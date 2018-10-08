@@ -33,11 +33,11 @@ import java.util.stream.Stream;
 @Component
 public class TemaQuery {
 	@GraphQLQuery(name = "temaer")
-	public Set<Tema> temaer(@GraphQLArgument(name = "temaer") List<Temakode> temaer, @GraphQLContext Bruker bruker) {
+	public Set<Tema> temaer(@GraphQLArgument(name = "tema", defaultValue = "[]") List<Temakode> tema, @GraphQLContext Bruker bruker) {
 		Faker faker = new Faker();
 		return Stream.of(
-				temaer.contains(Temakode.BID) ? bidrag(faker) : null,
-				temaer.contains(Temakode.FOR) ? foreldrepenger(faker) : null
+				tema.contains(Temakode.BID) || tema.isEmpty() ? bidrag(faker) : null,
+				tema.contains(Temakode.FOR) || tema.isEmpty() ? foreldrepenger(faker) : null
 		).filter(Objects::nonNull).collect(Collectors.toSet());
 	}
 
