@@ -42,7 +42,7 @@ import java.util.function.Function;
  * @author Jon Schneider
  */
 @Aspect
-@NonNullApi
+//@NonNullApi
 @Incubating(since = "1.0.0")
 @Slf4j
 @SuppressWarnings("Duplicates")
