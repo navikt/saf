@@ -13,6 +13,7 @@ import java.util.List;
 @Data
 @Builder
 public class Sak {
+	private final SakType sakType;
 	private final String saksreferanse;
 	private final Sakssystem sakssystem;
 	private final String fagsaksreferanse;

@@ -27,7 +27,7 @@ public class GraphQLController {
 	private final GraphQL graphQL;
 
 	@Inject
-	public GraphQLController(BrukerSakArkivQuery brukerQuery, TemaQuery temaQuery, SakQuery sakQuery) {
+	public GraphQLController(BrukerSakArkivQuery brukerQuery, TemaQuery temaQuery, SakQuery sakQuery, JournalpostQuery journalpostQuery) {
 		//Schema generated from query classes
 		GraphQLSchemaGenerator schemaGenerator = new GraphQLSchemaGenerator()
 				.withResolverBuilders(new AnnotatedResolverBuilder());
@@ -35,7 +35,8 @@ public class GraphQLController {
 		schemaGenerator = schemaGenerator
 				.withOperationsFromSingleton(brukerQuery)
 				.withOperationsFromSingleton(temaQuery)
-				.withOperationsFromSingleton(sakQuery);
+				.withOperationsFromSingleton(sakQuery)
+				.withOperationsFromSingleton(journalpostQuery);
 
 		GraphQLSchema schema = schemaGenerator.generate();
 		graphQL = GraphQL.newGraphQL(schema)
