@@ -3,8 +3,6 @@ package no.nav.saf;
 import graphql.ExecutionInput;
 import graphql.ExecutionResult;
 import graphql.GraphQL;
-import graphql.execution.AsyncExecutionStrategy;
-import graphql.execution.AsyncSerialExecutionStrategy;
 import graphql.schema.GraphQLSchema;
 import io.leangen.graphql.GraphQLSchemaGenerator;
 import io.leangen.graphql.metadata.strategy.query.AnnotatedResolverBuilder;
@@ -17,7 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -30,14 +27,15 @@ public class GraphQLController {
 	private final GraphQL graphQL;
 
 	@Inject
-	public GraphQLController(BrukerQuery brukerQuery, TemaQuery temaQuery) {
+	public GraphQLController(BrukerSakArkivQuery brukerQuery, TemaQuery temaQuery, SakQuery sakQuery) {
 		//Schema generated from query classes
 		GraphQLSchemaGenerator schemaGenerator = new GraphQLSchemaGenerator()
 				.withResolverBuilders(new AnnotatedResolverBuilder());
 
 		schemaGenerator = schemaGenerator
 				.withOperationsFromSingleton(brukerQuery)
-				.withOperationsFromSingleton(temaQuery);
+				.withOperationsFromSingleton(temaQuery)
+				.withOperationsFromSingleton(sakQuery);
 
 		GraphQLSchema schema = schemaGenerator.generate();
 		graphQL = GraphQL.newGraphQL(schema)

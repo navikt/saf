@@ -44,102 +44,14 @@ public class TemaQuery {
 	private Tema foreldrepenger(Faker faker) {
 		return Tema.builder()
 				.tema(Temakode.FOR)
-				.saker(Arrays.asList(
-						Sak.builder()
-								.saksreferanse(faker.number().digits(7))
-								.sakssystem(Sakssystem.GSAK)
-								.fagsaksreferanse(faker.number().digits(5))
-								.fagsystem(Fagsystem.VEDTAKSLOSNING_FORELDREPENGER)
-								.tema(Temakode.FOR)
-								.datoOpprettet(LocalDateTime.now())
-								.journalposter(Arrays.asList(
-										Journalpost.builder()
-												.journalpostId(faker.number().digits(9))
-												.beskrivelse("Søknad om engangsstønad")
-												.avsender(faker.number().digits(11))
-												.tema(Temakode.FOR)
-												.type(JournalpostType.INNGAENDE)
-												.status(JournalpostStatus.JOURNALFOERT)
-												.dokumentInfo(Arrays.asList(
-														DokumentInfo.builder()
-																.dokumentId(faker.number().digits(9))
-																.tittel("Søknad om engangsstønad")
-																.dokumenttypeId("I0000499")
-																.dokumentStatus(DokumentStatus.INNSENDT)
-																.tilknyttetJournalpostSom(TilknyttetJournalpostSom.HOVEDDOKUMENT)
-																.build(),
-														DokumentInfo.builder()
-																.dokumentId(faker.number().digits(9))
-																.tittel("Terminbekreftelse")
-																.dokumenttypeId("I0000500")
-																.dokumentStatus(DokumentStatus.INNSENDT)
-																.tilknyttetJournalpostSom(TilknyttetJournalpostSom.VEDLEGG)
-																.build()
-
-												))
-												.build()
-								))
-								.build())
-				).build();
+				.build();
 	}
 
 	private Tema bidrag(Faker faker) {
 		return Tema.builder()
 				.tema(Temakode.BID)
 				.saker(Arrays.asList(
-						Sak.builder()
-								.saksreferanse(faker.number().digits(7))
-								.sakssystem(Sakssystem.GSAK)
-								.fagsaksreferanse(faker.number().digits(5))
-								.fagsystem(Fagsystem.BIDRAG)
-								.tema(Temakode.BID)
-								.datoOpprettet(LocalDateTime.now().minusMonths(2))
-								.journalposter(Arrays.asList(
-										Journalpost.builder()
-												.journalpostId(faker.number().digits(9))
-												.beskrivelse("Søknad om forsørgerbidrag")
-												.avsender(faker.number().digits(11))
-												.tema(Temakode.BID)
-												.type(JournalpostType.INNGAENDE)
-												.status(JournalpostStatus.JOURNALFOERT)
-												.dokumentInfo(Arrays.asList(
-														DokumentInfo.builder()
-																.dokumentId(faker.number().digits(9))
-																.tittel("Søknad om forsørgerbidrag")
-																.dokumenttypeId("I0000342")
-																.dokumentStatus(DokumentStatus.INNSENDT)
-																.tilknyttetJournalpostSom(TilknyttetJournalpostSom.HOVEDDOKUMENT)
-																.build(),
-														DokumentInfo.builder()
-																.dokumentId(faker.number().digits(9))
-																.tittel("Dokumentasjon på forsørgerbidrag")
-																.dokumenttypeId("I0000343")
-																.dokumentStatus(DokumentStatus.INNSENDT)
-																.tilknyttetJournalpostSom(TilknyttetJournalpostSom.VEDLEGG)
-																.build()
-
-												))
-												.build()
-										, Journalpost.builder()
-												.journalpostId(faker.number().digits(9))
-												.beskrivelse("Vedtak om forsørgerbidrag")
-												.avsender(faker.number().digits(11))
-												.tema(Temakode.BID)
-												.type(JournalpostType.UTGAAENDE)
-												.status(JournalpostStatus.JOURNALFOERT)
-												.dokumentInfo(Arrays.asList(
-														DokumentInfo.builder()
-																.dokumentId(faker.number().digits(9))
-																.tittel("Vedtak om forsørgerbidrag")
-																.dokumenttypeId("0000200")
-																.dokumentStatus(DokumentStatus.FERDIGSTILT)
-																.tilknyttetJournalpostSom(TilknyttetJournalpostSom.HOVEDDOKUMENT)
-																.build()
-
-												))
-												.build()
-								))
-								.build())
+)
 				).build();
 	}
 }
