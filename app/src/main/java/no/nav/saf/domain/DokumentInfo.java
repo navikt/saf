@@ -2,6 +2,9 @@ package no.nav.saf.domain;
 
 import lombok.Builder;
 import lombok.Data;
+import no.nav.saf.domain.kode.DokumentStatus;
+import no.nav.saf.domain.kode.Dokumentkategori;
+import no.nav.saf.domain.kode.TilknyttetJournalpostSom;
 
 /**
  * @author Joakim Bjørnstad, Jbit AS

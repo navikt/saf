@@ -1,12 +1,11 @@
-package no.nav.saf;
+package no.nav.saf.sakerogjournalposter;
 
-import com.github.javafaker.Faker;
 import io.leangen.graphql.annotations.GraphQLArgument;
 import io.leangen.graphql.annotations.GraphQLContext;
 import io.leangen.graphql.annotations.GraphQLQuery;
 import no.nav.saf.domain.Bruker;
 import no.nav.saf.domain.Tema;
-import no.nav.saf.domain.Temakode;
+import no.nav.saf.domain.kode.Temakode;
 import org.springframework.stereotype.Component;
 
 import java.util.List;

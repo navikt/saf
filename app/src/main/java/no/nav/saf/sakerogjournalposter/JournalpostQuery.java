@@ -1,21 +1,21 @@
-package no.nav.saf;
+package no.nav.saf.sakerogjournalposter;
 
 import com.github.javafaker.Faker;
 import io.leangen.graphql.annotations.GraphQLContext;
 import io.leangen.graphql.annotations.GraphQLQuery;
-import no.nav.saf.domain.AvsenderType;
+import no.nav.saf.domain.kode.AvsenderType;
 import no.nav.saf.domain.DokumentInfo;
-import no.nav.saf.domain.DokumentStatus;
-import no.nav.saf.domain.Dokumentkategori;
-import no.nav.saf.domain.JournalTilstand;
+import no.nav.saf.domain.kode.DokumentStatus;
+import no.nav.saf.domain.kode.Dokumentkategori;
+import no.nav.saf.domain.kode.JournalTilstand;
 import no.nav.saf.domain.Journalpost;
-import no.nav.saf.domain.JournalpostStatus;
-import no.nav.saf.domain.JournalpostType;
-import no.nav.saf.domain.Mottakskanal;
+import no.nav.saf.domain.kode.JournalpostStatus;
+import no.nav.saf.domain.kode.JournalpostType;
+import no.nav.saf.domain.kode.Mottakskanal;
 import no.nav.saf.domain.Sak;
-import no.nav.saf.domain.Temakode;
-import no.nav.saf.domain.TilknyttetJournalpostSom;
-import no.nav.saf.domain.Utsendingskanal;
+import no.nav.saf.domain.kode.Temakode;
+import no.nav.saf.domain.kode.TilknyttetJournalpostSom;
+import no.nav.saf.domain.kode.Utsendingskanal;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;

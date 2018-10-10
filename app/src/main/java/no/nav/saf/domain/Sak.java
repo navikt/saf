@@ -2,6 +2,9 @@ package no.nav.saf.domain;
 
 import lombok.Builder;
 import lombok.Data;
+import no.nav.saf.domain.kode.SakType;
+import no.nav.saf.domain.kode.Sakssystem;
+import no.nav.saf.domain.kode.Temakode;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;

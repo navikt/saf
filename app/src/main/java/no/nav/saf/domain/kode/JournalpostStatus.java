@@ -1,4 +1,4 @@
-package no.nav.saf.domain;
+package no.nav.saf.domain.kode;
 
 import io.leangen.graphql.annotations.GraphQLEnumValue;
 

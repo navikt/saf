@@ -2,6 +2,7 @@ package no.nav.saf.domain;
 
 import lombok.Builder;
 import lombok.Data;
+import no.nav.saf.domain.kode.Temakode;
 
 import java.util.ArrayList;
 import java.util.List;

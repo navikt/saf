@@ -2,6 +2,13 @@ package no.nav.saf.domain;
 
 import lombok.Builder;
 import lombok.Data;
+import no.nav.saf.domain.kode.AvsenderType;
+import no.nav.saf.domain.kode.JournalTilstand;
+import no.nav.saf.domain.kode.JournalpostStatus;
+import no.nav.saf.domain.kode.JournalpostType;
+import no.nav.saf.domain.kode.Mottakskanal;
+import no.nav.saf.domain.kode.Temakode;
+import no.nav.saf.domain.kode.Utsendingskanal;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;

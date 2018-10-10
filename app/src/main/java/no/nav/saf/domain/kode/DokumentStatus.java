@@ -1,4 +1,4 @@
-package no.nav.saf.domain;
+package no.nav.saf.domain.kode;
 
 /**
  * @author Ugur Alpay Cenar, Visma Consulting.

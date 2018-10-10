@@ -1,7 +1,8 @@
-package no.nav.saf;
+package no.nav.saf.sakerogjournalposter;
 
 import com.github.javafaker.Faker;
 import io.leangen.graphql.annotations.GraphQLArgument;
+import io.leangen.graphql.annotations.GraphQLNonNull;
 import io.leangen.graphql.annotations.GraphQLQuery;
 import no.nav.saf.domain.Bruker;
 import org.springframework.stereotype.Component;
@@ -10,13 +11,12 @@ import org.springframework.stereotype.Component;
  * @author Joakim Bjørnstad, Jbit AS
  */
 @Component
-public class BrukerQuery {
-	@GraphQLQuery(name = "bruker")
-	public Bruker bruker(@GraphQLArgument(name = "foedselsnummer") String foedselsnummer,
-						 @GraphQLArgument(name = "aktoerId") String aktoerId) {
+public class BrukerSakArkivQuery {
+	@GraphQLQuery(name = "sakerOgJournalposterBy")
+	public Bruker sakerOgJournalposterBy(@GraphQLArgument(name = "aktoerId") @GraphQLNonNull String aktoerId) {
 		Faker faker = new Faker();
 		return Bruker.builder()
-				.aktoerId(faker.number().digits(15))
+				.aktoerId(aktoerId)
 				.fnr(faker.number().digits(11))
 				.build();
 	}
