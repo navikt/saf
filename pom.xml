@@ -10,6 +10,7 @@
 	<version>1-SNAPSHOT</version>
 	<modules>
 		<module>app</module>
+		<module>graphiql</module>
 	</modules>
 	<parent>
 		<groupId>org.springframework.boot</groupId>
@@ -43,6 +44,11 @@
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
+				<groupId>no.nav.saf</groupId>
+				<artifactId>graphiql</artifactId>
+				<version>1-SNAPSHOT</version>
+			</dependency>
+			<dependency>
 				<groupId>org.projectlombok</groupId>
 				<artifactId>lombok</artifactId>
 				<version>${lombok.version}</version>
@@ -56,11 +62,6 @@
 			<dependency>
 				<groupId>com.graphql-java</groupId>
 				<artifactId>graphql-spring-boot-starter</artifactId>
-				<version>${graphql.spring.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.graphql-java</groupId>
-				<artifactId>graphiql-spring-boot-starter</artifactId>
 				<version>${graphql.spring.version}</version>
 			</dependency>
 			<dependency>

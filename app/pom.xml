@@ -14,6 +14,10 @@
 
 	<dependencies>
 		<dependency>
+			<groupId>no.nav.saf</groupId>
+			<artifactId>graphiql</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
@@ -44,10 +48,6 @@
 		<dependency>
 			<groupId>com.graphql-java</groupId>
 			<artifactId>graphql-spring-boot-starter</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.graphql-java</groupId>
-			<artifactId>graphiql-spring-boot-starter</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>io.leangen.graphql</groupId>

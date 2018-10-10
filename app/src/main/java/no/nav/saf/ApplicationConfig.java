@@ -12,8 +12,8 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 @Configuration
 public class ApplicationConfig {
 
-    @Bean
-    public DokTimedAspect timedAspect(MeterRegistry meterRegistry) {
-        return new DokTimedAspect(meterRegistry);
-    }
+	@Bean
+	public DokTimedAspect timedAspect(MeterRegistry meterRegistry) {
+		return new DokTimedAspect(meterRegistry);
+	}
 }
