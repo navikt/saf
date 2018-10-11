@@ -12,7 +12,6 @@ import java.util.Set;
 @Data
 @Builder
 public class Bruker {
-	private final String fnr;
 	private final String aktoerId;
 	@Builder.Default
 	private final Set<Tema> temaer = new HashSet<>();

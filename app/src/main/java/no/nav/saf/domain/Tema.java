@@ -14,6 +14,7 @@ import java.util.List;
 @Builder
 public class Tema {
 	private final Temakode tema;
+	private final String temanavn;
 	@Builder.Default
 	private final List<Sak> saker = new ArrayList<>();
 }

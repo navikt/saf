@@ -1,4 +1,4 @@
-package no.nav.saf.sakerogjournalposter;
+package no.nav.saf.sakstilknyttedejournalposter;
 
 import io.leangen.graphql.annotations.GraphQLArgument;
 import io.leangen.graphql.annotations.GraphQLContext;
@@ -28,14 +28,18 @@ public class TemaQuery {
 	}
 
 	private Tema foreldrepenger() {
+		Temakode temakode = Temakode.FOR;
 		return Tema.builder()
-				.tema(Temakode.FOR)
+				.tema(temakode)
+				.temanavn(temakode.getTemanavn())
 				.build();
 	}
 
 	private Tema bidrag() {
+		Temakode temakode = Temakode.BID;
 		return Tema.builder()
-				.tema(Temakode.BID)
+				.tema(temakode)
+				.temanavn(temakode.getTemanavn())
 				.build();
 	}
 }

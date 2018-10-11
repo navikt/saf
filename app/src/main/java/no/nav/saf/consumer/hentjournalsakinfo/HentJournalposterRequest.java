@@ -11,7 +11,7 @@ import java.util.List;
  */
 @Data
 @Builder
-public class 	HentJournalposterRequest {
+public class HentJournalposterRequest {
 	@Builder.Default
 	private final List<String> gsakSakIdList = new ArrayList<>();
 	@Builder.Default

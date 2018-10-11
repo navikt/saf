@@ -1,13 +1,13 @@
-package no.nav.saf.sakerogjournalposter;
+package no.nav.saf.sakstilknyttedejournalposter;
 
 import com.github.javafaker.Faker;
 import io.leangen.graphql.annotations.GraphQLArgument;
 import io.leangen.graphql.annotations.GraphQLContext;
 import io.leangen.graphql.annotations.GraphQLQuery;
-import no.nav.saf.domain.Fagsystem;
+import no.nav.saf.domain.kode.Fagsystem;
 import no.nav.saf.domain.Sak;
 import no.nav.saf.domain.kode.SakType;
-import no.nav.saf.domain.kode.Sakssystem;
+import no.nav.saf.domain.kode.Arkivsakssystem;
 import no.nav.saf.domain.Tema;
 import no.nav.saf.domain.kode.Temakode;
 import org.springframework.stereotype.Component;
@@ -36,24 +36,22 @@ public class SakQuery {
 
 	private Sak foreldrepenger(Faker faker) {
 		return Sak.builder()
-				.sakType(SakType.FAGSYSTEM_SAK)
-				.saksreferanse(faker.number().digits(7))
-				.sakssystem(Sakssystem.GSAK)
-				.fagsaksreferanse(faker.number().digits(5))
+				.arkivsaksnummer(faker.number().digits(7))
+				.arkivsakssystem(Arkivsakssystem.GSAK)
+				.fagsaksnummer(faker.number().digits(5))
 				.fagsystem(Fagsystem.VEDTAKSLOSNING_FORELDREPENGER)
-				.tema(Temakode.FOR)
 				.datoOpprettet(LocalDateTime.now())
+				.temakode(Temakode.FOR)
 				.build();
 	}
 
 	private Sak bidrag(Faker faker) {
 		return Sak.builder()
-				.sakType(SakType.FAGSYSTEM_SAK)
-				.saksreferanse(faker.number().digits(7))
-				.sakssystem(Sakssystem.GSAK)
-				.fagsaksreferanse(faker.number().digits(5))
+				.arkivsaksnummer(faker.number().digits(7))
+				.arkivsakssystem(Arkivsakssystem.GSAK)
+				.fagsaksnummer(faker.number().digits(5))
 				.fagsystem(Fagsystem.BISYS)
-				.tema(Temakode.BID)
+				.temakode(Temakode.BID)
 				.datoOpprettet(LocalDateTime.now().minusMonths(2))
 				.build();
 	}

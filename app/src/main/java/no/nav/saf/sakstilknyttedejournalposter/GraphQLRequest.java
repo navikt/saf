@@ -1,4 +1,4 @@
-package no.nav.saf.sakerogjournalposter;
+package no.nav.saf.sakstilknyttedejournalposter;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
