@@ -10,6 +10,7 @@
 	<version>1-SNAPSHOT</version>
 	<modules>
 		<module>app</module>
+		<module>core-acl</module>
 		<module>graphiql</module>
 	</modules>
 	<parent>
@@ -43,6 +44,11 @@
 
 	<dependencyManagement>
 		<dependencies>
+			<dependency>
+				<groupId>no.nav.saf</groupId>
+				<artifactId>core-acl</artifactId>
+				<version>1-SNAPSHOT</version>
+			</dependency>
 			<dependency>
 				<groupId>no.nav.saf</groupId>
 				<artifactId>graphiql</artifactId>

@@ -3,10 +3,13 @@ package no.nav.saf.sakstilknyttedejournalposter;
 import graphql.ExecutionInput;
 import graphql.ExecutionResult;
 import graphql.GraphQL;
+import graphql.execution.instrumentation.dataloader.DataLoaderDispatcherInstrumentation;
 import graphql.schema.GraphQLSchema;
 import io.leangen.graphql.GraphQLSchemaGenerator;
 import io.leangen.graphql.metadata.strategy.query.AnnotatedResolverBuilder;
 import lombok.extern.slf4j.Slf4j;
+import org.dataloader.DataLoader;
+import org.dataloader.DataLoaderRegistry;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -27,18 +30,19 @@ public class GraphQLController {
 	private final GraphQL graphQL;
 
 	@Inject
-	public GraphQLController(SakstilknyttedeJournalposter brukerQuery, TemaQuery temaQuery, SakQuery sakQuery, JournalpostQuery journalpostQuery) {
+	public GraphQLController(SakstilknyttedeJournalposter sakstilknyttedeJournalposter, SakQuery sakQuery, JournalpostQuery journalpostQuery) {
 		//Schema generated from query classes
 		GraphQLSchemaGenerator schemaGenerator = new GraphQLSchemaGenerator()
 				.withResolverBuilders(new AnnotatedResolverBuilder());
 
 		schemaGenerator = schemaGenerator
-				.withOperationsFromSingleton(brukerQuery)
-				.withOperationsFromSingleton(temaQuery)
+				.withOperationsFromSingleton(sakstilknyttedeJournalposter)
 				.withOperationsFromSingleton(sakQuery)
 				.withOperationsFromSingleton(journalpostQuery);
 
 		GraphQLSchema schema = schemaGenerator.generate();
+
+
 		graphQL = GraphQL.newGraphQL(schema)
 				.build();
 	}

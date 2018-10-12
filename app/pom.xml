@@ -15,6 +15,10 @@
 	<dependencies>
 		<dependency>
 			<groupId>no.nav.saf</groupId>
+			<artifactId>core-acl</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>no.nav.saf</groupId>
 			<artifactId>graphiql</artifactId>
 		</dependency>
 		<dependency>

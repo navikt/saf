@@ -1,34 +1,22 @@
 package no.nav.saf.sakstilknyttedejournalposter;
 
-import static no.nav.saf.domain.kode.Temakode.BID;
-import static no.nav.saf.domain.kode.Temakode.FOR;
-
 import com.github.javafaker.Faker;
-import io.leangen.graphql.annotations.GraphQLArgument;
 import io.leangen.graphql.annotations.GraphQLContext;
-import io.leangen.graphql.annotations.GraphQLEnvironment;
 import io.leangen.graphql.annotations.GraphQLQuery;
-import no.nav.saf.domain.Tema;
-import no.nav.saf.domain.kode.AvsenderType;
-import no.nav.saf.domain.DokumentInfo;
-import no.nav.saf.domain.kode.DokumentStatus;
-import no.nav.saf.domain.kode.Dokumentkategori;
-import no.nav.saf.domain.kode.JournalTilstand;
-import no.nav.saf.domain.Journalpost;
-import no.nav.saf.domain.kode.JournalpostStatus;
-import no.nav.saf.domain.kode.JournalpostType;
-import no.nav.saf.domain.kode.Mottakskanal;
-import no.nav.saf.domain.Sak;
-import no.nav.saf.domain.kode.Temakode;
-import no.nav.saf.domain.kode.TilknyttetJournalpostSom;
-import no.nav.saf.domain.kode.Utsendingskanal;
+import no.nav.saf.context.saf.domain.DokumentInfo;
+import no.nav.saf.context.saf.domain.kode.DokumentStatus;
+import no.nav.saf.context.saf.domain.kode.Dokumentkategori;
+import no.nav.saf.context.saf.domain.Journalpost;
+import no.nav.saf.context.saf.domain.kode.JournalpostStatus;
+import no.nav.saf.context.saf.domain.kode.JournalpostType;
+import no.nav.saf.context.saf.domain.kode.Mottakskanal;
+import no.nav.saf.context.saf.domain.Sak;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.UUID;
 
 /**
  * @author Joakim Bjørnstad, Jbit AS
