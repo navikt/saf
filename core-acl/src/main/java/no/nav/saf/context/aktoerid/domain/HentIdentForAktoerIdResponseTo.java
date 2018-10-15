@@ -1,4 +1,4 @@
-package no.nav.saf.context.aktoerId.domain;
+package no.nav.saf.context.aktoerid.domain;
 
 import lombok.Builder;
 import lombok.Data;

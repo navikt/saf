@@ -19,7 +19,7 @@ import java.util.HashMap;
 /**
  * @author Ugur Alpay Cenar, Visma Consulting.
  */
-public class STSConfigUtil {
+final class STSConfigUtil {
 
 	private static final String STS_REQUEST_SAML_POLICY = "classpath:policy/requestSamlPolicy.xml";
 	private static final String STS_CLIENT_AUTHENTICATION_POLICY = "classpath:policy/untPolicy.xml";

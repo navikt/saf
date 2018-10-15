@@ -1,6 +1,6 @@
-package no.nav.saf.context.aktoerId.hentIdentForAktoerId;
+package no.nav.saf.context.aktoerid.hentidentforaktoerid;
 
-import no.nav.saf.context.aktoerId.domain.HentIdentForAktoerIdResponseTo;
+import no.nav.saf.context.aktoerid.domain.HentIdentForAktoerIdResponseTo;
 import no.nav.saf.context.exceptions.SafFunctionalException;
 import no.nav.saf.context.exceptions.SafTechnicalException;
 import no.nav.tjeneste.virksomhet.aktoer.v2.binding.AktoerV2;
