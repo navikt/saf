@@ -15,6 +15,10 @@
 	<dependencies>
 		<dependency>
 			<groupId>no.nav.saf</groupId>
+			<artifactId>core-acl</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>no.nav.saf</groupId>
 			<artifactId>graphiql</artifactId>
 		</dependency>
 		<dependency>
@@ -36,10 +40,6 @@
 		<dependency>
 			<groupId>javax.inject</groupId>
 			<artifactId>javax.inject</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.projectlombok</groupId>
-			<artifactId>lombok</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>net.logstash.logback</groupId>
@@ -66,6 +66,15 @@
 		<dependency>
 			<groupId>com.github.javafaker</groupId>
 			<artifactId>javafaker</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
