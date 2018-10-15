@@ -1,5 +1,6 @@
 package no.nav.saf.context.joark.hentjournalsakinfo;
 
+import no.nav.saf.fasit.ServiceuserAlias;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.ResponseEntity;
@@ -21,11 +22,12 @@ public class HentJournalsakinfo {
 	@Inject
 	public HentJournalsakinfo(@Value("${hentjournalsakinfo.url}") final String hentjournalsakinfoUrl,
 							  final RestTemplateBuilder restTemplateBuilder,
-							  final ClientHttpRequestFactory clientHttpRequestFactory) {
+							  final ClientHttpRequestFactory clientHttpRequestFactory,
+							  final ServiceuserAlias serviceuserAlias) {
 		this.hentjournalsakinfoUrl = hentjournalsakinfoUrl;
 		restTemplate = restTemplateBuilder
 				.requestFactory(() -> clientHttpRequestFactory)
-				//.basicAuthorization("","") TODO auth
+				.basicAuthorization(serviceuserAlias.getUsername(), serviceuserAlias.getPassword())
 				.setConnectTimeout((int) TimeUnit.SECONDS.toMillis(1))
 				.setReadTimeout((int) TimeUnit.SECONDS.toMillis(5))
 				.build();
