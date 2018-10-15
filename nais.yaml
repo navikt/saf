@@ -22,3 +22,11 @@ resources:
     memory: 1024Mi
   requests:
     memory: 512Mi
+fasitResources:
+  used:
+  - alias: sak.saker
+    resourceType: restservice
+  - alias: OpenIdConnectAgent
+    resourceType: credential
+    propertyMap:
+      password: security.openam.password
