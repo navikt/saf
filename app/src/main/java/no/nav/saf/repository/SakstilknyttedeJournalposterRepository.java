@@ -1,5 +1,7 @@
 package no.nav.saf.repository;
 
+import no.nav.saf.context.saf.domain.Journalpost;
+import no.nav.saf.context.saf.domain.Sak;
 import no.nav.saf.context.saf.domain.Tema;
 import no.nav.saf.context.saf.domain.kode.Temakode;
 import no.nav.saf.coordinator.SakstilknyttedeJournalposterCoordinator;
@@ -28,5 +30,13 @@ public class SakstilknyttedeJournalposterRepository {
 
 	public Set<Tema> findTemaKnyttetTilAktoerIdAndFilterByTemakoder(final String aktoerId, final List<Temakode> temakoder) {
 		return coordinator.findTemaKnyttetTilAktoerIdAndFilterByTemakoder(aktoerId, temakoder);
+	}
+
+	public List<Sak> findSakerByAktoerIdAndTema(final String aktoerId, final Temakode tema) {
+		return coordinator.findSakerByAktoerIdAndTema(aktoerId, tema);
+	}
+
+	public List<Journalpost> findJournalposterByFagsakAndTema(final String fagsaksnummer, final Temakode tema) {
+		return coordinator.findJournalposterByFagsakAndTema(fagsaksnummer, tema);
 	}
 }
