@@ -1,4 +1,4 @@
-package no.nav.saf.context.gsak.restconfig;
+package no.nav.saf.context.restconfig;
 
 
 import no.nav.saf.context.gsak.ServiceuserAlias;

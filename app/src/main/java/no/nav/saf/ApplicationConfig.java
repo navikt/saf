@@ -19,18 +19,18 @@ import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 @EnableConfigurationProperties(ServiceuserAlias.class)
 public class ApplicationConfig {
 
-	@Bean
-	ClientHttpRequestFactory requestFactory(HttpClient httpClient) {
-		return new HttpComponentsClientHttpRequestFactory(httpClient);
-	}
+    @Bean
+    ClientHttpRequestFactory requestFactory(HttpClient httpClient) {
+        return new HttpComponentsClientHttpRequestFactory(httpClient);
+    }
 
-	@Bean
-	HttpClient httpClient() {
-		return HttpClients.createDefault();
-	}
+    @Bean
+    HttpClient httpClient() {
+        return HttpClients.createDefault();
+    }
 
-	@Bean
-	DokTimedAspect timedAspect(MeterRegistry meterRegistry) {
-		return new DokTimedAspect(meterRegistry);
-	}
+    @Bean
+    DokTimedAspect timedAspect(MeterRegistry meterRegistry) {
+        return new DokTimedAspect(meterRegistry);
+    }
 }
