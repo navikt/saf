@@ -1,42 +1,50 @@
-package no.nav.saf.sakstilknyttedejournalposter;
+package no.nav.saf.context.mock;
 
 import com.github.javafaker.Faker;
-import io.leangen.graphql.annotations.GraphQLContext;
-import io.leangen.graphql.annotations.GraphQLQuery;
 import no.nav.saf.context.saf.domain.DokumentInfo;
+import no.nav.saf.context.saf.domain.Journalpost;
+import no.nav.saf.context.saf.domain.Sak;
+import no.nav.saf.context.saf.domain.kode.Arkivsakssystem;
 import no.nav.saf.context.saf.domain.kode.DokumentStatus;
 import no.nav.saf.context.saf.domain.kode.Dokumentkategori;
-import no.nav.saf.context.saf.domain.Journalpost;
+import no.nav.saf.context.saf.domain.kode.Fagsystem;
 import no.nav.saf.context.saf.domain.kode.JournalpostStatus;
 import no.nav.saf.context.saf.domain.kode.JournalpostType;
 import no.nav.saf.context.saf.domain.kode.Mottakskanal;
-import no.nav.saf.context.saf.domain.Sak;
-import org.springframework.stereotype.Component;
+import no.nav.saf.context.saf.domain.kode.Temakode;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
  * @author Joakim Bjørnstad, Jbit AS
  */
-@Component
-public class JournalpostQuery {
-	@GraphQLQuery(name = "journalposter")
-	public List<Journalpost> journalposter(@GraphQLContext Sak sak) {
-		Faker faker = new Faker();
-		switch (sak.getTemakode()) {
-			case BID:
-				return bidrag(faker);
-			case FOR:
-				return foreldrepenger(faker);
-			default:
-				return new ArrayList<>();
-		}
+public final class MockData {
+	public static List<Sak> foreldrepengesaker(Faker faker) {
+		return Collections.singletonList(Sak.builder()
+				.arkivsaksnummer(faker.number().digits(7))
+				.arkivsakssystem(Arkivsakssystem.GSAK)
+				.fagsaksnummer(faker.number().digits(5))
+				.fagsystem(Fagsystem.VEDTAKSLOSNING_FORELDREPENGER)
+				.datoOpprettet(LocalDateTime.now())
+				.temakode(Temakode.FOR)
+				.build());
 	}
 
-	private List<Journalpost> foreldrepenger(Faker faker) {
+	public static List<Sak> bidragsaker(Faker faker) {
+		return Collections.singletonList(Sak.builder()
+				.arkivsaksnummer(faker.number().digits(7))
+				.arkivsakssystem(Arkivsakssystem.GSAK)
+				.fagsaksnummer(faker.number().digits(5))
+				.fagsystem(Fagsystem.BISYS)
+				.temakode(Temakode.BID)
+				.datoOpprettet(LocalDateTime.now().minusMonths(2))
+				.build());
+	}
+
+	public static List<Journalpost> foreldrepengerjournalposter(Faker faker) {
 		return Arrays.asList(
 				Journalpost.builder()
 						.journalpostID(faker.number().digits(9))
@@ -70,7 +78,7 @@ public class JournalpostQuery {
 		);
 	}
 
-	private List<Journalpost> bidrag(Faker faker) {
+	public static List<Journalpost> bidragjournalposter(Faker faker) {
 		return Arrays.asList(
 				Journalpost.builder()
 						.journalpostID(faker.number().digits(9))

@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -30,18 +31,15 @@ public class GraphQLController {
 	private final GraphQL graphQL;
 
 	@Inject
-	public GraphQLController(SakstilknyttedeJournalposter sakstilknyttedeJournalposter, SakQuery sakQuery, JournalpostQuery journalpostQuery) {
+	public GraphQLController(SakstilknyttedeJournalposter sakstilknyttedeJournalposter) {
 		//Schema generated from query classes
 		GraphQLSchemaGenerator schemaGenerator = new GraphQLSchemaGenerator()
 				.withResolverBuilders(new AnnotatedResolverBuilder());
 
 		schemaGenerator = schemaGenerator
-				.withOperationsFromSingleton(sakstilknyttedeJournalposter)
-				.withOperationsFromSingleton(sakQuery)
-				.withOperationsFromSingleton(journalpostQuery);
+				.withOperationsFromSingleton(sakstilknyttedeJournalposter);
 
 		GraphQLSchema schema = schemaGenerator.generate();
-
 
 		graphQL = GraphQL.newGraphQL(schema)
 				.build();
@@ -49,12 +47,12 @@ public class GraphQLController {
 
 	@PostMapping(value = "/graphql", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
-	public Map<String, Object> graphQLRequest(@RequestBody GraphQLRequest request, HttpServletRequest raw) {
+	public Map<String, Object> graphQLRequest(@RequestBody GraphQLRequest request) {
 		ExecutionResult executionResult = graphQL.execute(ExecutionInput.newExecutionInput()
 				.query(request.getQuery())
 				.operationName(request.getOperationName())
 				.variables(request.getVariables())
-				.context(raw)
+				.context(new HashMap<String, Object>())
 				.build());
 		return executionResult.toSpecification();
 	}
