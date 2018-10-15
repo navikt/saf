@@ -6,10 +6,12 @@ import lombok.Data;
 @Data
 @Builder
 public class GsakSakerTo {
-    private Integer id;
-    private String tema;
-    private String applikasjon;
-    private String aktoerId;
-    private String orgnr;
-    private String fagsakNr;
+	private final Integer id;
+	private final String tema;
+	private final String applikasjon;
+	private final String aktoerId;
+	private final String orgnr;
+	private final String fagsakNr;
+	private final String opprettetAv;
+	private final String opprettetTidspunkt;
 }

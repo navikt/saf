@@ -1,7 +1,7 @@
 package no.nav.saf;
 
 import io.micrometer.core.instrument.MeterRegistry;
-import no.nav.saf.context.gsak.ServiceuserAlias;
+import no.nav.saf.context.config.fasit.ServiceuserAlias;
 import no.nav.saf.metrics.DokTimedAspect;
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.HttpClients;
@@ -19,18 +19,18 @@ import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 @EnableConfigurationProperties(ServiceuserAlias.class)
 public class ApplicationConfig {
 
-    @Bean
-    ClientHttpRequestFactory requestFactory(HttpClient httpClient) {
-        return new HttpComponentsClientHttpRequestFactory(httpClient);
-    }
+	@Bean
+	ClientHttpRequestFactory requestFactory(HttpClient httpClient) {
+		return new HttpComponentsClientHttpRequestFactory(httpClient);
+	}
 
-    @Bean
-    HttpClient httpClient() {
-        return HttpClients.createDefault();
-    }
+	@Bean
+	HttpClient httpClient() {
+		return HttpClients.createDefault();
+	}
 
-    @Bean
-    DokTimedAspect timedAspect(MeterRegistry meterRegistry) {
-        return new DokTimedAspect(meterRegistry);
-    }
+	@Bean
+	DokTimedAspect timedAspect(MeterRegistry meterRegistry) {
+		return new DokTimedAspect(meterRegistry);
+	}
 }

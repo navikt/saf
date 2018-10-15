@@ -53,15 +53,6 @@
 			<groupId>io.leangen.graphql</groupId>
 			<artifactId>spqr</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>org.apache.httpcomponents</groupId>
-			<artifactId>httpclient</artifactId>
-		</dependency>
-		<!--<dependency>-->
-			<!--<groupId>no.nav.freg</groupId>-->
-			<!--<artifactId>freg-security-oidc-utility</artifactId>-->
-			<!--<version>${freg.security.oidc.utility.version}</version>-->
-		<!--</dependency>-->
 
 		<dependency>
 			<groupId>com.github.javafaker</groupId>
