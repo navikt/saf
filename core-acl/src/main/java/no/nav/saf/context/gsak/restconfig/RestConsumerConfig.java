@@ -1,4 +1,4 @@
-package no.nav.saf.restconfig;
+package no.nav.saf.context.gsak.restconfig;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;

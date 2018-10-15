@@ -1,4 +1,4 @@
-package no.nav.saf.consumer;
+package no.nav.saf.context.gsak.domain;
 
 import lombok.Builder;
 import lombok.Data;

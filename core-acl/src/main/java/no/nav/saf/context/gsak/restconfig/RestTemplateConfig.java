@@ -1,7 +1,7 @@
-package no.nav.saf.restconfig;
+package no.nav.saf.context.gsak.restconfig;
 
 
-import no.nav.saf.fasit.ServiceuserAlias;
+import no.nav.saf.context.gsak.ServiceuserAlias;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

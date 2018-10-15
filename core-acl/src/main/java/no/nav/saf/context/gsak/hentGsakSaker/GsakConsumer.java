@@ -1,6 +1,7 @@
-package no.nav.saf.consumer;
+package no.nav.saf.context.gsak.hentGsakSaker;
 
 import lombok.extern.slf4j.Slf4j;
+import no.nav.saf.context.gsak.domain.GsakSakerTo;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
