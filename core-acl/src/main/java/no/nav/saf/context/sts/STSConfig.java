@@ -1,0 +1,28 @@
+package no.nav.saf.context.sts;
+
+import no.nav.saf.context.config.fasit.ServiceuserAlias;
+import org.apache.cxf.endpoint.Client;
+import org.apache.cxf.frontend.ClientProxy;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
+/**
+ * @author Ugur Alpay Cenar, Visma Consulting.
+ */
+@Component
+public class STSConfig {
+
+	@Value("${securityTokenService.url}")
+	private String stsUrl;
+	private ServiceuserAlias serviceuserAlias;
+
+	public STSConfig(ServiceuserAlias serviceuserAlias) {
+		this.serviceuserAlias = serviceuserAlias;
+	}
+
+	public void configureSTS(Object port) {
+		Client client = ClientProxy.getClient(port);
+		STSConfigUtil.configureStsRequestSamlToken(client, stsUrl, serviceuserAlias.getUsername(), serviceuserAlias.getPassword());
+	}
+
+}

@@ -40,6 +40,9 @@
 		<graphql.spring.version>5.0.2</graphql.spring.version>
 		<javax.interceptor.version>3.1</javax.interceptor.version>
 		<junit.version>4.12</junit.version>
+		<aktoer.version>2.0.1</aktoer.version>
+		<cxf.version>3.2.6</cxf.version>
+		<modig-security.version>3.0.6</modig-security.version>
 	</properties>
 
 	<dependencyManagement>
@@ -74,6 +77,22 @@
 				<groupId>javax.interceptor</groupId>
 				<artifactId>javax.interceptor-api</artifactId>
 				<version>${javax.interceptor.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>no.nav.tjenester.fim</groupId>
+				<artifactId>nav-fim-aktoer-v2-tjenestespesifikasjon</artifactId>
+				<version>${aktoer.version}</version>
+				<classifier>jaxws</classifier>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.cxf</groupId>
+				<artifactId>cxf-spring-boot-starter-jaxws</artifactId>
+				<version>${cxf.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>no.nav.modig</groupId>
+				<artifactId>modig-security-ws</artifactId>
+				<version>${modig-security.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>io.leangen.graphql</groupId>
