@@ -1,4 +1,4 @@
-package no.nav.saf.context.gsak.wubadubadub;
+package no.nav.saf.context.gsak.hentgsaksaker;
 
 import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.context.exceptions.SafFunctionalException;
@@ -36,12 +36,10 @@ class GsakConsumer {
 			return restTemplate.getForObject(this.gsakApiUrl + "/" + saksId, GsakSakerTo.class);
 		} catch (HttpServerErrorException e) {
 			throw new SafTechnicalException(String.format("getGsaksaker feilet teknisk med statusKode=%s. Feilmelding=%s", e
-					.getStatusCode(), e
-					.getResponseBodyAsString()), e, e.getStatusCode());
+					.getStatusCode(), e.getMessage()), e, e.getStatusCode());
 		} catch (HttpClientErrorException e) {
 			throw new SafFunctionalException(String.format("getGsaksaker feilet funksjonelt med statusKode=%s. Feilmelding=%s", e
-					.getStatusCode(), e
-					.getResponseBodyAsString()), e, e.getStatusCode());
+					.getStatusCode(), e.getMessage()), e, e.getStatusCode());
 		}
 	}
 }
