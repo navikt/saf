@@ -2,8 +2,8 @@ package no.nav.saf.context.gsak.hentgsaksaker;
 
 import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.context.Exceptions.SafTechnicalException;
-import no.nav.saf.context.config.fasit.ServiceuserAlias;
 import no.nav.saf.context.gsak.domain.GsakSakerTo;
+import no.nav.saf.fasit.ServiceuserAlias;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.stereotype.Component;
