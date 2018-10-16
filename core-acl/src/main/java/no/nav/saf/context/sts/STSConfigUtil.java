@@ -52,7 +52,6 @@ final class STSConfigUtil {
 
 		//used for the STS client to authenticate itself to the STS provider.
 		stsClient.setPolicy(STS_CLIENT_AUTHENTICATION_POLICY);
-
 	}
 
 	private static Policy resolvePolicyReference(Client client, String uri) {

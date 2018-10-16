@@ -42,7 +42,6 @@
 		<junit.version>4.12</junit.version>
 		<aktoer.version>2.0.1</aktoer.version>
 		<cxf.version>3.2.6</cxf.version>
-		<modig-security.version>3.0.6</modig-security.version>
 	</properties>
 
 	<dependencyManagement>
@@ -90,10 +89,15 @@
 				<version>${cxf.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>no.nav.modig</groupId>
-				<artifactId>modig-security-ws</artifactId>
-				<version>${modig-security.version}</version>
+				<groupId>org.apache.cxf</groupId>
+				<artifactId>cxf-rt-ws-security</artifactId>
+				<version>${cxf.version}</version>
 			</dependency>
+			<!--<dependency>-->
+				<!--<groupId>no.nav.modig</groupId>-->
+				<!--<artifactId>modig-security-ws</artifactId>-->
+				<!--<version>${modig-security.version}</version>-->
+			<!--</dependency>-->
 			<dependency>
 				<groupId>io.leangen.graphql</groupId>
 				<artifactId>spqr</artifactId>

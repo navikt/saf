@@ -30,8 +30,9 @@
 			<artifactId>cxf-spring-boot-starter-jaxws</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>no.nav.modig</groupId>
-			<artifactId>modig-security-ws</artifactId>
+			<groupId>org.apache.cxf</groupId>
+			<artifactId>cxf-rt-ws-security</artifactId>
+			<version>${cxf.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>javax.inject</groupId>
