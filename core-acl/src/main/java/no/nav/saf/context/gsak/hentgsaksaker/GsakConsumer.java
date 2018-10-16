@@ -1,6 +1,7 @@
 package no.nav.saf.context.gsak.hentgsaksaker;
 
 import lombok.extern.slf4j.Slf4j;
+import no.nav.saf.context.Exceptions.SafTechnicalException;
 import no.nav.saf.context.config.fasit.ServiceuserAlias;
 import no.nav.saf.context.gsak.domain.GsakSakerTo;
 import org.springframework.beans.factory.annotation.Value;
@@ -37,11 +38,13 @@ class GsakConsumer {
 		try {
 			return restTemplate.getForObject(this.gsakApiUrl + "/" + saksId, GsakSakerTo.class);
 		} catch (HttpClientErrorException e) {
-			throw new RuntimeException(String.format("getGsakSaker feilet med statusKode=%s. Fant ingen sak med saksId=%s.", e
-					.getStatusCode(), saksId));
+			throw new SafTechnicalException(String.format("getGsaksaker feilet pa clientside med statusKode=%s. Feilmelding=%s", e
+					.getStatusCode(), e
+					.getResponseBodyAsString()), e, e.getStatusCode());
 		} catch (HttpServerErrorException e) {
-			throw new RuntimeException(String.format("getGsakSaker feilet teknisk med statusKode=%s. Fant ingen sak med saksId=%s.", e
-					.getStatusCode(), saksId));
+			throw new SafTechnicalException(String.format("getGsaksaker feilet pa serverside med statusKode=%s. Feilmelding=%s", e
+					.getStatusCode(), e
+					.getResponseBodyAsString()), e, e.getStatusCode());
 		}
 	}
 }
