@@ -1,4 +1,4 @@
-package no.nav.saf.context.Exceptions;
+package no.nav.saf.context.exceptions;
 
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
@@ -6,7 +6,7 @@ import org.springframework.http.HttpStatus;
 @Getter
 public class SafTechnicalException extends RuntimeException {
 
-	private HttpStatus httpStatus;
+	private final HttpStatus httpStatus;
 
 	public SafTechnicalException(String message, Throwable cause, HttpStatus httpStatus) {
 		super(message, cause);
