@@ -7,6 +7,7 @@ import no.nav.saf.context.saf.domain.kode.Arkivsakssystem;
 import no.nav.saf.context.saf.domain.kode.Temakode;
 
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,8 +20,8 @@ public class Sak {
 	private final String arkivsaksnummer;
 	private final Arkivsakssystem arkivsakssystem;
 	private final String fagsaksnummer;
-	private final Fagsystem fagsystem;
-	private final LocalDateTime datoOpprettet;
+	private final String fagsystem;
+	private final OffsetDateTime datoOpprettet;
 	private final Temakode temakode;
 
 	@Builder.Default

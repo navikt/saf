@@ -14,6 +14,7 @@ import no.nav.saf.context.saf.domain.kode.Mottakskanal;
 import no.nav.saf.context.saf.domain.kode.Temakode;
 
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -27,8 +28,8 @@ public final class MockData {
 				.arkivsaksnummer(faker.number().digits(7))
 				.arkivsakssystem(Arkivsakssystem.GSAK)
 				.fagsaksnummer(faker.number().digits(5))
-				.fagsystem(Fagsystem.VEDTAKSLOSNING_FORELDREPENGER)
-				.datoOpprettet(LocalDateTime.now())
+				.fagsystem(Fagsystem.VEDTAKSLOSNING_FORELDREPENGER.name())
+				.datoOpprettet(OffsetDateTime.now())
 				.temakode(Temakode.FOR)
 				.build());
 	}
@@ -38,9 +39,9 @@ public final class MockData {
 				.arkivsaksnummer(faker.number().digits(7))
 				.arkivsakssystem(Arkivsakssystem.GSAK)
 				.fagsaksnummer(faker.number().digits(5))
-				.fagsystem(Fagsystem.BISYS)
+				.fagsystem(Fagsystem.BISYS.name())
 				.temakode(Temakode.BID)
-				.datoOpprettet(LocalDateTime.now().minusMonths(2))
+				.datoOpprettet(OffsetDateTime.now().minusMonths(2))
 				.build());
 	}
 
