@@ -46,7 +46,7 @@ public class JoarkAclImpl implements JoarkAcl {
 						.journalposttype(JournalpostType.fromJoark(journalpostTo.getJournalposttype()))
 						.journalstatus(JournalpostStatus.fromJoark(journalpostTo.getJournalstatus()))
 						.mottakskanal(Mottakskanal.fromJoark(journalpostTo.getMottakskanal()))
-						.opprettet(journalpostTo.getDokumentDato() == null ? null : journalpostTo.getDokumentDato().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime())
+						.opprettet(journalpostTo.getDatoOpprettet() == null ? null : journalpostTo.getDatoOpprettet().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime())
 						.utsendingskanal(Utsendingskanal.fromJoark(journalpostTo.getUtsendingskanal()))
 						.build()).collect(Collectors.toList());
 	}

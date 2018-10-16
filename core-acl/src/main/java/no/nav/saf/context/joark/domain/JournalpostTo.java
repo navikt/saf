@@ -55,6 +55,7 @@ public class JournalpostTo {
 	private JournalpostTypeCode journalposttype;
 	private Boolean signatur;
 	private SaksrelasjonTo saksrelasjon;
+	private Date datoOpprettet;
 	@Builder.Default
 	private final Set<JournalpostDokumentInfoRelasjonTo> journalpostDokumentInfoRelasjoner = new HashSet<>();
 //	private final Set<Kryssreferanse> kryssreferanser = new HashSet<>(); TODO Trenger vi denne?

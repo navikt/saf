@@ -20,7 +20,7 @@ public class AktoerV2Config extends AbstractCxfEndpointConfig {
 	private static final String WSDL_URL = "wsdl/no/nav/tjeneste/virksomhet/aktoer/v2/v2.wsdl";
 
 	@Bean
-	public AktoerV2 aktoerV2(@Value("${aktoer.v2.endpinturl}") String endpointurl,
+	public AktoerV2 aktoerV2(@Value("${aktoer.v2.endpointurl}") String endpointurl,
 							 @Value("${aktoer.v2.readtimeoutms}") int readtimeoutms,
 							 @Value("${aktoer.v2.connectiontimeoutms}") int connectiontimeoutms) {
 		setWsdlUrl(WSDL_URL);
