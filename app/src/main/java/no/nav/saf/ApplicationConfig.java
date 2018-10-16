@@ -1,7 +1,7 @@
 package no.nav.saf;
 
 import io.micrometer.core.instrument.MeterRegistry;
-import no.nav.saf.context.config.fasit.ServiceuserAlias;
+import no.nav.saf.fasit.ServiceuserAlias;
 import no.nav.saf.metrics.DokTimedAspect;
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.HttpClients;
