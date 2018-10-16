@@ -25,8 +25,8 @@ public class Journalpost {
 	private final String journalposttittel;
 	private final String avsenderID;
 	private final String avsenderNavn;
-	private LocalDateTime opprettet;
+	private final LocalDateTime opprettet;
 
 	@Builder.Default
-	private final List<DokumentInfo> dokumentInfo = new ArrayList<>();
+	private final List<DokumentInfo> dokumenter = new ArrayList<>();
 }

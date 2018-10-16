@@ -1,8 +1,11 @@
 package no.nav.saf.context.joark.hentjournalsakinfo;
 
-import no.nav.saf.context.config.fasit.ServiceuserAlias;
+import static no.nav.saf.cache.CacheConfig.HENT_JOURNALPOSTER_CACHE;
+
+import no.nav.saf.fasit.ServiceuserAlias;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
@@ -28,11 +31,12 @@ public class HentJournalsakinfo {
 		restTemplate = restTemplateBuilder
 				.requestFactory(() -> clientHttpRequestFactory)
 				.basicAuthorization(serviceuserAlias.getUsername(), serviceuserAlias.getPassword())
-				.setConnectTimeout((int) TimeUnit.SECONDS.toMillis(1))
-				.setReadTimeout((int) TimeUnit.SECONDS.toMillis(5))
+				.setConnectTimeout((int) TimeUnit.SECONDS.toMillis(5))
+				.setReadTimeout((int) TimeUnit.SECONDS.toMillis(10))
 				.build();
 	}
 
+	@Cacheable(cacheNames = HENT_JOURNALPOSTER_CACHE)
 	public HentJournalposterResponse hentJournalposter(HentJournalposterRequest request) {
 		ResponseEntity<HentJournalposterResponse> response = restTemplate.postForEntity(hentjournalsakinfoUrl, request, HentJournalposterResponse.class);
 		return response.getBody();

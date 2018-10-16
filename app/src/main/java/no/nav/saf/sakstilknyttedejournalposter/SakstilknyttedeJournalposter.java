@@ -1,32 +1,26 @@
 package no.nav.saf.sakstilknyttedejournalposter;
 
-import com.github.javafaker.Faker;
-import graphql.schema.DataFetchingEnvironment;
 import io.leangen.graphql.annotations.GraphQLArgument;
 import io.leangen.graphql.annotations.GraphQLContext;
-import io.leangen.graphql.annotations.GraphQLEnvironment;
 import io.leangen.graphql.annotations.GraphQLNonNull;
 import io.leangen.graphql.annotations.GraphQLQuery;
 import io.leangen.graphql.annotations.GraphQLRootContext;
-import io.leangen.graphql.execution.ResolutionEnvironment;
 import no.nav.saf.context.saf.domain.Bruker;
+import no.nav.saf.context.saf.domain.DokumentInfo;
 import no.nav.saf.context.saf.domain.Journalpost;
 import no.nav.saf.context.saf.domain.Sak;
 import no.nav.saf.context.saf.domain.Tema;
+import no.nav.saf.context.saf.domain.kode.JournalpostStatus;
+import no.nav.saf.context.saf.domain.kode.JournalpostType;
 import no.nav.saf.context.saf.domain.kode.Temakode;
 import no.nav.saf.repository.SakstilknyttedeJournalposterRepository;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
-import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * @author Joakim Bjørnstad, Jbit AS
@@ -65,7 +59,19 @@ public class SakstilknyttedeJournalposter {
 
 	@GraphQLQuery(name = "journalposter")
 	public List<Journalpost> journalposter(@GraphQLContext Sak sak,
-										   @GraphQLRootContext("tema") Temakode tema) {
-		return repository.findJournalposterByFagsakAndTema(sak.getFagsaksnummer(), tema);
+										   @GraphQLArgument(name = "journalposttype", defaultValue = "[]") List<JournalpostType> journalpostType,
+										   @GraphQLArgument(name = "journalstatus", defaultValue = "[]") List<JournalpostStatus> journalstatus,
+										   @GraphQLRootContext Map<String, Object> rootContext) {
+		rootContext.put("arkivsaksnummer", sak.getArkivsaksnummer());
+		return repository.findJournalposterByArkivsaksnummer(sak.getArkivsaksnummer()).stream()
+				.filter(journalpost -> journalpostType.isEmpty() || journalpostType.contains(journalpost.getJournalposttype()))
+				.filter(journalpost -> journalstatus.isEmpty() || journalstatus.contains(journalpost.getJournalstatus()))
+				.collect(Collectors.toList());
+	}
+
+	@GraphQLQuery(name = "dokumenter")
+	public List<DokumentInfo> dokumenter(@GraphQLContext Journalpost journalpost,
+										 @GraphQLRootContext("arkivsaksnummer") String arkivsaksnummer) {
+		return repository.findDokumenterByArkivsaksnummerAndJournalpostId(journalpost.getJournalpostID(), arkivsaksnummer);
 	}
 }

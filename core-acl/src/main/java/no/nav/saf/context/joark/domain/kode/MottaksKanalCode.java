@@ -1,5 +1,7 @@
 package no.nav.saf.context.joark.domain.kode;
 
+import no.nav.saf.context.saf.domain.kode.Mottakskanal;
+
 public enum MottaksKanalCode {
 
 	/** EESSI */

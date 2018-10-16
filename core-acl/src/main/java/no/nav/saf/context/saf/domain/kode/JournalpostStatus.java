@@ -1,6 +1,7 @@
 package no.nav.saf.context.saf.domain.kode;
 
 import io.leangen.graphql.annotations.GraphQLEnumValue;
+import no.nav.saf.context.joark.domain.kode.JournalStatusCode;
 
 /**
  * @author Ugur Alpay Cenar, Visma Consulting.
@@ -8,39 +9,45 @@ import io.leangen.graphql.annotations.GraphQLEnumValue;
 public enum JournalpostStatus {
 
     @GraphQLEnumValue(description = "Endelig journalføring")
-    JOURNALFOERT,
+    J,
 
     @GraphQLEnumValue(description = "Midlertidig journalføring")
-    MIDLERTIDIG_JOURNALFOERT,
+    M,
 
     @GraphQLEnumValue(description = "Ferdigstilt og sendt videre til sentralprint")
-    FERDIGSTILT_SENTRALPRINT,
+    FS,
 
     @GraphQLEnumValue(description = "Ferdigstilt og sendt videre til lokalprint")
-    FERDIGSTILT_LOKALPRINT,
+    FL,
 
     @GraphQLEnumValue(description = "Utgår")
-    UTGAAR,
+    U,
 
     @GraphQLEnumValue(description = "Avbrutt")
-    AVBRUTT,
+    A,
 
     @GraphQLEnumValue(description = "Dokument under produksjon")
-    UNDER_PRODUKSJON,
+    D,
 
     @GraphQLEnumValue(description = "Ekspedert")
-    EKSPEDERT,
+    E,
 
     @GraphQLEnumValue(description = "Mottat")
-    MOTTAT,
+    MO,
 
     @GraphQLEnumValue(description = "Ukjent bruker")
-    UKJENT_BRUKER,
+    UB,
 
     @GraphQLEnumValue(description = "Opplaster dokument")
-    OPPLASTER_DOKUMENT,
+    OD,
 
     @GraphQLEnumValue(description = "Reservert dokument")
-    RESERVERT;
+    R;
 
+    public static JournalpostStatus fromJoark(JournalStatusCode journalStatusCode) {
+        if(journalStatusCode == null) {
+            return null;
+        }
+        return JournalpostStatus.valueOf(journalStatusCode.name());
+    }
 }

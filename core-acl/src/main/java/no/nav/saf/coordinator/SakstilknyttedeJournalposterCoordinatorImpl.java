@@ -1,21 +1,17 @@
 package no.nav.saf.coordinator;
 
-import com.github.javafaker.Faker;
 import no.nav.saf.context.gsak.GsakAcl;
-import no.nav.saf.context.gsak.domain.GsakSakerTo;
-import no.nav.saf.context.mock.MockData;
+import no.nav.saf.context.joark.JoarkAcl;
+import no.nav.saf.context.saf.domain.DokumentInfo;
 import no.nav.saf.context.saf.domain.Journalpost;
 import no.nav.saf.context.saf.domain.Sak;
 import no.nav.saf.context.saf.domain.Tema;
-import no.nav.saf.context.saf.domain.kode.Arkivsakssystem;
 import no.nav.saf.context.saf.domain.kode.Temakode;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * @author Joakim Bjørnstad, Jbit AS
@@ -24,10 +20,12 @@ import java.util.stream.Collectors;
 class SakstilknyttedeJournalposterCoordinatorImpl implements SakstilknyttedeJournalposterCoordinator {
 
 	private final GsakAcl gsakAcl;
+	private final JoarkAcl joarkAcl;
 
 	@Inject
-	SakstilknyttedeJournalposterCoordinatorImpl(GsakAcl gsakAcl) {
+	SakstilknyttedeJournalposterCoordinatorImpl(GsakAcl gsakAcl, JoarkAcl joarkAcl) {
 		this.gsakAcl = gsakAcl;
+		this.joarkAcl = joarkAcl;
 	}
 
 	@Override
@@ -41,16 +39,12 @@ class SakstilknyttedeJournalposterCoordinatorImpl implements SakstilknyttedeJour
 	}
 
 	@Override
-	public List<Journalpost> findJournalposterByFagsakAndTema(String fagsaksnummer, Temakode tema) {
-		// mockdata
-		Faker faker = new Faker();
-		switch (tema) {
-			case BID:
-				return MockData.bidragjournalposter(faker);
-			case FOR:
-				return MockData.foreldrepengerjournalposter(faker);
-			default:
-				return new ArrayList<>();
-		}
+	public List<Journalpost> findJournalposterByArkivsak(String arkivsaksnummer) {
+		return joarkAcl.hentJournalpostListeByArkivsaksnummer(arkivsaksnummer);
+	}
+
+	@Override
+	public List<DokumentInfo> findDokumentInfoByJournalpostIdAndArkivsak(String journalpostId, String arkivsaksnummer) {
+		return joarkAcl.hentDokumentInfoListeByJournalpostIdAndArkivsak(journalpostId, arkivsaksnummer);
 	}
 }
