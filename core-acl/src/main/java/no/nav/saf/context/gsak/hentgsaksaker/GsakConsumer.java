@@ -1,20 +1,31 @@
 package no.nav.saf.context.gsak.hentgsaksaker;
 
 import lombok.extern.slf4j.Slf4j;
+import no.nav.saf.cache.CacheConfig;
 import no.nav.saf.context.exceptions.SafFunctionalException;
 import no.nav.saf.context.exceptions.SafTechnicalException;
 import no.nav.saf.context.gsak.domain.GsakSakerTo;
 import no.nav.saf.context.config.fasit.ServiceuserAlias;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
+
+import java.util.List;
+import java.util.UUID;
 
 @Slf4j
 @Component
-class GsakConsumer {
+public class GsakConsumer {
 
 	private static final int TIMEOUT = 30_000;
 	private final RestTemplate restTemplate;
@@ -30,9 +41,29 @@ class GsakConsumer {
 				.basicAuthorization(serviceuserAlias.getUsername(), serviceuserAlias.getPassword()).build();
 	}
 
-	public GsakSakerTo getGsakSaker(final String saksId) {
+
+	public GsakSakerTo hentSakBySakId(final String saksId) {
 		try {
 			return restTemplate.getForObject(this.gsakApiUrl + "/" + saksId, GsakSakerTo.class);
+		} catch (HttpServerErrorException e) {
+			throw new SafTechnicalException(String.format("getGsaksaker feilet teknisk med statusKode=%s. Feilmelding=%s", e
+					.getStatusCode(), e.getMessage()), e, e.getStatusCode());
+		} catch (HttpClientErrorException e) {
+			throw new SafFunctionalException(String.format("getGsaksaker feilet funksjonelt med statusKode=%s. Feilmelding=%s", e
+					.getStatusCode(), e.getMessage()), e, e.getStatusCode());
+		}
+	}
+
+	@Cacheable(cacheNames = CacheConfig.SAKER_BY_AKTOER_ID_CACHE)
+	public List<GsakSakerTo> hentSakerByAktoerId(final String aktoerId) {
+		try {
+			HttpHeaders headers = new HttpHeaders();
+			headers.set("X-Correlation-ID", UUID.randomUUID().toString());
+			UriComponentsBuilder uri = UriComponentsBuilder.fromHttpUrl(gsakApiUrl)
+					.queryParam("aktoerId", aktoerId);
+			ResponseEntity<List<GsakSakerTo>> response = restTemplate.exchange(uri.toUriString(), HttpMethod.GET, new HttpEntity<>(headers), new ParameterizedTypeReference<List<GsakSakerTo>>() {
+			});
+			return response.getBody();
 		} catch (HttpServerErrorException e) {
 			throw new SafTechnicalException(String.format("getGsaksaker feilet teknisk med statusKode=%s. Feilmelding=%s", e
 					.getStatusCode(), e.getMessage()), e, e.getStatusCode());
