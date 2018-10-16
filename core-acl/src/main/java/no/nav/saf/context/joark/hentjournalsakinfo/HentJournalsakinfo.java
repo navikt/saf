@@ -1,6 +1,6 @@
 package no.nav.saf.context.joark.hentjournalsakinfo;
 
-import no.nav.saf.fasit.ServiceuserAlias;
+import no.nav.saf.context.config.fasit.ServiceuserAlias;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.ResponseEntity;

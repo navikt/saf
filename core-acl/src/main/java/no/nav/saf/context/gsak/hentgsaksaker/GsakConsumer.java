@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.context.exceptions.SafFunctionalException;
 import no.nav.saf.context.exceptions.SafTechnicalException;
 import no.nav.saf.context.gsak.domain.GsakSakerTo;
-import no.nav.saf.fasit.ServiceuserAlias;
+import no.nav.saf.context.config.fasit.ServiceuserAlias;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.stereotype.Component;
@@ -29,7 +29,6 @@ class GsakConsumer {
 				.setConnectTimeout(TIMEOUT)
 				.basicAuthorization(serviceuserAlias.getUsername(), serviceuserAlias.getPassword()).build();
 	}
-
 
 	public GsakSakerTo getGsakSaker(final String saksId) {
 		try {

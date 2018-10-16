@@ -1,19 +1,27 @@
 package no.nav.saf.context.exceptions;
 
-/**
- * The main technical exception type in Joark.
- *
- * @author Joakim Bjørnstad, Jbit AS
- */
+import lombok.Getter;
+import org.springframework.http.HttpStatus;
+
+
+@Getter
 public class SafTechnicalException extends RuntimeException {
-	public SafTechnicalException() {
+	private HttpStatus httpStatus;
+
+	public SafTechnicalException(HttpStatus httpStatus) {
 		super();
+		this.httpStatus = httpStatus;
 	}
 
-	public SafTechnicalException(String message) {
+	public SafTechnicalException(String message, HttpStatus httpStatus) {
 		super(message);
+		this.httpStatus = httpStatus;
 	}
 
+	public SafTechnicalException(String message, Throwable cause, HttpStatus httpStatus) {
+		super(message, cause);
+		this.httpStatus = httpStatus;
+	}
 	public SafTechnicalException(String message, Throwable cause) {
 		super(message, cause);
 	}
@@ -21,4 +29,5 @@ public class SafTechnicalException extends RuntimeException {
 	public SafTechnicalException(Throwable cause) {
 		super(cause);
 	}
+
 }

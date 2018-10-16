@@ -1,24 +1,30 @@
 package no.nav.saf.context.exceptions;
 
-/**
- * The main functional exception type in Joark.
- *
- * @author Joakim Bjørnstad, Jbit AS
- */
+import lombok.Getter;
+import org.springframework.http.HttpStatus;
+
+
+@Getter
 public class SafFunctionalException extends RuntimeException {
-	public SafFunctionalException() {
+	private final HttpStatus httpStatus;
+
+	public SafFunctionalException(HttpStatus httpStatus) {
 		super();
+		this.httpStatus = httpStatus;
 	}
 
-	public SafFunctionalException(String message) {
+	public SafFunctionalException(String message, HttpStatus httpStatus) {
 		super(message);
+		this.httpStatus = httpStatus;
+	}
+
+	public SafFunctionalException(String message, Throwable cause, HttpStatus httpStatus) {
+		super(message, cause);
+		this.httpStatus = httpStatus;
 	}
 
 	public SafFunctionalException(String message, Throwable cause) {
 		super(message, cause);
-	}
-
-	public SafFunctionalException(Throwable cause) {
-		super(cause);
+		this.httpStatus = null;
 	}
 }

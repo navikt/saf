@@ -56,7 +56,7 @@ public class DokTimedAspect {
         );
     }
 
-    public DokTimedAspect(MeterRegistry registry, Function<ProceedingJoinPoint, Iterable<Tag>> tagsBasedOnJoinpoint) {
+    private DokTimedAspect(MeterRegistry registry, Function<ProceedingJoinPoint, Iterable<Tag>> tagsBasedOnJoinpoint) {
         this.registry = registry;
         this.tagsBasedOnJoinpoint = tagsBasedOnJoinpoint;
     }
