@@ -22,4 +22,9 @@ public class SafFunctionalException extends RuntimeException {
 		super(message, cause);
 		this.httpStatus = httpStatus;
 	}
+
+	public SafFunctionalException(String message, Throwable cause) {
+		super(message, cause);
+		this.httpStatus = null;
+	}
 }

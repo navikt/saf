@@ -1,4 +1,4 @@
-package no.nav.saf.fasit;
+package no.nav.saf.context.config.fasit;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -9,7 +9,7 @@ import org.springframework.validation.annotation.Validated;
 import javax.validation.constraints.NotEmpty;
 
 /**
- * @author Ugur Alpay Cenar, Visma Consulting.
+ * @author Joakim Bjørnstad, Jbit AS
  */
 @Getter
 @Setter

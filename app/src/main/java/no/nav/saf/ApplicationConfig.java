@@ -1,10 +1,11 @@
 package no.nav.saf;
 
 import io.micrometer.core.instrument.MeterRegistry;
-import no.nav.saf.fasit.ServiceuserAlias;
+import no.nav.saf.context.config.fasit.ServiceuserAlias;
 import no.nav.saf.metrics.DokTimedAspect;
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -16,6 +17,7 @@ import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 @EnableAspectJAutoProxy
 @ComponentScan
 @Configuration
+@EnableAutoConfiguration
 @EnableConfigurationProperties(ServiceuserAlias.class)
 public class ApplicationConfig {
 
