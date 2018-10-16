@@ -73,7 +73,7 @@ public abstract class AbstractCxfEndpointConfig {
 	}
 
 	<T> T createPort(Class<T> portType) {
-//		factoryBean.getFeatures().add(new TimeoutFeature(receiveTimeout, connectTimeout));
+		factoryBean.getFeatures().add(new TimeoutFeature(receiveTimeout, connectTimeout));
 		return factoryBean.create(portType);
 	}
 
