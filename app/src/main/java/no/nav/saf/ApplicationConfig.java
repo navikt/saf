@@ -15,10 +15,10 @@ import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 
 @EnableAspectJAutoProxy
-@EnableConfigurationProperties(ServiceuserAlias.class)
 @ComponentScan
 @Configuration
 @EnableAutoConfiguration
+@EnableConfigurationProperties(ServiceuserAlias.class)
 public class ApplicationConfig {
 
 	@Bean
