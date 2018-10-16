@@ -19,10 +19,6 @@ import java.util.Map;
  * @author Andreas Skomedal, Visma Consulting.
  */
 public abstract class AbstractCxfEndpointConfig {
-	private static final int DEFAULT_TIMEOUT = 30_000;
-
-	private int receiveTimeout = DEFAULT_TIMEOUT;
-	private int connectTimeout = DEFAULT_TIMEOUT;
 
 	@Inject
 	private Bus bus;
@@ -86,14 +82,6 @@ public abstract class AbstractCxfEndpointConfig {
 
 	protected void enableMtom() {
 		factoryBean.getProperties().put("mtom-enabled", true);
-	}
-
-	void setReceiveTimeout(int receiveTimeout) {
-		this.receiveTimeout = receiveTimeout;
-	}
-
-	void setConnectTimeout(int connectTimeout) {
-		this.connectTimeout = connectTimeout;
 	}
 
 	void configureSTSSamlToken(Object port) {

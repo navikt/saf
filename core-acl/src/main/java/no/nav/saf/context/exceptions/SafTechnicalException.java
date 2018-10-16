@@ -6,7 +6,7 @@ import org.springframework.http.HttpStatus;
 
 @Getter
 public class SafTechnicalException extends RuntimeException {
-	private HttpStatus httpStatus;
+	private final HttpStatus httpStatus;
 
 	public SafTechnicalException(HttpStatus httpStatus) {
 		super();
@@ -24,10 +24,7 @@ public class SafTechnicalException extends RuntimeException {
 	}
 	public SafTechnicalException(String message, Throwable cause) {
 		super(message, cause);
-	}
-
-	public SafTechnicalException(Throwable cause) {
-		super(cause);
+		this.httpStatus = null;
 	}
 
 }
