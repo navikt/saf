@@ -1,0 +1,17 @@
+package no.nav.saf.anticorruptionlayer.joark.domain.kode;
+
+public enum DokumentStatusCode {
+
+	/**
+	 * Dokumentet er under redigering
+	 */
+	UNDER_REDIGERING,
+	/**
+	 * Dokumentet er ferdigstilt
+	 */
+	FERDIGSTILT,
+	/**
+	 * Dokumentet er avbrutt
+	 */
+	AVBRUTT;
+}

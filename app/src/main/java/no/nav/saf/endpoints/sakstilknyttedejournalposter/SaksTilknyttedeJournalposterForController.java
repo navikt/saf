@@ -4,6 +4,8 @@ import graphql.ExecutionInput;
 import graphql.ExecutionResult;
 import graphql.GraphQL;
 import graphql.schema.GraphQLSchema;
+import io.leangen.graphql.GraphQLSchemaGenerator;
+import io.leangen.graphql.metadata.strategy.query.AnnotatedResolverBuilder;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.endpoints.GraphQLRequest;
 import org.springframework.http.MediaType;
@@ -12,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.inject.Inject;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,9 +26,14 @@ public class SaksTilknyttedeJournalposterForController {
 
 	private final GraphQLSchema graphQLSchema;
 
-	@Inject
-	public SaksTilknyttedeJournalposterForController(GraphQLSchema graphQLSchema) {
-		this.graphQLSchema = graphQLSchema;
+	public SaksTilknyttedeJournalposterForController(SakstilknyttedeJournalposterFor sakstilknyttedeJournalposterFor) {
+		GraphQLSchemaGenerator schemaGenerator = new GraphQLSchemaGenerator()
+				.withResolverBuilders(new AnnotatedResolverBuilder());
+
+		schemaGenerator = schemaGenerator
+				.withOperationsFromSingleton(sakstilknyttedeJournalposterFor);
+
+		this.graphQLSchema = schemaGenerator.generate();
 	}
 
 	@PostMapping(value = "/graphql", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)

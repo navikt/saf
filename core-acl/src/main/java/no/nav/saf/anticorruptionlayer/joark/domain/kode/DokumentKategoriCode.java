@@ -1,11 +1,7 @@
-package no.nav.saf.domain.visningsmodell.kode;
+package no.nav.saf.anticorruptionlayer.joark.domain.kode;
 
-import no.nav.saf.anticorruptionlayer.joark.domain.kode.DokumentKategoriCode;
+public enum DokumentKategoriCode {
 
-/**
- * @author Joakim Bjørnstad, Jbit AS
- */
-public enum Dokumentkategori {
 	/**
 	 * Brev
 	 */
@@ -89,11 +85,4 @@ public enum Dokumentkategori {
 	 * Klage eller anke
 	 */
 	KA;
-
-	public static Dokumentkategori fromJoark(DokumentKategoriCode dokumentKategoriCode) {
-		if(dokumentKategoriCode == null) {
-			return null;
-		}
-		return Dokumentkategori.valueOf(dokumentKategoriCode.name());
-	}
 }

@@ -1,7 +1,7 @@
 package no.nav.saf.domain.visningsmodell.kode;
 
 import io.leangen.graphql.annotations.GraphQLEnumValue;
-import no.nav.saf.legacycontext.joark.domain.kode.JournalStatusCode;
+import no.nav.saf.anticorruptionlayer.joark.domain.kode.JournalStatusCode;
 
 /**
  * @author Ugur Alpay Cenar, Visma Consulting.

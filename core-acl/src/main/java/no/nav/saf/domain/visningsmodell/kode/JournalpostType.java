@@ -1,6 +1,6 @@
 package no.nav.saf.domain.visningsmodell.kode;
 
-import no.nav.saf.legacycontext.joark.domain.kode.JournalpostTypeCode;
+import no.nav.saf.anticorruptionlayer.joark.domain.kode.JournalpostTypeCode;
 
 /**
  * @author Ugur Alpay Cenar, Visma Consulting.

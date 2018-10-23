@@ -1,6 +1,6 @@
 package no.nav.saf.domain.visningsmodell.kode;
 
-import no.nav.saf.legacycontext.joark.domain.kode.DokumentStatusCode;
+import no.nav.saf.anticorruptionlayer.joark.domain.kode.DokumentStatusCode;
 
 /**
  * @author Ugur Alpay Cenar, Visma Consulting.

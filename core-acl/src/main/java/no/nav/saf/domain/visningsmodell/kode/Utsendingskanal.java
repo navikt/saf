@@ -1,6 +1,6 @@
 package no.nav.saf.domain.visningsmodell.kode;
 
-import no.nav.saf.legacycontext.joark.domain.kode.UtsendingsKanalCode;
+import no.nav.saf.anticorruptionlayer.joark.domain.kode.UtsendingsKanalCode;
 
 /**
  * @author Joakim Bjørnstad, Jbit AS

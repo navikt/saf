@@ -1,11 +1,7 @@
-package no.nav.saf.domain.visningsmodell.kode;
+package no.nav.saf.anticorruptionlayer.joark.domain.kode;
 
-import no.nav.saf.anticorruptionlayer.joark.domain.kode.MottaksKanalCode;
+public enum MottaksKanalCode {
 
-/**
- * @author Joakim Bjørnstad, Jbit AS
- */
-public enum Mottakskanal {
 	/** EESSI */
 	EESSI,
 	/** EIA */
@@ -33,7 +29,7 @@ public enum Mottakskanal {
 	/** NETS - postboks 1408 */
 	NETS_PB1408,
 	/** NETS - postboks 1411 */
-	NETS_PB1411,
+	NETS_PB1411,	
 	/** NETS - postboks 1412 */
 	NETS_PB1412,
 	/** NETS - postboks 1413 */
@@ -46,11 +42,4 @@ public enum Mottakskanal {
 	NETS_PB1441,
 	/** Eksternt oppslag */
 	EKST_OPPS;
-
-	public static Mottakskanal fromJoark(MottaksKanalCode mottaksKanalCode) {
-		if(mottaksKanalCode == null) {
-			return null;
-		}
-		return Mottakskanal.valueOf(mottaksKanalCode.name());
-	}
 }

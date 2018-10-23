@@ -1,10 +1,6 @@
 package no.nav.saf;
 
-import graphql.schema.GraphQLSchema;
-import io.leangen.graphql.GraphQLSchemaGenerator;
-import io.leangen.graphql.metadata.strategy.query.AnnotatedResolverBuilder;
 import io.micrometer.core.instrument.MeterRegistry;
-import no.nav.saf.endpoints.sakstilknyttedejournalposter.SakstilknyttedeJournalposter;
 import no.nav.saf.integration.fasit.ServiceuserAlias;
 import no.nav.saf.metrics.DokTimedAspect;
 import org.apache.http.client.HttpClient;
@@ -38,17 +34,5 @@ public class ApplicationConfig {
 	@Bean
 	DokTimedAspect timedAspect(MeterRegistry meterRegistry) {
 		return new DokTimedAspect(meterRegistry);
-	}
-
-	@Bean
-	GraphQLSchema graphQLSchema(SakstilknyttedeJournalposter sakstilknyttedeJournalposter) {
-		//Schema generated from query classes
-		GraphQLSchemaGenerator schemaGenerator = new GraphQLSchemaGenerator()
-				.withResolverBuilders(new AnnotatedResolverBuilder());
-
-		schemaGenerator = schemaGenerator
-				.withOperationsFromSingleton(sakstilknyttedeJournalposter);
-
-		return schemaGenerator.generate();
 	}
 }
