@@ -1,0 +1,75 @@
+package no.nav.saf.anticorruptionlayer.gsak.hentgsaksaker;
+
+import lombok.extern.slf4j.Slf4j;
+import no.nav.saf.anticorruptionlayer.gsak.domain.GsakSakerTo;
+import no.nav.saf.cache.LokalCacheConfig;
+import no.nav.saf.exceptions.SafFunctionalException;
+import no.nav.saf.exceptions.SafTechnicalException;
+import no.nav.saf.integration.fasit.ServiceuserAlias;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
+
+import java.util.List;
+import java.util.UUID;
+
+@Slf4j
+@Component
+public class GsakConsumer {
+
+	private static final int TIMEOUT = 30_000;
+	private final RestTemplate restTemplate;
+	private final String gsakApiUrl;
+
+	public GsakConsumer(RestTemplateBuilder restTemplateBuilder,
+						@Value("${sak.saker.url}") String gsakApiUrl,
+						ServiceuserAlias serviceuserAlias) {
+		this.gsakApiUrl = gsakApiUrl;
+		this.restTemplate = restTemplateBuilder
+				.setReadTimeout(TIMEOUT)
+				.setConnectTimeout(TIMEOUT)
+				.basicAuthorization("srvGsak", "WjSoK2D62cx6hf").build();
+	}
+
+
+	public GsakSakerTo hentSakBySakId(final String saksId) {
+		try {
+			return restTemplate.getForObject(this.gsakApiUrl + "/" + saksId, GsakSakerTo.class);
+		} catch (HttpServerErrorException e) {
+			throw new SafTechnicalException(String.format("getGsaksaker feilet teknisk med statusKode=%s. Feilmelding=%s", e
+					.getStatusCode(), e.getMessage()), e, e.getStatusCode());
+		} catch (HttpClientErrorException e) {
+			throw new SafFunctionalException(String.format("getGsaksaker feilet funksjonelt med statusKode=%s. Feilmelding=%s", e
+					.getStatusCode(), e.getMessage()), e, e.getStatusCode());
+		}
+	}
+
+	@Cacheable(cacheNames = LokalCacheConfig.SAKER_BY_AKTOER_ID_CACHE)
+	public List<GsakSakerTo> hentSakerByAktoerId(final String aktoerId) {
+		try {
+			HttpHeaders headers = new HttpHeaders();
+			headers.set("X-Correlation-ID", UUID.randomUUID().toString());
+			UriComponentsBuilder uri = UriComponentsBuilder.fromHttpUrl(gsakApiUrl)
+					.queryParam("aktoerId", aktoerId);
+			ResponseEntity<List<GsakSakerTo>> response = restTemplate.exchange(uri.toUriString(), HttpMethod.GET, new HttpEntity<>(headers), new ParameterizedTypeReference<List<GsakSakerTo>>() {
+			});
+			return response.getBody();
+		} catch (HttpServerErrorException e) {
+			throw new SafTechnicalException(String.format("getGsaksaker feilet teknisk med statusKode=%s. Feilmelding=%s", e
+					.getStatusCode(), e.getMessage()), e, e.getStatusCode());
+		} catch (HttpClientErrorException e) {
+			throw new SafFunctionalException(String.format("getGsaksaker feilet funksjonelt med statusKode=%s. Feilmelding=%s", e
+					.getStatusCode(), e.getMessage()), e, e.getStatusCode());
+		}
+	}
+}
