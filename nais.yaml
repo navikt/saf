@@ -29,3 +29,5 @@ fasitResources:
     propertyMap:
       username: SERVICEUSER_USERNAME
       password: SERVICEUSER_PASSWORD
+  - alias: "abac.pdp.endpoint"
+    resourceType: restservice
