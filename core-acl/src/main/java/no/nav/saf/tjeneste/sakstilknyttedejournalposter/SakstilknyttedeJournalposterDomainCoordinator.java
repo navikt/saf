@@ -1,5 +1,6 @@
 package no.nav.saf.tjeneste.sakstilknyttedejournalposter;
 
+import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tjeneste.sakstilknyttedejournalposter.visningsmodell.Bruker;
 
 /**
@@ -9,5 +10,5 @@ import no.nav.saf.tjeneste.sakstilknyttedejournalposter.visningsmodell.Bruker;
  * @author Joakim Bjørnstad, Jbit AS
  */
 public interface SakstilknyttedeJournalposterDomainCoordinator {
-	Bruker findBrukerByAktoerId(String aktoerId);
+	Bruker findBrukerByAktoerId(String aktoerId, SafRequestContext safRequestContext);
 }
