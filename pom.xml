@@ -94,6 +94,11 @@
 				<version>${cxf.version}</version>
 			</dependency>
 			<dependency>
+				<groupId>com.auth0</groupId>
+				<artifactId>java-jwt</artifactId>
+				<version>3.4.1</version>
+			</dependency>
+			<dependency>
 				<groupId>io.leangen.graphql</groupId>
 				<artifactId>spqr</artifactId>
 				<version>0.9.8</version>

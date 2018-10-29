@@ -2,6 +2,7 @@ package no.nav.saf.tilgangskontroll.pep;
 
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.tilgangskontroll.AbacLogger;
+import no.nav.saf.tilgangskontroll.SafRequestContext;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
@@ -29,7 +30,7 @@ public class Pep1EvaluatorImpl implements PepEvaluator<TilgangBruker> {
 	}
 
 	@Override
-	public boolean hasAccess(TilgangBruker ressurs) {
+	public boolean hasAccess(TilgangBruker ressurs, SafRequestContext safRequestContext) {
 		// TODO MMA-1119 - Implementer itest også! Bruk wiremock!
 		return false;
 	}

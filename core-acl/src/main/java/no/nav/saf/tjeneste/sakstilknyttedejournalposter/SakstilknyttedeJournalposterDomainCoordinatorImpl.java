@@ -2,6 +2,7 @@ package no.nav.saf.tjeneste.sakstilknyttedejournalposter;
 
 import no.nav.saf.domain.TilgangsmodellRepository;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
+import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.pep.PepEvaluator;
 import no.nav.saf.tjeneste.sakstilknyttedejournalposter.visningsmodell.Bruker;
 import org.springframework.stereotype.Component;
@@ -31,7 +32,7 @@ class SakstilknyttedeJournalposterDomainCoordinatorImpl implements Sakstilknytte
 	}
 
 	@Override
-	public Bruker findBrukerByAktoerId(String aktoerId) {
+	public Bruker findBrukerByAktoerId(String aktoerId, SafRequestContext safRequestContext) {
 		// TODO MMA-1121
 
 		return Bruker.builder().aktoerId(aktoerId).build();

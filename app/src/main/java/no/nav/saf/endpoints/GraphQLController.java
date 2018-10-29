@@ -8,13 +8,14 @@ import io.leangen.graphql.GraphQLSchemaGenerator;
 import io.leangen.graphql.metadata.strategy.query.AnnotatedResolverBuilder;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.endpoints.sakstilknyttedejournalposter.SakstilknyttedeJournalposterFor;
+import no.nav.saf.tilgangskontroll.NavBrukertype;
+import no.nav.saf.tilgangskontroll.SafRequestContext;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -47,7 +48,7 @@ public class GraphQLController {
 						.query(request.getQuery())
 						.operationName(request.getOperationName())
 						.variables(request.getVariables())
-						.context(new HashMap<String, Object>())
+						.context(SafRequestContext.builder().oidcToken("TODO").navBrukertype(NavBrukertype.SAKSBEHANDLER).build())
 						.build());
 		return executionResult.toSpecification();
 	}

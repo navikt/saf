@@ -5,6 +5,7 @@ import io.leangen.graphql.annotations.GraphQLContext;
 import io.leangen.graphql.annotations.GraphQLNonNull;
 import io.leangen.graphql.annotations.GraphQLQuery;
 import io.leangen.graphql.annotations.GraphQLRootContext;
+import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tjeneste.sakstilknyttedejournalposter.SakstilknyttedeJournalposterDomainCoordinator;
 import no.nav.saf.tjeneste.sakstilknyttedejournalposter.visningsmodell.Bruker;
 import no.nav.saf.tjeneste.sakstilknyttedejournalposter.visningsmodell.DokumentInfo;
@@ -20,7 +21,6 @@ import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -38,9 +38,9 @@ public class SakstilknyttedeJournalposterFor {
 
 	@GraphQLQuery(name = "sakstilknyttedeJournalposterFor")
 	public Bruker sakstilknyttedeJournalposterFor(@GraphQLArgument(name = "aktoerId") @GraphQLNonNull String aktoerId,
-												 @GraphQLRootContext Map<String, Object> rootContext) {
-		rootContext.put("aktoerId", aktoerId);
-		return coordinator.findBrukerByAktoerId(aktoerId);
+												 @GraphQLRootContext SafRequestContext safRequestContext) {
+		safRequestContext.setAktoerId(aktoerId);
+		return coordinator.findBrukerByAktoerId(aktoerId, safRequestContext);
 	}
 
 	@GraphQLQuery(name = "temaer")
@@ -53,8 +53,7 @@ public class SakstilknyttedeJournalposterFor {
 	@GraphQLQuery(name = "saker")
 	public List<Sak> saker(@GraphQLContext Tema tema,
 						   @GraphQLRootContext("aktoerId") String aktoerId,
-						   @GraphQLRootContext Map<String, Object> rootContext) {
-		rootContext.put("tema", tema.getTema());
+						   @GraphQLRootContext SafRequestContext safRequestContext) {
 		return new ArrayList<>();
 	}
 
@@ -62,8 +61,7 @@ public class SakstilknyttedeJournalposterFor {
 	public List<Journalpost> journalposter(@GraphQLContext Sak sak,
 										   @GraphQLArgument(name = "journalposttype", defaultValue = "[]") List<JournalpostType> journalpostType,
 										   @GraphQLArgument(name = "journalstatus", defaultValue = "[]") List<JournalpostStatus> journalstatus,
-										   @GraphQLRootContext Map<String, Object> rootContext) {
-		rootContext.put("arkivsaksnummer", sak.getArkivsaksnummer());
+										   @GraphQLRootContext SafRequestContext safRequestContext) {
 		return new ArrayList<>();
 	}
 
