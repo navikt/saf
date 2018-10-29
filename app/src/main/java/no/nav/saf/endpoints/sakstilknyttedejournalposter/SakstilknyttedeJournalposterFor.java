@@ -5,15 +5,15 @@ import io.leangen.graphql.annotations.GraphQLContext;
 import io.leangen.graphql.annotations.GraphQLNonNull;
 import io.leangen.graphql.annotations.GraphQLQuery;
 import io.leangen.graphql.annotations.GraphQLRootContext;
-import no.nav.saf.coordinator.SafDomainCoordinator;
-import no.nav.saf.domain.visningsmodell.Bruker;
-import no.nav.saf.domain.visningsmodell.DokumentInfo;
-import no.nav.saf.domain.visningsmodell.Journalpost;
-import no.nav.saf.domain.visningsmodell.Sak;
-import no.nav.saf.domain.visningsmodell.Tema;
-import no.nav.saf.domain.visningsmodell.kode.JournalpostStatus;
-import no.nav.saf.domain.visningsmodell.kode.JournalpostType;
-import no.nav.saf.domain.visningsmodell.kode.Temakode;
+import no.nav.saf.tjeneste.sakstilknyttedejournalposter.SakstilknyttedeJournalposterDomainCoordinator;
+import no.nav.saf.tjeneste.sakstilknyttedejournalposter.visningsmodell.Bruker;
+import no.nav.saf.tjeneste.sakstilknyttedejournalposter.visningsmodell.DokumentInfo;
+import no.nav.saf.tjeneste.sakstilknyttedejournalposter.visningsmodell.Journalpost;
+import no.nav.saf.tjeneste.sakstilknyttedejournalposter.visningsmodell.Sak;
+import no.nav.saf.tjeneste.sakstilknyttedejournalposter.visningsmodell.Tema;
+import no.nav.saf.tjeneste.sakstilknyttedejournalposter.visningsmodell.kode.JournalpostStatus;
+import no.nav.saf.tjeneste.sakstilknyttedejournalposter.visningsmodell.kode.JournalpostType;
+import no.nav.saf.tjeneste.sakstilknyttedejournalposter.visningsmodell.kode.Temakode;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
@@ -29,10 +29,10 @@ import java.util.Set;
 @Component
 public class SakstilknyttedeJournalposterFor {
 
-	private final SafDomainCoordinator coordinator;
+	private final SakstilknyttedeJournalposterDomainCoordinator coordinator;
 
 	@Inject
-	public SakstilknyttedeJournalposterFor(SafDomainCoordinator coordinator) {
+	public SakstilknyttedeJournalposterFor(SakstilknyttedeJournalposterDomainCoordinator coordinator) {
 		this.coordinator = coordinator;
 	}
 

@@ -1,8 +1,8 @@
-package no.nav.saf.domain.visningsmodell;
+package no.nav.saf.tjeneste.sakstilknyttedejournalposter.visningsmodell;
 
 import lombok.Builder;
 import lombok.Value;
-import no.nav.saf.domain.visningsmodell.kode.Temakode;
+import no.nav.saf.tjeneste.sakstilknyttedejournalposter.visningsmodell.kode.Temakode;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,4 +1,4 @@
-package no.nav.saf.endpoints.sakstilknyttedejournalposter;
+package no.nav.saf.endpoints;
 
 import graphql.ExecutionInput;
 import graphql.ExecutionResult;
@@ -7,7 +7,7 @@ import graphql.schema.GraphQLSchema;
 import io.leangen.graphql.GraphQLSchemaGenerator;
 import io.leangen.graphql.metadata.strategy.query.AnnotatedResolverBuilder;
 import lombok.extern.slf4j.Slf4j;
-import no.nav.saf.endpoints.GraphQLRequest;
+import no.nav.saf.endpoints.sakstilknyttedejournalposter.SakstilknyttedeJournalposterFor;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,15 +18,17 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * GraphQL endepunktet til applikasjonen.
+ *
  * @author Ugur Alpay Cenar, Visma Consulting.
  */
 @RestController
 @Slf4j
-public class SaksTilknyttedeJournalposterForController {
+public class GraphQLController {
 
 	private final GraphQLSchema graphQLSchema;
 
-	public SaksTilknyttedeJournalposterForController(SakstilknyttedeJournalposterFor sakstilknyttedeJournalposterFor) {
+	public GraphQLController(SakstilknyttedeJournalposterFor sakstilknyttedeJournalposterFor) {
 		GraphQLSchemaGenerator schemaGenerator = new GraphQLSchemaGenerator()
 				.withResolverBuilders(new AnnotatedResolverBuilder());
 

@@ -1,4 +1,4 @@
-package no.nav.saf.domain.visningsmodell;
+package no.nav.saf.tjeneste.sakstilknyttedejournalposter.visningsmodell;
 
 import lombok.Builder;
 import lombok.Value;
