@@ -1,9 +1,9 @@
-package no.nav.saf.domain.visningsmodell;
+package no.nav.saf.tjeneste.sakstilknyttedejournalposter.visningsmodell;
 
 import lombok.Builder;
 import lombok.Value;
-import no.nav.saf.domain.visningsmodell.kode.DokumentStatus;
-import no.nav.saf.domain.visningsmodell.kode.Dokumentkategori;
+import no.nav.saf.tjeneste.sakstilknyttedejournalposter.visningsmodell.kode.DokumentStatus;
+import no.nav.saf.tjeneste.sakstilknyttedejournalposter.visningsmodell.kode.Dokumentkategori;
 
 /**
  * @author Joakim Bjørnstad, Jbit AS

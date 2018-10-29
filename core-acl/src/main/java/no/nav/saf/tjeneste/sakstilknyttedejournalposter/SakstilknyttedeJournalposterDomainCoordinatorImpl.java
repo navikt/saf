@@ -1,10 +1,9 @@
-package no.nav.saf.coordinator;
+package no.nav.saf.tjeneste.sakstilknyttedejournalposter;
 
 import no.nav.saf.domain.TilgangsmodellRepository;
-import no.nav.saf.domain.VisningsmodellRepository;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
-import no.nav.saf.domain.visningsmodell.Bruker;
 import no.nav.saf.tilgangskontroll.pep.PepEvaluator;
+import no.nav.saf.tjeneste.sakstilknyttedejournalposter.visningsmodell.Bruker;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
@@ -16,19 +15,19 @@ import javax.inject.Inject;
  * @author Joakim Bjørnstad, Jbit AS
  */
 @Component
-class SafDomainCoordinatorImpl implements SafDomainCoordinator {
+class SakstilknyttedeJournalposterDomainCoordinatorImpl implements SakstilknyttedeJournalposterDomainCoordinator {
 
 	private final PepEvaluator<TilgangBruker> pepEvaluator1;
 	private final TilgangsmodellRepository tilgangsmodellRepository;
-	private final VisningsmodellRepository visningsmodellRepository;
+	private final SakstilknyttedeJournalposterVisningsmodellRepository sakstilknyttedeJournalposterVisningsmodellRepository;
 
 	@Inject
-	SafDomainCoordinatorImpl(PepEvaluator<TilgangBruker> pepEvaluator1,
-							 TilgangsmodellRepository tilgangsmodellRepository,
-							 VisningsmodellRepository visningsmodellRepository) {
+	SakstilknyttedeJournalposterDomainCoordinatorImpl(PepEvaluator<TilgangBruker> pepEvaluator1,
+													  TilgangsmodellRepository tilgangsmodellRepository,
+													  SakstilknyttedeJournalposterVisningsmodellRepository sakstilknyttedeJournalposterVisningsmodellRepository) {
 		this.pepEvaluator1 = pepEvaluator1;
 		this.tilgangsmodellRepository = tilgangsmodellRepository;
-		this.visningsmodellRepository = visningsmodellRepository;
+		this.sakstilknyttedeJournalposterVisningsmodellRepository = sakstilknyttedeJournalposterVisningsmodellRepository;
 	}
 
 	@Override

@@ -1,7 +1,7 @@
 package no.nav.saf.anticorruptionlayer.joark;
 
-import no.nav.saf.domain.visningsmodell.DokumentInfo;
-import no.nav.saf.domain.visningsmodell.Journalpost;
+import no.nav.saf.tjeneste.sakstilknyttedejournalposter.visningsmodell.DokumentInfo;
+import no.nav.saf.tjeneste.sakstilknyttedejournalposter.visningsmodell.Journalpost;
 
 import java.util.List;
 

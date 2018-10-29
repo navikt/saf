@@ -1,4 +1,4 @@
-package no.nav.saf.domain.visningsmodell.kode;
+package no.nav.saf.tjeneste.sakstilknyttedejournalposter.visningsmodell.kode;
 
 import io.leangen.graphql.annotations.GraphQLEnumValue;
 
