@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
  * @author Joakim Bjørnstad, Jbit AS
  */
 @Component
-@Slf4j
+@Slf4j(topic = "abacLogger")
 public class AbacLogger {
 	// TODO MMA-1120 - Implementer test også!
 	private static final String SEPARATOR = ".";
@@ -48,11 +48,11 @@ public class AbacLogger {
 				"decision=" + xacmlResponse.getDecision().getValue() +
 				(
 						xacmlResponse.getAdvices().isEmpty() ? "" :
-								", " + xacmlResponse.getAdvices()
+								(", " + xacmlResponse.getAdvices()
 										.stream()
 										.flatMap(a -> a.getAttributeAssignments().stream())
 										.map(as -> substringAfterLast(as.getAttributeId(), SEPARATOR) + "=" + as.getValue())
-										.collect(Collectors.joining(", "))
+										.collect(Collectors.joining(", ")))
 				);
 	}
 
