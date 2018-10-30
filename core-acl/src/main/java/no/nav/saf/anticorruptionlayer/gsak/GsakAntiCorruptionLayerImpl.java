@@ -2,10 +2,10 @@ package no.nav.saf.anticorruptionlayer.gsak;
 
 import no.nav.saf.anticorruptionlayer.gsak.domain.GsakSakerTo;
 import no.nav.saf.anticorruptionlayer.gsak.hentgsaksaker.GsakConsumer;
-import no.nav.saf.domain.visningsmodell.Sak;
-import no.nav.saf.domain.visningsmodell.Tema;
-import no.nav.saf.domain.visningsmodell.kode.Arkivsakssystem;
-import no.nav.saf.domain.visningsmodell.kode.Temakode;
+import no.nav.saf.tjeneste.sakstilknyttedejournalposter.visningsmodell.Sak;
+import no.nav.saf.tjeneste.sakstilknyttedejournalposter.visningsmodell.Tema;
+import no.nav.saf.tjeneste.sakstilknyttedejournalposter.visningsmodell.kode.Arkivsakssystem;
+import no.nav.saf.tjeneste.sakstilknyttedejournalposter.visningsmodell.kode.Temakode;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;

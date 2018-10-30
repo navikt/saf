@@ -5,22 +5,22 @@ import io.leangen.graphql.annotations.GraphQLContext;
 import io.leangen.graphql.annotations.GraphQLNonNull;
 import io.leangen.graphql.annotations.GraphQLQuery;
 import io.leangen.graphql.annotations.GraphQLRootContext;
-import no.nav.saf.coordinator.SafDomainCoordinator;
-import no.nav.saf.domain.visningsmodell.Bruker;
-import no.nav.saf.domain.visningsmodell.DokumentInfo;
-import no.nav.saf.domain.visningsmodell.Journalpost;
-import no.nav.saf.domain.visningsmodell.Sak;
-import no.nav.saf.domain.visningsmodell.Tema;
-import no.nav.saf.domain.visningsmodell.kode.JournalpostStatus;
-import no.nav.saf.domain.visningsmodell.kode.JournalpostType;
-import no.nav.saf.domain.visningsmodell.kode.Temakode;
+import no.nav.saf.tilgangskontroll.SafRequestContext;
+import no.nav.saf.tjeneste.sakstilknyttedejournalposter.SakstilknyttedeJournalposterDomainCoordinator;
+import no.nav.saf.tjeneste.sakstilknyttedejournalposter.visningsmodell.Bruker;
+import no.nav.saf.tjeneste.sakstilknyttedejournalposter.visningsmodell.DokumentInfo;
+import no.nav.saf.tjeneste.sakstilknyttedejournalposter.visningsmodell.Journalpost;
+import no.nav.saf.tjeneste.sakstilknyttedejournalposter.visningsmodell.Sak;
+import no.nav.saf.tjeneste.sakstilknyttedejournalposter.visningsmodell.Tema;
+import no.nav.saf.tjeneste.sakstilknyttedejournalposter.visningsmodell.kode.JournalpostStatus;
+import no.nav.saf.tjeneste.sakstilknyttedejournalposter.visningsmodell.kode.JournalpostType;
+import no.nav.saf.tjeneste.sakstilknyttedejournalposter.visningsmodell.kode.Temakode;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -29,18 +29,18 @@ import java.util.Set;
 @Component
 public class SakstilknyttedeJournalposterFor {
 
-	private final SafDomainCoordinator coordinator;
+	private final SakstilknyttedeJournalposterDomainCoordinator coordinator;
 
 	@Inject
-	public SakstilknyttedeJournalposterFor(SafDomainCoordinator coordinator) {
+	public SakstilknyttedeJournalposterFor(SakstilknyttedeJournalposterDomainCoordinator coordinator) {
 		this.coordinator = coordinator;
 	}
 
 	@GraphQLQuery(name = "sakstilknyttedeJournalposterFor")
 	public Bruker sakstilknyttedeJournalposterFor(@GraphQLArgument(name = "aktoerId") @GraphQLNonNull String aktoerId,
-												 @GraphQLRootContext Map<String, Object> rootContext) {
-		rootContext.put("aktoerId", aktoerId);
-		return coordinator.findBrukerByAktoerId(aktoerId);
+												 @GraphQLRootContext SafRequestContext safRequestContext) {
+		safRequestContext.setAktoerId(aktoerId);
+		return coordinator.findBrukerByAktoerId(aktoerId, safRequestContext);
 	}
 
 	@GraphQLQuery(name = "temaer")
@@ -53,8 +53,7 @@ public class SakstilknyttedeJournalposterFor {
 	@GraphQLQuery(name = "saker")
 	public List<Sak> saker(@GraphQLContext Tema tema,
 						   @GraphQLRootContext("aktoerId") String aktoerId,
-						   @GraphQLRootContext Map<String, Object> rootContext) {
-		rootContext.put("tema", tema.getTema());
+						   @GraphQLRootContext SafRequestContext safRequestContext) {
 		return new ArrayList<>();
 	}
 
@@ -62,8 +61,7 @@ public class SakstilknyttedeJournalposterFor {
 	public List<Journalpost> journalposter(@GraphQLContext Sak sak,
 										   @GraphQLArgument(name = "journalposttype", defaultValue = "[]") List<JournalpostType> journalpostType,
 										   @GraphQLArgument(name = "journalstatus", defaultValue = "[]") List<JournalpostStatus> journalstatus,
-										   @GraphQLRootContext Map<String, Object> rootContext) {
-		rootContext.put("arkivsaksnummer", sak.getArkivsaksnummer());
+										   @GraphQLRootContext SafRequestContext safRequestContext) {
 		return new ArrayList<>();
 	}
 
