@@ -42,6 +42,7 @@
 		<junit.version>4.12</junit.version>
 		<aktoer.version>2.0.1</aktoer.version>
 		<cxf.version>3.2.6</cxf.version>
+		<graphql-java.version>11.0</graphql-java.version>
 	</properties>
 
 	<dependencyManagement>
@@ -69,8 +70,8 @@
 			</dependency>
 			<dependency>
 				<groupId>com.graphql-java</groupId>
-				<artifactId>graphql-spring-boot-starter</artifactId>
-				<version>${graphql.spring.version}</version>
+				<artifactId>graphql-java</artifactId>
+				<version>${graphql-java.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>javax.interceptor</groupId>
@@ -99,19 +100,9 @@
 				<version>3.4.1</version>
 			</dependency>
 			<dependency>
-				<groupId>io.leangen.graphql</groupId>
-				<artifactId>spqr</artifactId>
-				<version>0.9.8</version>
-			</dependency>
-			<dependency>
 				<groupId>net.logstash.logback</groupId>
 				<artifactId>logstash-logback-encoder</artifactId>
 				<version>5.2</version>
-			</dependency>
-			<dependency>
-				<groupId>com.github.javafaker</groupId>
-				<artifactId>javafaker</artifactId>
-				<version>0.12</version>
 			</dependency>
 			<!-- Test dependencies -->
 			<dependency>

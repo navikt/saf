@@ -4,7 +4,7 @@ import no.nav.saf.domain.TilgangsmodellRepository;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.pep.PepEvaluator;
-import no.nav.saf.tjeneste.sakstilknyttedejournalposter.visningsmodell.Bruker;
+import no.nav.saf.tjeneste.visningsmodell.Bruker;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;

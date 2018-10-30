@@ -4,20 +4,20 @@ import no.nav.saf.anticorruptionlayer.joark.domain.DokumentInfoTo;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.HentJournalposterRequest;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.HentJournalposterResponse;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.HentJournalsakinfo;
-import no.nav.saf.tjeneste.sakstilknyttedejournalposter.visningsmodell.DokumentInfo;
-import no.nav.saf.tjeneste.sakstilknyttedejournalposter.visningsmodell.Journalpost;
-import no.nav.saf.tjeneste.sakstilknyttedejournalposter.visningsmodell.kode.DokumentStatus;
-import no.nav.saf.tjeneste.sakstilknyttedejournalposter.visningsmodell.kode.Dokumentkategori;
-import no.nav.saf.tjeneste.sakstilknyttedejournalposter.visningsmodell.kode.JournalpostStatus;
-import no.nav.saf.tjeneste.sakstilknyttedejournalposter.visningsmodell.kode.JournalpostType;
-import no.nav.saf.tjeneste.sakstilknyttedejournalposter.visningsmodell.kode.Mottakskanal;
-import no.nav.saf.tjeneste.sakstilknyttedejournalposter.visningsmodell.kode.Utsendingskanal;
+import no.nav.saf.tjeneste.visningsmodell.DokumentInfo;
+import no.nav.saf.tjeneste.visningsmodell.Journalpost;
+import no.nav.saf.tjeneste.visningsmodell.Sak;
+import no.nav.saf.tjeneste.visningsmodell.kode.DokumentStatus;
+import no.nav.saf.tjeneste.visningsmodell.kode.Dokumentkategori;
+import no.nav.saf.tjeneste.visningsmodell.kode.JournalpostType;
+import no.nav.saf.tjeneste.visningsmodell.kode.Mottakskanal;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
 import java.time.ZoneId;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -37,15 +37,30 @@ public class JoarkAntiCorruptionLayerImpl implements JoarkAntiCorruptionLayer {
 		HentJournalposterResponse hentJournalposterResponse = hentJournalsakinfo.hentJournalposter(HentJournalposterRequest.builder().gsakSakIdList(Collections.singletonList(arkivsaksnummer)).build());
 		return hentJournalposterResponse
 				.getGsakJournalpostList().stream().map(journalpostTo -> Journalpost.builder()
-						.avsenderID(journalpostTo.getAvsenderMottakerId())
-						.avsenderNavn(journalpostTo.getAvsenderMottaker())
 						.journalpostID(journalpostTo.getJournalpostId().toString())
-						.journalposttittel(journalpostTo.getInnhold())
+						.beskrivelse(journalpostTo.getInnhold())
 						.journalposttype(JournalpostType.fromJoark(journalpostTo.getJournalposttype()))
-						.journalstatus(JournalpostStatus.fromJoark(journalpostTo.getJournalstatus()))
+						.journalstatus(journalpostTo.getJournalstatus().toSafJournalStatus())
 						.mottakskanal(Mottakskanal.fromJoark(journalpostTo.getMottakskanal()))
-						.opprettet(journalpostTo.getDatoOpprettet() == null ? null : journalpostTo.getDatoOpprettet().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime())
-						.utsendingskanal(Utsendingskanal.fromJoark(journalpostTo.getUtsendingskanal()))
+						.opprettet(journalpostTo.getDatoOpprettet() == null ? null : journalpostTo.getDatoOpprettet().toInstant().atZone(ZoneId.systemDefault()).toString())
+						.build()).collect(Collectors.toList());
+	}
+
+	@Override
+	public List<Journalpost> hentJournalpostListeByArkivsaker(List<Sak> saker) {
+		HentJournalposterResponse hentJournalposterResponse = hentJournalsakinfo.hentJournalposter(HentJournalposterRequest.builder()
+				.gsakSakIdList(saker.stream().map(Sak::getArkivsaksnummer).collect(Collectors.toList()))
+				.build());
+		Map<String, Sak> sakMap = saker.stream().collect(Collectors.toMap(Sak::getArkivsaksnummer, sak -> sak));
+		return hentJournalposterResponse
+				.getGsakJournalpostList().stream().map(journalpostTo -> Journalpost.builder()
+						.journalpostID(journalpostTo.getJournalpostId().toString())
+						.beskrivelse(journalpostTo.getInnhold())
+						.journalposttype(JournalpostType.fromJoark(journalpostTo.getJournalposttype()))
+						.journalstatus(journalpostTo.getJournalstatus().toSafJournalStatus())
+						.mottakskanal(Mottakskanal.fromJoark(journalpostTo.getMottakskanal()))
+						.opprettet(journalpostTo.getDatoOpprettet() == null ? null : journalpostTo.getDatoOpprettet().toInstant().atZone(ZoneId.systemDefault()).toString())
+						.sak(journalpostTo.getSaksrelasjon() == null ? null : sakMap.get(journalpostTo.getSaksrelasjon().getSakId()))
 						.build()).collect(Collectors.toList());
 	}
 
