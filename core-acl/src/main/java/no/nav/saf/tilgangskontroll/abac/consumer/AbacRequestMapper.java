@@ -5,11 +5,13 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlAttribute;
 import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlRequest;
 import no.nav.saf.tilgangskontroll.abac.exception.JsonMarshallingException;
+import org.springframework.stereotype.Component;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.List;
 
+@Component
 public class AbacRequestMapper {
 
 	String map(XacmlRequest request) {
