@@ -40,6 +40,8 @@ public class Pep1EvaluatorImpl implements PepEvaluator<TilgangBruker> {
 		this.abacLogger = abacLogger;
 	}
 
+
+	//  TODO: Det må bestemmes om oidcToken på safRequestContext bare skal inneholde payload (midterste del) eller hele tokenet. I siste tilfelle må payloaden hentes ut her
 	@Override
 	public boolean hasAccess(TilgangBruker ressurs, SafRequestContext safRequestContext) {
 		{
@@ -50,7 +52,7 @@ public class Pep1EvaluatorImpl implements PepEvaluator<TilgangBruker> {
 			request.resource(RESOURCE_FELLES_PERSON_FNR, ressurs.getFoedselsnummer());
 
 			XacmlResponse response = abacService.evaluate(request);
-			return response.getDecision().getValue().equals(Decision.PERMIT);
+			return Decision.PERMIT.equals(response.getDecision());
 		}
 	}
 }

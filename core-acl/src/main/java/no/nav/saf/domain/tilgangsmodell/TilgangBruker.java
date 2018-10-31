@@ -13,6 +13,7 @@ import java.util.List;
 @Builder
 public class TilgangBruker {
 	private final String aktoerId;
+	@Builder.Default
 	private final List<TilgangIdent> historiskeIdenter = new ArrayList<>();
 
 	public String getFoedselsnummer() {

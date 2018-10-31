@@ -27,6 +27,10 @@ public class AbacLogger {
 		log.info("{}{}; {}", mapRequest(xacmlRequest), mapCustomResources(resources), mapResponse(xacmlResponse));
 	}
 
+	public void logAbacPermit(final XacmlRequest xacmlRequest) {
+		log.info("{};", mapRequest(xacmlRequest));
+	}
+
 	private String mapCustomResources(final Map<String, String> resources) {
 		if (resources.isEmpty()) {
 			return "";
