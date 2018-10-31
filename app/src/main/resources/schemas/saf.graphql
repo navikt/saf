@@ -1,53 +1,57 @@
 
+scalar Date
+scalar DateTime
+
 schema {
     query: Query
 }
 
 type Query {
-    dokumentOversiktFor(aktoerId: String): Bruker
-}
-
-type Bruker {
-    aktoerId: String!
-    journalposter: [Journalpost]
+    # Returnerer en liste over alle dokumenter tilknyttet en bruker.
+    dokumentoversikt(aktoerId: String, fraDato: Date = null, journalposttyper : [Journalposttypekode] = [], journalstatuser : [Journalstatuskode] = [], visFeilregistrerte: Boolean = false): [Journalpost]!
 }
 
 type Journalpost {
     journalpostID: String!
     beskrivelse: String
-    journalposttype: JournalpostType
-    journalstatus: JournalStatus
-    tema: Tema
+    journalposttype: Journalposttypekode
+    journalstatus: Journalstatuskode
+    tema: Temakode
     temanavn: String
     sak: Sak
     mottakskanal: String
-    opprettet: String
-    dokumenter: [Dokument]
+    opprettet: DateTime
+    dokumenter: [DokumentInfo]
 }
 
 type Sak {
     arkivsaksnummer: String
-    arkivsaksystem: String
+    arkivsaksystem: Arkivsaksystemkode
     fagsaknummer: String
     fagsystem: String
-    datoOpprettet: String
+    datoOpprettet: DateTime
 }
 
-type Dokument {
+type DokumentInfo {
     dokumentID: String!
     tittel: String
-    variantFormat: VariantFormat
+    variantFormat: VariantFormatkode
     saksbehandlerHarTilgang: Boolean
     innbyggerHarDigitaltInnsyn: Boolean
 }
 
-enum JournalpostType {
+enum Arkivsaksystemkode {
+    GSAK
+    PSAK
+}
+
+enum Journalposttypekode {
 	I
 	U
 	N
 }
 
-enum JournalStatus {
+enum Journalstatuskode {
     MIDLERTIDIG
     ENDELIG
     FERDIGSTILT
@@ -59,7 +63,7 @@ enum JournalStatus {
     UKJENT_BRUKER
 }
 
-enum Tema {
+enum Temakode {
 	BID,
 	PEN,
 	OVR,
@@ -121,7 +125,7 @@ enum Tema {
 	FAR,
 }
 
-enum VariantFormat {
+enum VariantFormatkode {
     ARKIV
     SKJERMET
     SLETTET

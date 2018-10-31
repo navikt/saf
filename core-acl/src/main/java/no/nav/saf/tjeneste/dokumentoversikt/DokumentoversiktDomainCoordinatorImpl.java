@@ -1,7 +1,7 @@
 package no.nav.saf.tjeneste.dokumentoversikt;
 
 import no.nav.saf.tilgangskontroll.SafRequestContext;
-import no.nav.saf.tjeneste.visningsmodell.Bruker;
+import no.nav.saf.tjeneste.visningsmodell.DokumentInfo;
 import no.nav.saf.tjeneste.visningsmodell.Journalpost;
 import org.springframework.stereotype.Component;
 
@@ -22,14 +22,17 @@ public class DokumentoversiktDomainCoordinatorImpl implements DokumentoversiktDo
 	}
 
 	@Override
-	public Bruker findBrukerByAktoerId(String aktoerId, SafRequestContext safRequestContext) {
-		// TODO Pep1 her
-		return Bruker.builder().aktoerId(aktoerId).build();
+	public List<Journalpost> findJournalposter(String aktoerId, SafRequestContext safRequestContext) {
+		// TODO Pep1 på TilgangBruker aktoerId her
+		// TODO Pep2 TilgangSak her
+		// TODO Pep3 hvis tema=BID eller FAR
+		// TODO Pep4 for TilgangJournalpost her
+		return repository.findJournalposterByAktoerId(safRequestContext.getAktoerId());
 	}
 
 	@Override
-	public List<Journalpost> findJournalposterByAktoerId(String aktoerId, SafRequestContext safRequestContext) {
-		// TODO Pep2, Pep3 og Pep4 her
-		return repository.findJournalposterByAktoerId(aktoerId);
+	public List<DokumentInfo> findDokumenter(Journalpost journalpost, SafRequestContext safRequestContext) {
+		// TODO Pep4 for TilgangDokument her (er dette allerede er avklart i TilgangJournalpost så må context vite om dette)
+		return journalpost.getDokumenter();
 	}
 }
