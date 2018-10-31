@@ -1,4 +1,4 @@
-package no.nav.saf.tjeneste.sakstilknyttedejournalposter.visningsmodell.kode;
+package no.nav.saf.tjeneste.visningsmodell.kode;
 
 /**
  * @author Ugur Alpay Cenar, Visma Consulting.

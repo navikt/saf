@@ -1,8 +1,8 @@
 package no.nav.saf.anticorruptionlayer.gsak;
 
-import no.nav.saf.tjeneste.sakstilknyttedejournalposter.visningsmodell.Sak;
-import no.nav.saf.tjeneste.sakstilknyttedejournalposter.visningsmodell.Tema;
-import no.nav.saf.tjeneste.sakstilknyttedejournalposter.visningsmodell.kode.Temakode;
+import no.nav.saf.tjeneste.visningsmodell.Sak;
+import no.nav.saf.tjeneste.visningsmodell.Tema;
+import no.nav.saf.tjeneste.visningsmodell.kode.Temakode;
 
 import java.util.List;
 import java.util.Set;
@@ -11,6 +11,7 @@ import java.util.Set;
  * @author Joakim Bjørnstad, Jbit AS
  */
 public interface GsakAntiCorruptionLayer {
-	Set<Tema> findTemaByAktoerIdAndFilterTemakode(String aktoerId, List<Temakode> temakoder);
-	List<Sak> findSakByAktoerIdAndTemakode(String aktoerId, Temakode temakode);
+	Set<Tema> findTemaerByAktoerIdAndFilterTemakode(String aktoerId, List<Temakode> temakoder);
+	List<Sak> findSakerByAktoerIdAndTemakode(String aktoerId, Temakode temakode);
+	List<Sak> findSakerByAktoerId(final String aktoerId, final List<Temakode> temakodeFilter);
 }

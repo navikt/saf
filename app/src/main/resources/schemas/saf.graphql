@@ -1,0 +1,128 @@
+
+schema {
+    query: Query
+}
+
+type Query {
+    dokumentOversiktFor(aktoerId: String): Bruker
+}
+
+type Bruker {
+    aktoerId: String!
+    journalposter: [Journalpost]
+}
+
+type Journalpost {
+    journalpostID: String!
+    beskrivelse: String
+    journalposttype: JournalpostType
+    journalstatus: JournalStatus
+    tema: Tema
+    temanavn: String
+    sak: Sak
+    mottakskanal: String
+    opprettet: String
+    dokumenter: [Dokument]
+}
+
+type Sak {
+    arkivsaksnummer: String
+    arkivsaksystem: String
+    fagsaknummer: String
+    fagsystem: String
+    datoOpprettet: String
+}
+
+type Dokument {
+    dokumentID: String!
+    tittel: String
+    variantFormat: VariantFormat
+    saksbehandlerHarTilgang: Boolean
+    innbyggerHarDigitaltInnsyn: Boolean
+}
+
+enum JournalpostType {
+	I
+	U
+	N
+}
+
+enum JournalStatus {
+    MIDLERTIDIG
+    ENDELIG
+    FERDIGSTILT
+    EKSPEDERT
+    UNDER_ARBEID
+    FEILREGISTRERT
+    UTGAAR
+    AVBRUTT
+    UKJENT_BRUKER
+}
+
+enum Tema {
+	BID,
+	PEN,
+	OVR,
+	MOT,
+	OKO,
+	BII,
+	BIL,
+	HJE,
+	BAR,
+	FOR,
+	GRA,
+	GRU,
+	KON,
+	OMS,
+	SUP,
+	YRK,
+	ENF,
+	STO,
+	FOS,
+	ERS,
+	SAK,
+	DAG,
+	IND,
+	MOB,
+	OPP,
+	VEN,
+	YRA,
+	REH,
+	UFO,
+	SYK,
+	SYM,
+	FEI,
+	GEN,
+	AAP,
+	FUL,
+	HEL,
+	CON,
+	MED,
+	UKJ,
+	TIL,
+	REK,
+	IAR,
+	AGR,
+	TRK,
+	KTR,
+	PER,
+	AAR,
+	TRY,
+	SAA,
+	SAP,
+	OPA,
+	SER,
+	SIK,
+	UFM,
+	TSR,
+	TSO,
+	RVE,
+	RPO,
+	FAR,
+}
+
+enum VariantFormat {
+    ARKIV
+    SKJERMET
+    SLETTET
+}

@@ -1,7 +1,7 @@
 package no.nav.saf.tjeneste.sakstilknyttedejournalposter;
 
 import no.nav.saf.tilgangskontroll.SafRequestContext;
-import no.nav.saf.tjeneste.sakstilknyttedejournalposter.visningsmodell.Bruker;
+import no.nav.saf.tjeneste.visningsmodell.Bruker;
 
 /**
  * Returnerer visningsmodell.
