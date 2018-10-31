@@ -7,10 +7,13 @@ import no.nav.tjeneste.virksomhet.aktoer.v2.binding.AktoerV2;
 import no.nav.tjeneste.virksomhet.aktoer.v2.binding.HentIdentForAktoerIdPersonIkkeFunnet;
 import no.nav.tjeneste.virksomhet.aktoer.v2.meldinger.HentIdentForAktoerIdRequest;
 import no.nav.tjeneste.virksomhet.aktoer.v2.meldinger.HentIdentForAktoerIdResponse;
+import org.springframework.stereotype.Component;
 
 /**
  * @author Sigurd Midttun, Visma Consulting.
  */
+
+@Component
 public class HentIdentForAktoerId {
 
 	private final AktoerV2 aktoerV2;

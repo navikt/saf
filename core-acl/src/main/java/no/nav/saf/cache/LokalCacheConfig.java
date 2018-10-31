@@ -20,6 +20,8 @@ public class LokalCacheConfig {
 
 	public static final String SAKER_BY_AKTOER_ID_CACHE = "sakerByAktoerId";
 	public static final String HENT_JOURNALPOSTER_CACHE = "hentJournalposter";
+	public static final String TILGANGSMODELL_REPO_BRUKER_CACHE = "tilgangsmodellRepoBruker";
+
 
 	@Bean
 	CacheManager cacheManager() {
@@ -30,6 +32,10 @@ public class LokalCacheConfig {
 						.maximumSize(500)
 						.build()),
 				new CaffeineCache(HENT_JOURNALPOSTER_CACHE, Caffeine.newBuilder()
+						.expireAfterWrite(10, TimeUnit.MINUTES)
+						.maximumSize(500)
+						.build()),
+				new CaffeineCache(TILGANGSMODELL_REPO_BRUKER_CACHE, Caffeine.newBuilder()
 						.expireAfterWrite(10, TimeUnit.MINUTES)
 						.maximumSize(500)
 						.build())
