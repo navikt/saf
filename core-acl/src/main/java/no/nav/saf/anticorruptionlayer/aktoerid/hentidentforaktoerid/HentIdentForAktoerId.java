@@ -1,5 +1,9 @@
 package no.nav.saf.anticorruptionlayer.aktoerid.hentidentforaktoerid;
 
+import static no.nav.saf.anticorruptionlayer.aktoerid.hentidentforaktoerid.RetryConstants.DELAY_SHORT;
+import static no.nav.saf.anticorruptionlayer.aktoerid.hentidentforaktoerid.RetryConstants.MAX_ATTEMPTS_SHORT;
+import static no.nav.saf.anticorruptionlayer.aktoerid.hentidentforaktoerid.RetryConstants.MULTIPLIER_SHORT;
+
 import no.nav.saf.anticorruptionlayer.aktoerid.domain.HentIdentForAktoerIdResponseTo;
 import no.nav.saf.exceptions.SafFunctionalException;
 import no.nav.saf.exceptions.SafTechnicalException;
@@ -7,6 +11,8 @@ import no.nav.tjeneste.virksomhet.aktoer.v2.binding.AktoerV2;
 import no.nav.tjeneste.virksomhet.aktoer.v2.binding.HentIdentForAktoerIdPersonIkkeFunnet;
 import no.nav.tjeneste.virksomhet.aktoer.v2.meldinger.HentIdentForAktoerIdRequest;
 import no.nav.tjeneste.virksomhet.aktoer.v2.meldinger.HentIdentForAktoerIdResponse;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
 
 /**
@@ -22,7 +28,7 @@ public class HentIdentForAktoerId {
 		this.aktoerV2 = aktoerV2;
 	}
 
-	//	TODO Retry
+	@Retryable(include = SafTechnicalException.class, maxAttempts = MAX_ATTEMPTS_SHORT, backoff = @Backoff(delay = DELAY_SHORT, multiplier = MULTIPLIER_SHORT))
 	public HentIdentForAktoerIdResponseTo hentIdentForAktoerId(String aktoerId) {
 		HentIdentForAktoerIdRequest request = new HentIdentForAktoerIdRequest();
 		request.setAktoerId(aktoerId);
