@@ -31,20 +31,20 @@ import java.io.IOException;
  * @author Sigurd Midttun, Visma Consulting.
  */
 @ExtendWith(SpringExtension.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-		classes = {CoreAclConfig.class, TestToolsAutoConfig.class, ServletWebServerFactoryAutoConfiguration.class, IdpConfig.class, TestConfig.class})
+@SpringBootTest(classes = {CoreAclConfig.class, TestToolsAutoConfig.class, ServletWebServerFactoryAutoConfiguration.class, IdpConfig.class, TestConfig.class},
+		webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("itest,wiremock,oidc")
 @ImportAutoConfiguration
 @AutoConfigureWireMock(port = 0)
 public abstract class AbstractPepEvaluatorIT {
 
-	protected static final String AKTOER_ID = "12345";
-	protected static final String IDENTIFIKATOR = "***gammelt_fnr***";
+	static final String AKTOER_ID = "12345";
+	static final String IDENTIFIKATOR = "***gammelt_fnr***";
 
-	protected String OIDC_TOKEN_PERSON_USER_TEST;
-	protected String OIDC_TOKEN_SERVICE_USER_TEST;
-	protected final String SERVICE_USER_ID = "srvsaf";
-	protected final String PERSON_USER_ID = "Z990782";
+	String OIDC_TOKEN_PERSON_USER_TEST;
+	String OIDC_TOKEN_SERVICE_USER_TEST;
+	private final String SERVICE_USER_ID = "srvsaf";
+	private final String PERSON_USER_ID = "Z990782";
 
 	@Inject
 	protected OidcTestService oidcTestService;

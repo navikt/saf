@@ -5,7 +5,6 @@ import static no.nav.abac.xacml.NavAttributter.ENVIRONMENT_FELLES_PEP_ID;
 import static no.nav.abac.xacml.NavAttributter.RESOURCE_FELLES_PERSON_FNR;
 
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
-import no.nav.saf.tilgangskontroll.AbacLogger;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlRequest;
 import no.nav.saf.tilgangskontroll.abac.dto.response.Decision;
@@ -28,31 +27,25 @@ import javax.inject.Inject;
 @Component("pep1")
 public class Pep1EvaluatorImpl implements PepEvaluator<TilgangBruker> {
 
-	public static final String SAF = "saf";
+	private static final String SAF = "saf";
 
 	private final AbacService abacService;
-	private final AbacLogger abacLogger;
 
 	@Inject
-	public Pep1EvaluatorImpl(AbacService abacService,
-							 AbacLogger abacLogger) {
+	public Pep1EvaluatorImpl(AbacService abacService) {
 		this.abacService = abacService;
-		this.abacLogger = abacLogger;
 	}
-
 
 	//  TODO: Det må bestemmes om oidcToken på safRequestContext bare skal inneholde payload (midterste del) eller hele tokenet. I siste tilfelle må payloaden hentes ut her
 	@Override
 	public boolean hasAccess(TilgangBruker ressurs, SafRequestContext safRequestContext) {
-		{
-			XacmlRequest request = new XacmlRequest();
-			request.environment(ENVIRONMENT_FELLES_OIDC_TOKEN_BODY, safRequestContext.getOidcToken());
-			request.environment(ENVIRONMENT_FELLES_PEP_ID, SAF);
-			request.resource(ENVIRONMENT_FELLES_PEP_ID, SAF);
-			request.resource(RESOURCE_FELLES_PERSON_FNR, ressurs.getFoedselsnummer());
+		XacmlRequest request = new XacmlRequest();
+		request.environment(ENVIRONMENT_FELLES_OIDC_TOKEN_BODY, safRequestContext.getOidcToken());
+		request.environment(ENVIRONMENT_FELLES_PEP_ID, SAF);
+		request.resource(ENVIRONMENT_FELLES_PEP_ID, SAF);
+		request.resource(RESOURCE_FELLES_PERSON_FNR, ressurs.getFoedselsnummer());
 
-			XacmlResponse response = abacService.evaluate(request);
-			return Decision.PERMIT.equals(response.getDecision());
-		}
+		XacmlResponse response = abacService.evaluate(request);
+		return Decision.PERMIT.equals(response.getDecision());
 	}
 }

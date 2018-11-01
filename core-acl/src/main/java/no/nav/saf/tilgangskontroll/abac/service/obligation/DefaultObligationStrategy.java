@@ -1,6 +1,8 @@
 package no.nav.saf.tilgangskontroll.abac.service.obligation;
 
+import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlRequest;
 import no.nav.saf.tilgangskontroll.abac.dto.response.Obligation;
+import no.nav.saf.tilgangskontroll.abac.dto.response.XacmlResponse;
 import org.springframework.stereotype.Component;
 
 /**
@@ -15,7 +17,7 @@ public class DefaultObligationStrategy implements ObligationStrategy {
 	}
 
 	@Override
-	public void perform(Obligation attribute) {
+	public void perform(Obligation attribute, XacmlRequest request, XacmlResponse response) {
 		//TODO Add action
 	}
 }
