@@ -27,7 +27,7 @@ import java.util.UUID;
 @Component
 public class GsakConsumer {
 
-	private static final int TIMEOUT = 30_000;
+	private static final int TIMEOUT = 10_000;
 	private final RestTemplate restTemplate;
 	private final String gsakApiUrl;
 
@@ -38,7 +38,7 @@ public class GsakConsumer {
 		this.restTemplate = restTemplateBuilder
 				.setReadTimeout(TIMEOUT)
 				.setConnectTimeout(TIMEOUT)
-				.basicAuthorization("srvGsak", "WjSoK2D62cx6hf").build();
+				.basicAuthorization(serviceuserAlias.getUsername(), serviceuserAlias.getPassword()).build();
 	}
 
 
