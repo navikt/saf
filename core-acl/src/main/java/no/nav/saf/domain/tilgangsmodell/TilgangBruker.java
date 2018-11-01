@@ -11,6 +11,7 @@ import java.util.List;
 @Value
 @Builder
 public class TilgangBruker {
+	private final String foedselsnr;
 	private final String aktoerId;
 	private final List<TilgangIdent> historiskeIdenter;
 }

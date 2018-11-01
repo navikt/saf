@@ -1,10 +1,10 @@
 package no.nav.saf.domain;
 
 import static java.lang.String.format;
-import static no.nav.saf.cache.LokalCacheConfig.TILGANGSMODELL_REPO_BRUKER_CACHE;
 
 import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.anticorruptionlayer.aktoerid.AktoerAntiCorruptionLayer;
+import no.nav.saf.cache.LokalCacheConfig;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Repository;
@@ -25,7 +25,7 @@ public class TilgangsmodellRepositoryImpl implements TilgangsmodellRepository {
 	}
 
 	@Override
-	@Cacheable(TILGANGSMODELL_REPO_BRUKER_CACHE)
+	@Cacheable(cacheNames = LokalCacheConfig.TILGANGSMODELL_REPO_BRUKER_CACHE)
 	public TilgangBruker findTilgangBrukerByAktoerId(String aktoerId) {
 		try {
 			return aktoerAntiCorruptionLayer.hentTilgangBruker(aktoerId);

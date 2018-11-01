@@ -35,7 +35,7 @@ public class HentIdentForAktoerId {
 		try {
 			HentIdentForAktoerIdResponse response = aktoerV2.hentIdentForAktoerId(request);
 			return HentIdentForAktoerIdResponseTo.builder()
-					.ident(response.getIdent())
+					.foedselsnr(response.getIdent())
 					.historiskeIdenter(response.getHistoriskeIdenter())
 					.build();
 		} catch (HentIdentForAktoerIdPersonIkkeFunnet e) {
@@ -46,4 +46,3 @@ public class HentIdentForAktoerId {
 		}
 	}
 }
-

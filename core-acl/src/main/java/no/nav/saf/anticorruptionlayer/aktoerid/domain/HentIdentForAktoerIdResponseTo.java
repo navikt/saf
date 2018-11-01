@@ -13,7 +13,8 @@ import java.util.List;
 @Builder
 public class HentIdentForAktoerIdResponseTo {
 
-	private final String ident;
+	private final String foedselsnr;
 	@Builder.Default
 	private final List<String> historiskeIdenter = new ArrayList<>();
+
 }
