@@ -4,10 +4,11 @@ import graphql.ExecutionInput;
 import graphql.ExecutionResult;
 import graphql.GraphQL;
 import graphql.schema.GraphQLSchema;
-import io.leangen.graphql.GraphQLSchemaGenerator;
-import io.leangen.graphql.metadata.strategy.query.AnnotatedResolverBuilder;
+import graphql.schema.idl.SchemaGenerator;
+import graphql.schema.idl.SchemaParser;
+import graphql.schema.idl.TypeDefinitionRegistry;
 import lombok.extern.slf4j.Slf4j;
-import no.nav.saf.endpoints.sakstilknyttedejournalposter.SakstilknyttedeJournalposterFor;
+import no.nav.saf.endpoints.wiring.DokumentoversiktWiring;
 import no.nav.saf.tilgangskontroll.NavBrukertype;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import org.springframework.http.MediaType;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.InputStreamReader;
 import java.util.Map;
 
 /**
@@ -29,14 +31,13 @@ public class GraphQLController {
 
 	private final GraphQLSchema graphQLSchema;
 
-	public GraphQLController(SakstilknyttedeJournalposterFor sakstilknyttedeJournalposterFor) {
-		GraphQLSchemaGenerator schemaGenerator = new GraphQLSchemaGenerator()
-				.withResolverBuilders(new AnnotatedResolverBuilder());
+	public GraphQLController(DokumentoversiktWiring dokumentoversiktWiring) {
+		SchemaParser schemaParser = new SchemaParser();
+		InputStreamReader schema = new InputStreamReader(getClass().getClassLoader().getResourceAsStream("schemas/saf.graphql"));
 
-		schemaGenerator = schemaGenerator
-				.withOperationsFromSingleton(sakstilknyttedeJournalposterFor);
-
-		this.graphQLSchema = schemaGenerator.generate();
+		TypeDefinitionRegistry typeRegistry = schemaParser.parse(schema);
+		SchemaGenerator schemaGenerator = new SchemaGenerator();
+		graphQLSchema = schemaGenerator.makeExecutableSchema(typeRegistry, dokumentoversiktWiring.createRuntimeWiring());
 	}
 
 	@PostMapping(value = "/graphql", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)

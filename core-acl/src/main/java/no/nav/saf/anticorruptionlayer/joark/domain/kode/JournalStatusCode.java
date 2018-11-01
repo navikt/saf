@@ -1,52 +1,64 @@
 package no.nav.saf.anticorruptionlayer.joark.domain.kode;
 
+import no.nav.saf.tjeneste.visningsmodell.kode.JournalStatus;
+
 public enum JournalStatusCode {
 	/**
 	 * journalført
 	 */
-	J,
+	J(JournalStatus.ENDELIG),
 	/**
 	 * midl journalført
 	 */
-	M,
+	M(JournalStatus.MIDLERTIDIG),
 	/**
 	 * Utgår før tilknytn til sak
 	 */
-	U,
+	U(JournalStatus.UTGAAR),
 	/**
 	 * Dokument under produksjon
 	 */
-	D,
+	D(JournalStatus.UNDER_ARBEID),
 	/**
 	 * Reservert dokument
 	 */
-	R,
+	R(JournalStatus.MIDLERTIDIG),
 	/**
 	 * Ferdig og sentral print
 	 */
-	FS,
+	FS(JournalStatus.FERDIGSTILT),
 	/**
 	 * Ferdig og lokal print
 	 */
-	FL,
+	FL(JournalStatus.FERDIGSTILT),
 	/**
 	 * Ekspedert
 	 */
-	E,
+	E(JournalStatus.EKSPEDERT),
 	/**
 	 * Avbrutt
 	 */
-	A,
+	A(JournalStatus.AVBRUTT),
 	/**
 	 * Mottatt   
 	 */
-	MO,
+	MO(JournalStatus.MIDLERTIDIG),
 	/**
 	 * Ukjent bruker 
 	 */
-	UB,
-	/** 
+	UB(JournalStatus.UKJENT_BRUKER),
+	/**
 	 * Opplasting dokument 
 	 */
-	OD;
+	OD(JournalStatus.MIDLERTIDIG);
+
+	private final JournalStatus safJournalStatus;
+
+	JournalStatusCode(JournalStatus safJournalStatus) {
+		this.safJournalStatus = safJournalStatus;
+	}
+
+	public JournalStatus toSafJournalStatus() {
+		return safJournalStatus;
+	}
 }

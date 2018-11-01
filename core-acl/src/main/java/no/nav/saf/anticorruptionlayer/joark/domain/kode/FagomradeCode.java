@@ -1,5 +1,7 @@
 package no.nav.saf.anticorruptionlayer.joark.domain.kode;
 
+import no.nav.saf.tjeneste.visningsmodell.kode.Temakode;
+
 public enum FagomradeCode {
 
 	/** Bidrag */
@@ -122,4 +124,8 @@ public enum FagomradeCode {
 	RPO,
 	/** Farskap */
 	FAR;
+
+	public static Temakode toSafJournalStatus(FagomradeCode joarkFagomradeCode) {
+		return Temakode.valueOf(joarkFagomradeCode.name());
+	}
 }
