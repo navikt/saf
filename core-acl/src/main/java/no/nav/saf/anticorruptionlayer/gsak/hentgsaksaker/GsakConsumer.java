@@ -22,7 +22,6 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.List;
-import java.util.UUID;
 
 @Slf4j
 @Component
@@ -43,33 +42,24 @@ public class GsakConsumer {
 	}
 
 	@Cacheable(cacheNames = LokalCacheConfig.SAKER_BY_AKTOER_ID_CACHE)
-	public List<GsakSakerTo> hentSakerByAktoerIdAndTema(final String aktoerId, final Temakode temakode) {
-		try {
-			HttpHeaders headers = new HttpHeaders();
-			headers.set("X-Correlation-ID", UUID.randomUUID().toString());
-			UriComponentsBuilder uri = UriComponentsBuilder.fromHttpUrl(gsakApiUrl)
-					.queryParam("aktoerId", aktoerId)
-					.queryParam("tema", temakode.toString());
-			ResponseEntity<List<GsakSakerTo>> response = restTemplate.exchange(uri.toUriString(), HttpMethod.GET, new HttpEntity<>(headers), new ParameterizedTypeReference<List<GsakSakerTo>>() {
-			});
-			return response.getBody();
-		} catch (HttpServerErrorException e) {
-			throw new SafTechnicalException(String.format("getGsaksaker feilet teknisk med statusKode=%s. Feilmelding=%s", e
-					.getStatusCode(), e.getMessage()), e, e.getStatusCode());
-		} catch (HttpClientErrorException e) {
-			throw new SafFunctionalException(String.format("getGsaksaker feilet funksjonelt med statusKode=%s. Feilmelding=%s", e
-					.getStatusCode(), e.getMessage()), e, e.getStatusCode());
-		}
+	public List<GsakSakerTo> hentSakerByAktoerId(final String aktoerId, final Temakode temakode) {
+		UriComponentsBuilder uri = UriComponentsBuilder.fromHttpUrl(gsakApiUrl)
+				.queryParam("aktoerId", aktoerId)
+				.queryParam("tema", temakode.toString());
+		return hentSaker(uri.toUriString());
 	}
 
 	@Cacheable(cacheNames = LokalCacheConfig.SAKER_BY_AKTOER_ID_CACHE)
 	public List<GsakSakerTo> hentSakerByAktoerId(final String aktoerId) {
+		UriComponentsBuilder uri = UriComponentsBuilder.fromHttpUrl(gsakApiUrl)
+				.queryParam("aktoerId", aktoerId);
+		return hentSaker(uri.toUriString());
+	}
+
+	private List<GsakSakerTo> hentSaker(final String uri) {
 		try {
 			HttpHeaders headers = new HttpHeaders();
-			headers.set("X-Correlation-ID", UUID.randomUUID().toString());
-			UriComponentsBuilder uri = UriComponentsBuilder.fromHttpUrl(gsakApiUrl)
-					.queryParam("aktoerId", aktoerId);
-			ResponseEntity<List<GsakSakerTo>> response = restTemplate.exchange(uri.toUriString(), HttpMethod.GET, new HttpEntity<>(headers), new ParameterizedTypeReference<List<GsakSakerTo>>() {
+			ResponseEntity<List<GsakSakerTo>> response = restTemplate.exchange(uri, HttpMethod.GET, new HttpEntity<>(headers), new ParameterizedTypeReference<List<GsakSakerTo>>() {
 			});
 			return response.getBody();
 		} catch (HttpServerErrorException e) {

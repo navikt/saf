@@ -37,7 +37,7 @@ public class GsakAntiCorruptionLayerImpl implements GsakAntiCorruptionLayer {
 	@Override
 	public List<Sak> findSakerByAktoerIdAndTemakode(final String aktoerId, final Temakode temakode) {
 
-		List<GsakSakerTo> gsakSakerTo = gsakConsumer.hentSakerByAktoerIdAndTema(aktoerId, temakode);
+		List<GsakSakerTo> gsakSakerTo = gsakConsumer.hentSakerByAktoerId(aktoerId, temakode);
 
 		return gsakSakerTo.stream()
 				.filter(gsak -> Temakode.valueOf(gsak.getTema()) == temakode)
