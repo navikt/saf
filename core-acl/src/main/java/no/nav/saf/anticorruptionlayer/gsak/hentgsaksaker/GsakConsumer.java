@@ -6,6 +6,7 @@ import no.nav.saf.cache.LokalCacheConfig;
 import no.nav.saf.exceptions.SafFunctionalException;
 import no.nav.saf.exceptions.SafTechnicalException;
 import no.nav.saf.integration.fasit.ServiceuserAlias;
+import no.nav.saf.tjeneste.visningsmodell.kode.Temakode;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.cache.annotation.Cacheable;
@@ -41,10 +42,17 @@ public class GsakConsumer {
 				.basicAuthorization("srvGsak", "WjSoK2D62cx6hf").build();
 	}
 
-
-	public GsakSakerTo hentSakBySakId(final String saksId) {
+	@Cacheable(cacheNames = LokalCacheConfig.SAKER_BY_AKTOER_ID_CACHE)
+	public List<GsakSakerTo> hentSakerByAktoerIdAndTema(final String aktoerId, final Temakode temakode) {
 		try {
-			return restTemplate.getForObject(this.gsakApiUrl + "/" + saksId, GsakSakerTo.class);
+			HttpHeaders headers = new HttpHeaders();
+			headers.set("X-Correlation-ID", UUID.randomUUID().toString());
+			UriComponentsBuilder uri = UriComponentsBuilder.fromHttpUrl(gsakApiUrl)
+					.queryParam("aktoerId", aktoerId)
+					.queryParam("tema", temakode.toString());
+			ResponseEntity<List<GsakSakerTo>> response = restTemplate.exchange(uri.toUriString(), HttpMethod.GET, new HttpEntity<>(headers), new ParameterizedTypeReference<List<GsakSakerTo>>() {
+			});
+			return response.getBody();
 		} catch (HttpServerErrorException e) {
 			throw new SafTechnicalException(String.format("getGsaksaker feilet teknisk med statusKode=%s. Feilmelding=%s", e
 					.getStatusCode(), e.getMessage()), e, e.getStatusCode());

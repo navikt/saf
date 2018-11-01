@@ -27,6 +27,7 @@ public class GsakAntiCorruptionLayerImpl implements GsakAntiCorruptionLayer {
 
 	@Override
 	public Set<Tema> findTemaerByAktoerIdAndFilterTemakode(final String aktoerId, final List<Temakode> temakoder) {
+
 		List<GsakSakerTo> gsakSakerTo = gsakConsumer.hentSakerByAktoerId(aktoerId);
 		return gsakSakerTo.stream().map(gsak -> Tema.fromTemakode(Temakode.valueOf(gsak.getTema())))
 				.filter(t -> temakoder.isEmpty() || temakoder.contains(t.getTema()))
@@ -35,7 +36,9 @@ public class GsakAntiCorruptionLayerImpl implements GsakAntiCorruptionLayer {
 
 	@Override
 	public List<Sak> findSakerByAktoerIdAndTemakode(final String aktoerId, final Temakode temakode) {
-		List<GsakSakerTo> gsakSakerTo = gsakConsumer.hentSakerByAktoerId(aktoerId);
+
+		List<GsakSakerTo> gsakSakerTo = gsakConsumer.hentSakerByAktoerIdAndTema(aktoerId, temakode);
+
 		return gsakSakerTo.stream()
 				.filter(gsak -> Temakode.valueOf(gsak.getTema()) == temakode)
 				.map(gsak -> Sak.builder()
@@ -51,8 +54,10 @@ public class GsakAntiCorruptionLayerImpl implements GsakAntiCorruptionLayer {
 
 	@Override
 	public List<Sak> findSakerByAktoerId(final String aktoerId, final List<Temakode> temakodeFilter) {
-		// TODO temakodefilter support i consumer
+
 		List<GsakSakerTo> gsakSakerTo = gsakConsumer.hentSakerByAktoerId(aktoerId);
+
+
 		return gsakSakerTo.stream()
 				.map(gsak -> Sak.builder()
 						.arkivsaksnummer(gsak.getId().toString())
