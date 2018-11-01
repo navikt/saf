@@ -17,7 +17,7 @@ import java.util.List;
 @Value
 @Builder
 public class Journalpost {
-	private final String journalpostID;
+	private final String journalpostId;
 	private final String beskrivelse;
 	private final JournalpostType journalposttype;
 	private final JournalStatus journalstatus;

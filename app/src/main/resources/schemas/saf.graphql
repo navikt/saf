@@ -8,15 +8,15 @@ schema {
 
 type Query {
     # Returnerer en liste over alle dokumenter tilknyttet en bruker.
-    dokumentoversikt(aktoerId: String, fraDato: Date = null, journalposttyper : [Journalposttypekode] = [], journalstatuser : [Journalstatuskode] = [], visFeilregistrerte: Boolean = false): [Journalpost]!
+    dokumentoversikt(aktoerId: String, fraDato: Date = null, journalposttyper : [JournalpostType] = [], journalstatuser : [JournalStatus] = [], visFeilregistrerte: Boolean = false): [Journalpost]!
 }
 
 type Journalpost {
-    journalpostID: String!
+    journalpostId: String!
     beskrivelse: String
-    journalposttype: Journalposttypekode
-    journalstatus: Journalstatuskode
-    tema: Temakode
+    journalposttype: JournalpostType
+    journalstatus: JournalStatus
+    tema: Tema
     temanavn: String
     sak: Sak
     mottakskanal: String
@@ -26,32 +26,32 @@ type Journalpost {
 
 type Sak {
     arkivsaksnummer: String
-    arkivsaksystem: Arkivsaksystemkode
+    arkivsaksystem: Arkivsaksystem
     fagsaknummer: String
     fagsystem: String
     datoOpprettet: DateTime
 }
 
 type DokumentInfo {
-    dokumentID: String!
+    dokumentId: String!
     tittel: String
-    variantFormat: VariantFormatkode
+    variantFormat: VariantFormat
     saksbehandlerHarTilgang: Boolean
     innbyggerHarDigitaltInnsyn: Boolean
 }
 
-enum Arkivsaksystemkode {
+enum Arkivsaksystem {
     GSAK
     PSAK
 }
 
-enum Journalposttypekode {
+enum JournalpostType {
 	I
 	U
 	N
 }
 
-enum Journalstatuskode {
+enum JournalStatus {
     MIDLERTIDIG
     ENDELIG
     FERDIGSTILT
@@ -63,7 +63,7 @@ enum Journalstatuskode {
     UKJENT_BRUKER
 }
 
-enum Temakode {
+enum Tema {
 	BID,
 	PEN,
 	OVR,
@@ -125,7 +125,7 @@ enum Temakode {
 	FAR,
 }
 
-enum VariantFormatkode {
+enum VariantFormat {
     ARKIV
     SKJERMET
     SLETTET

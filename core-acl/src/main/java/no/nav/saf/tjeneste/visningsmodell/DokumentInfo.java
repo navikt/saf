@@ -10,7 +10,7 @@ import no.nav.saf.tjeneste.visningsmodell.kode.VariantFormatkode;
 @Value
 @Builder
 public class DokumentInfo {
-    private final String dokumentID;
+    private final String dokumentId;
     private final String tittel;
     private final VariantFormatkode variantFormat;
     private final boolean saksbehandlerHarTilgang;

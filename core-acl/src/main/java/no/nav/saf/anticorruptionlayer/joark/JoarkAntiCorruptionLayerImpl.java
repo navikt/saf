@@ -38,7 +38,7 @@ public class JoarkAntiCorruptionLayerImpl implements JoarkAntiCorruptionLayer {
 		HentJournalposterResponse hentJournalposterResponse = hentJournalsakinfo.hentJournalposter(HentJournalposterRequest.builder().gsakSakIdList(Collections.singletonList(arkivsaksnummer)).build());
 		return hentJournalposterResponse
 				.getGsakJournalpostList().stream().map(journalpostTo -> Journalpost.builder()
-						.journalpostID(journalpostTo.getJournalpostId().toString())
+						.journalpostId(journalpostTo.getJournalpostId().toString())
 						.beskrivelse(journalpostTo.getInnhold())
 						.journalposttype(JournalpostType.fromJoark(journalpostTo.getJournalposttype()))
 						.journalstatus(journalpostTo.getJournalstatus().toSafJournalStatus())
@@ -57,7 +57,7 @@ public class JoarkAntiCorruptionLayerImpl implements JoarkAntiCorruptionLayer {
 		Map<String, Sak> sakMap = saker.stream().collect(Collectors.toMap(Sak::getArkivsaksnummer, sak -> sak));
 		return hentJournalposterResponse
 				.getGsakJournalpostList().stream().map(journalpostTo -> Journalpost.builder()
-						.journalpostID(journalpostTo.getJournalpostId().toString())
+						.journalpostId(journalpostTo.getJournalpostId().toString())
 						.beskrivelse(journalpostTo.getInnhold())
 						.journalposttype(JournalpostType.fromJoark(journalpostTo.getJournalposttype()))
 						.journalstatus(journalpostTo.getJournalstatus().toSafJournalStatus())
@@ -70,7 +70,7 @@ public class JoarkAntiCorruptionLayerImpl implements JoarkAntiCorruptionLayer {
 								.map(jr -> {
 									final DokumentInfoTo dokumentInfoTo = jr.getDokumentInfo();
 									return DokumentInfo.builder()
-											.dokumentID(dokumentInfoTo.getDokumentInfoId().toString())
+											.dokumentId(dokumentInfoTo.getDokumentInfoId().toString())
 											.tittel(dokumentInfoTo.getTittel())
 											.variantFormat(VariantFormatkode.ARKIV)
 											.saksbehandlerHarTilgang(false)
