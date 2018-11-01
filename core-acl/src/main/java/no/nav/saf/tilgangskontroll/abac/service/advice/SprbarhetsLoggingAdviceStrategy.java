@@ -18,7 +18,7 @@ public class SprbarhetsLoggingAdviceStrategy implements AdviceStrategy {
 
 	private final AbacLogger abacLogger;
 
-	public SprbarhetsLoggingAdviceStrategy(@Qualifier("SporbarhetsLogger") AbacLogger abacLogger) {
+	public SprbarhetsLoggingAdviceStrategy(@Qualifier("sporbarhetslogg") AbacLogger abacLogger) {
 		this.abacLogger = abacLogger;
 	}
 

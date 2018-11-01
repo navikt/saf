@@ -8,8 +8,8 @@ import org.springframework.stereotype.Component;
 /**
  * @author Joakim Bjørnstad, Jbit AS
  */
-@Component("SporbarhetsLogger")
-@Slf4j(topic = "sporbarhetsLogger")
+@Component("sporbarhetslogg")
+@Slf4j(topic = "sporbarhetslogg")
 public class SporbarhetsLogger extends AbacLogger {
 
 	public void logAbacDeny(final XacmlRequest xacmlRequest, final XacmlResponse xacmlResponse) {

@@ -2,7 +2,7 @@
 <included>
 	<include resource="org/springframework/boot/logging/logback/defaults.xml"/>
 
-	<appender name="stdout_json" class="ch.qos.logback.core.ConsoleAppender">
+	<appender name="applikasjonslogg" class="ch.qos.logback.core.ConsoleAppender">
 		<encoder class="net.logstash.logback.encoder.LogstashEncoder">
 			<throwableConverter class="net.logstash.logback.stacktrace.ShortenedThrowableConverter">
 				<maxDepthPerThrowable>30</maxDepthPerThrowable>
@@ -16,7 +16,7 @@
 		</encoder>
 	</appender>
 
-	<appender name="sporbarhetsLogger" class="com.papertrailapp.logback.Syslog4jAppender">
+	<appender name="sporbarhetslogg" class="com.papertrailapp.logback.Syslog4jAppender">
 		<layout class="ch.qos.logback.classic.PatternLayout">
 			<pattern>[%d, %-5p, %C:%L] - [%X{user},%X{transaction},%X{applicationKey}] - %m%n</pattern>
 		</layout>
@@ -29,15 +29,15 @@
 		</syslogConfig>
 	</appender>
 
-	<logger level="INFO" name="sporbarhetsLogger" additivity="false">
-		<appender-ref ref="sporbarhetsLogger"/>
+	<logger level="INFO" name="sporbarhetslogg" additivity="false">
+		<appender-ref ref="sporbarhetslogg"/>
 	</logger>
 
 	<root level="WARN">
-		<appender-ref ref="stdout_json"/>
+		<appender-ref ref="applikasjonslogg"/>
 	</root>
 
 	<logger name="no.nav.saf" level="INFO" additivity="false">
-		<appender-ref ref="stdout_json"/>
+		<appender-ref ref="applikasjonslogg"/>
 	</logger>
 </included>

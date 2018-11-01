@@ -2,7 +2,9 @@ package no.nav.saf.tilgangskontroll.pep;
 
 import static no.nav.abac.xacml.NavAttributter.ENVIRONMENT_FELLES_OIDC_TOKEN_BODY;
 import static no.nav.abac.xacml.NavAttributter.ENVIRONMENT_FELLES_PEP_ID;
+import static no.nav.abac.xacml.NavAttributter.RESOURCE_FELLES_DOMENE;
 import static no.nav.abac.xacml.NavAttributter.RESOURCE_FELLES_PERSON_FNR;
+import static no.nav.saf.domain.DomainConstants.SAF;
 
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
@@ -27,8 +29,6 @@ import javax.inject.Inject;
 @Component("pep1")
 public class Pep1EvaluatorImpl implements PepEvaluator<TilgangBruker> {
 
-	private static final String SAF = "saf";
-
 	private final AbacService abacService;
 
 	@Inject
@@ -42,7 +42,7 @@ public class Pep1EvaluatorImpl implements PepEvaluator<TilgangBruker> {
 		XacmlRequest request = new XacmlRequest();
 		request.environment(ENVIRONMENT_FELLES_OIDC_TOKEN_BODY, safRequestContext.getOidcToken());
 		request.environment(ENVIRONMENT_FELLES_PEP_ID, SAF);
-		request.resource(ENVIRONMENT_FELLES_PEP_ID, SAF);
+		request.resource(RESOURCE_FELLES_DOMENE, SAF);
 		request.resource(RESOURCE_FELLES_PERSON_FNR, ressurs.getFoedselsnummer());
 
 		XacmlResponse response = abacService.evaluate(request);

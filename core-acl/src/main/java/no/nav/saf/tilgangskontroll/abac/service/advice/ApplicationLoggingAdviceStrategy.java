@@ -20,7 +20,7 @@ public class ApplicationLoggingAdviceStrategy implements AdviceStrategy {
 
 	private final AbacLogger abacLogger;
 
-	public ApplicationLoggingAdviceStrategy(@Qualifier("ApplicationLogger") AbacLogger abacLogger) {
+	public ApplicationLoggingAdviceStrategy(@Qualifier("applikasjonslogg") AbacLogger abacLogger) {
 		this.abacLogger = abacLogger;
 	}
 

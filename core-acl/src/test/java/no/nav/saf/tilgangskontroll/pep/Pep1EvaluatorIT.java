@@ -12,9 +12,9 @@ import no.nav.saf.domain.tilgangsmodell.TilgangIdent;
 import no.nav.saf.tilgangskontroll.NavBrukertype;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Qualifier;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
@@ -23,10 +23,10 @@ import java.util.Collections;
  * @author Sigurd Midttun, Visma Consulting.
  */
 
-public class Pep1EvaluatorImplIT extends AbstractPepEvaluatorIT {
+public class Pep1EvaluatorIT extends AbstractPepEvaluatorIT {
 
 	@Inject
-	@Qualifier("pep1")
+	@Named("pep1")
 	private PepEvaluator<TilgangBruker> pep1;
 
 	@Test

@@ -3,7 +3,7 @@
     "Resource": {
       "Attribute": [
         {
-          "AttributeId": "no.nav.abac.attributter.environment.felles.pep_id",
+          "AttributeId": "no.nav.abac.attributter.resource.felles.domene",
           "Value": "saf"
         },
         {
