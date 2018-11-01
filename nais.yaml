@@ -31,3 +31,7 @@ fasitResources:
       password: SERVICEUSER_PASSWORD
   - alias: "abac.pdp.endpoint"
     resourceType: restservice
+  - alias: securityTokenService
+    resourceType: baseurl
+  - alias: Aktoer_v2
+    resourceType: webserviceendpoint

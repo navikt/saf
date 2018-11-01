@@ -7,13 +7,17 @@ import no.nav.saf.tjeneste.visningsmodell.kode.JournalpostType;
 import no.nav.saf.tjeneste.visningsmodell.kode.Mottakskanal;
 import no.nav.saf.tjeneste.visningsmodell.kode.Temakode;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @author Joakim Bjørnstad, Jbit AS
  */
 @Value
 @Builder
 public class Journalpost {
-	private final String journalpostID;
+	private final String journalpostId;
 	private final String beskrivelse;
 	private final JournalpostType journalposttype;
 	private final JournalStatus journalstatus;
@@ -21,5 +25,7 @@ public class Journalpost {
 	private final String temanavn;
 	private final Sak sak;
 	private final Mottakskanal mottakskanal;
-	private final String opprettet;
+	private final LocalDateTime opprettet;
+	@Builder.Default
+	private final List<DokumentInfo> dokumenter = new ArrayList<>();
 }
