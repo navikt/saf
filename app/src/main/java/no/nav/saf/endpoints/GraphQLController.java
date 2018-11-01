@@ -33,7 +33,7 @@ public class GraphQLController {
 
 	public GraphQLController(DokumentoversiktWiring dokumentoversiktWiring) {
 		SchemaParser schemaParser = new SchemaParser();
-		InputStreamReader schema = new InputStreamReader(getClass().getClassLoader().getSystemResourceAsStream("schemas/saf.graphql"));
+		InputStreamReader schema = new InputStreamReader(getClass().getClassLoader().getResourceAsStream("schemas/saf.graphql"));
 
 		TypeDefinitionRegistry typeRegistry = schemaParser.parse(schema);
 		SchemaGenerator schemaGenerator = new SchemaGenerator();
