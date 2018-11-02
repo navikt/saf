@@ -5,6 +5,7 @@ import no.nav.saf.anticorruptionlayer.gsak.domain.GsakSakerTo;
 import no.nav.saf.cache.LokalCacheConfig;
 import no.nav.saf.exceptions.SafFunctionalException;
 import no.nav.saf.exceptions.SafTechnicalException;
+import no.nav.saf.integration.fasit.ServiceuserAlias;
 import no.nav.saf.tjeneste.visningsmodell.kode.Temakode;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -32,7 +33,8 @@ public class GsakConsumer {
 	private final String gsakApiUrl;
 
 	public GsakConsumer(RestTemplateBuilder restTemplateBuilder,
-						@Value("${sak.saker.url}") String gsakApiUrl) {
+						@Value("${sak.saker.url}") String gsakApiUrl,
+						ServiceuserAlias serviceuserAlias) {
 		this.gsakApiUrl = gsakApiUrl;
 		this.restTemplate = restTemplateBuilder
 				.setReadTimeout(TIMEOUT)
@@ -47,7 +49,6 @@ public class GsakConsumer {
 		return hentSaker(uri.toUriString());
 	}
 
-<<<<<<< HEAD
 	@Cacheable(cacheNames = LokalCacheConfig.SAKER_BY_AKTOER_ID_CACHE)
 	public List<GsakSakerTo> hentSakerByAktoerId(final String aktoerId, final Temakode temakode) {
 		UriComponentsBuilder uri = UriComponentsBuilder.fromHttpUrl(gsakApiUrl)
