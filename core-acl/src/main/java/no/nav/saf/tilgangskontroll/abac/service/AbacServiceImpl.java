@@ -36,8 +36,8 @@ public class AbacServiceImpl implements AbacService {
 		XacmlResponse response = abacConsumer.evaluate(request);
 		response = assignResultBasedOnBias(request, response);
 
-		handleObligations(response);
-		handleAdvice(response);
+		handleObligations(request, response);
+		handleAdvice(request, response);
 
 		return response;
 	}
@@ -51,21 +51,21 @@ public class AbacServiceImpl implements AbacService {
 		return response;
 	}
 
-	private void handleObligations(XacmlResponse response) {
+	private void handleObligations(XacmlRequest request, XacmlResponse response) {
 		for (Obligation obligation : response.getObligations()) {
 			ObligationStrategy strategy = findSupportedStrategy(obligation.getId(), obligationStrategies);
 			if (strategy == null) {
 				throw new UnhandledObligationException(obligation.getId());
 			}
-			strategy.perform(obligation);
+			strategy.perform(obligation, request, response);
 		}
 	}
 
-	private void handleAdvice(XacmlResponse response) {
+	private void handleAdvice(XacmlRequest request, XacmlResponse response) {
 		for (Advice advice : response.getAdvices()) {
 			AdviceStrategy strategy = findSupportedStrategy(advice.getId(), adviceStrategies);
 			if (strategy != null) {
-				strategy.perform(advice);
+				strategy.perform(advice, request, response);
 			}
 		}
 	}

@@ -1,29 +1,30 @@
-package no.nav.saf;
+package no.nav.saf.tilgangskontroll.testconfig;
 
-import io.micrometer.core.instrument.MeterRegistry;
 import no.nav.saf.integration.fasit.ServiceuserAlias;
-import no.nav.saf.metrics.DokTimedAspect;
+import org.apache.cxf.Bus;
+import org.apache.cxf.bus.spring.SpringBus;
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.HttpClients;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.EnableAspectJAutoProxy;
-import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
-import org.springframework.retry.annotation.EnableRetry;
 
-@EnableAspectJAutoProxy
-@ComponentScan
+/**
+ * @author Sigurd Midttun, Visma Consulting.
+ */
 @Configuration
-@EnableAutoConfiguration
-@Import(CoreAclConfig.class)
 @EnableConfigurationProperties(ServiceuserAlias.class)
-@EnableRetry
-public class ApplicationConfig {
+@Profile("itest")
+public class TestConfig {
+
+	@Bean
+	RestTemplateBuilder restTemplateBuilder() {
+		return new RestTemplateBuilder();
+	}
 
 	@Bean
 	ClientHttpRequestFactory requestFactory(HttpClient httpClient) {
@@ -36,7 +37,8 @@ public class ApplicationConfig {
 	}
 
 	@Bean
-	DokTimedAspect timedAspect(MeterRegistry meterRegistry) {
-		return new DokTimedAspect(meterRegistry);
+	public Bus bus() {
+		return new SpringBus();
 	}
+
 }

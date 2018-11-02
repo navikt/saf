@@ -1,0 +1,28 @@
+{
+  "Request": {
+    "Resource": {
+      "Attribute": [
+        {
+          "AttributeId": "no.nav.abac.attributter.resource.felles.domene",
+          "Value": "saf"
+        },
+        {
+          "AttributeId": "no.nav.abac.attributter.resource.felles.person.fnr",
+          "Value": "***gammelt_fnr***"
+        }
+      ]
+    },
+    "Environment": {
+      "Attribute": [
+        {
+          "AttributeId": "no.nav.abac.attributter.environment.felles.oidc_token_body",
+          "Value": "%s"
+        },
+        {
+          "AttributeId": "no.nav.abac.attributter.environment.felles.pep_id",
+          "Value": "saf"
+        }
+      ]
+    }
+  }
+}

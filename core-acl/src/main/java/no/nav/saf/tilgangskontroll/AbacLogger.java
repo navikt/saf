@@ -2,48 +2,34 @@ package no.nav.saf.tilgangskontroll;
 
 import static org.apache.commons.lang3.StringUtils.substringAfterLast;
 
-import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlRequest;
 import no.nav.saf.tilgangskontroll.abac.dto.response.XacmlResponse;
-import org.springframework.stereotype.Component;
 
-import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
  * @author Joakim Bjørnstad, Jbit AS
+ * <p>
+ * NB! Be sure to know what you are doing before changing any of these methods, as audit logging is expected to conform to a specific format!
  */
-@Component
-@Slf4j(topic = "abacLogger")
-public class AbacLogger {
-	// TODO MMA-1120 - Implementer test også!
-	private static final String SEPARATOR = ".";
+public abstract class AbacLogger {
 
-	public void logAbacDeny(final XacmlRequest xacmlRequest, final XacmlResponse xacmlResponse, final Map<String, String> resources) {
-		log.warn("{}{}; {}", mapRequest(xacmlRequest), mapCustomResources(resources), mapResponse(xacmlResponse));
-	}
+	static final String SEPARATOR = ".";
 
-	public void logAbacPermit(final XacmlRequest xacmlRequest, final XacmlResponse xacmlResponse, final Map<String, String> resources) {
-		log.info("{}{}; {}", mapRequest(xacmlRequest), mapCustomResources(resources), mapResponse(xacmlResponse));
-	}
+	public abstract void logAbacDeny(final XacmlRequest xacmlRequest, final XacmlResponse xacmlResponse);
 
-	private String mapCustomResources(final Map<String, String> resources) {
-		if (resources.isEmpty()) {
-			return "";
-		} else {
-			return ", " + resources.entrySet().stream().map(entry -> entry.getKey() + "=" + entry.getValue()).collect(Collectors.joining(", "));
-		}
-	}
+	public abstract void logAbacPermit(final XacmlRequest xacmlRequest, final XacmlResponse xacmlResponse);
 
-	private String mapRequest(final XacmlRequest xacmlRequest) {
+	String mapRequest(final XacmlRequest xacmlRequest) {
 		return "Authorization Request: " +
 				xacmlRequest.getResources()
 						.stream()
-						.map(xacmlAttribute -> substringAfterLast(xacmlAttribute.getAttributeId(), SEPARATOR) + "=" + xacmlAttribute.getValue())
+						.map(xacmlAttribute -> substringAfterLast(xacmlAttribute.getAttributeId(), SEPARATOR) + "=" + xacmlAttribute
+								.getValue())
 						.collect(Collectors.joining(", "));
 	}
 
-	private String mapResponse(final XacmlResponse xacmlResponse) {
+	String mapResponse(final XacmlResponse xacmlResponse) {
 		return "Authorization Response: " +
 				"decision=" + xacmlResponse.getDecision().getValue() +
 				(
@@ -55,6 +41,4 @@ public class AbacLogger {
 										.collect(Collectors.joining(", ")))
 				);
 	}
-
-
 }
