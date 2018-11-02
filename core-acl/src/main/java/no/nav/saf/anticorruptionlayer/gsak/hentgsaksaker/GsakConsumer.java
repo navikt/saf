@@ -27,7 +27,7 @@ import java.util.UUID;
 @Component
 public class GsakConsumer {
 
-	private static final int TIMEOUT = 30_000;
+	private static final int TIMEOUT = 10_000;
 	private final RestTemplate restTemplate;
 	private final String gsakApiUrl;
 
@@ -37,7 +37,7 @@ public class GsakConsumer {
 		this.restTemplate = restTemplateBuilder
 				.setReadTimeout(TIMEOUT)
 				.setConnectTimeout(TIMEOUT)
-				.basicAuthorization("srvGsak", "WjSoK2D62cx6hf").build();
+				.basicAuthorization(serviceuserAlias.getUsername(), serviceuserAlias.getPassword()).build();
 	}
 
 	@Cacheable(cacheNames = LokalCacheConfig.SAKER_BY_AKTOER_ID_CACHE)
@@ -47,6 +47,7 @@ public class GsakConsumer {
 		return hentSaker(uri.toUriString());
 	}
 
+<<<<<<< HEAD
 	@Cacheable(cacheNames = LokalCacheConfig.SAKER_BY_AKTOER_ID_CACHE)
 	public List<GsakSakerTo> hentSakerByAktoerId(final String aktoerId, final Temakode temakode) {
 		UriComponentsBuilder uri = UriComponentsBuilder.fromHttpUrl(gsakApiUrl)

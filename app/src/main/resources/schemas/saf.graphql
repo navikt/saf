@@ -1,19 +1,18 @@
 
+scalar Date
+scalar DateTime
+
 schema {
     query: Query
 }
 
 type Query {
-    dokumentOversiktFor(aktoerId: String): Bruker
-}
-
-type Bruker {
-    aktoerId: String!
-    journalposter: [Journalpost]
+    # Returnerer en liste over alle dokumenter tilknyttet en bruker.
+    dokumentoversikt(aktoerId: String, fraDato: Date = null, journalposttyper : [JournalpostType] = [], journalstatuser : [JournalStatus] = [], visFeilregistrerte: Boolean = false): [Journalpost]!
 }
 
 type Journalpost {
-    journalpostID: String!
+    journalpostId: String!
     beskrivelse: String
     journalposttype: JournalpostType
     journalstatus: JournalStatus
@@ -21,24 +20,29 @@ type Journalpost {
     temanavn: String
     sak: Sak
     mottakskanal: String
-    opprettet: String
-    dokumenter: [Dokument]
+    opprettet: DateTime
+    dokumenter: [DokumentInfo]
 }
 
 type Sak {
     arkivsaksnummer: String
-    arkivsaksystem: String
+    arkivsaksystem: Arkivsaksystem
     fagsaknummer: String
     fagsystem: String
-    datoOpprettet: String
+    datoOpprettet: DateTime
 }
 
-type Dokument {
-    dokumentID: String!
+type DokumentInfo {
+    dokumentId: String!
     tittel: String
     variantFormat: VariantFormat
     saksbehandlerHarTilgang: Boolean
     innbyggerHarDigitaltInnsyn: Boolean
+}
+
+enum Arkivsaksystem {
+    GSAK
+    PSAK
 }
 
 enum JournalpostType {

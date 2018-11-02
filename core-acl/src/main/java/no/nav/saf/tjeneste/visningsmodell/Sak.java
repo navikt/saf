@@ -5,7 +5,7 @@ import lombok.Value;
 import no.nav.saf.tjeneste.visningsmodell.kode.Arkivsakssystem;
 import no.nav.saf.tjeneste.visningsmodell.kode.Temakode;
 
-import java.time.OffsetDateTime;
+import java.time.LocalDateTime;
 
 /**
  * @author Joakim Bjørnstad, Jbit AS
@@ -14,9 +14,9 @@ import java.time.OffsetDateTime;
 @Builder
 public class Sak {
 	private final String arkivsaksnummer;
-	private final Arkivsakssystem arkivsakssystem;
+	private final Arkivsakssystem arkivsaksystem;
 	private final String fagsaksnummer;
 	private final String fagsystem;
-	private final OffsetDateTime datoOpprettet;
+	private final LocalDateTime datoOpprettet;
 	private final Temakode temakode;
 }

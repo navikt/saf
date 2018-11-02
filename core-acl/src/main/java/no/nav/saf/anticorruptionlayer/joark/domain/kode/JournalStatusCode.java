@@ -47,7 +47,7 @@ public enum JournalStatusCode {
 	 * Ukjent bruker 
 	 */
 	UB(JournalStatus.UKJENT_BRUKER),
-	/** 
+	/**
 	 * Opplasting dokument 
 	 */
 	OD(JournalStatus.MIDLERTIDIG);

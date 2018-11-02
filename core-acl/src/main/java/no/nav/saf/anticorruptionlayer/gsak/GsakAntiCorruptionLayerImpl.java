@@ -53,11 +53,11 @@ public class GsakAntiCorruptionLayerImpl implements GsakAntiCorruptionLayer {
 		return gsakSakerToFiltered.stream()
 				.map(gsak -> Sak.builder()
 						.arkivsaksnummer(gsak.getId().toString())
-						.arkivsakssystem(Arkivsakssystem.GSAK)
+						.arkivsaksystem(Arkivsakssystem.GSAK)
 						.fagsaksnummer(gsak.getFagsakNr())
 						.fagsystem(gsak.getApplikasjon())
 						.temakode(Temakode.valueOf(gsak.getTema()))
-						.datoOpprettet(gsak.getOpprettetTidspunkt())
+						.datoOpprettet(gsak.getOpprettetTidspunkt().toLocalDateTime())
 						.build())
 				.collect(Collectors.toList());
 	}
@@ -80,11 +80,11 @@ public class GsakAntiCorruptionLayerImpl implements GsakAntiCorruptionLayer {
 		return gsakSakerTo.stream()
 				.map(gsak -> Sak.builder()
 						.arkivsaksnummer(gsak.getId().toString())
-						.arkivsakssystem(Arkivsakssystem.GSAK)
+						.arkivsaksystem(Arkivsakssystem.GSAK)
 						.fagsaksnummer(gsak.getFagsakNr())
 						.fagsystem(gsak.getApplikasjon())
 						.temakode(Temakode.valueOf(gsak.getTema()))
-						.datoOpprettet(gsak.getOpprettetTidspunkt())
+						.datoOpprettet(gsak.getOpprettetTidspunkt().toLocalDateTime())
 						.build())
 				.collect(Collectors.toList());
 	}

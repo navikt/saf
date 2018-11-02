@@ -1,7 +1,7 @@
 image: "docker.adeo.no:5000/dok/saf"
 replicas:
-  min: 1
-  max: 2
+  min: 2
+  max: 4
   cpuThresholdPercentage: 50
 port: 8080
 healthcheck:
@@ -31,3 +31,7 @@ fasitResources:
       password: SERVICEUSER_PASSWORD
   - alias: "abac.pdp.endpoint"
     resourceType: restservice
+  - alias: securityTokenService
+    resourceType: baseurl
+  - alias: Aktoer_v2
+    resourceType: webserviceendpoint
