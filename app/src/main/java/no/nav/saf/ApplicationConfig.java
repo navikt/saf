@@ -13,12 +13,14 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.retry.annotation.EnableRetry;
 
 @EnableAspectJAutoProxy
 @ComponentScan
 @Configuration
 @EnableAutoConfiguration
 @EnableConfigurationProperties(ServiceuserAlias.class)
+@EnableRetry
 public class ApplicationConfig {
 
 	@Bean
