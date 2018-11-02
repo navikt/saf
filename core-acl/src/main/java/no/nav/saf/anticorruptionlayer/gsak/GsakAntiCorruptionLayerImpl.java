@@ -35,12 +35,22 @@ public class GsakAntiCorruptionLayerImpl implements GsakAntiCorruptionLayer {
 	}
 
 	@Override
-	public List<Sak> findSakerByAktoerIdAndTemakode(final String aktoerId, final Temakode temakode) {
+	public List<Sak> findSakerByAktoerId(final String aktoerId, final List<Temakode> temakodeFilter) {
 
-		List<GsakSakerTo> gsakSakerTo = gsakConsumer.hentSakerByAktoerId(aktoerId, temakode);
+		List<GsakSakerTo> gsakSakerToFiltered;
 
-		return gsakSakerTo.stream()
-				.filter(gsak -> Temakode.valueOf(gsak.getTema()) == temakode)
+		if (temakodeFilter.size() == 1) {
+			gsakSakerToFiltered = gsakConsumer.hentSakerByAktoerId(aktoerId, temakodeFilter.get(0));
+
+		} else {
+			List<GsakSakerTo> gsakSakerTo = gsakConsumer.hentSakerByAktoerId(aktoerId);
+			gsakSakerToFiltered =
+					gsakSakerTo.stream()
+							.filter(gsak -> temakodeFilter.contains(TemakodeValueOf(gsak.getTema())))
+							.collect(Collectors.toList());
+
+		}
+		return gsakSakerToFiltered.stream()
 				.map(gsak -> Sak.builder()
 						.arkivsaksnummer(gsak.getId().toString())
 						.arkivsakssystem(Arkivsakssystem.GSAK)
@@ -52,8 +62,17 @@ public class GsakAntiCorruptionLayerImpl implements GsakAntiCorruptionLayer {
 				.collect(Collectors.toList());
 	}
 
+	private Temakode TemakodeValueOf(String tema) {
+		try {
+			return Temakode.valueOf(tema);
+		} catch (Exception e) {
+			return null;
+		}
+	}
+
+
 	@Override
-	public List<Sak> findSakerByAktoerId(final String aktoerId, final List<Temakode> temakodeFilter) {
+	public List<Sak> findSakerByAktoerId(final String aktoerId) {
 
 		List<GsakSakerTo> gsakSakerTo = gsakConsumer.hentSakerByAktoerId(aktoerId);
 
@@ -69,4 +88,5 @@ public class GsakAntiCorruptionLayerImpl implements GsakAntiCorruptionLayer {
 						.build())
 				.collect(Collectors.toList());
 	}
+
 }

@@ -22,6 +22,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.List;
+import java.util.UUID;
 
 @Slf4j
 @Component
@@ -42,6 +43,13 @@ public class GsakConsumer {
 	}
 
 	@Cacheable(cacheNames = LokalCacheConfig.SAKER_BY_AKTOER_ID_CACHE)
+	public List<GsakSakerTo> hentSakerByAktoerId(final String aktoerId) {
+		UriComponentsBuilder uri = UriComponentsBuilder.fromHttpUrl(gsakApiUrl)
+				.queryParam("aktoerId", aktoerId);
+		return hentSaker(uri.toUriString());
+	}
+
+	@Cacheable(cacheNames = LokalCacheConfig.SAKER_BY_AKTOER_ID_CACHE)
 	public List<GsakSakerTo> hentSakerByAktoerId(final String aktoerId, final Temakode temakode) {
 		UriComponentsBuilder uri = UriComponentsBuilder.fromHttpUrl(gsakApiUrl)
 				.queryParam("aktoerId", aktoerId)
@@ -49,16 +57,10 @@ public class GsakConsumer {
 		return hentSaker(uri.toUriString());
 	}
 
-	@Cacheable(cacheNames = LokalCacheConfig.SAKER_BY_AKTOER_ID_CACHE)
-	public List<GsakSakerTo> hentSakerByAktoerId(final String aktoerId) {
-		UriComponentsBuilder uri = UriComponentsBuilder.fromHttpUrl(gsakApiUrl)
-				.queryParam("aktoerId", aktoerId);
-		return hentSaker(uri.toUriString());
-	}
-
 	private List<GsakSakerTo> hentSaker(final String uri) {
 		try {
 			HttpHeaders headers = new HttpHeaders();
+			headers.set("X-Correlation-ID", UUID.randomUUID().toString());
 			ResponseEntity<List<GsakSakerTo>> response = restTemplate.exchange(uri, HttpMethod.GET, new HttpEntity<>(headers), new ParameterizedTypeReference<List<GsakSakerTo>>() {
 			});
 			return response.getBody();
