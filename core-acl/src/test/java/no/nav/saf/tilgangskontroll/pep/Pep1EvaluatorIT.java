@@ -54,6 +54,7 @@ public class Pep1EvaluatorIT extends AbstractPepEvaluatorIT {
 
 		boolean hasAccess = pep1.hasAccess(TilgangBruker.builder()
 				.aktoerId(AKTOER_ID)
+				.foedselsnr(IDENTIFIKATOR)
 				.historiskeIdenter(Collections.singletonList(TilgangIdent.builder().identifikator(IDENTIFIKATOR).build()))
 				.build(), SafRequestContext.builder()
 				.aktoerId(AKTOER_ID)
