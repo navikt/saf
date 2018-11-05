@@ -43,7 +43,7 @@ public class Pep1EvaluatorImpl implements PepEvaluator<TilgangBruker> {
 		request.environment(ENVIRONMENT_FELLES_OIDC_TOKEN_BODY, safRequestContext.getOidcToken());
 		request.environment(ENVIRONMENT_FELLES_PEP_ID, SAF);
 		request.resource(RESOURCE_FELLES_DOMENE, SAF);
-		request.resource(RESOURCE_FELLES_PERSON_FNR, ressurs.getFoedselsnummer());
+		request.resource(RESOURCE_FELLES_PERSON_FNR, ressurs.getFoedselsnr());
 
 		XacmlResponse response = abacService.evaluate(request);
 		return Decision.PERMIT.equals(response.getDecision());

@@ -16,9 +16,4 @@ public class TilgangBruker {
 	private final String aktoerId;
 	@Builder.Default
 	private final List<TilgangIdent> historiskeIdenter = new ArrayList<>();
-
-	public String getFoedselsnummer() {
-		return (this.historiskeIdenter.isEmpty() || this.historiskeIdenter.get(0) == null) ? null : this.historiskeIdenter.get(0)
-				.getIdentifikator();
-	}
 }
