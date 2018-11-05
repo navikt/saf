@@ -8,6 +8,11 @@ import org.springframework.http.HttpStatus;
 public class SafFunctionalException extends RuntimeException {
 	private final HttpStatus httpStatus;
 
+	public SafFunctionalException(String message) {
+		super(message);
+		this.httpStatus = null;
+	}
+
 	public SafFunctionalException(HttpStatus httpStatus) {
 		super();
 		this.httpStatus = httpStatus;
