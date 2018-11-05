@@ -97,6 +97,7 @@
         return fetch('${graphqlEndpoint}', {
             method: 'post',
             headers: {
+                'Authorization': 'Bearer oidcTokenShouldBeHere',
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },
