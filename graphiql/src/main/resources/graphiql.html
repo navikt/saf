@@ -97,6 +97,7 @@
         return fetch('${graphqlEndpoint}', {
             method: 'post',
             headers: {
+                'Authorization': 'Bearer ' + document.getElementById('jwt-token').value,
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },
