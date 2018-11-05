@@ -12,6 +12,6 @@ import java.util.Set;
  */
 public interface GsakAntiCorruptionLayer {
 	Set<Tema> findTemaerByAktoerIdAndFilterTemakode(String aktoerId, List<Temakode> temakoder);
-	List<Sak> findSakerByAktoerIdAndTemakode(String aktoerId, Temakode temakode);
 	List<Sak> findSakerByAktoerId(final String aktoerId, final List<Temakode> temakodeFilter);
+	List<Sak> findSakerByAktoerId(final String aktoerId);
 }

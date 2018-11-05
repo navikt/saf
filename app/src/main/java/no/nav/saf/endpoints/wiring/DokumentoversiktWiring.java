@@ -1,7 +1,9 @@
 package no.nav.saf.endpoints.wiring;
 
+import graphql.schema.idl.NaturalEnumValuesProvider;
 import graphql.schema.idl.RuntimeWiring;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
+import no.nav.saf.tjeneste.dokumentoversikt.DokumentoversiktArguments;
 import no.nav.saf.tjeneste.dokumentoversikt.DokumentoversiktDomainCoordinator;
 import no.nav.saf.tjeneste.visningsmodell.Journalpost;
 import no.nav.saf.tjeneste.visningsmodell.kode.JournalStatus;
@@ -28,6 +30,8 @@ public class DokumentoversiktWiring {
 		return RuntimeWiring.newRuntimeWiring()
 				.scalar(DateScalar.DATE)
 				.scalar(DateTimeScalar.DATE_TIME)
+				.type("JournalpostType", typeWiring -> typeWiring.enumValues(new NaturalEnumValuesProvider<>(JournalpostType.class)))
+				.type("JournalStatus", typeWiring -> typeWiring.enumValues(new NaturalEnumValuesProvider<>(JournalStatus.class)))
 				.type("Query", typeWiring -> typeWiring.dataFetcher("dokumentoversikt", environment -> {
 					String aktoerId = environment.getArgument("aktoerId");
 					LocalDate fraDato = environment.getArgument("fraDato");
@@ -36,7 +40,8 @@ public class DokumentoversiktWiring {
 					boolean visFeilregistrerte = environment.getArgument("visFeilregistrerte");
 					SafRequestContext safRequestContext = environment.getContext();
 					safRequestContext.setAktoerId(aktoerId);
-					return dokumentoversiktDomainCoordinator.findJournalposter(aktoerId, safRequestContext);
+					return dokumentoversiktDomainCoordinator.findJournalposter(new DokumentoversiktArguments(aktoerId, fraDato, journalposttyper, journalstatuser, visFeilregistrerte),
+							safRequestContext);
 				}))
 				.type("Journalpost", typeWiring -> typeWiring.dataFetcher("dokumenter", environment -> {
 					Journalpost journalpost = environment.getSource();

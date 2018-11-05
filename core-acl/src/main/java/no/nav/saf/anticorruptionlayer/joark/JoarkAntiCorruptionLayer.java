@@ -9,7 +9,5 @@ import java.util.List;
  * @author Joakim Bjørnstad, Jbit AS
  */
 public interface JoarkAntiCorruptionLayer {
-	List<Journalpost> hentJournalpostListeByArkivsaksnummer(String arkivsaksnummer);
-
 	List<Journalpost> hentJournalpostListeByArkivsaker(List<Sak> arkivsaksnummer);
 }
