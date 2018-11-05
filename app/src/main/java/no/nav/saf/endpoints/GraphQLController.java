@@ -11,11 +11,10 @@ import graphql.schema.idl.SchemaParser;
 import graphql.schema.idl.TypeDefinitionRegistry;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.endpoints.wiring.DokumentoversiktWiring;
-import no.nav.saf.exceptions.OidcTokenNotFoundException;
+import no.nav.saf.exceptions.OidcAuthentificationException;
 import no.nav.saf.tilgangskontroll.NavBrukertype;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -37,7 +36,9 @@ import java.util.Optional;
 @Slf4j
 public class GraphQLController {
 
+	private static final String TOKEN_TYPE = "Bearer";
 	private final GraphQLSchema graphQLSchema;
+
 
 	public GraphQLController(DokumentoversiktWiring dokumentoversiktWiring) {
 		SchemaParser schemaParser = new SchemaParser();
@@ -53,15 +54,6 @@ public class GraphQLController {
 	public Map<String, Object> graphQLRequest(@RequestBody GraphQLRequest request, @RequestHeader HttpHeaders httpHeaders) {
 
 		String oidcToken = getIdToken(httpHeaders);
-		if (oidcToken == null) {
-			throw new OidcTokenNotFoundException("Authorization field did not contain oidc token.", HttpStatus.UNAUTHORIZED);
-		}
-
-		try {
-			JWT.decode(oidcToken).getPayload();
-		} catch (JWTDecodeException e) {
-			throw new OidcTokenNotFoundException(e.getMessage(), HttpStatus.UNAUTHORIZED);
-		}
 
 		ExecutionResult executionResult = GraphQL.newGraphQL(graphQLSchema)
 				.build()
@@ -77,16 +69,30 @@ public class GraphQLController {
 	}
 
 	private String getIdToken(HttpHeaders httpHeaders) {
-		return Optional.ofNullable(getAuthorizationList(httpHeaders)).filter(e -> {
-			return e.get(0).startsWith("Bearer ");
-		}).map(e -> {
-			return e.get(0).replaceFirst("Bearer ", "");
-		}).orElse(null);
+		String oidcToken = Optional.ofNullable(getAuthorizationList(httpHeaders))
+				.filter(e -> e.startsWith(TOKEN_TYPE + " "))
+				.map(e -> e.replaceFirst(TOKEN_TYPE + " ", ""))
+				.orElseThrow(() -> new OidcAuthentificationException("Autorization sitt OIDC token mangler token_type " + TOKEN_TYPE + " foran oidc token."));
+
+		try {
+			return JWT.decode(oidcToken).getPayload();
+		} catch (JWTDecodeException e) {
+			throw new OidcAuthentificationException("Dekoding av oidcToken feilet, " + e.getMessage());
+		}
 	}
 
-	private List<String> getAuthorizationList(HttpHeaders httpHeaders) throws OidcTokenNotFoundException {
-		return Optional.ofNullable(httpHeaders.get("Authorization"))
-				.orElseThrow(() -> new OidcTokenNotFoundException("No Authorization field was found in GraphQLRequest.", HttpStatus.UNAUTHORIZED));
+	private String getAuthorizationList(HttpHeaders httpHeaders) {
+
+		List<String> authorization = Optional.ofNullable(
+				httpHeaders.get(HttpHeaders.AUTHORIZATION))
+				.orElseThrow(() -> new OidcAuthentificationException("GraphQLRequest inneholder ikke et Autorization felt."));
+
+		if (authorization.size() != 1) {
+			throw new OidcAuthentificationException("GraphQLRequest skal ha kun et Autorization felt.");
+		}
+
+		return authorization.get(0);
+
 	}
 
 }
