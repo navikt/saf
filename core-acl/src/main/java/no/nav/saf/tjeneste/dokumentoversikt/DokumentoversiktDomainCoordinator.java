@@ -10,7 +10,7 @@ import java.util.List;
  * @author Joakim Bjørnstad, Jbit AS
  */
 public interface DokumentoversiktDomainCoordinator {
-	List<Journalpost> findJournalposter(String aktoerId, SafRequestContext safRequestContext);
+	List<Journalpost> findJournalposter(DokumentoversiktArguments dokumentoversiktArguments, SafRequestContext safRequestContext);
 
 	List<DokumentInfo> findDokumenter(Journalpost journalpost, SafRequestContext safRequestContext);
 }

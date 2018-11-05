@@ -2,6 +2,9 @@ package no.nav.saf.tjeneste.visningsmodell.kode;
 
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.JournalpostTypeCode;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * @author Ugur Alpay Cenar, Visma Consulting.
  */
@@ -15,5 +18,9 @@ public enum JournalpostType {
 			return null;
 		}
 		return JournalpostType.valueOf(journalpostTypeCode.name());
+	}
+
+	public static List<JournalpostType> asList() {
+		return Arrays.asList(values());
 	}
 }

@@ -1,5 +1,8 @@
 package no.nav.saf.tjeneste.visningsmodell.kode;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * @author Joakim Bjørnstad, Jbit AS
  */
@@ -73,5 +76,9 @@ public enum Temakode {
 
 	public String getTemanavn() {
 		return temanavn;
+	}
+
+	public static List<Temakode> asList() {
+		return Arrays.asList(values());
 	}
 }

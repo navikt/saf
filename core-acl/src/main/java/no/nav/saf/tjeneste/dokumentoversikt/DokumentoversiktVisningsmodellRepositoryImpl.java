@@ -4,10 +4,10 @@ import no.nav.saf.anticorruptionlayer.gsak.GsakAntiCorruptionLayer;
 import no.nav.saf.anticorruptionlayer.joark.JoarkAntiCorruptionLayer;
 import no.nav.saf.tjeneste.visningsmodell.Journalpost;
 import no.nav.saf.tjeneste.visningsmodell.Sak;
+import no.nav.saf.tjeneste.visningsmodell.kode.Temakode;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -27,8 +27,8 @@ public class DokumentoversiktVisningsmodellRepositoryImpl implements Dokumentove
 	}
 
 	@Override
-	public List<Journalpost> findJournalposterByAktoerId(String aktoerId) {
-		List<Sak> sakerByAktoerId = gsakAntiCorruptionLayer.findSakerByAktoerId(aktoerId, new ArrayList<>());
+	public List<Journalpost> findJournalposterByAktoerId(String aktoerId, List<Temakode> temaer) {
+		List<Sak> sakerByAktoerId = gsakAntiCorruptionLayer.findSakerByAktoerId(aktoerId, temaer);
 		List<Journalpost> journalposter = joarkAntiCorruptionLayer.hentJournalpostListeByArkivsaker(sakerByAktoerId);
 		return journalposter;
 	}

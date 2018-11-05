@@ -1,12 +1,18 @@
 package no.nav.saf.tjeneste.dokumentoversikt;
 
+import no.nav.saf.domain.TilgangsmodellRepository;
+import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
+import no.nav.saf.tilgangskontroll.pep.PepEvaluator;
 import no.nav.saf.tjeneste.visningsmodell.DokumentInfo;
 import no.nav.saf.tjeneste.visningsmodell.Journalpost;
+import no.nav.saf.tjeneste.visningsmodell.kode.Temakode;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author Joakim Bjørnstad, Jbit AS
@@ -14,20 +20,38 @@ import java.util.List;
 @Component
 public class DokumentoversiktDomainCoordinatorImpl implements DokumentoversiktDomainCoordinator {
 
-	private final DokumentoversiktVisningsmodellRepository repository;
+	private final TilgangsmodellRepository tilgangsmodellRepository;
+	private final DokumentoversiktVisningsmodellRepository visningsmodellRepository;
+	private final PepEvaluator<TilgangBruker> pep1;
 
 	@Inject
-	public DokumentoversiktDomainCoordinatorImpl(DokumentoversiktVisningsmodellRepository repository) {
-		this.repository = repository;
+	public DokumentoversiktDomainCoordinatorImpl(TilgangsmodellRepository tilgangsmodellRepository,
+												 DokumentoversiktVisningsmodellRepository visningsmodellRepository,
+												 @Named("pep1") PepEvaluator<TilgangBruker> pep1) {
+		this.tilgangsmodellRepository = tilgangsmodellRepository;
+		this.visningsmodellRepository = visningsmodellRepository;
+		this.pep1 = pep1;
 	}
 
 	@Override
-	public List<Journalpost> findJournalposter(String aktoerId, SafRequestContext safRequestContext) {
+	public List<Journalpost> findJournalposter(DokumentoversiktArguments dokumentoversiktArguments, SafRequestContext safRequestContext) {
+		TilgangBruker tilgangBruker = tilgangsmodellRepository.findTilgangBrukerByAktoerId(dokumentoversiktArguments.getAktoerId());
 		// TODO Pep1 på TilgangBruker aktoerId her
+		boolean pep1Access = this.pep1.hasAccess(tilgangBruker, safRequestContext);
+		// TODO fjern det under når saf domain er klart i PDP
+//		if(!pep1Access) {
+//			return new ArrayList<>();
+//		}
 		// TODO Pep2 TilgangSak her
 		// TODO Pep3 hvis tema=BID eller FAR
 		// TODO Pep4 for TilgangJournalpost her
-		return repository.findJournalposterByAktoerId(safRequestContext.getAktoerId());
+		return visningsmodellRepository.findJournalposterByAktoerId(dokumentoversiktArguments.getAktoerId(), Temakode.asList())
+				.stream()
+				// TODO midlertidig. kallet mot joark burde returnere bare det man behøver
+				.filter(j -> j.getOpprettet().toLocalDate().isAfter(dokumentoversiktArguments.getFraDato()))
+				.filter(j -> dokumentoversiktArguments.getJournalposttyper().contains(j.getJournalposttype()))
+				.filter(j -> dokumentoversiktArguments.getJournalstatuser().contains(j.getJournalstatus()))
+				.collect(Collectors.toList());
 	}
 
 	@Override

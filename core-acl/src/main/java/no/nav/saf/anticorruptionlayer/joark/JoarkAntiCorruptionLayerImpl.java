@@ -16,7 +16,6 @@ import org.springframework.stereotype.Component;
 import javax.inject.Inject;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -31,22 +30,6 @@ public class JoarkAntiCorruptionLayerImpl implements JoarkAntiCorruptionLayer {
 	@Inject
 	public JoarkAntiCorruptionLayerImpl(HentJournalsakinfo hentJournalsakinfo) {
 		this.hentJournalsakinfo = hentJournalsakinfo;
-	}
-
-	@Override
-	public List<Journalpost> hentJournalpostListeByArkivsaksnummer(final String arkivsaksnummer) {
-		HentJournalposterResponse hentJournalposterResponse = hentJournalsakinfo.hentJournalposter(HentJournalposterRequest.builder().gsakSakIdList(Collections.singletonList(arkivsaksnummer)).build());
-		return hentJournalposterResponse
-				.getGsakJournalpostList().stream().map(journalpostTo -> Journalpost.builder()
-						.journalpostId(journalpostTo.getJournalpostId().toString())
-						.beskrivelse(journalpostTo.getInnhold())
-						.journalposttype(JournalpostType.fromJoark(journalpostTo.getJournalposttype()))
-						.journalstatus(journalpostTo.getJournalstatus().toSafJournalStatus())
-						.tema(FagomradeCode.toSafJournalStatus(journalpostTo.getFagomrade()))
-						.temanavn(FagomradeCode.toSafJournalStatus(journalpostTo.getFagomrade()).getTemanavn())
-						.mottakskanal(Mottakskanal.fromJoark(journalpostTo.getMottakskanal()))
-						.opprettet(journalpostTo.getDatoOpprettet() == null ? null : LocalDateTime.from(journalpostTo.getDatoOpprettet().toInstant().atZone(ZoneId.systemDefault())))
-						.build()).collect(Collectors.toList());
 	}
 
 	@Override
