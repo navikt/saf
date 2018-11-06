@@ -36,7 +36,6 @@ public class Pep1EvaluatorImpl implements PepEvaluator<TilgangBruker> {
 		this.abacService = abacService;
 	}
 
-	//  TODO: Det må bestemmes om oidcToken på safRequestContext bare skal inneholde payload (midterste del) eller hele tokenet. I siste tilfelle må payloaden hentes ut her
 	@Override
 	public boolean hasAccess(TilgangBruker ressurs, SafRequestContext safRequestContext) {
 		XacmlRequest request = new XacmlRequest();

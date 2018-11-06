@@ -2,6 +2,7 @@ package no.nav.saf.anticorruptionlayer.gsak;
 
 import no.nav.saf.anticorruptionlayer.gsak.domain.GsakSakerTo;
 import no.nav.saf.anticorruptionlayer.gsak.hentgsaksaker.GsakConsumer;
+import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 import no.nav.saf.tjeneste.visningsmodell.Sak;
 import no.nav.saf.tjeneste.visningsmodell.Tema;
 import no.nav.saf.tjeneste.visningsmodell.kode.Arkivsakssystem;
@@ -85,6 +86,20 @@ public class GsakAntiCorruptionLayerImpl implements GsakAntiCorruptionLayer {
 						.fagsystem(gsak.getApplikasjon())
 						.temakode(Temakode.valueOf(gsak.getTema()))
 						.datoOpprettet(gsak.getOpprettetTidspunkt().toLocalDateTime())
+						.build())
+				.collect(Collectors.toList());
+	}
+
+
+	@Override
+	public List<TilgangSak> findTilgangSakListByAktoerId(final String aktoerId) {
+		List<GsakSakerTo> gsakSakerTo = gsakConsumer.hentSakerByAktoerId(aktoerId);
+
+		return gsakSakerTo.stream()
+				.map(gsak -> TilgangSak.builder()
+						.arkivsaksnummer(gsak.getId().toString())
+						.arkivsaksystem(Arkivsakssystem.GSAK.name())
+						.tema(gsak.getTema())
 						.build())
 				.collect(Collectors.toList());
 	}
