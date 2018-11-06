@@ -1,6 +1,6 @@
-package no.nav.saf.anticorruptionlayer.pensjonSak;
+package no.nav.saf.anticorruptionlayer.pensjonsak;
 
-import no.nav.saf.anticorruptionlayer.pensjonSak.domain.TilgangSak;
+import no.nav.saf.anticorruptionlayer.pensjonsak.domain.TilgangSak;
 
 import java.util.List;
 

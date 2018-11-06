@@ -1,4 +1,4 @@
-package no.nav.saf.anticorruptionlayer.pensjonSak.hentSakSammendragListe;
+package no.nav.saf.anticorruptionlayer.pensjonsak.hentSakSammendragListe;
 
 /**
  * @author Ugur Alpay Cenar, Visma Consulting.

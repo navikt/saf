@@ -14,7 +14,7 @@ import javax.xml.namespace.QName;
 @Configuration
 public class PensjonConfig extends AbstractCxfEndpointConfig {
 
-	private static final String NAMESPACE = "http://nav.no/tjeneste/virksomhet/pensjonSak/v1";
+	private static final String NAMESPACE = "http://nav.no/tjeneste/virksomhet/pensjonsak/v1";
 	private static final QName SERVICE_QNAME = new QName(NAMESPACE, "PensjonSak_v1");
 	private static final QName PORT_QNAME = new QName(NAMESPACE, "PensjonSak_v1Port");
 	private static final String WSDL_URL = "no/nav/tjeneste/virksomhet/pensjonSak/v1/PensjonSak.wsdl";

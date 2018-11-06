@@ -1,4 +1,4 @@
-package no.nav.saf.anticorruptionlayer.pensjonSak.domain;
+package no.nav.saf.anticorruptionlayer.pensjonsak.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

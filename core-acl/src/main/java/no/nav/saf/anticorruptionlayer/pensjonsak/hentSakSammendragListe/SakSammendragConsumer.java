@@ -1,4 +1,4 @@
-package no.nav.saf.anticorruptionlayer.pensjonSak.hentSakSammendragListe;
+package no.nav.saf.anticorruptionlayer.pensjonsak.hentSakSammendragListe;
 
 
 import no.nav.saf.cache.LokalCacheConfig;
