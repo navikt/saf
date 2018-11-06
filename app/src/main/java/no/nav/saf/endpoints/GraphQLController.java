@@ -82,7 +82,6 @@ public class GraphQLController {
 	}
 
 	private String getAuthorizationList(HttpHeaders httpHeaders) {
-
 		List<String> authorization = Optional.ofNullable(
 				httpHeaders.get(HttpHeaders.AUTHORIZATION))
 				.orElseThrow(() -> new OidcAuthentificationException("GraphQLRequest inneholder ikke et Autorization felt."));

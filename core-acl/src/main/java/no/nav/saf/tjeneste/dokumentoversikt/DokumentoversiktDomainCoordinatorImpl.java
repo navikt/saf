@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -36,12 +37,10 @@ public class DokumentoversiktDomainCoordinatorImpl implements DokumentoversiktDo
 	@Override
 	public List<Journalpost> findJournalposter(DokumentoversiktArguments dokumentoversiktArguments, SafRequestContext safRequestContext) {
 		TilgangBruker tilgangBruker = tilgangsmodellRepository.findTilgangBrukerByAktoerId(dokumentoversiktArguments.getAktoerId());
-		// TODO Pep1 på TilgangBruker aktoerId her
 		boolean pep1Access = this.pep1.hasAccess(tilgangBruker, safRequestContext);
-		// TODO fjern det under når saf domain er klart i PDP
-//		if(!pep1Access) {
-//			return new ArrayList<>();
-//		}
+		if(!pep1Access) {
+			return new ArrayList<>();
+		}
 		// TODO Pep2 TilgangSak her
 		// TODO Pep3 hvis tema=BID eller FAR
 		// TODO Pep4 for TilgangJournalpost her
