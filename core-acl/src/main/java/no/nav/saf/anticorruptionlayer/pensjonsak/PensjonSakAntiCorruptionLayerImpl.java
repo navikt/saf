@@ -1,7 +1,7 @@
 package no.nav.saf.anticorruptionlayer.pensjonsak;
 
 import no.nav.saf.anticorruptionlayer.pensjonsak.domain.TilgangSak;
-import no.nav.saf.anticorruptionlayer.pensjonsak.hentSakSammendragListe.SakSammendragConsumer;
+import no.nav.saf.anticorruptionlayer.pensjonsak.hentsaksammendragliste.SakSammendragConsumer;
 import no.nav.saf.tjeneste.visningsmodell.kode.Arkivsakssystem;
 import no.nav.tjeneste.virksomhet.pensjonsak.v1.informasjon.WSSakSammendrag;
 import org.springframework.stereotype.Component;
