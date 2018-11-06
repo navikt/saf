@@ -48,14 +48,13 @@ public class DokumentoversiktDomainCoordinatorImpl implements DokumentoversiktDo
 	@Override
 	public List<Journalpost> findJournalposter(final DokumentoversiktArguments dokumentoversiktArguments, final SafRequestContext safRequestContext) {
 		final TilgangBruker tilgangBruker = tilgangsmodellRepository.findTilgangBrukerByAktoerId(dokumentoversiktArguments.getAktoerId());
-		final List<TilgangSak> tilgangSakList = tilgangsmodellRepository.findTilgangSakListByAktoerId(dokumentoversiktArguments.getAktoerId());
-
 		boolean pep1Access = this.pep1.hasAccess(tilgangBruker, safRequestContext);
 
 		if (!pep1Access) {
 			return new ArrayList<>();
 		}
 
+		final List<TilgangSak> tilgangSakList = tilgangsmodellRepository.findTilgangSakListByAktoerId(dokumentoversiktArguments.getAktoerId());
 		List<TilgangSak> filteredTilgangSakList = tilgangSakList.stream()
 				.filter(tilgangSak -> pep2.hasAccess(tilgangSak, safRequestContext))
 				.filter(tilgangSak -> pep3.hasAccess(tilgangSak, safRequestContext))

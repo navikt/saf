@@ -7,8 +7,8 @@
           "Value": "saf"
         },
         {
-          "AttributeId": "no.nav.abac.attributter.resource.felles.person.fnr",
-          "Value": "***gammelt_fnr***"
+          "AttributeId": "no.nav.abac.attributter.resource.felles.person.aktoerId_resource",
+          "Value": "12345"
         }
       ]
     },
