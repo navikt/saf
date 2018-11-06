@@ -66,6 +66,10 @@
 			<groupId>no.nav.abac.policies</groupId>
 			<artifactId>abac-attribute-constants</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>no.nav.sbl</groupId>
+			<artifactId>pensjon-sak-v1-tjenestespesifikasjon</artifactId>
+		</dependency>
 
 		<!--Test dependencies-->
 		<dependency>
