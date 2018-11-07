@@ -2,7 +2,9 @@ package no.nav.saf.anticorruptionlayer.pensjonsak;
 
 import no.nav.saf.anticorruptionlayer.pensjonsak.hentsaksammendragliste.PensjonSakConsumer;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
+import no.nav.saf.tjeneste.visningsmodell.Sak;
 import no.nav.saf.tjeneste.visningsmodell.kode.Arkivsakssystem;
+import no.nav.saf.tjeneste.visningsmodell.kode.Temakode;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
@@ -27,6 +29,20 @@ public class PensjonSakAntiCorruptionLayerImpl implements PensjonSakAntiCorrupti
 						.arkivsaksnummer(tilgangsak.getSakNr())
 						.arkivsaksystem(String.valueOf(Arkivsakssystem.PSAK))
 						.tema(tilgangsak.getTema())
+						.build())
+				.collect(Collectors.toList());
+	}
+
+	@Override
+	public List<Sak> hentSakerByFoedselsnummer(final String foedselsnummer) {
+		return pensjonSakConsumer.hentSakSammendragListe(foedselsnummer).getSakSammendragListe().stream()
+				.map(sakSammendrag -> Sak.builder()
+						.arkivsaksnummer(sakSammendrag.getSakNr())
+						.arkivsaksystem(Arkivsakssystem.PSAK)
+						.fagsaksnummer(null)
+						.fagsystem("AT06")
+						.temakode(Temakode.valueOf(sakSammendrag.getTema()))
+						.datoOpprettet(sakSammendrag.getDatoOpprettet())
 						.build())
 				.collect(Collectors.toList());
 	}

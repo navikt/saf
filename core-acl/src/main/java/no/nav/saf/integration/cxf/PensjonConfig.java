@@ -14,13 +14,13 @@ import javax.xml.namespace.QName;
 @Configuration
 public class PensjonConfig extends AbstractCxfEndpointConfig {
 
-	private static final String NAMESPACE = "http://nav.no/tjeneste/virksomhet/pensjonsak/v1";
+	private static final String NAMESPACE = "http://nav.no/tjeneste/virksomhet/pensjonSak/v1/Binding";
 	private static final QName SERVICE_QNAME = new QName(NAMESPACE, "PensjonSak_v1");
 	private static final QName PORT_QNAME = new QName(NAMESPACE, "PensjonSak_v1Port");
-	private static final String WSDL_URL = "wsdl/no/nav/tjeneste/virksomhet/pensjonSak/v1/PensjonSak.wsdl";
+	private static final String WSDL_URL = "wsdl/no/nav/tjeneste/virksomhet/pensjonSak/v1/Binding.wsdl";
 
 	@Bean
-	public PensjonSakV1 pensjonSakV1(@Value("${pensjonsak.v1.endpointurl}") String endpointurl,
+	public PensjonSakV1 pensjonSakV1(@Value("${serviceGateway.url}") String endpointurl,
 									 @Value("${pensjonsak.v1.readtimeoutms}") int readtimeoutms,
 									 @Value("${pensjonsak.v1.connectiontimeoutms}") int connectiontimeoutms) {
 		setWsdlUrl(WSDL_URL);

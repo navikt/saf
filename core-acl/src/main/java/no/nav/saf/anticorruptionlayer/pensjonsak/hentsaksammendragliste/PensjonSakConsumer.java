@@ -47,7 +47,8 @@ public class PensjonSakConsumer {
 			returnObject.setSakSammendragListe(response.getSakSammendragListe().stream().map(saksammendrag -> SakSammendragListeTo.SakSammendrag.builder()
 					.sakNr(saksammendrag.getSakId())
 					.arkivSakSystem(Arkivsakssystem.PSAK)
-					.tema(saksammendrag.getArkivtema().toString())
+					.tema(saksammendrag.getArkivtema().getValue())
+					.datoOpprettet(saksammendrag.getSaksperiode().getFom() == null ? null : saksammendrag.getSaksperiode().getFom().toGregorianCalendar().toZonedDateTime().toLocalDateTime())
 					.build())
 					.collect(Collectors.toList())
 			);

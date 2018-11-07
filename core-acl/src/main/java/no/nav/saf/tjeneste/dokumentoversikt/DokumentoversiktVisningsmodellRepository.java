@@ -9,5 +9,5 @@ import java.util.List;
  * @author Joakim Bjørnstad, Jbit AS
  */
 public interface DokumentoversiktVisningsmodellRepository {
-	List<Journalpost> findJournalposterByAktoerId(String aktoerId, List<Temakode> temaer);
+	List<Journalpost> findJournalposterByAktoerId(String aktoerId, String foedselsnummer, List<Temakode> temaer);
 }
