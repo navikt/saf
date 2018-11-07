@@ -35,3 +35,5 @@ fasitResources:
     resourceType: baseurl
   - alias: Aktoer_v2
     resourceType: webserviceendpoint
+  - alias: safProperties
+    resourceType: applicationproperties
