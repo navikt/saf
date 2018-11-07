@@ -8,6 +8,7 @@ import no.nav.saf.tjeneste.visningsmodell.Bruker;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 /**
  * Skiller boblekontekst for SAF domenet fra legacy kontekster.
@@ -23,7 +24,7 @@ class SakstilknyttedeJournalposterDomainCoordinatorImpl implements Sakstilknytte
 	private final SakstilknyttedeJournalposterVisningsmodellRepository sakstilknyttedeJournalposterVisningsmodellRepository;
 
 	@Inject
-	SakstilknyttedeJournalposterDomainCoordinatorImpl(PepEvaluator<TilgangBruker> pepEvaluator1,
+	SakstilknyttedeJournalposterDomainCoordinatorImpl(@Named("pep1") PepEvaluator<TilgangBruker> pepEvaluator1,
 													  TilgangsmodellRepository tilgangsmodellRepository,
 													  SakstilknyttedeJournalposterVisningsmodellRepository sakstilknyttedeJournalposterVisningsmodellRepository) {
 		this.pepEvaluator1 = pepEvaluator1;
