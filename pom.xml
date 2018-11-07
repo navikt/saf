@@ -44,7 +44,7 @@
 		<graphql-java.version>11.0</graphql-java.version>
 		<abac-attribute-constants>3.4.4</abac-attribute-constants>
 		<freg.security.test.version>3.1.0</freg.security.test.version>
-		<pensjon-sak-v1-tjenestespesifikasjon.version>1.0.3</pensjon-sak-v1-tjenestespesifikasjon.version>
+		<pensjon-sak-v1.version>1.0.0</pensjon-sak-v1.version>
 	</properties>
 
 	<dependencyManagement>
@@ -101,11 +101,11 @@
 				<artifactId>java-jwt</artifactId>
 				<version>3.4.1</version>
 			</dependency>
-
 			<dependency>
-				<groupId>no.nav.sbl</groupId>
-				<artifactId>pensjon-sak-v1-tjenestespesifikasjon</artifactId>
-				<version>${pensjon-sak-v1-tjenestespesifikasjon.version}</version>
+				<groupId>no.nav.tjenester.fim</groupId>
+				<artifactId>nav-pensjonSak-v1-tjenestespesifikasjon</artifactId>
+				<version>${pensjon-sak-v1.version}</version>
+				<classifier>jaxws</classifier>
 			</dependency>
 
 			<dependency>

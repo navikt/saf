@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import no.nav.tjeneste.virksomhet.pensjonsak.v1.informasjon.WSSakSammendrag;
+import no.nav.saf.tjeneste.visningsmodell.kode.Arkivsakssystem;
 
 import java.util.List;
 
@@ -14,5 +14,14 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SakSammendragListeTo {
-	List<WSSakSammendrag> sakSammendragListe;
+
+	List<SakSammendrag> sakSammendragListe;
+
+	@Data
+	@Builder
+	public static class SakSammendrag {
+		String sakNr;
+		Arkivsakssystem arkivSakSystem;
+		String tema;
+	}
 }

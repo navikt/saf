@@ -1,9 +1,8 @@
 package no.nav.saf.anticorruptionlayer.pensjonsak;
 
-import no.nav.saf.anticorruptionlayer.pensjonsak.domain.TilgangSak;
-import no.nav.saf.anticorruptionlayer.pensjonsak.hentsaksammendragliste.SakSammendragConsumer;
+import no.nav.saf.anticorruptionlayer.pensjonsak.hentsaksammendragliste.PensjonSakConsumer;
+import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 import no.nav.saf.tjeneste.visningsmodell.kode.Arkivsakssystem;
-import no.nav.tjeneste.virksomhet.pensjonsak.v1.informasjon.WSSakSammendrag;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
@@ -13,22 +12,21 @@ import java.util.stream.Collectors;
 @Component
 public class PensjonSakAntiCorruptionLayerImpl implements PensjonSakAntiCorruptionLayer {
 
-	private final SakSammendragConsumer sakSammendragConsumer;
+	private final PensjonSakConsumer pensjonSakConsumer;
 
 	@Inject
-	public PensjonSakAntiCorruptionLayerImpl(SakSammendragConsumer sakSammendragConsumer) {
-		this.sakSammendragConsumer = sakSammendragConsumer;
+	public PensjonSakAntiCorruptionLayerImpl(PensjonSakConsumer pensjonSakConsumer) {
+		this.pensjonSakConsumer = pensjonSakConsumer;
 	}
 
 	@Override
-	public List<TilgangSak> hentSakSammendrag(final String personident) {
+	public List<TilgangSak> hentTilgangSakList(final String personident) {
 
-		List<WSSakSammendrag> sakSammendragListe = sakSammendragConsumer.hentSakSammendragListe(personident);
-		return sakSammendragListe.stream()
-				.map(psak -> TilgangSak.builder()
-						.sakNr(psak.getSakId())
-						.arkivSakSystem(Arkivsakssystem.PSAK)
-						.tema(psak.getArkivtema().toString())
+		return pensjonSakConsumer.hentSakSammendragListe(personident).getSakSammendragListe().stream()
+				.map(tilgangsak -> TilgangSak.builder()
+						.saksnummer(tilgangsak.getSakNr())
+						.arkivsaksystem(String.valueOf(Arkivsakssystem.PSAK))
+						.tema(tilgangsak.getTema())
 						.build())
 				.collect(Collectors.toList());
 	}
