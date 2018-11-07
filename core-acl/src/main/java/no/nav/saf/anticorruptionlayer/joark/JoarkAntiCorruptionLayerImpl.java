@@ -41,10 +41,10 @@ public class JoarkAntiCorruptionLayerImpl implements JoarkAntiCorruptionLayer {
 	public List<Journalpost> hentJournalpostListeByArkivsaker(List<Sak> saker) {
 		HentJournalposterResponse hentJournalposterResponse = hentJournalsakinfo.hentJournalposter(HentJournalposterRequest.builder()
 				.gsakSakIdList(saker.stream()
-						.filter(sak -> Arkivsakssystem.GSAK.name().equals(sak.getArkivsaksystem()))
+						.filter(sak -> Arkivsakssystem.GSAK.equals(sak.getArkivsaksystem()))
 						.map(Sak::getArkivsaksnummer).collect(Collectors.toList()))
 				.psakSakIdList(saker.stream()
-						.filter(tilgangSak -> Arkivsakssystem.PSAK.name().equals(tilgangSak.getArkivsaksystem()))
+						.filter(tilgangSak -> Arkivsakssystem.PSAK.equals(tilgangSak.getArkivsaksystem()))
 						.map(Sak::getArkivsaksnummer).collect(Collectors.toList()))
 				.build());
 
