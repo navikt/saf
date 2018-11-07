@@ -24,7 +24,7 @@ public class PensjonSakAntiCorruptionLayerImpl implements PensjonSakAntiCorrupti
 
 		return pensjonSakConsumer.hentSakSammendragListe(personident).getSakSammendragListe().stream()
 				.map(tilgangsak -> TilgangSak.builder()
-						.saksnummer(tilgangsak.getSakNr())
+						.arkivsaksnummer(tilgangsak.getSakNr())
 						.arkivsaksystem(String.valueOf(Arkivsakssystem.PSAK))
 						.tema(tilgangsak.getTema())
 						.build())
