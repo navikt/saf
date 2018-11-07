@@ -66,6 +66,11 @@
 			<groupId>no.nav.abac.policies</groupId>
 			<artifactId>abac-attribute-constants</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>no.nav.tjenester.fim</groupId>
+			<artifactId>nav-pensjonSak-v1-tjenestespesifikasjon</artifactId>
+			<classifier>jaxws</classifier>
+		</dependency>
 
 		<!--Test dependencies-->
 		<dependency>
