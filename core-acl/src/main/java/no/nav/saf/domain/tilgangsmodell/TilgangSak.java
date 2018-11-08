@@ -1,5 +1,6 @@
 package no.nav.saf.domain.tilgangsmodell;
 
+import lombok.Builder;
 import lombok.Value;
 
 import java.util.List;
@@ -8,8 +9,9 @@ import java.util.List;
  * @author Joakim Bjørnstad, Jbit AS
  */
 @Value
+@Builder
 public class TilgangSak {
-	private final String saksnummer;
+	private final String arkivsaksnummer;
 	private final String arkivsaksystem;
 	private final String sakspart;
 	private final List<TilgangRelevantTredjepart> relevanteTredjeparter;
