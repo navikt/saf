@@ -1,6 +1,7 @@
 package no.nav.saf;
 
 import io.micrometer.core.instrument.MeterRegistry;
+import no.nav.saf.graphiql.GraphiQLController;
 import no.nav.saf.integration.fasit.ServiceuserAlias;
 import no.nav.saf.metrics.DokTimedAspect;
 import org.apache.http.client.HttpClient;
@@ -20,7 +21,8 @@ import org.springframework.retry.annotation.EnableRetry;
 @ComponentScan
 @Configuration
 @EnableAutoConfiguration
-@Import(CoreAclConfig.class)
+@Import({CoreAclConfig.class,
+		GraphiQLController.class})
 @EnableConfigurationProperties(ServiceuserAlias.class)
 @EnableRetry
 public class ApplicationConfig {
