@@ -44,6 +44,7 @@
 		<graphql-java.version>11.0</graphql-java.version>
 		<abac-attribute-constants>3.4.4</abac-attribute-constants>
 		<freg.security.test.version>3.1.0</freg.security.test.version>
+		<pensjon-sak-v1.version>1.0.0</pensjon-sak-v1.version>
 	</properties>
 
 	<dependencyManagement>
@@ -99,6 +100,12 @@
 				<groupId>com.auth0</groupId>
 				<artifactId>java-jwt</artifactId>
 				<version>3.4.1</version>
+			</dependency>
+			<dependency>
+				<groupId>no.nav.tjenester.fim</groupId>
+				<artifactId>nav-pensjonSak-v1-tjenestespesifikasjon</artifactId>
+				<version>${pensjon-sak-v1.version}</version>
+				<classifier>jaxws</classifier>
 			</dependency>
 			<dependency>
 				<groupId>io.springfox</groupId>

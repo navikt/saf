@@ -13,7 +13,7 @@ public interface TilgangsmodellRepository {
 
 	TilgangBruker findTilgangBrukerByAktoerId(String aktoerId);
 
-	List<TilgangSak> findTilgangSakListByAktoerId(String aktoerId);
+	List<TilgangSak> findTilgangSakListByTilgangBruker(TilgangBruker tilgangBruker);
 
 	List<TilgangJournalpost> findTilgangJournalpostListByArkivsaker(List<TilgangSak> tilgangSakList);
 }

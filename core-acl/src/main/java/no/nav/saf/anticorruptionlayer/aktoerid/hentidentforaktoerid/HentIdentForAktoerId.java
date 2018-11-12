@@ -1,8 +1,8 @@
 package no.nav.saf.anticorruptionlayer.aktoerid.hentidentforaktoerid;
 
-import static no.nav.saf.anticorruptionlayer.aktoerid.hentidentforaktoerid.RetryConstants.DELAY_SHORT;
-import static no.nav.saf.anticorruptionlayer.aktoerid.hentidentforaktoerid.RetryConstants.MAX_ATTEMPTS_SHORT;
-import static no.nav.saf.anticorruptionlayer.aktoerid.hentidentforaktoerid.RetryConstants.MULTIPLIER_SHORT;
+import static no.nav.saf.anticorruptionlayer.RetryConstants.DELAY_SHORT_AKTOER_V2;
+import static no.nav.saf.anticorruptionlayer.RetryConstants.MAX_ATTEMPTS_SHORT_AKTOER_V2;
+import static no.nav.saf.anticorruptionlayer.RetryConstants.MULTIPLIER_SHORT_AKTOER_V2;
 
 import no.nav.saf.anticorruptionlayer.aktoerid.domain.HentIdentForAktoerIdResponseTo;
 import no.nav.saf.exceptions.SafFunctionalException;
@@ -28,7 +28,9 @@ public class HentIdentForAktoerId {
 		this.aktoerV2 = aktoerV2;
 	}
 
-	@Retryable(include = SafTechnicalException.class, maxAttempts = MAX_ATTEMPTS_SHORT, backoff = @Backoff(delay = DELAY_SHORT, multiplier = MULTIPLIER_SHORT))
+	@Retryable(include = SafTechnicalException.class,
+			maxAttempts = MAX_ATTEMPTS_SHORT_AKTOER_V2,
+			backoff = @Backoff(delay = DELAY_SHORT_AKTOER_V2, multiplier = MULTIPLIER_SHORT_AKTOER_V2))
 	public HentIdentForAktoerIdResponseTo hentIdentForAktoerId(String aktoerId) {
 		HentIdentForAktoerIdRequest request = new HentIdentForAktoerIdRequest();
 		request.setAktoerId(aktoerId);

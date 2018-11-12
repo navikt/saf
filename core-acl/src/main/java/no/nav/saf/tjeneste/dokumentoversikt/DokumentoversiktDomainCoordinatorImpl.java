@@ -54,7 +54,7 @@ public class DokumentoversiktDomainCoordinatorImpl implements DokumentoversiktDo
 			return new ArrayList<>();
 		}
 
-		final List<TilgangSak> tilgangSakList = tilgangsmodellRepository.findTilgangSakListByAktoerId(dokumentoversiktArguments.getAktoerId());
+		final List<TilgangSak> tilgangSakList = tilgangsmodellRepository.findTilgangSakListByTilgangBruker(tilgangBruker);
 		List<TilgangSak> filteredTilgangSakList = tilgangSakList.stream()
 				.filter(tilgangSak -> pep2.hasAccess(tilgangSak, safRequestContext))
 				.filter(tilgangSak -> pep3.hasAccess(tilgangSak, safRequestContext))
@@ -66,7 +66,7 @@ public class DokumentoversiktDomainCoordinatorImpl implements DokumentoversiktDo
 				.filter(tilgangJournalpost -> pep4.hasAccess(tilgangJournalpost, safRequestContext))
 				.collect(Collectors.toList());
 
-		return visningsmodellRepository.findJournalposterByAktoerId(dokumentoversiktArguments.getAktoerId(), Temakode.asList())
+		return visningsmodellRepository.findJournalposterByAktoerId(tilgangBruker.getAktoerId(), tilgangBruker.getFoedselsnr(), Temakode.asList())
 				.stream()
 				// TODO midlertidig. kallet mot joark burde returnere bare det man behøver
 				.filter(j -> j.getOpprettet().toLocalDate().isAfter(dokumentoversiktArguments.getFraDato()))

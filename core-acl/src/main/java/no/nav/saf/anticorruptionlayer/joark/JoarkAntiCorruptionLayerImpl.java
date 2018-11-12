@@ -1,6 +1,7 @@
 package no.nav.saf.anticorruptionlayer.joark;
 
 import no.nav.saf.anticorruptionlayer.joark.domain.DokumentInfoTo;
+import no.nav.saf.anticorruptionlayer.joark.domain.JournalpostTo;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.FagomradeCode;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.HentJournalposterRequest;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.HentJournalposterResponse;
@@ -23,6 +24,7 @@ import java.time.ZoneId;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @author Joakim Bjørnstad, Jbit AS
@@ -50,32 +52,36 @@ public class JoarkAntiCorruptionLayerImpl implements JoarkAntiCorruptionLayer {
 
 		Map<String, Sak> sakMap = saker.stream().collect(Collectors.toMap(Sak::getArkivsaksnummer, sak -> sak));
 
-		return hentJournalposterResponse
-				.getGsakJournalpostList().stream().map(journalpostTo -> Journalpost.builder()
-						.journalpostId(journalpostTo.getJournalpostId().toString())
-						.beskrivelse(journalpostTo.getInnhold())
-						.journalposttype(JournalpostType.fromJoark(journalpostTo.getJournalposttype()))
-						.journalstatus(journalpostTo.getJournalstatus().toSafJournalStatus())
-						.tema(FagomradeCode.toSafJournalStatus(journalpostTo.getFagomrade()))
-						.temanavn(FagomradeCode.toSafJournalStatus(journalpostTo.getFagomrade()).getTemanavn())
-						.mottakskanal(Mottakskanal.fromJoark(journalpostTo.getMottakskanal()))
-						.opprettet(journalpostTo.getDatoOpprettet() == null ? null : LocalDateTime.from(journalpostTo.getDatoOpprettet()
-								.toInstant()
-								.atZone(ZoneId.systemDefault())))
-						.sak(journalpostTo.getSaksrelasjon() == null ? null : sakMap.get(journalpostTo.getSaksrelasjon()
-								.getSakId()))
-						.dokumenter(journalpostTo.getJournalpostDokumentInfoRelasjoner().stream()
-								.map(jr -> {
-									final DokumentInfoTo dokumentInfoTo = jr.getDokumentInfo();
-									return DokumentInfo.builder()
-											.dokumentId(dokumentInfoTo.getDokumentInfoId().toString())
-											.tittel(dokumentInfoTo.getTittel())
-											.variantFormat(VariantFormatkode.ARKIV)
-											.saksbehandlerHarTilgang(false)
-											.innbyggerHarDigitaltInnsyn(false)
-											.build();
-								}).collect(Collectors.toList()))
-						.build()).collect(Collectors.toList());
+		return Stream.concat(hentJournalposterResponse.getGsakJournalpostList().stream(), hentJournalposterResponse.getPsakJournalpostList().stream())
+				.map(journalpostTo -> mapJournalpostTo(sakMap, journalpostTo))
+				.collect(Collectors.toList());
+	}
+
+	private Journalpost mapJournalpostTo(Map<String, Sak> sakMap, JournalpostTo journalpostTo) {
+		return Journalpost.builder()
+				.journalpostId(journalpostTo.getJournalpostId().toString())
+				.beskrivelse(journalpostTo.getInnhold())
+				.journalposttype(JournalpostType.fromJoark(journalpostTo.getJournalposttype()))
+				.journalstatus(journalpostTo.getJournalstatus().toSafJournalStatus())
+				.tema(FagomradeCode.toSafJournalStatus(journalpostTo.getFagomrade()))
+				.temanavn(FagomradeCode.toSafJournalStatus(journalpostTo.getFagomrade()).getTemanavn())
+				.mottakskanal(Mottakskanal.fromJoark(journalpostTo.getMottakskanal()))
+				.opprettet(journalpostTo.getDatoOpprettet() == null ? null : LocalDateTime.from(journalpostTo.getDatoOpprettet()
+						.toInstant()
+						.atZone(ZoneId.systemDefault())))
+				.sak(journalpostTo.getSaksrelasjon() == null ? null : sakMap.get(journalpostTo.getSaksrelasjon()
+						.getSakId()))
+				.dokumenter(journalpostTo.getJournalpostDokumentInfoRelasjoner().stream()
+						.map(jr -> {
+							final DokumentInfoTo dokumentInfoTo = jr.getDokumentInfo();
+							return DokumentInfo.builder()
+									.dokumentId(dokumentInfoTo.getDokumentInfoId().toString())
+									.tittel(dokumentInfoTo.getTittel())
+									.variantFormat(VariantFormatkode.ARKIV)
+									.saksbehandlerHarTilgang(false)
+									.innbyggerHarDigitaltInnsyn(false)
+									.build();
+						}).collect(Collectors.toList())).build();
 	}
 
 	@Override
