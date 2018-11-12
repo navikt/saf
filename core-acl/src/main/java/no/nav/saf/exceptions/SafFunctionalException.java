@@ -1,11 +1,16 @@
 package no.nav.saf.exceptions;
 
+import graphql.ErrorType;
+import graphql.GraphQLError;
+import graphql.language.SourceLocation;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
+import java.util.List;
+
 
 @Getter
-public class SafFunctionalException extends RuntimeException {
+public class SafFunctionalException extends RuntimeException implements GraphQLError {
 	private final HttpStatus httpStatus;
 
 	public SafFunctionalException(String message) {
@@ -31,5 +36,15 @@ public class SafFunctionalException extends RuntimeException {
 	public SafFunctionalException(String message, Throwable cause) {
 		super(message, cause);
 		this.httpStatus = null;
+	}
+
+	@Override
+	public List<SourceLocation> getLocations() {
+		return null;
+	}
+
+	@Override
+	public ErrorType getErrorType() {
+		return ErrorType.DataFetchingException;
 	}
 }
