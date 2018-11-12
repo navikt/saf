@@ -3,6 +3,7 @@ package no.nav.saf.swagger;
 import static springfox.documentation.builders.PathSelectors.regex;
 
 import com.google.common.collect.Lists;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import springfox.documentation.builders.RequestHandlerSelectors;
@@ -24,6 +25,10 @@ import java.util.Collections;
 /**
  * @author Ugur Alpay Cenar, Visma Consulting.
  */
+@ConditionalOnProperty(
+		value = {"swagger.enabled"},
+		havingValue = "true"
+)
 @Configuration
 @EnableSwagger2
 public class SwaggerConfig {
