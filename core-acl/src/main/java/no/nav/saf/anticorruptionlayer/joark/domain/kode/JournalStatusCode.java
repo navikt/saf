@@ -6,7 +6,7 @@ public enum JournalStatusCode {
 	/**
 	 * journalført
 	 */
-	J(JournalStatus.ENDELIG),
+	J(JournalStatus.JOURNALFOERT),
 	/**
 	 * midl journalført
 	 */
@@ -22,7 +22,7 @@ public enum JournalStatusCode {
 	/**
 	 * Reservert dokument
 	 */
-	R(JournalStatus.MIDLERTIDIG),
+	R(JournalStatus.RESERVERT),
 	/**
 	 * Ferdig og sentral print
 	 */
@@ -50,7 +50,7 @@ public enum JournalStatusCode {
 	/**
 	 * Opplasting dokument 
 	 */
-	OD(JournalStatus.MIDLERTIDIG);
+	OD(JournalStatus.OPPLASTING_DOKUMENT);
 
 	private final JournalStatus safJournalStatus;
 

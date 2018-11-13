@@ -41,10 +41,9 @@ public class DokumentoversiktWiring {
 					LocalDate fraDato = environment.getArgument("fraDato");
 					List<JournalpostType> journalposttyper = environment.getArgument("journalposttyper");
 					List<JournalStatus> journalstatuser = environment.getArgument("journalstatuser");
-					boolean visFeilregistrerte = environment.getArgument("visFeilregistrerte");
 					SafRequestContext safRequestContext = environment.getContext();
 					try {
-						return dokumentoversiktDomainCoordinator.findJournalposter(new DokumentoversiktArguments(aktoerId, fraDato, journalposttyper, journalstatuser, visFeilregistrerte),
+						return dokumentoversiktDomainCoordinator.findJournalposter(new DokumentoversiktArguments(aktoerId, fraDato, journalposttyper, journalstatuser),
 								safRequestContext);
 					} catch(SafFunctionalException e) {
 						return new DataFetcherResult<List<Journalpost>>(new ArrayList<>(), Collections.singletonList(e));
