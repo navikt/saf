@@ -39,7 +39,7 @@ public class PensjonSakAntiCorruptionLayerImpl implements PensjonSakAntiCorrupti
 				.map(sakSammendrag -> Sak.builder()
 						.arkivsaksnummer(sakSammendrag.getSakNr())
 						.arkivsaksystem(Arkivsakssystem.PSAK)
-						.fagsaksnummer(null)
+						.fagsaksnummer(sakSammendrag.getSakNr())
 						.fagsystem("AT06")
 						.temakode(Temakode.valueOf(sakSammendrag.getTema()))
 						.datoOpprettet(sakSammendrag.getDatoOpprettet())

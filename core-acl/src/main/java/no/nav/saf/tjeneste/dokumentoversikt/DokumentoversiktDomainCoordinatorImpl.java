@@ -59,7 +59,6 @@ public class DokumentoversiktDomainCoordinatorImpl implements DokumentoversiktDo
 				.filter(tilgangSak -> pep2.hasAccess(tilgangSak, safRequestContext))
 				.filter(tilgangSak -> pep3.hasAccess(tilgangSak, safRequestContext))
 				.collect(Collectors.toList());
-
 		final List<TilgangJournalpost> tilgangJournalpostList = tilgangsmodellRepository.findTilgangJournalposter(tilgangBruker,
 				filteredTilgangSakList,
 				dokumentoversiktArguments.getFraDato(),
@@ -71,14 +70,7 @@ public class DokumentoversiktDomainCoordinatorImpl implements DokumentoversiktDo
 		final List<TilgangJournalpost> filteredTilgangJournalpostList = tilgangJournalpostList.stream()
 				.filter(tilgangJournalpost -> pep4.hasAccess(tilgangJournalpost, safRequestContext))
 				.collect(Collectors.toList());
-
-		return visningsmodellRepository.findJournalposterByAktoerId(tilgangBruker.getAktoerId(), tilgangBruker.getFoedselsnr(), Temakode.asList())
-				.stream()
-				// TODO midlertidig. kallet mot joark burde returnere bare det man behøver
-				.filter(j -> j.getOpprettet().toLocalDate().isAfter(dokumentoversiktArguments.getFraDato()))
-				.filter(j -> dokumentoversiktArguments.getJournalposttyper().contains(j.getJournalposttype()))
-				.filter(j -> dokumentoversiktArguments.getJournalstatuser().contains(j.getJournalstatus()))
-				.collect(Collectors.toList());
+		return visningsmodellRepository.findJournalposter(tilgangBruker, filteredTilgangJournalpostList);
 	}
 
 	@Override
@@ -86,6 +78,4 @@ public class DokumentoversiktDomainCoordinatorImpl implements DokumentoversiktDo
 		// TODO Pep4 for TilgangDokument her (er dette allerede er avklart i TilgangJournalpost så må context vite om dette)
 		return journalpost.getDokumenter();
 	}
-
-
 }

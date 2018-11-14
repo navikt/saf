@@ -2,9 +2,12 @@ package no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo;
 
 import static no.nav.saf.cache.LokalCacheConfig.HENT_JOURNALPOSTER_CACHE;
 import static no.nav.saf.cache.LokalCacheConfig.HENT_TILGANG_JOURNALPOSTER_CACHE;
+import static no.nav.saf.cache.LokalCacheConfig.HENT_VISNING_JOURNALPOSTER_CACHE;
 
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.TilgangJournalpostBulkRequestTo;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.TilgangJournalpostBulkResponseTo;
+import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark910.VisningJournalpostBulkRequestTo;
+import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark910.VisningJournalpostBulkResponseTo;
 import no.nav.saf.integration.fasit.ServiceuserAlias;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -46,9 +49,15 @@ public class HentJournalsakinfo {
 		return response.getBody();
 	}
 
-	@Cacheable(cacheNames = HENT_TILGANG_JOURNALPOSTER_CACHE, key = "#request.aktoerId")
+	@Cacheable(cacheNames = HENT_TILGANG_JOURNALPOSTER_CACHE)
 	public TilgangJournalpostBulkResponseTo hentTilgangJournalpostBulk(TilgangJournalpostBulkRequestTo request) {
 		ResponseEntity<TilgangJournalpostBulkResponseTo> response = restTemplate.postForEntity("/tilgangjournalpostbulk", request, TilgangJournalpostBulkResponseTo.class);
+		return response.getBody();
+	}
+
+	@Cacheable(cacheNames = HENT_VISNING_JOURNALPOSTER_CACHE, key = "#request.journalpostIds")
+	public VisningJournalpostBulkResponseTo hentVisningJournalpostBulk(VisningJournalpostBulkRequestTo request) {
+		ResponseEntity<VisningJournalpostBulkResponseTo> response = restTemplate.postForEntity("/visningjournalpostbulk", request, VisningJournalpostBulkResponseTo.class);
 		return response.getBody();
 	}
 }

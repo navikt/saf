@@ -3,6 +3,8 @@ package no.nav.saf.tjeneste.dokumentoversikt;
 import no.nav.saf.anticorruptionlayer.gsak.GsakAntiCorruptionLayer;
 import no.nav.saf.anticorruptionlayer.joark.JoarkAntiCorruptionLayer;
 import no.nav.saf.anticorruptionlayer.pensjonsak.PensjonSakAntiCorruptionLayer;
+import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
+import no.nav.saf.domain.tilgangsmodell.TilgangJournalpost;
 import no.nav.saf.tjeneste.visningsmodell.Journalpost;
 import no.nav.saf.tjeneste.visningsmodell.Sak;
 import no.nav.saf.tjeneste.visningsmodell.kode.Temakode;
@@ -10,6 +12,8 @@ import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author Joakim Bjørnstad, Jbit AS
@@ -36,5 +40,13 @@ public class DokumentoversiktVisningsmodellRepositoryImpl implements Dokumentove
 		sakerByAktoerId.addAll(pensjonSakAntiCorruptionLayer.hentSakerByFoedselsnummer(foedselsnummer));
 		List<Journalpost> journalposter = joarkAntiCorruptionLayer.hentJournalpostListeByArkivsaker(sakerByAktoerId);
 		return journalposter;
+	}
+
+	@Override
+	public List<Journalpost> findJournalposter(TilgangBruker tilgangBruker, List<TilgangJournalpost> journalposter) {
+		List<Sak> sakerByAktoerId = gsakAntiCorruptionLayer.findSakerByAktoerId(tilgangBruker.getAktoerId());
+		Map<String, Sak> sakMap = sakerByAktoerId.stream().collect(Collectors.toMap(Sak::getArkivsaksnummer, sak -> sak));
+		List<String> journalpostIds = journalposter.stream().map(TilgangJournalpost::getJournalpostId).collect(Collectors.toList());
+		return joarkAntiCorruptionLayer.hentVisningJournalposter(sakMap, journalpostIds);
 	}
 }

@@ -12,6 +12,7 @@ import no.nav.saf.tjeneste.visningsmodell.kode.Temakode;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Joakim Bjørnstad, Jbit AS
@@ -28,4 +29,5 @@ public interface JoarkAntiCorruptionLayer {
 																	Collection<Temakode> inkluderTema,
 																	List<JournalpostType> inkluderJournalposttyper,
 																	List<JournalStatus> inkluderJournalstatus);
+	List<Journalpost> hentVisningJournalposter(Map<String, Sak> sakMap, List<String> journalpostIds);
 }
