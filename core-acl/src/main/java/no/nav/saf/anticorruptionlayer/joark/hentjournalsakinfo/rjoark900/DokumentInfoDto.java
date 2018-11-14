@@ -10,9 +10,10 @@ import no.nav.saf.anticorruptionlayer.joark.domain.kode.VariantFormatCode;
  */
 @Data
 @NoArgsConstructor
-public class TilgangDokumentInfoDto {
+public class DokumentInfoDto {
 	private String dokumentInfoId;
 	private DokumentStatusCode dokumentstatus;
 	private String brevkode;
 	private VariantFormatCode variantFormat;
+	private String tittel;
 }

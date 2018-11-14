@@ -8,11 +8,10 @@ import no.nav.saf.anticorruptionlayer.joark.domain.kode.JournalpostTypeCode;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.HentJournalposterRequest;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.HentJournalposterResponse;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.HentJournalsakinfo;
-import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.TilgangJournalpostBulkRequestTo;
-import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.TilgangJournalpostBulkResponseTo;
-import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.TilgangJournalpostDto;
-import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark910.JournalpostDto;
-import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark910.VisningJournalpostBulkRequestTo;
+import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.HentJournalpostBulkRequestTo;
+import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.HentJournalpostBulkResponseTo;
+import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.JournalpostDto;
+import no.nav.saf.cache.LokalCacheConfig;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.domain.tilgangsmodell.TilgangDokumentInfo;
 import no.nav.saf.domain.tilgangsmodell.TilgangIdent;
@@ -27,6 +26,8 @@ import no.nav.saf.tjeneste.visningsmodell.kode.JournalpostType;
 import no.nav.saf.tjeneste.visningsmodell.kode.Mottakskanal;
 import no.nav.saf.tjeneste.visningsmodell.kode.Temakode;
 import no.nav.saf.tjeneste.visningsmodell.kode.VariantFormatkode;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
@@ -36,6 +37,7 @@ import java.time.ZoneId;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -46,10 +48,12 @@ import java.util.stream.Stream;
 public class JoarkAntiCorruptionLayerImpl implements JoarkAntiCorruptionLayer {
 
 	private final HentJournalsakinfo hentJournalsakinfo;
+	private final Cache journalpostCache;
 
 	@Inject
-	public JoarkAntiCorruptionLayerImpl(HentJournalsakinfo hentJournalsakinfo) {
+	public JoarkAntiCorruptionLayerImpl(HentJournalsakinfo hentJournalsakinfo, CacheManager cacheManager) {
 		this.hentJournalsakinfo = hentJournalsakinfo;
+		this.journalpostCache = cacheManager.getCache(LokalCacheConfig.JOURNALPOST_CACHE);
 	}
 
 	@Override
@@ -134,7 +138,7 @@ public class JoarkAntiCorruptionLayerImpl implements JoarkAntiCorruptionLayer {
 																		   List<JournalStatus> inkluderJournalstatus) {
 		List<String> alleIdenter = tilgangBruker.getHistoriskeIdenter().stream().map(TilgangIdent::getIdentifikator).collect(Collectors.toList());
 		alleIdenter.add(tilgangBruker.getFoedselsnr());
-		TilgangJournalpostBulkResponseTo responseTo = hentJournalsakinfo.hentTilgangJournalpostBulk(TilgangJournalpostBulkRequestTo.builder()
+		HentJournalpostBulkResponseTo responseTo = hentJournalsakinfo.hentJournalpostBulk(HentJournalpostBulkRequestTo.builder()
 				.aktoerId(tilgangBruker.getAktoerId())
 				.alleIdenter(alleIdenter)
 				.inkluderJournalpostType(inkluderJournalposttyper.stream().map(jt -> JournalpostTypeCode.valueOf(jt.name())).collect(Collectors.toList()))
@@ -153,11 +157,12 @@ public class JoarkAntiCorruptionLayerImpl implements JoarkAntiCorruptionLayer {
 		return responseTo.getTilgangJournalposter().stream().map(this::mapTilgangJournalpost).collect(Collectors.toList());
 	}
 
-	private TilgangJournalpost mapTilgangJournalpost(TilgangJournalpostDto dto) {
+	private TilgangJournalpost mapTilgangJournalpost(JournalpostDto dto) {
+		journalpostCache.put(dto.getJournalpostId().toString(), dto);
 		return TilgangJournalpost.builder()
-				.journalpostId(dto.getJournalpostId())
-				.journalStatus(dto.getJournalStatus().toString())
-				.journalpostType(dto.getJournalpostType().toString())
+				.journalpostId(dto.getJournalpostId().toString())
+				.journalStatus(dto.getJournalstatus().toString())
+				.journalpostType(dto.getJournalposttype().toString())
 				.tema(dto.getFagomrade() == null ? null : dto.getFagomrade().toString())
 				.datoOpprettet(dto.getDatoOpprettet().toInstant().atZone(ZoneId.systemDefault()).toLocalDate())
 				.mottakskanal(dto.getMottakskanal() == null ? null : dto.getMottakskanal().toString())
@@ -173,28 +178,34 @@ public class JoarkAntiCorruptionLayerImpl implements JoarkAntiCorruptionLayer {
 
 	@Override
 	public List<Journalpost> hentVisningJournalposter(Map<String, Sak> sakMap, List<String> journalpostIds) {
-		return hentJournalsakinfo.hentVisningJournalpostBulk(new VisningJournalpostBulkRequestTo(journalpostIds)).getJournalposter().stream()
-				.map(journalpostDto -> mapJournalpostDto(sakMap, journalpostDto)).collect(Collectors.toList());
+		return journalpostIds.stream()
+				.map(journalpostId -> {
+					JournalpostDto journalpostDto = journalpostCache.get(journalpostId, JournalpostDto.class);
+					if(journalpostDto == null) {
+						return null;
+					}
+					return mapJournalpostDto(sakMap, journalpostDto);
+				}).filter(Objects::nonNull).collect(Collectors.toList());
 	}
 
-	private Journalpost mapJournalpostDto(Map<String, Sak> sakMap, JournalpostDto journalpostTo) {
+	private Journalpost mapJournalpostDto(Map<String, Sak> sakMap, JournalpostDto journalpostDto) {
 		return Journalpost.builder()
-				.journalpostId(journalpostTo.getJournalpostId().toString())
-				.beskrivelse(journalpostTo.getInnhold())
-				.journalposttype(JournalpostType.fromJoark(journalpostTo.getJournalposttype()))
-				.journalstatus(journalpostTo.getJournalstatus().toSafJournalStatus())
-				.tema(FagomradeCode.toSafJournalStatus(journalpostTo.getFagomrade()))
-				.temanavn(FagomradeCode.toSafJournalStatus(journalpostTo.getFagomrade()).getTemanavn())
-				.mottakskanal(Mottakskanal.fromJoark(journalpostTo.getMottakskanal()))
-				.opprettet(journalpostTo.getDatoOpprettet() == null ? null : LocalDateTime.from(journalpostTo.getDatoOpprettet()
+				.journalpostId(journalpostDto.getJournalpostId().toString())
+				.beskrivelse(journalpostDto.getInnhold())
+				.journalposttype(JournalpostType.fromJoark(journalpostDto.getJournalposttype()))
+				.journalstatus(journalpostDto.getJournalstatus().toSafJournalStatus())
+				.tema(FagomradeCode.toSafJournalStatus(journalpostDto.getFagomrade()))
+				.temanavn(FagomradeCode.toSafJournalStatus(journalpostDto.getFagomrade()).getTemanavn())
+				.mottakskanal(Mottakskanal.fromJoark(journalpostDto.getMottakskanal()))
+				.opprettet(journalpostDto.getDatoOpprettet() == null ? null : LocalDateTime.from(journalpostDto.getDatoOpprettet()
 						.toInstant()
 						.atZone(ZoneId.systemDefault())))
-				.sak(journalpostTo.getSaksrelasjon() == null ? null : sakMap.get(journalpostTo.getSaksrelasjon()
+				.sak(journalpostDto.getSaksrelasjon() == null ? null : sakMap.get(journalpostDto.getSaksrelasjon()
 						.getSakId()))
-				.dokumenter(journalpostTo.getDokumenter().stream()
+				.dokumenter(journalpostDto.getDokumenter().stream()
 						.map(dokumentInfoDto -> {
 							return DokumentInfo.builder()
-									.dokumentId(dokumentInfoDto.getDokumentInfoId().toString())
+									.dokumentId(dokumentInfoDto.getDokumentInfoId())
 									.tittel(dokumentInfoDto.getTittel())
 									.variantFormat(VariantFormatkode.ARKIV)
 									.saksbehandlerHarTilgang(false)
