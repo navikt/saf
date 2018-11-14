@@ -60,7 +60,13 @@ public class DokumentoversiktDomainCoordinatorImpl implements DokumentoversiktDo
 				.filter(tilgangSak -> pep3.hasAccess(tilgangSak, safRequestContext))
 				.collect(Collectors.toList());
 
-		final List<TilgangJournalpost> tilgangJournalpostList = tilgangsmodellRepository.findTilgangJournalpostListByArkivsaker(filteredTilgangSakList);
+		final List<TilgangJournalpost> tilgangJournalpostList = tilgangsmodellRepository.findTilgangJournalposter(tilgangBruker,
+				filteredTilgangSakList,
+				dokumentoversiktArguments.getFraDato(),
+				filteredTilgangSakList.stream().map(s -> Temakode.valueOf(s.getTema())).collect(Collectors.toSet()),
+				dokumentoversiktArguments.getJournalposttyper(),
+				dokumentoversiktArguments.getJournalstatuser()
+		);
 
 		final List<TilgangJournalpost> filteredTilgangJournalpostList = tilgangJournalpostList.stream()
 				.filter(tilgangJournalpost -> pep4.hasAccess(tilgangJournalpost, safRequestContext))

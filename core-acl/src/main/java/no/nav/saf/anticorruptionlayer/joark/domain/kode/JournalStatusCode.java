@@ -2,6 +2,9 @@ package no.nav.saf.anticorruptionlayer.joark.domain.kode;
 
 import no.nav.saf.tjeneste.visningsmodell.kode.JournalStatus;
 
+import java.util.Arrays;
+import java.util.List;
+
 public enum JournalStatusCode {
 	/**
 	 * journalført
@@ -60,5 +63,9 @@ public enum JournalStatusCode {
 
 	public JournalStatus toSafJournalStatus() {
 		return safJournalStatus;
+	}
+
+	public static List<JournalStatusCode> asList() {
+		return Arrays.asList(values());
 	}
 }

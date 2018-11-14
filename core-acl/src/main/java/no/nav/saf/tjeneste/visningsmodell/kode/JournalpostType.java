@@ -13,6 +13,7 @@ public enum JournalpostType {
 	U,
 	N;
 
+	@Deprecated // TODO fjern denne, skal ikke vite om joark i det hele tatt
 	public static JournalpostType fromJoark(JournalpostTypeCode journalpostTypeCode) {
 		if(journalpostTypeCode == null) {
 			return null;
