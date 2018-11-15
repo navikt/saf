@@ -13,6 +13,5 @@ public class HentDokumentArguments {
 	private final String journalpostId;
 	private final String dokumentId;
 	private final String variantFormat;
-	private final String aktoerId = "***gammelt_fnr***71";
 
 }

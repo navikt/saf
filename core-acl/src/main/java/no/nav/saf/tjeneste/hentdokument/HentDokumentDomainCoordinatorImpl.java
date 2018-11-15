@@ -3,6 +3,7 @@ package no.nav.saf.tjeneste.hentdokument;
 import no.nav.saf.domain.TilgangsmodellRepository;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.domain.tilgangsmodell.TilgangJournalpost;
+import no.nav.saf.domain.tilgangsmodell.TilgangJournalpostHentDokument;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.pep.PepEvaluator;
@@ -40,6 +41,12 @@ public class HentDokumentDomainCoordinatorImpl implements HentDokumentDomainCoor
 	@Override
 	public HentDokumentResponse hentDokument(final HentDokumentArguments hentDokumentArguments, final SafRequestContext safRequestContext) {
 
+//		final TilgangJournalpostHentDokument tilgangJournalpost = tilgangsmodellRepository.findTilgangJournalpost(hentDokumentArguments
+//				.getJournalpostId(), hentDokumentArguments.getDokumentId(), hentDokumentArguments.getVariantFormat());
+//
+//		final List<TilgangJournalpost> tilgangJournalpostList = tilgangsmodellRepository.findTilgangJournalpostListByArkivsaker(filteredTilgangSakList);
+//
+//
 //		final TilgangBruker tilgangBruker = tilgangsmodellRepository.findTilgangBrukerByAktoerId(hentDokumentArguments.getAktoerId());
 //		boolean pep1Access = this.pep1.hasAccess(tilgangBruker, safRequestContext);
 //
@@ -60,7 +67,7 @@ public class HentDokumentDomainCoordinatorImpl implements HentDokumentDomainCoor
 //
 //
 //		if (!hasSakAccessToJp) {
-//			return null;
+//			return null;hentDokumentController
 //		}
 //
 //		final List<TilgangJournalpost> filteredTilgangJournalpostList = tilgangJournalpostList.stream()

@@ -58,5 +58,6 @@ public class HentDokumentController {
 				.build();
 
 		return hentDokumentDomainCoordinator.hentDokument(hentDokumentArguments, safRequestContext).getDokument();
+//		return null;
 	}
 }
