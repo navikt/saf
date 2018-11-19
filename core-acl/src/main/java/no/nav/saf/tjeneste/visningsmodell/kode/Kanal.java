@@ -1,0 +1,29 @@
+package no.nav.saf.tjeneste.visningsmodell.kode;
+
+/**
+ * @author Joakim Bjørnstad, Jbit AS
+ */
+public enum Kanal {
+	ALTINN("Altinn"),
+	EESSI("EESSI"),
+	EIA("EIA"),
+	EKST_OPPS("Eksternt oppslag"),
+	LOKAL_UTSKRIFT("Lokal utskrift"),
+	NAV_NO("Ditt NAV"),
+	PSELV("Selvbetjening Pesys"),
+	SENTRAL_UTSKRIFT("Sentral utskrift"),
+	SDP("Sikkert Digital Post"),
+	SKAN_NETS("Skanning Nets"),
+	SKAN_PEN("Skanning Pensjon"),
+	INGEN_DISTRIBUSJON("Ingen distribusjon");
+
+	private final String kanalnavn;
+	
+	Kanal(String kanalnavn) {
+		this.kanalnavn = kanalnavn;
+	}
+
+	public String getKanalnavn() {
+		return kanalnavn;
+	}
+}

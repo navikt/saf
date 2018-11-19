@@ -70,7 +70,7 @@ public class DokumentoversiktDomainCoordinatorImpl implements DokumentoversiktDo
 		final List<TilgangJournalpost> filteredTilgangJournalpostList = tilgangJournalpostList.stream()
 				.filter(tilgangJournalpost -> pep4.hasAccess(tilgangJournalpost, safRequestContext))
 				.collect(Collectors.toList());
-		return visningsmodellRepository.findJournalposter(tilgangBruker.getAktoerId(),
+		return visningsmodellRepository.findJournalposter(tilgangBruker.getAktoerId(), tilgangBruker.getFoedselsnr(),
 				filteredTilgangJournalpostList.stream().map(TilgangJournalpost::getJournalpostId).collect(Collectors.toList()));
 	}
 

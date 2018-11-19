@@ -19,8 +19,6 @@ import java.util.Map;
  */
 public interface JoarkAntiCorruptionLayer {
 
-	List<Journalpost> hentJournalpostListeByArkivsaker(List<Sak> saker);
-
 	List<TilgangJournalpost> hentTilgangJournalpostListByArkivsaker(List<TilgangSak> tilgangSakList);
 
 	List<TilgangJournalpost> hentTilgangJournalpostListByArkivsaker(TilgangBruker tilgangBruker,

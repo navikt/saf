@@ -13,13 +13,16 @@ type Query {
 
 type Journalpost {
     journalpostId: String!
-    beskrivelse: String
+    tittel: String
     journalposttype: JournalpostType
     journalstatus: JournalStatus
     tema: Tema
     temanavn: String
     sak: Sak
-    mottakskanal: String
+    avsenderMottakerNavn: String
+    journalfortAvNavn: String
+    kanal: Kanal
+    kanalnavn: String
     opprettet: DateTime
     dokumenter: [DokumentInfo]
 }
@@ -46,13 +49,17 @@ enum Arkivsaksystem {
 }
 
 enum JournalpostType {
+    # Inngående dokument
 	I
+	# Utgående dokument
 	U
+	# Notat
 	N
 }
 
 enum JournalStatus {
     MIDLERTIDIG
+    MOTTATT
     JOURNALFOERT
     FERDIGSTILT
     EKSPEDERT
@@ -63,6 +70,20 @@ enum JournalStatus {
     UKJENT_BRUKER
     RESERVERT
     OPPLASTING_DOKUMENT
+}
+
+enum Kanal {
+    ALTINN,
+	EESSI,
+	EIA,
+	EKST_OPPS,
+	LOKAL_UTSKRIFT,
+	NAV_NO,
+	PSELV,
+	SENTRAL_UTSKRIFT,
+	SDP,
+	SKAN_NETS,
+	SKAN_PEN
 }
 
 enum Tema {

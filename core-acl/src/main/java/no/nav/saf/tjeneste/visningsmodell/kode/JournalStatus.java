@@ -7,7 +7,8 @@ import java.util.List;
  * @author Ugur Alpay Cenar, Visma Consulting.
  */
 public enum JournalStatus {
-	MIDLERTIDIG,
+	MIDLERTIDIG_JOURNALFOERT,
+	MOTTATT,
 	JOURNALFOERT,
 	FERDIGSTILT,
 	EKSPEDERT,
