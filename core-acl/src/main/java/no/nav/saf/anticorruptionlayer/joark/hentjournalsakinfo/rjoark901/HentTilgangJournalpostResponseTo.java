@@ -1,14 +1,18 @@
 package no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark901;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Value;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * @author Sigurd Midttun, Visma Consulting.
  */
-@Value
+@Data
 @Builder
-public class HentTilgangJournalpostResponse {
+@AllArgsConstructor
+@NoArgsConstructor
+public class HentTilgangJournalpostResponseTo {
 
-	TilgangJournalpostDto tilgangJournalpostDto;
+	private TilgangJournalpostDto tilgangJournalpostDto;
 }

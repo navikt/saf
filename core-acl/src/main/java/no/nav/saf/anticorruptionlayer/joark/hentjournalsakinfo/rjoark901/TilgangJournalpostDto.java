@@ -1,25 +1,27 @@
-package no.nav.dokarkiv.hentjournalsakinfo.dto;
+package no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark901;
 
 
-import lombok.Value;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
 /**
  * @author Sigurd Midttun, Visma Consulting.
  */
-@Value
+@Data
+@NoArgsConstructor
 public class TilgangJournalpostDto {
 
-	private final String journalpostId;
-	private final String journalStatus;
-	private final String journalpostType;
-	private final String tema;
-	private final LocalDateTime datoOpprettet;
-	private final String mottakskanal;
-	private final String avsenderMottaker;
-	//	private final Boolean kvalitetssikretForInnsyn; TODO Finne ut av denne
-	private final TilgangBrukerDto bruker;
-	private final TilgangSakDto sak;
-	private final TilgangDokumentInfoDto dokument;
+	private String journalpostId;
+	private String journalStatus;
+	private String journalpostType;
+	private String tema;
+	private LocalDateTime datoOpprettet;
+	private String mottakskanal;
+	private String avsenderMottakerId;
+	//	private  Boolean kvalitetssikretForInnsyn; TODO Finne ut av denne
+	private TilgangBrukerDto bruker;
+	private TilgangSakDto sak;
+	private TilgangDokumentInfoDto dokument;
 }

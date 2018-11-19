@@ -11,12 +11,18 @@ import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.HentJournalsakinf
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.HentJournalpostBulkRequestTo;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.HentJournalpostBulkResponseTo;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.JournalpostDto;
+import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark901.HentTilgangJournalpostResponseTo;
+import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark901.TilgangBrukerDto;
+import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark901.TilgangDokumentInfoDto;
+import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark901.TilgangJournalpostDto;
+import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark901.TilgangSakDto;
 import no.nav.saf.cache.LokalCacheConfig;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.domain.tilgangsmodell.TilgangDokumentInfo;
 import no.nav.saf.domain.tilgangsmodell.TilgangIdent;
 import no.nav.saf.domain.tilgangsmodell.TilgangJournalpost;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
+import no.nav.saf.tjeneste.hentdokument.HentDokument;
 import no.nav.saf.tjeneste.visningsmodell.DokumentInfo;
 import no.nav.saf.tjeneste.visningsmodell.Journalpost;
 import no.nav.saf.tjeneste.visningsmodell.Sak;
@@ -34,6 +40,7 @@ import javax.inject.Inject;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -69,7 +76,8 @@ public class JoarkAntiCorruptionLayerImpl implements JoarkAntiCorruptionLayer {
 
 		Map<String, Sak> sakMap = saker.stream().collect(Collectors.toMap(Sak::getArkivsaksnummer, sak -> sak));
 
-		return Stream.concat(hentJournalposterResponse.getGsakJournalpostList().stream(), hentJournalposterResponse.getPsakJournalpostList().stream())
+		return Stream.concat(hentJournalposterResponse.getGsakJournalpostList()
+				.stream(), hentJournalposterResponse.getPsakJournalpostList().stream())
 				.map(journalpostTo -> mapJournalpostTo(sakMap, journalpostTo))
 				.collect(Collectors.toList());
 	}
@@ -136,12 +144,17 @@ public class JoarkAntiCorruptionLayerImpl implements JoarkAntiCorruptionLayer {
 																		   Collection<Temakode> inkluderTema,
 																		   List<JournalpostType> inkluderJournalposttyper,
 																		   List<JournalStatus> inkluderJournalstatus) {
-		List<String> alleIdenter = tilgangBruker.getHistoriskeIdenter().stream().map(TilgangIdent::getIdentifikator).collect(Collectors.toList());
+		List<String> alleIdenter = tilgangBruker.getHistoriskeIdenter()
+				.stream()
+				.map(TilgangIdent::getIdentifikator)
+				.collect(Collectors.toList());
 		alleIdenter.add(tilgangBruker.getFoedselsnr());
 		HentJournalpostBulkResponseTo responseTo = hentJournalsakinfo.hentJournalpostBulk(HentJournalpostBulkRequestTo.builder()
 				.aktoerId(tilgangBruker.getAktoerId())
 				.alleIdenter(alleIdenter)
-				.inkluderJournalpostType(inkluderJournalposttyper.stream().map(jt -> JournalpostTypeCode.valueOf(jt.name())).collect(Collectors.toList()))
+				.inkluderJournalpostType(inkluderJournalposttyper.stream()
+						.map(jt -> JournalpostTypeCode.valueOf(jt.name()))
+						.collect(Collectors.toList()))
 				.inkluderJournalStatus(JournalStatusCode.asList())
 				.inkluderTema(inkluderTema.stream().map(t -> FagomradeCode.valueOf(t.name())).collect(Collectors.toList()))
 				.visFeilregistrerte(inkluderJournalstatus.contains(JournalStatus.FEILREGISTRERT))
@@ -155,6 +168,57 @@ public class JoarkAntiCorruptionLayerImpl implements JoarkAntiCorruptionLayer {
 				.build());
 
 		return responseTo.getTilgangJournalposter().stream().map(this::mapTilgangJournalpost).collect(Collectors.toList());
+	}
+
+	@Override
+	public TilgangJournalpost hentTilgangJournalpost(String journalpostId, String dokumentId, String variantFormat) {
+		HentTilgangJournalpostResponseTo hentTilgangJournalpostResponseTo = hentJournalsakinfo.hentTilgangJournalpost(journalpostId, dokumentId, variantFormat);
+		return mapTilgangJournalpost(hentTilgangJournalpostResponseTo.getTilgangJournalpostDto());
+
+	}
+
+	@Override
+	public TilgangSak hentTilgangSak(String journalpostId, String dokumentId, String variantFormat) {
+		HentTilgangJournalpostResponseTo hentTilgangJournalpostResponseTo = hentJournalsakinfo.hentTilgangJournalpost(journalpostId, dokumentId, variantFormat);
+		final TilgangSakDto tilgangSakDto = hentTilgangJournalpostResponseTo.getTilgangJournalpostDto().getSak();
+		return TilgangSak.builder()
+				.arkivsaksnummer(tilgangSakDto.getSakId())
+				.arkivsaksystem(tilgangSakDto.getFagsystem())
+				.build();
+	}
+
+	@Override
+	public TilgangBruker hentTilgangBruker(String journalpostId, String dokumentId, String variantFormat) {
+		HentTilgangJournalpostResponseTo hentTilgangJournalpostResponseTo = hentJournalsakinfo.hentTilgangJournalpost(journalpostId, dokumentId, variantFormat);
+		final TilgangBrukerDto tilgangBrukerDto = hentTilgangJournalpostResponseTo.getTilgangJournalpostDto().getBruker();
+		return TilgangBruker.builder()
+				.foedselsnr(tilgangBrukerDto.getBrukerId())
+				.build();
+	}
+
+	@Override
+	public HentDokument hentDokument(String dokumentId, String variantFormat) {
+		return hentJournalsakinfo.hentDokument(dokumentId, variantFormat);
+	}
+
+	private TilgangJournalpost mapTilgangJournalpost(TilgangJournalpostDto dto) {
+		final TilgangDokumentInfoDto tilgangDokumentInfoDto = dto.getDokument();
+		return TilgangJournalpost.builder()
+				.journalpostId(dto.getJournalpostId())
+				.journalStatus(dto.getJournalStatus())
+				.journalpostType(dto.getJournalpostType())
+				.tema(dto.getTema())
+				.datoOpprettet(dto.getDatoOpprettet().toLocalDate())
+				.mottakskanal(dto.getMottakskanal())
+				.avsenderMottakerId(dto.getAvsenderMottakerId())
+				.dokumenter(Arrays.asList(TilgangDokumentInfo.builder()
+						.dokumentInfoId(tilgangDokumentInfoDto.getDokumentinfoId())
+						.dokumentstatus(tilgangDokumentInfoDto.getDokumentstatus())
+						.brevkode(tilgangDokumentInfoDto.getBrevkode())
+						.variantFormat(tilgangDokumentInfoDto.getVariantFormat())
+						.build()))
+				.build();
+
 	}
 
 	private TilgangJournalpost mapTilgangJournalpost(JournalpostDto dto) {
@@ -181,7 +245,7 @@ public class JoarkAntiCorruptionLayerImpl implements JoarkAntiCorruptionLayer {
 		return journalpostIds.stream()
 				.map(journalpostId -> {
 					JournalpostDto journalpostDto = journalpostCache.get(journalpostId, JournalpostDto.class);
-					if(journalpostDto == null) {
+					if (journalpostDto == null) {
 						return null;
 					}
 					return mapJournalpostDto(sakMap, journalpostDto);

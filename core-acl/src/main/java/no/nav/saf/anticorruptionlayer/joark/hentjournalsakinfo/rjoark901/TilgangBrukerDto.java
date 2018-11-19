@@ -1,12 +1,14 @@
-package no.nav.dokarkiv.hentjournalsakinfo.dto;
+package no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark901;
 
-import lombok.Value;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * @author Sigurd Midttun, Visma Consulting.
  */
-@Value
+@Data
+@NoArgsConstructor
 public class TilgangBrukerDto {
 
-	String brukerId;
+	private String brukerId;
 }

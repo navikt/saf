@@ -13,11 +13,10 @@ import org.springframework.http.MediaType;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class HentDokumentResponse {
-
+public class HentDokument {
 	@Builder.Default
 	private final byte[] dokument = new byte[0];
 	@Builder.Default
-	private final MediaType mediaType = MediaType.APPLICATION_JSON;
+	private final MediaType mediaType = MediaType.TEXT_PLAIN;
 
 }

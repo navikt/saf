@@ -1,20 +1,22 @@
-package no.nav.dokarkiv.hentjournalsakinfo.dto;
+package no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark901;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Value;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * @author Sigurd Midttun, Visma Consulting.
  */
-@Value
+@Data
 @Builder
+@NoArgsConstructor
 @AllArgsConstructor
 public class TilgangDokumentInfoDto {
 
-	private final String dokumentinfoId;
-	private final String dokumentstatus;
-	private final String brevkode;
-	private final String variantFormat;
+	private String dokumentinfoId;
+	private String dokumentstatus;
+	private String brevkode;
+	private String variantFormat;
 
 }

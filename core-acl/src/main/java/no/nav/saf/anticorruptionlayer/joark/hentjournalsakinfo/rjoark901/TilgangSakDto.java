@@ -1,18 +1,20 @@
-package no.nav.dokarkiv.hentjournalsakinfo.dto;
+package no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark901;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Value;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * @author Sigurd Midttun, Visma Consulting.
  */
-@Value
+@Data
 @Builder
+@NoArgsConstructor
 @AllArgsConstructor
 public class TilgangSakDto {
 
-	private final String sakId;
-	private final String fagsystem;
+	private String sakId;
+	private String fagsystem;
 
 }

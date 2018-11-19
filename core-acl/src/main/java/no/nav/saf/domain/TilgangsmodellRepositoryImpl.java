@@ -66,7 +66,8 @@ public class TilgangsmodellRepositoryImpl implements TilgangsmodellRepository {
 			tilgangSakList.addAll(pensjonSakAntiCorruptionLayer.hentTilgangSakList(tilgangBruker.getFoedselsnr()));
 			return tilgangSakList;
 		} catch (Exception e) {
-			log.warn(format("FindTilgangSakListByAktoerId feilet ved oppslag av aktoer=%s. Feilmelding=%s", tilgangBruker.getAktoerId(), e.getMessage()));
+			log.warn(format("FindTilgangSakListByAktoerId feilet ved oppslag av aktoer=%s. Feilmelding=%s", tilgangBruker.getAktoerId(), e
+					.getMessage()));
 			return new ArrayList<>();
 		}
 	}
@@ -93,10 +94,43 @@ public class TilgangsmodellRepositoryImpl implements TilgangsmodellRepository {
 					inkluderJournalposttyper,
 					inkluderJournalstatus);
 		} catch (Exception e) {
-			log.warn(format("HentTilgangJournalpostListByArkivsaker feilet ved oppslag av arkivsaker=%s. Feilmelding=%s",
-					tilgangSakList.stream().map(TilgangSak::getArkivsaksnummer).collect(Collectors.toList()), e.getMessage()));
+			log.warn("HentTilgangJournalpostListByArkivsaker feilet ved oppslag av arkivsaker={}. Feilmelding={}",
+					tilgangSakList.stream().map(TilgangSak::getArkivsaksnummer).collect(Collectors.toList()), e.getMessage());
 			return new ArrayList<>();
 		}
+	}
+
+	@Override
+	public TilgangJournalpost findTilgangJournalpost(String journalpostId, String dokumentId, String variantFormat) {
+		try {
+			return joarkAntiCorruptionLayer.hentTilgangJournalpost(journalpostId, dokumentId, variantFormat);
+		} catch (Exception e) {
+			log.warn("hentTilgangJournalpost feilet ved oppslag, journalpostId={}, dokumentId={}, variantFormat={}. Feilmelding={}",
+					journalpostId, dokumentId, variantFormat, e.getMessage());
+		}
+		return null;
+	}
+
+	@Override
+	public TilgangSak findTilgangSak(String journalpostId, String dokumentId, String variantFormat) {
+		try {
+			return joarkAntiCorruptionLayer.hentTilgangSak(journalpostId, dokumentId, variantFormat);
+		} catch (Exception e) {
+			log.warn("hentTilgangSak feilet ved oppslag, journalpostId={}, dokumentId={}, variantFormat={}. Feilmelding={}",
+					journalpostId, dokumentId, variantFormat, e.getMessage());
+		}
+		return null;
+	}
+
+	@Override
+	public TilgangBruker findTilgangBruker(String journalpostId, String dokumentId, String variantFormat) {
+		try {
+			return joarkAntiCorruptionLayer.hentTilgangBruker(journalpostId, dokumentId, variantFormat);
+		} catch (Exception e) {
+			log.warn("hentTilgangBruker feilet ved oppslag, journalpostId={}, dokumentId={}, variantFormat={}. Feilmelding={}",
+					journalpostId, dokumentId, variantFormat, e.getMessage());
+		}
+		return null;
 	}
 
 }

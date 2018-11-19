@@ -29,7 +29,6 @@ public class PensjonSakConsumer {
 	@Inject
 	public PensjonSakConsumer(PensjonSakV1 pensjonSakV1) {
 		this.pensjonSakV1 = pensjonSakV1;
-
 	}
 
 	@Retryable(include = SafTechnicalException.class,

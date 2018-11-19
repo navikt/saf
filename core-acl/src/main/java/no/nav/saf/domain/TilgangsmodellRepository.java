@@ -28,4 +28,10 @@ public interface TilgangsmodellRepository {
 													  Collection<Temakode> inkluderTema,
 													  List<JournalpostType> inkluderJournalposttyper,
 													  List<JournalStatus> inkluderJournalstatus);
+
+	TilgangJournalpost findTilgangJournalpost(String journalpostId, String dokumentId, String variantFormat);
+
+	TilgangSak findTilgangSak(String journalpostId, String dokumentId, String variantFormat);
+
+	TilgangBruker findTilgangBruker(String journalpostId, String dokumentId, String variantFormat);
 }
