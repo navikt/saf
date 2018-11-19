@@ -176,12 +176,12 @@ public class JoarkAntiCorruptionLayerImpl implements JoarkAntiCorruptionLayer {
 				if(journalpostDto.getMottakskanal() == null) {
 					return null;
 				}
-				return Kanal.valueOf(journalpostDto.getMottakskanal().name());
+				return journalpostDto.getMottakskanal().getSafKanal();
 			case U:
 				if(journalpostDto.getUtsendingskanal() == null) {
 					return mapManglendeUtsendingskanal(journalpostDto);
 				}
-				return Kanal.valueOf(journalpostDto.getUtsendingskanal().name());
+				return journalpostDto.getUtsendingskanal().getSafKanal();
 			default:
 				if(journalpostDto.getUtsendingskanal() == null) {
 					return mapManglendeUtsendingskanal(journalpostDto);
