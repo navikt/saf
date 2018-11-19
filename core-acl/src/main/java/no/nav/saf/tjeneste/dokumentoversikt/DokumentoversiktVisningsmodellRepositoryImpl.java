@@ -10,6 +10,8 @@ import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author Joakim Bjørnstad, Jbit AS
@@ -36,5 +38,12 @@ public class DokumentoversiktVisningsmodellRepositoryImpl implements Dokumentove
 		sakerByAktoerId.addAll(pensjonSakAntiCorruptionLayer.hentSakerByFoedselsnummer(foedselsnummer));
 		List<Journalpost> journalposter = joarkAntiCorruptionLayer.hentJournalpostListeByArkivsaker(sakerByAktoerId);
 		return journalposter;
+	}
+
+	@Override
+	public List<Journalpost> findJournalposter(String aktoerId, List<String> journalpostIds) {
+		List<Sak> sakerByAktoerId = gsakAntiCorruptionLayer.findSakerByAktoerId(aktoerId);
+		Map<String, Sak> sakMap = sakerByAktoerId.stream().collect(Collectors.toMap(Sak::getArkivsaksnummer, sak -> sak));
+		return joarkAntiCorruptionLayer.hentVisningJournalposter(sakMap, journalpostIds);
 	}
 }

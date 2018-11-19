@@ -11,11 +11,16 @@ import no.nav.saf.cache.LokalCacheConfig;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.domain.tilgangsmodell.TilgangJournalpost;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
+import no.nav.saf.tjeneste.visningsmodell.kode.JournalStatus;
+import no.nav.saf.tjeneste.visningsmodell.kode.JournalpostType;
+import no.nav.saf.tjeneste.visningsmodell.kode.Temakode;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Repository;
 
 import javax.inject.Inject;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -62,8 +67,8 @@ public class TilgangsmodellRepositoryImpl implements TilgangsmodellRepository {
 			return tilgangSakList;
 		} catch (Exception e) {
 			log.warn(format("FindTilgangSakListByAktoerId feilet ved oppslag av aktoer=%s. Feilmelding=%s", tilgangBruker.getAktoerId(), e.getMessage()));
+			return new ArrayList<>();
 		}
-		return new ArrayList<>();
 	}
 
 	@Override
@@ -74,8 +79,24 @@ public class TilgangsmodellRepositoryImpl implements TilgangsmodellRepository {
 		} catch (Exception e) {
 			log.warn(format("HentTilgangJournalpostListByArkivsaker feilet ved oppslag av arkivsaker=%s. Feilmelding=%s",
 					tilgangSakList.stream().map(TilgangSak::getArkivsaksnummer).collect(Collectors.toList()), e.getMessage()));
+			return new ArrayList<>();
 		}
-		return new ArrayList<>();
+	}
+
+	@Override
+	public List<TilgangJournalpost> findTilgangJournalposter(TilgangBruker tilgangBruker, List<TilgangSak> tilgangSakList, LocalDate fraDato, Collection<Temakode> inkluderTema, List<JournalpostType> inkluderJournalposttyper, List<JournalStatus> inkluderJournalstatus) {
+		try {
+			return joarkAntiCorruptionLayer.hentTilgangJournalpostListByArkivsaker(tilgangBruker,
+					tilgangSakList,
+					fraDato,
+					inkluderTema,
+					inkluderJournalposttyper,
+					inkluderJournalstatus);
+		} catch (Exception e) {
+			log.warn(format("HentTilgangJournalpostListByArkivsaker feilet ved oppslag av arkivsaker=%s. Feilmelding=%s",
+					tilgangSakList.stream().map(TilgangSak::getArkivsaksnummer).collect(Collectors.toList()), e.getMessage()));
+			return new ArrayList<>();
+		}
 	}
 
 }

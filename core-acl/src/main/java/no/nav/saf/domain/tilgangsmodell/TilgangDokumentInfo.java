@@ -11,5 +11,6 @@ import lombok.Value;
 public class TilgangDokumentInfo {
 	private final String dokumentInfoId;
 	private final String dokumentstatus;
+	private final String brevkode;
 	private final String variantFormat;
 }

@@ -1,7 +1,6 @@
 package no.nav.saf.anticorruptionlayer.joark.domain.kode;
 
 public enum JournalpostTypeCode {
-
 	/**
 	 * Inngående dokument
 	 */
@@ -13,5 +12,5 @@ public enum JournalpostTypeCode {
 	/**
 	 * Internt notat
 	 */
-	N;
+	N
 }

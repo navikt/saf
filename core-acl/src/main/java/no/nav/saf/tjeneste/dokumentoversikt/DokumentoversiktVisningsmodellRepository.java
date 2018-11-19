@@ -10,4 +10,5 @@ import java.util.List;
  */
 public interface DokumentoversiktVisningsmodellRepository {
 	List<Journalpost> findJournalposterByAktoerId(String aktoerId, String foedselsnummer, List<Temakode> temaer);
+	List<Journalpost> findJournalposter(String aktoerId, List<String> journalpostIds);
 }

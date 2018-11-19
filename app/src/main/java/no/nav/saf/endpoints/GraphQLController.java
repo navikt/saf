@@ -1,7 +1,5 @@
 package no.nav.saf.endpoints;
 
-import static no.nav.saf.security.OidcAuthUtils.getOidcToken;
-
 import graphql.ExecutionInput;
 import graphql.ExecutionResult;
 import graphql.GraphQL;
@@ -11,7 +9,6 @@ import graphql.schema.idl.SchemaParser;
 import graphql.schema.idl.TypeDefinitionRegistry;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.endpoints.wiring.DokumentoversiktWiring;
-import no.nav.saf.tilgangskontroll.NavBrukertype;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -32,13 +29,12 @@ import java.util.Map;
 @RestController
 @Slf4j
 public class GraphQLController {
-
 	private final GraphQLSchema graphQLSchema;
+
 
 	public GraphQLController(DokumentoversiktWiring dokumentoversiktWiring) {
 		SchemaParser schemaParser = new SchemaParser();
-		InputStreamReader schema = new InputStreamReader(getClass().getClassLoader()
-				.getResourceAsStream("schemas/saf.graphql"));
+		InputStreamReader schema = new InputStreamReader(getClass().getClassLoader().getResourceAsStream("schemas/saf.graphql"));
 
 		TypeDefinitionRegistry typeRegistry = schemaParser.parse(schema);
 		SchemaGenerator schemaGenerator = new SchemaGenerator();
@@ -47,25 +43,16 @@ public class GraphQLController {
 
 	@PostMapping(value = "/graphql", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
-	public Map<String, Object> graphQLRequest(@RequestBody GraphQLRequest request, @RequestHeader HttpHeaders httpHeaders) {
-
-		String oidcToken = getOidcToken(httpHeaders);
-
+	public Map<String, Object> graphQLRequest(@RequestHeader(value = HttpHeaders.AUTHORIZATION, required = false) String authorizationHeader,
+											  @RequestBody GraphQLRequest request) {
 		ExecutionResult executionResult = GraphQL.newGraphQL(graphQLSchema)
 				.build()
 				.execute(ExecutionInput.newExecutionInput()
 						.query(request.getQuery())
 						.operationName(request.getOperationName())
 						.variables(request.getVariables())
-						.context(SafRequestContext.builder()
-								.oidcToken(oidcToken)
-								.navBrukertype(NavBrukertype.SAKSBEHANDLER)
-								.build())
+						.context(new SafRequestContext(authorizationHeader))
 						.build());
-
 		return executionResult.toSpecification();
-
 	}
-
-
 }

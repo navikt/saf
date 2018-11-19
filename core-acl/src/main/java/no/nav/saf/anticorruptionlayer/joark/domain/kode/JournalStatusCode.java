@@ -2,11 +2,14 @@ package no.nav.saf.anticorruptionlayer.joark.domain.kode;
 
 import no.nav.saf.tjeneste.visningsmodell.kode.JournalStatus;
 
+import java.util.Arrays;
+import java.util.List;
+
 public enum JournalStatusCode {
 	/**
 	 * journalført
 	 */
-	J(JournalStatus.ENDELIG),
+	J(JournalStatus.JOURNALFOERT),
 	/**
 	 * midl journalført
 	 */
@@ -22,7 +25,7 @@ public enum JournalStatusCode {
 	/**
 	 * Reservert dokument
 	 */
-	R(JournalStatus.MIDLERTIDIG),
+	R(JournalStatus.RESERVERT),
 	/**
 	 * Ferdig og sentral print
 	 */
@@ -50,7 +53,7 @@ public enum JournalStatusCode {
 	/**
 	 * Opplasting dokument 
 	 */
-	OD(JournalStatus.MIDLERTIDIG);
+	OD(JournalStatus.OPPLASTING_DOKUMENT);
 
 	private final JournalStatus safJournalStatus;
 
@@ -60,5 +63,9 @@ public enum JournalStatusCode {
 
 	public JournalStatus toSafJournalStatus() {
 		return safJournalStatus;
+	}
+
+	public static List<JournalStatusCode> asList() {
+		return Arrays.asList(values());
 	}
 }

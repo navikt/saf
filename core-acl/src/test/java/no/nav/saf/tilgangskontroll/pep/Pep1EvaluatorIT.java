@@ -9,7 +9,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.domain.tilgangsmodell.TilgangIdent;
-import no.nav.saf.tilgangskontroll.NavBrukertype;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import org.junit.jupiter.api.Test;
 
@@ -22,7 +21,6 @@ import java.util.Collections;
 /**
  * @author Sigurd Midttun, Visma Consulting.
  */
-
 public class Pep1EvaluatorIT extends AbstractPepEvaluatorIT {
 
 	@Inject
@@ -37,11 +35,7 @@ public class Pep1EvaluatorIT extends AbstractPepEvaluatorIT {
 				.aktoerId(AKTOER_ID)
 				.foedselsnr(IDENTIFIKATOR)
 				.historiskeIdenter(Arrays.asList(TilgangIdent.builder().identifikator(IDENTIFIKATOR).build()))
-				.build(), SafRequestContext.builder()
-				.aktoerId(AKTOER_ID)
-				.navBrukertype(NavBrukertype.BRUKER)
-				.oidcToken(getOidcTokenBody(OIDC_TOKEN_PERSON_USER_TEST.replace("Bearer ", "")))
-				.build());
+				.build(), new SafRequestContext(OIDC_TOKEN_PERSON_USER_TEST));
 
 		verify(postRequestedFor(urlEqualTo("/abac")).withRequestBody(equalToJson(format(stringFromClasspath("pep1/pep1-happy.json"),
 				getOidcTokenBody(OIDC_TOKEN_PERSON_USER_TEST.replace("Bearer ", ""))))));
@@ -56,11 +50,7 @@ public class Pep1EvaluatorIT extends AbstractPepEvaluatorIT {
 				.aktoerId(AKTOER_ID)
 				.foedselsnr(IDENTIFIKATOR)
 				.historiskeIdenter(Collections.singletonList(TilgangIdent.builder().identifikator(IDENTIFIKATOR).build()))
-				.build(), SafRequestContext.builder()
-				.aktoerId(AKTOER_ID)
-				.navBrukertype(NavBrukertype.BRUKER)
-				.oidcToken(getOidcTokenBody(OIDC_TOKEN_PERSON_USER_TEST.replace("Bearer ", "")))
-				.build());
+				.build(), new SafRequestContext(OIDC_TOKEN_PERSON_USER_TEST));
 
 		verify(postRequestedFor(urlEqualTo("/abac")).withRequestBody(equalToJson(format(stringFromClasspath("pep1/pep1-happy.json"),
 				getOidcTokenBody(OIDC_TOKEN_PERSON_USER_TEST.replace("Bearer ", ""))))));
