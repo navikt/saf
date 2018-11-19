@@ -38,7 +38,7 @@ public class HentDokumentController {
 	@ApiOperation(value = "Hent dokument for angitte søkekriterier", authorizations = {@Authorization(value = "apiKey")})
 	@SwaggerRestHentDokument
 	@GetMapping(value = "hentdokument/{journalpostId}/{dokumentId}/{variantFormat}")
-	@DokMetrics(value = "dok_request", description = "rest hentDokument", percentiles = {0.5, 0.95})
+	@DokMetrics(value = "dok_request", extraTags = {"process", "hentDokument"}, percentiles = {0.5, 0.95}) // trenger sånn ish sånn her på alle metrikkene, så sjekk grafana, så
 	public ResponseEntity<byte[]> hentDokument(@PathVariable String journalpostId,
 											   @PathVariable String dokumentId,
 											   @PathVariable String variantFormat,

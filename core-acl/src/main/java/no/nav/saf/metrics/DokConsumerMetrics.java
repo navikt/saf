@@ -28,6 +28,8 @@ public @interface DokConsumerMetrics {
 
 	String[] extraTags() default {};
 
+	double[] percentiles() default {};
+
 	boolean histogram() default false;
 
 	String description() default "";

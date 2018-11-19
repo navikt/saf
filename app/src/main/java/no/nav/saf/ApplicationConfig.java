@@ -41,4 +41,6 @@ public class ApplicationConfig {
 	DokTimedAspect timedAspect(MeterRegistry meterRegistry) {
 		return new DokTimedAspect(meterRegistry);
 	}
+
+
 }

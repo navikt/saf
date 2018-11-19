@@ -16,7 +16,6 @@
 package no.nav.saf.metrics;
 
 import io.micrometer.core.annotation.Incubating;
-import io.micrometer.core.annotation.Timed;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Tag;
@@ -63,9 +62,9 @@ public class DokTimedAspect {
 	}
 
 	@Around("execution (@no.nav.saf.metrics.DokMetrics * *.*(..))")
-	public Object timedMethod(ProceedingJoinPoint pjp) throws Throwable {
+	public Object dokMetrics(ProceedingJoinPoint pjp) throws Throwable {
 		Method method = ((MethodSignature) pjp.getSignature()).getMethod();
-		Timed timed = method.getAnnotation(Timed.class);
+		DokMetrics timed = method.getAnnotation(DokMetrics.class);
 
 		if (timed.value().isEmpty()) {
 			return pjp.proceed();
@@ -99,7 +98,7 @@ public class DokTimedAspect {
 	@Around("execution (@no.nav.saf.metrics.DokConsumerMetrics * *.*(..))")
 	public Object dokTimedConsumerMetric(ProceedingJoinPoint pjp) throws Throwable {
 		Method method = ((MethodSignature) pjp.getSignature()).getMethod();
-		Timed timed = method.getAnnotation(Timed.class);
+		DokConsumerMetrics timed = method.getAnnotation(DokConsumerMetrics.class);
 
 		if (timed.value().isEmpty()) {
 			return pjp.proceed();

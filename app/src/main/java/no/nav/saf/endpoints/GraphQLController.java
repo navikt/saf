@@ -44,7 +44,7 @@ public class GraphQLController {
 
 	@PostMapping(value = "/graphql", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
-	@DokMetrics(value = "dok_request", description = "graphQL hentDokument", percentiles = {0.5, 0.95})
+	@DokMetrics(value = "dok_request", extraTags = {"process", "dokumentOversikt"}, percentiles = {0.5, 0.95})
 	public Map<String, Object> graphQLRequest(@RequestHeader(value = HttpHeaders.AUTHORIZATION, required = false) String authorizationHeader,
 											  @RequestBody GraphQLRequest request) {
 		ExecutionResult executionResult = GraphQL.newGraphQL(graphQLSchema)

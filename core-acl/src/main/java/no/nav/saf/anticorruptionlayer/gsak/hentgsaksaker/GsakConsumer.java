@@ -44,7 +44,7 @@ public class GsakConsumer {
 	}
 
 	@Cacheable(cacheNames = LokalCacheConfig.SAKER_BY_AKTOER_ID_CACHE)
-	@DokConsumerMetrics(value = "dok_consumer", description = "hentSakerByAktoerId")
+	@DokConsumerMetrics(value = "dok_consumer", extraTags = {"process", "hentSakerByAktoerId"}, percentiles = {0.5, 0.95})
 	public List<GsakSakerTo> hentSakerByAktoerId(final String aktoerId) {
 		UriComponentsBuilder uri = UriComponentsBuilder.fromHttpUrl(gsakApiUrl)
 				.queryParam("aktoerId", aktoerId);
@@ -52,7 +52,7 @@ public class GsakConsumer {
 	}
 
 	@Cacheable(cacheNames = LokalCacheConfig.SAKER_BY_AKTOER_ID_CACHE)
-	@DokConsumerMetrics(value = "dok_consumer", description = "hentSakerByAktoerIdWithTemakode")
+	@DokConsumerMetrics(value = "dok_consumer", extraTags = {"process", "hentSakerByAktoerIdWithTemakode"}, percentiles = {0.5, 0.95})
 	public List<GsakSakerTo> hentSakerByAktoerId(final String aktoerId, final Temakode temakode) {
 		UriComponentsBuilder uri = UriComponentsBuilder.fromHttpUrl(gsakApiUrl)
 				.queryParam("aktoerId", aktoerId)
