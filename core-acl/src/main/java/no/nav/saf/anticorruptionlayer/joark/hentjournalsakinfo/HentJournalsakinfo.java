@@ -3,6 +3,7 @@ package no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo;
 import static no.nav.saf.cache.LokalCacheConfig.HENT_JOURNALPOSTER_CACHE;
 
 import no.nav.saf.integration.fasit.ServiceuserAlias;
+import no.nav.saf.metrics.DokConsumerMetrics;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.cache.annotation.Cacheable;
@@ -37,6 +38,7 @@ public class HentJournalsakinfo {
 	}
 
 	@Cacheable(cacheNames = HENT_JOURNALPOSTER_CACHE)
+	@DokConsumerMetrics(value = "dok_consumer", description = "hentJournalposter")
 	public HentJournalposterResponse hentJournalposter(HentJournalposterRequest request) {
 		ResponseEntity<HentJournalposterResponse> response = restTemplate.postForEntity(hentjournalsakinfoUrl, request, HentJournalposterResponse.class);
 		return response.getBody();

@@ -5,6 +5,7 @@ import static no.nav.saf.security.OidcAuthUtils.getOidcToken;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.Authorization;
 import lombok.extern.slf4j.Slf4j;
+import no.nav.saf.metrics.DokMetrics;
 import no.nav.saf.swagger.SwaggerRestHentDokument;
 import no.nav.saf.tilgangskontroll.NavBrukertype;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
@@ -40,6 +41,7 @@ public class HentDokumentController {
 	@ApiOperation(value = "Hent dokument for angitte søkekriterier", authorizations = {@Authorization(value = "apiKey")})
 	@SwaggerRestHentDokument
 	@GetMapping(value = "hentdokument/{journalpostId}/{dokumentId}/{variantFormat}")
+	@DokMetrics(value = "dok_request", description = "rest hentDokument", percentiles = {0.5, 0.95})
 	public Base64 hentDokument(@PathVariable String journalpostId,
 							   @PathVariable String dokumentId,
 							   @PathVariable String variantFormat,
@@ -58,6 +60,5 @@ public class HentDokumentController {
 				.build();
 
 		return hentDokumentDomainCoordinator.hentDokument(hentDokumentArguments, safRequestContext).getDokument();
-//		return null;
 	}
 }

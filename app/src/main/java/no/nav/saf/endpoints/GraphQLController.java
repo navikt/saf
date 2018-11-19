@@ -11,6 +11,7 @@ import graphql.schema.idl.SchemaParser;
 import graphql.schema.idl.TypeDefinitionRegistry;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.endpoints.wiring.DokumentoversiktWiring;
+import no.nav.saf.metrics.DokMetrics;
 import no.nav.saf.tilgangskontroll.NavBrukertype;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import org.springframework.http.HttpHeaders;
@@ -47,6 +48,7 @@ public class GraphQLController {
 
 	@PostMapping(value = "/graphql", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
+	@DokMetrics(value = "dok_request", description = "graphQL hentDokument", percentiles = {0.5, 0.95})
 	public Map<String, Object> graphQLRequest(@RequestBody GraphQLRequest request, @RequestHeader HttpHeaders httpHeaders) {
 
 		String oidcToken = getOidcToken(httpHeaders);

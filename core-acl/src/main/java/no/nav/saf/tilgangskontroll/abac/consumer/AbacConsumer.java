@@ -3,6 +3,7 @@ package no.nav.saf.tilgangskontroll.abac.consumer;
 import static java.util.Collections.singletonList;
 
 import no.nav.saf.integration.fasit.ServiceuserAlias;
+import no.nav.saf.metrics.DokMetrics;
 import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlRequest;
 import no.nav.saf.tilgangskontroll.abac.dto.response.XacmlResponse;
 import no.nav.saf.tilgangskontroll.abac.exception.UnexpectedHttpCodeException;
@@ -40,6 +41,7 @@ public class AbacConsumer {
 		this.abacResponseMapper = abacResponseMapper;
 	}
 
+	@DokMetrics(value = "dok_consumer", description = "abacEvaluate", percentiles = {0.5, 0.95})
 	public XacmlResponse evaluate(XacmlRequest requestBody) {
 		HttpEntity<String> httpRequest = prepareHttpRequest(requestBody);
 
