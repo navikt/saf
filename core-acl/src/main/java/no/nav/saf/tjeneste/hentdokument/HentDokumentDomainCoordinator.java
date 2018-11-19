@@ -8,5 +8,5 @@ import no.nav.saf.tilgangskontroll.SafRequestContext;
 
 public interface HentDokumentDomainCoordinator {
 
-	HentDokumentResponse hentDokument(HentDokumentArguments hentDokumentArguments, SafRequestContext safRequestContext);
+	HentDokument hentDokument(String journalpostId, String dokumentId, String variantFormat, SafRequestContext safRequestContext);
 }

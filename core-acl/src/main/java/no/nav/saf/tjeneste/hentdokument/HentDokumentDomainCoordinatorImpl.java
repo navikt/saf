@@ -1,9 +1,9 @@
 package no.nav.saf.tjeneste.hentdokument;
 
+import no.nav.saf.domain.DokumentRepository;
 import no.nav.saf.domain.TilgangsmodellRepository;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.domain.tilgangsmodell.TilgangJournalpost;
-import no.nav.saf.domain.tilgangsmodell.TilgangJournalpostHentDokument;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.pep.PepEvaluator;
@@ -19,6 +19,7 @@ import javax.inject.Named;
 @Component
 public class HentDokumentDomainCoordinatorImpl implements HentDokumentDomainCoordinator {
 
+	private final DokumentRepository dokumentRepository;
 	private final TilgangsmodellRepository tilgangsmodellRepository;
 	private final PepEvaluator<TilgangBruker> pep1;
 	private final PepEvaluator<TilgangSak> pep2;
@@ -26,11 +27,13 @@ public class HentDokumentDomainCoordinatorImpl implements HentDokumentDomainCoor
 	private final PepEvaluator<TilgangJournalpost> pep4;
 
 	@Inject
-	public HentDokumentDomainCoordinatorImpl(TilgangsmodellRepository tilgangsmodellRepository,
+	public HentDokumentDomainCoordinatorImpl(DokumentRepository dokumentRepository,
+											 TilgangsmodellRepository tilgangsmodellRepository,
 											 @Named("pep1") PepEvaluator<TilgangBruker> pep1,
 											 @Named("pep2") PepEvaluator<TilgangSak> pep2,
 											 @Named("pep3") PepEvaluator<TilgangSak> pep3,
 											 @Named("pep4") PepEvaluator<TilgangJournalpost> pep4) {
+		this.dokumentRepository = dokumentRepository;
 		this.tilgangsmodellRepository = tilgangsmodellRepository;
 		this.pep1 = pep1;
 		this.pep2 = pep2;
@@ -39,41 +42,31 @@ public class HentDokumentDomainCoordinatorImpl implements HentDokumentDomainCoor
 	}
 
 	@Override
-	public HentDokumentResponse hentDokument(final HentDokumentArguments hentDokumentArguments, final SafRequestContext safRequestContext) {
+	public HentDokument hentDokument(final String journalpostId, final String dokumentId, final String variantFormat, final SafRequestContext safRequestContext) {
+		final TilgangBruker tilgangBruker = tilgangsmodellRepository.findTilgangBruker(journalpostId, dokumentId, variantFormat);
+		boolean pep1Access = pep1.hasAccess(tilgangBruker, safRequestContext);
+		if (!pep1Access) {
+			return new HentDokument();
+		}
 
-//		final TilgangJournalpostHentDokument tilgangJournalpost = tilgangsmodellRepository.findTilgangJournalpost(hentDokumentArguments
-//				.getJournalpostId(), hentDokumentArguments.getDokumentId(), hentDokumentArguments.getVariantFormat());
-//
-//		final List<TilgangJournalpost> tilgangJournalpostList = tilgangsmodellRepository.findTilgangJournalpostListByArkivsaker(filteredTilgangSakList);
-//
-//
-//		final TilgangBruker tilgangBruker = tilgangsmodellRepository.findTilgangBrukerByAktoerId(hentDokumentArguments.getAktoerId());
-//		boolean pep1Access = this.pep1.hasAccess(tilgangBruker, safRequestContext);
-//
-//		if (!pep1Access) {
-//			return null;
-//		}
-//
-//		final List<TilgangSak> tilgangSakList = tilgangsmodellRepository.findTilgangSakListByAktoerId(hentDokumentArguments.getAktoerId());
-//		List<TilgangSak> filteredTilgangSakList = tilgangSakList.stream()
-//				.filter(tilgangSak -> pep2.hasAccess(tilgangSak, safRequestContext))
-//				.filter(tilgangSak -> pep3.hasAccess(tilgangSak, safRequestContext))
-//				.collect(Collectors.toList());
-//
-//		final List<TilgangJournalpost> tilgangJournalpostList = tilgangsmodellRepository.findTilgangJournalpostListByArkivsaker(filteredTilgangSakList);
+		final TilgangSak tilgangSak = tilgangsmodellRepository.findTilgangSak(journalpostId, dokumentId, variantFormat);
+		boolean pep2Access = pep2.hasAccess(tilgangSak, safRequestContext);
+		if (!pep2Access) {
+			return new HentDokument();
+		}
 
-//		final TilgangJournalpost tilgangJournalpost = tilgangJournalpostList.stream()
-//				.findAny(tilgangJp -> tilgangJp.getJournalpostId().equals(hentDokumentArguments.getJournalpostId()))
-//
-//
-//		if (!hasSakAccessToJp) {
-//			return null;hentDokumentController
-//		}
-//
-//		final List<TilgangJournalpost> filteredTilgangJournalpostList = tilgangJournalpostList.stream()
-//				.filter(tilgangJournalpost -> pep4.hasAccess(tilgangJournalpost, safRequestContext))
-//				.collect(Collectors.toList());
+		boolean pep3Access = pep3.hasAccess(tilgangSak, safRequestContext);
+		if (!pep3Access) {
+			return new HentDokument();
+		}
 
-		return HentDokumentResponse.builder().build();
+		final TilgangJournalpost tilgangJournalpost = tilgangsmodellRepository.findTilgangJournalpost(journalpostId, dokumentId, variantFormat);
+		boolean pep4Access = pep4.hasAccess(tilgangJournalpost, safRequestContext);
+
+		if (!pep4Access) {
+			return new HentDokument();
+		}
+
+		return dokumentRepository.findDokument(dokumentId, variantFormat);
 	}
 }

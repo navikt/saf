@@ -8,7 +8,7 @@ schema {
 
 type Query {
     # Returnerer en liste over alle dokumenter tilknyttet en bruker.
-    dokumentoversikt(aktoerId: String, fraDato: Date = null, journalposttyper : [JournalpostType] = [], journalstatuser : [JournalStatus] = [], visFeilregistrerte: Boolean = false): [Journalpost]!
+    dokumentoversiktBruker(aktoerId: String, fraDato: Date = null, journalposttyper : [JournalpostType] = [], journalstatuser : [JournalStatus] = []): [Journalpost]!
 }
 
 type Journalpost {
@@ -53,7 +53,7 @@ enum JournalpostType {
 
 enum JournalStatus {
     MIDLERTIDIG
-    ENDELIG
+    JOURNALFOERT
     FERDIGSTILT
     EKSPEDERT
     UNDER_ARBEID
@@ -61,6 +61,8 @@ enum JournalStatus {
     UTGAAR
     AVBRUTT
     UKJENT_BRUKER
+    RESERVERT
+    OPPLASTING_DOKUMENT
 }
 
 enum Tema {

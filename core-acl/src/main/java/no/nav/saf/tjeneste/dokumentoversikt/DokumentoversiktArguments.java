@@ -18,7 +18,7 @@ public class DokumentoversiktArguments {
 	private final List<JournalStatus> journalstatuser;
 	private final boolean visFeilregistrerte;
 
-	public DokumentoversiktArguments(String aktoerId, LocalDate fraDato, List<JournalpostType> journalposttyper, List<JournalStatus> journalstatuser, boolean visFeilregistrerte) {
+	public DokumentoversiktArguments(String aktoerId, LocalDate fraDato, List<JournalpostType> journalposttyper, List<JournalStatus> journalstatuser) {
 		this.aktoerId = aktoerId;
 		if(fraDato == null) {
 			this.fraDato = LocalDate.now().minusMonths(12);
@@ -35,6 +35,6 @@ public class DokumentoversiktArguments {
 		} else {
 			this.journalstatuser = journalstatuser;
 		}
-		this.visFeilregistrerte = visFeilregistrerte;
+		this.visFeilregistrerte = this.journalstatuser.contains(JournalStatus.FEILREGISTRERT);
 	}
 }
