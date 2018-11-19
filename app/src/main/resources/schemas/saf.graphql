@@ -58,7 +58,7 @@ enum JournalpostType {
 }
 
 enum JournalStatus {
-    MIDLERTIDIG
+    MIDLERTIDIG_JOURNALFOERT
     MOTTATT
     JOURNALFOERT
     FERDIGSTILT
