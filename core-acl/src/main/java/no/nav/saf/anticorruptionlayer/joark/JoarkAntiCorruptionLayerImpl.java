@@ -3,8 +3,6 @@ package no.nav.saf.anticorruptionlayer.joark;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.FagomradeCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.JournalStatusCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.JournalpostTypeCode;
-import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.HentJournalposterRequest;
-import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.HentJournalposterResponse;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.HentJournalsakinfo;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.HentJournalpostBulkRequestTo;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.HentJournalpostBulkResponseTo;
@@ -51,34 +49,6 @@ public class JoarkAntiCorruptionLayerImpl implements JoarkAntiCorruptionLayer {
 	public JoarkAntiCorruptionLayerImpl(HentJournalsakinfo hentJournalsakinfo, CacheManager cacheManager) {
 		this.hentJournalsakinfo = hentJournalsakinfo;
 		this.journalpostCache = cacheManager.getCache(LokalCacheConfig.JOURNALPOST_CACHE);
-	}
-
-	@Override
-	public List<TilgangJournalpost> hentTilgangJournalpostListByArkivsaker(List<TilgangSak> tilgangSakList) {
-		HentJournalposterResponse hentJournalposterResponse = hentJournalsakinfo.hentJournalposter(HentJournalposterRequest.builder()
-				.gsakSakIdList(tilgangSakList.stream()
-						.filter(tilgangSak -> Arkivsakssystem.GSAK.name().equals(tilgangSak.getArkivsaksystem()))
-						.map(TilgangSak::getArkivsaksnummer).collect(Collectors.toList()))
-				.psakSakIdList(tilgangSakList.stream()
-						.filter(tilgangSak -> Arkivsakssystem.PSAK.name().equals(tilgangSak.getArkivsaksystem()))
-						.map(TilgangSak::getArkivsaksnummer).collect(Collectors.toList()))
-				.build());
-
-		return hentJournalposterResponse
-				.getGsakJournalpostList().stream().map(journalpostTo -> TilgangJournalpost.builder()
-						.journalpostId(journalpostTo.getJournalpostId().toString())
-						.journalStatus(journalpostTo.getJournalstatus() == null ? null : journalpostTo.getJournalstatus()
-								.name())
-						.dokumenter(journalpostTo.getJournalpostDokumentInfoRelasjoner().stream()
-								.map(relasjon -> TilgangDokumentInfo.builder()
-										.dokumentInfoId(relasjon.getDokumentInfo().getDokumentInfoId().toString())
-										.dokumentstatus(relasjon.getDokumentInfo().getDokumentstatus() == null ? null : relasjon
-												.getDokumentInfo().getDokumentstatus().name())
-										.variantFormat("ARKIV") //TODO Endre hentJournalsakInfo til å også returnere variantformat
-										.build())
-								.collect(Collectors.toList()))
-						.build())
-				.collect(Collectors.toList());
 	}
 
 	@Override

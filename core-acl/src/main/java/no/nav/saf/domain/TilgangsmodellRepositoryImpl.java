@@ -72,18 +72,6 @@ public class TilgangsmodellRepositoryImpl implements TilgangsmodellRepository {
 	}
 
 	@Override
-	@Cacheable(cacheNames = LokalCacheConfig.TILGANGSMODELL_REPO_JORNALPOST_CACHE)
-	public List<TilgangJournalpost> findTilgangJournalpostListByArkivsaker(List<TilgangSak> tilgangSakList) {
-		try {
-			return joarkAntiCorruptionLayer.hentTilgangJournalpostListByArkivsaker(tilgangSakList);
-		} catch (Exception e) {
-			log.warn(format("HentTilgangJournalpostListByArkivsaker feilet ved oppslag av arkivsaker=%s. Feilmelding=%s",
-					tilgangSakList.stream().map(TilgangSak::getArkivsaksnummer).collect(Collectors.toList()), e.getMessage()));
-			return new ArrayList<>();
-		}
-	}
-
-	@Override
 	public List<TilgangJournalpost> findTilgangJournalposter(TilgangBruker tilgangBruker, List<TilgangSak> tilgangSakList, LocalDate fraDato, Collection<Temakode> inkluderTema, List<JournalpostType> inkluderJournalposttyper, List<JournalStatus> inkluderJournalstatus) {
 		try {
 			return joarkAntiCorruptionLayer.hentTilgangJournalpostListByArkivsaker(tilgangBruker,

@@ -20,8 +20,6 @@ public interface TilgangsmodellRepository {
 
 	List<TilgangSak> findTilgangSakListByTilgangBruker(TilgangBruker tilgangBruker);
 
-	List<TilgangJournalpost> findTilgangJournalpostListByArkivsaker(List<TilgangSak> tilgangSakList);
-
 	List<TilgangJournalpost> findTilgangJournalposter(TilgangBruker tilgangBruker,
 													  List<TilgangSak> tilgangSakList,
 													  LocalDate fraDato,

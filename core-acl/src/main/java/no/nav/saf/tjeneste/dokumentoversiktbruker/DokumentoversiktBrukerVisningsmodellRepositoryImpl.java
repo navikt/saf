@@ -1,4 +1,4 @@
-package no.nav.saf.tjeneste.dokumentoversikt;
+package no.nav.saf.tjeneste.dokumentoversiktbruker;
 
 import no.nav.saf.anticorruptionlayer.gsak.GsakAntiCorruptionLayer;
 import no.nav.saf.anticorruptionlayer.joark.JoarkAntiCorruptionLayer;
@@ -16,16 +16,16 @@ import java.util.stream.Collectors;
  * @author Joakim Bjørnstad, Jbit AS
  */
 @Component
-public class DokumentoversiktVisningsmodellRepositoryImpl implements DokumentoversiktVisningsmodellRepository {
+public class DokumentoversiktBrukerVisningsmodellRepositoryImpl implements DokumentoversiktBrukerVisningsmodellRepository {
 
 	private final GsakAntiCorruptionLayer gsakAntiCorruptionLayer;
 	private final PensjonSakAntiCorruptionLayer pensjonSakAntiCorruptionLayer;
 	private final JoarkAntiCorruptionLayer joarkAntiCorruptionLayer;
 
 	@Inject
-	public DokumentoversiktVisningsmodellRepositoryImpl(GsakAntiCorruptionLayer gsakAntiCorruptionLayer,
-														PensjonSakAntiCorruptionLayer pensjonSakAntiCorruptionLayer,
-														JoarkAntiCorruptionLayer joarkAntiCorruptionLayer) {
+	public DokumentoversiktBrukerVisningsmodellRepositoryImpl(GsakAntiCorruptionLayer gsakAntiCorruptionLayer,
+															  PensjonSakAntiCorruptionLayer pensjonSakAntiCorruptionLayer,
+															  JoarkAntiCorruptionLayer joarkAntiCorruptionLayer) {
 		this.gsakAntiCorruptionLayer = gsakAntiCorruptionLayer;
 		this.pensjonSakAntiCorruptionLayer = pensjonSakAntiCorruptionLayer;
 		this.joarkAntiCorruptionLayer = joarkAntiCorruptionLayer;

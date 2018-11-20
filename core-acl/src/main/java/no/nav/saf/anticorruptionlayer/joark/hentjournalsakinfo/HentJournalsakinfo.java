@@ -1,13 +1,9 @@
 package no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo;
 
-import static no.nav.saf.cache.LokalCacheConfig.HENT_JOURNALPOSTER_CACHE;
 import static no.nav.saf.cache.LokalCacheConfig.HENT_TILGANG_JOURNALPOSTER_CACHE;
-import static no.nav.saf.cache.LokalCacheConfig.HENT_VISNING_JOURNALPOSTER_CACHE;
 
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.HentJournalpostBulkRequestTo;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.HentJournalpostBulkResponseTo;
-import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark910.VisningJournalpostBulkRequestTo;
-import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark910.VisningJournalpostBulkResponseTo;
 import no.nav.saf.integration.fasit.ServiceuserAlias;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -26,14 +22,12 @@ import java.util.concurrent.TimeUnit;
 @Service
 public class HentJournalsakinfo {
 	private final RestTemplate restTemplate;
-	private final String hentjournalsakinfoUrl;
 
 	@Inject
 	public HentJournalsakinfo(@Value("${hentjournalsakinfo.url}") final String hentjournalsakinfoUrl,
 							  final RestTemplateBuilder restTemplateBuilder,
 							  final ClientHttpRequestFactory clientHttpRequestFactory,
 							  final ServiceuserAlias serviceuserAlias) {
-		this.hentjournalsakinfoUrl = hentjournalsakinfoUrl;
 		restTemplate = restTemplateBuilder
 				.requestFactory(() -> clientHttpRequestFactory)
 				.rootUri(hentjournalsakinfoUrl)
@@ -43,21 +37,10 @@ public class HentJournalsakinfo {
 				.build();
 	}
 
-	@Cacheable(cacheNames = HENT_JOURNALPOSTER_CACHE)
-	public HentJournalposterResponse hentJournalposter(HentJournalposterRequest request) {
-		ResponseEntity<HentJournalposterResponse> response = restTemplate.postForEntity("/hentjournalposter", request, HentJournalposterResponse.class);
-		return response.getBody();
-	}
-
 	@Cacheable(cacheNames = HENT_TILGANG_JOURNALPOSTER_CACHE)
 	public HentJournalpostBulkResponseTo hentJournalpostBulk(HentJournalpostBulkRequestTo request) {
 		ResponseEntity<HentJournalpostBulkResponseTo> response = restTemplate.postForEntity("/hentjournalpostbulk", request, HentJournalpostBulkResponseTo.class);
 		return response.getBody();
 	}
 
-	@Cacheable(cacheNames = HENT_VISNING_JOURNALPOSTER_CACHE, key = "#request.journalpostIds")
-	public VisningJournalpostBulkResponseTo hentVisningJournalpostBulk(VisningJournalpostBulkRequestTo request) {
-		ResponseEntity<VisningJournalpostBulkResponseTo> response = restTemplate.postForEntity("/visningjournalpostbulk", request, VisningJournalpostBulkResponseTo.class);
-		return response.getBody();
-	}
 }
