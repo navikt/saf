@@ -1,6 +1,5 @@
 package no.nav.saf.anticorruptionlayer.gsak.hentgsaksaker;
 
-import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.anticorruptionlayer.gsak.domain.GsakSakerTo;
 import no.nav.saf.cache.LokalCacheConfig;
 import no.nav.saf.exceptions.SafFunctionalException;
@@ -21,14 +20,13 @@ import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.UUID;
 
-@Slf4j
 @Component
 public class GsakConsumer {
 
-	private static final int TIMEOUT = 10_000;
 	private final RestTemplate restTemplate;
 	private final String gsakApiUrl;
 
@@ -37,9 +35,9 @@ public class GsakConsumer {
 						ServiceuserAlias serviceuserAlias) {
 		this.gsakApiUrl = gsakApiUrl;
 		this.restTemplate = restTemplateBuilder
-				.setReadTimeout(TIMEOUT)
-				.setConnectTimeout(TIMEOUT)
-				.basicAuthorization(serviceuserAlias.getUsername(), serviceuserAlias.getPassword()).build();
+				.setReadTimeout(Duration.ofSeconds(10))
+				.setConnectTimeout(Duration.ofSeconds(5))
+				.basicAuthentication(serviceuserAlias.getUsername(), serviceuserAlias.getPassword()).build();
 	}
 
 	@Cacheable(cacheNames = LokalCacheConfig.SAKER_BY_AKTOER_ID_CACHE)

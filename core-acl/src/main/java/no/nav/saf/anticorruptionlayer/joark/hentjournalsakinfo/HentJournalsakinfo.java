@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import javax.inject.Inject;
-import java.util.concurrent.TimeUnit;
+import java.time.Duration;
 
 /**
  * @author Joakim Bjørnstad, Jbit AS
@@ -31,9 +31,9 @@ public class HentJournalsakinfo {
 		restTemplate = restTemplateBuilder
 				.requestFactory(() -> clientHttpRequestFactory)
 				.rootUri(hentjournalsakinfoUrl)
-				.basicAuthorization(serviceuserAlias.getUsername(), serviceuserAlias.getPassword())
-				.setConnectTimeout((int) TimeUnit.SECONDS.toMillis(5))
-				.setReadTimeout((int) TimeUnit.SECONDS.toMillis(20))
+				.basicAuthentication(serviceuserAlias.getUsername(), serviceuserAlias.getPassword())
+				.setReadTimeout(Duration.ofSeconds(10))
+				.setConnectTimeout(Duration.ofSeconds(5))
 				.build();
 	}
 
