@@ -8,7 +8,7 @@ import static no.nav.saf.anticorruptionlayer.RetryConstants.MULTIPLIER_SHORT_PEN
 import no.nav.saf.anticorruptionlayer.pensjonsak.domain.SakSammendragListeTo;
 import no.nav.saf.exceptions.SafFunctionalException;
 import no.nav.saf.exceptions.SafTechnicalException;
-import no.nav.saf.metrics.DokConsumerMetrics;
+import no.nav.saf.metrics.Monitor;
 import no.nav.saf.tjeneste.visningsmodell.kode.Arkivsakssystem;
 import no.nav.tjeneste.virksomhet.pensjonsak.v1.binding.HentSakSammendragListePersonIkkeFunnet;
 import no.nav.tjeneste.virksomhet.pensjonsak.v1.binding.HentSakSammendragListeSakManglerEierenhet;
@@ -35,7 +35,7 @@ public class PensjonSakConsumer {
 	@Retryable(include = SafTechnicalException.class,
 			maxAttempts = MAX_ATTEMPTS_SHORT_PENSJON_V1,
 			backoff = @Backoff(delay = DELAY_SHORT_PENSJON_V1, multiplier = MULTIPLIER_SHORT_PENSJON_V1))
-	@DokConsumerMetrics(value = "dok_consumer", description = "hentSakSammendragListe")
+	@Monitor(value = "dok_consumer", description = "hentSakSammendragListe")
 	public SakSammendragListeTo hentSakSammendragListe(String personident) {
 		HentSakSammendragListeRequest request = new HentSakSammendragListeRequest();
 		request.setPersonident(personident);

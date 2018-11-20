@@ -11,7 +11,7 @@ import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark901.HentTil
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark910.VisningJournalpostBulkRequestTo;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark910.VisningJournalpostBulkResponseTo;
 import no.nav.saf.integration.fasit.ServiceuserAlias;
-import no.nav.saf.metrics.DokConsumerMetrics;
+import no.nav.saf.metrics.Monitor;
 import no.nav.saf.tjeneste.hentdokument.HentDokument;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -47,34 +47,34 @@ public class HentJournalsakinfo {
 	}
 
 	@Cacheable(cacheNames = HENT_JOURNALPOSTER_CACHE)
-	@DokConsumerMetrics(value = "dok_consumer", extraTags = {"process", "hentJournalposter"}, percentiles = {0.5, 0.95})
+	@Monitor(value = "dok_consumer", extraTags = {"process", "hentJournalposter"}, percentiles = {0.9, 0.95})
 	public HentJournalposterResponse hentJournalposter(HentJournalposterRequest request) {
 		ResponseEntity<HentJournalposterResponse> response = restTemplate.postForEntity("/hentjournalposter", request, HentJournalposterResponse.class);
 		return response.getBody();
 	}
 
 	@Cacheable(cacheNames = HENT_TILGANG_JOURNALPOSTER_CACHE)
-	@DokConsumerMetrics(value = "dok_consumer", extraTags = {"process", "hentJournalpostBulk"}, percentiles = {0.5, 0.95})
+	@Monitor(value = "dok_consumer", extraTags = {"process", "hentJournalpostBulk"}, percentiles = {0.9, 0.95})
 	public HentJournalpostBulkResponseTo hentJournalpostBulk(HentJournalpostBulkRequestTo request) {
 		ResponseEntity<HentJournalpostBulkResponseTo> response = restTemplate.postForEntity("/hentjournalpostbulk", request, HentJournalpostBulkResponseTo.class);
 		return response.getBody();
 	}
 
 	@Cacheable(cacheNames = HENT_VISNING_JOURNALPOSTER_CACHE, key = "#request.journalpostIds")
-	@DokConsumerMetrics(value = "dok_consumer", extraTags = {"process", "hentVisningJournalpostBulk"}, percentiles = {0.5, 0.95})
+	@Monitor(value = "dok_consumer", extraTags = {"process", "hentVisningJournalpostBulk"}, percentiles = {0.9, 0.95})
 	public VisningJournalpostBulkResponseTo hentVisningJournalpostBulk(VisningJournalpostBulkRequestTo request) {
 		ResponseEntity<VisningJournalpostBulkResponseTo> response = restTemplate.postForEntity("/visningjournalpostbulk", request, VisningJournalpostBulkResponseTo.class);
 		return response.getBody();
 	}
 
 	@Cacheable(cacheNames = HENT_TILGANG_JOURNALPOST_CACHE)
-	@DokConsumerMetrics(value = "dok_consumer", extraTags = {"process", "hentTilgangJournalpost"}, percentiles = {0.5, 0.95})
+	@Monitor(value = "dok_consumer", extraTags = {"process", "hentTilgangJournalpost"}, percentiles = {0.9, 0.95})
 	public HentTilgangJournalpostResponseTo hentTilgangJournalpost(String journalpostId, String dokumentId, String variantFormat) {
 		return restTemplate.getForObject("/henttilgangjournalpost/{journalpostId}/{dokumentId}/{variantFormat}", HentTilgangJournalpostResponseTo.class, journalpostId, dokumentId, variantFormat);
 	}
 
 	//	@Cacheable(cacheNames = HENT_DOKUMENT_CACHE) TODO Skal vi chache dokumenter?
-	@DokConsumerMetrics(value = "dok_consumer", extraTags = {"process", "hentDokument"}, percentiles = {0.5, 0.95})
+	@Monitor(value = "dok_consumer", extraTags = {"process", "hentDokument"}, percentiles = {0.9, 0.95})
 	public HentDokument hentDokument(String dokumentId, String variantFormat) {
 		ResponseEntity<String> response = restTemplate.getForEntity("/hentdokument/{dokumentId}/{variantFormat}", String.class, dokumentId, variantFormat);
 		return HentDokument.builder()

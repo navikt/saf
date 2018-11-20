@@ -9,7 +9,7 @@ import graphql.schema.idl.SchemaParser;
 import graphql.schema.idl.TypeDefinitionRegistry;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.endpoints.wiring.DokumentoversiktWiring;
-import no.nav.saf.metrics.DokMetrics;
+import no.nav.saf.metrics.Monitor;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -44,7 +44,7 @@ public class GraphQLController {
 
 	@PostMapping(value = "/graphql", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
-	@DokMetrics(value = "dok_request", extraTags = {"process", "dokumentOversikt"}, percentiles = {0.5, 0.95})
+	@Monitor(value = "dok_request", extraTags = {"process", "dokumentOversikt"}, percentiles = {0.5, 0.95})
 	public Map<String, Object> graphQLRequest(@RequestHeader(value = HttpHeaders.AUTHORIZATION, required = false) String authorizationHeader,
 											  @RequestBody GraphQLRequest request) {
 		ExecutionResult executionResult = GraphQL.newGraphQL(graphQLSchema)

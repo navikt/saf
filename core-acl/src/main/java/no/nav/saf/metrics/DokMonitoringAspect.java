@@ -45,28 +45,28 @@ import java.util.function.Function;
 @Incubating(since = "1.0.0")
 @Slf4j
 @SuppressWarnings("Duplicates")
-public class DokTimedAspect {
+public class DokMonitoringAspect {
 	private final MeterRegistry registry;
 	private final Function<ProceedingJoinPoint, Iterable<Tag>> tagsBasedOnJoinpoint;
 
-	public DokTimedAspect(MeterRegistry registry) {
+	public DokMonitoringAspect(MeterRegistry registry) {
 		this(registry, pjp ->
 				Tags.of("class", pjp.getStaticPart().getSignature().getDeclaringTypeName(),
 						"method", pjp.getStaticPart().getSignature().getName())
 		);
 	}
 
-	private DokTimedAspect(MeterRegistry registry, Function<ProceedingJoinPoint, Iterable<Tag>> tagsBasedOnJoinpoint) {
+	private DokMonitoringAspect(MeterRegistry registry, Function<ProceedingJoinPoint, Iterable<Tag>> tagsBasedOnJoinpoint) {
 		this.registry = registry;
 		this.tagsBasedOnJoinpoint = tagsBasedOnJoinpoint;
 	}
 
-	@Around("execution (@no.nav.saf.metrics.DokMetrics * *.*(..))")
+	@Around("execution (@no.nav.saf.metrics.Monitor * *.*(..))")
 	public Object dokMetrics(ProceedingJoinPoint pjp) throws Throwable {
 		Method method = ((MethodSignature) pjp.getSignature()).getMethod();
-		DokMetrics timed = method.getAnnotation(DokMetrics.class);
+		Monitor monitor = method.getAnnotation(Monitor.class);
 
-		if (timed.value().isEmpty()) {
+		if (monitor.value().isEmpty()) {
 			return pjp.proceed();
 		}
 
@@ -76,44 +76,21 @@ public class DokTimedAspect {
 		} catch (Exception e) {
 			logException(e);
 
-			Counter.builder(timed.value() + "_exception")
+			Counter.builder(monitor.value() + "_exception")
 					.tags("error_type", isFunctionalException(e) ? "functional" : "technical")
 					.tags("exception_name", e.getClass().getSimpleName())
-					.tags(timed.extraTags())
+					.tags(monitor.extraTags())
 					.tags(tagsBasedOnJoinpoint.apply(pjp))
 					.register(registry)
 					.increment();
 			throw e;
 		} finally {
-			sample.stop(Timer.builder(timed.value())
-					.description(timed.description().isEmpty() ? null : timed.description())
-					.tags(timed.extraTags())
+			sample.stop(Timer.builder(monitor.value())
+					.description(monitor.description().isEmpty() ? null : monitor.description())
+					.tags(monitor.extraTags())
 					.tags(tagsBasedOnJoinpoint.apply(pjp))
-					.publishPercentileHistogram(timed.histogram())
-					.publishPercentiles(timed.percentiles().length == 0 ? null : timed.percentiles())
-					.register(registry));
-		}
-	}
-
-	@Around("execution (@no.nav.saf.metrics.DokConsumerMetrics * *.*(..))")
-	public Object dokTimedConsumerMetric(ProceedingJoinPoint pjp) throws Throwable {
-		Method method = ((MethodSignature) pjp.getSignature()).getMethod();
-		DokConsumerMetrics timed = method.getAnnotation(DokConsumerMetrics.class);
-
-		if (timed.value().isEmpty()) {
-			return pjp.proceed();
-		}
-
-		Timer.Sample sample = Timer.start(registry);
-		try {
-			return pjp.proceed();
-		} finally {
-			sample.stop(Timer.builder(timed.value())
-					.description(timed.description().isEmpty() ? null : timed.description())
-					.tags(timed.extraTags())
-					.tags(tagsBasedOnJoinpoint.apply(pjp))
-					.publishPercentileHistogram(timed.histogram())
-					.publishPercentiles(timed.percentiles().length == 0 ? null : timed.percentiles())
+					.publishPercentileHistogram(monitor.histogram())
+					.publishPercentiles(monitor.percentiles().length == 0 ? null : monitor.percentiles())
 					.register(registry));
 		}
 	}
