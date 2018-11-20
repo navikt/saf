@@ -72,4 +72,16 @@ public class GsakConsumer {
 					.getStatusCode(), e.getMessage()), e, e.getStatusCode());
 		}
 	}
+
+	public GsakSakerTo hentSakBySakId(final String sakId) {
+		try {
+			return restTemplate.getForObject(this.gsakApiUrl + "/{sakId}", GsakSakerTo.class, sakId);
+		} catch (HttpServerErrorException e) {
+			throw new SafTechnicalException(String.format("getGsaksaker feilet teknisk med statusKode=%s. Feilmelding=%s", e
+					.getStatusCode(), e.getMessage()), e, e.getStatusCode());
+		} catch (HttpClientErrorException e) {
+			throw new SafFunctionalException(String.format("getGsaksaker feilet funksjonelt med statusKode=%s. Feilmelding=%s", e
+					.getStatusCode(), e.getMessage()), e, e.getStatusCode());
+		}
+	}
 }

@@ -1,5 +1,6 @@
 package no.nav.saf.anticorruptionlayer.gsak;
 
+import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 import no.nav.saf.tjeneste.visningsmodell.Sak;
 import no.nav.saf.tjeneste.visningsmodell.Tema;
@@ -20,4 +21,6 @@ public interface GsakAntiCorruptionLayer {
 	List<Sak> findSakerByAktoerId(final String aktoerId);
 
 	List<TilgangSak> findTilgangSakListByAktoerId(final String aktoerId);
+
+	TilgangBruker findTilgangSakBySakId(final String sakId);
 }

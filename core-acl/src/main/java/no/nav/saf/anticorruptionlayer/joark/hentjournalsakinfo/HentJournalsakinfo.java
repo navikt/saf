@@ -10,8 +10,8 @@ import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.HentJou
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark901.HentTilgangJournalpostResponseTo;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark910.VisningJournalpostBulkRequestTo;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark910.VisningJournalpostBulkResponseTo;
+import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark920.HentDokumentResponseTo;
 import no.nav.saf.integration.fasit.ServiceuserAlias;
-import no.nav.saf.tjeneste.hentdokument.HentDokument;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.cache.annotation.Cacheable;
@@ -21,7 +21,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import javax.inject.Inject;
-import java.util.Base64;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -69,10 +68,10 @@ public class HentJournalsakinfo {
 	}
 
 	//	@Cacheable(cacheNames = HENT_DOKUMENT_CACHE) TODO Skal vi chache dokumenter?
-	public HentDokument hentDokument(String dokumentId, String variantFormat) {
+	public HentDokumentResponseTo hentDokument(String dokumentId, String variantFormat) {
 		ResponseEntity<String> response = restTemplate.getForEntity("/hentdokument/{dokumentId}/{variantFormat}", String.class, dokumentId, variantFormat);
-		return HentDokument.builder()
-				.dokument(Base64.getDecoder().decode(response.getBody()))
+		return HentDokumentResponseTo.builder()
+				.dokument(response.getBody())
 				.mediaType(response.getHeaders().getContentType())
 				.build();
 	}

@@ -1,5 +1,6 @@
 package no.nav.saf.anticorruptionlayer.joark;
 
+import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.anticorruptionlayer.joark.domain.DokumentInfoTo;
 import no.nav.saf.anticorruptionlayer.joark.domain.JournalpostTo;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.FagomradeCode;
@@ -16,12 +17,14 @@ import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark901.Tilgang
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark901.TilgangDokumentInfoDto;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark901.TilgangJournalpostDto;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark901.TilgangSakDto;
+import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark920.HentDokumentResponseTo;
 import no.nav.saf.cache.LokalCacheConfig;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.domain.tilgangsmodell.TilgangDokumentInfo;
 import no.nav.saf.domain.tilgangsmodell.TilgangIdent;
 import no.nav.saf.domain.tilgangsmodell.TilgangJournalpost;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
+import no.nav.saf.exceptions.SafTechnicalException;
 import no.nav.saf.tjeneste.hentdokument.HentDokument;
 import no.nav.saf.tjeneste.visningsmodell.DokumentInfo;
 import no.nav.saf.tjeneste.visningsmodell.Journalpost;
@@ -41,6 +44,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -52,6 +56,7 @@ import java.util.stream.Stream;
  * @author Joakim Bjørnstad, Jbit AS
  */
 @Component
+@Slf4j
 public class JoarkAntiCorruptionLayerImpl implements JoarkAntiCorruptionLayer {
 
 	private final HentJournalsakinfo hentJournalsakinfo;
@@ -179,11 +184,16 @@ public class JoarkAntiCorruptionLayerImpl implements JoarkAntiCorruptionLayer {
 
 	@Override
 	public TilgangSak hentTilgangSak(String journalpostId, String dokumentId, String variantFormat) {
-		HentTilgangJournalpostResponseTo hentTilgangJournalpostResponseTo = hentJournalsakinfo.hentTilgangJournalpost(journalpostId, dokumentId, variantFormat);
+		final HentTilgangJournalpostResponseTo hentTilgangJournalpostResponseTo = hentJournalsakinfo.hentTilgangJournalpost(journalpostId, dokumentId, variantFormat);
+		if (hentTilgangJournalpostResponseTo.getTilgangJournalpostDto() == null || hentTilgangJournalpostResponseTo.getTilgangJournalpostDto()
+				.getSak() == null) {
+			return null;
+		}
 		final TilgangSakDto tilgangSakDto = hentTilgangJournalpostResponseTo.getTilgangJournalpostDto().getSak();
 		return TilgangSak.builder()
 				.arkivsaksnummer(tilgangSakDto.getSakId())
 				.arkivsaksystem(tilgangSakDto.getFagsystem())
+				.tema(hentTilgangJournalpostResponseTo.getTilgangJournalpostDto().getTema())
 				.build();
 	}
 
@@ -198,7 +208,19 @@ public class JoarkAntiCorruptionLayerImpl implements JoarkAntiCorruptionLayer {
 
 	@Override
 	public HentDokument hentDokument(String dokumentId, String variantFormat) {
-		return hentJournalsakinfo.hentDokument(dokumentId, variantFormat);
+		HentDokumentResponseTo responseTo = hentJournalsakinfo.hentDokument(dokumentId, variantFormat);
+		byte[] dokumentByteArray;
+		try {
+			dokumentByteArray = Base64.getDecoder().decode(responseTo.getDokument());
+		} catch (Exception e) {
+			throw new SafTechnicalException(String.format("Kunne ikke dekode dokument, dokumentId=%s, variantFormat=%s. Feilmelding=%s", dokumentId, variantFormat, e
+					.getMessage()), e);
+		}
+
+		return HentDokument.builder()
+				.dokument(dokumentByteArray)
+				.mediaType(responseTo.getMediaType())
+				.build();
 	}
 
 	private TilgangJournalpost mapTilgangJournalpost(TilgangJournalpostDto dto) {

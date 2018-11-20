@@ -133,4 +133,13 @@ public class TilgangsmodellRepositoryImpl implements TilgangsmodellRepository {
 		return null;
 	}
 
+	@Override
+	public TilgangBruker findTilgangBrukerBySakId(String sakId) {
+		try {
+			return gsakAntiCorruptionLayer.findTilgangSakBySakId(sakId);
+		} catch (Exception e) {
+			log.warn("findTilgangSakBySakId feilet ved oppslag på sakId={}", sakId);
+			return null;
+		}
+	}
 }
