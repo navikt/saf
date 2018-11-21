@@ -8,7 +8,6 @@ import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tjeneste.hentdokument.HentDokument;
 import no.nav.saf.tjeneste.hentdokument.HentDokumentDomainCoordinator;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -37,7 +36,7 @@ public class HentDokumentController {
 
 	@ApiOperation(value = "Hent dokument for angitte søkekriterier", authorizations = {@Authorization(value = "apiKey")})
 	@SwaggerRestHentDokument
-	@GetMapping(value = "hentdokument/{journalpostId}/{dokumentId}/{variantFormat}", produces = MediaType.APPLICATION_PDF_VALUE)
+	@GetMapping(value = "hentdokument/{journalpostId}/{dokumentId}/{variantFormat}")
 	public ResponseEntity<byte[]> hentDokument(@PathVariable String journalpostId,
 											   @PathVariable String dokumentId,
 											   @PathVariable String variantFormat,
@@ -48,7 +47,7 @@ public class HentDokumentController {
 
 		return ResponseEntity.ok()
 				.contentType(response.getMediaType())
-				.header("content-disposition", "attachment; filename=" + "example.pdf") //TODO Hva skal vi sette som filnavn?
+				.header("content-disposition", "inline; filename=" + dokumentId + "_" + variantFormat)
 				.body(response.getDokument());
 	}
 
