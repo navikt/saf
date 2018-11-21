@@ -35,7 +35,7 @@ public class GraphQLExceptionHandler implements DataFetcherExceptionHandler {
 		handlerParameters.getExecutionContext().addError(error);
 		log.warn(error.getMessage(), exception);
 
-		incrementExceptionCounter("dok_request_seconds_count", error.getException(), meterRegistry, "process", "dokumentOversikt", "path");
+		incrementExceptionCounter("dok_request_seconds_count", error.getException(), meterRegistry, "process", "dokumentOversikt");
 	}
 
 	private String getPathAsString(List<Object> pathList) {
@@ -46,7 +46,6 @@ public class GraphQLExceptionHandler implements DataFetcherExceptionHandler {
 		Counter.builder(counterName)
 				.tags("error_type", isFunctionalException(throwable) ? "functional" : "technical")
 				.tags("exception_name", throwable.getClass().getSimpleName())
-				.tags(otherParameters)
 				.register(meterRegistry)
 				.increment();
 	}
