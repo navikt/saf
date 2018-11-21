@@ -9,6 +9,7 @@ import graphql.GraphQLError;
 import graphql.GraphqlErrorHelper;
 import graphql.execution.ExecutionPath;
 import graphql.language.SourceLocation;
+import lombok.Getter;
 import lombok.ToString;
 
 import java.util.Collections;
@@ -21,12 +22,14 @@ import java.util.Map;
  * @author Ugur Alpay Cenar, Visma Consulting.
  */
 @ToString
+@Getter
 public class CustomExceptionWhileDataFetching implements GraphQLError {
     private final String message;
     private final List<Object> path;
     private final Throwable exception;
     private final List<SourceLocation> locations;
     private final ExceptionType exceptionType;
+    static final long serialVersionUID = 123456789;
 
     public CustomExceptionWhileDataFetching(ExecutionPath path, Throwable exception, SourceLocation sourceLocation) {
         this.path = assertNotNull(path).toList();
@@ -58,15 +61,6 @@ public class CustomExceptionWhileDataFetching implements GraphQLError {
     @Override
     public String getMessage() {
         return message;
-    }
-
-    @Override
-    public List<SourceLocation> getLocations() {
-        return locations;
-    }
-
-    public List<Object> getPath() {
-        return path;
     }
 
     @Override
