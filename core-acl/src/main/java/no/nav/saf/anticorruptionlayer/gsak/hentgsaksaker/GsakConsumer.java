@@ -71,6 +71,7 @@ public class GsakConsumer {
 		}
 	}
 
+	@Cacheable(cacheNames = LokalCacheConfig.SAKE_BY_SAKID_CACHE)
 	public GsakSakerTo hentSakBySakId(final String sakId) {
 		try {
 			HttpHeaders headers = new HttpHeaders();
