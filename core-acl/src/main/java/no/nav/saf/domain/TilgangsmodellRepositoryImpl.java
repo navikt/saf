@@ -13,6 +13,7 @@ import no.nav.saf.cache.LokalCacheConfig;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.domain.tilgangsmodell.TilgangJournalpost;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
+import no.nav.saf.tjeneste.visningsmodell.kode.Arkivsakssystem;
 import no.nav.saf.tjeneste.visningsmodell.kode.JournalStatus;
 import no.nav.saf.tjeneste.visningsmodell.kode.JournalpostType;
 import no.nav.saf.tjeneste.visningsmodell.kode.Temakode;
@@ -124,11 +125,29 @@ public class TilgangsmodellRepositoryImpl implements TilgangsmodellRepository {
 	}
 
 	@Override
-	public TilgangBruker findTilgangBrukerBySakId(String sakId) {
+	public TilgangBruker findTilgangBruker(String journalpostId, String dokumentId, String variantFormat) {
 		try {
-			return gsakAntiCorruptionLayer.findTilgangSakBySakId(sakId);
+			return joarkAntiCorruptionLayer.hentTilgangBruker(journalpostId, dokumentId, variantFormat);
 		} catch (Exception e) {
-			log.warn("findTilgangSakBySakId feilet ved oppslag på sakId={}. Feilmelding={}", sakId, e.getMessage());
+			log.warn("hentTilgangBruker feilet ved oppslag, journalpostId={}, dokumentId={}, variantFormat={}. Feilmelding={}",
+					journalpostId, dokumentId, variantFormat, e.getMessage());
+		}
+		return null;
+	}
+
+	@Override
+	public TilgangBruker findTilgangBrukerBySakId(String sakId, String arkivsaksystem) {
+		try {
+			if (Arkivsakssystem.GSAK.name().equals(arkivsaksystem)) {
+				return gsakAntiCorruptionLayer.findTilgangSakBySakId(sakId);
+			} else if (Arkivsakssystem.PSAK.equals(arkivsaksystem)) {
+				//TODO implement call to psak
+				return null;
+			} else {
+				return null;
+			}
+		} catch (Exception e) {
+			log.warn("findTilgangBrukerBySakId feilet ved oppslag på sakId={}. Feilmelding={}", sakId, e.getMessage());
 			return null;
 		}
 	}

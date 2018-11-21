@@ -8,6 +8,7 @@ import no.nav.saf.tjeneste.visningsmodell.kode.Temakode;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,26 +24,37 @@ class PensjonSakAntiCorruptionLayerImpl implements PensjonSakAntiCorruptionLayer
 
 	@Override
 	public List<TilgangSak> hentTilgangSakList(final String personident) {
-		return pensjonSakConsumer.hentSakSammendragListe(personident).getSakSammendragListe().stream()
-				.map(tilgangsak -> TilgangSak.builder()
-						.arkivsaksnummer(tilgangsak.getSakNr())
-						.arkivsaksystem(String.valueOf(Arkivsakssystem.PSAK))
-						.tema(tilgangsak.getTema())
-						.build())
-				.collect(Collectors.toList());
+
+		try {
+			return pensjonSakConsumer.hentSakSammendragListe(personident).getSakSammendragListe().stream()
+					.map(tilgangsak -> TilgangSak.builder()
+							.arkivsaksnummer(tilgangsak.getSakNr())
+							.arkivsaksystem(String.valueOf(Arkivsakssystem.PSAK))
+							.tema(tilgangsak.getTema())
+							.build())
+					.collect(Collectors.toList());
+		} catch (Exception e) {
+			return new ArrayList<>();
+		}
 	}
+
 
 	@Override
 	public List<Sak> hentSakerByFoedselsnummer(final String foedselsnummer) {
-		return pensjonSakConsumer.hentSakSammendragListe(foedselsnummer).getSakSammendragListe().stream()
-				.map(sakSammendrag -> Sak.builder()
-						.arkivsaksnummer(sakSammendrag.getSakNr())
-						.arkivsaksystem(Arkivsakssystem.PSAK)
-						.fagsaksnummer(sakSammendrag.getSakNr())
-						.fagsystem("AT06")
-						.temakode(Temakode.valueOf(sakSammendrag.getTema()))
-						.datoOpprettet(sakSammendrag.getDatoOpprettet())
-						.build())
-				.collect(Collectors.toList());
+		try {
+			return pensjonSakConsumer.hentSakSammendragListe(foedselsnummer).getSakSammendragListe().stream()
+					.map(sakSammendrag -> Sak.builder()
+							.arkivsaksnummer(sakSammendrag.getSakNr())
+							.arkivsaksystem(Arkivsakssystem.PSAK)
+							.fagsaksnummer(sakSammendrag.getSakNr())
+							.fagsystem("AT06")
+							.temakode(Temakode.valueOf(sakSammendrag.getTema()))
+							.datoOpprettet(sakSammendrag.getDatoOpprettet())
+							.build())
+					.collect(Collectors.toList());
+		} catch (Exception e) {
+			return new ArrayList<>();
+		}
+
 	}
 }

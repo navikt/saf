@@ -1,5 +1,6 @@
 package no.nav.saf.tilgangskontroll.pep;
 
+import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlRequest;
@@ -11,6 +12,7 @@ import javax.inject.Inject;
 /**
  * @author Joakim Bjørnstad, Jbit AS
  */
+@Slf4j
 @Component("pep1b")
 public class Pep1bEvaluatorImpl implements PepEvaluator<TilgangBruker> {
 
@@ -23,9 +25,15 @@ public class Pep1bEvaluatorImpl implements PepEvaluator<TilgangBruker> {
 
 	@Override
 	public boolean hasAccess(TilgangBruker ressurs, SafRequestContext safRequestContext) {
-		XacmlRequest request = new XacmlRequest();
-		//TODO Populate request and perform call to pdp
+//      TODO: Uncomment when implemented
+//		if (ressurs == null) {
+//			log.warn("Pep1b mangler tilstrekkelig datagrunnlag for å kunne gjennomføre tilgangskontroll");
+//			return false;
+//		}
 
-		return true;
+			XacmlRequest request = new XacmlRequest();
+			//TODO Populate request and perform call to pdp
+
+			return true;
+		}
 	}
-}
