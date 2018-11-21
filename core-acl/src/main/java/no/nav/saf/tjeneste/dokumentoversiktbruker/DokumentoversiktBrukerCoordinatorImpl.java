@@ -1,5 +1,7 @@
 package no.nav.saf.tjeneste.dokumentoversiktbruker;
 
+import io.reactivex.Flowable;
+import io.reactivex.schedulers.Schedulers;
 import no.nav.saf.domain.TilgangsmodellRepository;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.domain.tilgangsmodell.TilgangJournalpost;
@@ -55,11 +57,14 @@ public class DokumentoversiktBrukerCoordinatorImpl implements DokumentoversiktBr
 		}
 
 		final List<TilgangSak> tilgangSakList = tilgangsmodellRepository.findTilgangSakListByTilgangBruker(tilgangBruker);
-		// TODO parallell MMA-1057, MMA-1058
-		List<TilgangSak> filteredTilgangSakList = tilgangSakList.stream()
-				.filter(tilgangSak -> pep2.hasAccess(tilgangSak, safRequestContext))
-				.filter(tilgangSak -> pep3.hasAccess(tilgangSak, safRequestContext))
-				.collect(Collectors.toList());
+		List<TilgangSak> filteredTilgangSakList = Flowable.fromIterable(tilgangSakList)
+				.flatMap(tilgangSak ->
+						Flowable.just(tilgangSak)
+								.observeOn(Schedulers.io())
+								.filter(ts -> pep2.hasAccess(ts, safRequestContext))
+								.filter(ts -> pep3.hasAccess(ts, safRequestContext))
+				).toList()
+				.blockingGet();
 
 		final List<TilgangJournalpost> tilgangJournalpostList = tilgangsmodellRepository.findTilgangJournalposter(tilgangBruker,
 				filteredTilgangSakList,
@@ -69,10 +74,13 @@ public class DokumentoversiktBrukerCoordinatorImpl implements DokumentoversiktBr
 				dokumentoversiktBrukerArguments.getJournalstatuser()
 		);
 
-		// TODO parallell MMA-1091
-		final List<TilgangJournalpost> filteredTilgangJournalpostList = tilgangJournalpostList.stream()
-				.filter(tilgangJournalpost -> pep4.hasAccess(tilgangJournalpost, safRequestContext))
-				.collect(Collectors.toList());
+		final List<TilgangJournalpost> filteredTilgangJournalpostList = Flowable.fromIterable(tilgangJournalpostList)
+				.flatMap(tilgangJournalpost ->
+						Flowable.just(tilgangJournalpost)
+								.observeOn(Schedulers.io())
+								.filter(tj -> pep4.hasAccess(tj, safRequestContext))
+				).toList()
+				.blockingGet();
 
 		return visningsmodellRepository.findJournalposter(tilgangBruker.getAktoerId(), tilgangBruker.getFoedselsnr(),
 				filteredTilgangJournalpostList.stream().map(TilgangJournalpost::getJournalpostId).collect(Collectors.toList()));

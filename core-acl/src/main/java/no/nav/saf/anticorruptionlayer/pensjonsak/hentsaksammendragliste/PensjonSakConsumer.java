@@ -5,6 +5,7 @@ import static no.nav.saf.anticorruptionlayer.RetryConstants.DELAY_SHORT_PENSJON_
 import static no.nav.saf.anticorruptionlayer.RetryConstants.MAX_ATTEMPTS_SHORT_PENSJON_V1;
 import static no.nav.saf.anticorruptionlayer.RetryConstants.MULTIPLIER_SHORT_PENSJON_V1;
 
+import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.anticorruptionlayer.pensjonsak.domain.SakSammendragListeTo;
 import no.nav.saf.exceptions.SafFunctionalException;
 import no.nav.saf.exceptions.SafTechnicalException;
@@ -21,7 +22,7 @@ import org.springframework.stereotype.Component;
 import javax.inject.Inject;
 import java.util.stream.Collectors;
 
-
+@Slf4j
 @Component
 public class PensjonSakConsumer {
 	private final PensjonSakV1 pensjonSakV1;
@@ -29,15 +30,18 @@ public class PensjonSakConsumer {
 	@Inject
 	public PensjonSakConsumer(PensjonSakV1 pensjonSakV1) {
 		this.pensjonSakV1 = pensjonSakV1;
-
 	}
 
 	@Retryable(include = SafTechnicalException.class,
 			maxAttempts = MAX_ATTEMPTS_SHORT_PENSJON_V1,
 			backoff = @Backoff(delay = DELAY_SHORT_PENSJON_V1, multiplier = MULTIPLIER_SHORT_PENSJON_V1))
-	public SakSammendragListeTo hentSakSammendragListe(String personident) {
+	public SakSammendragListeTo hentSakSammendragListe(final String personident) {
 		HentSakSammendragListeRequest request = new HentSakSammendragListeRequest();
 		request.setPersonident(personident);
+
+		if(log.isDebugEnabled()) {
+			log.debug("Henter psaker for foedselsnummer={}", personident);
+		}
 
 		try {
 			HentSakSammendragListeResponse response = pensjonSakV1.hentSakSammendragListe(request);

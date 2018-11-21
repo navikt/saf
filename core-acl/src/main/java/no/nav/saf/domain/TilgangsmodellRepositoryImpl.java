@@ -2,6 +2,8 @@ package no.nav.saf.domain;
 
 import static java.lang.String.format;
 
+import io.reactivex.Observable;
+import io.reactivex.schedulers.Schedulers;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.anticorruptionlayer.aktoer.AktoerAntiCorruptionLayer;
 import no.nav.saf.anticorruptionlayer.gsak.GsakAntiCorruptionLayer;
@@ -61,13 +63,21 @@ public class TilgangsmodellRepositoryImpl implements TilgangsmodellRepository {
 
 	@Override
 	@Cacheable(cacheNames = LokalCacheConfig.TILGANGSMODELL_REPO_SAK_CACHE)
-	public List<TilgangSak> findTilgangSakListByTilgangBruker(TilgangBruker tilgangBruker) {
+	public List<TilgangSak> findTilgangSakListByTilgangBruker(final TilgangBruker tilgangBruker) {
 		try {
-			// TODO parallell
-			List<TilgangSak> tilgangSakList = gsakAntiCorruptionLayer.findTilgangSakListByAktoerId(tilgangBruker.getAktoerId());
-			tilgangSakList.addAll(pensjonSakAntiCorruptionLayer.hentTilgangSakList(tilgangBruker.getFoedselsnr()));
-			// TODO hente bisys saker MMA-1058
-			return tilgangSakList;
+			Observable<List<TilgangSak>> gsaker = Observable.fromCallable(() ->
+					gsakAntiCorruptionLayer.findTilgangSakListByAktoerId(tilgangBruker.getAktoerId()))
+					.subscribeOn(Schedulers.io());
+			Observable<List<TilgangSak>> psaker = Observable.fromCallable(() ->
+					pensjonSakAntiCorruptionLayer.hentTilgangSakList(tilgangBruker.getFoedselsnr()))
+					.subscribeOn(Schedulers.io());
+			return Observable.concat(gsaker, psaker)
+					.flatMapIterable(item -> item)
+					.toList().blockingGet();
+
+//			List<TilgangSak> tilgangSakList = gsakAntiCorruptionLayer.findTilgangSakListByAktoerId(tilgangBruker.getAktoerId());
+//			tilgangSakList.addAll(pensjonSakAntiCorruptionLayer.hentTilgangSakList(tilgangBruker.getFoedselsnr()));
+//			return tilgangSakList;
 		} catch (Exception e) {
 			log.warn(format("FindTilgangSakListByAktoerId feilet ved oppslag av aktoer=%s. Feilmelding=%s", tilgangBruker.getAktoerId(), e.getMessage()));
 			return new ArrayList<>();
