@@ -1,4 +1,4 @@
-package no.nav.saf.anticorruptionlayer.aktoerid.domain;
+package no.nav.saf.anticorruptionlayer.aktoer.domain;
 
 import lombok.Builder;
 import lombok.Data;

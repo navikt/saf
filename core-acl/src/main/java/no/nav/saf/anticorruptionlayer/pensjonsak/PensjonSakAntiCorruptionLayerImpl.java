@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
-public class PensjonSakAntiCorruptionLayerImpl implements PensjonSakAntiCorruptionLayer {
+class PensjonSakAntiCorruptionLayerImpl implements PensjonSakAntiCorruptionLayer {
 
 	private final PensjonSakConsumer pensjonSakConsumer;
 
@@ -23,7 +23,6 @@ public class PensjonSakAntiCorruptionLayerImpl implements PensjonSakAntiCorrupti
 
 	@Override
 	public List<TilgangSak> hentTilgangSakList(final String personident) {
-
 		return pensjonSakConsumer.hentSakSammendragListe(personident).getSakSammendragListe().stream()
 				.map(tilgangsak -> TilgangSak.builder()
 						.arkivsaksnummer(tilgangsak.getSakNr())

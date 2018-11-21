@@ -47,7 +47,7 @@ public class DokumentoversiktBrukerCoordinatorImpl implements DokumentoversiktBr
 
 	@Override
 	public List<Journalpost> findJournalposter(final DokumentoversiktBrukerArguments dokumentoversiktBrukerArguments, final SafRequestContext safRequestContext) {
-		final TilgangBruker tilgangBruker = tilgangsmodellRepository.findTilgangBrukerByAktoerId(dokumentoversiktBrukerArguments.getAktoerId());
+		final TilgangBruker tilgangBruker = tilgangsmodellRepository.findTilgangBruker(dokumentoversiktBrukerArguments.getAktoerId());
 		boolean pep1Access = this.pep1.hasAccess(tilgangBruker, safRequestContext);
 
 		if (!pep1Access) {
@@ -55,10 +55,12 @@ public class DokumentoversiktBrukerCoordinatorImpl implements DokumentoversiktBr
 		}
 
 		final List<TilgangSak> tilgangSakList = tilgangsmodellRepository.findTilgangSakListByTilgangBruker(tilgangBruker);
+		// TODO parallell MMA-1057, MMA-1058
 		List<TilgangSak> filteredTilgangSakList = tilgangSakList.stream()
 				.filter(tilgangSak -> pep2.hasAccess(tilgangSak, safRequestContext))
 				.filter(tilgangSak -> pep3.hasAccess(tilgangSak, safRequestContext))
 				.collect(Collectors.toList());
+
 		final List<TilgangJournalpost> tilgangJournalpostList = tilgangsmodellRepository.findTilgangJournalposter(tilgangBruker,
 				filteredTilgangSakList,
 				dokumentoversiktBrukerArguments.getFraDato(),
@@ -67,16 +69,18 @@ public class DokumentoversiktBrukerCoordinatorImpl implements DokumentoversiktBr
 				dokumentoversiktBrukerArguments.getJournalstatuser()
 		);
 
+		// TODO parallell MMA-1091
 		final List<TilgangJournalpost> filteredTilgangJournalpostList = tilgangJournalpostList.stream()
 				.filter(tilgangJournalpost -> pep4.hasAccess(tilgangJournalpost, safRequestContext))
 				.collect(Collectors.toList());
+
 		return visningsmodellRepository.findJournalposter(tilgangBruker.getAktoerId(), tilgangBruker.getFoedselsnr(),
 				filteredTilgangJournalpostList.stream().map(TilgangJournalpost::getJournalpostId).collect(Collectors.toList()));
 	}
 
 	@Override
 	public List<DokumentInfo> findDokumenter(Journalpost journalpost, SafRequestContext safRequestContext) {
-		// TODO Pep4 for TilgangDokument her (er dette allerede er avklart i TilgangJournalpost så må context vite om dette)
+		// TODO MMA-1092 Pep4 for TilgangDokument her (er dette allerede er avklart i TilgangJournalpost så må context vite om dette)
 		return journalpost.getDokumenter();
 	}
 }

@@ -40,7 +40,7 @@ import java.util.stream.Collectors;
  * @author Joakim Bjørnstad, Jbit AS
  */
 @Component
-public class JoarkAntiCorruptionLayerImpl implements JoarkAntiCorruptionLayer {
+class JoarkAntiCorruptionLayerImpl implements JoarkAntiCorruptionLayer {
 
 	private final HentJournalsakinfo hentJournalsakinfo;
 	private final Cache journalpostCache;
