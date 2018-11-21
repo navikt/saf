@@ -3,6 +3,7 @@ package no.nav.saf.swagger;
 import static springfox.documentation.builders.PathSelectors.regex;
 
 import com.google.common.collect.Lists;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -33,7 +34,8 @@ import java.util.Collections;
 @EnableSwagger2
 public class SwaggerConfig {
 
-	private String version = "0.0.0";
+	@Value("${APP_VERSION:0.0.0}")
+	private String version;
 
 	@Bean
 	public Docket api() {

@@ -1,5 +1,6 @@
 package no.nav.saf.anticorruptionlayer.gsak.hentgsaksaker;
 
+import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.anticorruptionlayer.gsak.domain.GsakSakerTo;
 import no.nav.saf.cache.LokalCacheConfig;
 import no.nav.saf.exceptions.SafFunctionalException;
@@ -25,6 +26,7 @@ import java.time.Duration;
 import java.util.List;
 import java.util.UUID;
 
+@Slf4j
 @Component
 public class GsakConsumer {
 
@@ -59,6 +61,9 @@ public class GsakConsumer {
 	}
 
 	private List<GsakSakerTo> hentSaker(final String uri) {
+		if(log.isDebugEnabled()) {
+			log.debug("Henter gsaker uri={}", uri);
+		}
 		try {
 			HttpHeaders headers = new HttpHeaders();
 			headers.set("X-Correlation-ID", UUID.randomUUID().toString());
@@ -74,9 +79,12 @@ public class GsakConsumer {
 		}
 	}
 
+	@Cacheable(cacheNames = LokalCacheConfig.SAK_BY_SAKID_CACHE)
 	public GsakSakerTo hentSakBySakId(final String sakId) {
 		try {
-			return restTemplate.getForObject(this.gsakApiUrl + "/{sakId}", GsakSakerTo.class, sakId);
+			HttpHeaders headers = new HttpHeaders();
+			headers.set("X-Correlation-ID", UUID.randomUUID().toString());
+			return restTemplate.exchange(gsakApiUrl + "/{sakId}", HttpMethod.GET, new HttpEntity<>(headers), GsakSakerTo.class, sakId).getBody();
 		} catch (HttpServerErrorException e) {
 			throw new SafTechnicalException(String.format("getGsaksaker feilet teknisk med statusKode=%s. Feilmelding=%s", e
 					.getStatusCode(), e.getMessage()), e, e.getStatusCode());

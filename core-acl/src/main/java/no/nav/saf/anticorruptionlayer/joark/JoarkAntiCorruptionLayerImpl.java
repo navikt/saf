@@ -9,7 +9,6 @@ import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.HentJou
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.HentJournalpostBulkResponseTo;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.JournalpostDto;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark901.HentTilgangJournalpostResponseTo;
-import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark901.TilgangBrukerDto;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark901.TilgangDokumentInfoDto;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark901.TilgangJournalpostDto;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark901.TilgangSakDto;
@@ -114,15 +113,6 @@ class JoarkAntiCorruptionLayerImpl implements JoarkAntiCorruptionLayer {
 				.arkivsaksnummer(tilgangSakDto.getSakId())
 				.arkivsaksystem(tilgangSakDto.getFagsystem())
 				.tema(hentTilgangJournalpostResponseTo.getTilgangJournalpostDto().getTema())
-				.build();
-	}
-
-	@Override
-	public TilgangBruker hentTilgangBruker(String journalpostId, String dokumentId, String variantFormat) {
-		HentTilgangJournalpostResponseTo hentTilgangJournalpostResponseTo = hentJournalsakinfo.hentTilgangJournalpost(journalpostId, dokumentId, variantFormat);
-		final TilgangBrukerDto tilgangBrukerDto = hentTilgangJournalpostResponseTo.getTilgangJournalpostDto().getBruker();
-		return TilgangBruker.builder()
-				.foedselsnr(tilgangBrukerDto.getBrukerId())
 				.build();
 	}
 

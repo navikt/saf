@@ -23,6 +23,10 @@ public class Pep4EvaluatorImpl implements PepEvaluator<TilgangJournalpost> {
 
 	@Override
 	public boolean hasAccess(TilgangJournalpost ressurs, SafRequestContext safRequestContext) {
+		if (ressurs == null) {
+			return false;
+		}
+
 		XacmlRequest request = new XacmlRequest();
 		//TODO Populate request and perform call to pdp
 

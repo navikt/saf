@@ -38,6 +38,10 @@ public class Pep1EvaluatorImpl implements PepEvaluator<TilgangBruker> {
 
 	@Override
 	public boolean hasAccess(TilgangBruker ressurs, SafRequestContext safRequestContext) {
+		if (ressurs == null || ressurs.getAktoerId() == null) {
+			return false;
+		}
+
 		XacmlRequest request = new XacmlRequest();
 		request.environment(ENVIRONMENT_FELLES_OIDC_TOKEN_BODY, safRequestContext.getOidcTokenBody());
 		request.environment(ENVIRONMENT_FELLES_PEP_ID, SAF);

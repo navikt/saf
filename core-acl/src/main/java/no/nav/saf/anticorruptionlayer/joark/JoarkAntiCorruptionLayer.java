@@ -33,8 +33,6 @@ public interface JoarkAntiCorruptionLayer {
 
 	TilgangSak hentTilgangSak(String journalpostId, String dokumentId, String variantFormat);
 
-	TilgangBruker hentTilgangBruker(String journalpostId, String dokumentId, String variantFormat);
-
 	HentDokument hentDokument(String dokumentId, String variantFormat);
 
 }

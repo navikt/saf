@@ -22,7 +22,7 @@ import java.lang.annotation.Target;
 @ApiResponses(value = {
 		@ApiResponse(code = 200, message = "OK."),
 		@ApiResponse(code = 401, message = "Ingen tilgang til dokumentet."),
-		@ApiResponse(code = 404, message = "Dokumentet ble ikke funnet i JOARK.")}
+		@ApiResponse(code = 404, message = "Dokumentet ble ikke funnet.")}
 )
 public @interface SwaggerRestHentDokument {
 	@AliasFor(
