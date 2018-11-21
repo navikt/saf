@@ -23,6 +23,9 @@ public class Pep2bEvaluatorImpl implements PepEvaluator<TilgangSak> {
 
 	@Override
 	public boolean hasAccess(TilgangSak ressurs, SafRequestContext safRequestContext) {
+		if (ressurs == null) {
+			return false;
+		}
 		XacmlRequest request = new XacmlRequest();
 		//TODO Populate request and perform call to pdp
 
