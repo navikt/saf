@@ -1,45 +1,49 @@
 package no.nav.saf.anticorruptionlayer.joark.domain.kode;
 
+import no.nav.saf.tjeneste.visningsmodell.kode.Kanal;
+
 public enum MottaksKanalCode {
 
-	/** EESSI */
-	EESSI,
-	/** EIA */
-	EIA,
-	/** nav.no */
-	NAV_NO,
-	/** ALTINN */
-	ALTINN,
-	/** PSELV */
-	PSELV,
-	/** Skanning Pensjon */
-	SKAN_PEN,
-	/** Skanning Nets */
-	SKAN_NETS,
-	/** E-post */
-	E_POST,
-	/** NETS - postboks 1400 */
-	NETS_PB1400,
-	/** NETS - postboks 1405 */
-	NETS_PB1405,
-	/** NETS - postboks 1406 */
-	NETS_PB1406,
-	/** NETS - postboks 1407 */
-	NETS_PB1407,
-	/** NETS - postboks 1408 */
-	NETS_PB1408,
-	/** NETS - postboks 1411 */
-	NETS_PB1411,	
-	/** NETS - postboks 1412 */
-	NETS_PB1412,
-	/** NETS - postboks 1413 */
-	NETS_PB1413,
-	/** NETS - postboks 1423 */
-	NETS_PB1423,
-	/** NETS - postboks 1431 */
-	NETS_PB1431,
-	/** NETS - postboks 1441 */
-	NETS_PB1441,
-	/** Eksternt oppslag */
-	EKST_OPPS;
+	/**
+	 * EESSI
+	 */
+	EESSI(Kanal.EESSI),
+	/**
+	 * EIA
+	 */
+	EIA(Kanal.EIA),
+	/**
+	 * nav.no
+	 */
+	NAV_NO(Kanal.NAV_NO),
+	/**
+	 * ALTINN
+	 */
+	ALTINN(Kanal.ALTINN),
+	/**
+	 * PSELV
+	 */
+	PSELV(Kanal.PSELV),
+	/**
+	 * Skanning Pensjon
+	 */
+	SKAN_PEN(Kanal.SKAN_PEN),
+	/**
+	 * Skanning Nets
+	 */
+	SKAN_NETS(Kanal.SKAN_NETS),
+	/**
+	 * Eksternt oppslag
+	 */
+	EKST_OPPS(Kanal.EKST_OPPS);
+
+	private final Kanal safKanal;
+
+	MottaksKanalCode(Kanal safKanal) {
+		this.safKanal = safKanal;
+	}
+
+	public Kanal getSafKanal() {
+		return safKanal;
+	}
 }

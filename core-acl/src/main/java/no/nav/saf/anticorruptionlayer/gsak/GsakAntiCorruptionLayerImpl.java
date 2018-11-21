@@ -2,6 +2,7 @@ package no.nav.saf.anticorruptionlayer.gsak;
 
 import no.nav.saf.anticorruptionlayer.gsak.domain.GsakSakerTo;
 import no.nav.saf.anticorruptionlayer.gsak.hentgsaksaker.GsakConsumer;
+import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 import no.nav.saf.tjeneste.visningsmodell.Sak;
 import no.nav.saf.tjeneste.visningsmodell.Tema;
@@ -18,7 +19,7 @@ import java.util.stream.Collectors;
  * @author Joakim Bjørnstad, Jbit AS
  */
 @Component
-public class GsakAntiCorruptionLayerImpl implements GsakAntiCorruptionLayer {
+class GsakAntiCorruptionLayerImpl implements GsakAntiCorruptionLayer {
 	private final GsakConsumer gsakConsumer;
 
 	@Inject
@@ -74,9 +75,7 @@ public class GsakAntiCorruptionLayerImpl implements GsakAntiCorruptionLayer {
 
 	@Override
 	public List<Sak> findSakerByAktoerId(final String aktoerId) {
-
 		List<GsakSakerTo> gsakSakerTo = gsakConsumer.hentSakerByAktoerId(aktoerId);
-
 
 		return gsakSakerTo.stream()
 				.map(gsak -> Sak.builder()
@@ -102,6 +101,14 @@ public class GsakAntiCorruptionLayerImpl implements GsakAntiCorruptionLayer {
 						.tema(gsak.getTema())
 						.build())
 				.collect(Collectors.toList());
+	}
+
+	@Override
+	public TilgangBruker findTilgangSakBySakId(final String sakId) {
+		GsakSakerTo gsakSakerTo = gsakConsumer.hentSakBySakId(sakId);
+		return gsakSakerTo == null ? null : TilgangBruker.builder()
+				.aktoerId(gsakSakerTo.getAktoerId())
+				.build();
 	}
 
 }

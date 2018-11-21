@@ -1,12 +1,9 @@
 package no.nav.saf.anticorruptionlayer.joark;
 
-import no.nav.saf.anticorruptionlayer.joark.domain.DokumentInfoTo;
-import no.nav.saf.anticorruptionlayer.joark.domain.JournalpostTo;
+import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.FagomradeCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.JournalStatusCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.JournalpostTypeCode;
-import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.HentJournalposterRequest;
-import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.HentJournalposterResponse;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.HentJournalsakinfo;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.HentJournalpostBulkRequestTo;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.HentJournalpostBulkResponseTo;
@@ -16,12 +13,14 @@ import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark901.Tilgang
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark901.TilgangDokumentInfoDto;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark901.TilgangJournalpostDto;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark901.TilgangSakDto;
+import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark920.HentDokumentResponseTo;
 import no.nav.saf.cache.LokalCacheConfig;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.domain.tilgangsmodell.TilgangDokumentInfo;
 import no.nav.saf.domain.tilgangsmodell.TilgangIdent;
 import no.nav.saf.domain.tilgangsmodell.TilgangJournalpost;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
+import no.nav.saf.exceptions.SafTechnicalException;
 import no.nav.saf.tjeneste.hentdokument.HentDokument;
 import no.nav.saf.tjeneste.visningsmodell.DokumentInfo;
 import no.nav.saf.tjeneste.visningsmodell.Journalpost;
@@ -29,9 +28,9 @@ import no.nav.saf.tjeneste.visningsmodell.Sak;
 import no.nav.saf.tjeneste.visningsmodell.kode.Arkivsakssystem;
 import no.nav.saf.tjeneste.visningsmodell.kode.JournalStatus;
 import no.nav.saf.tjeneste.visningsmodell.kode.JournalpostType;
-import no.nav.saf.tjeneste.visningsmodell.kode.Mottakskanal;
+import no.nav.saf.tjeneste.visningsmodell.kode.Kanal;
 import no.nav.saf.tjeneste.visningsmodell.kode.Temakode;
-import no.nav.saf.tjeneste.visningsmodell.kode.VariantFormatkode;
+import no.nav.saf.tjeneste.visningsmodell.kode.VariantFormat;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Component;
@@ -41,19 +40,19 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * @author Joakim Bjørnstad, Jbit AS
  */
 @Component
-public class JoarkAntiCorruptionLayerImpl implements JoarkAntiCorruptionLayer {
-
+@Slf4j
+class JoarkAntiCorruptionLayerImpl implements JoarkAntiCorruptionLayer {
 	private final HentJournalsakinfo hentJournalsakinfo;
 	private final Cache journalpostCache;
 
@@ -61,80 +60,6 @@ public class JoarkAntiCorruptionLayerImpl implements JoarkAntiCorruptionLayer {
 	public JoarkAntiCorruptionLayerImpl(HentJournalsakinfo hentJournalsakinfo, CacheManager cacheManager) {
 		this.hentJournalsakinfo = hentJournalsakinfo;
 		this.journalpostCache = cacheManager.getCache(LokalCacheConfig.JOURNALPOST_CACHE);
-	}
-
-	@Override
-	public List<Journalpost> hentJournalpostListeByArkivsaker(List<Sak> saker) {
-		HentJournalposterResponse hentJournalposterResponse = hentJournalsakinfo.hentJournalposter(HentJournalposterRequest.builder()
-				.gsakSakIdList(saker.stream()
-						.filter(sak -> Arkivsakssystem.GSAK.equals(sak.getArkivsaksystem()))
-						.map(Sak::getArkivsaksnummer).collect(Collectors.toList()))
-				.psakSakIdList(saker.stream()
-						.filter(tilgangSak -> Arkivsakssystem.PSAK.equals(tilgangSak.getArkivsaksystem()))
-						.map(Sak::getArkivsaksnummer).collect(Collectors.toList()))
-				.build());
-
-		Map<String, Sak> sakMap = saker.stream().collect(Collectors.toMap(Sak::getArkivsaksnummer, sak -> sak));
-
-		return Stream.concat(hentJournalposterResponse.getGsakJournalpostList()
-				.stream(), hentJournalposterResponse.getPsakJournalpostList().stream())
-				.map(journalpostTo -> mapJournalpostTo(sakMap, journalpostTo))
-				.collect(Collectors.toList());
-	}
-
-	private Journalpost mapJournalpostTo(Map<String, Sak> sakMap, JournalpostTo journalpostTo) {
-		return Journalpost.builder()
-				.journalpostId(journalpostTo.getJournalpostId().toString())
-				.beskrivelse(journalpostTo.getInnhold())
-				.journalposttype(JournalpostType.fromJoark(journalpostTo.getJournalposttype()))
-				.journalstatus(journalpostTo.getJournalstatus().toSafJournalStatus())
-				.tema(FagomradeCode.toSafJournalStatus(journalpostTo.getFagomrade()))
-				.temanavn(FagomradeCode.toSafJournalStatus(journalpostTo.getFagomrade()).getTemanavn())
-				.mottakskanal(Mottakskanal.fromJoark(journalpostTo.getMottakskanal()))
-				.opprettet(journalpostTo.getDatoOpprettet() == null ? null : LocalDateTime.from(journalpostTo.getDatoOpprettet()
-						.toInstant()
-						.atZone(ZoneId.systemDefault())))
-				.sak(journalpostTo.getSaksrelasjon() == null ? null : sakMap.get(journalpostTo.getSaksrelasjon()
-						.getSakId()))
-				.dokumenter(journalpostTo.getJournalpostDokumentInfoRelasjoner().stream()
-						.map(jr -> {
-							final DokumentInfoTo dokumentInfoTo = jr.getDokumentInfo();
-							return DokumentInfo.builder()
-									.dokumentId(dokumentInfoTo.getDokumentInfoId().toString())
-									.tittel(dokumentInfoTo.getTittel())
-									.variantFormat(VariantFormatkode.ARKIV)
-									.saksbehandlerHarTilgang(false)
-									.innbyggerHarDigitaltInnsyn(false)
-									.build();
-						}).collect(Collectors.toList())).build();
-	}
-
-	@Override
-	public List<TilgangJournalpost> hentTilgangJournalpostListByArkivsaker(List<TilgangSak> tilgangSakList) {
-		HentJournalposterResponse hentJournalposterResponse = hentJournalsakinfo.hentJournalposter(HentJournalposterRequest.builder()
-				.gsakSakIdList(tilgangSakList.stream()
-						.filter(tilgangSak -> Arkivsakssystem.GSAK.name().equals(tilgangSak.getArkivsaksystem()))
-						.map(TilgangSak::getArkivsaksnummer).collect(Collectors.toList()))
-				.psakSakIdList(tilgangSakList.stream()
-						.filter(tilgangSak -> Arkivsakssystem.PSAK.name().equals(tilgangSak.getArkivsaksystem()))
-						.map(TilgangSak::getArkivsaksnummer).collect(Collectors.toList()))
-				.build());
-
-		return hentJournalposterResponse
-				.getGsakJournalpostList().stream().map(journalpostTo -> TilgangJournalpost.builder()
-						.journalpostId(journalpostTo.getJournalpostId().toString())
-						.journalStatus(journalpostTo.getJournalstatus() == null ? null : journalpostTo.getJournalstatus()
-								.name())
-						.dokumenter(journalpostTo.getJournalpostDokumentInfoRelasjoner().stream()
-								.map(relasjon -> TilgangDokumentInfo.builder()
-										.dokumentInfoId(relasjon.getDokumentInfo().getDokumentInfoId().toString())
-										.dokumentstatus(relasjon.getDokumentInfo().getDokumentstatus() == null ? null : relasjon
-												.getDokumentInfo().getDokumentstatus().name())
-										.variantFormat("ARKIV") //TODO Endre hentJournalsakInfo til å også returnere variantformat
-										.build())
-								.collect(Collectors.toList()))
-						.build())
-				.collect(Collectors.toList());
 	}
 
 	@Override
@@ -179,11 +104,16 @@ public class JoarkAntiCorruptionLayerImpl implements JoarkAntiCorruptionLayer {
 
 	@Override
 	public TilgangSak hentTilgangSak(String journalpostId, String dokumentId, String variantFormat) {
-		HentTilgangJournalpostResponseTo hentTilgangJournalpostResponseTo = hentJournalsakinfo.hentTilgangJournalpost(journalpostId, dokumentId, variantFormat);
+		final HentTilgangJournalpostResponseTo hentTilgangJournalpostResponseTo = hentJournalsakinfo.hentTilgangJournalpost(journalpostId, dokumentId, variantFormat);
+		if (hentTilgangJournalpostResponseTo.getTilgangJournalpostDto() == null || hentTilgangJournalpostResponseTo.getTilgangJournalpostDto()
+				.getSak() == null) {
+			return null;
+		}
 		final TilgangSakDto tilgangSakDto = hentTilgangJournalpostResponseTo.getTilgangJournalpostDto().getSak();
 		return TilgangSak.builder()
 				.arkivsaksnummer(tilgangSakDto.getSakId())
 				.arkivsaksystem(tilgangSakDto.getFagsystem())
+				.tema(hentTilgangJournalpostResponseTo.getTilgangJournalpostDto().getTema())
 				.build();
 	}
 
@@ -198,7 +128,19 @@ public class JoarkAntiCorruptionLayerImpl implements JoarkAntiCorruptionLayer {
 
 	@Override
 	public HentDokument hentDokument(String dokumentId, String variantFormat) {
-		return hentJournalsakinfo.hentDokument(dokumentId, variantFormat);
+		HentDokumentResponseTo responseTo = hentJournalsakinfo.hentDokument(dokumentId, variantFormat);
+		byte[] dokumentByteArray;
+		try {
+			dokumentByteArray = Base64.getDecoder().decode(responseTo.getDokument());
+		} catch (Exception e) {
+			throw new SafTechnicalException(String.format("Kunne ikke dekode dokument, dokumentId=%s, variantFormat=%s. Feilmelding=%s", dokumentId, variantFormat, e
+					.getMessage()), e);
+		}
+
+		return HentDokument.builder()
+				.dokument(dokumentByteArray)
+				.mediaType(responseTo.getMediaType())
+				.build();
 	}
 
 	private TilgangJournalpost mapTilgangJournalpost(TilgangJournalpostDto dto) {
@@ -230,7 +172,7 @@ public class JoarkAntiCorruptionLayerImpl implements JoarkAntiCorruptionLayer {
 				.tema(dto.getFagomrade() == null ? null : dto.getFagomrade().toString())
 				.datoOpprettet(dto.getDatoOpprettet().toInstant().atZone(ZoneId.systemDefault()).toLocalDate())
 				.mottakskanal(dto.getMottakskanal() == null ? null : dto.getMottakskanal().toString())
-				.avsenderMottakerId(dto.getAvsenderMottakerId())
+				.avsenderMottakerId(dto.getAvsenderMottakerNavn())
 				.dokumenter(dto.getDokumenter().stream().map(dokdto -> TilgangDokumentInfo.builder()
 						.dokumentInfoId(dokdto.getDokumentInfoId())
 						.dokumentstatus(dokdto.getDokumentstatus() == null ? null : dokdto.getDokumentstatus().toString())
@@ -253,28 +195,63 @@ public class JoarkAntiCorruptionLayerImpl implements JoarkAntiCorruptionLayer {
 	}
 
 	private Journalpost mapJournalpostDto(Map<String, Sak> sakMap, JournalpostDto journalpostDto) {
+		final Kanal kanal = mapKanal(journalpostDto);
 		return Journalpost.builder()
 				.journalpostId(journalpostDto.getJournalpostId().toString())
-				.beskrivelse(journalpostDto.getInnhold())
+				.tittel(journalpostDto.getInnhold())
 				.journalposttype(JournalpostType.fromJoark(journalpostDto.getJournalposttype()))
 				.journalstatus(journalpostDto.getJournalstatus().toSafJournalStatus())
 				.tema(FagomradeCode.toSafJournalStatus(journalpostDto.getFagomrade()))
 				.temanavn(FagomradeCode.toSafJournalStatus(journalpostDto.getFagomrade()).getTemanavn())
-				.mottakskanal(Mottakskanal.fromJoark(journalpostDto.getMottakskanal()))
+				.sak(journalpostDto.getSaksrelasjon() == null ? null : sakMap.get(journalpostDto.getSaksrelasjon()
+						.getSakId()))
+				.avsenderMottakerNavn(journalpostDto.getAvsenderMottakerNavn())
+				.journalfortAvNavn(journalpostDto.getJournalfortAvNavn())
+				.kanal(kanal)
+				.kanalnavn(kanal == null ? null : kanal.getKanalnavn())
 				.opprettet(journalpostDto.getDatoOpprettet() == null ? null : LocalDateTime.from(journalpostDto.getDatoOpprettet()
 						.toInstant()
 						.atZone(ZoneId.systemDefault())))
-				.sak(journalpostDto.getSaksrelasjon() == null ? null : sakMap.get(journalpostDto.getSaksrelasjon()
-						.getSakId()))
 				.dokumenter(journalpostDto.getDokumenter().stream()
 						.map(dokumentInfoDto -> {
 							return DokumentInfo.builder()
 									.dokumentId(dokumentInfoDto.getDokumentInfoId())
 									.tittel(dokumentInfoDto.getTittel())
-									.variantFormat(VariantFormatkode.ARKIV)
+									.variantFormat(VariantFormat.ARKIV)
 									.saksbehandlerHarTilgang(false)
 									.innbyggerHarDigitaltInnsyn(false)
 									.build();
 						}).collect(Collectors.toList())).build();
+	}
+
+	private Kanal mapKanal(JournalpostDto journalpostDto) {
+		switch (journalpostDto.getJournalposttype()) {
+			case I:
+				if (journalpostDto.getMottakskanal() == null) {
+					return null;
+				}
+				return journalpostDto.getMottakskanal().getSafKanal();
+			case U:
+				if (journalpostDto.getUtsendingskanal() == null) {
+					return mapManglendeUtsendingskanal(journalpostDto);
+				}
+				return journalpostDto.getUtsendingskanal().getSafKanal();
+			default:
+				if (journalpostDto.getUtsendingskanal() == null) {
+					return mapManglendeUtsendingskanal(journalpostDto);
+				}
+				return null;
+		}
+	}
+
+	private Kanal mapManglendeUtsendingskanal(JournalpostDto journalpostDto) {
+		switch (journalpostDto.getJournalstatus()) {
+			case FL:
+				return Kanal.LOKAL_UTSKRIFT;
+			case FS:
+				return Kanal.SENTRAL_UTSKRIFT;
+			default:
+				return null;
+		}
 	}
 }

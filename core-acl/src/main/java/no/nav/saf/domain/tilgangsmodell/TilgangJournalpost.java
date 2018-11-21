@@ -4,6 +4,7 @@ import lombok.Builder;
 import lombok.Value;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -20,5 +21,5 @@ public class TilgangJournalpost {
 	private final String mottakskanal;
 	private final String avsenderMottakerId;
 	@Builder.Default
-	private final List<TilgangDokumentInfo> dokumenter;
+	private final List<TilgangDokumentInfo> dokumenter = new ArrayList<>();
 }

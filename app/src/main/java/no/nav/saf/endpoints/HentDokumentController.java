@@ -49,6 +49,7 @@ public class HentDokumentController {
 
 		return ResponseEntity.ok()
 				.contentType(response.getMediaType())
+				.header("content-disposition", "inline; filename=" + dokumentId + "_" + variantFormat)
 				.body(response.getDokument());
 	}
 

@@ -5,8 +5,8 @@ import graphql.schema.idl.NaturalEnumValuesProvider;
 import graphql.schema.idl.RuntimeWiring;
 import no.nav.saf.exceptions.SafFunctionalException;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
-import no.nav.saf.tjeneste.dokumentoversikt.DokumentoversiktArguments;
-import no.nav.saf.tjeneste.dokumentoversikt.DokumentoversiktDomainCoordinator;
+import no.nav.saf.tjeneste.dokumentoversiktbruker.DokumentoversiktBrukerArguments;
+import no.nav.saf.tjeneste.dokumentoversiktbruker.DokumentoversiktBrukerCoordinator;
 import no.nav.saf.tjeneste.visningsmodell.Journalpost;
 import no.nav.saf.tjeneste.visningsmodell.kode.JournalStatus;
 import no.nav.saf.tjeneste.visningsmodell.kode.JournalpostType;
@@ -23,11 +23,11 @@ import java.util.List;
  */
 @Component
 public class DokumentoversiktWiring {
-	private final DokumentoversiktDomainCoordinator dokumentoversiktDomainCoordinator;
+	private final DokumentoversiktBrukerCoordinator dokumentoversiktBrukerCoordinator;
 
 	@Inject
-	public DokumentoversiktWiring(DokumentoversiktDomainCoordinator dokumentoversiktDomainCoordinator) {
-		this.dokumentoversiktDomainCoordinator = dokumentoversiktDomainCoordinator;
+	public DokumentoversiktWiring(DokumentoversiktBrukerCoordinator dokumentoversiktBrukerCoordinator) {
+		this.dokumentoversiktBrukerCoordinator = dokumentoversiktBrukerCoordinator;
 	}
 
 	public RuntimeWiring createRuntimeWiring() {
@@ -43,7 +43,7 @@ public class DokumentoversiktWiring {
 					List<JournalStatus> journalstatuser = environment.getArgument("journalstatuser");
 					SafRequestContext safRequestContext = environment.getContext();
 					try {
-						return dokumentoversiktDomainCoordinator.findJournalposter(new DokumentoversiktArguments(aktoerId, fraDato, journalposttyper, journalstatuser),
+						return dokumentoversiktBrukerCoordinator.findJournalposter(new DokumentoversiktBrukerArguments(aktoerId, fraDato, journalposttyper, journalstatuser),
 								safRequestContext);
 					} catch(SafFunctionalException e) {
 						return new DataFetcherResult<List<Journalpost>>(new ArrayList<>(), Collections.singletonList(e));
@@ -52,7 +52,7 @@ public class DokumentoversiktWiring {
 				.type("Journalpost", typeWiring -> typeWiring.dataFetcher("dokumenter", environment -> {
 					Journalpost journalpost = environment.getSource();
 					final SafRequestContext safRequestContext = environment.getContext();
-					return dokumentoversiktDomainCoordinator.findDokumenter(journalpost, safRequestContext);
+					return dokumentoversiktBrukerCoordinator.findDokumenter(journalpost, safRequestContext);
 				}))
 				.build();
 	}

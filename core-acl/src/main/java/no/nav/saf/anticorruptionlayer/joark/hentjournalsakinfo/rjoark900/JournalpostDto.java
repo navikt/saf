@@ -25,7 +25,7 @@ public class JournalpostDto {
 	private FagomradeCode fagomrade;
 	private JournalStatusCode journalstatus;
 	private Date dokumentDato;
-	private String avsenderMottakerId;
+	private String avsenderMottakerNavn;
 	private String journalfortAvNavn;
 	private Date mottattDato;
 	private MottaksKanalCode mottakskanal;

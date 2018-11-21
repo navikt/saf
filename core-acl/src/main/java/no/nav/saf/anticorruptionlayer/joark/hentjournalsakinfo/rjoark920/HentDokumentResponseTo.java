@@ -1,12 +1,16 @@
 package no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark920;
 
-import lombok.Value;
+import lombok.Builder;
+import lombok.Data;
+import org.springframework.http.MediaType;
 
 /**
  * @author Sigurd Midttun, Visma Consulting.
  */
-@Value
+@Data
+@Builder
 public class HentDokumentResponseTo {
 
-	private final byte[] dokument = new byte[0];
+	private final String dokument;
+	private final MediaType mediaType;
 }
