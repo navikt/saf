@@ -73,7 +73,9 @@ public class GsakConsumer {
 
 	public GsakSakerTo hentSakBySakId(final String sakId) {
 		try {
-			return restTemplate.getForObject(this.gsakApiUrl + "/{sakId}", GsakSakerTo.class, sakId);
+			HttpHeaders headers = new HttpHeaders();
+			headers.set("X-Correlation-ID", UUID.randomUUID().toString());
+			return restTemplate.exchange(gsakApiUrl + "/{sakId}", HttpMethod.GET, new HttpEntity<>(headers), GsakSakerTo.class, sakId).getBody();
 		} catch (HttpServerErrorException e) {
 			throw new SafTechnicalException(String.format("getGsaksaker feilet teknisk med statusKode=%s. Feilmelding=%s", e
 					.getStatusCode(), e.getMessage()), e, e.getStatusCode());

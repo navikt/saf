@@ -114,22 +114,11 @@ public class TilgangsmodellRepositoryImpl implements TilgangsmodellRepository {
 	}
 
 	@Override
-	public TilgangBruker findTilgangBruker(String journalpostId, String dokumentId, String variantFormat) {
-		try {
-			return joarkAntiCorruptionLayer.hentTilgangBruker(journalpostId, dokumentId, variantFormat);
-		} catch (Exception e) {
-			log.warn("hentTilgangBruker feilet ved oppslag, journalpostId={}, dokumentId={}, variantFormat={}. Feilmelding={}",
-					journalpostId, dokumentId, variantFormat, e.getMessage());
-		}
-		return null;
-	}
-
-	@Override
 	public TilgangBruker findTilgangBrukerBySakId(String sakId) {
 		try {
 			return gsakAntiCorruptionLayer.findTilgangSakBySakId(sakId);
 		} catch (Exception e) {
-			log.warn("findTilgangSakBySakId feilet ved oppslag på sakId={}", sakId);
+			log.warn("findTilgangSakBySakId feilet ved oppslag på sakId={}. Feilmelding={}", sakId, e.getMessage());
 			return null;
 		}
 	}

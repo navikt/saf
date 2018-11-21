@@ -44,7 +44,7 @@ public class HentDokumentDomainCoordinatorImpl implements HentDokumentDomainCoor
 	@Override
 	public HentDokument hentDokument(final String journalpostId, final String dokumentId, final String variantFormat, final SafRequestContext safRequestContext) {
 		final TilgangSak tilgangSak = tilgangsmodellRepository.findTilgangSak(journalpostId, dokumentId, variantFormat);
-		final TilgangBruker tilgangBruker = TilgangBruker.builder().aktoerId(tilgangSak.getArkivsaksnummer()).build();
+		final TilgangBruker tilgangBruker = tilgangsmodellRepository.findTilgangBrukerBySakId(tilgangSak.getArkivsaksnummer());
 
 		boolean pep1Access = pep1.hasAccess(tilgangBruker, safRequestContext);
 		if (!pep1Access) {
