@@ -55,7 +55,6 @@ public class HentJournalsakinfo {
 		return restTemplate.getForObject("/henttilgangjournalpost/{journalpostId}/{dokumentId}/{variantFormat}", HentTilgangJournalpostResponseTo.class, journalpostId, dokumentId, variantFormat);
 	}
 
-	//TODO Skal vi chache dokumenter?
 	public HentDokumentResponseTo hentDokument(String dokumentId, String variantFormat) {
 		try {
 			ResponseEntity<String> response = restTemplate.getForEntity("/hentdokument/{dokumentId}/{variantFormat}", String.class, dokumentId, variantFormat);

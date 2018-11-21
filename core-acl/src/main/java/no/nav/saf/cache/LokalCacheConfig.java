@@ -20,7 +20,7 @@ public class LokalCacheConfig {
 
 	public static final String JOURNALPOST_CACHE = "journalpost";
 	public static final String SAKER_BY_AKTOER_ID_CACHE = "sakerByAktoerId";
-	public static final String SAKE_BY_SAKID_CACHE = "sakerBySakId";
+	public static final String SAK_BY_SAKID_CACHE = "sakerBySakId";
 	public static final String HENT_TILGANG_JOURNALPOSTER_CACHE = "hentTilgangJournalposterBulk";
 	public static final String TILGANGSMODELL_REPO_BRUKER_CACHE = "tilgangsmodellRepoBruker";
 	public static final String PENSJON_SAK_SAMMENDRAG_LISTE_CACHE = "pensjonSakSammendragListe";
@@ -64,7 +64,7 @@ public class LokalCacheConfig {
 						.expireAfterWrite(10, TimeUnit.MINUTES)
 						.maximumSize(500)
 						.build()),
-				new CaffeineCache(SAKE_BY_SAKID_CACHE, Caffeine.newBuilder()
+				new CaffeineCache(SAK_BY_SAKID_CACHE, Caffeine.newBuilder()
 						.expireAfterWrite(10, TimeUnit.MINUTES)
 						.maximumSize(500)
 						.build())
