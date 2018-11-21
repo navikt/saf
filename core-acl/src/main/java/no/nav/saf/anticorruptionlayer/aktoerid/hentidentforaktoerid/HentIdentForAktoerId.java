@@ -32,7 +32,7 @@ public class HentIdentForAktoerId {
 	@Retryable(include = SafTechnicalException.class,
 			maxAttempts = MAX_ATTEMPTS_SHORT_AKTOER_V2,
 			backoff = @Backoff(delay = DELAY_SHORT_AKTOER_V2, multiplier = MULTIPLIER_SHORT_AKTOER_V2))
-	@Monitor(value = "dok_consumer", extraTags = {"process", "hentDokument"}, percentiles = {0.9, 0.95})
+	@Monitor(value = "dok_consumer", extraTags = {"process", "hentIdentForAktoerId"}, percentiles = {0.9, 0.95})
 	public HentIdentForAktoerIdResponseTo hentIdentForAktoerId(String aktoerId) {
 		HentIdentForAktoerIdRequest request = new HentIdentForAktoerIdRequest();
 		request.setAktoerId(aktoerId);
