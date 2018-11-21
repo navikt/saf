@@ -10,7 +10,7 @@ import com.auth0.jwt.JWT;
 import no.nav.freg.security.oidc.idp.config.IdpConfig;
 import no.nav.freg.security.test.oidc.tools.OidcTestService;
 import no.nav.freg.security.test.oidc.tools.TestToolsAutoConfig;
-import no.nav.saf.CoreAclConfig;
+import no.nav.saf.CoreConfig;
 import no.nav.saf.tilgangskontroll.testconfig.TestConfig;
 import org.apache.cxf.helpers.IOUtils;
 import org.junit.jupiter.api.BeforeEach;
@@ -31,7 +31,7 @@ import java.io.IOException;
  * @author Sigurd Midttun, Visma Consulting.
  */
 @ExtendWith(SpringExtension.class)
-@SpringBootTest(classes = {CoreAclConfig.class, TestToolsAutoConfig.class, ServletWebServerFactoryAutoConfiguration.class, IdpConfig.class, TestConfig.class},
+@SpringBootTest(classes = {CoreConfig.class, TestToolsAutoConfig.class, ServletWebServerFactoryAutoConfiguration.class, IdpConfig.class, TestConfig.class},
 		webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("itest,wiremock,oidc")
 @ImportAutoConfiguration

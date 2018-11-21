@@ -15,11 +15,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.Duration;
+
 @Component
 public class AbacConsumer {
-
 	private static final MediaType APPLICATION_XACML_AND_JSON = MediaType.parseMediaType("application/xacml+json");
-	private static final int TIMEOUT = 30_000;
 
 	private final RestTemplate restTemplate;
 	private final String url;
@@ -33,9 +33,9 @@ public class AbacConsumer {
 						AbacResponseMapper abacResponseMapper) {
 		this.url = url;
 		this.restTemplate = restTemplateBuilder
-				.setReadTimeout(TIMEOUT)
-				.setConnectTimeout(TIMEOUT)
-				.basicAuthorization(serviceuserAlias.getUsername(), serviceuserAlias.getPassword()).build();
+				.setReadTimeout(Duration.ofSeconds(10))
+				.setConnectTimeout(Duration.ofSeconds(5))
+				.basicAuthentication(serviceuserAlias.getUsername(), serviceuserAlias.getPassword()).build();
 		this.abacRequestMapper = abacRequestMapper;
 		this.abacResponseMapper = abacResponseMapper;
 	}

@@ -1,15 +1,11 @@
 package no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo;
 
-import static no.nav.saf.cache.LokalCacheConfig.HENT_JOURNALPOSTER_CACHE;
 import static no.nav.saf.cache.LokalCacheConfig.HENT_TILGANG_JOURNALPOSTER_CACHE;
 import static no.nav.saf.cache.LokalCacheConfig.HENT_TILGANG_JOURNALPOST_CACHE;
-import static no.nav.saf.cache.LokalCacheConfig.HENT_VISNING_JOURNALPOSTER_CACHE;
 
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.HentJournalpostBulkRequestTo;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.HentJournalpostBulkResponseTo;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark901.HentTilgangJournalpostResponseTo;
-import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark910.VisningJournalpostBulkRequestTo;
-import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark910.VisningJournalpostBulkResponseTo;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark920.HentDokumentResponseTo;
 import no.nav.saf.exceptions.DokumentIkkeFunnetException;
 import no.nav.saf.exceptions.SafTechnicalException;
@@ -25,7 +21,7 @@ import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import javax.inject.Inject;
-import java.util.concurrent.TimeUnit;
+import java.time.Duration;
 
 /**
  * @author Joakim Bjørnstad, Jbit AS
@@ -42,27 +38,15 @@ public class HentJournalsakinfo {
 		restTemplate = restTemplateBuilder
 				.requestFactory(() -> clientHttpRequestFactory)
 				.rootUri(hentjournalsakinfoUrl)
-				.basicAuthorization(serviceuserAlias.getUsername(), serviceuserAlias.getPassword())
-				.setConnectTimeout((int) TimeUnit.SECONDS.toMillis(5))
-				.setReadTimeout((int) TimeUnit.SECONDS.toMillis(20))
+				.basicAuthentication(serviceuserAlias.getUsername(), serviceuserAlias.getPassword())
+				.setReadTimeout(Duration.ofSeconds(10))
+				.setConnectTimeout(Duration.ofSeconds(5))
 				.build();
-	}
-
-	@Cacheable(cacheNames = HENT_JOURNALPOSTER_CACHE)
-	public HentJournalposterResponse hentJournalposter(HentJournalposterRequest request) {
-		ResponseEntity<HentJournalposterResponse> response = restTemplate.postForEntity("/hentjournalposter", request, HentJournalposterResponse.class);
-		return response.getBody();
 	}
 
 	@Cacheable(cacheNames = HENT_TILGANG_JOURNALPOSTER_CACHE)
 	public HentJournalpostBulkResponseTo hentJournalpostBulk(HentJournalpostBulkRequestTo request) {
 		ResponseEntity<HentJournalpostBulkResponseTo> response = restTemplate.postForEntity("/hentjournalpostbulk", request, HentJournalpostBulkResponseTo.class);
-		return response.getBody();
-	}
-
-	@Cacheable(cacheNames = HENT_VISNING_JOURNALPOSTER_CACHE, key = "#request.journalpostIds")
-	public VisningJournalpostBulkResponseTo hentVisningJournalpostBulk(VisningJournalpostBulkRequestTo request) {
-		ResponseEntity<VisningJournalpostBulkResponseTo> response = restTemplate.postForEntity("/visningjournalpostbulk", request, VisningJournalpostBulkResponseTo.class);
 		return response.getBody();
 	}
 

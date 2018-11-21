@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
  * @author Joakim Bjørnstad, Jbit AS
  */
 @Component
-public class GsakAntiCorruptionLayerImpl implements GsakAntiCorruptionLayer {
+class GsakAntiCorruptionLayerImpl implements GsakAntiCorruptionLayer {
 	private final GsakConsumer gsakConsumer;
 
 	@Inject
@@ -75,9 +75,7 @@ public class GsakAntiCorruptionLayerImpl implements GsakAntiCorruptionLayer {
 
 	@Override
 	public List<Sak> findSakerByAktoerId(final String aktoerId) {
-
 		List<GsakSakerTo> gsakSakerTo = gsakConsumer.hentSakerByAktoerId(aktoerId);
-
 
 		return gsakSakerTo.stream()
 				.map(gsak -> Sak.builder()

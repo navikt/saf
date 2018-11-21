@@ -3,7 +3,7 @@ package no.nav.saf.domain;
 import static java.lang.String.format;
 
 import lombok.extern.slf4j.Slf4j;
-import no.nav.saf.anticorruptionlayer.aktoerid.AktoerAntiCorruptionLayer;
+import no.nav.saf.anticorruptionlayer.aktoer.AktoerAntiCorruptionLayer;
 import no.nav.saf.anticorruptionlayer.gsak.GsakAntiCorruptionLayer;
 import no.nav.saf.anticorruptionlayer.joark.JoarkAntiCorruptionLayer;
 import no.nav.saf.anticorruptionlayer.pensjonsak.PensjonSakAntiCorruptionLayer;
@@ -49,9 +49,10 @@ public class TilgangsmodellRepositoryImpl implements TilgangsmodellRepository {
 
 	@Override
 	@Cacheable(cacheNames = LokalCacheConfig.TILGANGSMODELL_REPO_BRUKER_CACHE)
-	public TilgangBruker findTilgangBrukerByAktoerId(String aktoerId) {
+	public TilgangBruker findTilgangBruker(String aktoerId) {
 		try {
-			return aktoerAntiCorruptionLayer.hentTilgangBruker(aktoerId);
+			// TODO MMA-1579
+			return aktoerAntiCorruptionLayer.hentTilgangBrukerByAktoerId(aktoerId);
 		} catch (Exception e) {
 			log.warn(format("FindTilgangBrukerByAktoerId feilet ved oppslag av aktoer=%s. Feilmelding=%s", aktoerId, e.getMessage()));
 		}
@@ -62,24 +63,14 @@ public class TilgangsmodellRepositoryImpl implements TilgangsmodellRepository {
 	@Cacheable(cacheNames = LokalCacheConfig.TILGANGSMODELL_REPO_SAK_CACHE)
 	public List<TilgangSak> findTilgangSakListByTilgangBruker(TilgangBruker tilgangBruker) {
 		try {
+			// TODO parallell
 			List<TilgangSak> tilgangSakList = gsakAntiCorruptionLayer.findTilgangSakListByAktoerId(tilgangBruker.getAktoerId());
 			tilgangSakList.addAll(pensjonSakAntiCorruptionLayer.hentTilgangSakList(tilgangBruker.getFoedselsnr()));
+			// TODO hente bisys saker MMA-1058
 			return tilgangSakList;
 		} catch (Exception e) {
 			log.warn(format("FindTilgangSakListByAktoerId feilet ved oppslag av aktoer=%s. Feilmelding=%s", tilgangBruker.getAktoerId(), e
 					.getMessage()));
-			return new ArrayList<>();
-		}
-	}
-
-	@Override
-	@Cacheable(cacheNames = LokalCacheConfig.TILGANGSMODELL_REPO_JORNALPOST_CACHE)
-	public List<TilgangJournalpost> findTilgangJournalpostListByArkivsaker(List<TilgangSak> tilgangSakList) {
-		try {
-			return joarkAntiCorruptionLayer.hentTilgangJournalpostListByArkivsaker(tilgangSakList);
-		} catch (Exception e) {
-			log.warn(format("HentTilgangJournalpostListByArkivsaker feilet ved oppslag av arkivsaker=%s. Feilmelding=%s",
-					tilgangSakList.stream().map(TilgangSak::getArkivsaksnummer).collect(Collectors.toList()), e.getMessage()));
 			return new ArrayList<>();
 		}
 	}

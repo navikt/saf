@@ -16,11 +16,9 @@ import java.util.List;
  */
 public interface TilgangsmodellRepository {
 
-	TilgangBruker findTilgangBrukerByAktoerId(String aktoerId);
+	TilgangBruker findTilgangBruker(String aktoerId);
 
 	List<TilgangSak> findTilgangSakListByTilgangBruker(TilgangBruker tilgangBruker);
-
-	List<TilgangJournalpost> findTilgangJournalpostListByArkivsaker(List<TilgangSak> tilgangSakList);
 
 	List<TilgangJournalpost> findTilgangJournalposter(TilgangBruker tilgangBruker,
 													  List<TilgangSak> tilgangSakList,

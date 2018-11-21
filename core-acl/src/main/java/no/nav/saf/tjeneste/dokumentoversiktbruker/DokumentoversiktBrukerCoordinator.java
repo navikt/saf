@@ -1,4 +1,4 @@
-package no.nav.saf.tjeneste.dokumentoversikt;
+package no.nav.saf.tjeneste.dokumentoversiktbruker;
 
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tjeneste.visningsmodell.DokumentInfo;
@@ -9,8 +9,8 @@ import java.util.List;
 /**
  * @author Joakim Bjørnstad, Jbit AS
  */
-public interface DokumentoversiktDomainCoordinator {
-	List<Journalpost> findJournalposter(DokumentoversiktArguments dokumentoversiktArguments, SafRequestContext safRequestContext);
+public interface DokumentoversiktBrukerCoordinator {
+	List<Journalpost> findJournalposter(DokumentoversiktBrukerArguments dokumentoversiktBrukerArguments, SafRequestContext safRequestContext);
 
 	List<DokumentInfo> findDokumenter(Journalpost journalpost, SafRequestContext safRequestContext);
 }

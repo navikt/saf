@@ -21,7 +21,7 @@ import org.springframework.retry.annotation.EnableRetry;
 @ComponentScan
 @Configuration
 @EnableAutoConfiguration
-@Import({CoreAclConfig.class,
+@Import({CoreConfig.class,
 		GraphiQLController.class})
 @EnableConfigurationProperties(ServiceuserAlias.class)
 @EnableRetry

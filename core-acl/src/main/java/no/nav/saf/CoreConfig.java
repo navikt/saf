@@ -8,5 +8,5 @@ import org.springframework.context.annotation.Configuration;
  */
 @ComponentScan
 @Configuration
-public class CoreAclConfig {
+public class CoreConfig {
 }
