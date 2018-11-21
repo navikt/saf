@@ -41,7 +41,7 @@ public class AbacConsumer {
 		this.abacResponseMapper = abacResponseMapper;
 	}
 
-	@Monitor(value = "dok_consumer", extraTags = {"process", "abacEvaluate"}, percentiles = {0.9, 0.95})
+	@Monitor(value = "dok_consumer", extraTags = {"process", "abacEvaluate"}, histogram = true)
 	public XacmlResponse evaluate(XacmlRequest requestBody) {
 		HttpEntity<String> httpRequest = prepareHttpRequest(requestBody);
 

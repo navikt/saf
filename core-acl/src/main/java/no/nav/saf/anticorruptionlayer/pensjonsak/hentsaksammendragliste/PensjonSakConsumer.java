@@ -35,7 +35,7 @@ public class PensjonSakConsumer {
 	@Retryable(include = SafTechnicalException.class,
 			maxAttempts = MAX_ATTEMPTS_SHORT_PENSJON_V1,
 			backoff = @Backoff(delay = DELAY_SHORT_PENSJON_V1, multiplier = MULTIPLIER_SHORT_PENSJON_V1))
-	@Monitor(value = "dok_consumer", description = "hentSakSammendragListe", percentiles = {0.9, 0.95})
+	@Monitor(value = "dok_consumer", description = "hentSakSammendragListe", histogram = true)
 	public SakSammendragListeTo hentSakSammendragListe(String personident) {
 		HentSakSammendragListeRequest request = new HentSakSammendragListeRequest();
 		request.setPersonident(personident);

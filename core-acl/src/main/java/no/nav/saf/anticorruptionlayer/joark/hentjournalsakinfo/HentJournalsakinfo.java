@@ -46,14 +46,14 @@ public class HentJournalsakinfo {
 	}
 
 	@Cacheable(cacheNames = HENT_TILGANG_JOURNALPOSTER_CACHE)
-	@Monitor(value = "dok_consumer", extraTags = {"process", "hentJournalpostBulk"}, percentiles = {0.9, 0.95})
+	@Monitor(value = "dok_consumer", extraTags = {"process", "hentJournalpostBulk"}, histogram = true)
 	public HentJournalpostBulkResponseTo hentJournalpostBulk(HentJournalpostBulkRequestTo request) {
 		ResponseEntity<HentJournalpostBulkResponseTo> response = restTemplate.postForEntity("/hentjournalpostbulk", request, HentJournalpostBulkResponseTo.class);
 		return response.getBody();
 	}
 
 	@Cacheable(cacheNames = HENT_TILGANG_JOURNALPOST_CACHE)
-	@Monitor(value = "dok_consumer", extraTags = {"process", "hentTilgangJournalpost"}, percentiles = {0.9, 0.95})
+	@Monitor(value = "dok_consumer", extraTags = {"process", "hentTilgangJournalpost"}, histogram = true)
 	public HentTilgangJournalpostResponseTo hentTilgangJournalpost(String journalpostId, String dokumentId, String variantFormat) {
 		return restTemplate.getForObject("/henttilgangjournalpost/{journalpostId}/{dokumentId}/{variantFormat}", HentTilgangJournalpostResponseTo.class, journalpostId, dokumentId, variantFormat);
 	}

@@ -38,7 +38,7 @@ public class HentDokumentController {
 	@ApiOperation(value = "Hent dokument for angitte søkekriterier", authorizations = {@Authorization(value = "apiKey")})
 	@SwaggerRestHentDokument
 	@GetMapping(value = "hentdokument/{journalpostId}/{dokumentId}/{variantFormat}")
-	@Monitor(value = "dok_request", extraTags = {"process", "hentDokument"}, percentiles = {0.9, 0.95})
+	@Monitor(value = "dok_request", extraTags = {"process", "hentDokument"}, histogram = true)
 	public ResponseEntity<byte[]> hentDokument(@PathVariable String journalpostId,
 											   @PathVariable String dokumentId,
 											   @PathVariable String variantFormat,
