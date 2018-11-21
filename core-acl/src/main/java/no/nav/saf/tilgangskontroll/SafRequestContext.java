@@ -20,7 +20,7 @@ public class SafRequestContext {
 	}
 
 	private Optional<String> getOidcTokenBody(String authorizationHeader) {
-		if(!authorizationHeader.startsWith(OIDC_TOKEN_PREFIX)) {
+		if(authorizationHeader == null || !authorizationHeader.startsWith(OIDC_TOKEN_PREFIX)) {
 			return Optional.empty();
 		}
 		try {

@@ -75,4 +75,19 @@ public class GsakConsumer {
 					.getStatusCode(), e.getMessage()), e, e.getStatusCode());
 		}
 	}
+
+	@Cacheable(cacheNames = LokalCacheConfig.SAK_BY_SAKID_CACHE)
+	public GsakSakerTo hentSakBySakId(final String sakId) {
+		try {
+			HttpHeaders headers = new HttpHeaders();
+			headers.set("X-Correlation-ID", UUID.randomUUID().toString());
+			return restTemplate.exchange(gsakApiUrl + "/{sakId}", HttpMethod.GET, new HttpEntity<>(headers), GsakSakerTo.class, sakId).getBody();
+		} catch (HttpServerErrorException e) {
+			throw new SafTechnicalException(String.format("getGsaksaker feilet teknisk med statusKode=%s. Feilmelding=%s", e
+					.getStatusCode(), e.getMessage()), e, e.getStatusCode());
+		} catch (HttpClientErrorException e) {
+			throw new SafFunctionalException(String.format("getGsaksaker feilet funksjonelt med statusKode=%s. Feilmelding=%s", e
+					.getStatusCode(), e.getMessage()), e, e.getStatusCode());
+		}
+	}
 }

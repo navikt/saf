@@ -2,6 +2,7 @@ package no.nav.saf.anticorruptionlayer.gsak;
 
 import no.nav.saf.anticorruptionlayer.gsak.domain.GsakSakerTo;
 import no.nav.saf.anticorruptionlayer.gsak.hentgsaksaker.GsakConsumer;
+import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 import no.nav.saf.tjeneste.visningsmodell.Sak;
 import no.nav.saf.tjeneste.visningsmodell.Tema;
@@ -100,6 +101,14 @@ class GsakAntiCorruptionLayerImpl implements GsakAntiCorruptionLayer {
 						.tema(gsak.getTema())
 						.build())
 				.collect(Collectors.toList());
+	}
+
+	@Override
+	public TilgangBruker findTilgangSakBySakId(final String sakId) {
+		GsakSakerTo gsakSakerTo = gsakConsumer.hentSakBySakId(sakId);
+		return gsakSakerTo == null ? null : TilgangBruker.builder()
+				.aktoerId(gsakSakerTo.getAktoerId())
+				.build();
 	}
 
 }
