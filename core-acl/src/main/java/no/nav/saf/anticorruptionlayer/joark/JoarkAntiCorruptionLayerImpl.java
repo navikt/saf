@@ -52,6 +52,8 @@ import java.util.stream.Collectors;
 @Component
 @Slf4j
 class JoarkAntiCorruptionLayerImpl implements JoarkAntiCorruptionLayer {
+	// Joark bruker in query og max antall elementer er 1000 i Oracle.
+	private static final int SAK_MAX_SIZE = 1000;
 	private final HentJournalsakinfo hentJournalsakinfo;
 	private final Cache journalpostCache;
 
@@ -85,10 +87,10 @@ class JoarkAntiCorruptionLayerImpl implements JoarkAntiCorruptionLayer {
 				.fraDato(fraDato.toString())
 				.gsakSakIds(tilgangSakList.stream()
 						.filter(tilgangSak -> Arkivsakssystem.GSAK.name().equals(tilgangSak.getArkivsaksystem()))
-						.map(TilgangSak::getArkivsaksnummer).collect(Collectors.toList()))
+						.map(TilgangSak::getArkivsaksnummer).limit(SAK_MAX_SIZE).collect(Collectors.toList()))
 				.psakSakIds(tilgangSakList.stream()
 						.filter(tilgangSak -> Arkivsakssystem.PSAK.name().equals(tilgangSak.getArkivsaksystem()))
-						.map(TilgangSak::getArkivsaksnummer).collect(Collectors.toList()))
+						.map(TilgangSak::getArkivsaksnummer).limit(SAK_MAX_SIZE).collect(Collectors.toList()))
 				.build());
 
 		return responseTo.getTilgangJournalposter().stream().map(this::mapTilgangJournalpost).collect(Collectors.toList());
