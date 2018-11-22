@@ -13,6 +13,11 @@ import java.util.List;
 public class SafFunctionalException extends RuntimeException implements GraphQLError {
 	private final HttpStatus httpStatus;
 
+	public SafFunctionalException() {
+		super();
+		httpStatus = null;
+	}
+
 	public SafFunctionalException(String message) {
 		super(message);
 		this.httpStatus = null;

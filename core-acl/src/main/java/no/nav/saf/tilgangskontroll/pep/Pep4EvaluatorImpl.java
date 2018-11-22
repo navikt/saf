@@ -1,5 +1,6 @@
 package no.nav.saf.tilgangskontroll.pep;
 
+import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.domain.tilgangsmodell.TilgangJournalpost;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlRequest;
@@ -11,6 +12,7 @@ import javax.inject.Inject;
 /**
  * @author Joakim Bjørnstad, Jbit AS
  */
+@Slf4j
 @Component("pep4")
 public class Pep4EvaluatorImpl implements PepEvaluator<TilgangJournalpost> {
 
@@ -24,6 +26,7 @@ public class Pep4EvaluatorImpl implements PepEvaluator<TilgangJournalpost> {
 	@Override
 	public boolean hasAccess(TilgangJournalpost ressurs, SafRequestContext safRequestContext) {
 		if (ressurs == null) {
+			log.warn("Pep4 mangler tilstrekkelig datagrunnlag for å kunne gjennomføre tilgangskontroll");
 			return false;
 		}
 

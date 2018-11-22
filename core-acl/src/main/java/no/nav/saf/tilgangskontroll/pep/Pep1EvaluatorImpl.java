@@ -4,8 +4,10 @@ import static no.nav.abac.xacml.NavAttributter.ENVIRONMENT_FELLES_OIDC_TOKEN_BOD
 import static no.nav.abac.xacml.NavAttributter.ENVIRONMENT_FELLES_PEP_ID;
 import static no.nav.abac.xacml.NavAttributter.RESOURCE_FELLES_DOMENE;
 import static no.nav.abac.xacml.NavAttributter.RESOURCE_FELLES_PERSON_AKTOERID_RESOURCE;
+import static no.nav.abac.xacml.NavAttributter.RESOURCE_FELLES_PERSON_FNR;
 import static no.nav.saf.domain.DomainConstants.SAF;
 
+import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlRequest;
@@ -27,6 +29,7 @@ import javax.inject.Inject;
  * @author Joakim Bjørnstad, Jbit AS
  */
 @Component("pep1")
+@Slf4j
 public class Pep1EvaluatorImpl implements PepEvaluator<TilgangBruker> {
 
 	private final AbacService abacService;
@@ -38,7 +41,8 @@ public class Pep1EvaluatorImpl implements PepEvaluator<TilgangBruker> {
 
 	@Override
 	public boolean hasAccess(TilgangBruker ressurs, SafRequestContext safRequestContext) {
-		if (ressurs == null || ressurs.getAktoerId() == null) {
+		if (ressurs == null) {
+			log.warn("Pep1 mangler tilstrekkelig datagrunnlag for å kunne gjennomføre tilgangskontroll");
 			return false;
 		}
 
@@ -46,8 +50,14 @@ public class Pep1EvaluatorImpl implements PepEvaluator<TilgangBruker> {
 		request.environment(ENVIRONMENT_FELLES_OIDC_TOKEN_BODY, safRequestContext.getOidcTokenBody());
 		request.environment(ENVIRONMENT_FELLES_PEP_ID, SAF);
 		request.resource(RESOURCE_FELLES_DOMENE, SAF);
-		request.resource(RESOURCE_FELLES_PERSON_AKTOERID_RESOURCE, ressurs.getAktoerId());
 
+		if (ressurs.getAktoerId() != null) {
+			request.resource(RESOURCE_FELLES_PERSON_AKTOERID_RESOURCE, ressurs.getAktoerId());
+		} else if (ressurs.getFoedselsnr() != null) {
+			request.resource(RESOURCE_FELLES_PERSON_FNR, ressurs.getFoedselsnr());
+		} else {
+			return false;
+		}
 		XacmlResponse response = abacService.evaluate(request);
 		return Decision.PERMIT.equals(response.getDecision());
 	}

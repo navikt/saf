@@ -1,5 +1,8 @@
 package no.nav.saf.anticorruptionlayer.joark;
 
+import static no.nav.saf.anticorruptionlayer.joark.domain.kode.FagsystemCode.FS22;
+import static no.nav.saf.anticorruptionlayer.joark.domain.kode.FagsystemCode.PEN;
+
 import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.FagomradeCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.JournalStatusCode;
@@ -9,6 +12,7 @@ import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.HentJou
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.HentJournalpostBulkResponseTo;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.JournalpostDto;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark901.HentTilgangJournalpostResponseTo;
+import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark901.TilgangBrukerDto;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark901.TilgangDokumentInfoDto;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark901.TilgangJournalpostDto;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark901.TilgangSakDto;
@@ -19,6 +23,7 @@ import no.nav.saf.domain.tilgangsmodell.TilgangDokumentInfo;
 import no.nav.saf.domain.tilgangsmodell.TilgangIdent;
 import no.nav.saf.domain.tilgangsmodell.TilgangJournalpost;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
+import no.nav.saf.exceptions.SafFunctionalException;
 import no.nav.saf.exceptions.SafTechnicalException;
 import no.nav.saf.tjeneste.hentdokument.HentDokument;
 import no.nav.saf.tjeneste.visningsmodell.DokumentInfo;
@@ -113,8 +118,17 @@ class JoarkAntiCorruptionLayerImpl implements JoarkAntiCorruptionLayer {
 		final TilgangSakDto tilgangSakDto = hentTilgangJournalpostResponseTo.getTilgangJournalpostDto().getSak();
 		return TilgangSak.builder()
 				.arkivsaksnummer(tilgangSakDto.getSakId())
-				.arkivsaksystem(tilgangSakDto.getFagsystem())
+				.arkivsaksystem(mapJoarkFagsystem(tilgangSakDto.getFagsystem()))
 				.tema(hentTilgangJournalpostResponseTo.getTilgangJournalpostDto().getTema())
+				.build();
+	}
+
+	@Override
+	public TilgangBruker hentTilgangBruker(String journalpostId, String dokumentId, String variantFormat) {
+		HentTilgangJournalpostResponseTo hentTilgangJournalpostResponseTo = hentJournalsakinfo.hentTilgangJournalpost(journalpostId, dokumentId, variantFormat);
+		final TilgangBrukerDto tilgangBrukerDto = hentTilgangJournalpostResponseTo.getTilgangJournalpostDto().getBruker();
+		return TilgangBruker.builder()
+				.foedselsnr(tilgangBrukerDto.getBrukerId())
 				.build();
 	}
 
@@ -205,15 +219,13 @@ class JoarkAntiCorruptionLayerImpl implements JoarkAntiCorruptionLayer {
 						.toInstant()
 						.atZone(ZoneId.systemDefault())))
 				.dokumenter(journalpostDto.getDokumenter().stream()
-						.map(dokumentInfoDto -> {
-							return DokumentInfo.builder()
-									.dokumentId(dokumentInfoDto.getDokumentInfoId())
-									.tittel(dokumentInfoDto.getTittel())
-									.variantFormat(VariantFormat.ARKIV)
-									.saksbehandlerHarTilgang(false)
-									.innbyggerHarDigitaltInnsyn(false)
-									.build();
-						}).collect(Collectors.toList())).build();
+						.map(dokumentInfoDto -> DokumentInfo.builder()
+								.dokumentId(dokumentInfoDto.getDokumentInfoId())
+								.tittel(dokumentInfoDto.getTittel())
+								.variantFormat(VariantFormat.ARKIV)
+								.saksbehandlerHarTilgang(false)
+								.innbyggerHarDigitaltInnsyn(false)
+								.build()).collect(Collectors.toList())).build();
 	}
 
 	private Kanal mapKanal(JournalpostDto journalpostDto) {
@@ -246,4 +258,15 @@ class JoarkAntiCorruptionLayerImpl implements JoarkAntiCorruptionLayer {
 				return null;
 		}
 	}
+
+	private String mapJoarkFagsystem(String joarkFagsystem) {
+		if (FS22.name().equals(joarkFagsystem)) {
+			return Arkivsakssystem.GSAK.name();
+		} else if (PEN.name().equals(joarkFagsystem)) {
+			return Arkivsakssystem.PSAK.name();
+		} else {
+			throw new SafFunctionalException(String.format("Arkivsaksystem må være GSAK (FS22) eller PSAK (PEN). Fikk: %s i oppslag mot hentTilgangJournalpost", joarkFagsystem));
+		}
+	}
+
 }
