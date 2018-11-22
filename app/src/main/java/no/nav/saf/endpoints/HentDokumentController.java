@@ -1,6 +1,7 @@
 package no.nav.saf.endpoints;
 
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.Authorization;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.swagger.SwaggerRestHentDokument;
@@ -34,13 +35,13 @@ public class HentDokumentController {
 		this.hentDokumentDomainCoordinator = hentDokumentDomainCoordinator;
 	}
 
-	@ApiOperation(value = "Hent dokument for angitte søkekriterier", authorizations = {@Authorization(value = "apiKey")})
+	@ApiOperation(value = "Hent dokument for angitte søkekriterier", authorizations = {@Authorization(value = "OIDC token")})
 	@SwaggerRestHentDokument
 	@GetMapping(value = "hentdokument/{journalpostId}/{dokumentId}/{variantFormat}")
-	public ResponseEntity<byte[]> hentDokument(@PathVariable String journalpostId,
-											   @PathVariable String dokumentId,
-											   @PathVariable String variantFormat,
-											   @RequestHeader(value = HttpHeaders.AUTHORIZATION, required = false) String authorizationHeader) {
+	public ResponseEntity<byte[]> hentDokument(@ApiParam(name = "JournalpostId", required = true) @PathVariable  String journalpostId,
+											   @ApiParam(name = "DokumentId", required = true) @PathVariable  String dokumentId,
+											   @ApiParam(name = "VariantFormat", required = true) @PathVariable  String variantFormat,
+											   @ApiParam(hidden = true) @RequestHeader(value = HttpHeaders.AUTHORIZATION, required = false) String authorizationHeader) {
 
 		log.info("hentDokument har mottatt forespørsel om å hente dokument, journalpostId={}, dokumentId={}, variantFormat={}", journalpostId, dokumentId, variantFormat);
 		HentDokument response = hentDokumentDomainCoordinator.hentDokument(journalpostId, dokumentId, variantFormat, new SafRequestContext(authorizationHeader));
