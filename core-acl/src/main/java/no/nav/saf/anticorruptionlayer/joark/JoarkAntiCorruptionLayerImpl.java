@@ -33,7 +33,7 @@ import no.nav.saf.tjeneste.visningsmodell.kode.Arkivsakssystem;
 import no.nav.saf.tjeneste.visningsmodell.kode.JournalStatus;
 import no.nav.saf.tjeneste.visningsmodell.kode.JournalpostType;
 import no.nav.saf.tjeneste.visningsmodell.kode.Kanal;
-import no.nav.saf.tjeneste.visningsmodell.kode.VariantFormat;
+import no.nav.saf.tjeneste.visningsmodell.kode.Varianttest;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Component;
@@ -218,7 +218,7 @@ class JoarkAntiCorruptionLayerImpl implements JoarkAntiCorruptionLayer {
 						.map(dokumentInfoDto -> DokumentInfo.builder()
 								.dokumentId(dokumentInfoDto.getDokumentInfoId())
 								.tittel(dokumentInfoDto.getTittel())
-								.variantFormat(VariantFormat.ARKIV)
+								.variantFormat(Varianttest.ARKIV)
 								.saksbehandlerHarTilgang(false)
 								.innbyggerHarDigitaltInnsyn(false)
 								.build()).collect(Collectors.toList())).build();
