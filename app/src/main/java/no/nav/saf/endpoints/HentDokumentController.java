@@ -3,6 +3,7 @@ package no.nav.saf.endpoints;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.Authorization;
 import lombok.extern.slf4j.Slf4j;
+import no.nav.saf.metrics.Monitor;
 import no.nav.saf.swagger.SwaggerRestHentDokument;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tjeneste.hentdokument.HentDokument;
@@ -37,6 +38,7 @@ public class HentDokumentController {
 	@ApiOperation(value = "Hent dokument for angitte søkekriterier", authorizations = {@Authorization(value = "apiKey")})
 	@SwaggerRestHentDokument
 	@GetMapping(value = "hentdokument/{journalpostId}/{dokumentId}/{variantFormat}")
+	@Monitor(value = "dok_request", extraTags = {"process", "hentDokument"}, histogram = true)
 	public ResponseEntity<byte[]> hentDokument(@PathVariable String journalpostId,
 											   @PathVariable String dokumentId,
 											   @PathVariable String variantFormat,
