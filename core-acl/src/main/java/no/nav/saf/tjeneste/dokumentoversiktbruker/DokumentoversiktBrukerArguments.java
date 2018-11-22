@@ -18,20 +18,23 @@ public class DokumentoversiktBrukerArguments {
 	private final List<JournalStatus> journalstatuser;
 	private final boolean visFeilregistrerte;
 
-	public DokumentoversiktBrukerArguments(String aktoerId, LocalDate fraDato, List<JournalpostType> journalposttyper, List<JournalStatus> journalstatuser) {
+	public DokumentoversiktBrukerArguments(String aktoerId,
+										   LocalDate fraDato,
+										   List<JournalpostType> journalposttyper,
+										   List<JournalStatus> journalstatuser) {
 		this.aktoerId = aktoerId;
-		if(fraDato == null) {
-			this.fraDato = LocalDate.now().minusMonths(12);
+		if (fraDato == null) {
+			this.fraDato = LocalDate.of(1, 1, 1);
 		} else {
 			this.fraDato = fraDato;
 		}
-		if(journalposttyper.isEmpty()) {
+		if (journalposttyper.isEmpty()) {
 			this.journalposttyper = JournalpostType.asList();
 		} else {
 			this.journalposttyper = journalposttyper;
 		}
-		if(journalstatuser.isEmpty()) {
-			this.journalstatuser = JournalStatus.asList();
+		if (journalstatuser.isEmpty()) {
+			this.journalstatuser = JournalStatus.mestBrukte();
 		} else {
 			this.journalstatuser = journalstatuser;
 		}

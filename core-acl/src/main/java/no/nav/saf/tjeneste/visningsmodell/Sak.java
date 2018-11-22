@@ -17,6 +17,6 @@ public class Sak {
 	private final Arkivsakssystem arkivsaksystem;
 	private final String fagsaksnummer;
 	private final String fagsystem;
-	private final LocalDateTime datoOpprettet;
 	private final Temakode temakode;
+	private final LocalDateTime datoOpprettet;
 }

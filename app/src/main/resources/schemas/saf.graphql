@@ -53,6 +53,7 @@ type Dokumentvariant {
 }
 
 enum Datotype {
+    OPPRETTET_DATO
     EKSPEDERT_DATO
     MOTTATT_DATO
 }
