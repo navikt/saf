@@ -72,7 +72,9 @@ public class SwaggerConfig {
 	private ApiInfo apiInfo() {
 		return new ApiInfo(
 				"SAF API",
-				"Her dokumenteres tjenestegrensesnittet til sak og arkivfasade (SAF).",
+				"Her dokumenteres tjenestegrensesnittet til sak og arkivfasade (SAF). Til autentisering brukes OIDC-token (JWT via OAuth2.0). " +
+				"Følgende format må brukes i Authorize sitt input-felt \"Value\": <strong> Bearer {token} </strong>. " +
+				"Eksempel på verdi i input-feltet: <strong> Bearer eYdmifml0ejugm </strong>. Et gyldig token kommer til å ha mange flere karakterer enn i eksempelet.",
 				version,
 				"",
 				new Contact("Team Dokument", "", ""),
@@ -80,12 +82,7 @@ public class SwaggerConfig {
 	}
 
 	private ApiKey apiKey() {
+
 		return new ApiKey("apiKey", HttpHeaders.AUTHORIZATION, "header");
 	}
-//	TODO find a way to reach a "descritpion" field in the authorize button.
-//	"OIDC token. Til autentisering brukes OIDC-token (JWT via OAuth2.0). " +
-//				"Følgende format må brukes i input-feltet \"Value\" under: Bearer {token}*. " +
-//				"Eksempel på verdi i input-felt: Bearer eYdmifml0ejugm. Et gyldig token kommer til å ha mange flere karakterer enn i eksempelet."
-
-
 }
