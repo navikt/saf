@@ -33,7 +33,6 @@ import no.nav.saf.tjeneste.visningsmodell.kode.Arkivsakssystem;
 import no.nav.saf.tjeneste.visningsmodell.kode.JournalStatus;
 import no.nav.saf.tjeneste.visningsmodell.kode.JournalpostType;
 import no.nav.saf.tjeneste.visningsmodell.kode.Kanal;
-import no.nav.saf.tjeneste.visningsmodell.kode.Temakode;
 import no.nav.saf.tjeneste.visningsmodell.kode.VariantFormat;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
@@ -45,7 +44,6 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Arrays;
 import java.util.Base64;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -72,7 +70,6 @@ class JoarkAntiCorruptionLayerImpl implements JoarkAntiCorruptionLayer {
 	public List<TilgangJournalpost> hentTilgangJournalpostListByArkivsaker(TilgangBruker tilgangBruker,
 																		   List<TilgangSak> tilgangSakList,
 																		   LocalDate fraDato,
-																		   Collection<Temakode> inkluderTema,
 																		   List<JournalpostType> inkluderJournalposttyper,
 																		   List<JournalStatus> inkluderJournalstatus) {
 		List<String> alleIdenter = tilgangBruker.getHistoriskeIdenter()
@@ -87,7 +84,6 @@ class JoarkAntiCorruptionLayerImpl implements JoarkAntiCorruptionLayer {
 						.map(jt -> JournalpostTypeCode.valueOf(jt.name()))
 						.collect(Collectors.toList()))
 				.inkluderJournalStatus(JournalStatusCode.asList())
-				.inkluderTema(inkluderTema.stream().map(t -> FagomradeCode.valueOf(t.name())).collect(Collectors.toList()))
 				.visFeilregistrerte(inkluderJournalstatus.contains(JournalStatus.FEILREGISTRERT))
 				.fraDato(fraDato.toString())
 				.gsakSakIds(tilgangSakList.stream()
