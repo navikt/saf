@@ -3,6 +3,7 @@ package no.nav.saf.endpoints.wiring;
 import graphql.execution.DataFetcherResult;
 import graphql.schema.idl.NaturalEnumValuesProvider;
 import graphql.schema.idl.RuntimeWiring;
+import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.exceptions.SafFunctionalException;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tjeneste.dokumentoversiktbruker.DokumentoversiktBrukerArguments;
@@ -21,6 +22,7 @@ import java.util.List;
 /**
  * @author Joakim Bjørnstad, Jbit AS
  */
+@Slf4j
 @Component
 public class DokumentoversiktWiring {
 	private final DokumentoversiktBrukerCoordinator dokumentoversiktBrukerCoordinator;
@@ -38,6 +40,7 @@ public class DokumentoversiktWiring {
 				.type("JournalStatus", typeWiring -> typeWiring.enumValues(new NaturalEnumValuesProvider<>(JournalStatus.class)))
 				.type("Query", typeWiring -> typeWiring.dataFetcher("dokumentoversiktBruker", environment -> {
 					String aktoerId = environment.getArgument("aktoerId");
+					log.info("dokumentoversiktBruker hentes for aktoerId={}", aktoerId);
 					LocalDate fraDato = environment.getArgument("fraDato");
 					List<JournalpostType> journalposttyper = environment.getArgument("journalposttyper");
 					List<JournalStatus> journalstatuser = environment.getArgument("journalstatuser");

@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.anticorruptionlayer.pensjonsak.domain.SakSammendragListeTo;
 import no.nav.saf.exceptions.SafFunctionalException;
 import no.nav.saf.exceptions.SafTechnicalException;
+import no.nav.saf.metrics.Monitor;
 import no.nav.saf.tjeneste.visningsmodell.kode.Arkivsakssystem;
 import no.nav.tjeneste.virksomhet.pensjonsak.v1.binding.HentSakSammendragListePersonIkkeFunnet;
 import no.nav.tjeneste.virksomhet.pensjonsak.v1.binding.HentSakSammendragListeSakManglerEierenhet;
@@ -35,6 +36,7 @@ public class PensjonSakConsumer {
 	@Retryable(include = SafTechnicalException.class,
 			maxAttempts = MAX_ATTEMPTS_SHORT_PENSJON_V1,
 			backoff = @Backoff(delay = DELAY_SHORT_PENSJON_V1, multiplier = MULTIPLIER_SHORT_PENSJON_V1))
+	@Monitor(value = "dok_consumer", extraTags = "hentSakSammendragListe", histogram = true)
 	public SakSammendragListeTo hentSakSammendragListe(final String personident) {
 		HentSakSammendragListeRequest request = new HentSakSammendragListeRequest();
 		request.setPersonident(personident);

@@ -10,6 +10,7 @@ import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark920.HentDok
 import no.nav.saf.exceptions.DokumentIkkeFunnetException;
 import no.nav.saf.exceptions.SafTechnicalException;
 import no.nav.saf.integration.fasit.ServiceuserAlias;
+import no.nav.saf.metrics.Monitor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.cache.annotation.Cacheable;
@@ -45,12 +46,14 @@ public class HentJournalsakinfo {
 	}
 
 	@Cacheable(cacheNames = HENT_TILGANG_JOURNALPOSTER_CACHE)
+	@Monitor(value = "dok_consumer", extraTags = {"process", "hentJournalpostBulk"}, histogram = true)
 	public HentJournalpostBulkResponseTo hentJournalpostBulk(HentJournalpostBulkRequestTo request) {
 		ResponseEntity<HentJournalpostBulkResponseTo> response = restTemplate.postForEntity("/hentjournalpostbulk", request, HentJournalpostBulkResponseTo.class);
 		return response.getBody();
 	}
 
 	@Cacheable(cacheNames = HENT_TILGANG_JOURNALPOST_CACHE)
+	@Monitor(value = "dok_consumer", extraTags = {"process", "hentTilgangJournalpost"}, histogram = true)
 	public HentTilgangJournalpostResponseTo hentTilgangJournalpost(String journalpostId, String dokumentId, String variantFormat) {
 		return restTemplate.getForObject("/henttilgangjournalpost/{journalpostId}/{dokumentId}/{variantFormat}", HentTilgangJournalpostResponseTo.class, journalpostId, dokumentId, variantFormat);
 	}
