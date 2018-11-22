@@ -140,7 +140,7 @@ public class TilgangsmodellRepositoryImpl implements TilgangsmodellRepository {
 		try {
 			if (Arkivsakssystem.GSAK.name().equals(arkivsaksystem)) {
 				return gsakAntiCorruptionLayer.findTilgangSakBySakId(sakId);
-			} else if (Arkivsakssystem.PSAK.equals(arkivsaksystem)) {
+			} else if (Arkivsakssystem.PSAK.name().equals(arkivsaksystem)) {
 				//TODO implement call to psak
 				return null;
 			} else {

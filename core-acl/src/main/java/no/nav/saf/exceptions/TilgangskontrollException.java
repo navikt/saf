@@ -7,5 +7,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 public class TilgangskontrollException extends SafFunctionalException {
 
 	public TilgangskontrollException() {
+		super();
 	}
 }

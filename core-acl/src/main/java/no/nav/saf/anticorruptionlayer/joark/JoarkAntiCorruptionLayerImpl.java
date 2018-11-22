@@ -260,7 +260,7 @@ class JoarkAntiCorruptionLayerImpl implements JoarkAntiCorruptionLayer {
 	}
 
 	private String mapJoarkFagsystem(String joarkFagsystem) {
-		if (FS22.equals(joarkFagsystem)) {
+		if (FS22.name().equals(joarkFagsystem)) {
 			return Arkivsakssystem.GSAK.name();
 		} else if (PEN.name().equals(joarkFagsystem)) {
 			return Arkivsakssystem.PSAK.name();
