@@ -8,6 +8,7 @@ import no.nav.saf.anticorruptionlayer.aktoer.domain.HentAktoerIdForIdentResponse
 import no.nav.saf.anticorruptionlayer.aktoer.domain.HentIdentForAktoerIdResponseTo;
 import no.nav.saf.exceptions.SafFunctionalException;
 import no.nav.saf.exceptions.SafTechnicalException;
+import no.nav.saf.metrics.Monitor;
 import no.nav.tjeneste.virksomhet.aktoer.v2.binding.AktoerV2;
 import no.nav.tjeneste.virksomhet.aktoer.v2.binding.HentAktoerIdForIdentPersonIkkeFunnet;
 import no.nav.tjeneste.virksomhet.aktoer.v2.binding.HentIdentForAktoerIdPersonIkkeFunnet;
@@ -38,6 +39,7 @@ public class AktoerV2Consumer {
 	@Retryable(include = SafTechnicalException.class,
 			maxAttempts = MAX_ATTEMPTS_SHORT_AKTOER_V2,
 			backoff = @Backoff(delay = DELAY_SHORT_AKTOER_V2, multiplier = MULTIPLIER_SHORT_AKTOER_V2))
+	@Monitor(value = "dok_consumer", extraTags = {"process", "hentIdentForAktoerId"}, histogram = true)
 	public HentIdentForAktoerIdResponseTo hentIdentForAktoerId(String aktoerId) {
 		HentIdentForAktoerIdRequest request = new HentIdentForAktoerIdRequest();
 		request.setAktoerId(aktoerId);

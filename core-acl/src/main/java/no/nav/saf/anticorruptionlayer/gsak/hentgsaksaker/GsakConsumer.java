@@ -6,6 +6,7 @@ import no.nav.saf.cache.LokalCacheConfig;
 import no.nav.saf.exceptions.SafFunctionalException;
 import no.nav.saf.exceptions.SafTechnicalException;
 import no.nav.saf.integration.fasit.ServiceuserAlias;
+import no.nav.saf.metrics.Monitor;
 import no.nav.saf.tjeneste.visningsmodell.kode.Temakode;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -43,6 +44,7 @@ public class GsakConsumer {
 	}
 
 	@Cacheable(cacheNames = LokalCacheConfig.SAKER_BY_AKTOER_ID_CACHE)
+	@Monitor(value = "dok_consumer", extraTags = {"process", "hentSakerByAktoerId"}, histogram = true)
 	public List<GsakSakerTo> hentSakerByAktoerId(final String aktoerId) {
 		UriComponentsBuilder uri = UriComponentsBuilder.fromHttpUrl(gsakApiUrl)
 				.queryParam("aktoerId", aktoerId);
@@ -50,6 +52,7 @@ public class GsakConsumer {
 	}
 
 	@Cacheable(cacheNames = LokalCacheConfig.SAKER_BY_AKTOER_ID_CACHE)
+	@Monitor(value = "dok_consumer", extraTags = {"process", "hentSakerByAktoerIdWithTemakode"}, histogram = true)
 	public List<GsakSakerTo> hentSakerByAktoerId(final String aktoerId, final Temakode temakode) {
 		UriComponentsBuilder uri = UriComponentsBuilder.fromHttpUrl(gsakApiUrl)
 				.queryParam("aktoerId", aktoerId)
