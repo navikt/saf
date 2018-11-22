@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpHeaders;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.service.ApiInfo;
 import springfox.documentation.service.ApiKey;
@@ -70,10 +71,10 @@ public class SwaggerConfig {
 
 	private ApiInfo apiInfo() {
 		return new ApiInfo(
-				"saf hentDokument API",
-				"Her dokumenteres tjenestegrensesnittet for saf sin hentDokument tjeneste. \n \n Til autentisering brukes OIDC-token (JWT via OAuth2.0). " +
-						" Følgende format må brukes i \\\"Authorize\\\" input-feltet \\\"Value\\\" under: <strong>\\\"Bearer {token}\\\"</strong>.\"\n" +
-						"Eksempel på verdi i input-felt: <strong>Bearer eYdmifml0ejugm</strong>. Et gyldig token kommer til å ha mange flere karakterer enn i eksempelet.",
+				"SAF API",
+				"Her dokumenteres tjenestegrensesnittet til sak og arkivfasade (SAF). Til autentisering brukes OIDC-token (JWT via OAuth2.0). " +
+				"Følgende format må brukes i Authorize sitt input-felt \"Value\": <strong> Bearer {token} </strong>. " +
+				"Eksempel på verdi i input-feltet: <strong> Bearer eYdmifml0ejugm </strong>. Et gyldig token kommer til å ha mange flere karakterer enn i eksempelet.",
 				version,
 				"",
 				new Contact("Team Dokument", "", ""),
@@ -81,8 +82,7 @@ public class SwaggerConfig {
 	}
 
 	private ApiKey apiKey() {
-		return new ApiKey("apiKey", "Authorization", "header");
+
+		return new ApiKey("apiKey", HttpHeaders.AUTHORIZATION, "header");
 	}
-
-
 }
