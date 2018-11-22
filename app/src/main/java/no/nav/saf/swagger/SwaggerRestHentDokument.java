@@ -20,7 +20,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @ApiResponses(value = {
-		@ApiResponse(code = 200, message = "OK."),
+		@ApiResponse(code = 200, message = "OK.", response = void.class),
 		@ApiResponse(code = 401, message = "Ingen tilgang til dokumentet."),
 		@ApiResponse(code = 404, message = "Dokumentet ble ikke funnet.")}
 )

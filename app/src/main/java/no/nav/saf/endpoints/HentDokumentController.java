@@ -35,7 +35,7 @@ public class HentDokumentController {
 		this.hentDokumentDomainCoordinator = hentDokumentDomainCoordinator;
 	}
 
-	@ApiOperation(value = "Hent dokument for angitte søkekriterier", authorizations = {@Authorization(value = "OIDC token")})
+	@ApiOperation(value = "Hent dokument for angitte søkekriterier", authorizations = {@Authorization(value = "apiKey")})
 	@SwaggerRestHentDokument
 	@GetMapping(value = "hentdokument/{journalpostId}/{dokumentId}/{variantFormat}")
 	public ResponseEntity<byte[]> hentDokument(@ApiParam(name = "JournalpostId", required = true) @PathVariable  String journalpostId,

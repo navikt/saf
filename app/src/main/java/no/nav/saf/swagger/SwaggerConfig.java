@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpHeaders;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.service.ApiInfo;
 import springfox.documentation.service.ApiKey;
@@ -79,10 +80,12 @@ public class SwaggerConfig {
 	}
 
 	private ApiKey apiKey() {
-		return new ApiKey("Bearer", "OIDC token. Til autentisering brukes OIDC-token (JWT via OAuth2.0)." +
-				"Følgende format må brukes i \"Authorize\" input-feltet \"Value\" under: Bearer {token}*." +
-				"Eksempel på verdi i input-felt: Bearer eYdmifml0ejugm. Et gyldig token kommer til å ha mange flere karakterer enn i eksempelet.", "header");
+		return new ApiKey("apiKey", HttpHeaders.AUTHORIZATION, "header");
 	}
+//	TODO find a way to reach a "descritpion" field in the authorize button.
+//	"OIDC token. Til autentisering brukes OIDC-token (JWT via OAuth2.0). " +
+//				"Følgende format må brukes i input-feltet \"Value\" under: Bearer {token}*. " +
+//				"Eksempel på verdi i input-felt: Bearer eYdmifml0ejugm. Et gyldig token kommer til å ha mange flere karakterer enn i eksempelet."
 
 
 }
