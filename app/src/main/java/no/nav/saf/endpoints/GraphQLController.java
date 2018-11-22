@@ -35,7 +35,7 @@ import java.util.Map;
 @Slf4j
 public class GraphQLController {
 	private final GraphQLSchema graphQLSchema;
-	private final GraphQL graphQL;
+	private GraphQLExceptionHandler graphQLExceptionHandler;
 
 	@Inject
 	public GraphQLController(DokumentoversiktWiring dokumentoversiktWiring,
@@ -43,15 +43,9 @@ public class GraphQLController {
 		SchemaParser schemaParser = new SchemaParser();
 		InputStreamReader schema = new InputStreamReader(getClass().getClassLoader().getResourceAsStream("schemas/saf.graphql"));
 
-
 		TypeDefinitionRegistry typeRegistry = schemaParser.parse(schema);
 		SchemaGenerator schemaGenerator = new SchemaGenerator();
 		graphQLSchema = schemaGenerator.makeExecutableSchema(typeRegistry, dokumentoversiktWiring.createRuntimeWiring());
-
-		graphQL = GraphQL.newGraphQL(graphQLSchema)
-				.mutationExecutionStrategy(new AsyncSerialExecutionStrategy(graphQLExceptionHandler))
-				.queryExecutionStrategy(new AsyncExecutionStrategy(graphQLExceptionHandler))
-				.build();
 	}
 
 	@PostMapping(value = "/graphql", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -59,7 +53,11 @@ public class GraphQLController {
 	@Monitor(value = "dok_request", extraTags = {"process", "dokumentOversikt"}, histogram = true)
 	public Map<String, Object> graphQLRequest(@RequestHeader(value = HttpHeaders.AUTHORIZATION, required = false) String authorizationHeader,
 											  @RequestBody GraphQLRequest request) {
-		ExecutionResult executionResult = graphQL.execute(ExecutionInput.newExecutionInput()
+		ExecutionResult executionResult =
+				GraphQL.newGraphQL(graphQLSchema)
+						.mutationExecutionStrategy(new AsyncSerialExecutionStrategy(graphQLExceptionHandler))
+						.queryExecutionStrategy(new AsyncExecutionStrategy(graphQLExceptionHandler))
+						.build().execute(ExecutionInput.newExecutionInput()
 				.query(request.getQuery())
 				.operationName(request.getOperationName())
 				.variables(request.getVariables())
