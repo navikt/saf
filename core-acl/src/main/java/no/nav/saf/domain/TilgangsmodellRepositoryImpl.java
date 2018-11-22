@@ -13,6 +13,7 @@ import no.nav.saf.cache.LokalCacheConfig;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.domain.tilgangsmodell.TilgangJournalpost;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
+import no.nav.saf.tjeneste.visningsmodell.kode.BrukeridentifikatorType;
 import no.nav.saf.tjeneste.visningsmodell.kode.JournalStatus;
 import no.nav.saf.tjeneste.visningsmodell.kode.JournalpostType;
 import no.nav.saf.tjeneste.visningsmodell.kode.Temakode;
@@ -51,12 +52,16 @@ public class TilgangsmodellRepositoryImpl implements TilgangsmodellRepository {
 
 	@Override
 	@Cacheable(cacheNames = LokalCacheConfig.TILGANGSMODELL_REPO_BRUKER_CACHE)
-	public TilgangBruker findTilgangBruker(String aktoerId) {
+	public TilgangBruker findTilgangBruker(String ident, BrukeridentifikatorType brukeridentifikatorType) {
 		try {
-			// TODO MMA-1579
-			return aktoerAntiCorruptionLayer.hentTilgangBrukerByAktoerId(aktoerId);
+			if (brukeridentifikatorType.equals(BrukeridentifikatorType.AKTOERID)) {
+				return aktoerAntiCorruptionLayer.hentTilgangBrukerByAktoerId(ident);
+			} else if (brukeridentifikatorType.equals(BrukeridentifikatorType.FOEDSELSNUMMER)) {
+				return aktoerAntiCorruptionLayer.hentTilgangBrukerByFoedselsnummer(ident);
+			}
 		} catch (Exception e) {
-			log.warn(format("FindTilgangBrukerByAktoerId feilet ved oppslag av aktoer=%s. Feilmelding=%s", aktoerId, e.getMessage()));
+			log.warn(format("findTilgangBruker feilet ved oppslag av ident. Brukertype=%s Feilmelding=%s", brukeridentifikatorType, e
+					.getMessage()));
 		}
 		return null;
 	}
@@ -75,7 +80,7 @@ public class TilgangsmodellRepositoryImpl implements TilgangsmodellRepository {
 					.flatMapIterable(item -> item)
 					.toList().blockingGet();
 
-//			List<TilgangSak> tilgangSakList = gsakAntiCorruptionLayer.findTilgangSakListByAktoerId(tilgangBruker.getAktoerId());
+//			List<TilgangSak> tilgangSakList = gsakAntiCorruptionLayer.findTilgangSakListByAktoerId(tilgangBruker.getIdent());
 //			tilgangSakList.addAll(pensjonSakAntiCorruptionLayer.hentTilgangSakList(tilgangBruker.getFoedselsnr()));
 //			return tilgangSakList;
 		} catch (Exception e) {

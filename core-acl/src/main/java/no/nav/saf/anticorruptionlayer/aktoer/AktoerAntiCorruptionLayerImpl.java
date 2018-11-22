@@ -1,6 +1,7 @@
 package no.nav.saf.anticorruptionlayer.aktoer;
 
 import no.nav.saf.anticorruptionlayer.aktoer.aktoerv2.AktoerV2Consumer;
+import no.nav.saf.anticorruptionlayer.aktoer.domain.HentAktoerIdForIdentResponseTo;
 import no.nav.saf.anticorruptionlayer.aktoer.domain.HentIdentForAktoerIdResponseTo;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.domain.tilgangsmodell.TilgangIdent;
@@ -33,7 +34,13 @@ class AktoerAntiCorruptionLayerImpl implements AktoerAntiCorruptionLayer {
 
 	@Override
 	public TilgangBruker hentTilgangBrukerByFoedselsnummer(String foedselsnummer) {
-		// TODO MMA-1579
-		return null;
+		HentAktoerIdForIdentResponseTo responseTo = aktoerV2Consumer.hentAktoerIdForIdent(foedselsnummer);
+
+		return TilgangBruker.builder()
+				.foedselsnr(foedselsnummer)
+				.aktoerId(responseTo.getAktoerId())
+				.historiskeIdenter(responseTo.getHistoriskeIdenter().stream()
+						.map(ident -> TilgangIdent.builder().identifikator(ident).build()).collect(Collectors.toList()))
+				.build();
 	}
 }

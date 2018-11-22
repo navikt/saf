@@ -3,6 +3,7 @@ package no.nav.saf.domain;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.domain.tilgangsmodell.TilgangJournalpost;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
+import no.nav.saf.tjeneste.visningsmodell.kode.BrukeridentifikatorType;
 import no.nav.saf.tjeneste.visningsmodell.kode.JournalStatus;
 import no.nav.saf.tjeneste.visningsmodell.kode.JournalpostType;
 import no.nav.saf.tjeneste.visningsmodell.kode.Temakode;
@@ -16,7 +17,7 @@ import java.util.List;
  */
 public interface TilgangsmodellRepository {
 
-	TilgangBruker findTilgangBruker(String aktoerId);
+	TilgangBruker findTilgangBruker(String ident, BrukeridentifikatorType brukeridentifikatorType);
 
 	List<TilgangSak> findTilgangSakListByTilgangBruker(TilgangBruker tilgangBruker);
 
