@@ -8,7 +8,7 @@ schema {
 
 type Query {
     # Returnerer en liste over alle dokumenter tilknyttet en bruker.
-    dokumentoversiktBruker(ident: String!, brukeridentifikatorType: BrukeridentifikatorType!, fraDato: Date = null, journalposttyper : [JournalpostType] = [], journalstatuser : [JournalStatus] = []): [Journalpost]!
+    dokumentoversiktBruker(brukeridentifikator: Brukeridentifikator!, fraDato: Date = null, journalposttyper : [JournalpostType] = [], journalstatuser : [JournalStatus] = []): [Journalpost]!
 }
 
 type Journalpost {
@@ -41,6 +41,12 @@ type DokumentInfo {
     variantFormat: VariantFormat
     saksbehandlerHarTilgang: Boolean
     innbyggerHarDigitaltInnsyn: Boolean
+}
+
+input Brukeridentifikator {
+    ident: String!
+    brukeridentifikatorType: BrukeridentifikatorType!
+
 }
 
 enum BrukeridentifikatorType {
