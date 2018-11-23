@@ -2,7 +2,9 @@ package no.nav.saf.tjeneste.visningsmodell;
 
 import lombok.Builder;
 import lombok.Value;
-import no.nav.saf.tjeneste.visningsmodell.kode.VariantFormat;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Joakim Bjørnstad, Jbit AS
@@ -10,9 +12,10 @@ import no.nav.saf.tjeneste.visningsmodell.kode.VariantFormat;
 @Value
 @Builder
 public class DokumentInfo {
-    private final String dokumentId;
-    private final String tittel;
-    private final VariantFormat variantFormat;
-    private final boolean saksbehandlerHarTilgang;
-    private final boolean innbyggerHarDigitaltInnsyn;
+	private final String dokumentId;
+	private final String tittel;
+	private final String navSkjemaId;
+	private final boolean saksbehandlerHarTilgang;
+	@Builder.Default
+	private final List<Dokumentvariant> dokumentvarianter = new ArrayList<>();
 }

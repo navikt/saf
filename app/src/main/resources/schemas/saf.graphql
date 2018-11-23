@@ -23,8 +23,13 @@ type Journalpost {
     journalfortAvNavn: String
     kanal: Kanal
     kanalnavn: String
-    opprettet: DateTime
+    relevanteDatoer: [RelevantDato]
     dokumenter: [DokumentInfo]
+}
+
+type RelevantDato {
+    dato: DateTime
+    datotype: Datotype
 }
 
 type Sak {
@@ -38,9 +43,19 @@ type Sak {
 type DokumentInfo {
     dokumentId: String!
     tittel: String
-    variantFormat: VariantFormat
+    navSkjemaId: String
     saksbehandlerHarTilgang: Boolean
-    innbyggerHarDigitaltInnsyn: Boolean
+    dokumentvarianter: [Dokumentvariant]
+}
+
+type Dokumentvariant {
+    variantformat: Variantformat
+}
+
+enum Datotype {
+    OPPRETTET_DATO
+    EKSPEDERT_DATO
+    MOTTATT_DATO
 }
 
 input Brukeridentifikator {
@@ -159,8 +174,7 @@ enum Tema {
 	FAR,
 }
 
-enum VariantFormat {
+enum Variantformat {
     ARKIV
     SKJERMET
-    SLETTET
 }

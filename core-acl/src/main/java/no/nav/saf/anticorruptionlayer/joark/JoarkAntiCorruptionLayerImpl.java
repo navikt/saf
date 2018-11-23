@@ -27,25 +27,27 @@ import no.nav.saf.exceptions.SafFunctionalException;
 import no.nav.saf.exceptions.SafTechnicalException;
 import no.nav.saf.tjeneste.hentdokument.HentDokument;
 import no.nav.saf.tjeneste.visningsmodell.DokumentInfo;
+import no.nav.saf.tjeneste.visningsmodell.Dokumentvariant;
 import no.nav.saf.tjeneste.visningsmodell.Journalpost;
+import no.nav.saf.tjeneste.visningsmodell.RelevantDato;
 import no.nav.saf.tjeneste.visningsmodell.Sak;
 import no.nav.saf.tjeneste.visningsmodell.kode.Arkivsakssystem;
+import no.nav.saf.tjeneste.visningsmodell.kode.Datotype;
 import no.nav.saf.tjeneste.visningsmodell.kode.JournalStatus;
 import no.nav.saf.tjeneste.visningsmodell.kode.JournalpostType;
 import no.nav.saf.tjeneste.visningsmodell.kode.Kanal;
-import no.nav.saf.tjeneste.visningsmodell.kode.Temakode;
-import no.nav.saf.tjeneste.visningsmodell.kode.VariantFormat;
+import no.nav.saf.tjeneste.visningsmodell.kode.Variantformat;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
-import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -72,7 +74,6 @@ class JoarkAntiCorruptionLayerImpl implements JoarkAntiCorruptionLayer {
 	public List<TilgangJournalpost> hentTilgangJournalpostListByArkivsaker(TilgangBruker tilgangBruker,
 																		   List<TilgangSak> tilgangSakList,
 																		   LocalDate fraDato,
-																		   Collection<Temakode> inkluderTema,
 																		   List<JournalpostType> inkluderJournalposttyper,
 																		   List<JournalStatus> inkluderJournalstatus) {
 		List<String> alleIdenter = tilgangBruker.getHistoriskeIdenter()
@@ -87,7 +88,6 @@ class JoarkAntiCorruptionLayerImpl implements JoarkAntiCorruptionLayer {
 						.map(jt -> JournalpostTypeCode.valueOf(jt.name()))
 						.collect(Collectors.toList()))
 				.inkluderJournalStatus(JournalStatusCode.asList())
-				.inkluderTema(inkluderTema.stream().map(t -> FagomradeCode.valueOf(t.name())).collect(Collectors.toList()))
 				.visFeilregistrerte(inkluderJournalstatus.contains(JournalStatus.FEILREGISTRERT))
 				.fraDato(fraDato.toString())
 				.gsakSakIds(tilgangSakList.stream()
@@ -215,17 +215,36 @@ class JoarkAntiCorruptionLayerImpl implements JoarkAntiCorruptionLayer {
 				.journalfortAvNavn(journalpostDto.getJournalfortAvNavn())
 				.kanal(kanal)
 				.kanalnavn(kanal == null ? null : kanal.getKanalnavn())
-				.opprettet(journalpostDto.getDatoOpprettet() == null ? null : LocalDateTime.from(journalpostDto.getDatoOpprettet()
-						.toInstant()
-						.atZone(ZoneId.systemDefault())))
+				.relevanteDatoer(mapRelevanteDatoer(journalpostDto))
 				.dokumenter(journalpostDto.getDokumenter().stream()
 						.map(dokumentInfoDto -> DokumentInfo.builder()
 								.dokumentId(dokumentInfoDto.getDokumentInfoId())
 								.tittel(dokumentInfoDto.getTittel())
-								.variantFormat(VariantFormat.ARKIV)
-								.saksbehandlerHarTilgang(false)
-								.innbyggerHarDigitaltInnsyn(false)
+								.navSkjemaId(dokumentInfoDto.getBrevkode())
+								.saksbehandlerHarTilgang(true) //TODO
+								.dokumentvarianter(Collections.singletonList(Dokumentvariant.builder()
+										.variantformat(Variantformat.valueOf(dokumentInfoDto.getVariantFormat().name()))
+										.build()))
 								.build()).collect(Collectors.toList())).build();
+	}
+
+	private List<RelevantDato> mapRelevanteDatoer(JournalpostDto journalpostDto) {
+		List<RelevantDato> relevanteDatoer = new ArrayList<>();
+		switch (journalpostDto.getJournalposttype()) {
+			case I:
+				if (journalpostDto.getMottattDato() != null) {
+					relevanteDatoer.add(new RelevantDato(journalpostDto.getMottattDato(), Datotype.MOTTATT_DATO));
+				}
+			case U:
+				if (journalpostDto.getEkspedertDato() != null) {
+					relevanteDatoer.add(new RelevantDato(journalpostDto.getEkspedertDato(), Datotype.EKSPEDERT_DATO));
+				}
+			default:
+				if(journalpostDto.getDatoOpprettet() != null) {
+					relevanteDatoer.add(new RelevantDato(journalpostDto.getDatoOpprettet(), Datotype.OPPRETTET_DATO));
+				}
+				return relevanteDatoer;
+		}
 	}
 
 	private Kanal mapKanal(JournalpostDto journalpostDto) {
@@ -268,5 +287,4 @@ class JoarkAntiCorruptionLayerImpl implements JoarkAntiCorruptionLayer {
 			throw new SafFunctionalException(String.format("Arkivsaksystem må være GSAK (FS22) eller PSAK (PEN). Fikk: %s i oppslag mot hentTilgangJournalpost", joarkFagsystem));
 		}
 	}
-
 }

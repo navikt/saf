@@ -19,10 +19,13 @@ public class DokumentoversiktBrukerArguments {
 	private final List<JournalStatus> journalstatuser;
 	private final boolean visFeilregistrerte;
 
-	public DokumentoversiktBrukerArguments(Brukeridentifikator brukeridentifikator, LocalDate fraDato, List<JournalpostType> journalposttyper, List<JournalStatus> journalstatuser) {
+	public DokumentoversiktBrukerArguments(Brukeridentifikator brukeridentifikator,
+										   LocalDate fraDato,
+										   List<JournalpostType> journalposttyper,
+										   List<JournalStatus> journalstatuser) {
 		this.brukeridentifikator = brukeridentifikator;
 		if (fraDato == null) {
-			this.fraDato = LocalDate.now().minusMonths(12);
+			this.fraDato = LocalDate.of(1, 1, 1);
 		} else {
 			this.fraDato = fraDato;
 		}

@@ -18,14 +18,12 @@ import no.nav.saf.tjeneste.visningsmodell.kode.Arkivsakssystem;
 import no.nav.saf.tjeneste.visningsmodell.kode.BrukeridentifikatorType;
 import no.nav.saf.tjeneste.visningsmodell.kode.JournalStatus;
 import no.nav.saf.tjeneste.visningsmodell.kode.JournalpostType;
-import no.nav.saf.tjeneste.visningsmodell.kode.Temakode;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Repository;
 
 import javax.inject.Inject;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -81,24 +79,22 @@ public class TilgangsmodellRepositoryImpl implements TilgangsmodellRepository {
 			return Observable.concat(gsaker, psaker)
 					.flatMapIterable(item -> item)
 					.toList().blockingGet();
-
-//			List<TilgangSak> tilgangSakList = gsakAntiCorruptionLayer.findTilgangSakListByAktoerId(tilgangBruker.getIdent());
-//			tilgangSakList.addAll(pensjonSakAntiCorruptionLayer.hentTilgangSakList(tilgangBruker.getFoedselsnr()));
-//			return tilgangSakList;
 		} catch (Exception e) {
-			log.warn(format("FindTilgangSakListByAktoerId feilet ved oppslag av aktoer=%s. Feilmelding=%s", tilgangBruker.getAktoerId(), e
-					.getMessage()));
+			log.warn("FindTilgangSakListByAktoerId feilet ved oppslag av aktoer={}", tilgangBruker.getAktoerId(), e);
 			return new ArrayList<>();
 		}
 	}
 
 	@Override
-	public List<TilgangJournalpost> findTilgangJournalposter(TilgangBruker tilgangBruker, List<TilgangSak> tilgangSakList, LocalDate fraDato, Collection<Temakode> inkluderTema, List<JournalpostType> inkluderJournalposttyper, List<JournalStatus> inkluderJournalstatus) {
+	public List<TilgangJournalpost> findTilgangJournalposter(TilgangBruker tilgangBruker,
+															 List<TilgangSak> tilgangSakList,
+															 LocalDate fraDato,
+															 List<JournalpostType> inkluderJournalposttyper,
+															 List<JournalStatus> inkluderJournalstatus) {
 		try {
 			return joarkAntiCorruptionLayer.hentTilgangJournalpostListByArkivsaker(tilgangBruker,
 					tilgangSakList,
 					fraDato,
-					inkluderTema,
 					inkluderJournalposttyper,
 					inkluderJournalstatus);
 		} catch (Exception e) {

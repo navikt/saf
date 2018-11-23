@@ -40,6 +40,7 @@ public class GraphQLController {
 	@Inject
 	public GraphQLController(DokumentoversiktWiring dokumentoversiktWiring,
 							 GraphQLExceptionHandler graphQLExceptionHandler) {
+		this.graphQLExceptionHandler = graphQLExceptionHandler;
 		SchemaParser schemaParser = new SchemaParser();
 		InputStreamReader schema = new InputStreamReader(getClass().getClassLoader().getResourceAsStream("schemas/saf.graphql"));
 

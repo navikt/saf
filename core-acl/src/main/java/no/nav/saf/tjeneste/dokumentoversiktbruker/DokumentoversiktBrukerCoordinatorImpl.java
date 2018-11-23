@@ -10,7 +10,6 @@ import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.pep.PepEvaluator;
 import no.nav.saf.tjeneste.visningsmodell.DokumentInfo;
 import no.nav.saf.tjeneste.visningsmodell.Journalpost;
-import no.nav.saf.tjeneste.visningsmodell.kode.Temakode;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
@@ -69,7 +68,6 @@ public class DokumentoversiktBrukerCoordinatorImpl implements DokumentoversiktBr
 		final List<TilgangJournalpost> tilgangJournalpostList = tilgangsmodellRepository.findTilgangJournalposter(tilgangBruker,
 				filteredTilgangSakList,
 				dokumentoversiktBrukerArguments.getFraDato(),
-				filteredTilgangSakList.stream().map(s -> Temakode.valueOf(s.getTema())).collect(Collectors.toSet()),
 				dokumentoversiktBrukerArguments.getJournalposttyper(),
 				dokumentoversiktBrukerArguments.getJournalstatuser()
 		);
