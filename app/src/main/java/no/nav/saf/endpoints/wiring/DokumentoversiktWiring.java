@@ -4,12 +4,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import graphql.execution.DataFetcherResult;
 import graphql.schema.idl.NaturalEnumValuesProvider;
 import graphql.schema.idl.RuntimeWiring;
+import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.exceptions.SafFunctionalException;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tjeneste.dokumentoversiktbruker.DokumentoversiktBrukerArguments;
 import no.nav.saf.tjeneste.dokumentoversiktbruker.DokumentoversiktBrukerCoordinator;
 import no.nav.saf.tjeneste.visningsmodell.Brukeridentifikator;
 import no.nav.saf.tjeneste.visningsmodell.Journalpost;
+import no.nav.saf.tjeneste.visningsmodell.kode.BrukeridentifikatorType;
 import no.nav.saf.tjeneste.visningsmodell.kode.JournalStatus;
 import no.nav.saf.tjeneste.visningsmodell.kode.JournalpostType;
 import org.springframework.stereotype.Component;
@@ -24,6 +26,7 @@ import java.util.List;
  * @author Joakim Bjørnstad, Jbit AS
  */
 @Component
+@Slf4j
 public class DokumentoversiktWiring {
 	private final DokumentoversiktBrukerCoordinator dokumentoversiktBrukerCoordinator;
 	private final ObjectMapper mapper = new ObjectMapper();
@@ -42,6 +45,7 @@ public class DokumentoversiktWiring {
 				.type("Query", typeWiring -> typeWiring.dataFetcher("dokumentoversiktBruker", environment -> {
 					Object brukeridentifikatorObject = environment.getArgument("brukeridentifikator");
 					Brukeridentifikator brukeridentifikator = mapper.convertValue(brukeridentifikatorObject, Brukeridentifikator.class);
+					logHendelse(brukeridentifikator);
 					LocalDate fraDato = environment.getArgument("fraDato");
 					List<JournalpostType> journalposttyper = environment.getArgument("journalposttyper");
 					List<JournalStatus> journalstatuser = environment.getArgument("journalstatuser");
@@ -59,5 +63,13 @@ public class DokumentoversiktWiring {
 					return dokumentoversiktBrukerCoordinator.findDokumenter(journalpost, safRequestContext);
 				}))
 				.build();
+	}
+
+	private void logHendelse(Brukeridentifikator brukeridentifikator) {
+		if (brukeridentifikator.getBrukeridentifikatorType().equals(BrukeridentifikatorType.AKTOERID)) {
+			log.info("DokumentoversiktBruker hentes for aktoerId={}", brukeridentifikator.getIdent());
+		} else if (brukeridentifikator.getBrukeridentifikatorType().equals(BrukeridentifikatorType.FOEDSELSNUMMER)) {
+			log.info("DokumentoversiktBruker hentes for bruker med brukeridentifikatorType=FØEDSELSNUMMER");
+		}
 	}
 }
