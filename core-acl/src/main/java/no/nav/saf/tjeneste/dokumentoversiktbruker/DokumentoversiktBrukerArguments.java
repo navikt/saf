@@ -35,7 +35,7 @@ public class DokumentoversiktBrukerArguments {
 			this.journalposttyper = journalposttyper;
 		}
 		if (journalstatuser.isEmpty()) {
-			this.journalstatuser = JournalStatus.asList();
+			this.journalstatuser = JournalStatus.mestBrukte();
 		} else {
 			this.journalstatuser = journalstatuser;
 		}
