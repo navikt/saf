@@ -1,6 +1,7 @@
 package no.nav.saf.tjeneste.dokumentoversiktbruker;
 
 import lombok.Value;
+import no.nav.saf.tjeneste.visningsmodell.Brukeridentifikator;
 import no.nav.saf.tjeneste.visningsmodell.kode.JournalStatus;
 import no.nav.saf.tjeneste.visningsmodell.kode.JournalpostType;
 
@@ -12,17 +13,17 @@ import java.util.List;
  */
 @Value
 public class DokumentoversiktBrukerArguments {
-	private final String aktoerId;
+	private final Brukeridentifikator brukeridentifikator;
 	private final LocalDate fraDato;
 	private final List<JournalpostType> journalposttyper;
 	private final List<JournalStatus> journalstatuser;
 	private final boolean visFeilregistrerte;
 
-	public DokumentoversiktBrukerArguments(String aktoerId,
+	public DokumentoversiktBrukerArguments(Brukeridentifikator brukeridentifikator,
 										   LocalDate fraDato,
 										   List<JournalpostType> journalposttyper,
 										   List<JournalStatus> journalstatuser) {
-		this.aktoerId = aktoerId;
+		this.brukeridentifikator = brukeridentifikator;
 		if (fraDato == null) {
 			this.fraDato = LocalDate.of(1, 1, 1);
 		} else {

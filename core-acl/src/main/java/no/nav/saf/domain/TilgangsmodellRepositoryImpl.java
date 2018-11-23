@@ -13,7 +13,9 @@ import no.nav.saf.cache.LokalCacheConfig;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.domain.tilgangsmodell.TilgangJournalpost;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
+import no.nav.saf.tjeneste.visningsmodell.Brukeridentifikator;
 import no.nav.saf.tjeneste.visningsmodell.kode.Arkivsakssystem;
+import no.nav.saf.tjeneste.visningsmodell.kode.BrukeridentifikatorType;
 import no.nav.saf.tjeneste.visningsmodell.kode.JournalStatus;
 import no.nav.saf.tjeneste.visningsmodell.kode.JournalpostType;
 import org.springframework.cache.annotation.Cacheable;
@@ -50,12 +52,16 @@ public class TilgangsmodellRepositoryImpl implements TilgangsmodellRepository {
 
 	@Override
 	@Cacheable(cacheNames = LokalCacheConfig.TILGANGSMODELL_REPO_BRUKER_CACHE)
-	public TilgangBruker findTilgangBruker(String aktoerId) {
+	public TilgangBruker findTilgangBruker(Brukeridentifikator brukeridentifikator) {
 		try {
-			// TODO MMA-1579
-			return aktoerAntiCorruptionLayer.hentTilgangBrukerByAktoerId(aktoerId);
+			if (brukeridentifikator.getBrukeridentifikatorType().equals(BrukeridentifikatorType.AKTOERID)) {
+				return aktoerAntiCorruptionLayer.hentTilgangBrukerByAktoerId(brukeridentifikator.getIdent());
+			} else if (brukeridentifikator.getBrukeridentifikatorType().equals(BrukeridentifikatorType.FOEDSELSNUMMER)) {
+				return aktoerAntiCorruptionLayer.hentTilgangBrukerByFoedselsnummer(brukeridentifikator.getIdent());
+			}
 		} catch (Exception e) {
-			log.warn(format("FindTilgangBrukerByAktoerId feilet ved oppslag av aktoer=%s. Feilmelding=%s", aktoerId, e.getMessage()));
+			log.warn(format("findTilgangBruker feilet ved oppslag av ident. Brukertype=%s Feilmelding=%s", brukeridentifikator.getBrukeridentifikatorType(), e
+					.getMessage()));
 		}
 		return null;
 	}

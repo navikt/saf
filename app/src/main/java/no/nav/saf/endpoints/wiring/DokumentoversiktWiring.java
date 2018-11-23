@@ -1,5 +1,6 @@
 package no.nav.saf.endpoints.wiring;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import graphql.execution.DataFetcherResult;
 import graphql.schema.idl.NaturalEnumValuesProvider;
 import graphql.schema.idl.RuntimeWiring;
@@ -8,7 +9,9 @@ import no.nav.saf.exceptions.SafFunctionalException;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tjeneste.dokumentoversiktbruker.DokumentoversiktBrukerArguments;
 import no.nav.saf.tjeneste.dokumentoversiktbruker.DokumentoversiktBrukerCoordinator;
+import no.nav.saf.tjeneste.visningsmodell.Brukeridentifikator;
 import no.nav.saf.tjeneste.visningsmodell.Journalpost;
+import no.nav.saf.tjeneste.visningsmodell.kode.BrukeridentifikatorType;
 import no.nav.saf.tjeneste.visningsmodell.kode.JournalStatus;
 import no.nav.saf.tjeneste.visningsmodell.kode.JournalpostType;
 import org.springframework.stereotype.Component;
@@ -22,10 +25,11 @@ import java.util.List;
 /**
  * @author Joakim Bjørnstad, Jbit AS
  */
-@Slf4j
 @Component
+@Slf4j
 public class DokumentoversiktWiring {
 	private final DokumentoversiktBrukerCoordinator dokumentoversiktBrukerCoordinator;
+	private final ObjectMapper mapper = new ObjectMapper();
 
 	@Inject
 	public DokumentoversiktWiring(DokumentoversiktBrukerCoordinator dokumentoversiktBrukerCoordinator) {
@@ -39,16 +43,17 @@ public class DokumentoversiktWiring {
 				.type("JournalpostType", typeWiring -> typeWiring.enumValues(new NaturalEnumValuesProvider<>(JournalpostType.class)))
 				.type("JournalStatus", typeWiring -> typeWiring.enumValues(new NaturalEnumValuesProvider<>(JournalStatus.class)))
 				.type("Query", typeWiring -> typeWiring.dataFetcher("dokumentoversiktBruker", environment -> {
-					String aktoerId = environment.getArgument("aktoerId");
-					log.info("dokumentoversiktBruker hentes for aktoerId={}", aktoerId);
+					Object brukeridentifikatorObject = environment.getArgument("brukeridentifikator");
+					Brukeridentifikator brukeridentifikator = mapper.convertValue(brukeridentifikatorObject, Brukeridentifikator.class);
+					logHendelse(brukeridentifikator);
 					LocalDate fraDato = environment.getArgument("fraDato");
 					List<JournalpostType> journalposttyper = environment.getArgument("journalposttyper");
 					List<JournalStatus> journalstatuser = environment.getArgument("journalstatuser");
 					SafRequestContext safRequestContext = environment.getContext();
 					try {
-						return dokumentoversiktBrukerCoordinator.findJournalposter(new DokumentoversiktBrukerArguments(aktoerId, fraDato, journalposttyper, journalstatuser),
+						return dokumentoversiktBrukerCoordinator.findJournalposter(new DokumentoversiktBrukerArguments(brukeridentifikator, fraDato, journalposttyper, journalstatuser),
 								safRequestContext);
-					} catch(SafFunctionalException e) {
+					} catch (SafFunctionalException e) {
 						return new DataFetcherResult<List<Journalpost>>(new ArrayList<>(), Collections.singletonList(e));
 					}
 				}))
@@ -58,5 +63,13 @@ public class DokumentoversiktWiring {
 					return dokumentoversiktBrukerCoordinator.findDokumenter(journalpost, safRequestContext);
 				}))
 				.build();
+	}
+
+	private void logHendelse(Brukeridentifikator brukeridentifikator) {
+		if (brukeridentifikator.getBrukeridentifikatorType().equals(BrukeridentifikatorType.AKTOERID)) {
+			log.info("DokumentoversiktBruker hentes for aktoerId={}", brukeridentifikator.getIdent());
+		} else if (brukeridentifikator.getBrukeridentifikatorType().equals(BrukeridentifikatorType.FOEDSELSNUMMER)) {
+			log.info("DokumentoversiktBruker hentes for bruker med brukeridentifikatorType=FØEDSELSNUMMER");
+		}
 	}
 }
