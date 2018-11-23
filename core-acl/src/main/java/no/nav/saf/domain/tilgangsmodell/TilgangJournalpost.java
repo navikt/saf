@@ -14,6 +14,8 @@ import java.util.List;
 @Value
 @Builder
 public class TilgangJournalpost implements SecModel {
+	private final String arkivsaksnummer;
+	private final String arkivsaksystem;
 	private final String journalpostId;
 	private final String journalStatus;
 	private final String journalpostType;

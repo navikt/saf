@@ -12,6 +12,7 @@ import java.util.List;
 @Value
 @Builder
 public class TilgangSak implements SecModel {
+	private final String aktoerId;
 	private final String arkivsaksnummer;
 	private final String arkivsaksystem;
 	private final String sakspart;
