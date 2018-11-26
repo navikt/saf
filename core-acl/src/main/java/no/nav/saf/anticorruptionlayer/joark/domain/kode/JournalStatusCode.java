@@ -13,7 +13,7 @@ public enum JournalStatusCode {
 	/**
 	 * midl journalført
 	 */
-	M(JournalStatus.MIDLERTIDIG_JOURNALFOERT),
+	M(JournalStatus.MOTTATT),
 	/**
 	 * Utgår før tilknytn til sak
 	 */

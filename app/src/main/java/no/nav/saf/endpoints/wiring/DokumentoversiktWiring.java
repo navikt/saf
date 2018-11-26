@@ -66,10 +66,10 @@ public class DokumentoversiktWiring {
 	}
 
 	private void logHendelse(Brukeridentifikator brukeridentifikator) {
-		if (brukeridentifikator.getBrukeridentifikatorType().equals(BrukeridentifikatorType.AKTOERID)) {
+		if (brukeridentifikator.getIdentType().equals(BrukeridentifikatorType.AKTOERID)) {
 			log.info("DokumentoversiktBruker hentes for aktoerId={}", brukeridentifikator.getIdent());
-		} else if (brukeridentifikator.getBrukeridentifikatorType().equals(BrukeridentifikatorType.FOEDSELSNUMMER)) {
-			log.info("DokumentoversiktBruker hentes for bruker med brukeridentifikatorType=FØEDSELSNUMMER");
+		} else if (brukeridentifikator.getIdentType().equals(BrukeridentifikatorType.FOEDSELSNUMMER)) {
+			log.info("DokumentoversiktBruker hentes for bruker med identType=FØEDSELSNUMMER");
 		}
 	}
 }

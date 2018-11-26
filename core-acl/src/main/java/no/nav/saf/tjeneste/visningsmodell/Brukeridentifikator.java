@@ -14,6 +14,6 @@ import no.nav.saf.tjeneste.visningsmodell.kode.BrukeridentifikatorType;
 public class Brukeridentifikator {
 
 	private String ident;
-	private BrukeridentifikatorType brukeridentifikatorType;
+	private BrukeridentifikatorType identType;
 
 }

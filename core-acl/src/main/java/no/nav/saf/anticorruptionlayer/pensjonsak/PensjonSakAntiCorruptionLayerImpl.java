@@ -38,7 +38,6 @@ class PensjonSakAntiCorruptionLayerImpl implements PensjonSakAntiCorruptionLayer
 		}
 	}
 
-
 	@Override
 	public List<Sak> hentSakerByFoedselsnummer(final String foedselsnummer) {
 		try {
@@ -55,6 +54,5 @@ class PensjonSakAntiCorruptionLayerImpl implements PensjonSakAntiCorruptionLayer
 		} catch (Exception e) {
 			return new ArrayList<>();
 		}
-
 	}
 }

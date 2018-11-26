@@ -54,13 +54,13 @@ public class TilgangsmodellRepositoryImpl implements TilgangsmodellRepository {
 	@Cacheable(cacheNames = LokalCacheConfig.TILGANGSMODELL_REPO_BRUKER_CACHE)
 	public TilgangBruker findTilgangBruker(Brukeridentifikator brukeridentifikator) {
 		try {
-			if (brukeridentifikator.getBrukeridentifikatorType().equals(BrukeridentifikatorType.AKTOERID)) {
+			if (brukeridentifikator.getIdentType().equals(BrukeridentifikatorType.AKTOERID)) {
 				return aktoerAntiCorruptionLayer.hentTilgangBrukerByAktoerId(brukeridentifikator.getIdent());
-			} else if (brukeridentifikator.getBrukeridentifikatorType().equals(BrukeridentifikatorType.FOEDSELSNUMMER)) {
+			} else if (brukeridentifikator.getIdentType().equals(BrukeridentifikatorType.FOEDSELSNUMMER)) {
 				return aktoerAntiCorruptionLayer.hentTilgangBrukerByFoedselsnummer(brukeridentifikator.getIdent());
 			}
 		} catch (Exception e) {
-			log.warn(format("findTilgangBruker feilet ved oppslag av ident. Brukertype=%s Feilmelding=%s", brukeridentifikator.getBrukeridentifikatorType(), e
+			log.warn(format("findTilgangBruker feilet ved oppslag av ident. Brukertype=%s Feilmelding=%s", brukeridentifikator.getIdentType(), e
 					.getMessage()));
 		}
 		return null;

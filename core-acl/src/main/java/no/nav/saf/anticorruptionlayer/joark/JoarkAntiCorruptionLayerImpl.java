@@ -206,7 +206,7 @@ class JoarkAntiCorruptionLayerImpl implements JoarkAntiCorruptionLayer {
 				.journalpostId(journalpostDto.getJournalpostId().toString())
 				.tittel(journalpostDto.getInnhold())
 				.journalposttype(JournalpostType.fromJoark(journalpostDto.getJournalposttype()))
-				.journalstatus(journalpostDto.getJournalstatus().toSafJournalStatus())
+				.journalstatus(mapJournalstatus(journalpostDto))
 				.tema(FagomradeCode.toSafJournalStatus(journalpostDto.getFagomrade()))
 				.temanavn(FagomradeCode.toSafJournalStatus(journalpostDto.getFagomrade()).getTemanavn())
 				.sak(journalpostDto.getSaksrelasjon() == null ? null : sakMap.get(journalpostDto.getSaksrelasjon()
@@ -226,6 +226,14 @@ class JoarkAntiCorruptionLayerImpl implements JoarkAntiCorruptionLayer {
 										.variantformat(Variantformat.valueOf(dokumentInfoDto.getVariantFormat().name()))
 										.build()))
 								.build()).collect(Collectors.toList())).build();
+	}
+
+	private JournalStatus mapJournalstatus(JournalpostDto journalpostDto) {
+		if(journalpostDto.getSaksrelasjon() != null && journalpostDto.getSaksrelasjon().getFeilregistrert()) {
+			return JournalStatus.FEILREGISTRERT;
+		} else {
+			return journalpostDto.getJournalstatus().toSafJournalStatus();
+		}
 	}
 
 	private List<RelevantDato> mapRelevanteDatoer(JournalpostDto journalpostDto) {
@@ -259,10 +267,9 @@ class JoarkAntiCorruptionLayerImpl implements JoarkAntiCorruptionLayer {
 					return mapManglendeUtsendingskanal(journalpostDto);
 				}
 				return journalpostDto.getUtsendingskanal().getSafKanal();
+			case N:
+				return Kanal.INGEN_DISTRIBUSJON;
 			default:
-				if (journalpostDto.getUtsendingskanal() == null) {
-					return mapManglendeUtsendingskanal(journalpostDto);
-				}
 				return null;
 		}
 	}
