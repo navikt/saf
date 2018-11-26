@@ -44,7 +44,7 @@ class StandalonePepEvaluatorTest {
 		@Override
 		public List<TilgangBruker> fetchAndFilter(ParameterContext parameterContext) {
 			List<TilgangBruker> brukers = Lists.newArrayList(TilgangBruker.builder().aktoerId("123456789").build());
-			return brukers.stream().filter(bruker -> parameterContext.getStringParameter("aktoerId").equals(bruker.getAktoerId())).collect(Collectors.toList());
+			return brukers.stream().filter(bruker -> parameterContext.getParameter("aktoerId").equals(bruker.getAktoerId())).collect(Collectors.toList());
 		}
 	}
 
@@ -71,8 +71,8 @@ class StandalonePepEvaluatorTest {
 		public List<TilgangSak> fetchAndFilter(ParameterContext parameterContext) {
 			List<TilgangSak> saker = Lists.newArrayList( sak1, sak2);
 			return saker.stream().filter( sak ->
-					sak.getArkivsaksystem().equals(parameterContext.getStringParameter("arkivsaksystem"))
-							&& sak.getArkivsaksnummer().equals(parameterContext.getStringParameter("arkivsaksnummer"))
+					sak.getArkivsaksystem().equals(parameterContext.getParameter("arkivsaksystem"))
+							&& sak.getArkivsaksnummer().equals(parameterContext.getParameter("arkivsaksnummer"))
 			).collect(Collectors.toList());
 		}
 	}
@@ -104,8 +104,8 @@ class StandalonePepEvaluatorTest {
 			);
 			if (parameterContext.getListParameter("journalpostIds") != null) {
 				return jps.stream().filter(jp -> parameterContext.getListParameter("journalpostIds").contains(jp.getJournalpostId())).collect(Collectors.toList());
-			} else if (parameterContext.getStringParameter("journalpostId") != null){
-				return jps.stream().filter(jp -> jp.getJournalpostId().equals(parameterContext.getStringParameter("journalpostId"))).collect(Collectors.toList());
+			} else if (parameterContext.getParameter("journalpostId") != null){
+				return jps.stream().filter(jp -> jp.getJournalpostId().equals(parameterContext.getParameter("journalpostId"))).collect(Collectors.toList());
 			} else if (parameterContext.getListParameter("psakSaker") != null || parameterContext.getListParameter("gsakSaker") != null) {
 				return jps.stream().filter(jp ->
 						parameterContext.getListParameter("gsakSaker").contains(jp.getArkivsaksnummer()) && jp.getArkivsaksystem().equals("FS22")
@@ -155,7 +155,7 @@ class StandalonePepEvaluatorTest {
 		when(pep2.hasAccesOn(any(TilgangSak.class), any(AccessDecisionContext.class))).thenReturn(true);
 		when(pep3.hasAccesOn(any(TilgangJournalpost.class), any(AccessDecisionContext.class))).thenReturn(true);
 
-		parameterContext.addStringSearchParameter("journalpostId", "1234");
+		parameterContext.putParameter("journalpostId", "1234");
 		List<TilgangJournalpost> journalposts = jpPepEvaluator.fetchAndFilterAndEnforce(parameterContext, accessDecisionContext, secModelWorld);
 		assertTrue(journalposts.size() == 1);
 		assertThat(journalposts.get(0).getJournalpostId(), Is.is("1234"));
@@ -171,7 +171,7 @@ class StandalonePepEvaluatorTest {
 		when(pep2.hasAccesOn(any(TilgangSak.class), any(AccessDecisionContext.class))).thenReturn(true);
 		when(pep3.hasAccesOn(any(TilgangJournalpost.class), any(AccessDecisionContext.class))).thenReturn(true);
 
-		parameterContext.addStringSearchParameter("journalpostId", "1234");
+		parameterContext.putParameter("journalpostId", "1234");
 		List<TilgangJournalpost> journalposts = jpPepEvaluator.fetchAndFilterAndEnforce(parameterContext, accessDecisionContext, secModelWorld);
 		assertTrue(CollectionUtils.isEmpty(journalposts));
 	}
@@ -183,7 +183,7 @@ class StandalonePepEvaluatorTest {
 		when(pep3.hasAccesOn(any(TilgangJournalpost.class), any(AccessDecisionContext.class))).thenReturn(true);
 
 		List<String> journalpostIds = Lists.newArrayList("1234", "2345");
-		parameterContext.addListSearchParameter("journalpostIds", journalpostIds);
+		parameterContext.putParameter("journalpostIds", journalpostIds);
 		List<TilgangJournalpost> journalposts = jpPepEvaluator.fetchAndFilterAndEnforce(parameterContext, accessDecisionContext, secModelWorld);
 		assertEquals(2, journalposts.size());
 	}
@@ -191,13 +191,12 @@ class StandalonePepEvaluatorTest {
 	@Test
 	public void shouldLimitAccessToOneSak() {
 		when(pep1.hasAccesOn(any(TilgangBruker.class), any(AccessDecisionContext.class))).thenReturn(true);
-		when(pep3.hasAccesOn(any(TilgangJournalpost.class), any(AccessDecisionContext.class))).thenReturn(true);
-
 		doReturn(false).when(pep2).hasAccesOn(eq(sak1), eq(accessDecisionContext));
 		doReturn(true).when(pep2).hasAccesOn(eq(sak2), eq(accessDecisionContext));
+		when(pep3.hasAccesOn(any(TilgangJournalpost.class), any(AccessDecisionContext.class))).thenReturn(true);
 
 		List<String> journalpostIds = Lists.newArrayList("1234", "2345");
-		parameterContext.addListSearchParameter("journalpostIds", journalpostIds);
+		parameterContext.putParameter("journalpostIds", journalpostIds);
 		List<TilgangJournalpost> journalposts = jpPepEvaluator.fetchAndFilterAndEnforce(parameterContext, accessDecisionContext, secModelWorld);
 		assertEquals(1, journalposts.size());
 		assertThat(journalposts.get(0).getJournalpostId(), Is.is("2345"));
@@ -210,9 +209,9 @@ class StandalonePepEvaluatorTest {
 		when(pep3.hasAccesOn(any(TilgangJournalpost.class), any(AccessDecisionContext.class))).thenReturn(true);
 
 		List<String> gsakSaker = Lists.newArrayList("123");
-		parameterContext.addListSearchParameter("gsakSaker", gsakSaker);
+		parameterContext.putParameter("gsakSaker", gsakSaker);
 		List<String> psakSaker = Lists.newArrayList("234");
-		parameterContext.addListSearchParameter("psakSaker", psakSaker);
+		parameterContext.putParameter("psakSaker", psakSaker);
 
 		List<TilgangJournalpost> journalposts = jpPepEvaluator.fetchAndFilterAndEnforce(parameterContext, accessDecisionContext, secModelWorld);
 		assertEquals(2, journalposts.size());

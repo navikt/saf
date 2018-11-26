@@ -1,5 +1,7 @@
 package no.nav.saf.tilgangskontroll.abstraction;
 
+import lombok.NonNull;
+
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -20,13 +22,11 @@ public class StandalonePepEvaluator<T extends SecModel> {
     SecModelParameterAdapter<T> parameterAdapter;
 
 
-    public StandalonePepEvaluator(StandalonePepEvaluator parent, SecModelDataFetcher<T> dataFetcher, Pep<T> pep, SecModelParameterAdapter<T> parameterAdapter) {
+    public StandalonePepEvaluator(StandalonePepEvaluator parent, @NonNull SecModelDataFetcher<T> dataFetcher, @NonNull Pep<T> pep, SecModelParameterAdapter<T> parameterAdapter) {
         this.parent = parent;
         this.dataFetcher = dataFetcher;
         this.pep = pep;
         this.parameterAdapter = parameterAdapter;
-        assert dataFetcher != null;
-        assert pep != null;
         if (parent != null) {
             assert parameterAdapter != null;
         }

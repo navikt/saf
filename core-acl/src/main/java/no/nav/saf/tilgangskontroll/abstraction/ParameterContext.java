@@ -5,6 +5,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * Contains a thread-safe map of search parameters.
+ */
 public class ParameterContext {
     private final ConcurrentHashMap<String, Object> parameterMap;
 
@@ -16,20 +19,24 @@ public class ParameterContext {
         this.parameterMap = new ConcurrentHashMap<>(parameterMap);
     }
 
-    public void addSearchParameters(Map<String, ? extends Object> parentSearchParameters) {
+    public Map<String, Object> getParameters() {
+        return parameterMap;
+    }
+
+    public boolean containsParameter(String name) {
+        return parameterMap.containsKey(name);
+    }
+
+    public <T> T getParameter(String name) {
+        return (T) parameterMap.get(name);
+    }
+
+    public void putParameters(Map<String, ? extends Object> parentSearchParameters) {
         parameterMap.putAll(parentSearchParameters);
     }
 
-    public void addStringSearchParameter(String parameterName, String parameterValue) {
+    public void putParameter(String parameterName, Object parameterValue) {
         parameterMap.put(parameterName, parameterValue);
-    }
-
-    public void addListSearchParameter(String parameterName, List<String> valueList) {
-        parameterMap.put(parameterName, valueList);
-    }
-
-    public String getStringParameter(String parameterName) {
-        return parameterMap.containsKey(parameterName) ? parameterMap.get(parameterName).toString() : null;
     }
 
     public List<String> getListParameter(String parameterName) {
