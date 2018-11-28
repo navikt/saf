@@ -7,6 +7,7 @@ import static no.nav.saf.anticorruptionlayer.RetryConstants.MULTIPLIER_SHORT_PEN
 
 import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.anticorruptionlayer.pensjonsak.domain.SakSammendragListeTo;
+import no.nav.saf.cache.LokalCacheConfig;
 import no.nav.saf.exceptions.SafFunctionalException;
 import no.nav.saf.exceptions.SafTechnicalException;
 import no.nav.saf.metrics.Monitor;
@@ -16,6 +17,7 @@ import no.nav.tjeneste.virksomhet.pensjonsak.v1.binding.HentSakSammendragListeSa
 import no.nav.tjeneste.virksomhet.pensjonsak.v1.binding.PensjonSakV1;
 import no.nav.tjeneste.virksomhet.pensjonsak.v1.meldinger.HentSakSammendragListeRequest;
 import no.nav.tjeneste.virksomhet.pensjonsak.v1.meldinger.HentSakSammendragListeResponse;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
@@ -33,6 +35,7 @@ public class PensjonSakConsumer {
 		this.pensjonSakV1 = pensjonSakV1;
 	}
 
+	@Cacheable(cacheNames = LokalCacheConfig.PENSJON_SAK_SAMMENDRAG_LISTE_CACHE, key = "#personident")
 	@Retryable(include = SafTechnicalException.class,
 			maxAttempts = MAX_ATTEMPTS_SHORT_PENSJON_V1,
 			backoff = @Backoff(delay = DELAY_SHORT_PENSJON_V1, multiplier = MULTIPLIER_SHORT_PENSJON_V1))

@@ -1,6 +1,5 @@
 package no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo;
 
-import static no.nav.saf.cache.LokalCacheConfig.HENT_TILGANG_JOURNALPOSTER_CACHE;
 import static no.nav.saf.cache.LokalCacheConfig.HENT_TILGANG_JOURNALPOST_CACHE;
 
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.HentJournalpostBulkRequestTo;
@@ -45,7 +44,7 @@ public class HentJournalsakinfo {
 				.build();
 	}
 
-	@Cacheable(cacheNames = HENT_TILGANG_JOURNALPOSTER_CACHE)
+//	@Cacheable(cacheNames = HENT_JOURNALPOSTBULK_CACHE)
 	@Monitor(value = "dok_consumer", extraTags = {"process", "hentJournalpostBulk"}, histogram = true)
 	public HentJournalpostBulkResponseTo hentJournalpostBulk(HentJournalpostBulkRequestTo request) {
 		ResponseEntity<HentJournalpostBulkResponseTo> response = restTemplate.postForEntity("/hentjournalpostbulk", request, HentJournalpostBulkResponseTo.class);

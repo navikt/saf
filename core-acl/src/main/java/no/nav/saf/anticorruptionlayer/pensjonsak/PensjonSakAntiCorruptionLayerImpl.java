@@ -1,5 +1,6 @@
 package no.nav.saf.anticorruptionlayer.pensjonsak;
 
+import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.anticorruptionlayer.pensjonsak.hentsaksammendragliste.PensjonSakConsumer;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 import no.nav.saf.tjeneste.visningsmodell.Sak;
@@ -12,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Component
 class PensjonSakAntiCorruptionLayerImpl implements PensjonSakAntiCorruptionLayer {
 
@@ -23,9 +25,9 @@ class PensjonSakAntiCorruptionLayerImpl implements PensjonSakAntiCorruptionLayer
 	}
 
 	@Override
-	public List<TilgangSak> hentTilgangSakList(final String personident) {
+	public List<TilgangSak> hentTilgangSakList(final String foedselsnummer) {
 		try {
-			return pensjonSakConsumer.hentSakSammendragListe(personident).getSakSammendragListe().stream()
+			return pensjonSakConsumer.hentSakSammendragListe(foedselsnummer).getSakSammendragListe().stream()
 					.map(tilgangsak -> TilgangSak.builder()
 							.arkivsaksnummer(tilgangsak.getSakNr())
 							.arkivsaksystem(String.valueOf(Arkivsakssystem.PSAK))
@@ -33,6 +35,7 @@ class PensjonSakAntiCorruptionLayerImpl implements PensjonSakAntiCorruptionLayer
 							.build())
 					.collect(Collectors.toList());
 		} catch (Exception e) {
+			log.warn("Klarte ikke hente pensjonssaker for foedelsnummer={}", "*****", e);
 			return new ArrayList<>();
 		}
 	}
@@ -51,6 +54,7 @@ class PensjonSakAntiCorruptionLayerImpl implements PensjonSakAntiCorruptionLayer
 							.build())
 					.collect(Collectors.toList());
 		} catch (Exception e) {
+			log.warn("Klarte ikke hente pensjonssaker for foedelsnummer={}", "*****", e);
 			return new ArrayList<>();
 		}
 	}

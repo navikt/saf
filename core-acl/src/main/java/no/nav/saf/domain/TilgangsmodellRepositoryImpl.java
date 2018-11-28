@@ -15,7 +15,6 @@ import no.nav.saf.domain.tilgangsmodell.TilgangJournalpost;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 import no.nav.saf.tjeneste.visningsmodell.Brukeridentifikator;
 import no.nav.saf.tjeneste.visningsmodell.kode.Arkivsakssystem;
-import no.nav.saf.tjeneste.visningsmodell.kode.BrukeridentifikatorType;
 import no.nav.saf.tjeneste.visningsmodell.kode.JournalStatus;
 import no.nav.saf.tjeneste.visningsmodell.kode.JournalpostType;
 import org.springframework.cache.annotation.Cacheable;
@@ -54,10 +53,13 @@ public class TilgangsmodellRepositoryImpl implements TilgangsmodellRepository {
 	@Cacheable(cacheNames = LokalCacheConfig.TILGANGSMODELL_REPO_BRUKER_CACHE)
 	public TilgangBruker findTilgangBruker(Brukeridentifikator brukeridentifikator) {
 		try {
-			if (brukeridentifikator.getIdentType().equals(BrukeridentifikatorType.AKTOERID)) {
-				return aktoerAntiCorruptionLayer.hentTilgangBrukerByAktoerId(brukeridentifikator.getIdent());
-			} else if (brukeridentifikator.getIdentType().equals(BrukeridentifikatorType.FOEDSELSNUMMER)) {
-				return aktoerAntiCorruptionLayer.hentTilgangBrukerByFoedselsnummer(brukeridentifikator.getIdent());
+			switch(brukeridentifikator.getIdentType()) {
+				case AKTOERID:
+					return aktoerAntiCorruptionLayer.hentTilgangBrukerByAktoerId(brukeridentifikator.getIdent());
+				case FOEDSELSNUMMER:
+					return aktoerAntiCorruptionLayer.hentTilgangBrukerByFoedselsnummer(brukeridentifikator.getIdent());
+				default:
+					return null;
 			}
 		} catch (Exception e) {
 			log.warn(format("findTilgangBruker feilet ved oppslag av ident. Brukertype=%s Feilmelding=%s", brukeridentifikator.getIdentType(), e
@@ -67,7 +69,7 @@ public class TilgangsmodellRepositoryImpl implements TilgangsmodellRepository {
 	}
 
 	@Override
-	@Cacheable(cacheNames = LokalCacheConfig.TILGANGSMODELL_REPO_SAK_CACHE)
+	@Cacheable(cacheNames = LokalCacheConfig.TILGANGSMODELL_REPO_SAK_CACHE, key = "#tilgangBruker.aktoerId")
 	public List<TilgangSak> findTilgangSakListByTilgangBruker(final TilgangBruker tilgangBruker) {
 		try {
 			Observable<List<TilgangSak>> gsaker = Observable.fromCallable(() ->

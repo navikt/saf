@@ -50,8 +50,10 @@ public class DokumentoversiktWiring {
 					List<JournalStatus> journalstatuser = environment.getArgument("journalstatuser");
 					SafRequestContext safRequestContext = environment.getContext();
 					try {
-						return dokumentoversiktBrukerCoordinator.findJournalposter(new DokumentoversiktBrukerArguments(brukeridentifikator, fraDato, journalposttyper, journalstatuser),
+						List<Journalpost> journalposter = dokumentoversiktBrukerCoordinator.findJournalposter(new DokumentoversiktBrukerArguments(brukeridentifikator, fraDato, journalposttyper, journalstatuser),
 								safRequestContext);
+						logDokumentoversiktBrukerQueryDone(journalposter.size(), brukeridentifikator);
+						return journalposter;
 					} catch (SafFunctionalException e) {
 						return new DataFetcherResult<List<Journalpost>>(new ArrayList<>(), Collections.singletonList(e));
 					}
@@ -71,6 +73,20 @@ public class DokumentoversiktWiring {
 				break;
 			case FOEDSELSNUMMER:
 				log.info("dokumentoversiktBruker hentes for bruker med fødselsnummer={}", "*****"); // vi kan ikke logge fnr
+				break;
+			default:
+				// noop
+				break;
+		}
+	}
+
+	private void logDokumentoversiktBrukerQueryDone(int numJournalposter, Brukeridentifikator brukeridentifikator) {
+		switch (brukeridentifikator.getIdentType()) {
+			case AKTOERID:
+				log.info("dokumentoversiktBruker returnerer {} journalposter for bruker med aktoerId={}", numJournalposter, brukeridentifikator.getIdent());
+				break;
+			case FOEDSELSNUMMER:
+				log.info("dokumentoversiktBruker returnerer {} journalposter for bruker med fødselsnummer={}", numJournalposter, "*****"); // vi kan ikke logge fnr
 				break;
 			default:
 				// noop
