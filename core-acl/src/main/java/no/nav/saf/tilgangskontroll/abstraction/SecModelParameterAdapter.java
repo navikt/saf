@@ -11,7 +11,7 @@ public interface SecModelParameterAdapter<T> {
      * For Journalpost, the necessary keys to populate the above level is saksref + arkivsaksystem,
      * For Sak, the necessary key to populate the above level is aktoerId.
      *
-     * The resulting map will be appended into the ParameterContext in the StandalonePepEvaluator
+     * The resulting map will be appended into the ParameterContext in the UpwardsSecModelTraverser
      * @param secModelEntity
      * @return map of search parameters
      */

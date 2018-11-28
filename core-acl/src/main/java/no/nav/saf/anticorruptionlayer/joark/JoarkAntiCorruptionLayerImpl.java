@@ -156,6 +156,8 @@ class JoarkAntiCorruptionLayerImpl implements JoarkAntiCorruptionLayer {
 				.journalStatus(dto.getJournalStatus())
 				.journalpostType(dto.getJournalpostType())
 				.tema(dto.getTema())
+				.arkivsaksystem(dto.getSak().getFagsystem())
+				.arkivsaksnummer(dto.getSak().getSakId())
 				.datoOpprettet(dto.getDatoOpprettet().toLocalDate())
 				.mottakskanal(dto.getMottakskanal())
 				.avsenderMottakerId(dto.getAvsenderMottakerId())
@@ -229,7 +231,7 @@ class JoarkAntiCorruptionLayerImpl implements JoarkAntiCorruptionLayer {
 	}
 
 	private JournalStatus mapJournalstatus(JournalpostDto journalpostDto) {
-		if(journalpostDto.getSaksrelasjon() != null && journalpostDto.getSaksrelasjon().getFeilregistrert()) {
+		if (journalpostDto.getSaksrelasjon() != null && journalpostDto.getSaksrelasjon().getFeilregistrert()) {
 			return JournalStatus.FEILREGISTRERT;
 		} else {
 			return journalpostDto.getJournalstatus().toSafJournalStatus();
@@ -248,7 +250,7 @@ class JoarkAntiCorruptionLayerImpl implements JoarkAntiCorruptionLayer {
 					relevanteDatoer.add(new RelevantDato(journalpostDto.getEkspedertDato(), Datotype.EKSPEDERT_DATO));
 				}
 			default:
-				if(journalpostDto.getDatoOpprettet() != null) {
+				if (journalpostDto.getDatoOpprettet() != null) {
 					relevanteDatoer.add(new RelevantDato(journalpostDto.getDatoOpprettet(), Datotype.OPPRETTET_DATO));
 				}
 				return relevanteDatoer;

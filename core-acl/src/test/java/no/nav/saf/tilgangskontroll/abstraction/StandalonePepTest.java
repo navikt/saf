@@ -13,6 +13,8 @@ import com.google.common.collect.Maps;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.domain.tilgangsmodell.TilgangJournalpost;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
+import no.nav.saf.tilgangskontroll.SafRequestContext;
+import no.nav.saf.tilgangskontroll.pep.Pep;
 import org.hamcrest.core.Is;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -30,11 +32,11 @@ import java.util.stream.Collectors;
  */
 @ExtendWith(MockitoExtension.class)
 
-class StandalonePepEvaluatorTest {
+class StandalonePepTest {
 
-	private class BrukerPepEvaluator extends StandalonePepEvaluator<TilgangBruker> {
+	private class BrukerPepEvaluator extends UpwardsSecModelTraverser<TilgangBruker> {
 
-		public BrukerPepEvaluator(StandalonePepEvaluator parent, SecModelDataFetcher dataFetcher, Pep pep, SecModelParameterAdapter parameterAdapter) {
+		public BrukerPepEvaluator(UpwardsSecModelTraverser parent, SecModelDataFetcher dataFetcher, Pep<TilgangBruker> pep, SecModelParameterAdapter parameterAdapter) {
 			super(parent, dataFetcher, pep, parameterAdapter);
 		}
 	}
@@ -48,9 +50,9 @@ class StandalonePepEvaluatorTest {
 		}
 	}
 
-	private class SakPepEvaluator extends StandalonePepEvaluator<TilgangSak> {
+	private class SakPepEvaluator extends UpwardsSecModelTraverser<TilgangSak> {
 
-		public SakPepEvaluator(StandalonePepEvaluator parent, SecModelDataFetcher<TilgangSak> dataFetcher, Pep<TilgangSak> pep, SecModelParameterAdapter parameterAdapter) {
+		public SakPepEvaluator(UpwardsSecModelTraverser parent, SecModelDataFetcher<TilgangSak> dataFetcher, Pep<TilgangSak> pep, SecModelParameterAdapter parameterAdapter) {
 			super(parent, dataFetcher, pep, parameterAdapter);
 		}
 	}
@@ -77,9 +79,9 @@ class StandalonePepEvaluatorTest {
 		}
 	}
 
-	private class JPPepEvaluator extends StandalonePepEvaluator<TilgangJournalpost> {
+	private class JPPepEvaluator extends UpwardsSecModelTraverser<TilgangJournalpost> {
 
-		public JPPepEvaluator(StandalonePepEvaluator parent, SecModelDataFetcher<TilgangJournalpost> dataFetcher, Pep<TilgangJournalpost> pep, SecModelParameterAdapter parameterAdapter) {
+		public JPPepEvaluator(UpwardsSecModelTraverser parent, SecModelDataFetcher<TilgangJournalpost> dataFetcher, Pep<TilgangJournalpost> pep, SecModelParameterAdapter parameterAdapter) {
 			super(parent, dataFetcher, pep, parameterAdapter);
 		}
 
@@ -128,7 +130,7 @@ class StandalonePepEvaluatorTest {
 	@Mock
 	Pep<TilgangJournalpost> pep3;
 
-	AccessDecisionContext accessDecisionContext;
+	SafRequestContext accessDecisionContext;
 	ParameterContext parameterContext;
 	SecModelWorld secModelWorld;
 
@@ -140,7 +142,7 @@ class StandalonePepEvaluatorTest {
 
 	@BeforeEach
 	public void setUp() {
-		accessDecisionContext = new AccessDecisionContext();
+		accessDecisionContext = new SafRequestContext("eyAidHlwIjogIkpXVCIsICJraWQiOiAiU0gxSWVSU2sxT1VGSDNzd1orRXVVcTE5VHZRPSIsICJhbGciOiAiUlMyNTYiIH0.eyAiYXRfaGFzaCI6ICJQMmFoT3RsWmsxN2xmQjJ1TlJINld3IiwgInN1YiI6ICJaOTkwNDI0IiwgImF1ZGl0VHJhY2tpbmdJZCI6ICJlYTdmNWUxMi1jYjZjLTQ1ZjUtYmViMi0wYjVkYmI5ZDQ3YTItODE5MDM0IiwgImlzcyI6ICJodHRwczovL2lzc28tdC5hZGVvLm5vOjQ0My9pc3NvL29hdXRoMiIsICJ0b2tlbk5hbWUiOiAiaWRfdG9rZW4iLCAiYXVkIjogImlkYS10IiwgImNfaGFzaCI6ICJvS3o5alkySkJwT0hmbWpuMUNwcGlBIiwgIm9yZy5mb3JnZXJvY2sub3BlbmlkY29ubmVjdC5vcHMiOiAiZjZkMjNiNzYtMmU3MS00OWNhLThkMDEtMzk0MTE4YTI3NGVmIiwgImF6cCI6ICJpZGEtdCIsICJhdXRoX3RpbWUiOiAxNTQzNDEzNTEzLCAicmVhbG0iOiAiLyIsICJleHAiOiAxNTQzNDE3MTEzLCAidG9rZW5UeXBlIjogIkpXVFRva2VuIiwgImlhdCI6IDE1NDM0MTM1MTMgfQ.VE5VWrFbi3QbrsOXOoscf0J9Fu-fEnQhwZ67pgAhnxbgopn_E3dVkkTKXoSXJxD9JqmIN49w3g86gG863xbdBwTqJbGHwc0_KaXacKfJAhWtplhP4RWBaTHWo9cbEdPPdYha2-QfEE9AZGSTh0Z3LRVQZPvI2zPvyEveoFPOIMjBt0lqh4s0Wdopj4AOCNjmGPW6KOZ0JlZUP_1YeJBHmN14O50OiYPc3GYkO1tsvhSkUylPlIkRQgH0vCbgjihuREJ0wVq5XhzmkXu2m0aKZgYjRNzMiDdYGCpr3Jv7y845J3CAuLaIjNfj8uTe5NwcOpH0rw8BrksYM_DozEG83Q");
 		parameterContext = new ParameterContext();
 
 		brukerPepEvaluator = new BrukerPepEvaluator(null, new BrukerDataFetcher(), pep1, null);
@@ -151,9 +153,9 @@ class StandalonePepEvaluatorTest {
 
 	@Test
 	public void shouldReturnJournalpostInHappyPath() {
-		when(pep1.hasAccesOn(any(TilgangBruker.class), any(AccessDecisionContext.class))).thenReturn(true);
-		when(pep2.hasAccesOn(any(TilgangSak.class), any(AccessDecisionContext.class))).thenReturn(true);
-		when(pep3.hasAccesOn(any(TilgangJournalpost.class), any(AccessDecisionContext.class))).thenReturn(true);
+		when(pep1.hasAccess(any(TilgangBruker.class), any(SafRequestContext.class))).thenReturn(true);
+		when(pep2.hasAccess(any(TilgangSak.class), any(SafRequestContext.class))).thenReturn(true);
+		when(pep3.hasAccess(any(TilgangJournalpost.class), any(SafRequestContext.class))).thenReturn(true);
 
 		parameterContext.putParameter("journalpostId", "1234");
 		List<TilgangJournalpost> journalposts = jpPepEvaluator.fetchAndFilterAndEnforce(parameterContext, accessDecisionContext, secModelWorld);
@@ -167,9 +169,9 @@ class StandalonePepEvaluatorTest {
 
 	@Test
 	public void shouldReturnEmptyListIfAccessDenyOnBruker() {
-		when(pep1.hasAccesOn(any(TilgangBruker.class), any(AccessDecisionContext.class))).thenReturn(false);
-		when(pep2.hasAccesOn(any(TilgangSak.class), any(AccessDecisionContext.class))).thenReturn(true);
-		when(pep3.hasAccesOn(any(TilgangJournalpost.class), any(AccessDecisionContext.class))).thenReturn(true);
+		when(pep1.hasAccess(any(TilgangBruker.class), any(SafRequestContext.class))).thenReturn(false);
+		when(pep2.hasAccess(any(TilgangSak.class), any(SafRequestContext.class))).thenReturn(true);
+		when(pep3.hasAccess(any(TilgangJournalpost.class), any(SafRequestContext.class))).thenReturn(true);
 
 		parameterContext.putParameter("journalpostId", "1234");
 		List<TilgangJournalpost> journalposts = jpPepEvaluator.fetchAndFilterAndEnforce(parameterContext, accessDecisionContext, secModelWorld);
@@ -178,9 +180,9 @@ class StandalonePepEvaluatorTest {
 
 	@Test
 	public void shouldSupportJournalpostListParameter() {
-		when(pep1.hasAccesOn(any(TilgangBruker.class), any(AccessDecisionContext.class))).thenReturn(true);
-		when(pep2.hasAccesOn(any(TilgangSak.class), any(AccessDecisionContext.class))).thenReturn(true);
-		when(pep3.hasAccesOn(any(TilgangJournalpost.class), any(AccessDecisionContext.class))).thenReturn(true);
+		when(pep1.hasAccess(any(TilgangBruker.class), any(SafRequestContext.class))).thenReturn(true);
+		when(pep2.hasAccess(any(TilgangSak.class), any(SafRequestContext.class))).thenReturn(true);
+		when(pep3.hasAccess(any(TilgangJournalpost.class), any(SafRequestContext.class))).thenReturn(true);
 
 		List<String> journalpostIds = Lists.newArrayList("1234", "2345");
 		parameterContext.putParameter("journalpostIds", journalpostIds);
@@ -190,10 +192,10 @@ class StandalonePepEvaluatorTest {
 
 	@Test
 	public void shouldLimitAccessToOneSak() {
-		when(pep1.hasAccesOn(any(TilgangBruker.class), any(AccessDecisionContext.class))).thenReturn(true);
-		doReturn(false).when(pep2).hasAccesOn(eq(sak1), eq(accessDecisionContext));
-		doReturn(true).when(pep2).hasAccesOn(eq(sak2), eq(accessDecisionContext));
-		when(pep3.hasAccesOn(any(TilgangJournalpost.class), any(AccessDecisionContext.class))).thenReturn(true);
+		when(pep1.hasAccess(any(TilgangBruker.class), any(SafRequestContext.class))).thenReturn(true);
+		doReturn(false).when(pep2).hasAccess(eq(sak1), eq(accessDecisionContext));
+		doReturn(true).when(pep2).hasAccess(eq(sak2), eq(accessDecisionContext));
+		when(pep3.hasAccess(any(TilgangJournalpost.class), any(SafRequestContext.class))).thenReturn(true);
 
 		List<String> journalpostIds = Lists.newArrayList("1234", "2345");
 		parameterContext.putParameter("journalpostIds", journalpostIds);
@@ -204,9 +206,9 @@ class StandalonePepEvaluatorTest {
 
 	@Test
 	public void shouldSupporSakListParameter() {
-		when(pep1.hasAccesOn(any(TilgangBruker.class), any(AccessDecisionContext.class))).thenReturn(true);
-		when(pep2.hasAccesOn(any(TilgangSak.class), any(AccessDecisionContext.class))).thenReturn(true);
-		when(pep3.hasAccesOn(any(TilgangJournalpost.class), any(AccessDecisionContext.class))).thenReturn(true);
+		when(pep1.hasAccess(any(TilgangBruker.class), any(SafRequestContext.class))).thenReturn(true);
+		when(pep2.hasAccess(any(TilgangSak.class), any(SafRequestContext.class))).thenReturn(true);
+		when(pep3.hasAccess(any(TilgangJournalpost.class), any(SafRequestContext.class))).thenReturn(true);
 
 		List<String> gsakSaker = Lists.newArrayList("123");
 		parameterContext.putParameter("gsakSaker", gsakSaker);

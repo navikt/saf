@@ -1,6 +1,8 @@
 package no.nav.saf.tilgangskontroll.abstraction;
 
 import lombok.NonNull;
+import no.nav.saf.tilgangskontroll.SafRequestContext;
+import no.nav.saf.tilgangskontroll.pep.Pep;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -15,14 +17,14 @@ import java.util.stream.Stream;
  * @param <T>
  */
 
-public class StandalonePepEvaluator<T extends SecModel> {
-    StandalonePepEvaluator parent;
+public class UpwardsSecModelTraverser<T extends SecModel> {
+    UpwardsSecModelTraverser parent;
     SecModelDataFetcher<T> dataFetcher;
     Pep<T> pep;
     SecModelParameterAdapter<T> parameterAdapter;
 
 
-    public StandalonePepEvaluator(StandalonePepEvaluator parent, @NonNull SecModelDataFetcher<T> dataFetcher, @NonNull Pep<T> pep, SecModelParameterAdapter<T> parameterAdapter) {
+    public UpwardsSecModelTraverser(UpwardsSecModelTraverser parent, @NonNull SecModelDataFetcher<T> dataFetcher, @NonNull Pep<T> pep, SecModelParameterAdapter<T> parameterAdapter) {
         this.parent = parent;
         this.dataFetcher = dataFetcher;
         this.pep = pep;
@@ -45,10 +47,10 @@ public class StandalonePepEvaluator<T extends SecModel> {
      * @return
      */
 
-    public List<T> fetchAndFilterAndEnforce(ParameterContext parameterContext, AccessDecisionContext accessDecicionContext, SecModelWorld secModelWorld) {
+    public List<T> fetchAndFilterAndEnforce(ParameterContext parameterContext, SafRequestContext accessDecicionContext, SecModelWorld secModelWorld) {
         List<T> secModelResult = dataFetcher.fetchAndFilter(parameterContext);
 
-        Stream<T> allowedResult = secModelResult.stream().filter(e -> pep.hasAccesOn(e, accessDecicionContext));
+        Stream<T> allowedResult = secModelResult.stream().filter(e -> pep.hasAccess(e, accessDecicionContext));
 
         if (parent != null) {
             List<T> collect =

@@ -36,7 +36,7 @@ import java.io.IOException;
 @ActiveProfiles("itest,wiremock,oidc")
 @ImportAutoConfiguration
 @AutoConfigureWireMock(port = 0)
-public abstract class AbstractPepEvaluatorIT {
+public abstract class AbstractPepIT {
 
 	static final String AKTOER_ID = "12345";
 	static final String IDENTIFIKATOR = "***gammelt_fnr***";

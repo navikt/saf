@@ -21,11 +21,11 @@ import java.util.Collections;
 /**
  * @author Sigurd Midttun, Visma Consulting.
  */
-public class Pep1EvaluatorIT extends AbstractPepEvaluatorIT {
+public class Pep1EvaluatorIT extends AbstractPepIT {
 
 	@Inject
 	@Named("pep1")
-	private PepEvaluator<TilgangBruker> pep1;
+	private Pep<TilgangBruker> pep1;
 
 	@Test
 	public void pep1HappyPath() throws IOException {

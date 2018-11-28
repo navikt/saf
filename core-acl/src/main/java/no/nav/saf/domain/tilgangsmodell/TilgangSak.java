@@ -13,9 +13,12 @@ import java.util.List;
 @Builder
 public class TilgangSak implements SecModel {
 	private final String aktoerId;
+	private final String foedselsnummer;
+	private final String orgnummer;
 	private final String arkivsaksnummer;
 	private final String arkivsaksystem;
-	private final String sakspart;
+	private final String fagsaknummer;
+	private final String fagsystem;
 	private final List<TilgangRelevantTredjepart> relevanteTredjeparter;
 	private final String tema;
 }

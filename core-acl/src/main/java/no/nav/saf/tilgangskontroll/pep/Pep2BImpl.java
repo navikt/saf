@@ -14,12 +14,12 @@ import javax.inject.Inject;
  */
 @Slf4j
 @Component("pep2b")
-public class Pep2bEvaluatorImpl implements PepEvaluator<TilgangSak> {
+public class Pep2BImpl implements Pep<TilgangSak> {
 
 	private final AbacService abacService;
 
 	@Inject
-	public Pep2bEvaluatorImpl(AbacService abacService) {
+	public Pep2BImpl(AbacService abacService) {
 		this.abacService = abacService;
 	}
 

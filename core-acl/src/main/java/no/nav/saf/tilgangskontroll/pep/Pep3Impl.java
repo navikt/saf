@@ -15,12 +15,12 @@ import javax.inject.Inject;
  */
 @Slf4j
 @Component("pep3")
-public class Pep3EvaluatorImpl implements PepEvaluator<TilgangSak> {
+public class Pep3Impl implements Pep<TilgangSak> {
 
 	private final AbacService abacService;
 
 	@Inject
-	public Pep3EvaluatorImpl(AbacService abacService) {
+	public Pep3Impl(AbacService abacService) {
 		this.abacService = abacService;
 	}
 

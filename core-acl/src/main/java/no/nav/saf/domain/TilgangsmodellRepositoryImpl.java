@@ -141,6 +141,23 @@ public class TilgangsmodellRepositoryImpl implements TilgangsmodellRepository {
 	public TilgangBruker findTilgangBrukerBySakId(String sakId, String arkivsaksystem) {
 		try {
 			if (Arkivsakssystem.GSAK.name().equals(arkivsaksystem)) {
+				return gsakAntiCorruptionLayer.findTilgangBrukerBySakId(sakId);
+			} else if (Arkivsakssystem.PSAK.name().equals(arkivsaksystem)) {
+				//TODO implement call to psak
+				return null;
+			} else {
+				return null;
+			}
+		} catch (Exception e) {
+			log.warn("findTilgangBrukerBySakId feilet ved oppslag på sakId={}. Feilmelding={}", sakId, e.getMessage());
+			return null;
+		}
+	}
+
+	@Override
+	public TilgangSak findTilgangSakBySakId(String sakId, String arkivsaksystem) {
+		try {
+			if (Arkivsakssystem.GSAK.name().equals(arkivsaksystem)) {
 				return gsakAntiCorruptionLayer.findTilgangSakBySakId(sakId);
 			} else if (Arkivsakssystem.PSAK.name().equals(arkivsaksystem)) {
 				//TODO implement call to psak

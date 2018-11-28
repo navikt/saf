@@ -32,4 +32,6 @@ public interface TilgangsmodellRepository {
 	TilgangBruker findTilgangBruker(String journalpostId, String dokumentId, String variantFormat);
 
 	TilgangBruker findTilgangBrukerBySakId(String sakId, String arkivsaksystem);
+
+	TilgangSak findTilgangSakBySakId(String sakId, String arkivsaksystem);
 }

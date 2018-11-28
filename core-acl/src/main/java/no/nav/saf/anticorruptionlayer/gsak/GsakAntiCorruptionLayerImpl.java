@@ -104,7 +104,22 @@ class GsakAntiCorruptionLayerImpl implements GsakAntiCorruptionLayer {
 	}
 
 	@Override
-	public TilgangBruker findTilgangSakBySakId(final String sakId) {
+	public TilgangSak findTilgangSakBySakId(final String sakId) {
+		GsakSakerTo gsakSakerTo = gsakConsumer.hentSakBySakId(sakId);
+		return gsakSakerTo == null ? null : TilgangSak.builder()
+				.aktoerId(gsakSakerTo.getAktoerId())
+				.arkivsaksnummer(gsakSakerTo.getId().toString())
+				.arkivsaksystem(Arkivsakssystem.GSAK.name())
+				.fagsystem(gsakSakerTo.getApplikasjon())
+				.fagsaknummer(gsakSakerTo.getFagsakNr())
+				.tema(gsakSakerTo.getTema())
+				.orgnummer(gsakSakerTo.getOrgnr())
+				.build();
+	}
+
+
+	@Override
+	public TilgangBruker findTilgangBrukerBySakId(final String sakId) {
 		GsakSakerTo gsakSakerTo = gsakConsumer.hentSakBySakId(sakId);
 		return gsakSakerTo == null ? null : TilgangBruker.builder()
 				.aktoerId(gsakSakerTo.getAktoerId())
