@@ -194,6 +194,7 @@ class JoarkAntiCorruptionLayerImpl implements JoarkAntiCorruptionLayer {
 				.map(journalpostId -> {
 					JournalpostDto journalpostDto = journalpostCache.get(journalpostId, JournalpostDto.class);
 					if (journalpostDto == null) {
+						log.warn("journalpostId={} ikke funnet i lokal cache.", journalpostId);
 						return null;
 					}
 					return mapJournalpostDto(sakMap, journalpostDto);

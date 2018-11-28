@@ -5,14 +5,12 @@ import no.nav.saf.anticorruptionlayer.gsak.hentgsaksaker.GsakConsumer;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 import no.nav.saf.tjeneste.visningsmodell.Sak;
-import no.nav.saf.tjeneste.visningsmodell.Tema;
 import no.nav.saf.tjeneste.visningsmodell.kode.Arkivsakssystem;
 import no.nav.saf.tjeneste.visningsmodell.kode.Temakode;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -25,15 +23,6 @@ class GsakAntiCorruptionLayerImpl implements GsakAntiCorruptionLayer {
 	@Inject
 	public GsakAntiCorruptionLayerImpl(GsakConsumer gsakConsumer) {
 		this.gsakConsumer = gsakConsumer;
-	}
-
-	@Override
-	public Set<Tema> findTemaerByAktoerIdAndFilterTemakode(final String aktoerId, final List<Temakode> temakoder) {
-
-		List<GsakSakerTo> gsakSakerTo = gsakConsumer.hentSakerByAktoerId(aktoerId);
-		return gsakSakerTo.stream().map(gsak -> Tema.fromTemakode(Temakode.valueOf(gsak.getTema())))
-				.filter(t -> temakoder.isEmpty() || temakoder.contains(t.getTema()))
-				.collect(Collectors.toSet());
 	}
 
 	@Override
@@ -72,7 +61,6 @@ class GsakAntiCorruptionLayerImpl implements GsakAntiCorruptionLayer {
 		}
 	}
 
-
 	@Override
 	public List<Sak> findSakerByAktoerId(final String aktoerId) {
 		List<GsakSakerTo> gsakSakerTo = gsakConsumer.hentSakerByAktoerId(aktoerId);
@@ -110,5 +98,4 @@ class GsakAntiCorruptionLayerImpl implements GsakAntiCorruptionLayer {
 				.aktoerId(gsakSakerTo.getAktoerId())
 				.build();
 	}
-
 }
