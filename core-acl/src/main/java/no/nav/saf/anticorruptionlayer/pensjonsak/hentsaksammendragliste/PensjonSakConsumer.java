@@ -58,9 +58,7 @@ public class PensjonSakConsumer {
 					.build())
 					.collect(Collectors.toList())
 			);
-
 			return returnObject;
-
 		} catch (HentSakSammendragListeSakManglerEierenhet e) {
 			throw new SafTechnicalException("Funksjonell feil mot Pensjon_v1. Personen ble funnet, men en av sakene mangler eierenhet. Feilmelding=%s", e);
 		} catch (HentSakSammendragListePersonIkkeFunnet e) {

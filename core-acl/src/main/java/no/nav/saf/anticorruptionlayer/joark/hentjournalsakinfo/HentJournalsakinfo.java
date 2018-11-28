@@ -40,7 +40,7 @@ public class HentJournalsakinfo {
 				.requestFactory(() -> clientHttpRequestFactory)
 				.rootUri(hentjournalsakinfoUrl)
 				.basicAuthentication(serviceuserAlias.getUsername(), serviceuserAlias.getPassword())
-				.setReadTimeout(Duration.ofSeconds(10))
+				.setReadTimeout(Duration.ofSeconds(40))
 				.setConnectTimeout(Duration.ofSeconds(5))
 				.build();
 	}

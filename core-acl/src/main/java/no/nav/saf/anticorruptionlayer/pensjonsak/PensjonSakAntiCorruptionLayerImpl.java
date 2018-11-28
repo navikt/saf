@@ -24,7 +24,6 @@ class PensjonSakAntiCorruptionLayerImpl implements PensjonSakAntiCorruptionLayer
 
 	@Override
 	public List<TilgangSak> hentTilgangSakList(final String personident) {
-
 		try {
 			return pensjonSakConsumer.hentSakSammendragListe(personident).getSakSammendragListe().stream()
 					.map(tilgangsak -> TilgangSak.builder()

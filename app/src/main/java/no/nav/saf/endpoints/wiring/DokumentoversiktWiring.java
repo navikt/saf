@@ -11,7 +11,6 @@ import no.nav.saf.tjeneste.dokumentoversiktbruker.DokumentoversiktBrukerArgument
 import no.nav.saf.tjeneste.dokumentoversiktbruker.DokumentoversiktBrukerCoordinator;
 import no.nav.saf.tjeneste.visningsmodell.Brukeridentifikator;
 import no.nav.saf.tjeneste.visningsmodell.Journalpost;
-import no.nav.saf.tjeneste.visningsmodell.kode.BrukeridentifikatorType;
 import no.nav.saf.tjeneste.visningsmodell.kode.JournalStatus;
 import no.nav.saf.tjeneste.visningsmodell.kode.JournalpostType;
 import org.springframework.stereotype.Component;
@@ -45,7 +44,7 @@ public class DokumentoversiktWiring {
 				.type("Query", typeWiring -> typeWiring.dataFetcher("dokumentoversiktBruker", environment -> {
 					Object brukeridentifikatorObject = environment.getArgument("brukeridentifikator");
 					Brukeridentifikator brukeridentifikator = mapper.convertValue(brukeridentifikatorObject, Brukeridentifikator.class);
-					logHendelse(brukeridentifikator);
+					logDokumentoversiktBrukerQueryInit(brukeridentifikator);
 					LocalDate fraDato = environment.getArgument("fraDato");
 					List<JournalpostType> journalposttyper = environment.getArgument("journalposttyper");
 					List<JournalStatus> journalstatuser = environment.getArgument("journalstatuser");
@@ -65,11 +64,17 @@ public class DokumentoversiktWiring {
 				.build();
 	}
 
-	private void logHendelse(Brukeridentifikator brukeridentifikator) {
-		if (brukeridentifikator.getIdentType().equals(BrukeridentifikatorType.AKTOERID)) {
-			log.info("DokumentoversiktBruker hentes for aktoerId={}", brukeridentifikator.getIdent());
-		} else if (brukeridentifikator.getIdentType().equals(BrukeridentifikatorType.FOEDSELSNUMMER)) {
-			log.info("DokumentoversiktBruker hentes for bruker med identType=FØEDSELSNUMMER");
+	private void logDokumentoversiktBrukerQueryInit(Brukeridentifikator brukeridentifikator) {
+		switch (brukeridentifikator.getIdentType()) {
+			case AKTOERID:
+				log.info("dokumentoversiktBruker hentes for bruker med aktoerId={}", brukeridentifikator.getIdent());
+				break;
+			case FOEDSELSNUMMER:
+				log.info("dokumentoversiktBruker hentes for bruker med fødselsnummer={}", "*****"); // vi kan ikke logge fnr
+				break;
+			default:
+				// noop
+				break;
 		}
 	}
 }

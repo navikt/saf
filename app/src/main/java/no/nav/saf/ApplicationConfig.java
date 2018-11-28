@@ -26,7 +26,6 @@ import org.springframework.retry.annotation.EnableRetry;
 @EnableConfigurationProperties(ServiceuserAlias.class)
 @EnableRetry
 public class ApplicationConfig {
-
 	@Bean
 	ClientHttpRequestFactory requestFactory(HttpClient httpClient) {
 		return new HttpComponentsClientHttpRequestFactory(httpClient);
@@ -41,6 +40,4 @@ public class ApplicationConfig {
 	DokMonitoringAspect timedAspect(MeterRegistry meterRegistry) {
 		return new DokMonitoringAspect(meterRegistry);
 	}
-
-
 }
