@@ -17,7 +17,6 @@ import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark901.Tilgang
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark901.TilgangJournalpostDto;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark901.TilgangSakDto;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark920.HentDokumentResponseTo;
-import no.nav.saf.cache.LokalCacheConfig;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.domain.tilgangsmodell.TilgangDokumentInfo;
 import no.nav.saf.domain.tilgangsmodell.TilgangIdent;
@@ -37,7 +36,6 @@ import no.nav.saf.tjeneste.visningsmodell.kode.JournalStatus;
 import no.nav.saf.tjeneste.visningsmodell.kode.JournalpostType;
 import no.nav.saf.tjeneste.visningsmodell.kode.Kanal;
 import no.nav.saf.tjeneste.visningsmodell.kode.Variantformat;
-import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Component;
 
@@ -50,7 +48,6 @@ import java.util.Base64;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -62,12 +59,42 @@ class JoarkAntiCorruptionLayerImpl implements JoarkAntiCorruptionLayer {
 	// Joark bruker in query og max antall elementer er 1000 i Oracle.
 	private static final int SAK_MAX_SIZE = 1000;
 	private final HentJournalsakinfo hentJournalsakinfo;
-	private final Cache journalpostCache;
 
 	@Inject
 	public JoarkAntiCorruptionLayerImpl(HentJournalsakinfo hentJournalsakinfo, CacheManager cacheManager) {
 		this.hentJournalsakinfo = hentJournalsakinfo;
-		this.journalpostCache = cacheManager.getCache(LokalCacheConfig.JOURNALPOST_CACHE);
+	}
+
+	@Override
+	public Map<String, JournalpostDto> hentJournalpostBulk(TilgangBruker tilgangBruker,
+														   List<TilgangSak> tilgangSakList,
+														   LocalDate fraDato,
+														   List<JournalpostType> inkluderJournalposttyper,
+														   List<JournalStatus> inkluderJournalstatus) {
+		List<String> alleIdenter = tilgangBruker.getHistoriskeIdenter()
+				.stream()
+				.map(TilgangIdent::getIdentifikator)
+				.collect(Collectors.toList());
+		alleIdenter.add(tilgangBruker.getFoedselsnr());
+		HentJournalpostBulkResponseTo responseTo = hentJournalsakinfo.hentJournalpostBulk(HentJournalpostBulkRequestTo.builder()
+				.aktoerId(tilgangBruker.getAktoerId())
+				.alleIdenter(alleIdenter)
+				.inkluderJournalpostType(inkluderJournalposttyper.stream()
+						.map(jt -> JournalpostTypeCode.valueOf(jt.name()))
+						.collect(Collectors.toList()))
+				.inkluderJournalStatus(JournalStatusCode.asList())
+				.visFeilregistrerte(inkluderJournalstatus.contains(JournalStatus.FEILREGISTRERT))
+				.fraDato(fraDato.toString())
+				.gsakSakIds(tilgangSakList.stream()
+						.filter(tilgangSak -> Arkivsakssystem.GSAK.name().equals(tilgangSak.getArkivsaksystem()))
+						.map(TilgangSak::getArkivsaksnummer).limit(SAK_MAX_SIZE).collect(Collectors.toList()))
+				.psakSakIds(tilgangSakList.stream()
+						.filter(tilgangSak -> Arkivsakssystem.PSAK.name().equals(tilgangSak.getArkivsaksystem()))
+						.map(TilgangSak::getArkivsaksnummer).limit(SAK_MAX_SIZE).collect(Collectors.toList()))
+				.build());
+
+		return responseTo.getTilgangJournalposter().stream()
+				.collect(Collectors.toMap(journalpostDto -> "journalpostId=" + journalpostDto.getJournalpostId().toString(), journalpostDto -> journalpostDto));
 	}
 
 	@Override
@@ -170,7 +197,6 @@ class JoarkAntiCorruptionLayerImpl implements JoarkAntiCorruptionLayer {
 	}
 
 	private TilgangJournalpost mapTilgangJournalpost(JournalpostDto dto) {
-		journalpostCache.put(dto.getJournalpostId().toString(), dto);
 		return TilgangJournalpost.builder()
 				.journalpostId(dto.getJournalpostId().toString())
 				.journalStatus(dto.getJournalstatus().toString())
@@ -186,19 +212,6 @@ class JoarkAntiCorruptionLayerImpl implements JoarkAntiCorruptionLayer {
 						.variantFormat(dokdto.getVariantFormat() == null ? null : dokdto.getVariantFormat().toString())
 						.build()).collect(Collectors.toList()))
 				.build();
-	}
-
-	@Override
-	public List<Journalpost> hentVisningJournalposter(Map<String, Sak> sakMap, List<String> journalpostIds) {
-		return journalpostIds.stream()
-				.map(journalpostId -> {
-					JournalpostDto journalpostDto = journalpostCache.get(journalpostId, JournalpostDto.class);
-					if (journalpostDto == null) {
-						log.warn("journalpostId={} ikke funnet i lokal cache.", journalpostId);
-						return null;
-					}
-					return mapJournalpostDto(sakMap, journalpostDto);
-				}).filter(Objects::nonNull).collect(Collectors.toList());
 	}
 
 	private Journalpost mapJournalpostDto(Map<String, Sak> sakMap, JournalpostDto journalpostDto) {
@@ -230,7 +243,7 @@ class JoarkAntiCorruptionLayerImpl implements JoarkAntiCorruptionLayer {
 	}
 
 	private JournalStatus mapJournalstatus(JournalpostDto journalpostDto) {
-		if(journalpostDto.getSaksrelasjon() != null && journalpostDto.getSaksrelasjon().getFeilregistrert()) {
+		if (journalpostDto.getSaksrelasjon() != null && journalpostDto.getSaksrelasjon().getFeilregistrert()) {
 			return JournalStatus.FEILREGISTRERT;
 		} else {
 			return journalpostDto.getJournalstatus().toSafJournalStatus();
@@ -249,7 +262,7 @@ class JoarkAntiCorruptionLayerImpl implements JoarkAntiCorruptionLayer {
 					relevanteDatoer.add(new RelevantDato(journalpostDto.getEkspedertDato(), Datotype.EKSPEDERT_DATO));
 				}
 			default:
-				if(journalpostDto.getDatoOpprettet() != null) {
+				if (journalpostDto.getDatoOpprettet() != null) {
 					relevanteDatoer.add(new RelevantDato(journalpostDto.getDatoOpprettet(), Datotype.OPPRETTET_DATO));
 				}
 				return relevanteDatoer;

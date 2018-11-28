@@ -65,10 +65,11 @@ public class PensjonSakConsumer {
 			);
 			return returnObject;
 		} catch (HentSakSammendragListeSakManglerEierenhet e) {
-			throw new SafTechnicalException("Funksjonell feil mot Pensjon_v1. Personen ble funnet, men en av sakene mangler eierenhet. Feilmelding=%s", e);
+			throw new SafFunctionalException("Funksjonell feil mot PensjonSak_v1.hentSakSammendragListe. Personen ble funnet, men en av sakene mangler eierenhet.", e);
 		} catch (HentSakSammendragListePersonIkkeFunnet e) {
-			throw new SafFunctionalException(String.format("Teknisk feil mot Pensjon_v1. Personen ble ikke funnet. Feilmelding=%s", e
-					.getMessage()), e);
+			throw new SafFunctionalException("Funksjonell feil mot PensjonSak_v1.hentSakSammendragListe. Personen ble ikke funnet.", e);
+		} catch (Exception e) {
+			throw new SafTechnicalException("Teknisk feil mot PensjonSak_v1.hentSakSammendragListe", e);
 		}
 	}
 

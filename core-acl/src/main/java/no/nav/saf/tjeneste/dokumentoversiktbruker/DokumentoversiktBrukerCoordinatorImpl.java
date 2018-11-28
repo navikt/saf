@@ -65,7 +65,8 @@ public class DokumentoversiktBrukerCoordinatorImpl implements DokumentoversiktBr
 				).toList()
 				.blockingGet();
 
-		final List<TilgangJournalpost> tilgangJournalpostList = tilgangsmodellRepository.findTilgangJournalposter(tilgangBruker,
+		final List<TilgangJournalpost> tilgangJournalpostList = tilgangsmodellRepository.findTilgangJournalposter(safRequestContext,
+				tilgangBruker,
 				filteredTilgangSakList,
 				dokumentoversiktBrukerArguments.getFraDato(),
 				dokumentoversiktBrukerArguments.getJournalposttyper(),
@@ -80,7 +81,7 @@ public class DokumentoversiktBrukerCoordinatorImpl implements DokumentoversiktBr
 				).toList()
 				.blockingGet();
 
-		return visningsmodellRepository.findJournalposter(tilgangBruker.getAktoerId(), tilgangBruker.getFoedselsnr(),
+		return visningsmodellRepository.findJournalposter(safRequestContext, tilgangBruker.getAktoerId(), tilgangBruker.getFoedselsnr(),
 				filteredTilgangJournalpostList.stream().map(TilgangJournalpost::getJournalpostId).collect(Collectors.toList()));
 	}
 

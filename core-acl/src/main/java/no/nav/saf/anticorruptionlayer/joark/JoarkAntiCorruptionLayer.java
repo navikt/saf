@@ -1,11 +1,10 @@
 package no.nav.saf.anticorruptionlayer.joark;
 
+import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.JournalpostDto;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.domain.tilgangsmodell.TilgangJournalpost;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 import no.nav.saf.tjeneste.hentdokument.HentDokument;
-import no.nav.saf.tjeneste.visningsmodell.Journalpost;
-import no.nav.saf.tjeneste.visningsmodell.Sak;
 import no.nav.saf.tjeneste.visningsmodell.kode.JournalStatus;
 import no.nav.saf.tjeneste.visningsmodell.kode.JournalpostType;
 
@@ -18,13 +17,17 @@ import java.util.Map;
  */
 public interface JoarkAntiCorruptionLayer {
 
+	Map<String, JournalpostDto> hentJournalpostBulk(TilgangBruker tilgangBruker,
+													List<TilgangSak> tilgangSakList,
+													LocalDate fraDato,
+													List<JournalpostType> inkluderJournalposttyper,
+													List<JournalStatus> inkluderJournalstatus);
+
 	List<TilgangJournalpost> hentTilgangJournalpostListByArkivsaker(TilgangBruker tilgangBruker,
 																	List<TilgangSak> tilgangSakList,
 																	LocalDate fraDato,
 																	List<JournalpostType> inkluderJournalposttyper,
 																	List<JournalStatus> inkluderJournalstatus);
-
-	List<Journalpost> hentVisningJournalposter(Map<String, Sak> sakMap, List<String> journalpostIds);
 
 	TilgangJournalpost hentTilgangJournalpost(String journalpostId, String dokumentId, String variantFormat);
 

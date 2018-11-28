@@ -1,5 +1,6 @@
 package no.nav.saf.tjeneste.dokumentoversiktbruker;
 
+import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tjeneste.visningsmodell.Journalpost;
 
 import java.util.List;
@@ -8,5 +9,8 @@ import java.util.List;
  * @author Joakim Bjørnstad, Jbit AS
  */
 public interface DokumentoversiktBrukerVisningsmodellRepository {
-	List<Journalpost> findJournalposter(String aktoerId, String foedselsnummer, List<String> journalpostIds);
+	List<Journalpost> findJournalposter(SafRequestContext safRequestContext,
+										String aktoerId,
+										String foedselsnummer,
+										List<String> journalpostIds);
 }

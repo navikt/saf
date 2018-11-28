@@ -44,7 +44,6 @@ public class HentJournalsakinfo {
 				.build();
 	}
 
-//	@Cacheable(cacheNames = HENT_JOURNALPOSTBULK_CACHE)
 	@Monitor(value = "dok_consumer", extraTags = {"process", "hentJournalpostBulk"}, histogram = true)
 	public HentJournalpostBulkResponseTo hentJournalpostBulk(HentJournalpostBulkRequestTo request) {
 		ResponseEntity<HentJournalpostBulkResponseTo> response = restTemplate.postForEntity("/hentjournalpostbulk", request, HentJournalpostBulkResponseTo.class);
