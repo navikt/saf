@@ -1,5 +1,5 @@
 team: teamdokumenthandtering
-image: "docker.adeo.no:5000/dok/saf"
+image: "repo.adeo.no:5443/dok/saf"
 replicas:
   min: 2
   max: 4
