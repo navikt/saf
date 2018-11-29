@@ -1,5 +1,6 @@
 package no.nav.saf.anticorruptionlayer.gsak;
 
+import no.nav.saf.domain.Arkivsak;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 import no.nav.saf.tjeneste.visningsmodell.Sak;
@@ -12,9 +13,11 @@ import java.util.List;
  */
 public interface GsakAntiCorruptionLayer {
 
-	List<Sak> findSakerByAktoerId(final String aktoerId);
+	List<Sak> findSakerByAktoerId(String aktoerId);
 
-	List<TilgangSak> findTilgangSakListByAktoerId(final String aktoerId, List<Tema> tema);
+	List<Arkivsak> findArkivsaker(String aktoerId, List<Tema> tema);
 
-	TilgangBruker findTilgangSakBySakId(final String sakId);
+	List<TilgangSak> findTilgangSakListByAktoerId(String aktoerId, List<Tema> tema);
+
+	TilgangBruker findTilgangSakBySakId(String sakId);
 }

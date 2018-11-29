@@ -10,18 +10,17 @@ import no.nav.saf.tjeneste.visningsmodell.kode.Journalstatus;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author Joakim Bjørnstad, Jbit AS
  */
 public interface JoarkAntiCorruptionLayer {
 
-	Map<String, JournalpostDto> hentJournalpostBulk(TilgangBruker tilgangBruker,
-													List<TilgangSak> tilgangSakList,
-													LocalDate fraDato,
-													List<Journalposttype> inkluderJournalposttyper,
-													List<Journalstatus> inkluderJournalstatuses);
+	List<JournalpostDto> hentJournalpostBulk(TilgangBruker tilgangBruker,
+											 List<TilgangSak> tilgangSakList,
+											 LocalDate fraDato,
+											 List<Journalposttype> inkluderJournalposttyper,
+											 List<Journalstatus> inkluderJournalstatuses);
 
 	TilgangJournalpost hentTilgangJournalpost(String journalpostId, String dokumentId, String variantFormat);
 

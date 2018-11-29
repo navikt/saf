@@ -1,7 +1,6 @@
 package no.nav.saf.anticorruptionlayer.gsak.hentgsaksaker;
 
 import lombok.extern.slf4j.Slf4j;
-import no.nav.saf.anticorruptionlayer.gsak.domain.GsakSakerTo;
 import no.nav.saf.cache.LokalCacheConfig;
 import no.nav.saf.exceptions.SafFunctionalException;
 import no.nav.saf.exceptions.SafTechnicalException;

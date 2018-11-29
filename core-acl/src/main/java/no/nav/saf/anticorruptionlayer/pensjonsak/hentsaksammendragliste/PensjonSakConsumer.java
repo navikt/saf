@@ -23,6 +23,7 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
+import javax.xml.ws.soap.SOAPFaultException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -66,6 +67,14 @@ public class PensjonSakConsumer {
 			throw new SafFunctionalException("Funksjonell feil mot PensjonSak_v1.hentSakSammendragListe. Personen ble funnet, men en av sakene mangler eierenhet.", e);
 		} catch (HentSakSammendragListePersonIkkeFunnet e) {
 			throw new SafFunctionalException("Funksjonell feil mot PensjonSak_v1.hentSakSammendragListe. Personen ble ikke funnet.", e);
+		} catch (SOAPFaultException e) {
+			// Se https://jira.adeo.no/browse/TEST-40974 for grunnen til at dette er her
+			// Workaround for å komme rundt at pensjon ikke oppfyller kontraktene sine
+			if(e.getMessage().contains("cvc-particle 3.1: in element {http://nav.no/tjeneste/virksomhet/pensjonSak/v1}hentSakSammendragListepersonIkkeFunnet of type {http://nav.no/tjeneste/virksomhet/pensjonSak/v1/feil}PersonIkkeFunnet, found </a:hentSakSammendragListepersonIkkeFunnet> (in namespace http://nav.no/tjeneste/virksomhet/pensjonSak/v1), but next item should be feilkilde")){
+				throw new SafFunctionalException("Funksjonell feil mot PensjonSak_v1.hentSakSammendragListe. Personen ble ikke funnet.", e);
+			} else {
+				throw new SafTechnicalException("Teknisk feil mot PensjonSak_v1.hentSakSammendragListe", e);
+			}
 		} catch (Exception e) {
 			throw new SafTechnicalException("Teknisk feil mot PensjonSak_v1.hentSakSammendragListe", e);
 		}

@@ -1,21 +1,14 @@
 package no.nav.saf.tjeneste.dokumentoversiktbruker;
 
-import static no.nav.saf.domain.TilgangsmodellRepositoryImpl.PENSJON;
-
-import no.nav.saf.anticorruptionlayer.gsak.GsakAntiCorruptionLayer;
 import no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoMapper;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.JournalpostDto;
-import no.nav.saf.anticorruptionlayer.pensjonsak.PensjonSakAntiCorruptionLayer;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tjeneste.visningsmodell.Journalpost;
-import no.nav.saf.tjeneste.visningsmodell.Sak;
-import no.nav.saf.tjeneste.visningsmodell.kode.Tema;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -23,33 +16,20 @@ import java.util.stream.Collectors;
  */
 @Component
 public class DokumentoversiktBrukerVisningsmodellRepositoryImpl implements DokumentoversiktBrukerVisningsmodellRepository {
-	private final GsakAntiCorruptionLayer gsakAntiCorruptionLayer;
-	private final PensjonSakAntiCorruptionLayer pensjonSakAntiCorruptionLayer;
 	private final JournalpostDtoMapper journalpostDtoMapper;
 
 	@Inject
-	public DokumentoversiktBrukerVisningsmodellRepositoryImpl(GsakAntiCorruptionLayer gsakAntiCorruptionLayer,
-															  PensjonSakAntiCorruptionLayer pensjonSakAntiCorruptionLayer,
-															  JournalpostDtoMapper journalpostDtoMapper) {
-		this.gsakAntiCorruptionLayer = gsakAntiCorruptionLayer;
-		this.pensjonSakAntiCorruptionLayer = pensjonSakAntiCorruptionLayer;
+	public DokumentoversiktBrukerVisningsmodellRepositoryImpl(JournalpostDtoMapper journalpostDtoMapper) {
 		this.journalpostDtoMapper = journalpostDtoMapper;
 	}
 
 	@Override
-	public List<Journalpost> findJournalposter(SafRequestContext safRequestContext,
-											   List<Tema> tema,
-											   String aktoerId,
-											   String foedselsnummer,
-											   List<String> journalpostIds) {
-		List<Sak> sakerByAktoerId = gsakAntiCorruptionLayer.findSakerByAktoerId(aktoerId);
-		if(!Collections.disjoint(tema, PENSJON)) {
-			sakerByAktoerId.addAll(pensjonSakAntiCorruptionLayer.hentSakerByFoedselsnummer(foedselsnummer));
-		}
-		Map<String, Sak> sakMap = sakerByAktoerId.stream().collect(Collectors.toMap(Sak::getArkivsaksnummer, sak -> sak));
+	public List<Journalpost> findJournalposter(final List<String> journalpostIds,
+											   final SafRequestContext safRequestContext) {
 		return journalpostIds.stream().map(journalpostId -> {
 			JournalpostDto journalpostDto = safRequestContext.getParameterContext().getParameter("journalpostId=" + journalpostId);
-			return journalpostDtoMapper.mapJournalpostDto(sakMap, journalpostDto);
-		}).collect(Collectors.toList());
+			return journalpostDtoMapper.mapJournalpostDto(journalpostDto, safRequestContext.getParameterContext());
+		}).filter(Objects::nonNull)
+				.collect(Collectors.toList());
 	}
 }

@@ -34,7 +34,6 @@ import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -55,11 +54,11 @@ class JoarkAntiCorruptionLayerImpl implements JoarkAntiCorruptionLayer {
 	}
 
 	@Override
-	public Map<String, JournalpostDto> hentJournalpostBulk(TilgangBruker tilgangBruker,
-														   List<TilgangSak> tilgangSakList,
-														   LocalDate fraDato,
-														   List<Journalposttype> inkluderJournalposttyper,
-														   List<Journalstatus> inkluderJournalstatuses) {
+	public List<JournalpostDto> hentJournalpostBulk(TilgangBruker tilgangBruker,
+													List<TilgangSak> tilgangSakList,
+													LocalDate fraDato,
+													List<Journalposttype> inkluderJournalposttyper,
+													List<Journalstatus> inkluderJournalstatuses) {
 		List<String> alleIdenter = tilgangBruker.getHistoriskeIdenter()
 				.stream()
 				.map(TilgangIdent::getIdentifikator)
@@ -82,15 +81,7 @@ class JoarkAntiCorruptionLayerImpl implements JoarkAntiCorruptionLayer {
 						.map(TilgangSak::getArkivsaksnummer).limit(SAK_MAX_SIZE).collect(Collectors.toList()))
 				.build());
 
-		List<JournalpostDto> tilgangJournalposter = responseTo.getTilgangJournalposter();
-		return tilgangJournalposter.stream()
-				.collect(Collectors.toMap(journalpostDto -> "journalpostId=" + journalpostDto.getJournalpostId().toString(),
-						journalpostDto -> journalpostDto, (
-								journalpostDto1, journalpostDto2) -> {
-							// Ignorerer duplikate journalpostId
-							return journalpostDto1;
-						})
-				);
+		return responseTo.getTilgangJournalposter();
 	}
 
 	@Override

@@ -16,17 +16,18 @@ import java.util.List;
  * @author Joakim Bjørnstad, Jbit AS
  */
 public interface TilgangsmodellRepository {
-
 	TilgangBruker findTilgangBruker(Brukeridentifikator brukeridentifikator);
+
+	List<TilgangSak> findTilgangSaker(TilgangBruker tilgangBruker, List<Tema> tema, SafRequestContext safRequestContext);
 
 	List<TilgangSak> findTilgangSakListByTilgangBruker(TilgangBruker tilgangBruker, List<Tema> tema);
 
-	List<TilgangJournalpost> findTilgangJournalposter(SafRequestContext safRequestContext,
-													  TilgangBruker tilgangBruker,
+	List<TilgangJournalpost> findTilgangJournalposter(TilgangBruker tilgangBruker,
 													  List<TilgangSak> tilgangSakList,
 													  LocalDate fraDato,
 													  List<Journalposttype> inkluderJournalposttyper,
-													  List<Journalstatus> inkluderJournalstatuses);
+													  List<Journalstatus> inkluderJournalstatuses,
+													  SafRequestContext safRequestContext);
 
 	TilgangJournalpost findTilgangJournalpost(String journalpostId, String dokumentId, String variantFormat);
 

@@ -1,12 +1,17 @@
 package no.nav.saf.anticorruptionlayer.joark.domain;
 
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.FagomradeCode;
+import no.nav.saf.anticorruptionlayer.joark.domain.kode.FagsystemCode;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.JournalpostDto;
+import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.SaksrelasjonDto;
+import no.nav.saf.domain.Arkivsak;
+import no.nav.saf.tilgangskontroll.ParameterContext;
 import no.nav.saf.tjeneste.visningsmodell.DokumentInfo;
 import no.nav.saf.tjeneste.visningsmodell.Dokumentvariant;
 import no.nav.saf.tjeneste.visningsmodell.Journalpost;
 import no.nav.saf.tjeneste.visningsmodell.RelevantDato;
 import no.nav.saf.tjeneste.visningsmodell.Sak;
+import no.nav.saf.tjeneste.visningsmodell.kode.Arkivsakssystem;
 import no.nav.saf.tjeneste.visningsmodell.kode.Datotype;
 import no.nav.saf.tjeneste.visningsmodell.kode.Journalposttype;
 import no.nav.saf.tjeneste.visningsmodell.kode.Journalstatus;
@@ -17,7 +22,6 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -27,7 +31,10 @@ import java.util.stream.Collectors;
  */
 @Component
 public class JournalpostDtoMapper {
-	public Journalpost mapJournalpostDto(Map<String, Sak> sakMap, JournalpostDto journalpostDto) {
+	public Journalpost mapJournalpostDto(final JournalpostDto journalpostDto, final ParameterContext parameterContext) {
+		if (journalpostDto == null) {
+			return null;
+		}
 		final Kanal kanal = mapKanal(journalpostDto);
 		return Journalpost.builder()
 				.journalpostId(journalpostDto.getJournalpostId().toString())
@@ -36,8 +43,7 @@ public class JournalpostDtoMapper {
 				.journalstatus(mapJournalstatus(journalpostDto))
 				.tema(FagomradeCode.toSafJournalStatus(journalpostDto.getFagomrade()))
 				.temanavn(FagomradeCode.toSafJournalStatus(journalpostDto.getFagomrade()).getTemanavn())
-				.sak(journalpostDto.getSaksrelasjon() == null ? null : sakMap.get(journalpostDto.getSaksrelasjon()
-						.getSakId()))
+				.sak(mapSak(journalpostDto, parameterContext))
 				.avsenderMottakerNavn(journalpostDto.getAvsenderMottakerNavn())
 				.journalfortAvNavn(journalpostDto.getJournalfortAvNavn())
 				.kanal(kanal)
@@ -53,6 +59,26 @@ public class JournalpostDtoMapper {
 										.variantformat(Variantformat.valueOf(dokumentInfoDto.getVariantFormat().name()))
 										.build()))
 								.build()).collect(Collectors.toList())).build();
+	}
+
+	private Sak mapSak(JournalpostDto journalpostDto, ParameterContext parameterContext) {
+		SaksrelasjonDto saksrelasjon = journalpostDto.getSaksrelasjon();
+		if (saksrelasjon == null) {
+			return null;
+		} else {
+			Arkivsak arkivsak = parameterContext.getParameter("sakId=" + saksrelasjon.getSakId() + "-" + mapJoarkFagsystem(saksrelasjon.getFagsystem()));
+			if (arkivsak == null) {
+				return null;
+			}
+			return Sak.builder()
+					.arkivsaksnummer(arkivsak.getArkivsaksnummer())
+					.arkivsaksystem(arkivsak.getArkivsaksystem())
+					.fagsaksnummer(arkivsak.getFagsaksnummer())
+					.fagsystem(arkivsak.getFagsystem())
+					.tema(arkivsak.getTema())
+					.datoOpprettet(arkivsak.getDatoOpprettet())
+					.build();
+		}
 	}
 
 	private Journalstatus mapJournalstatus(JournalpostDto journalpostDto) {
@@ -109,6 +135,17 @@ public class JournalpostDtoMapper {
 				return Kanal.SENTRAL_UTSKRIFT;
 			default:
 				return null;
+		}
+	}
+
+	private String mapJoarkFagsystem(FagsystemCode joarkFagsystem) {
+		switch (joarkFagsystem) {
+			case PEN:
+				return Arkivsakssystem.PSAK.name();
+			case FS22:
+				return Arkivsakssystem.GSAK.name();
+			default:
+				return "";
 		}
 	}
 }

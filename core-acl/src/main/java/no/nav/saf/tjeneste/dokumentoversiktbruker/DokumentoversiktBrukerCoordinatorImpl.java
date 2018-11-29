@@ -55,7 +55,7 @@ public class DokumentoversiktBrukerCoordinatorImpl implements DokumentoversiktBr
 			return new ArrayList<>();
 		}
 
-		final List<TilgangSak> tilgangSakList = tilgangsmodellRepository.findTilgangSakListByTilgangBruker(tilgangBruker, dokumentoversiktBrukerArguments.getTema());
+		final List<TilgangSak> tilgangSakList = tilgangsmodellRepository.findTilgangSaker(tilgangBruker, dokumentoversiktBrukerArguments.getTema(), safRequestContext);
 		List<TilgangSak> filteredTilgangSakList = Flowable.fromIterable(tilgangSakList)
 				.flatMap(tilgangSak ->
 						Flowable.just(tilgangSak)
@@ -65,12 +65,13 @@ public class DokumentoversiktBrukerCoordinatorImpl implements DokumentoversiktBr
 				).toList()
 				.blockingGet();
 
-		final List<TilgangJournalpost> tilgangJournalpostList = tilgangsmodellRepository.findTilgangJournalposter(safRequestContext,
+		final List<TilgangJournalpost> tilgangJournalpostList = tilgangsmodellRepository.findTilgangJournalposter(
 				tilgangBruker,
 				filteredTilgangSakList,
 				dokumentoversiktBrukerArguments.getFraDato(),
 				dokumentoversiktBrukerArguments.getJournalposttyper(),
-				dokumentoversiktBrukerArguments.getJournalstatuser()
+				dokumentoversiktBrukerArguments.getJournalstatuser(),
+				safRequestContext
 		);
 
 		final List<TilgangJournalpost> filteredTilgangJournalpostList = Flowable.fromIterable(tilgangJournalpostList)
@@ -81,8 +82,7 @@ public class DokumentoversiktBrukerCoordinatorImpl implements DokumentoversiktBr
 				).toList()
 				.blockingGet();
 
-		return visningsmodellRepository.findJournalposter(safRequestContext, dokumentoversiktBrukerArguments.getTema(), tilgangBruker.getAktoerId(), tilgangBruker.getFoedselsnr(),
-				filteredTilgangJournalpostList.stream().map(TilgangJournalpost::getJournalpostId).collect(Collectors.toList()));
+		return visningsmodellRepository.findJournalposter(filteredTilgangJournalpostList.stream().map(TilgangJournalpost::getJournalpostId).collect(Collectors.toList()), safRequestContext);
 	}
 
 	@Override
