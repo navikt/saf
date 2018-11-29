@@ -7,6 +7,7 @@ import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tjeneste.visningsmodell.Brukeridentifikator;
 import no.nav.saf.tjeneste.visningsmodell.kode.Journalposttype;
 import no.nav.saf.tjeneste.visningsmodell.kode.Journalstatus;
+import no.nav.saf.tjeneste.visningsmodell.kode.Tema;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -18,7 +19,7 @@ public interface TilgangsmodellRepository {
 
 	TilgangBruker findTilgangBruker(Brukeridentifikator brukeridentifikator);
 
-	List<TilgangSak> findTilgangSakListByTilgangBruker(TilgangBruker tilgangBruker);
+	List<TilgangSak> findTilgangSakListByTilgangBruker(TilgangBruker tilgangBruker, List<Tema> tema);
 
 	List<TilgangJournalpost> findTilgangJournalposter(SafRequestContext safRequestContext,
 													  TilgangBruker tilgangBruker,

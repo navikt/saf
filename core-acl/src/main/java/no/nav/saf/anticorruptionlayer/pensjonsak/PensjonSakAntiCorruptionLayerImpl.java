@@ -27,7 +27,7 @@ class PensjonSakAntiCorruptionLayerImpl implements PensjonSakAntiCorruptionLayer
 	@Override
 	public List<TilgangSak> hentTilgangSakList(final String foedselsnummer) {
 		try {
-			return pensjonSakConsumer.hentSakSammendragListe(foedselsnummer).getSakSammendragListe().stream()
+			return pensjonSakConsumer.hentSakSammendragListe(foedselsnummer).stream()
 					.map(tilgangsak -> TilgangSak.builder()
 							.arkivsaksnummer(tilgangsak.getSakNr())
 							.arkivsaksystem(String.valueOf(Arkivsakssystem.PSAK))
@@ -43,7 +43,7 @@ class PensjonSakAntiCorruptionLayerImpl implements PensjonSakAntiCorruptionLayer
 	@Override
 	public List<Sak> hentSakerByFoedselsnummer(final String foedselsnummer) {
 		try {
-			return pensjonSakConsumer.hentSakSammendragListe(foedselsnummer).getSakSammendragListe().stream()
+			return pensjonSakConsumer.hentSakSammendragListe(foedselsnummer).stream()
 					.map(sakSammendrag -> Sak.builder()
 							.arkivsaksnummer(sakSammendrag.getSakNr())
 							.arkivsaksystem(Arkivsakssystem.PSAK)

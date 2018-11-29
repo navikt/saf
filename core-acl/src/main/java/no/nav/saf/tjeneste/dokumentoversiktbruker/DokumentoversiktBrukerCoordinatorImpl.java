@@ -55,7 +55,7 @@ public class DokumentoversiktBrukerCoordinatorImpl implements DokumentoversiktBr
 			return new ArrayList<>();
 		}
 
-		final List<TilgangSak> tilgangSakList = tilgangsmodellRepository.findTilgangSakListByTilgangBruker(tilgangBruker);
+		final List<TilgangSak> tilgangSakList = tilgangsmodellRepository.findTilgangSakListByTilgangBruker(tilgangBruker, dokumentoversiktBrukerArguments.getTema());
 		List<TilgangSak> filteredTilgangSakList = Flowable.fromIterable(tilgangSakList)
 				.flatMap(tilgangSak ->
 						Flowable.just(tilgangSak)
@@ -81,12 +81,12 @@ public class DokumentoversiktBrukerCoordinatorImpl implements DokumentoversiktBr
 				).toList()
 				.blockingGet();
 
-		return visningsmodellRepository.findJournalposter(safRequestContext, tilgangBruker.getAktoerId(), tilgangBruker.getFoedselsnr(),
+		return visningsmodellRepository.findJournalposter(safRequestContext, dokumentoversiktBrukerArguments.getTema(), tilgangBruker.getAktoerId(), tilgangBruker.getFoedselsnr(),
 				filteredTilgangJournalpostList.stream().map(TilgangJournalpost::getJournalpostId).collect(Collectors.toList()));
 	}
 
 	@Override
-	public List<DokumentInfo> findDokumenter(Journalpost journalpost, SafRequestContext safRequestContext) {
+	public List<DokumentInfo> findDokumenter(final Journalpost journalpost, final SafRequestContext safRequestContext) {
 		// TODO MMA-1092 Pep4 for TilgangDokument her (er dette allerede er avklart i TilgangJournalpost så må context vite om dette)
 		return journalpost.getDokumenter();
 	}

@@ -8,7 +8,7 @@ schema {
 
 type Query {
     # Returnerer en liste over alle dokumenter tilknyttet en bruker.
-    dokumentoversiktBruker(brukeridentifikator: Brukeridentifikator!, fraDato: Date = null, journalposttyper : [Journalposttype] = [], journalstatuser : [Journalstatus] = []): [Journalpost]!
+    dokumentoversiktBruker(brukeridentifikator: Brukeridentifikator!, fraDato: Date = null, tema: [Tema], journalposttyper: [Journalposttype] = [], journalstatuser: [Journalstatus] = []): [Journalpost]!
 }
 
 type Journalpost {

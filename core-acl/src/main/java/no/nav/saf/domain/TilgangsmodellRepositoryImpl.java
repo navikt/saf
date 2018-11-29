@@ -18,6 +18,7 @@ import no.nav.saf.tjeneste.visningsmodell.Brukeridentifikator;
 import no.nav.saf.tjeneste.visningsmodell.kode.Arkivsakssystem;
 import no.nav.saf.tjeneste.visningsmodell.kode.Journalposttype;
 import no.nav.saf.tjeneste.visningsmodell.kode.Journalstatus;
+import no.nav.saf.tjeneste.visningsmodell.kode.Tema;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Repository;
 
@@ -25,6 +26,8 @@ import javax.inject.Inject;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -35,6 +38,7 @@ import java.util.stream.Collectors;
 @Repository
 @Slf4j
 public class TilgangsmodellRepositoryImpl implements TilgangsmodellRepository {
+	public static final EnumSet<Tema> PENSJON = EnumSet.of(Tema.PEN, Tema.UFO);
 
 	private final AktoerAntiCorruptionLayer aktoerAntiCorruptionLayer;
 	private final GsakAntiCorruptionLayer gsakAntiCorruptionLayer;
@@ -71,15 +75,19 @@ public class TilgangsmodellRepositoryImpl implements TilgangsmodellRepository {
 	}
 
 	@Override
-	@Cacheable(cacheNames = LokalCacheConfig.TILGANGSMODELL_REPO_SAK_CACHE, key = "#tilgangBruker.aktoerId")
-	public List<TilgangSak> findTilgangSakListByTilgangBruker(final TilgangBruker tilgangBruker) {
+	@Cacheable(cacheNames = LokalCacheConfig.TILGANGSMODELL_REPO_SAK_CACHE, key = "#tilgangBruker.aktoerId + '_' + #tema")
+	public List<TilgangSak> findTilgangSakListByTilgangBruker(final TilgangBruker tilgangBruker, final List<Tema> tema) {
 		try {
 			Observable<List<TilgangSak>> gsaker = Observable.fromCallable(() ->
-					gsakAntiCorruptionLayer.findTilgangSakListByAktoerId(tilgangBruker.getAktoerId()))
+					gsakAntiCorruptionLayer.findTilgangSakListByAktoerId(tilgangBruker.getAktoerId(), tema))
 					.subscribeOn(Schedulers.io());
-			Observable<List<TilgangSak>> psaker = Observable.fromCallable(() ->
-					pensjonSakAntiCorruptionLayer.hentTilgangSakList(tilgangBruker.getFoedselsnr()))
-					.subscribeOn(Schedulers.io());
+			Observable<List<TilgangSak>> psaker = Observable.fromCallable(() -> {
+				if(!Collections.disjoint(tema, PENSJON)) {
+					return pensjonSakAntiCorruptionLayer.hentTilgangSakList(tilgangBruker.getFoedselsnr());
+				} else {
+					return new ArrayList<TilgangSak>();
+				}
+			}).subscribeOn(Schedulers.io());
 			return Observable.concat(gsaker, psaker)
 					.flatMapIterable(item -> item)
 					.toList().blockingGet();

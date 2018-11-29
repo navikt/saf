@@ -6,7 +6,7 @@ import static no.nav.saf.anticorruptionlayer.RetryConstants.MAX_ATTEMPTS_SHORT_P
 import static no.nav.saf.anticorruptionlayer.RetryConstants.MULTIPLIER_SHORT_PENSJON_V1;
 
 import lombok.extern.slf4j.Slf4j;
-import no.nav.saf.anticorruptionlayer.pensjonsak.domain.SakSammendragListeTo;
+import no.nav.saf.anticorruptionlayer.pensjonsak.domain.PsakSakerTo;
 import no.nav.saf.cache.LokalCacheConfig;
 import no.nav.saf.exceptions.SafFunctionalException;
 import no.nav.saf.exceptions.SafTechnicalException;
@@ -23,6 +23,7 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
+import java.util.List;
 import java.util.stream.Collectors;
 
 
@@ -42,7 +43,7 @@ public class PensjonSakConsumer {
 			maxAttempts = MAX_ATTEMPTS_SHORT_PENSJON_V1,
 			backoff = @Backoff(delay = DELAY_SHORT_PENSJON_V1, multiplier = MULTIPLIER_SHORT_PENSJON_V1))
 	@Monitor(value = "dok_consumer", extraTags = {"process", "hentSakSammendragListe"}, histogram = true)
-	public SakSammendragListeTo hentSakSammendragListe(final String personident) {
+	public List<PsakSakerTo> hentSakSammendragListe(final String personident) {
 		WSHentSakSammendragListeRequest request = new WSHentSakSammendragListeRequest();
 		request.setPersonident(personident);
 
@@ -52,18 +53,15 @@ public class PensjonSakConsumer {
 
 		try {
 			WSHentSakSammendragListeResponse response = pensjonSakV1.hentSakSammendragListe(request);
-
-			SakSammendragListeTo returnObject = new SakSammendragListeTo();
-
-			returnObject.setSakSammendragListe(response.getSakSammendragListe().stream().map(saksammendrag -> SakSammendragListeTo.SakSammendrag.builder()
-					.sakNr(saksammendrag.getSakId())
-					.arkivSakSystem(Arkivsakssystem.PSAK)
-					.tema(saksammendrag.getArkivtema().getValue())
-					.datoOpprettet(saksammendrag.getSaksperiode().getFom() == null ? null : jodaToJavaLocalDateTime(saksammendrag.getSaksperiode().getFom().toDateTimeAtStartOfDay().toLocalDateTime()))
-					.build())
-					.collect(Collectors.toList())
-			);
-			return returnObject;
+			return response.getSakSammendragListe().stream().map(saksammendrag ->
+					PsakSakerTo.builder()
+							.sakNr(saksammendrag.getSakId())
+							.arkivSakSystem(Arkivsakssystem.PSAK)
+							.tema(saksammendrag.getArkivtema().getValue())
+							.datoOpprettet(saksammendrag.getSaksperiode().getFom() == null ? null :
+									jodaToJavaLocalDateTime(saksammendrag.getSaksperiode().getFom().toDateTimeAtStartOfDay().toLocalDateTime()))
+							.build())
+					.collect(Collectors.toList());
 		} catch (HentSakSammendragListeSakManglerEierenhet e) {
 			throw new SafFunctionalException("Funksjonell feil mot PensjonSak_v1.hentSakSammendragListe. Personen ble funnet, men en av sakene mangler eierenhet.", e);
 		} catch (HentSakSammendragListePersonIkkeFunnet e) {
@@ -73,7 +71,7 @@ public class PensjonSakConsumer {
 		}
 	}
 
-	public static java.time.LocalDateTime jodaToJavaLocalDateTime(org.joda.time.LocalDateTime localDateTime) {
+	private static java.time.LocalDateTime jodaToJavaLocalDateTime(org.joda.time.LocalDateTime localDateTime) {
 		return java.time.LocalDateTime.of(
 				localDateTime.getYear(),
 				localDateTime.getMonthOfYear(),

@@ -43,7 +43,7 @@ public class GsakConsumer {
 				.basicAuthentication(serviceuserAlias.getUsername(), serviceuserAlias.getPassword()).build();
 	}
 
-	@Cacheable(cacheNames = LokalCacheConfig.SAKER_BY_AKTOER_ID_CACHE)
+	@Cacheable(cacheNames = LokalCacheConfig.SAKER_BY_AKTOER_ID_CACHE, key = "#aktoerId")
 	@Monitor(value = "dok_consumer", extraTags = {"process", "hentSakerByAktoerId"}, histogram = true)
 	public List<GsakSakerTo> hentSakerByAktoerId(final String aktoerId) {
 		UriComponentsBuilder uri = UriComponentsBuilder.fromHttpUrl(gsakApiUrl)
@@ -51,7 +51,7 @@ public class GsakConsumer {
 		return hentSaker(uri.toUriString());
 	}
 
-	@Cacheable(cacheNames = LokalCacheConfig.SAKER_BY_AKTOER_ID_CACHE)
+	@Cacheable(cacheNames = LokalCacheConfig.SAKER_BY_AKTOER_ID_CACHE, key = "#aktoerId + '_' + #tema")
 	@Monitor(value = "dok_consumer", extraTags = {"process", "hentSakerByAktoerIdWithTemakode"}, histogram = true)
 	public List<GsakSakerTo> hentSakerByAktoerId(final String aktoerId, final Tema tema) {
 		UriComponentsBuilder uri = UriComponentsBuilder.fromHttpUrl(gsakApiUrl)

@@ -12,11 +12,9 @@ import java.util.List;
  */
 public interface GsakAntiCorruptionLayer {
 
-	List<Sak> findSakerByAktoerId(final String aktoerId, final List<Tema> temaFilter);
-
 	List<Sak> findSakerByAktoerId(final String aktoerId);
 
-	List<TilgangSak> findTilgangSakListByAktoerId(final String aktoerId);
+	List<TilgangSak> findTilgangSakListByAktoerId(final String aktoerId, List<Tema> tema);
 
 	TilgangBruker findTilgangSakBySakId(final String sakId);
 }

@@ -4,6 +4,7 @@ import lombok.Value;
 import no.nav.saf.tjeneste.visningsmodell.Brukeridentifikator;
 import no.nav.saf.tjeneste.visningsmodell.kode.Journalposttype;
 import no.nav.saf.tjeneste.visningsmodell.kode.Journalstatus;
+import no.nav.saf.tjeneste.visningsmodell.kode.Tema;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -15,12 +16,14 @@ import java.util.List;
 public class DokumentoversiktBrukerArguments {
 	private final Brukeridentifikator brukeridentifikator;
 	private final LocalDate fraDato;
+	private final List<Tema> tema;
 	private final List<Journalposttype> journalposttyper;
 	private final List<Journalstatus> journalstatuser;
 	private final boolean visFeilregistrerte;
 
 	public DokumentoversiktBrukerArguments(Brukeridentifikator brukeridentifikator,
 										   LocalDate fraDato,
+										   List<Tema> tema,
 										   List<Journalposttype> journalposttyper,
 										   List<Journalstatus> journalstatuser) {
 		this.brukeridentifikator = brukeridentifikator;
@@ -28,6 +31,11 @@ public class DokumentoversiktBrukerArguments {
 			this.fraDato = LocalDate.of(1, 1, 1);
 		} else {
 			this.fraDato = fraDato;
+		}
+		if(tema.isEmpty()) {
+			this.tema = Tema.asList();
+		} else {
+			this.tema = tema;
 		}
 		if (journalposttyper.isEmpty()) {
 			this.journalposttyper = Journalposttype.asList();

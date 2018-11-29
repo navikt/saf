@@ -13,6 +13,7 @@ import no.nav.saf.tjeneste.visningsmodell.Brukeridentifikator;
 import no.nav.saf.tjeneste.visningsmodell.Journalpost;
 import no.nav.saf.tjeneste.visningsmodell.kode.Journalposttype;
 import no.nav.saf.tjeneste.visningsmodell.kode.Journalstatus;
+import no.nav.saf.tjeneste.visningsmodell.kode.Tema;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
@@ -39,6 +40,7 @@ public class DokumentoversiktWiring {
 		return RuntimeWiring.newRuntimeWiring()
 				.scalar(DateScalar.DATE)
 				.scalar(DateTimeScalar.DATE_TIME)
+				.type("Tema", typeWiring -> typeWiring.enumValues(new NaturalEnumValuesProvider<>(Tema.class)))
 				.type("Journalposttype", typeWiring -> typeWiring.enumValues(new NaturalEnumValuesProvider<>(Journalposttype.class)))
 				.type("Journalstatus", typeWiring -> typeWiring.enumValues(new NaturalEnumValuesProvider<>(Journalstatus.class)))
 				.type("Query", typeWiring -> typeWiring.dataFetcher("dokumentoversiktBruker", environment -> {
@@ -46,11 +48,13 @@ public class DokumentoversiktWiring {
 					Brukeridentifikator brukeridentifikator = mapper.convertValue(brukeridentifikatorObject, Brukeridentifikator.class);
 					logDokumentoversiktBrukerQueryInit(brukeridentifikator);
 					LocalDate fraDato = environment.getArgument("fraDato");
+					List<Tema> tema = environment.getArgument("tema");
 					List<Journalposttype> journalposttyper = environment.getArgument("journalposttyper");
 					List<Journalstatus> journalstatuser = environment.getArgument("journalstatuser");
 					SafRequestContext safRequestContext = environment.getContext();
 					try {
-						List<Journalpost> journalposter = dokumentoversiktBrukerCoordinator.findJournalposter(new DokumentoversiktBrukerArguments(brukeridentifikator, fraDato, journalposttyper, journalstatuser),
+						List<Journalpost> journalposter = dokumentoversiktBrukerCoordinator.findJournalposter(
+								new DokumentoversiktBrukerArguments(brukeridentifikator, fraDato, tema, journalposttyper, journalstatuser),
 								safRequestContext);
 						logDokumentoversiktBrukerQueryDone(journalposter.size(), brukeridentifikator);
 						return journalposter;
