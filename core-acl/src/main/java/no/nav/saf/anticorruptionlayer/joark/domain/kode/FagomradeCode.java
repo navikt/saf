@@ -4,128 +4,259 @@ import no.nav.saf.tjeneste.visningsmodell.kode.Tema;
 
 public enum FagomradeCode {
 
-	/** Bidrag */
+	/**
+	 * Bidrag
+	 */
 	BID,
-	/** Pensjon */
+	/**
+	 * Pensjon
+	 */
 	PEN,
-	/** Øvrig */
+	/**
+	 * Øvrig
+	 */
 	OVR,
-	/** Skanning */
+	/**
+	 * Skanning
+	 */
 	MOT,
-	/** Okonomi */
+	/**
+	 * Okonomi
+	 */
 	OKO,
-	/** Bidrag innkreving */
+	/**
+	 * Bidrag innkreving
+	 */
 	BII,
-	/** FS22 */
+	/**
+	 * FS22
+	 */
 	FS22,
-	/** Bil */
+	/**
+	 * Bil
+	 */
 	BIL,
-	/** Hjelpemidler */
+	/**
+	 * Hjelpemidler
+	 */
 	HJE,
-	/** Barnetrygd */
+	/**
+	 * Barnetrygd
+	 */
 	BAR,
-	/** Foreldre- og svangerskapspenger */
+	/**
+	 * Foreldre- og svangerskapspenger
+	 */
 	FOR,
-	/** Gravferdsstønad */
+	/**
+	 * Gravferdsstønad
+	 */
 	GRA,
-	/** Grunn- og hjelpestønad */
+	/**
+	 * Grunn- og hjelpestønad
+	 */
 	GRU,
-	/** Kontantstøtte */
+	/**
+	 * Kontantstøtte
+	 */
 	KON,
-	/** Omsorgspenger, Pleiepenger og opplæringspenger */
+	/**
+	 * Omsorgspenger, Pleiepenger og opplæringspenger
+	 */
 	OMS,
-	/** Supplerende stønad */
+	/**
+	 * Supplerende stønad
+	 */
 	SUP,
-	/** Yrkesskade / Menerstatning */
+	/**
+	 * Yrkesskade / Menerstatning
+	 */
 	YRK,
-	/** Enslig forsørger */
+	/**
+	 * Enslig forsørger
+	 */
 	ENF,
-	/** Stønadsregnskap */
+	/**
+	 * Stønadsregnskap
+	 */
 	STO,
-	/** Forsikring */
+	/**
+	 * Forsikring
+	 */
 	FOS,
-	/** Erstatning */
+	/**
+	 * Erstatning
+	 */
 	ERS,
-	/** Saksomkostning */
+	/**
+	 * Saksomkostning
+	 */
 	SAK,
-	/** Dagpenger */
+	/**
+	 * Dagpenger
+	 */
 	DAG,
-	/** Individstønad */
+	/**
+	 * Individstønad
+	 */
 	IND,
-	/** Mob.stønad */
+	/**
+	 * Mob.stønad
+	 */
 	MOB,
-	/** Oppfølging */
+	/**
+	 * Oppfølging
+	 */
 	OPP,
-	/** Ventelønn */
+	/**
+	 * Ventelønn
+	 */
 	VEN,
-	/** Yrkesrettet attføring */
+	/**
+	 * Yrkesrettet attføring
+	 */
 	YRA,
-	/** Rehabilitering */
+	/**
+	 * Rehabilitering
+	 */
 	REH,
-	/** Uføreytelser */
+	/**
+	 * Uføreytelser
+	 */
 	UFO,
-	/** Sykepenger */
+	/**
+	 * Sykepenger
+	 */
 	SYK,
-	/** Sykemelding */
+	/**
+	 * Sykemelding
+	 */
 	SYM,
-	/** Feilutbetaling (Arenaytelser) */
+	/**
+	 * Feilutbetaling (Arenaytelser)
+	 */
 	FEI,
-	/** Generell */
+	/**
+	 * Generell
+	 */
 	GEN,
-	/** Arbeidsavklaringspenger */
+	/**
+	 * Arbeidsavklaringspenger
+	 */
 	AAP,
-	/** Fullmakt */
+	/**
+	 * Fullmakt
+	 */
 	FUL,
-	/** Helsetjenester og ort. Hjelpemidler */
+	/**
+	 * Helsetjenester og ort. Hjelpemidler
+	 */
 	HEL,
-	/** Condictio indebiti */
+	/**
+	 * Condictio indebiti
+	 */
 	CON,
-	/** Medlemskap */
+	/**
+	 * Medlemskap
+	 */
 	MED,
-	/** Ukjent */
+	/**
+	 * Ukjent
+	 */
 	UKJ,
-	/** Tiltak */
+	/**
+	 * Tiltak
+	 */
 	TIL,
-	/** Rekruttering og Stilling */
+	/**
+	 * Rekruttering og Stilling
+	 */
 	REK,
-	/** Inkluderende Arbeidsliv */
+	/**
+	 * Inkluderende Arbeidsliv
+	 */
 	IAR,
-	/** Ajourhold - Grunnopplysninger */
+	/**
+	 * Ajourhold - Grunnopplysninger
+	 */
 	AGR,
-	/** Trekk */
+	/**
+	 * Trekk
+	 */
 	TRK,
-	/** Kontroll */
+	/**
+	 * Kontroll
+	 */
 	KTR,
-	/** Permittering og masseoppsigelser */
+	/**
+	 * Permittering og masseoppsigelser
+	 */
 	PER,
-	/** AA-registeret */
+	/**
+	 * AA-registeret
+	 */
 	AAR,
-	/** Trygdeavgift */
+	/**
+	 * Trygdeavgift
+	 */
 	TRY,
-	/** Sanksjon - Arbeidsgiver */
+	/**
+	 * Sanksjon - Arbeidsgiver
+	 */
 	SAA,
-	/** Sanksjon - Person */
+	/**
+	 * Sanksjon - Person
+	 */
 	SAP,
-	/** Oppfølging */
+	/**
+	 * Oppfølging
+	 */
 	OPA,
-	/** Serviceklager */
+	/**
+	 * Serviceklager
+	 */
 	SER,
-	/** Sikkerhetstiltak */
+	/**
+	 * Sikkerhetstiltak
+	 */
 	SIK,
-	/** Unntak fra medlemskap */
+	/**
+	 * Unntak fra medlemskap
+	 */
 	UFM,
-	/** Tilleggsstønad arbeidsøkere */
+	/**
+	 * Tilleggsstønad arbeidsøkere
+	 */
 	TSR,
-	/** Tilleggsstønad */
+	/**
+	 * Tilleggsstønad
+	 */
 	TSO,
-	/** Rettferdsvederlag */
+	/**
+	 * Rettferdsvederlag
+	 */
 	RVE,
-	/** Retting av personopplysninger */
+	/**
+	 * Retting av personopplysninger
+	 */
 	RPO,
-	/** Farskap */
+	/**
+	 * Farskap
+	 */
 	FAR;
 
-	public static Tema toSafJournalStatus(FagomradeCode joarkFagomradeCode) {
+	public static Tema toSafJournalstatus(FagomradeCode joarkFagomradeCode) {
 		return Tema.valueOf(joarkFagomradeCode.name());
+	}
+
+	public static FagomradeCode fromTema(Tema tema) {
+		if (tema == null) {
+			return null;
+		}
+		try {
+			return FagomradeCode.valueOf(tema.name());
+		} catch (IllegalArgumentException e) {
+			return null;
+		}
 	}
 }

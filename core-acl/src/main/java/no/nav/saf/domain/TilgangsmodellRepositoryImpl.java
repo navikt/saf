@@ -137,13 +137,14 @@ public class TilgangsmodellRepositoryImpl implements TilgangsmodellRepository {
 	public List<TilgangJournalpost> findTilgangJournalposter(TilgangBruker tilgangBruker,
 															 List<TilgangSak> tilgangSakList,
 															 LocalDate fraDato,
-															 List<Journalposttype> inkluderJournalposttyper,
+															 List<Tema> inkluderTema, List<Journalposttype> inkluderJournalposttyper,
 															 List<Journalstatus> inkluderJournalstatuses,
 															 SafRequestContext safRequestContext) {
 		try {
 			List<JournalpostDto> journalposter = joarkAntiCorruptionLayer.hentJournalpostBulk(tilgangBruker,
 					tilgangSakList,
 					fraDato,
+					inkluderTema,
 					inkluderJournalposttyper,
 					inkluderJournalstatuses);
 			safRequestContext.getParameterContext().putParameters(journalposter.stream()

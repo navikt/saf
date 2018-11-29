@@ -5,6 +5,7 @@ import static no.nav.saf.anticorruptionlayer.joark.domain.kode.FagsystemCode.PEN
 
 import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.anticorruptionlayer.joark.domain.SafToJoarkJournalstatusMapper;
+import no.nav.saf.anticorruptionlayer.joark.domain.kode.FagomradeCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.JournalpostTypeCode;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.HentJournalsakinfo;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.HentJournalpostBulkRequestTo;
@@ -27,6 +28,7 @@ import no.nav.saf.tjeneste.hentdokument.HentDokument;
 import no.nav.saf.tjeneste.visningsmodell.kode.Arkivsakssystem;
 import no.nav.saf.tjeneste.visningsmodell.kode.Journalposttype;
 import no.nav.saf.tjeneste.visningsmodell.kode.Journalstatus;
+import no.nav.saf.tjeneste.visningsmodell.kode.Tema;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
@@ -34,6 +36,7 @@ import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -57,6 +60,7 @@ class JoarkAntiCorruptionLayerImpl implements JoarkAntiCorruptionLayer {
 	public List<JournalpostDto> hentJournalpostBulk(TilgangBruker tilgangBruker,
 													List<TilgangSak> tilgangSakList,
 													LocalDate fraDato,
+													List<Tema> inkluderTema,
 													List<Journalposttype> inkluderJournalposttyper,
 													List<Journalstatus> inkluderJournalstatuses) {
 		List<String> alleIdenter = tilgangBruker.getHistoriskeIdenter()
@@ -70,6 +74,7 @@ class JoarkAntiCorruptionLayerImpl implements JoarkAntiCorruptionLayer {
 				.inkluderJournalpostType(inkluderJournalposttyper.stream()
 						.map(jt -> JournalpostTypeCode.valueOf(jt.name()))
 						.collect(Collectors.toList()))
+				.inkluderTema(inkluderTema.stream().map(FagomradeCode::fromTema).filter(Objects::nonNull).collect(Collectors.toList()))
 				.inkluderJournalStatus(safToJoarkJournalstatusMapper.map(inkluderJournalstatuses))
 				.visFeilregistrerte(inkluderJournalstatuses.contains(Journalstatus.FEILREGISTRERT))
 				.fraDato(fraDato.toString())

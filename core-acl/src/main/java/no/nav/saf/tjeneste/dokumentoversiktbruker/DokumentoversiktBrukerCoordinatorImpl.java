@@ -69,6 +69,7 @@ public class DokumentoversiktBrukerCoordinatorImpl implements DokumentoversiktBr
 				tilgangBruker,
 				filteredTilgangSakList,
 				dokumentoversiktBrukerArguments.getFraDato(),
+				dokumentoversiktBrukerArguments.getTema(),
 				dokumentoversiktBrukerArguments.getJournalposttyper(),
 				dokumentoversiktBrukerArguments.getJournalstatuser(),
 				safRequestContext
