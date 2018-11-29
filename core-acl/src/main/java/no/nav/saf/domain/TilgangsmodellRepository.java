@@ -5,8 +5,8 @@ import no.nav.saf.domain.tilgangsmodell.TilgangJournalpost;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tjeneste.visningsmodell.Brukeridentifikator;
-import no.nav.saf.tjeneste.visningsmodell.kode.Journalz;
-import no.nav.saf.tjeneste.visningsmodell.kode.Journazz;
+import no.nav.saf.tjeneste.visningsmodell.kode.Journalposttype;
+import no.nav.saf.tjeneste.visningsmodell.kode.Journalstatus;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -24,8 +24,8 @@ public interface TilgangsmodellRepository {
 													  TilgangBruker tilgangBruker,
 													  List<TilgangSak> tilgangSakList,
 													  LocalDate fraDato,
-													  List<Journalz> inkluderJournalposttyper,
-													  List<Journazz> inkluderJournalstatuses);
+													  List<Journalposttype> inkluderJournalposttyper,
+													  List<Journalstatus> inkluderJournalstatuses);
 
 	TilgangJournalpost findTilgangJournalpost(String journalpostId, String dokumentId, String variantFormat);
 

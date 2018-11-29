@@ -6,7 +6,7 @@ import java.util.List;
 /**
  * @author Ugur Alpay Cenar, Visma Consulting.
  */
-public enum Journazz {
+public enum Journalstatus {
 	MOTTATT,
 	JOURNALFOERT,
 	FERDIGSTILT,
@@ -19,11 +19,7 @@ public enum Journazz {
 	RESERVERT,
 	OPPLASTING_DOKUMENT;
 
-	public static List<Journazz> standard() {
-		return Arrays.asList(JOURNALFOERT, FERDIGSTILT, EKSPEDERT);
-	}
-
-	public static List<Journazz> asList() {
+	public static List<Journalstatus> asList() {
 		return Arrays.asList(values());
 	}
 }

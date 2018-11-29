@@ -25,8 +25,8 @@ import no.nav.saf.exceptions.SafFunctionalException;
 import no.nav.saf.exceptions.SafTechnicalException;
 import no.nav.saf.tjeneste.hentdokument.HentDokument;
 import no.nav.saf.tjeneste.visningsmodell.kode.Arkivsakssystem;
-import no.nav.saf.tjeneste.visningsmodell.kode.Journalz;
-import no.nav.saf.tjeneste.visningsmodell.kode.Journazz;
+import no.nav.saf.tjeneste.visningsmodell.kode.Journalposttype;
+import no.nav.saf.tjeneste.visningsmodell.kode.Journalstatus;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
@@ -58,8 +58,8 @@ class JoarkAntiCorruptionLayerImpl implements JoarkAntiCorruptionLayer {
 	public Map<String, JournalpostDto> hentJournalpostBulk(TilgangBruker tilgangBruker,
 														   List<TilgangSak> tilgangSakList,
 														   LocalDate fraDato,
-														   List<Journalz> inkluderJournalposttyper,
-														   List<Journazz> inkluderJournalstatuses) {
+														   List<Journalposttype> inkluderJournalposttyper,
+														   List<Journalstatus> inkluderJournalstatuses) {
 		List<String> alleIdenter = tilgangBruker.getHistoriskeIdenter()
 				.stream()
 				.map(TilgangIdent::getIdentifikator)
@@ -72,7 +72,7 @@ class JoarkAntiCorruptionLayerImpl implements JoarkAntiCorruptionLayer {
 						.map(jt -> JournalpostTypeCode.valueOf(jt.name()))
 						.collect(Collectors.toList()))
 				.inkluderJournalStatus(safToJoarkJournalstatusMapper.map(inkluderJournalstatuses))
-				.visFeilregistrerte(inkluderJournalstatuses.contains(Journazz.FEILREGISTRERT))
+				.visFeilregistrerte(inkluderJournalstatuses.contains(Journalstatus.FEILREGISTRERT))
 				.fraDato(fraDato.toString())
 				.gsakSakIds(tilgangSakList.stream()
 						.filter(tilgangSak -> Arkivsakssystem.GSAK.name().equals(tilgangSak.getArkivsaksystem()))

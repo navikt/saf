@@ -1,6 +1,6 @@
 package no.nav.saf.anticorruptionlayer.joark.domain.kode;
 
-import no.nav.saf.tjeneste.visningsmodell.kode.Journazz;
+import no.nav.saf.tjeneste.visningsmodell.kode.Journalstatus;
 
 import java.util.Arrays;
 import java.util.List;
@@ -9,60 +9,60 @@ public enum JournalStatusCode {
 	/**
 	 * journalført
 	 */
-	J(Journazz.JOURNALFOERT),
+	J(Journalstatus.JOURNALFOERT),
 	/**
 	 * midl journalført
 	 */
-	M(Journazz.MOTTATT),
+	M(Journalstatus.MOTTATT),
 	/**
 	 * Utgår før tilknytn til sak
 	 */
-	U(Journazz.UTGAAR),
+	U(Journalstatus.UTGAAR),
 	/**
 	 * Dokument under produksjon
 	 */
-	D(Journazz.UNDER_ARBEID),
+	D(Journalstatus.UNDER_ARBEID),
 	/**
 	 * Reservert dokument
 	 */
-	R(Journazz.RESERVERT),
+	R(Journalstatus.RESERVERT),
 	/**
 	 * Ferdig og sentral print
 	 */
-	FS(Journazz.FERDIGSTILT),
+	FS(Journalstatus.FERDIGSTILT),
 	/**
 	 * Ferdig og lokal print
 	 */
-	FL(Journazz.FERDIGSTILT),
+	FL(Journalstatus.FERDIGSTILT),
 	/**
 	 * Ekspedert
 	 */
-	E(Journazz.EKSPEDERT),
+	E(Journalstatus.EKSPEDERT),
 	/**
 	 * Avbrutt
 	 */
-	A(Journazz.AVBRUTT),
+	A(Journalstatus.AVBRUTT),
 	/**
 	 * Mottatt   
 	 */
-	MO(Journazz.MOTTATT),
+	MO(Journalstatus.MOTTATT),
 	/**
 	 * Ukjent bruker 
 	 */
-	UB(Journazz.UKJENT_BRUKER),
+	UB(Journalstatus.UKJENT_BRUKER),
 	/**
 	 * Opplasting dokument 
 	 */
-	OD(Journazz.OPPLASTING_DOKUMENT);
+	OD(Journalstatus.OPPLASTING_DOKUMENT);
 
-	private final Journazz safJournazz;
+	private final Journalstatus safJournalstatus;
 
-	JournalStatusCode(Journazz safJournazz) {
-		this.safJournazz = safJournazz;
+	JournalStatusCode(Journalstatus safJournalstatus) {
+		this.safJournalstatus = safJournalstatus;
 	}
 
-	public Journazz toSafJournalStatus() {
-		return safJournazz;
+	public Journalstatus toSafJournalStatus() {
+		return safJournalstatus;
 	}
 
 	public static List<JournalStatusCode> asList() {

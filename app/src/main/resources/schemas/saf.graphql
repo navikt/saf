@@ -8,14 +8,14 @@ schema {
 
 type Query {
     # Returnerer en liste over alle dokumenter tilknyttet en bruker.
-    dokumentoversiktBruker(brukeridentifikator: Brukeridentifikator!, fraDato: Date = null, journalposttyper : [JournalpostType] = [], journalstatuser : [JournalStatus] = []): [Journalpost]!
+    dokumentoversiktBruker(brukeridentifikator: Brukeridentifikator!, fraDato: Date = null, journalposttyper : [Journalposttype] = [], journalstatuser : [Journalstatus] = []): [Journalpost]!
 }
 
 type Journalpost {
     journalpostId: String!
     tittel: String
-    journalposttype: JournalpostType
-    journalstatus: JournalStatus
+    journalposttype: Journalposttype
+    journalstatus: Journalstatus
     tema: Tema
     temanavn: String
     sak: Sak
@@ -75,7 +75,7 @@ enum Arkivsaksystem {
     PSAK
 }
 
-enum JournalpostType {
+enum Journalposttype {
     # Inngående dokument
 	I
 	# Utgående dokument
@@ -84,7 +84,7 @@ enum JournalpostType {
 	N
 }
 
-enum JournalStatus {
+enum Journalstatus {
     MOTTATT
     JOURNALFOERT
     FERDIGSTILT

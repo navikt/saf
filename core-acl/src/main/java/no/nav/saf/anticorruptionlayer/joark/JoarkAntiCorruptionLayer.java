@@ -5,8 +5,8 @@ import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.domain.tilgangsmodell.TilgangJournalpost;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 import no.nav.saf.tjeneste.hentdokument.HentDokument;
-import no.nav.saf.tjeneste.visningsmodell.kode.Journalz;
-import no.nav.saf.tjeneste.visningsmodell.kode.Journazz;
+import no.nav.saf.tjeneste.visningsmodell.kode.Journalposttype;
+import no.nav.saf.tjeneste.visningsmodell.kode.Journalstatus;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -20,8 +20,8 @@ public interface JoarkAntiCorruptionLayer {
 	Map<String, JournalpostDto> hentJournalpostBulk(TilgangBruker tilgangBruker,
 													List<TilgangSak> tilgangSakList,
 													LocalDate fraDato,
-													List<Journalz> inkluderJournalposttyper,
-													List<Journazz> inkluderJournalstatuses);
+													List<Journalposttype> inkluderJournalposttyper,
+													List<Journalstatus> inkluderJournalstatuses);
 
 	TilgangJournalpost hentTilgangJournalpost(String journalpostId, String dokumentId, String variantFormat);
 
