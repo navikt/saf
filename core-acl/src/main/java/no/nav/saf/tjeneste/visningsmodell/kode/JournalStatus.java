@@ -19,7 +19,7 @@ public enum JournalStatus {
 	RESERVERT,
 	OPPLASTING_DOKUMENT;
 
-	public static List<JournalStatus> mestBrukte() {
+	public static List<JournalStatus> standard() {
 		return Arrays.asList(JOURNALFOERT, FERDIGSTILT, EKSPEDERT);
 	}
 

@@ -6,7 +6,7 @@ import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 import no.nav.saf.tjeneste.visningsmodell.Sak;
 import no.nav.saf.tjeneste.visningsmodell.kode.Arkivsakssystem;
-import no.nav.saf.tjeneste.visningsmodell.kode.Temakode;
+import no.nav.saf.tjeneste.visningsmodell.kode.Tema;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
@@ -26,18 +26,18 @@ class GsakAntiCorruptionLayerImpl implements GsakAntiCorruptionLayer {
 	}
 
 	@Override
-	public List<Sak> findSakerByAktoerId(final String aktoerId, final List<Temakode> temakodeFilter) {
+	public List<Sak> findSakerByAktoerId(final String aktoerId, final List<Tema> temaFilter) {
 
 		List<GsakSakerTo> gsakSakerToFiltered;
 
-		if (temakodeFilter.size() == 1) {
-			gsakSakerToFiltered = gsakConsumer.hentSakerByAktoerId(aktoerId, temakodeFilter.get(0));
+		if (temaFilter.size() == 1) {
+			gsakSakerToFiltered = gsakConsumer.hentSakerByAktoerId(aktoerId, temaFilter.get(0));
 
 		} else {
 			List<GsakSakerTo> gsakSakerTo = gsakConsumer.hentSakerByAktoerId(aktoerId);
 			gsakSakerToFiltered =
 					gsakSakerTo.stream()
-							.filter(gsak -> temakodeFilter.contains(TemakodeValueOf(gsak.getTema())))
+							.filter(gsak -> temaFilter.contains(TemakodeValueOf(gsak.getTema())))
 							.collect(Collectors.toList());
 
 		}
@@ -47,15 +47,15 @@ class GsakAntiCorruptionLayerImpl implements GsakAntiCorruptionLayer {
 						.arkivsaksystem(Arkivsakssystem.GSAK)
 						.fagsaksnummer(gsak.getFagsakNr())
 						.fagsystem(gsak.getApplikasjon())
-						.temakode(Temakode.valueOf(gsak.getTema()))
+						.tema(Tema.valueOf(gsak.getTema()))
 						.datoOpprettet(gsak.getOpprettetTidspunkt().toLocalDateTime())
 						.build())
 				.collect(Collectors.toList());
 	}
 
-	private Temakode TemakodeValueOf(String tema) {
+	private Tema TemakodeValueOf(String tema) {
 		try {
-			return Temakode.valueOf(tema);
+			return Tema.valueOf(tema);
 		} catch (Exception e) {
 			return null;
 		}
@@ -71,7 +71,7 @@ class GsakAntiCorruptionLayerImpl implements GsakAntiCorruptionLayer {
 						.arkivsaksystem(Arkivsakssystem.GSAK)
 						.fagsaksnummer(gsak.getFagsakNr())
 						.fagsystem(gsak.getApplikasjon())
-						.temakode(Temakode.valueOf(gsak.getTema()))
+						.tema(Tema.valueOf(gsak.getTema()))
 						.datoOpprettet(gsak.getOpprettetTidspunkt().toLocalDateTime())
 						.build())
 				.collect(Collectors.toList());

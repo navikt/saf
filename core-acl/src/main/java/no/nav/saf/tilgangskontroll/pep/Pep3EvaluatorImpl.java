@@ -5,7 +5,7 @@ import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlRequest;
 import no.nav.saf.tilgangskontroll.abac.service.AbacService;
-import no.nav.saf.tjeneste.visningsmodell.kode.Temakode;
+import no.nav.saf.tjeneste.visningsmodell.kode.Tema;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
@@ -34,6 +34,6 @@ public class Pep3EvaluatorImpl implements PepEvaluator<TilgangSak> {
 		XacmlRequest request = new XacmlRequest();
 		//TODO Populate request and perform call to pdp
 
-		return !(ressurs.getTema().equals(Temakode.BID.name()) || ressurs.getTema().equals(Temakode.FAR.name()));
+		return !(ressurs.getTema().equals(Tema.BID.name()) || ressurs.getTema().equals(Tema.FAR.name()));
 	}
 }

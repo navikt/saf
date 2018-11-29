@@ -23,12 +23,6 @@ public interface JoarkAntiCorruptionLayer {
 													List<JournalpostType> inkluderJournalposttyper,
 													List<JournalStatus> inkluderJournalstatus);
 
-	List<TilgangJournalpost> hentTilgangJournalpostListByArkivsaker(TilgangBruker tilgangBruker,
-																	List<TilgangSak> tilgangSakList,
-																	LocalDate fraDato,
-																	List<JournalpostType> inkluderJournalposttyper,
-																	List<JournalStatus> inkluderJournalstatus);
-
 	TilgangJournalpost hentTilgangJournalpost(String journalpostId, String dokumentId, String variantFormat);
 
 	TilgangSak hentTilgangSak(String journalpostId, String dokumentId, String variantFormat);

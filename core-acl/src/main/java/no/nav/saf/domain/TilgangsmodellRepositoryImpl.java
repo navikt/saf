@@ -1,7 +1,5 @@
 package no.nav.saf.domain;
 
-import static java.lang.String.format;
-
 import io.reactivex.Observable;
 import io.reactivex.schedulers.Schedulers;
 import lombok.extern.slf4j.Slf4j;
@@ -67,8 +65,7 @@ public class TilgangsmodellRepositoryImpl implements TilgangsmodellRepository {
 					return null;
 			}
 		} catch (Exception e) {
-			log.warn(format("findTilgangBruker feilet ved oppslag av ident. Brukertype=%s Feilmelding=%s", brukeridentifikator.getIdentType(), e
-					.getMessage()));
+			log.warn("findTilgangBruker feilet ved oppslag av ident. Brukertype={}", brukeridentifikator.getIdentType(), e);
 		}
 		return null;
 	}
@@ -110,8 +107,8 @@ public class TilgangsmodellRepositoryImpl implements TilgangsmodellRepository {
 					.map(stringJournalpostDtoEntry -> mapTilgangJournalpost(stringJournalpostDtoEntry.getValue()))
 					.collect(Collectors.toList());
 		} catch (Exception e) {
-			log.warn("HentTilgangJournalpostListByArkivsaker feilet ved oppslag av arkivsaker={}. Feilmelding={}",
-					tilgangSakList.stream().map(TilgangSak::getArkivsaksnummer).collect(Collectors.toList()), e.getMessage());
+			log.warn("HentTilgangJournalpostListByArkivsaker feilet ved oppslag av arkivsaker={}.",
+					tilgangSakList.stream().map(TilgangSak::getArkivsaksnummer).collect(Collectors.toList()), e);
 			return new ArrayList<>();
 		}
 	}

@@ -3,7 +3,7 @@ package no.nav.saf.tjeneste.visningsmodell;
 import lombok.Builder;
 import lombok.Value;
 import no.nav.saf.tjeneste.visningsmodell.kode.Arkivsakssystem;
-import no.nav.saf.tjeneste.visningsmodell.kode.Temakode;
+import no.nav.saf.tjeneste.visningsmodell.kode.Tema;
 
 import java.time.LocalDateTime;
 
@@ -17,6 +17,6 @@ public class Sak {
 	private final Arkivsakssystem arkivsaksystem;
 	private final String fagsaksnummer;
 	private final String fagsystem;
-	private final Temakode temakode;
+	private final Tema tema;
 	private final LocalDateTime datoOpprettet;
 }

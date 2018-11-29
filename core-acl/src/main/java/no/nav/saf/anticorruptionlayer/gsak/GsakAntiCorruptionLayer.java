@@ -3,7 +3,7 @@ package no.nav.saf.anticorruptionlayer.gsak;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 import no.nav.saf.tjeneste.visningsmodell.Sak;
-import no.nav.saf.tjeneste.visningsmodell.kode.Temakode;
+import no.nav.saf.tjeneste.visningsmodell.kode.Tema;
 
 import java.util.List;
 
@@ -12,7 +12,7 @@ import java.util.List;
  */
 public interface GsakAntiCorruptionLayer {
 
-	List<Sak> findSakerByAktoerId(final String aktoerId, final List<Temakode> temakodeFilter);
+	List<Sak> findSakerByAktoerId(final String aktoerId, final List<Tema> temaFilter);
 
 	List<Sak> findSakerByAktoerId(final String aktoerId);
 

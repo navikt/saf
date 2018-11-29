@@ -6,7 +6,7 @@ import java.util.List;
 /**
  * @author Joakim Bjørnstad, Jbit AS
  */
-public enum Temakode {
+public enum Tema {
 	AAP("Arbeidsavklaringspenger"),
 	AAR("Aa-registeret"),
 	AGR("Ajourhold - Grunnopplysninger"),
@@ -72,7 +72,7 @@ public enum Temakode {
 
 	private final String temanavn;
 
-	Temakode(final String temanavn) {
+	Tema(final String temanavn) {
 		this.temanavn = temanavn;
 	}
 
@@ -80,7 +80,7 @@ public enum Temakode {
 		return temanavn;
 	}
 
-	public static List<Temakode> asList() {
+	public static List<Tema> asList() {
 		return Arrays.asList(values());
 	}
 }
