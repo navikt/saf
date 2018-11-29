@@ -8,8 +8,8 @@ import no.nav.saf.tjeneste.visningsmodell.Journalpost;
 import no.nav.saf.tjeneste.visningsmodell.RelevantDato;
 import no.nav.saf.tjeneste.visningsmodell.Sak;
 import no.nav.saf.tjeneste.visningsmodell.kode.Datotype;
-import no.nav.saf.tjeneste.visningsmodell.kode.JournalStatus;
-import no.nav.saf.tjeneste.visningsmodell.kode.JournalpostType;
+import no.nav.saf.tjeneste.visningsmodell.kode.Journalz;
+import no.nav.saf.tjeneste.visningsmodell.kode.Journazz;
 import no.nav.saf.tjeneste.visningsmodell.kode.Kanal;
 import no.nav.saf.tjeneste.visningsmodell.kode.Variantformat;
 import org.springframework.stereotype.Component;
@@ -32,7 +32,7 @@ public class JournalpostDtoMapper {
 		return Journalpost.builder()
 				.journalpostId(journalpostDto.getJournalpostId().toString())
 				.tittel(journalpostDto.getInnhold())
-				.journalposttype(JournalpostType.fromJoark(journalpostDto.getJournalposttype()))
+				.journalposttype(Journalz.fromJoark(journalpostDto.getJournalposttype()))
 				.journalstatus(mapJournalstatus(journalpostDto))
 				.tema(FagomradeCode.toSafJournalStatus(journalpostDto.getFagomrade()))
 				.temanavn(FagomradeCode.toSafJournalStatus(journalpostDto.getFagomrade()).getTemanavn())
@@ -55,9 +55,9 @@ public class JournalpostDtoMapper {
 								.build()).collect(Collectors.toList())).build();
 	}
 
-	private JournalStatus mapJournalstatus(JournalpostDto journalpostDto) {
+	private Journazz mapJournalstatus(JournalpostDto journalpostDto) {
 		if (journalpostDto.getSaksrelasjon() != null && journalpostDto.getSaksrelasjon().getFeilregistrert()) {
-			return JournalStatus.FEILREGISTRERT;
+			return Journazz.FEILREGISTRERT;
 		} else {
 			return journalpostDto.getJournalstatus().toSafJournalStatus();
 		}

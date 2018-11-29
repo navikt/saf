@@ -16,8 +16,8 @@ import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tjeneste.visningsmodell.Brukeridentifikator;
 import no.nav.saf.tjeneste.visningsmodell.kode.Arkivsakssystem;
-import no.nav.saf.tjeneste.visningsmodell.kode.JournalStatus;
-import no.nav.saf.tjeneste.visningsmodell.kode.JournalpostType;
+import no.nav.saf.tjeneste.visningsmodell.kode.Journalz;
+import no.nav.saf.tjeneste.visningsmodell.kode.Journazz;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Repository;
 
@@ -94,14 +94,14 @@ public class TilgangsmodellRepositoryImpl implements TilgangsmodellRepository {
 															 TilgangBruker tilgangBruker,
 															 List<TilgangSak> tilgangSakList,
 															 LocalDate fraDato,
-															 List<JournalpostType> inkluderJournalposttyper,
-															 List<JournalStatus> inkluderJournalstatus) {
+															 List<Journalz> inkluderJournalposttyper,
+															 List<Journazz> inkluderJournalstatuses) {
 		try {
 			Map<String, JournalpostDto> journalpostMap = joarkAntiCorruptionLayer.hentJournalpostBulk(tilgangBruker,
 					tilgangSakList,
 					fraDato,
 					inkluderJournalposttyper,
-					inkluderJournalstatus);
+					inkluderJournalstatuses);
 			safRequestContext.getParameterContext().putParameters(journalpostMap);
 			return journalpostMap.entrySet().stream()
 					.map(stringJournalpostDtoEntry -> mapTilgangJournalpost(stringJournalpostDtoEntry.getValue()))

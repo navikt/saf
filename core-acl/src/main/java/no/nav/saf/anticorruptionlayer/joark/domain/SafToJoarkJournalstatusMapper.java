@@ -1,7 +1,7 @@
 package no.nav.saf.anticorruptionlayer.joark.domain;
 
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.JournalStatusCode;
-import no.nav.saf.tjeneste.visningsmodell.kode.JournalStatus;
+import no.nav.saf.tjeneste.visningsmodell.kode.Journazz;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +13,7 @@ import java.util.List;
  * @author Joakim Bjørnstad, Jbit AS
  */
 public class SafToJoarkJournalstatusMapper {
-	public List<JournalStatusCode> map(List<JournalStatus> safJournalstatuser) {
+	public List<JournalStatusCode> map(List<Journazz> safJournalstatuser) {
 		if (safJournalstatuser == null || safJournalstatuser.isEmpty()) {
 			return new ArrayList<>();
 		}

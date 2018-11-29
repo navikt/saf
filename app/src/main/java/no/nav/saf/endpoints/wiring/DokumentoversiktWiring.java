@@ -11,8 +11,8 @@ import no.nav.saf.tjeneste.dokumentoversiktbruker.DokumentoversiktBrukerArgument
 import no.nav.saf.tjeneste.dokumentoversiktbruker.DokumentoversiktBrukerCoordinator;
 import no.nav.saf.tjeneste.visningsmodell.Brukeridentifikator;
 import no.nav.saf.tjeneste.visningsmodell.Journalpost;
-import no.nav.saf.tjeneste.visningsmodell.kode.JournalStatus;
-import no.nav.saf.tjeneste.visningsmodell.kode.JournalpostType;
+import no.nav.saf.tjeneste.visningsmodell.kode.Journalz;
+import no.nav.saf.tjeneste.visningsmodell.kode.Journazz;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
@@ -39,15 +39,15 @@ public class DokumentoversiktWiring {
 		return RuntimeWiring.newRuntimeWiring()
 				.scalar(DateScalar.DATE)
 				.scalar(DateTimeScalar.DATE_TIME)
-				.type("JournalpostType", typeWiring -> typeWiring.enumValues(new NaturalEnumValuesProvider<>(JournalpostType.class)))
-				.type("JournalStatus", typeWiring -> typeWiring.enumValues(new NaturalEnumValuesProvider<>(JournalStatus.class)))
+				.type("Journalz", typeWiring -> typeWiring.enumValues(new NaturalEnumValuesProvider<>(Journalz.class)))
+				.type("Journazz", typeWiring -> typeWiring.enumValues(new NaturalEnumValuesProvider<>(Journazz.class)))
 				.type("Query", typeWiring -> typeWiring.dataFetcher("dokumentoversiktBruker", environment -> {
 					Object brukeridentifikatorObject = environment.getArgument("brukeridentifikator");
 					Brukeridentifikator brukeridentifikator = mapper.convertValue(brukeridentifikatorObject, Brukeridentifikator.class);
 					logDokumentoversiktBrukerQueryInit(brukeridentifikator);
 					LocalDate fraDato = environment.getArgument("fraDato");
-					List<JournalpostType> journalposttyper = environment.getArgument("journalposttyper");
-					List<JournalStatus> journalstatuser = environment.getArgument("journalstatuser");
+					List<Journalz> journalposttyper = environment.getArgument("journalposttyper");
+					List<Journazz> journalstatuser = environment.getArgument("journalstatuser");
 					SafRequestContext safRequestContext = environment.getContext();
 					try {
 						List<Journalpost> journalposter = dokumentoversiktBrukerCoordinator.findJournalposter(new DokumentoversiktBrukerArguments(brukeridentifikator, fraDato, journalposttyper, journalstatuser),

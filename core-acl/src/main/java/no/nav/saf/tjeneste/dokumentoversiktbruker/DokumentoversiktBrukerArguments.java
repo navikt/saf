@@ -2,8 +2,8 @@ package no.nav.saf.tjeneste.dokumentoversiktbruker;
 
 import lombok.Value;
 import no.nav.saf.tjeneste.visningsmodell.Brukeridentifikator;
-import no.nav.saf.tjeneste.visningsmodell.kode.JournalStatus;
-import no.nav.saf.tjeneste.visningsmodell.kode.JournalpostType;
+import no.nav.saf.tjeneste.visningsmodell.kode.Journalz;
+import no.nav.saf.tjeneste.visningsmodell.kode.Journazz;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -15,14 +15,14 @@ import java.util.List;
 public class DokumentoversiktBrukerArguments {
 	private final Brukeridentifikator brukeridentifikator;
 	private final LocalDate fraDato;
-	private final List<JournalpostType> journalposttyper;
-	private final List<JournalStatus> journalstatuser;
+	private final List<Journalz> journalposttyper;
+	private final List<Journazz> journalstatuser;
 	private final boolean visFeilregistrerte;
 
 	public DokumentoversiktBrukerArguments(Brukeridentifikator brukeridentifikator,
 										   LocalDate fraDato,
-										   List<JournalpostType> journalposttyper,
-										   List<JournalStatus> journalstatuser) {
+										   List<Journalz> journalposttyper,
+										   List<Journazz> journalstatuser) {
 		this.brukeridentifikator = brukeridentifikator;
 		if (fraDato == null) {
 			this.fraDato = LocalDate.of(1, 1, 1);
@@ -30,15 +30,15 @@ public class DokumentoversiktBrukerArguments {
 			this.fraDato = fraDato;
 		}
 		if (journalposttyper.isEmpty()) {
-			this.journalposttyper = JournalpostType.asList();
+			this.journalposttyper = Journalz.asList();
 		} else {
 			this.journalposttyper = journalposttyper;
 		}
 		if (journalstatuser.isEmpty()) {
-			this.journalstatuser = JournalStatus.asList();
+			this.journalstatuser = Journazz.asList();
 		} else {
 			this.journalstatuser = journalstatuser;
 		}
-		this.visFeilregistrerte = this.journalstatuser.contains(JournalStatus.FEILREGISTRERT);
+		this.visFeilregistrerte = this.journalstatuser.contains(Journazz.FEILREGISTRERT);
 	}
 }
