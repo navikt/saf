@@ -82,7 +82,8 @@ public class JournalpostDtoMapper {
 	}
 
 	private Journalstatus mapJournalstatus(JournalpostDto journalpostDto) {
-		if (journalpostDto.getSaksrelasjon() != null && journalpostDto.getSaksrelasjon().getFeilregistrert()) {
+		SaksrelasjonDto saksrelasjon = journalpostDto.getSaksrelasjon();
+		if (saksrelasjon != null &&  saksrelasjon.getFeilregistrert() != null && saksrelasjon.getFeilregistrert()) {
 			return Journalstatus.FEILREGISTRERT;
 		} else {
 			return journalpostDto.getJournalstatus().toSafJournalStatus();
