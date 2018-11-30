@@ -29,7 +29,7 @@
 		<cxf.version>3.2.7</cxf.version>
 		<graphql-java.version>11.0</graphql-java.version>
 		<abac-attribute-constants>3.4.4</abac-attribute-constants>
-		<pensjon-sak-v1.version>1.0.0</pensjon-sak-v1.version>
+		<pensjon-sak-v1.version>1.0.1-SNAPSHOT</pensjon-sak-v1.version>
 		<rxjava.version>2.2.3</rxjava.version>
 		<java-jwt.version>3.4.1</java-jwt.version>
 		<logstash-logback-encoder.version>5.2</logstash-logback-encoder.version>
@@ -97,10 +97,9 @@
 				<version>${java-jwt.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>no.nav.tjenester.fim</groupId>
-				<artifactId>nav-pensjonSak-v1-tjenestespesifikasjon</artifactId>
-				<version>${pensjon-sak-v1.version}</version>
-				<classifier>jaxws</classifier>
+				<groupId>no.nav.sbl</groupId>
+				<artifactId>pensjon-sak-v1-tjenestespesifikasjon</artifactId>
+				<version>1.0.3</version>
 			</dependency>
 			<dependency>
 				<groupId>no.nav.abac.policies</groupId>

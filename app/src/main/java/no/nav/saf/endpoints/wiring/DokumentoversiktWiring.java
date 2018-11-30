@@ -11,9 +11,9 @@ import no.nav.saf.tjeneste.dokumentoversiktbruker.DokumentoversiktBrukerArgument
 import no.nav.saf.tjeneste.dokumentoversiktbruker.DokumentoversiktBrukerCoordinator;
 import no.nav.saf.tjeneste.visningsmodell.Brukeridentifikator;
 import no.nav.saf.tjeneste.visningsmodell.Journalpost;
-import no.nav.saf.tjeneste.visningsmodell.kode.BrukeridentifikatorType;
-import no.nav.saf.tjeneste.visningsmodell.kode.JournalStatus;
-import no.nav.saf.tjeneste.visningsmodell.kode.JournalpostType;
+import no.nav.saf.tjeneste.visningsmodell.kode.Journalposttype;
+import no.nav.saf.tjeneste.visningsmodell.kode.Journalstatus;
+import no.nav.saf.tjeneste.visningsmodell.kode.Tema;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
@@ -40,19 +40,24 @@ public class DokumentoversiktWiring {
 		return RuntimeWiring.newRuntimeWiring()
 				.scalar(DateScalar.DATE)
 				.scalar(DateTimeScalar.DATE_TIME)
-				.type("JournalpostType", typeWiring -> typeWiring.enumValues(new NaturalEnumValuesProvider<>(JournalpostType.class)))
-				.type("JournalStatus", typeWiring -> typeWiring.enumValues(new NaturalEnumValuesProvider<>(JournalStatus.class)))
+				.type("Tema", typeWiring -> typeWiring.enumValues(new NaturalEnumValuesProvider<>(Tema.class)))
+				.type("Journalposttype", typeWiring -> typeWiring.enumValues(new NaturalEnumValuesProvider<>(Journalposttype.class)))
+				.type("Journalstatus", typeWiring -> typeWiring.enumValues(new NaturalEnumValuesProvider<>(Journalstatus.class)))
 				.type("Query", typeWiring -> typeWiring.dataFetcher("dokumentoversiktBruker", environment -> {
 					Object brukeridentifikatorObject = environment.getArgument("brukeridentifikator");
 					Brukeridentifikator brukeridentifikator = mapper.convertValue(brukeridentifikatorObject, Brukeridentifikator.class);
-					logHendelse(brukeridentifikator);
+					logDokumentoversiktBrukerQueryInit(brukeridentifikator);
 					LocalDate fraDato = environment.getArgument("fraDato");
-					List<JournalpostType> journalposttyper = environment.getArgument("journalposttyper");
-					List<JournalStatus> journalstatuser = environment.getArgument("journalstatuser");
+					List<Tema> tema = environment.getArgument("tema");
+					List<Journalposttype> journalposttyper = environment.getArgument("journalposttyper");
+					List<Journalstatus> journalstatuser = environment.getArgument("journalstatuser");
 					SafRequestContext safRequestContext = environment.getContext();
 					try {
-						return dokumentoversiktBrukerCoordinator.findJournalposter(new DokumentoversiktBrukerArguments(brukeridentifikator, fraDato, journalposttyper, journalstatuser),
+						List<Journalpost> journalposter = dokumentoversiktBrukerCoordinator.findJournalposter(
+								new DokumentoversiktBrukerArguments(brukeridentifikator, fraDato, tema, journalposttyper, journalstatuser),
 								safRequestContext);
+						logDokumentoversiktBrukerQueryDone(journalposter.size(), brukeridentifikator);
+						return journalposter;
 					} catch (SafFunctionalException e) {
 						return new DataFetcherResult<List<Journalpost>>(new ArrayList<>(), Collections.singletonList(e));
 					}
@@ -65,11 +70,31 @@ public class DokumentoversiktWiring {
 				.build();
 	}
 
-	private void logHendelse(Brukeridentifikator brukeridentifikator) {
-		if (brukeridentifikator.getIdentType().equals(BrukeridentifikatorType.AKTOERID)) {
-			log.info("DokumentoversiktBruker hentes for aktoerId={}", brukeridentifikator.getIdent());
-		} else if (brukeridentifikator.getIdentType().equals(BrukeridentifikatorType.FOEDSELSNUMMER)) {
-			log.info("DokumentoversiktBruker hentes for bruker med identType=FØEDSELSNUMMER");
+	private void logDokumentoversiktBrukerQueryInit(Brukeridentifikator brukeridentifikator) {
+		switch (brukeridentifikator.getIdentType()) {
+			case AKTOERID:
+				log.info("dokumentoversiktBruker hentes for bruker med aktoerId={}", brukeridentifikator.getIdent());
+				break;
+			case FOEDSELSNUMMER:
+				log.info("dokumentoversiktBruker hentes for bruker med fødselsnummer={}", "*****"); // vi kan ikke logge fnr
+				break;
+			default:
+				// noop
+				break;
+		}
+	}
+
+	private void logDokumentoversiktBrukerQueryDone(int numJournalposter, Brukeridentifikator brukeridentifikator) {
+		switch (brukeridentifikator.getIdentType()) {
+			case AKTOERID:
+				log.info("dokumentoversiktBruker returnerer {} journalposter for bruker med aktoerId={}", numJournalposter, brukeridentifikator.getIdent());
+				break;
+			case FOEDSELSNUMMER:
+				log.info("dokumentoversiktBruker returnerer {} journalposter for bruker med fødselsnummer={}", numJournalposter, "*****"); // vi kan ikke logge fnr
+				break;
+			default:
+				// noop
+				break;
 		}
 	}
 }

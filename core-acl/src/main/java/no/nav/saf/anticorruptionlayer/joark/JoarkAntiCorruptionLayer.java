@@ -1,31 +1,29 @@
 package no.nav.saf.anticorruptionlayer.joark;
 
+import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.JournalpostDto;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.domain.tilgangsmodell.TilgangDokumentInfo;
 import no.nav.saf.domain.tilgangsmodell.TilgangJournalpost;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 import no.nav.saf.tjeneste.hentdokument.HentDokument;
-import no.nav.saf.tjeneste.visningsmodell.Journalpost;
-import no.nav.saf.tjeneste.visningsmodell.Sak;
-import no.nav.saf.tjeneste.visningsmodell.kode.JournalStatus;
-import no.nav.saf.tjeneste.visningsmodell.kode.JournalpostType;
+import no.nav.saf.tjeneste.visningsmodell.kode.Journalposttype;
+import no.nav.saf.tjeneste.visningsmodell.kode.Journalstatus;
+import no.nav.saf.tjeneste.visningsmodell.kode.Tema;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author Joakim Bjørnstad, Jbit AS
  */
 public interface JoarkAntiCorruptionLayer {
 
-	List<TilgangJournalpost> hentTilgangJournalpostListByArkivsaker(TilgangBruker tilgangBruker,
-																	List<TilgangSak> tilgangSakList,
-																	LocalDate fraDato,
-																	List<JournalpostType> inkluderJournalposttyper,
-																	List<JournalStatus> inkluderJournalstatus);
-
-	List<Journalpost> hentVisningJournalposter(Map<String, Sak> sakMap, List<String> journalpostIds);
+	List<JournalpostDto> hentJournalpostBulk(TilgangBruker tilgangBruker,
+											 List<TilgangSak> tilgangSakList,
+											 LocalDate fraDato,
+											 List<Tema> inkluderTema,
+											 List<Journalposttype> inkluderJournalposttyper,
+											 List<Journalstatus> inkluderJournalstatuses);
 
 	TilgangJournalpost hentTilgangJournalpost(String journalpostId, String dokumentId, String variantFormat);
 

@@ -1,4 +1,4 @@
-package no.nav.saf.tjeneste.visningsmodell;
+package no.nav.saf.domain;
 
 import lombok.Builder;
 import lombok.Value;
@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
  */
 @Value
 @Builder
-public class Sak {
+public class Arkivsak {
 	private final String arkivsaksnummer;
 	private final Arkivsakssystem arkivsaksystem;
 	private final String fagsaksnummer;

@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
  */
 @Component("applikasjonslogg")
 @Slf4j(topic = "applikasjonslogg")
-public class ApplicationLogger extends AbacLogger {
+public class ApplikasjonsLogger extends AbacLogger {
 
 	public void logAbacDeny(final XacmlRequest xacmlRequest, final XacmlResponse xacmlResponse) {
 		log.warn("{}{};", mapRequest(xacmlRequest), mapResponse(xacmlResponse));

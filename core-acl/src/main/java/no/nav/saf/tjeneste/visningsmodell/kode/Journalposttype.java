@@ -8,20 +8,20 @@ import java.util.List;
 /**
  * @author Ugur Alpay Cenar, Visma Consulting.
  */
-public enum JournalpostType {
+public enum Journalposttype {
 	I,
 	U,
 	N;
 
 	@Deprecated // TODO fjern denne, skal ikke vite om joark i det hele tatt
-	public static JournalpostType fromJoark(JournalpostTypeCode journalpostTypeCode) {
+	public static Journalposttype fromJoark(JournalpostTypeCode journalpostTypeCode) {
 		if(journalpostTypeCode == null) {
 			return null;
 		}
-		return JournalpostType.valueOf(journalpostTypeCode.name());
+		return Journalposttype.valueOf(journalpostTypeCode.name());
 	}
 
-	public static List<JournalpostType> asList() {
+	public static List<Journalposttype> asList() {
 		return Arrays.asList(values());
 	}
 }

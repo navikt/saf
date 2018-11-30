@@ -6,7 +6,7 @@ import java.util.List;
 /**
  * @author Ugur Alpay Cenar, Visma Consulting.
  */
-public enum JournalStatus {
+public enum Journalstatus {
 	MOTTATT,
 	JOURNALFOERT,
 	FERDIGSTILT,
@@ -19,11 +19,7 @@ public enum JournalStatus {
 	RESERVERT,
 	OPPLASTING_DOKUMENT;
 
-	public static List<JournalStatus> mestBrukte() {
-		return Arrays.asList(JOURNALFOERT, FERDIGSTILT, EKSPEDERT);
-	}
-
-	public static List<JournalStatus> asList() {
+	public static List<Journalstatus> asList() {
 		return Arrays.asList(values());
 	}
 }

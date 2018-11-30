@@ -1,28 +1,23 @@
 package no.nav.saf.anticorruptionlayer.gsak;
 
+import no.nav.saf.domain.Arkivsak;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 import no.nav.saf.tjeneste.visningsmodell.Sak;
-import no.nav.saf.tjeneste.visningsmodell.Tema;
-import no.nav.saf.tjeneste.visningsmodell.kode.Temakode;
+import no.nav.saf.tjeneste.visningsmodell.kode.Tema;
 
 import java.util.List;
-import java.util.Set;
 
 /**
  * @author Joakim Bjørnstad, Jbit AS
  */
 public interface GsakAntiCorruptionLayer {
 
-	Set<Tema> findTemaerByAktoerIdAndFilterTemakode(String aktoerId, List<Temakode> temakoder);
+	List<Sak> findSakerByAktoerId(String aktoerId);
 
-	List<Sak> findSakerByAktoerId(final String aktoerId, final List<Temakode> temakodeFilter);
+	List<Arkivsak> findArkivsaker(String aktoerId, List<Tema> tema);
 
-	List<Sak> findSakerByAktoerId(final String aktoerId);
+	List<TilgangSak> findTilgangSakListByAktoerId(String aktoerId, List<Tema> tema);
 
-	List<TilgangSak> findTilgangSakListByAktoerId(final String aktoerId);
-
-	TilgangBruker findTilgangBrukerBySakId(final String sakId);
-
-	TilgangSak findTilgangSakBySakId(final String sakId);
+	TilgangBruker findTilgangSakBySakId(String sakId);
 }

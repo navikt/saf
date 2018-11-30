@@ -2,10 +2,10 @@ package no.nav.saf.tjeneste.visningsmodell;
 
 import lombok.Builder;
 import lombok.Value;
-import no.nav.saf.tjeneste.visningsmodell.kode.JournalStatus;
-import no.nav.saf.tjeneste.visningsmodell.kode.JournalpostType;
+import no.nav.saf.tjeneste.visningsmodell.kode.Journalposttype;
+import no.nav.saf.tjeneste.visningsmodell.kode.Journalstatus;
 import no.nav.saf.tjeneste.visningsmodell.kode.Kanal;
-import no.nav.saf.tjeneste.visningsmodell.kode.Temakode;
+import no.nav.saf.tjeneste.visningsmodell.kode.Tema;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,9 +18,9 @@ import java.util.List;
 public class Journalpost {
 	private final String journalpostId;
 	private final String tittel;
-	private final JournalpostType journalposttype;
-	private final JournalStatus journalstatus;
-	private final Temakode tema;
+	private final Journalposttype journalposttype;
+	private final Journalstatus journalstatus;
+	private final Tema tema;
 	private final String temanavn;
 	private final Sak sak;
 	private final String avsenderMottakerNavn;

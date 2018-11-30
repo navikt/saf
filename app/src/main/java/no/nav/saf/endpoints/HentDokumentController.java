@@ -41,9 +41,9 @@ public class HentDokumentController {
 	@SwaggerRestHentDokument
 	@GetMapping(value = "hentdokument/{journalpostId}/{dokumentId}/{variantFormat}")
 	@Monitor(value = "dok_request", extraTags = {"process", "hentDokument"}, histogram = true)
-	public ResponseEntity<byte[]> hentDokument(@ApiParam(name = "JournalpostId", required = true) @PathVariable  String journalpostId,
-											   @ApiParam(name = "DokumentId", required = true) @PathVariable  String dokumentId,
-											   @ApiParam(name = "VariantFormat", required = true) @PathVariable  String variantFormat,
+	public ResponseEntity<byte[]> hentDokument(@ApiParam(name = "journalpostId", required = true) @PathVariable  String journalpostId,
+											   @ApiParam(name = "dokumentId", required = true) @PathVariable  String dokumentId,
+											   @ApiParam(name = "variantFormat", required = true) @PathVariable  String variantFormat,
 											   @ApiParam(hidden = true) @RequestHeader(value = HttpHeaders.AUTHORIZATION, required = false) String authorizationHeader) {
 
 		log.info("hentDokument har mottatt forespørsel om å hente dokument, journalpostId={}, dokumentId={}, variantFormat={}", journalpostId, dokumentId, variantFormat);
