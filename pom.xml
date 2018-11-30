@@ -47,7 +47,7 @@
 		<java-jwt.version>3.4.1</java-jwt.version>
 		<logstash-logback-encoder.version>5.2</logstash-logback-encoder.version>
 		<logback-syslog4j.version>1.0.0</logback-syslog4j.version>
-		<io.springfox.version>2.8.0</io.springfox.version>
+		<io.springfox.version>2.9.2</io.springfox.version>
 		<!-- provided -->
 		<lombok.version>1.18.4</lombok.version>
 		<!-- test -->
