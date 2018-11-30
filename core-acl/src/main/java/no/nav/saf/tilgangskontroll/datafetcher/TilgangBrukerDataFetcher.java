@@ -9,6 +9,7 @@ import no.nav.saf.tilgangskontroll.abstraction.ParameterContext;
 import no.nav.saf.tilgangskontroll.abstraction.SecModelDataFetcher;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -30,7 +31,7 @@ public class TilgangBrukerDataFetcher implements SecModelDataFetcher<TilgangBruk
 			return Arrays.asList(tilgangsmodellRepository.findTilgangBrukerBySakId(parameterContext.getParameter(ARKIVSAKSNUMMER), parameterContext.getParameter(ARKIVSAKSYSTEM)));
 		} else {
 			//TODO Støtt tilgangBruker fra jounalpost
-			return null;
+			return new ArrayList<>();
 		}
 
 	}
