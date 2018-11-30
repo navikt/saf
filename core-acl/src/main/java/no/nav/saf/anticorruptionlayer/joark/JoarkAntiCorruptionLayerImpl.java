@@ -105,7 +105,18 @@ class JoarkAntiCorruptionLayerImpl implements JoarkAntiCorruptionLayer {
 	public TilgangJournalpost hentTilgangJournalpost(String journalpostId, String dokumentId, String variantFormat) {
 		HentTilgangJournalpostResponseTo hentTilgangJournalpostResponseTo = hentJournalsakinfo.hentTilgangJournalpost(journalpostId, dokumentId, variantFormat);
 		return mapTilgangJournalpost(hentTilgangJournalpostResponseTo.getTilgangJournalpostDto());
+	}
 
+	@Override
+	public TilgangDokumentInfo hentTilgangDokumentInfo(String journalpostId, String dokumentId, String variantFormat) {
+		HentTilgangJournalpostResponseTo hentTilgangJournalpostResponseTo = hentJournalsakinfo.hentTilgangJournalpost(journalpostId, dokumentId, variantFormat);
+		return TilgangDokumentInfo.builder()
+				.journalpostId(journalpostId)
+				.dokumentInfoId(dokumentId)
+				.variantFormat(variantFormat)
+				.dokumentstatus(hentTilgangJournalpostResponseTo.getTilgangJournalpostDto().getDokument().getDokumentstatus())
+				.brevkode(hentTilgangJournalpostResponseTo.getTilgangJournalpostDto().getDokument().getBrevkode())
+				.build();
 	}
 
 	@Override
@@ -156,7 +167,7 @@ class JoarkAntiCorruptionLayerImpl implements JoarkAntiCorruptionLayer {
 				.journalStatus(dto.getJournalStatus())
 				.journalpostType(dto.getJournalpostType())
 				.tema(dto.getTema())
-				.arkivsaksystem(dto.getSak().getFagsystem())
+				.arkivsaksystem(mapJoarkFagsystem(dto.getSak().getFagsystem()))
 				.arkivsaksnummer(dto.getSak().getSakId())
 				.datoOpprettet(dto.getDatoOpprettet().toLocalDate())
 				.mottakskanal(dto.getMottakskanal())

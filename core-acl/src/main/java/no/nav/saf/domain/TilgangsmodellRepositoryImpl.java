@@ -11,6 +11,7 @@ import no.nav.saf.anticorruptionlayer.joark.JoarkAntiCorruptionLayer;
 import no.nav.saf.anticorruptionlayer.pensjonsak.PensjonSakAntiCorruptionLayer;
 import no.nav.saf.cache.LokalCacheConfig;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
+import no.nav.saf.domain.tilgangsmodell.TilgangDokumentInfo;
 import no.nav.saf.domain.tilgangsmodell.TilgangJournalpost;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 import no.nav.saf.tjeneste.visningsmodell.Brukeridentifikator;
@@ -110,6 +111,17 @@ public class TilgangsmodellRepositoryImpl implements TilgangsmodellRepository {
 			return joarkAntiCorruptionLayer.hentTilgangJournalpost(journalpostId, dokumentId, variantFormat);
 		} catch (Exception e) {
 			log.warn("hentTilgangJournalpost feilet ved oppslag, journalpostId={}, dokumentId={}, variantFormat={}. Feilmelding={}",
+					journalpostId, dokumentId, variantFormat, e.getMessage());
+		}
+		return null;
+	}
+
+	@Override
+	public TilgangDokumentInfo findTilgangDokumentInfo(String journalpostId, String dokumentId, String variantFormat) {
+		try {
+			return joarkAntiCorruptionLayer.hentTilgangDokumentInfo(journalpostId, dokumentId, variantFormat);
+		} catch (Exception e) {
+			log.warn("hentTilgangDokumentInfo feilet ved oppslag, journalpostId={}, dokumentId={}, variantFormat={}. Feilmelding={}",
 					journalpostId, dokumentId, variantFormat, e.getMessage());
 		}
 		return null;

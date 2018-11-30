@@ -40,14 +40,14 @@ public class SafRequestContext {
 				"Kun OIDC-token (JWT via OAuth 2.0) med header \"Authorization\" : \"Bearer {token}\" er tillatt."));
 	}
 
-	private String getSubjectFromToken(String token) {
-		if (isEmpty(token)) {
+	private String getSubjectFromToken(String authorizationHeader) {
+		if (isEmpty(authorizationHeader)) {
 			throw new OidcAuthorizationException("Ugyldig OIDC-token; fant ingen token på header");
 		}
 		try {
-			return JWT.decode(token).getSubject();
+			return JWT.decode(authorizationHeader.split(OIDC_TOKEN_PREFIX)[1]).getSubject();
 		} catch (JWTDecodeException e) {
-			throw new OidcAuthorizationException("Ugyldig OIDC-token; kunne ikke hente ut subject fra tokenet.");
+			throw new OidcAuthorizationException("Ugyldig OIDC-token; kunne ikke hente subject fra tokenet.");
 
 		}
 	}

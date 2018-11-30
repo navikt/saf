@@ -7,7 +7,6 @@ import no.nav.saf.domain.tilgangsmodell.TilgangJournalpost;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 import no.nav.saf.exceptions.TilgangskontrollException;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
-import no.nav.saf.tilgangskontroll.abstraction.UpwardsSecModelTraverser;
 import no.nav.saf.tilgangskontroll.pep.Pep;
 import org.springframework.stereotype.Component;
 
@@ -18,7 +17,7 @@ import javax.inject.Named;
  * @author Sigurd Midttun, Visma Consulting.
  */
 
-@Component
+@Component("HentDokumentDomainCoordinatorImpl")
 public class HentDokumentDomainCoordinatorImpl implements HentDokumentDomainCoordinator {
 
 	private final DokumentRepository dokumentRepository;

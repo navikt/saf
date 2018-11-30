@@ -1,6 +1,7 @@
 package no.nav.saf.anticorruptionlayer.joark;
 
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
+import no.nav.saf.domain.tilgangsmodell.TilgangDokumentInfo;
 import no.nav.saf.domain.tilgangsmodell.TilgangJournalpost;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 import no.nav.saf.tjeneste.hentdokument.HentDokument;
@@ -27,6 +28,8 @@ public interface JoarkAntiCorruptionLayer {
 	List<Journalpost> hentVisningJournalposter(Map<String, Sak> sakMap, List<String> journalpostIds);
 
 	TilgangJournalpost hentTilgangJournalpost(String journalpostId, String dokumentId, String variantFormat);
+
+	TilgangDokumentInfo hentTilgangDokumentInfo(String journalpostId, String dokumentId, String variantFormat);
 
 	TilgangSak hentTilgangSak(String journalpostId, String dokumentId, String variantFormat);
 

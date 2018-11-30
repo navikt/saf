@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 /**
  * Endepunktet til hentDokument, som returnerer et dokument fra joark basert på journalpostId, dokumentInfoId og variantFormat".
@@ -32,7 +33,7 @@ public class HentDokumentController {
 	private final HentDokumentDomainCoordinator hentDokumentDomainCoordinator;
 
 	@Inject
-	public HentDokumentController(HentDokumentDomainCoordinator hentDokumentDomainCoordinator) {
+	public HentDokumentController(@Named("HentDokumentDomainCoordinatorImplPoc") HentDokumentDomainCoordinator hentDokumentDomainCoordinator) {
 		this.hentDokumentDomainCoordinator = hentDokumentDomainCoordinator;
 	}
 
