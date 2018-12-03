@@ -59,6 +59,8 @@ public class GsakConsumer {
 		return hentSaker(uri.toUriString());
 	}
 
+	//todo hentSakeByFagsakId
+
 	private List<GsakSakerTo> hentSaker(final String uri) {
 		if(log.isDebugEnabled()) {
 			log.debug("Henter gsaker uri={}", uri);

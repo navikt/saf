@@ -30,16 +30,17 @@ import javax.inject.Inject;
  */
 @Component("pep1")
 @Slf4j
-public class Pep1EvaluatorImpl implements PepEvaluator<TilgangBruker> {
+public class Pep1Impl implements Pep<TilgangBruker> {
 
 	private final AbacService abacService;
 
 	@Inject
-	public Pep1EvaluatorImpl(AbacService abacService) {
+	public Pep1Impl(AbacService abacService) {
 		this.abacService = abacService;
 	}
 
 	@Override
+//	@Cacheable(key = "{#safRequestContext.saksbehandlerId, #ressurs.foedselsnr, #ressurs.aktoerId}")
 	public boolean hasAccess(TilgangBruker ressurs, SafRequestContext safRequestContext) {
 		if (ressurs == null) {
 			log.warn("Pep1 mangler tilstrekkelig datagrunnlag for å kunne gjennomføre tilgangskontroll");
@@ -61,4 +62,5 @@ public class Pep1EvaluatorImpl implements PepEvaluator<TilgangBruker> {
 		XacmlResponse response = abacService.evaluate(request);
 		return Decision.PERMIT.equals(response.getDecision());
 	}
+
 }

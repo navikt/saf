@@ -19,5 +19,7 @@ public interface GsakAntiCorruptionLayer {
 
 	List<TilgangSak> findTilgangSakListByAktoerId(String aktoerId, List<Tema> tema);
 
-	TilgangBruker findTilgangSakBySakId(String sakId);
+	TilgangSak findTilgangSakBySakId(String sakId);
+
+	TilgangBruker findTilgangBrukerBySakId(String sakId);
 }

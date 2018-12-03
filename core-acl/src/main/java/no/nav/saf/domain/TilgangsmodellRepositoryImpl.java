@@ -177,6 +177,17 @@ public class TilgangsmodellRepositoryImpl implements TilgangsmodellRepository {
 	}
 
 	@Override
+	public TilgangDokumentInfo findTilgangDokumentInfo(String journalpostId, String dokumentId, String variantFormat) {
+		try {
+			return joarkAntiCorruptionLayer.hentTilgangDokumentInfo(journalpostId, dokumentId, variantFormat);
+		} catch (Exception e) {
+			log.warn("hentTilgangDokumentInfo feilet ved oppslag, journalpostId={}, dokumentId={}, variantFormat={}. Feilmelding={}",
+					journalpostId, dokumentId, variantFormat, e.getMessage());
+		}
+		return null;
+	}
+
+	@Override
 	public TilgangSak findTilgangSak(String journalpostId, String dokumentId, String variantFormat) {
 		try {
 			return joarkAntiCorruptionLayer.hentTilgangSak(journalpostId, dokumentId, variantFormat);
@@ -200,6 +211,23 @@ public class TilgangsmodellRepositoryImpl implements TilgangsmodellRepository {
 
 	@Override
 	public TilgangBruker findTilgangBrukerBySakId(String sakId, String arkivsaksystem) {
+		try {
+			if (Arkivsakssystem.GSAK.name().equals(arkivsaksystem)) {
+				return gsakAntiCorruptionLayer.findTilgangBrukerBySakId(sakId);
+			} else if (Arkivsakssystem.PSAK.name().equals(arkivsaksystem)) {
+				//TODO implement call to psak
+				return null;
+			} else {
+				return null;
+			}
+		} catch (Exception e) {
+			log.warn("findTilgangBrukerBySakId feilet ved oppslag på sakId={}. Feilmelding={}", sakId, e.getMessage());
+			return null;
+		}
+	}
+
+	@Override
+	public TilgangSak findTilgangSakBySakId(String sakId, String arkivsaksystem) {
 		try {
 			if (Arkivsakssystem.GSAK.name().equals(arkivsaksystem)) {
 				return gsakAntiCorruptionLayer.findTilgangSakBySakId(sakId);
