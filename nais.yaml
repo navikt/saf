@@ -20,9 +20,9 @@ prometheus:
 resources:
   limits:
     cpu: 1000m
-    memory: 1024Mi
+    memory: 1536Mi
   requests:
-    memory: 512Mi
+    memory: 768Mi
 fasitResources:
   used:
   - alias: srvsaf

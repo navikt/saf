@@ -4,6 +4,7 @@ import io.micrometer.core.instrument.MeterRegistry;
 import no.nav.saf.graphiql.GraphiQLController;
 import no.nav.saf.integration.fasit.ServiceuserAlias;
 import no.nav.saf.metrics.DokMonitoringAspect;
+import no.nav.saf.platform.TomcatConfig;
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -21,7 +22,8 @@ import org.springframework.retry.annotation.EnableRetry;
 @ComponentScan
 @Configuration
 @EnableAutoConfiguration
-@Import({CoreConfig.class,
+@Import({TomcatConfig.class,
+		CoreConfig.class,
 		GraphiQLController.class})
 @EnableConfigurationProperties(ServiceuserAlias.class)
 @EnableRetry
