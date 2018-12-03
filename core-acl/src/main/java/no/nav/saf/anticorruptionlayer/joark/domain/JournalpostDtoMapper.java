@@ -5,13 +5,16 @@ import no.nav.saf.anticorruptionlayer.joark.domain.kode.FagsystemCode;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.JournalpostDto;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.SaksrelasjonDto;
 import no.nav.saf.domain.Arkivsak;
+import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.tilgangskontroll.ParameterContext;
+import no.nav.saf.tjeneste.visningsmodell.Bruker;
 import no.nav.saf.tjeneste.visningsmodell.DokumentInfo;
 import no.nav.saf.tjeneste.visningsmodell.Dokumentvariant;
 import no.nav.saf.tjeneste.visningsmodell.Journalpost;
 import no.nav.saf.tjeneste.visningsmodell.RelevantDato;
 import no.nav.saf.tjeneste.visningsmodell.Sak;
 import no.nav.saf.tjeneste.visningsmodell.kode.Arkivsakssystem;
+import no.nav.saf.tjeneste.visningsmodell.kode.Brukertype;
 import no.nav.saf.tjeneste.visningsmodell.kode.Datotype;
 import no.nav.saf.tjeneste.visningsmodell.kode.Journalposttype;
 import no.nav.saf.tjeneste.visningsmodell.kode.Journalstatus;
@@ -44,6 +47,7 @@ public class JournalpostDtoMapper {
 				.tema(FagomradeCode.toSafJournalstatus(journalpostDto.getFagomrade()))
 				.temanavn(FagomradeCode.toSafJournalstatus(journalpostDto.getFagomrade()).getTemanavn())
 				.sak(mapSak(journalpostDto, parameterContext))
+				.bruker(mapBruker(parameterContext))
 				.avsenderMottakerNavn(journalpostDto.getAvsenderMottakerNavn())
 				.journalfortAvNavn(journalpostDto.getJournalfortAvNavn())
 				.kanal(kanal)
@@ -59,6 +63,14 @@ public class JournalpostDtoMapper {
 										.variantformat(Variantformat.valueOf(dokumentInfoDto.getVariantFormat().name()))
 										.build()))
 								.build()).collect(Collectors.toList())).build();
+	}
+
+	private Bruker mapBruker(ParameterContext parameterContext) {
+		TilgangBruker tilgangBruker = parameterContext.getParameter("tilgangBruker");
+		if(tilgangBruker == null) {
+			return null;
+		}
+		return new Bruker(Brukertype.PERSON, tilgangBruker.getFoedselsnr());
 	}
 
 	private Sak mapSak(JournalpostDto journalpostDto, ParameterContext parameterContext) {

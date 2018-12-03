@@ -12,8 +12,6 @@ import no.nav.saf.tjeneste.visningsmodell.kode.BrukeridentifikatorType;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Brukeridentifikator {
-
 	private String ident;
 	private BrukeridentifikatorType identType;
-
 }

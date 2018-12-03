@@ -49,6 +49,7 @@ public class DokumentoversiktBrukerCoordinatorImpl implements DokumentoversiktBr
 	@Override
 	public List<Journalpost> findJournalposter(final DokumentoversiktBrukerArguments dokumentoversiktBrukerArguments, final SafRequestContext safRequestContext) {
 		final TilgangBruker tilgangBruker = tilgangsmodellRepository.findTilgangBruker(dokumentoversiktBrukerArguments.getBrukeridentifikator());
+		safRequestContext.getParameterContext().putParameter("tilgangBruker", tilgangBruker);
 		boolean pep1Access = this.pep1.hasAccess(tilgangBruker, safRequestContext);
 
 		if (!pep1Access) {

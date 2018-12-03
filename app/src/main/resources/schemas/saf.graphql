@@ -19,6 +19,7 @@ type Journalpost {
     tema: Tema
     temanavn: String
     sak: Sak
+    bruker: Bruker
     avsenderMottakerNavn: String
     journalfortAvNavn: String
     kanal: Kanal
@@ -38,6 +39,16 @@ type Sak {
     fagsaknummer: String
     fagsystem: String
     datoOpprettet: DateTime
+}
+
+type Bruker {
+    brukertype: Brukertype
+    identifikator: String
+}
+
+enum Brukertype {
+    PERSON
+    ORGANISASJON
 }
 
 type DokumentInfo {
