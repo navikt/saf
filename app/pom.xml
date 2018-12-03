@@ -79,12 +79,32 @@
 			<artifactId>junit-jupiter-api</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<!--<dependency>-->
+			<!--<groupId>no.nav.saf</groupId>-->
+			<!--<artifactId>core-acl</artifactId>-->
+			<!--<version>1-SNAPSHOT</version>-->
+			<!--&lt;!&ndash;<type>test-jar</type>&ndash;&gt;-->
+			<!--&lt;!&ndash;<scope>test</scope>&ndash;&gt;-->
+		<!--</dependency>-->
 		<dependency>
-			<groupId>no.nav.saf</groupId>
-			<artifactId>core-acl</artifactId>
-			<version>1-SNAPSHOT</version>
-			<type>test-jar</type>
+			<groupId>com.github.tomakehurst</groupId>
+			<artifactId>wiremock-standalone</artifactId>
 			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-contract-wiremock</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>no.nav.freg</groupId>
+			<artifactId>freg-security-test-oidc-tools</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>no.nav.freg</groupId>
+			<artifactId>freg-security-oidc</artifactId>
 		</dependency>
 	</dependencies>
 
