@@ -7,7 +7,6 @@ import com.github.tomakehurst.wiremock.client.WireMock;
 import no.nav.freg.security.test.oidc.tools.OidcTestService;
 import no.nav.freg.security.test.oidc.tools.TestToolsAutoConfig;
 import no.nav.saf.ApplicationConfig;
-import no.nav.saf.endpoints.testconfig.TestConfig;
 import org.apache.cxf.helpers.IOUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -25,7 +24,7 @@ import java.io.IOException;
  * @author Sigurd Midttun, Visma Consulting.
  */
 @ExtendWith(SpringExtension.class)
-@SpringBootTest(classes = {ApplicationConfig.class, TestToolsAutoConfig.class, TestConfig.class},
+@SpringBootTest(classes = {ApplicationConfig.class, TestToolsAutoConfig.class},
 		webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("itest,wiremock,oidc")
 @ImportAutoConfiguration
