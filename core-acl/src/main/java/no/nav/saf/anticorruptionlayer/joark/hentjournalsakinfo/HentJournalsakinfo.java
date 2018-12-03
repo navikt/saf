@@ -60,8 +60,6 @@ public class HentJournalsakinfo {
 		try {
 			ResponseEntity<String> response = restTemplate.getForEntity("/hentdokument/{dokumentId}/{variantFormat}", String.class, dokumentId, variantFormat);
 
-			System.out.println("wububub");
-
 			return HentDokumentResponseTo.builder()
 					.dokument(response.getBody())
 					.mediaType(response.getHeaders().getContentType())
