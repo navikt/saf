@@ -8,21 +8,20 @@ import static org.springframework.http.MediaType.APPLICATION_PDF_VALUE;
 
 import jdk.nashorn.internal.ir.annotations.Ignore;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.VariantFormatCode;
-import org.jose4j.base64url.Base64;
+import no.nav.saf.endpoints.AbstractItest;
 import org.junit.jupiter.api.Test;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 
 /**
  * @author Sigurd Midttun, Visma Consulting.
  */
-public class HentDokumentIT extends AbstractEndpointEvaluatorIT {
+public class HentDokumentIT extends AbstractItest {
 
 	public HentDokumentIT() {
 	}
@@ -40,7 +39,6 @@ public class HentDokumentIT extends AbstractEndpointEvaluatorIT {
 //		then place the contents in __files
 
 
-
 	@Test
 	public void hentDokumentHappyPath() {
 		String dokumentId = "441360260";
@@ -49,11 +47,11 @@ public class HentDokumentIT extends AbstractEndpointEvaluatorIT {
 
 		stubFor(get("/hentdokument/" + dokumentId + "/" + variantFormat).willReturn(aResponse().withStatus(HttpStatus.OK.value())
 				.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_PDF_VALUE)
-				.withBody(Base64.encode(new  String("test").getBytes(StandardCharsets.UTF_8)))));//"/hentDokument/hentdokument-happy.json")));
+				.withBody(Base64.getEncoder()
+						.encode(new String("test").getBytes(StandardCharsets.UTF_8)))));//"/hentDokument/hentdokument-happy.json")));
 
 		String uri = "/rest/hentdokument/" + journalpostId + "/" + dokumentId + "/" + variantFormat.toString();
-		ResponseEntity<String> responseEntity = this.restTemplate.exchange(uri, HttpMethod.GET, createHeaders(), String.class);
-
+		ResponseEntity<String> responseEntity = this.restTemplate.exchange(uri, HttpMethod.GET, createHttpEntity(), String.class);
 
 
 		// finally check the integrity of the dokument with various asserts.
@@ -75,15 +73,9 @@ public class HentDokumentIT extends AbstractEndpointEvaluatorIT {
 				.withBody("hentDokument/hentdokument-happy.json")));
 
 		String uri = "/rest/hentdokument/" + journalpostId + "/" + dokumentId + "/" + variantFormat.toString();
-			ResponseEntity<String> responseEntity = this.restTemplate.exchange(uri, HttpMethod.GET, createHeaders(), String.class);
+		ResponseEntity<String> responseEntity = this.restTemplate.exchange(uri, HttpMethod.GET, createHttpEntity(), String.class);
 
 		assertEquals(responseEntity.getStatusCode(), HttpStatus.NOT_FOUND);
 	}
 
-	private HttpEntity createHeaders() {
-		HttpHeaders headers = new HttpHeaders();
-		headers.setContentType(MediaType.TEXT_PLAIN);
-		headers.add(HttpHeaders.AUTHORIZATION, OIDC_TOKEN_PERSON_USER_TEST);
-		return new HttpEntity(headers);
-	}
 }
