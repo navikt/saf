@@ -1,9 +1,8 @@
-package no.nav.saf.tjeneste.visningsmodell;
+package no.nav.saf.tjeneste.argumenter;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import no.nav.saf.tjeneste.visningsmodell.kode.BrukeridentifikatorType;
 
 /**
  * @author Sigurd Midttun, Visma Consulting.
@@ -11,7 +10,7 @@ import no.nav.saf.tjeneste.visningsmodell.kode.BrukeridentifikatorType;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Brukeridentifikator {
+public class BrukerIdInput {
 	private String ident;
-	private BrukeridentifikatorType identType;
+	private BrukerIdInputType identType;
 }

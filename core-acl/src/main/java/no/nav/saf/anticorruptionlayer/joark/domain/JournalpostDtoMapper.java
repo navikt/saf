@@ -6,7 +6,7 @@ import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.Journal
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.SaksrelasjonDto;
 import no.nav.saf.domain.Arkivsak;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
-import no.nav.saf.tilgangskontroll.ParameterContext;
+import no.nav.saf.tilgangskontroll.RequestCache;
 import no.nav.saf.tjeneste.visningsmodell.Bruker;
 import no.nav.saf.tjeneste.visningsmodell.DokumentInfo;
 import no.nav.saf.tjeneste.visningsmodell.Dokumentvariant;
@@ -34,7 +34,7 @@ import java.util.stream.Collectors;
  */
 @Component
 public class JournalpostDtoMapper {
-	public Journalpost mapJournalpostDto(final JournalpostDto journalpostDto, final ParameterContext parameterContext) {
+	public Journalpost mapJournalpostDto(final JournalpostDto journalpostDto, final RequestCache requestCache) {
 		if (journalpostDto == null) {
 			return null;
 		}
@@ -46,8 +46,8 @@ public class JournalpostDtoMapper {
 				.journalstatus(mapJournalstatus(journalpostDto))
 				.tema(FagomradeCode.toSafJournalstatus(journalpostDto.getFagomrade()))
 				.temanavn(FagomradeCode.toSafJournalstatus(journalpostDto.getFagomrade()).getTemanavn())
-				.sak(mapSak(journalpostDto, parameterContext))
-				.bruker(mapBruker(parameterContext))
+				.sak(mapSak(journalpostDto, requestCache))
+				.bruker(mapBruker(requestCache))
 				.avsenderMottakerNavn(journalpostDto.getAvsenderMottakerNavn())
 				.journalfortAvNavn(journalpostDto.getJournalfortAvNavn())
 				.kanal(kanal)
@@ -65,20 +65,20 @@ public class JournalpostDtoMapper {
 								.build()).collect(Collectors.toList())).build();
 	}
 
-	private Bruker mapBruker(ParameterContext parameterContext) {
-		TilgangBruker tilgangBruker = parameterContext.getParameter("tilgangBruker");
+	private Bruker mapBruker(RequestCache requestCache) {
+		TilgangBruker tilgangBruker = requestCache.getObject("tilgangBruker");
 		if(tilgangBruker == null) {
 			return null;
 		}
 		return new Bruker(Brukertype.PERSON, tilgangBruker.getFoedselsnr());
 	}
 
-	private Sak mapSak(JournalpostDto journalpostDto, ParameterContext parameterContext) {
+	private Sak mapSak(JournalpostDto journalpostDto, RequestCache parameterContext) {
 		SaksrelasjonDto saksrelasjon = journalpostDto.getSaksrelasjon();
 		if (saksrelasjon == null) {
 			return null;
 		} else {
-			Arkivsak arkivsak = parameterContext.getParameter("sakId=" + saksrelasjon.getSakId() + "-" + mapJoarkFagsystem(saksrelasjon.getFagsystem()));
+			Arkivsak arkivsak = parameterContext.getObject("sakId=" + saksrelasjon.getSakId() + "-" + mapJoarkFagsystem(saksrelasjon.getFagsystem()));
 			if (arkivsak == null) {
 				return null;
 			}

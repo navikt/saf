@@ -27,8 +27,8 @@ public class DokumentoversiktBrukerVisningsmodellRepositoryImpl implements Dokum
 	public List<Journalpost> findJournalposter(final List<String> journalpostIds,
 											   final SafRequestContext safRequestContext) {
 		return journalpostIds.stream().map(journalpostId -> {
-			JournalpostDto journalpostDto = safRequestContext.getParameterContext().getParameter("journalpostId=" + journalpostId);
-			return journalpostDtoMapper.mapJournalpostDto(journalpostDto, safRequestContext.getParameterContext());
+			JournalpostDto journalpostDto = safRequestContext.getRequestCache().getObject("journalpostId=" + journalpostId);
+			return journalpostDtoMapper.mapJournalpostDto(journalpostDto, safRequestContext.getRequestCache());
 		}).filter(Objects::nonNull)
 				.collect(Collectors.toList());
 	}

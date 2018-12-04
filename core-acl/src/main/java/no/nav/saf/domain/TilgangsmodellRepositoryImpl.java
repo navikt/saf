@@ -14,7 +14,7 @@ import no.nav.saf.domain.tilgangsmodell.TilgangDokumentInfo;
 import no.nav.saf.domain.tilgangsmodell.TilgangJournalpost;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
-import no.nav.saf.tjeneste.visningsmodell.Brukeridentifikator;
+import no.nav.saf.tjeneste.argumenter.BrukerIdInput;
 import no.nav.saf.tjeneste.visningsmodell.kode.Arkivsakssystem;
 import no.nav.saf.tjeneste.visningsmodell.kode.Journalposttype;
 import no.nav.saf.tjeneste.visningsmodell.kode.Journalstatus;
@@ -57,18 +57,18 @@ public class TilgangsmodellRepositoryImpl implements TilgangsmodellRepository {
 
 	@Override
 	@Cacheable(cacheNames = LokalCacheConfig.TILGANGSMODELL_REPO_BRUKER_CACHE)
-	public TilgangBruker findTilgangBruker(Brukeridentifikator brukeridentifikator) {
+	public TilgangBruker findTilgangBruker(BrukerIdInput brukerIdInput) {
 		try {
-			switch (brukeridentifikator.getIdentType()) {
+			switch (brukerIdInput.getIdentType()) {
 				case AKTOERID:
-					return aktoerAntiCorruptionLayer.hentTilgangBrukerByAktoerId(brukeridentifikator.getIdent());
-				case FOEDSELSNUMMER:
-					return aktoerAntiCorruptionLayer.hentTilgangBrukerByFoedselsnummer(brukeridentifikator.getIdent());
+					return aktoerAntiCorruptionLayer.hentTilgangBrukerByAktoerId(brukerIdInput.getIdent());
+				case FNR:
+					return aktoerAntiCorruptionLayer.hentTilgangBrukerByFoedselsnummer(brukerIdInput.getIdent());
 				default:
 					return null;
 			}
 		} catch (Exception e) {
-			log.warn("findTilgangBruker feilet ved oppslag av ident. Brukertype={}", brukeridentifikator.getIdentType(), e);
+			log.warn("findTilgangBruker feilet ved oppslag av ident. Brukertype={}", brukerIdInput.getIdentType(), e);
 		}
 		return null;
 	}
@@ -90,7 +90,7 @@ public class TilgangsmodellRepositoryImpl implements TilgangsmodellRepository {
 			List<Arkivsak> arkivsaker = Observable.concat(gsaker, psaker)
 					.flatMapIterable(item -> item)
 					.toList().blockingGet();
-			safRequestContext.getParameterContext().putParameters(arkivsaker.stream()
+			safRequestContext.getRequestCache().putObjects(arkivsaker.stream()
 					.collect(Collectors.toMap(arkivsak -> "sakId=" + arkivsak.getArkivsaksnummer() + "-" + arkivsak.getArkivsaksystem() ,
 							arkivsak -> arkivsak, (
 									arkivsak1, arkivsak2) -> {
@@ -147,7 +147,7 @@ public class TilgangsmodellRepositoryImpl implements TilgangsmodellRepository {
 					inkluderTema,
 					inkluderJournalposttyper,
 					inkluderJournalstatuses);
-			safRequestContext.getParameterContext().putParameters(journalposter.stream()
+			safRequestContext.getRequestCache().putObjects(journalposter.stream()
 					.collect(Collectors.toMap(journalpostDto -> "journalpostId=" + journalpostDto.getJournalpostId().toString(),
 							journalpostDto -> journalpostDto, (
 									journalpostDto1, journalpostDto2) -> {
