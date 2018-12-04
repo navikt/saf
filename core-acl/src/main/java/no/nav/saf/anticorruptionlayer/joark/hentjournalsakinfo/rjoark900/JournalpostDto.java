@@ -19,22 +19,19 @@ import java.util.List;
 public class JournalpostDto {
 	private Long journalpostId;
 	private String journalForendeEnhetId;
-	private Date journalDato;
-	private Date sendtPrintDato;
 	private String innhold;
 	private FagomradeCode fagomrade;
 	private JournalStatusCode journalstatus;
-	private Date dokumentDato;
 	private String avsenderMottakerNavn;
 	private String journalfortAvNavn;
-	private Date mottattDato;
 	private MottaksKanalCode mottakskanal;
 	private UtsendingsKanalCode utsendingskanal;
-	private Date ekspedertDato;
-	private Date lestDato;
-	private Date mottattAdressatDato;
 	private JournalpostTypeCode journalposttype;
 	private SaksrelasjonDto saksrelasjon;
 	private Date datoOpprettet;
+	private Date mottattDato;
+	private Date journalDato;
+	private Date sendtPrintDato;
+	private Date ekspedertDato;
 	private List<DokumentInfoDto> dokumenter;
 }
