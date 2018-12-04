@@ -33,17 +33,17 @@ public class DokumentoversiktBrukerArguments {
 			this.fraDato = fraDato;
 		}
 		if(tema.isEmpty()) {
-			this.tema = Tema.asList();
+			this.tema = Tema.ALL;
 		} else {
 			this.tema = tema;
 		}
 		if (journalposttyper.isEmpty()) {
-			this.journalposttyper = Journalposttype.asList();
+			this.journalposttyper = Journalposttype.ALL;
 		} else {
 			this.journalposttyper = journalposttyper;
 		}
 		if (journalstatuser.isEmpty()) {
-			this.journalstatuser = Journalstatus.asList();
+			this.journalstatuser = Journalstatus.ALL;
 		} else {
 			this.journalstatuser = journalstatuser;
 		}

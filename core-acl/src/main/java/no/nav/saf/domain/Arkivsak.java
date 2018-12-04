@@ -19,4 +19,8 @@ public class Arkivsak {
 	private final String fagsystem;
 	private final Tema tema;
 	private final LocalDateTime datoOpprettet;
+
+	public String getKey() {
+		return arkivsaksnummer + arkivsaksystem;
+	}
 }

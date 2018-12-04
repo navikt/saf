@@ -64,6 +64,7 @@ public enum Tema {
 	YRA("Yrkesrettet attføring"),
 	YRK("Yrkesskade / Menerstatning");
 
+	public static final List<Tema> ALL = asList();
 	private final String temanavn;
 
 	Tema(final String temanavn) {

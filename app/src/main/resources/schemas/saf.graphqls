@@ -147,13 +147,19 @@ type Dokumentvariant {
 # TODO
 enum Datotype {
     # TODO
-    OPPRETTET_DATO
+	DATO_OPPRETTET
 
-    # TODO
-    EKSPEDERT_DATO
+	# TODO
+	DATO_EKSPEDERT
 
-    # TODO
-    MOTTATT_DATO
+	# TODO
+	DATO_MOTTATT
+
+	# TODO
+	DATO_SENDT_PRINT
+
+	# TODO
+	DATO_JOURNALFOERT
 }
 
 # TODO

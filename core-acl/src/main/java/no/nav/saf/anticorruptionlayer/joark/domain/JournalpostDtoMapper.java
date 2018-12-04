@@ -73,12 +73,12 @@ public class JournalpostDtoMapper {
 		return new Bruker(Brukertype.PERSON, tilgangBruker.getFoedselsnr());
 	}
 
-	private Sak mapSak(JournalpostDto journalpostDto, RequestCache parameterContext) {
+	private Sak mapSak(JournalpostDto journalpostDto, RequestCache requestCache) {
 		SaksrelasjonDto saksrelasjon = journalpostDto.getSaksrelasjon();
 		if (saksrelasjon == null) {
 			return null;
 		} else {
-			Arkivsak arkivsak = parameterContext.getObject("sakId=" + saksrelasjon.getSakId() + "-" + mapJoarkFagsystem(saksrelasjon.getFagsystem()));
+			Arkivsak arkivsak = requestCache.getObject(saksrelasjon.getSakId() + mapJoarkFagsystem(saksrelasjon.getFagsystem()));
 			if (arkivsak == null) {
 				return null;
 			}
@@ -104,19 +104,27 @@ public class JournalpostDtoMapper {
 
 	private List<RelevantDato> mapRelevanteDatoer(JournalpostDto journalpostDto) {
 		List<RelevantDato> relevanteDatoer = new ArrayList<>();
+		if (journalpostDto.getDatoOpprettet() != null) {
+			relevanteDatoer.add(new RelevantDato(journalpostDto.getDatoOpprettet(), Datotype.DATO_OPPRETTET));
+		}
+		if (journalpostDto.getMottattDato() != null) {
+			relevanteDatoer.add(new RelevantDato(journalpostDto.getMottattDato(), Datotype.DATO_JOURNALFOERT));
+		}
 		switch (journalpostDto.getJournalposttype()) {
 			case I:
 				if (journalpostDto.getMottattDato() != null) {
-					relevanteDatoer.add(new RelevantDato(journalpostDto.getMottattDato(), Datotype.MOTTATT_DATO));
+					relevanteDatoer.add(new RelevantDato(journalpostDto.getMottattDato(), Datotype.DATO_MOTTATT));
 				}
+				// fall gjennom
 			case U:
+				if(journalpostDto.getSendtPrintDato() != null) {
+					relevanteDatoer.add(new RelevantDato(journalpostDto.getEkspedertDato(), Datotype.DATO_SENDT_PRINT));
+				}
 				if (journalpostDto.getEkspedertDato() != null) {
-					relevanteDatoer.add(new RelevantDato(journalpostDto.getEkspedertDato(), Datotype.EKSPEDERT_DATO));
+					relevanteDatoer.add(new RelevantDato(journalpostDto.getEkspedertDato(), Datotype.DATO_EKSPEDERT));
 				}
+				// fall gjennom
 			default:
-				if (journalpostDto.getDatoOpprettet() != null) {
-					relevanteDatoer.add(new RelevantDato(journalpostDto.getDatoOpprettet(), Datotype.OPPRETTET_DATO));
-				}
 				return relevanteDatoer;
 		}
 	}
