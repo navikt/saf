@@ -7,7 +7,7 @@ import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.domain.tilgangsmodell.TilgangJournalpost;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
-import no.nav.saf.tilgangskontroll.pep.PepEvaluator;
+import no.nav.saf.tilgangskontroll.pep.Pep;
 import no.nav.saf.tjeneste.visningsmodell.DokumentInfo;
 import no.nav.saf.tjeneste.visningsmodell.Journalpost;
 import org.springframework.stereotype.Component;
@@ -26,18 +26,18 @@ public class DokumentoversiktBrukerCoordinatorImpl implements DokumentoversiktBr
 
 	private final TilgangsmodellRepository tilgangsmodellRepository;
 	private final DokumentoversiktBrukerVisningsmodellRepository visningsmodellRepository;
-	private final PepEvaluator<TilgangBruker> pep1;
-	private final PepEvaluator<TilgangSak> pep2;
-	private final PepEvaluator<TilgangSak> pep3;
-	private final PepEvaluator<TilgangJournalpost> pep4;
+	private final Pep<TilgangBruker> pep1;
+	private final Pep<TilgangSak> pep2;
+	private final Pep<TilgangSak> pep3;
+	private final Pep<TilgangJournalpost> pep4;
 
 	@Inject
 	public DokumentoversiktBrukerCoordinatorImpl(TilgangsmodellRepository tilgangsmodellRepository,
 												 DokumentoversiktBrukerVisningsmodellRepository visningsmodellRepository,
-												 @Named("pep1") PepEvaluator<TilgangBruker> pep1,
-												 @Named("pep2") PepEvaluator<TilgangSak> pep2,
-												 @Named("pep3") PepEvaluator<TilgangSak> pep3,
-												 @Named("pep4") PepEvaluator<TilgangJournalpost> pep4) {
+												 @Named("pep1") Pep<TilgangBruker> pep1,
+												 @Named("pep2") Pep<TilgangSak> pep2,
+												 @Named("pep3") Pep<TilgangSak> pep3,
+												 @Named("pep4") Pep<TilgangJournalpost> pep4) {
 		this.tilgangsmodellRepository = tilgangsmodellRepository;
 		this.visningsmodellRepository = visningsmodellRepository;
 		this.pep1 = pep1;
@@ -48,7 +48,8 @@ public class DokumentoversiktBrukerCoordinatorImpl implements DokumentoversiktBr
 
 	@Override
 	public List<Journalpost> findJournalposter(final DokumentoversiktBrukerArguments dokumentoversiktBrukerArguments, final SafRequestContext safRequestContext) {
-		final TilgangBruker tilgangBruker = tilgangsmodellRepository.findTilgangBruker(dokumentoversiktBrukerArguments.getBrukeridentifikator());
+		final TilgangBruker tilgangBruker = tilgangsmodellRepository.findTilgangBruker(dokumentoversiktBrukerArguments.getBrukerIdInput());
+		safRequestContext.getRequestCache().putObject("tilgangBruker", tilgangBruker);
 		boolean pep1Access = this.pep1.hasAccess(tilgangBruker, safRequestContext);
 
 		if (!pep1Access) {

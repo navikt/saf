@@ -15,11 +15,11 @@ import java.util.Arrays;
 /**
  * @author Sigurd Midttun, Visma Consulting.
  */
-public class Pep1EvaluatorIT extends AbstractPepEvaluatorIT {
+public class Pep1EvaluatorIT extends AbstractPepIT {
 
 	@Inject
 	@Named("pep1")
-	private PepEvaluator<TilgangBruker> pep1;
+	private Pep<TilgangBruker> pep1;
 
 	private static String AKTOER_ID = "1234";
 	private static String IDENTIFIKATOR = "2345";

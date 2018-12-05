@@ -18,6 +18,7 @@ import java.util.concurrent.TimeUnit;
 @EnableCaching
 public class LokalCacheConfig {
 
+	public static final String GRAPHQL_QUERY_CACHE = "graphQLQuery";
 	public static final String SAKER_BY_AKTOER_ID_CACHE = "sakerByAktoerId";
 	public static final String SAK_BY_SAKID_CACHE = "sakerBySakId";
 	public static final String HENT_JOURNALPOSTBULK_CACHE = "hentTilgangJournalposterBulk";
@@ -30,6 +31,12 @@ public class LokalCacheConfig {
 	CacheManager cacheManager() {
 		SimpleCacheManager manager = new SimpleCacheManager();
 		manager.setCaches(Arrays.asList(
+				// Brukes for caching av allerede parsede og validerte graphQL queries.
+				// Se https://www.graphql-java.com/documentation/v11/execution/
+				new CaffeineCache(GRAPHQL_QUERY_CACHE, Caffeine.newBuilder()
+						.initialCapacity(50)
+						.maximumSize(5_000)
+						.build()),
 				new CaffeineCache(SAKER_BY_AKTOER_ID_CACHE, Caffeine.newBuilder()
 						.expireAfterWrite(10, TimeUnit.MINUTES)
 						.maximumSize(500)

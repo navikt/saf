@@ -1,258 +1,456 @@
-
+# ISO-8601 representasjon for en kalenderdato. YYYY-MM-DD. Eksempel: 2018-01-01
 scalar Date
+
+# ISO-8601 representasjon for en kalenderdato med tid, trunkert til nærmeste sekund. YYYY-MM-DD'T'hh:mm:ss. Eksempel: 2018-01-01T12:00:00
 scalar DateTime
 
 schema {
+    # Alle spørringer mot SAF GraphQL API
     query: Query
 }
 
+# Query roten til SAF GraphQL API
 type Query {
-    # Returnerer en liste over alle dokumenter tilknyttet en bruker.
-    dokumentoversiktBruker(brukeridentifikator: Brukeridentifikator!, fraDato: Date = null, tema: [Tema] = [], journalposttyper: [Journalposttype] = [], journalstatuser: [Journalstatus] = []): [Journalpost]!
+    # Returnerer en liste over alle dokumenter tilknyttet en bruker
+    dokumentoversiktBruker(
+        # TODO
+        brukerId: BrukerIdInput!
+
+        # TODO
+        fraDato: Date = null
+
+        # TODO
+        tema: [Tema] = []
+
+        # TODO
+        journalposttyper: [Journalposttype] = []
+
+        # TODO
+        journalstatuser: [Journalstatus] = []
+    ): [Journalpost]!
 }
 
+# TODO
 type Journalpost {
+    # TODO
     journalpostId: String!
+
+    # TODO
     tittel: String
+
+    # TODO
     journalposttype: Journalposttype
+
+    # TODO
     journalstatus: Journalstatus
+
+    # TODO
     tema: Tema
+
+    # TODO
     temanavn: String
+
+    # TODO
     sak: Sak
+
+    # TODO
+    bruker: Bruker
+
+    # TODO
     avsenderMottakerNavn: String
+
+    # TODO
     journalfortAvNavn: String
+
+    # TODO
     kanal: Kanal
+
+    # TODO
     kanalnavn: String
+
+    # TODO
     relevanteDatoer: [RelevantDato]
+
+    # TODO
     dokumenter: [DokumentInfo]
 }
 
+# TODO
 type RelevantDato {
+    # TODO
     dato: DateTime
+
+    # TODO
     datotype: Datotype
 }
 
+# TODO
 type Sak {
+    # TODO
     arkivsaksnummer: String
+
+    # TODO
     arkivsaksystem: Arkivsaksystem
+
+    # TODO
     fagsaknummer: String
+
+    # TODO
     fagsystem: String
+
+    # TODO
     datoOpprettet: DateTime
 }
 
+# TODO
+type Bruker {
+    # TODO
+    brukertype: Brukertype
+
+    # TODO
+    identifikator: String
+}
+
+# TODO
+enum Brukertype {
+    # TODO
+    PERSON
+
+    # TODO
+    ORGANISASJON
+}
+
+# TODO
 type DokumentInfo {
+    # TODO
     dokumentId: String!
+
+    # TODO
     tittel: String
+
+    # TODO
     navSkjemaId: String
+
+    # TODO
     saksbehandlerHarTilgang: Boolean
+
+    # TODO
     dokumentvarianter: [Dokumentvariant]
 }
 
+# TODO
 type Dokumentvariant {
+    # TODO
     variantformat: Variantformat
 }
 
+# TODO
 enum Datotype {
-    OPPRETTET_DATO
-    EKSPEDERT_DATO
-    MOTTATT_DATO
+    # TODO
+	DATO_OPPRETTET
+
+	# TODO
+	DATO_EKSPEDERT
+
+	# TODO
+	DATO_MOTTATT
+
+	# TODO
+	DATO_SENDT_PRINT
+
+	# TODO
+	DATO_JOURNALFOERT
 }
 
-input Brukeridentifikator {
+# TODO
+input BrukerIdInput {
+    # TODO
     ident: String!
-    identType: BrukeridentifikatorType!
+
+    # TODO
+    identType: BrukerIdInputType!
 }
 
-enum BrukeridentifikatorType {
+# TODO
+enum BrukerIdInputType {
     # Aktørid
     AKTOERID
-    # Fødelsnummer - 11 siffer
-    FOEDSELSNUMMER
+
+    # Fødselsnummer
+    FNR
+
+    # Organisasjonsnummer
+    ORGNR
 }
 
+# TODO
 enum Arkivsaksystem {
+    # TODO
     GSAK
+    # TODO
     PSAK
 }
 
+# TODO
 enum Journalposttype {
     # Inngående dokument
 	I
+
 	# Utgående dokument
 	U
+
 	# Notat
 	N
 }
 
+# TODO
 enum Journalstatus {
+    # TODO
     MOTTATT
+
+    # TODO
     JOURNALFOERT
+
+    # TODO
     FERDIGSTILT
+
+    # TODO
     EKSPEDERT
+
+    # TODO
     UNDER_ARBEID
+
+    # TODO
     FEILREGISTRERT
+
+    # TODO
     UTGAAR
+
+    # TODO
     AVBRUTT
+
+    # TODO
     UKJENT_BRUKER
+
+    # TODO
     RESERVERT
+
+    # TODO
     OPPLASTING_DOKUMENT
 }
 
 enum Kanal {
     # Altinn
-    ALTINN,
+    ALTINN
+
     # Utveksling av trygdeinformasjon mellom EU- og EØS-land
-	EESSI,
+	EESSI
+
 	# Elektronisk innsending
-	EIA,
+	EIA
+
 	# Eksternt oppslag
-	EKST_OPPS,
+	EKST_OPPS
+
 	# Lokal utskrift
-	LOKAL_UTSKRIFT,
+	LOKAL_UTSKRIFT
+
 	# Ditt NAV
-	NAV_NO,
+	NAV_NO
+
 	# Selvbetjening Pesys
-	PSELV,
+	PSELV
+
 	# Sentral utskrift
-	SENTRAL_UTSKRIFT,
+	SENTRAL_UTSKRIFT
+
 	# Sikker Digital Post
-	SDP,
+	SDP
+
 	# Skanning Nets
-	SKAN_NETS,
+	SKAN_NETS
+
 	# Skanning Pensjon
-	SKAN_PEN,
+	SKAN_PEN
+
 	# Ingen distribusjon
 	INGEN_DISTRIBUSJON
 }
 
 enum Tema {
     # Arbeidsavklaringspenger
-    AAP,
+    AAP
+
     # Aa-registeret
-    AAR,
+    AAR
+
     # Ajourhold - Grunnopplysninger
-    AGR,
+    AGR
+
     # Barnetrygd
-    BAR,
-    # 1 - Bidrag
-    BID,
-    # 2 - Bidrag innkreving
-    BII,
+    BAR
+
+    # Bidrag
+    BID
+
     # Bil
-    BIL,
+    BIL
+
     # Dagpenger
-    DAG,
+    DAG
+
     # Enslig forsørger
-    ENF,
+    ENF
+
     # Erstatning
-    ERS,
+    ERS
+
     # Farskap
-    FAR,
+    FAR
+
     # Feilutbetaling
-    FEI,
+    FEI
+
     # Foreldre- og svangerskapspenger
-    FOR,
+    FOR
+
     # Forsikring
-    FOS,
+    FOS
+
     # Fullmakt
-    FUL,
+    FUL
+
     # Generell
-    GEN,
+    GEN
+
     # Gravferdsstønad
-    GRA,
+    GRA
+
     # Grunn- og hjelpestønad
-    GRU,
-    # Helsetjenester og ort. Hjelpemidler
-    HEL,
+    GRU
+
+    # Helsetjenester og ortopediske hjelpemidler
+    HEL
+
     # Hjelpemidler
-    HJE,
-    # Inkluderende Arbeidsliv
-    IAR,
+    HJE
+
+    # Inkluderende arbeidsliv
+    IAR
+
     # Tiltakspenger
-    IND,
-    # Klage/Anke
-    KLA,
+    IND
+
     # Kontakt NAV
-    KNA,
-    # Kommunale tjenester
-    KOM,
+    KNA
+
     # Kontantstøtte
-    KON,
+    KON
+
     # Kontroll
-    KTR,
-    # Lønnsgaranti
-    LGA,
+    KTR
+
     # Medlemskap
-    MED,
-    # Mob.stønad
-    MOB,
-    # 3 - Skanning
-    MOT,
+    MED
+
+    # Mobilitetsfremmende stønad
+    MOB
+
     # Økonomi
-    OKO,
-    # Omsorgspenger, Pleiepenger og opplæringspenger
-    OMS,
+    OKO
+
+    # Omsorgspenger, pleiepenger og opplæringspenger
+    OMS
+
     # Oppfølging - Arbeidsgiver
-    OPA,
+    OPA
+
     # Oppfølging
-    OPP,
-    # 4 - Øvrig
-    OVR,
+    OPP
+
     # Pensjon
-    PEN,
+    PEN
+
     # Permittering og masseoppsigelser
-    PER,
+    PER
+
     # Rehabilitering
-    REH,
-    # Rekruttering og Stilling
-    REK,
+    REH
+
+    # Rekruttering og stilling
+    REK
+
     # Retting av personopplysninger
-    RPO,
+    RPO
+
     # Rettferdsvederlag
-    RVE,
+    RVE
+
     # Sanksjon - Arbeidsgiver
-    SAA,
-    # Saksomkostning
-    SAK,
+    SAA
+
+    # Saksomkostninger
+    SAK
+
     # Sanksjon - Person
-    SAP,
+    SAP
+
     # Serviceklager
-    SER,
+    SER
+
     # Sikkerhetstiltak
-    SIK,
+    SIK
+
     # Regnskap/utbetaling
-    STO,
+    STO
+
     # Supplerende stønad
-    SUP,
+    SUP
+
     # Sykepenger
-    SYK,
-    # Sykemeldinger
-    SYM,
+    SYK
+
+    # Sykmeldinger
+    SYM
+
     # Tiltak
-    TIL,
+    TIL
+
     # Trekkhåndtering
-    TRK,
+    TRK
+
     # Trygdeavgift
-    TRY,
+    TRY
+
     # Tilleggsstønad
-    TSO,
+    TSO
+
     # Tilleggsstønad arbeidssøkere
-    TSR,
+    TSR
+
     # Unntak fra medlemskap
-    UFM,
+    UFM
+
     # Uføretrygd
-    UFO,
+    UFO
+
     # Ukjent
-    UKJ,
+    UKJ
+
     # Ventelønn
-    VEN,
+    VEN
+
     # Yrkesrettet attføring
-    YRA,
+    YRA
+
     # Yrkesskade / Menerstatning
     YRK
 }
 
 enum Variantformat {
+    # TODO
     ARKIV
+
+    # TODO
     SKJERMET
 }

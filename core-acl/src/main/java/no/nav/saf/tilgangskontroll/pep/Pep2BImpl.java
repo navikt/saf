@@ -13,23 +13,23 @@ import javax.inject.Inject;
  * @author Joakim Bjørnstad, Jbit AS
  */
 @Slf4j
-@Component("pep2")
-public class Pep2EvaluatorImpl implements PepEvaluator<TilgangSak> {
+@Component("pep2b")
+public class Pep2BImpl implements Pep<TilgangSak> {
 
 	private final AbacService abacService;
 
 	@Inject
-	public Pep2EvaluatorImpl(AbacService abacService) {
+	public Pep2BImpl(AbacService abacService) {
 		this.abacService = abacService;
 	}
 
 	@Override
 	public boolean hasAccess(TilgangSak ressurs, SafRequestContext safRequestContext) {
-		if (ressurs == null) {
-			log.warn("Pep2 mangler tilstrekkelig datagrunnlag for å kunne gjennomføre tilgangskontroll");
-			return false;
-		}
-
+//		TODO: Uncomment when implemented
+//		if (ressurs == null) {
+//			log.warn("Pep2b mangler tilstrekkelig datagrunnlag for å kunne gjennomføre tilgangskontroll");
+//			return false;
+//		}
 		XacmlRequest request = new XacmlRequest();
 		//TODO Populate request and perform call to pdp
 

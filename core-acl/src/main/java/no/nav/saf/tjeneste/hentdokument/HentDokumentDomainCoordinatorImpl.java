@@ -7,7 +7,7 @@ import no.nav.saf.domain.tilgangsmodell.TilgangJournalpost;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 import no.nav.saf.exceptions.TilgangskontrollException;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
-import no.nav.saf.tilgangskontroll.pep.PepEvaluator;
+import no.nav.saf.tilgangskontroll.pep.Pep;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
@@ -17,23 +17,23 @@ import javax.inject.Named;
  * @author Sigurd Midttun, Visma Consulting.
  */
 
-@Component
+@Component("HentDokumentDomainCoordinatorImpl")
 public class HentDokumentDomainCoordinatorImpl implements HentDokumentDomainCoordinator {
 
 	private final DokumentRepository dokumentRepository;
 	private final TilgangsmodellRepository tilgangsmodellRepository;
-	private final PepEvaluator<TilgangBruker> pep1;
-	private final PepEvaluator<TilgangSak> pep2;
-	private final PepEvaluator<TilgangSak> pep3;
-	private final PepEvaluator<TilgangJournalpost> pep4;
+	private final Pep<TilgangBruker> pep1;
+	private final Pep<TilgangSak> pep2;
+	private final Pep<TilgangSak> pep3;
+	private final Pep<TilgangJournalpost> pep4;
 
 	@Inject
 	public HentDokumentDomainCoordinatorImpl(DokumentRepository dokumentRepository,
 											 TilgangsmodellRepository tilgangsmodellRepository,
-											 @Named("pep1") PepEvaluator<TilgangBruker> pep1,
-											 @Named("pep2") PepEvaluator<TilgangSak> pep2,
-											 @Named("pep3") PepEvaluator<TilgangSak> pep3,
-											 @Named("pep4") PepEvaluator<TilgangJournalpost> pep4) {
+											 @Named("pep1") Pep<TilgangBruker> pep1,
+											 @Named("pep2") Pep<TilgangSak> pep2,
+											 @Named("pep3") Pep<TilgangSak> pep3,
+											 @Named("pep4") Pep<TilgangJournalpost> pep4) {
 		this.dokumentRepository = dokumentRepository;
 		this.tilgangsmodellRepository = tilgangsmodellRepository;
 		this.pep1 = pep1;
@@ -44,6 +44,7 @@ public class HentDokumentDomainCoordinatorImpl implements HentDokumentDomainCoor
 
 	@Override
 	public HentDokument hentDokument(final String journalpostId, final String dokumentId, final String variantFormat, final SafRequestContext safRequestContext) {
+
 		final TilgangSak tilgangSak = tilgangsmodellRepository.findTilgangSak(journalpostId, dokumentId, variantFormat);
 		final TilgangBruker tilgangBruker = getTilgangBruker(tilgangSak, journalpostId, dokumentId, variantFormat);
 

@@ -1,11 +1,10 @@
 package no.nav.saf.tilgangskontroll.pep;
 
 import lombok.extern.slf4j.Slf4j;
-import no.nav.saf.domain.tilgangsmodell.TilgangSak;
+import no.nav.saf.domain.tilgangsmodell.TilgangJournalpost;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlRequest;
 import no.nav.saf.tilgangskontroll.abac.service.AbacService;
-import no.nav.saf.tjeneste.visningsmodell.kode.Tema;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
@@ -14,26 +13,26 @@ import javax.inject.Inject;
  * @author Joakim Bjørnstad, Jbit AS
  */
 @Slf4j
-@Component("pep3")
-public class Pep3EvaluatorImpl implements PepEvaluator<TilgangSak> {
+@Component("pep4")
+public class Pep4Impl implements Pep<TilgangJournalpost> {
 
 	private final AbacService abacService;
 
 	@Inject
-	public Pep3EvaluatorImpl(AbacService abacService) {
+	public Pep4Impl(AbacService abacService) {
 		this.abacService = abacService;
 	}
 
 	@Override
-	public boolean hasAccess(TilgangSak ressurs, SafRequestContext safRequestContext) {
+	public boolean hasAccess(TilgangJournalpost ressurs, SafRequestContext safRequestContext) {
 		if (ressurs == null) {
-			log.warn("Pep3 mangler tilstrekkelig datagrunnlag for å kunne gjennomføre tilgangskontroll");
+			log.warn("Pep4 mangler tilstrekkelig datagrunnlag for å kunne gjennomføre tilgangskontroll");
 			return false;
 		}
 
 		XacmlRequest request = new XacmlRequest();
 		//TODO Populate request and perform call to pdp
 
-		return !(ressurs.getTema().equals(Tema.BID.name()) || ressurs.getTema().equals(Tema.FAR.name()));
+		return true;
 	}
 }

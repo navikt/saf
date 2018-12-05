@@ -10,10 +10,10 @@ import lombok.extern.slf4j.Slf4j;
 @Getter
 public class SafRequestContext {
 	private final SafSecurityContext securityContext;
-	private final ParameterContext parameterContext;
+	private final RequestCache requestCache;
 
 	public SafRequestContext(String authorizationHeader) {
 		this.securityContext = new SafSecurityContext(authorizationHeader);
-		this.parameterContext = new ParameterContext();
+		this.requestCache = new RequestCache();
 	}
 }

@@ -19,19 +19,6 @@
 		<version>2.1.0.RELEASE</version>
 	</parent>
 
-	<distributionManagement>
-		<repository>
-			<id>m2internal</id>
-			<name>NAV Internal Repository</name>
-			<url>dav:http://maven.adeo.no/nexus/content/repositories/m2internal</url>
-		</repository>
-		<snapshotRepository>
-			<id>m2snapshot</id>
-			<name>NAV Snapshot Repository</name>
-			<url>dav:http://maven.adeo.no/nexus/content/repositories/m2snapshot</url>
-		</snapshotRepository>
-	</distributionManagement>
-
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -52,6 +39,7 @@
 		<lombok.version>1.18.4</lombok.version>
 		<!-- test -->
 		<junit5.version>5.3.1</junit5.version>
+		<junit5.mockito.version>2.23.0</junit5.mockito.version>
 		<freg.security.test.version>3.1.0</freg.security.test.version>
 	</properties>
 
@@ -154,6 +142,12 @@
 				<groupId>org.junit.jupiter</groupId>
 				<artifactId>junit-jupiter-api</artifactId>
 				<version>${junit5.version}</version>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.mockito</groupId>
+				<artifactId>mockito-junit-jupiter</artifactId>
+				<version>${junit5.mockito.version}</version>
 				<scope>test</scope>
 			</dependency>
 			<dependency>

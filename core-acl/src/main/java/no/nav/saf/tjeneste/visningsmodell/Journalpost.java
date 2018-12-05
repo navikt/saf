@@ -23,6 +23,7 @@ public class Journalpost {
 	private final Tema tema;
 	private final String temanavn;
 	private final Sak sak;
+	private final Bruker bruker;
 	private final String avsenderMottakerNavn;
 	private final String journalfortAvNavn;
 	private final Kanal kanal;

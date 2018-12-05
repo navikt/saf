@@ -1,5 +1,7 @@
 package no.nav.saf.endpoints.wiring;
 
+import static java.time.temporal.ChronoUnit.SECONDS;
+
 import graphql.schema.Coercing;
 import graphql.schema.CoercingParseLiteralException;
 import graphql.schema.CoercingParseValueException;
@@ -31,7 +33,7 @@ class DateTimeScalar {
 
 	private static Object serializeDato(Object datafetcherResult) {
 		if(datafetcherResult instanceof LocalDateTime) {
-			return datafetcherResult.toString();
+			return ((LocalDateTime) datafetcherResult).truncatedTo(SECONDS).toString();
 		}
 		throw new CoercingSerializeException("Serialisering av " + datafetcherResult.getClass() + " til " + DATE_TIME.getName() + " er ikke implementert.");
 	}

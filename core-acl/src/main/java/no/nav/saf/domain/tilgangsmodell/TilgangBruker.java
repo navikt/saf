@@ -2,6 +2,7 @@ package no.nav.saf.domain.tilgangsmodell;
 
 import lombok.Builder;
 import lombok.Value;
+import no.nav.saf.tilgangskontroll.abstraction.SecModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,7 +12,7 @@ import java.util.List;
  */
 @Value
 @Builder
-public class TilgangBruker {
+public class TilgangBruker implements SecModel {
 	private final String foedselsnr;
 	private final String aktoerId;
 	@Builder.Default

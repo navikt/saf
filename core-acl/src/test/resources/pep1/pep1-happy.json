@@ -7,6 +7,10 @@
           "Value": "saf"
         },
         {
+          "AttributeId": "no.nav.abac.attributter.resource.felles.resource_type",
+          "Value": "no.nav.abac.attributter.resource.saf.journalpost"
+        },
+        {
           "AttributeId": "no.nav.abac.attributter.resource.felles.person.aktoerId_resource",
           "Value": "12345"
         }

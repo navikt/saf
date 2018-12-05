@@ -5,13 +5,16 @@ import no.nav.saf.anticorruptionlayer.joark.domain.kode.FagsystemCode;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.JournalpostDto;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.SaksrelasjonDto;
 import no.nav.saf.domain.Arkivsak;
-import no.nav.saf.tilgangskontroll.ParameterContext;
+import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
+import no.nav.saf.tilgangskontroll.RequestCache;
+import no.nav.saf.tjeneste.visningsmodell.Bruker;
 import no.nav.saf.tjeneste.visningsmodell.DokumentInfo;
 import no.nav.saf.tjeneste.visningsmodell.Dokumentvariant;
 import no.nav.saf.tjeneste.visningsmodell.Journalpost;
 import no.nav.saf.tjeneste.visningsmodell.RelevantDato;
 import no.nav.saf.tjeneste.visningsmodell.Sak;
 import no.nav.saf.tjeneste.visningsmodell.kode.Arkivsakssystem;
+import no.nav.saf.tjeneste.visningsmodell.kode.Brukertype;
 import no.nav.saf.tjeneste.visningsmodell.kode.Datotype;
 import no.nav.saf.tjeneste.visningsmodell.kode.Journalposttype;
 import no.nav.saf.tjeneste.visningsmodell.kode.Journalstatus;
@@ -31,7 +34,7 @@ import java.util.stream.Collectors;
  */
 @Component
 public class JournalpostDtoMapper {
-	public Journalpost mapJournalpostDto(final JournalpostDto journalpostDto, final ParameterContext parameterContext) {
+	public Journalpost mapJournalpostDto(final JournalpostDto journalpostDto, final RequestCache requestCache) {
 		if (journalpostDto == null) {
 			return null;
 		}
@@ -43,7 +46,8 @@ public class JournalpostDtoMapper {
 				.journalstatus(mapJournalstatus(journalpostDto))
 				.tema(FagomradeCode.toSafJournalstatus(journalpostDto.getFagomrade()))
 				.temanavn(FagomradeCode.toSafJournalstatus(journalpostDto.getFagomrade()).getTemanavn())
-				.sak(mapSak(journalpostDto, parameterContext))
+				.sak(mapSak(journalpostDto, requestCache))
+				.bruker(mapBruker(requestCache))
 				.avsenderMottakerNavn(journalpostDto.getAvsenderMottakerNavn())
 				.journalfortAvNavn(journalpostDto.getJournalfortAvNavn())
 				.kanal(kanal)
@@ -61,12 +65,20 @@ public class JournalpostDtoMapper {
 								.build()).collect(Collectors.toList())).build();
 	}
 
-	private Sak mapSak(JournalpostDto journalpostDto, ParameterContext parameterContext) {
+	private Bruker mapBruker(RequestCache requestCache) {
+		TilgangBruker tilgangBruker = requestCache.getObject("tilgangBruker");
+		if(tilgangBruker == null) {
+			return null;
+		}
+		return new Bruker(Brukertype.PERSON, tilgangBruker.getFoedselsnr());
+	}
+
+	private Sak mapSak(JournalpostDto journalpostDto, RequestCache requestCache) {
 		SaksrelasjonDto saksrelasjon = journalpostDto.getSaksrelasjon();
 		if (saksrelasjon == null) {
 			return null;
 		} else {
-			Arkivsak arkivsak = parameterContext.getParameter("sakId=" + saksrelasjon.getSakId() + "-" + mapJoarkFagsystem(saksrelasjon.getFagsystem()));
+			Arkivsak arkivsak = requestCache.getObject(saksrelasjon.getSakId() + mapJoarkFagsystem(saksrelasjon.getFagsystem()));
 			if (arkivsak == null) {
 				return null;
 			}
@@ -82,7 +94,8 @@ public class JournalpostDtoMapper {
 	}
 
 	private Journalstatus mapJournalstatus(JournalpostDto journalpostDto) {
-		if (journalpostDto.getSaksrelasjon() != null && journalpostDto.getSaksrelasjon().getFeilregistrert()) {
+		SaksrelasjonDto saksrelasjon = journalpostDto.getSaksrelasjon();
+		if (saksrelasjon != null &&  saksrelasjon.getFeilregistrert() != null && saksrelasjon.getFeilregistrert()) {
 			return Journalstatus.FEILREGISTRERT;
 		} else {
 			return journalpostDto.getJournalstatus().toSafJournalStatus();
@@ -91,19 +104,27 @@ public class JournalpostDtoMapper {
 
 	private List<RelevantDato> mapRelevanteDatoer(JournalpostDto journalpostDto) {
 		List<RelevantDato> relevanteDatoer = new ArrayList<>();
+		if (journalpostDto.getDatoOpprettet() != null) {
+			relevanteDatoer.add(new RelevantDato(journalpostDto.getDatoOpprettet(), Datotype.DATO_OPPRETTET));
+		}
+		if (journalpostDto.getMottattDato() != null) {
+			relevanteDatoer.add(new RelevantDato(journalpostDto.getMottattDato(), Datotype.DATO_JOURNALFOERT));
+		}
 		switch (journalpostDto.getJournalposttype()) {
 			case I:
 				if (journalpostDto.getMottattDato() != null) {
-					relevanteDatoer.add(new RelevantDato(journalpostDto.getMottattDato(), Datotype.MOTTATT_DATO));
+					relevanteDatoer.add(new RelevantDato(journalpostDto.getMottattDato(), Datotype.DATO_MOTTATT));
 				}
+				// fall gjennom
 			case U:
+				if(journalpostDto.getSendtPrintDato() != null) {
+					relevanteDatoer.add(new RelevantDato(journalpostDto.getEkspedertDato(), Datotype.DATO_SENDT_PRINT));
+				}
 				if (journalpostDto.getEkspedertDato() != null) {
-					relevanteDatoer.add(new RelevantDato(journalpostDto.getEkspedertDato(), Datotype.EKSPEDERT_DATO));
+					relevanteDatoer.add(new RelevantDato(journalpostDto.getEkspedertDato(), Datotype.DATO_EKSPEDERT));
 				}
+				// fall gjennom
 			default:
-				if (journalpostDto.getDatoOpprettet() != null) {
-					relevanteDatoer.add(new RelevantDato(journalpostDto.getDatoOpprettet(), Datotype.OPPRETTET_DATO));
-				}
 				return relevanteDatoer;
 		}
 	}
