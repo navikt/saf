@@ -1,4 +1,4 @@
-package no.nav.saf.endpoints;
+package no.nav.saf;
 
 
 import static no.nav.saf.endpoints.testconfig.SecurityConfig.AZURE_ISSUER_URL;

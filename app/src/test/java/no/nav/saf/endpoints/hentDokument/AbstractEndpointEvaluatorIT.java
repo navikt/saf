@@ -1,6 +1,10 @@
 package no.nav.saf.endpoints.hentDokument;
 
-import static no.nav.saf.endpoints.JwtClaimsBuilderProvider.openAmClaimsBuilder;
+import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.post;
+import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
+import static no.nav.saf.JwtClaimsBuilderProvider.openAmClaimsBuilder;
 
 import com.auth0.jwt.JWT;
 import com.github.tomakehurst.wiremock.client.WireMock;
@@ -14,6 +18,10 @@ import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -65,4 +73,24 @@ public abstract class AbstractEndpointEvaluatorIT {
 		return IOUtils.toString(this.getClass().getClassLoader().getResourceAsStream(resourcename));
 	}
 
+	protected void abacDeny() {
+		stubFor(post(urlEqualTo("/abac"))
+				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
+						.withHeader(org.apache.http.HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+						.withBodyFile("abac/abac-deny.json")));
+	}
+
+	protected void abacPermit() {
+		stubFor(post(urlEqualTo("/abac"))
+				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
+						.withHeader(org.apache.http.HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+						.withBodyFile("abac/abac-permit.json")));
+	}
+
+	protected HttpEntity createHeaders() {
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.TEXT_PLAIN);
+		headers.add(HttpHeaders.AUTHORIZATION, OIDC_TOKEN_PERSON_USER_TEST);
+		return new HttpEntity(headers);
+	}
 }

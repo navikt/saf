@@ -5,6 +5,7 @@ import no.nav.saf.domain.TilgangsmodellRepository;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.domain.tilgangsmodell.TilgangJournalpost;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
+import no.nav.saf.exceptions.TilgangskontrollException;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.pep.PepEvaluator;
 import org.springframework.stereotype.Component;
@@ -43,30 +44,30 @@ public class HentDokumentDomainCoordinatorImpl implements HentDokumentDomainCoor
 
 	@Override
 	public HentDokument hentDokument(final String journalpostId, final String dokumentId, final String variantFormat, final SafRequestContext safRequestContext) {
-//		final TilgangSak tilgangSak = tilgangsmodellRepository.findTilgangSak(journalpostId, dokumentId, variantFormat);
-//		final TilgangBruker tilgangBruker = getTilgangBruker(tilgangSak, journalpostId, dokumentId, variantFormat);
-//
-//		boolean pep1Access = pep1.hasAccess(tilgangBruker, safRequestContext);
-//		if (!pep1Access) {
-//			throw new TilgangskontrollException();
-//		}
-//
-//		boolean pep2Access = pep2.hasAccess(tilgangSak, safRequestContext);
-//		if (!pep2Access) {
-//			throw new TilgangskontrollException();
-//		}
-//
-//		boolean pep3Access = pep3.hasAccess(tilgangSak, safRequestContext);
-//		if (!pep3Access) {
-//			throw new TilgangskontrollException();
-//		}
-//
-//		final TilgangJournalpost tilgangJournalpost = tilgangsmodellRepository.findTilgangJournalpost(journalpostId, dokumentId, variantFormat);
-//		boolean pep4Access = pep4.hasAccess(tilgangJournalpost, safRequestContext);
-//
-//		if (!pep4Access) {
-//			throw new TilgangskontrollException();
-//		}
+		final TilgangSak tilgangSak = tilgangsmodellRepository.findTilgangSak(journalpostId, dokumentId, variantFormat);
+		final TilgangBruker tilgangBruker = getTilgangBruker(tilgangSak, journalpostId, dokumentId, variantFormat);
+
+		boolean pep1Access = pep1.hasAccess(tilgangBruker, safRequestContext);
+		if (!pep1Access) {
+			throw new TilgangskontrollException();
+		}
+
+		boolean pep2Access = pep2.hasAccess(tilgangSak, safRequestContext);
+		if (!pep2Access) {
+			throw new TilgangskontrollException();
+		}
+
+		boolean pep3Access = pep3.hasAccess(tilgangSak, safRequestContext);
+		if (!pep3Access) {
+			throw new TilgangskontrollException();
+		}
+
+		final TilgangJournalpost tilgangJournalpost = tilgangsmodellRepository.findTilgangJournalpost(journalpostId, dokumentId, variantFormat);
+		boolean pep4Access = pep4.hasAccess(tilgangJournalpost, safRequestContext);
+
+		if (!pep4Access) {
+			throw new TilgangskontrollException();
+		}
 
 		return dokumentRepository.findDokument(dokumentId, variantFormat);
 	}
