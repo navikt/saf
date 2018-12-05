@@ -20,12 +20,16 @@ public class DokumentoversiktBrukerArguments {
 	private final List<Journalposttype> journalposttyper;
 	private final List<Journalstatus> journalstatuser;
 	private final boolean visFeilregistrerte;
+	private final int foerste;
+	private final String etter;
 
 	public DokumentoversiktBrukerArguments(BrukerIdInput brukerIdInput,
 										   LocalDate fraDato,
 										   List<Tema> tema,
 										   List<Journalposttype> journalposttyper,
-										   List<Journalstatus> journalstatuser) {
+										   List<Journalstatus> journalstatuser,
+										   int foerste,
+										   String etter) {
 		this.brukerIdInput = brukerIdInput;
 		if (fraDato == null) {
 			this.fraDato = LocalDate.of(1, 1, 1);
@@ -48,5 +52,7 @@ public class DokumentoversiktBrukerArguments {
 			this.journalstatuser = journalstatuser;
 		}
 		this.visFeilregistrerte = this.journalstatuser.contains(Journalstatus.FEILREGISTRERT);
+		this.foerste = foerste;
+		this.etter = etter;
 	}
 }

@@ -23,6 +23,7 @@ import no.nav.saf.tjeneste.visningsmodell.kode.Variantformat;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -39,8 +40,9 @@ public class JournalpostDtoMapper {
 			return null;
 		}
 		final Kanal kanal = mapKanal(journalpostDto);
+		final String journalpostId = journalpostDto.getJournalpostId().toString();
 		return Journalpost.builder()
-				.journalpostId(journalpostDto.getJournalpostId().toString())
+				.journalpostId(journalpostId)
 				.tittel(journalpostDto.getInnhold())
 				.journalposttype(Journalposttype.fromJoark(journalpostDto.getJournalposttype()))
 				.journalstatus(mapJournalstatus(journalpostDto))
@@ -62,7 +64,9 @@ public class JournalpostDtoMapper {
 								.dokumentvarianter(Collections.singletonList(Dokumentvariant.builder()
 										.variantformat(Variantformat.valueOf(dokumentInfoDto.getVariantFormat().name()))
 										.build()))
-								.build()).collect(Collectors.toList())).build();
+								.build()).collect(Collectors.toList()))
+				.peker(Base64.getEncoder().encodeToString(journalpostId.getBytes()))
+				.build();
 	}
 
 	private Bruker mapBruker(RequestCache requestCache) {
