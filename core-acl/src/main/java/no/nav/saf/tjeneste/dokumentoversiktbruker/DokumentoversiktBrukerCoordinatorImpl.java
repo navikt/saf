@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 import javax.inject.Inject;
 import javax.inject.Named;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -73,6 +74,8 @@ public class DokumentoversiktBrukerCoordinatorImpl implements DokumentoversiktBr
 				dokumentoversiktBrukerArguments.getTema(),
 				dokumentoversiktBrukerArguments.getJournalposttyper(),
 				dokumentoversiktBrukerArguments.getJournalstatuser(),
+				dokumentoversiktBrukerArguments.getFoerste(),
+				dokumentoversiktBrukerArguments.getEtter(),
 				safRequestContext
 		);
 
@@ -84,7 +87,10 @@ public class DokumentoversiktBrukerCoordinatorImpl implements DokumentoversiktBr
 				).toList()
 				.blockingGet();
 
-		return visningsmodellRepository.findJournalposter(filteredTilgangJournalpostList.stream().map(TilgangJournalpost::getJournalpostId).collect(Collectors.toList()), safRequestContext);
+		return visningsmodellRepository.findJournalposter(filteredTilgangJournalpostList.stream()
+				.map(TilgangJournalpost::getJournalpostId)
+				.sorted(Comparator.reverseOrder())
+				.collect(Collectors.toList()), safRequestContext);
 	}
 
 	@Override

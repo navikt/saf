@@ -26,6 +26,8 @@ public interface TilgangsmodellRepository {
 													  LocalDate fraDato,
 													  List<Tema> inkluderTema, List<Journalposttype> inkluderJournalposttyper,
 													  List<Journalstatus> inkluderJournalstatuses,
+													  int foerste,
+													  String peker,
 													  SafRequestContext safRequestContext);
 
 	TilgangJournalpost findTilgangJournalpost(String journalpostId, String dokumentId, String variantFormat);
