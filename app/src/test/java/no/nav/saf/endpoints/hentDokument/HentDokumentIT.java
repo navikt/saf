@@ -10,6 +10,7 @@ import static org.springframework.http.MediaType.APPLICATION_PDF_VALUE;
 
 import jdk.nashorn.internal.ir.annotations.Ignore;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.VariantFormatCode;
+import no.nav.saf.endpoints.AbstractItest;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark901.HentTilgangJournalpostResponseTo;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;
@@ -17,12 +18,13 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
 /**
  * @author Sigurd Midttun, Visma Consulting.
  */
-public class HentDokumentIT extends AbstractEndpointEvaluatorIT {
+public class HentDokumentIT extends AbstractItest {
 
 	private static String DOKUMENT_ID = "441360260";
 	private static String JOURNALPOST_ID = "123";
@@ -31,6 +33,19 @@ public class HentDokumentIT extends AbstractEndpointEvaluatorIT {
 
 	public HentDokumentIT() {
 	}
+
+	// Flytt STSConfig etc til app, senere bør
+	// PepEvaluatorITX konvertertes til å bruke mockito istedenfor wiremock.
+
+	// all endpoints along the way must be stubbed
+	// and restTemplate.getForEntity should return a sensible document
+
+//		we're supposed to use wiremock, not lombok.
+//		difference is that mockito stubs the function, while wiremock mocks the external dependencies
+//		Example of this is in dokprod qdok001IT
+//	  	in order to get the json responseentity from hentDocument, use postman and copy the format
+//		then place the contents in __files
+
 
 	@Ignore
 	@Test

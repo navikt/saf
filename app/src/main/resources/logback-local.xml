@@ -15,4 +15,10 @@
 	<logger name="no.nav.saf" level="DEBUG" additivity="false">
 		<appender-ref ref="CONSOLE"/>
 	</logger>
+
+	<logger name="org.apache.cxf" level="INFO"/>
+	<!-- Set additivity to false when deployed -->
+	<logger name="org.apache.cxf.interceptor" additivity="true">
+		<appender-ref ref="CONSOLE"/>
+	</logger>
 </included>
