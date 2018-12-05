@@ -3,14 +3,11 @@ package no.nav.saf.endpoints.hentDokument;
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.IsNot.not;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.http.MediaType.APPLICATION_PDF_VALUE;
 
-import jdk.nashorn.internal.ir.annotations.Ignore;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.VariantFormatCode;
-import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark901.HentTilgangJournalpostResponseTo;
 import no.nav.saf.endpoints.AbstractItest;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;
@@ -25,7 +22,7 @@ import java.util.Base64;
  */
 public class HentDokumentIT extends AbstractItest {
 
-	private static String DOKUMENT_ID = "441360260";
+	private static String DOKUMENT_ID = "123";
 	private static String JOURNALPOST_ID = "123";
 	private static VariantFormatCode VARIANTFORMAT = VariantFormatCode.ARKIV;
 	private static byte[] TEST_FILE_BYTES = "TestThis".getBytes();
@@ -33,33 +30,21 @@ public class HentDokumentIT extends AbstractItest {
 	public HentDokumentIT() {
 	}
 
-	// Flytt STSConfig etc til app, senere bør
-	// PepEvaluatorITX konvertertes til å bruke mockito istedenfor wiremock.
-
-	// all endpoints along the way must be stubbed
-	// and restTemplate.getForEntity should return a sensible document
-
-//		we're supposed to use wiremock, not lombok.
-//		difference is that mockito stubs the function, while wiremock mocks the external dependencies
-//		Example of this is in dokprod qdok001IT
-//	  	in order to get the json responseentity from hentDocument, use postman and copy the format
-//		then place the contents in __files
-
-
-	@Ignore
 	@Test
 	public void hentDokumentHappyPath() {
 
 		abacPermit();
-		stubFor(get("/hentdokument/" + DOKUMENT_ID + "/" + VARIANTFORMAT).willReturn(aResponse().withStatus(HttpStatus.OK.value())
+		stubFor(get("/hentjournalsakinfo/hentdokument/" + DOKUMENT_ID + "/" + VARIANTFORMAT).willReturn(aResponse().withStatus(HttpStatus.OK.value())
 				.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_PDF_VALUE)
 				.withBody(Base64.getEncoder().encode(TEST_FILE_BYTES))));
 
-//Uncomment when database response has been found, also uncomment HentDokumentDomainCoordinatorImpl
-//		stubFor(get("/henttilgangjournalpost/" + JOURNALPOST_ID + "/" + DOKUMENT_ID + "/" + VARIANTFORMAT)
-//				.willReturn().withStatus(HttpStatus.OK.value()));
+		stubFor(get("/hentjournalsakinfo/henttilgangjournalpost/" + JOURNALPOST_ID + "/" + DOKUMENT_ID + "/" + VARIANTFORMAT).willReturn(aResponse().withStatus(HttpStatus.OK.value())
+				.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
+				.withBodyFile("hentjournalsakinfo/henttilgangjournalpost-happy.json")));
 
-		restTemplate.getForObject("/henttilgangjournalpost/{journalpostId}/{dokumentId}/{variantFormat}", HentTilgangJournalpostResponseTo.class, JOURNALPOST_ID, DOKUMENT_ID, VARIANTFORMAT);
+		stubFor(get("/gsak/10672720").willReturn(aResponse().withStatus(HttpStatus.OK.value())
+				.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
+				.withBodyFile("hentsak/hentsakbysaksid-happy.json")));
 
 		String uri = "/rest/hentdokument/" + JOURNALPOST_ID + "/" + DOKUMENT_ID + "/" + VARIANTFORMAT.toString();
 		ResponseEntity<String> responseEntity = this.restTemplate.exchange(uri, HttpMethod.GET, createHttpEntity(), String.class);
@@ -76,6 +61,16 @@ public class HentDokumentIT extends AbstractItest {
 				.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_PDF_VALUE)
 				.withBody(Base64.getEncoder().encode(TEST_FILE_BYTES))));
 
+		stubFor(get("/hentjournalsakinfo/hentdokument/" + DOKUMENT_ID + "/" + VARIANTFORMAT).willReturn(aResponse().withStatus(HttpStatus.NOT_FOUND.value())));
+
+		stubFor(get("/hentjournalsakinfo/henttilgangjournalpost/" + JOURNALPOST_ID + "/" + DOKUMENT_ID + "/" + VARIANTFORMAT).willReturn(aResponse().withStatus(HttpStatus.OK.value())
+				.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
+				.withBodyFile("hentjournalsakinfo/henttilgangjournalpost-happy.json")));
+
+		stubFor(get("/gsak/10672720").willReturn(aResponse().withStatus(HttpStatus.OK.value())
+				.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
+				.withBodyFile("hentsak/hentsakbysaksid-happy.json")));
+
 		String uri = "/rest/hentdokument/" + JOURNALPOST_ID + "/" + DOKUMENT_ID + "/" + VARIANTFORMAT.toString();
 		ResponseEntity<String> responseEntity = this.restTemplate.exchange(uri, HttpMethod.GET, createHttpEntity(), String.class);
 
@@ -84,54 +79,69 @@ public class HentDokumentIT extends AbstractItest {
 
 	@Test
 	public void hentDokumentDecodeFail() {
+
+		byte[] decodeFailProvokerFile = "whitespace breaks base64 decode".getBytes();
+
 		abacPermit();
-		stubFor(get("/hentdokument/" + DOKUMENT_ID + "/" + VARIANTFORMAT).willReturn(aResponse().withStatus(HttpStatus.OK.value())
+		stubFor(get("/hentjournalsakinfo/hentdokument/" + DOKUMENT_ID + "/" + VARIANTFORMAT).willReturn(aResponse().withStatus(HttpStatus.OK.value())
 				.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_PDF_VALUE)
-				.withBody(TEST_FILE_BYTES)));
+				.withBody(decodeFailProvokerFile)));
+
+		stubFor(get("/hentjournalsakinfo/henttilgangjournalpost/" + JOURNALPOST_ID + "/" + DOKUMENT_ID + "/" + VARIANTFORMAT).willReturn(aResponse().withStatus(HttpStatus.OK.value())
+				.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
+				.withBodyFile("hentjournalsakinfo/henttilgangjournalpost-happy.json")));
+
+		stubFor(get("/gsak/10672720").willReturn(aResponse().withStatus(HttpStatus.OK.value())
+				.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
+				.withBodyFile("hentsak/hentsakbysaksid-happy.json")));
+
 
 		String uri = "/rest/hentdokument/" + JOURNALPOST_ID + "/" + DOKUMENT_ID + "/" + VARIANTFORMAT.toString();
 		ResponseEntity<String> responseEntity = this.restTemplate.exchange(uri, HttpMethod.GET, createHttpEntity(), String.class);
 
-		assertEquals(responseEntity.getStatusCode(), HttpStatus.OK);
-		assertThat(responseEntity.getBody(), not(new String(TEST_FILE_BYTES)));
+		assertEquals(responseEntity.getStatusCode(), HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 
-//	@Test
-//	public void hentDokumentJoarkFailed() {
-
-//		abacPermit();
-//		stubFor(get("/hentdokument/" + DOKUMENT_ID + "/" + VARIANTFORMAT).willReturn(aResponse().withStatus(HttpStatus.OK.value())
-//				.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_PDF_VALUE)
-//				.withBody(testFile)));
-//
-//		//Uncomment when database response has been found, also uncomment HentDokumentDomainCoordinatorImpl
-////		stubFor(get("/henttilgangjournalpost/" + JOURNALPOST_ID + "/" + DOKUMENT_ID + "/" + VARIANTFORMAT)
-////				.willReturn().withStatus(HttpStatus.OK.value()));
-//
-////		restTemplate.getForObject("/henttilgangjournalpost/{journalpostId}/{dokumentId}/{variantFormat}", HentTilgangJournalpostResponseTo.class, journalpostId, dokumentId, variantFormat)
-//
-//		String uri = "/rest/hentdokument/" + journalpostId + "/" + dokumentId + "/" + variantFormat.toString();
-//		ResponseEntity<String> responseEntity = this.restTemplate.exchange(uri, HttpMethod.GET, createHeaders(), String.class);
-//
-//		assertEquals(responseEntity.getStatusCode(), HttpStatus.OK);
-//		assertThat(responseEntity.getBody(),not(new String(testFile)));
-//
-//	}
-
-	// Fix when peps are uncommented.
 	@Test
 	public void hentDokumentAbacDeny() {
 
 		abacDeny();
-		stubFor(get("/hentdokument/" + DOKUMENT_ID + "/" + VARIANTFORMAT).willReturn(aResponse().withStatus(HttpStatus.OK.value())
+		stubFor(get("/hentjournalsakinfo/hentdokument/" + DOKUMENT_ID + "/" + VARIANTFORMAT).willReturn(aResponse().withStatus(HttpStatus.OK.value())
 				.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_PDF_VALUE)
-				.withBody(TEST_FILE_BYTES)));
+				.withBody(Base64.getEncoder().encode(TEST_FILE_BYTES))));
+
+		stubFor(get("/hentjournalsakinfo/henttilgangjournalpost/" + JOURNALPOST_ID + "/" + DOKUMENT_ID + "/" + VARIANTFORMAT).willReturn(aResponse().withStatus(HttpStatus.OK.value())
+				.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
+				.withBodyFile("hentjournalsakinfo/henttilgangjournalpost-happy.json")));
+
+		stubFor(get("/gsak/10672720").willReturn(aResponse().withStatus(HttpStatus.OK.value())
+				.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
+				.withBodyFile("hentsak/hentsakbysaksid-happy.json")));
 
 		String uri = "/rest/hentdokument/" + JOURNALPOST_ID + "/" + DOKUMENT_ID + "/" + VARIANTFORMAT.toString();
 		ResponseEntity<String> responseEntity = this.restTemplate.exchange(uri, HttpMethod.GET, createHttpEntity(), String.class);
 
-		assertEquals(responseEntity.getStatusCode(), HttpStatus.OK);
-//		assertThat(responseEntity.getBody(), not(new String(TEST_FILE_BYTES)));
-
+		assertEquals(responseEntity.getStatusCode(), HttpStatus.UNAUTHORIZED);
 	}
+
+	@Test
+	public void hentDokumentJoarkFailed() {
+
+		abacPermit();
+		stubFor(get("/hentjournalsakinfo/hentdokument/" + DOKUMENT_ID + "/" + VARIANTFORMAT).willReturn(aResponse().withStatus(HttpStatus.INTERNAL_SERVER_ERROR.value())));
+
+		stubFor(get("/hentjournalsakinfo/henttilgangjournalpost/" + JOURNALPOST_ID + "/" + DOKUMENT_ID + "/" + VARIANTFORMAT).willReturn(aResponse().withStatus(HttpStatus.OK.value())
+				.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
+				.withBodyFile("hentjournalsakinfo/henttilgangjournalpost-happy.json")));
+
+		stubFor(get("/gsak/10672720").willReturn(aResponse().withStatus(HttpStatus.OK.value())
+				.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
+				.withBodyFile("hentsak/hentsakbysaksid-happy.json")));
+
+		String uri = "/rest/hentdokument/" + JOURNALPOST_ID + "/" + DOKUMENT_ID + "/" + VARIANTFORMAT.toString();
+		ResponseEntity<String> responseEntity = this.restTemplate.exchange(uri, HttpMethod.GET, createHttpEntity(), String.class);
+
+		assertEquals(responseEntity.getStatusCode(), HttpStatus.INTERNAL_SERVER_ERROR);
+	}
+
 }
