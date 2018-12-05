@@ -21,7 +21,7 @@ import javax.inject.Inject;
  * @author Sigurd Midttun, Visma Consulting.
  */
 @ExtendWith(MockitoExtension.class)
-public abstract class AbstractPepEvaluatorIT {
+public abstract class AbstractPepIT {
 
 	@Inject
 	public AbacConsumer abacConsumer;

@@ -10,15 +10,14 @@ import static org.springframework.http.MediaType.APPLICATION_PDF_VALUE;
 
 import jdk.nashorn.internal.ir.annotations.Ignore;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.VariantFormatCode;
-import no.nav.saf.endpoints.AbstractItest;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark901.HentTilgangJournalpostResponseTo;
+import no.nav.saf.endpoints.AbstractItest;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
 /**
@@ -63,7 +62,7 @@ public class HentDokumentIT extends AbstractItest {
 		restTemplate.getForObject("/henttilgangjournalpost/{journalpostId}/{dokumentId}/{variantFormat}", HentTilgangJournalpostResponseTo.class, JOURNALPOST_ID, DOKUMENT_ID, VARIANTFORMAT);
 
 		String uri = "/rest/hentdokument/" + JOURNALPOST_ID + "/" + DOKUMENT_ID + "/" + VARIANTFORMAT.toString();
-		ResponseEntity<String> responseEntity = this.restTemplate.exchange(uri, HttpMethod.GET, createHeaders(), String.class);
+		ResponseEntity<String> responseEntity = this.restTemplate.exchange(uri, HttpMethod.GET, createHttpEntity(), String.class);
 
 		assertEquals(responseEntity.getStatusCode(), HttpStatus.OK);
 		assertEquals(responseEntity.getBody(), new String(TEST_FILE_BYTES));
@@ -78,7 +77,7 @@ public class HentDokumentIT extends AbstractItest {
 				.withBody(Base64.getEncoder().encode(TEST_FILE_BYTES))));
 
 		String uri = "/rest/hentdokument/" + JOURNALPOST_ID + "/" + DOKUMENT_ID + "/" + VARIANTFORMAT.toString();
-		ResponseEntity<String> responseEntity = this.restTemplate.exchange(uri, HttpMethod.GET, createHeaders(), String.class);
+		ResponseEntity<String> responseEntity = this.restTemplate.exchange(uri, HttpMethod.GET, createHttpEntity(), String.class);
 
 		assertEquals(responseEntity.getStatusCode(), HttpStatus.NOT_FOUND);
 	}
@@ -91,7 +90,7 @@ public class HentDokumentIT extends AbstractItest {
 				.withBody(TEST_FILE_BYTES)));
 
 		String uri = "/rest/hentdokument/" + JOURNALPOST_ID + "/" + DOKUMENT_ID + "/" + VARIANTFORMAT.toString();
-		ResponseEntity<String> responseEntity = this.restTemplate.exchange(uri, HttpMethod.GET, createHeaders(), String.class);
+		ResponseEntity<String> responseEntity = this.restTemplate.exchange(uri, HttpMethod.GET, createHttpEntity(), String.class);
 
 		assertEquals(responseEntity.getStatusCode(), HttpStatus.OK);
 		assertThat(responseEntity.getBody(), not(new String(TEST_FILE_BYTES)));
@@ -129,7 +128,7 @@ public class HentDokumentIT extends AbstractItest {
 				.withBody(TEST_FILE_BYTES)));
 
 		String uri = "/rest/hentdokument/" + JOURNALPOST_ID + "/" + DOKUMENT_ID + "/" + VARIANTFORMAT.toString();
-		ResponseEntity<String> responseEntity = this.restTemplate.exchange(uri, HttpMethod.GET, createHeaders(), String.class);
+		ResponseEntity<String> responseEntity = this.restTemplate.exchange(uri, HttpMethod.GET, createHttpEntity(), String.class);
 
 		assertEquals(responseEntity.getStatusCode(), HttpStatus.OK);
 //		assertThat(responseEntity.getBody(), not(new String(TEST_FILE_BYTES)));
