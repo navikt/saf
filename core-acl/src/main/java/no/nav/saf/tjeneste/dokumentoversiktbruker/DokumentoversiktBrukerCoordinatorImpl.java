@@ -1,5 +1,7 @@
 package no.nav.saf.tjeneste.dokumentoversiktbruker;
 
+import io.reactivex.Flowable;
+import io.reactivex.schedulers.Schedulers;
 import no.nav.saf.domain.TilgangsmodellRepository;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.domain.tilgangsmodell.TilgangJournalpost;
@@ -55,10 +57,14 @@ public class DokumentoversiktBrukerCoordinatorImpl implements DokumentoversiktBr
 		}
 
 		final List<TilgangSak> tilgangSakList = tilgangsmodellRepository.findTilgangSaker(tilgangBruker, dokumentoversiktBrukerArguments.getTema(), safRequestContext);
-		List<TilgangSak> filteredTilgangSakList = tilgangSakList.stream()
-				.filter(ts -> pep2.hasAccess(ts, safRequestContext))
-				.filter(ts -> pep3.hasAccess(ts, safRequestContext))
-				.collect(Collectors.toList());
+		List<TilgangSak> filteredTilgangSakList = Flowable.fromIterable(tilgangSakList)
+				.flatMap(tilgangSak ->
+						Flowable.just(tilgangSak)
+								.observeOn(Schedulers.io())
+								.filter(ts -> pep2.hasAccess(ts, safRequestContext))
+								.filter(ts -> pep3.hasAccess(ts, safRequestContext))
+				).toList()
+				.blockingGet();
 
 		final List<TilgangJournalpost> tilgangJournalpostList = tilgangsmodellRepository.findTilgangJournalposter(
 				tilgangBruker,
@@ -70,9 +76,13 @@ public class DokumentoversiktBrukerCoordinatorImpl implements DokumentoversiktBr
 				safRequestContext
 		);
 
-		final List<TilgangJournalpost> filteredTilgangJournalpostList = tilgangJournalpostList.stream()
-				.filter(tj -> pep4.hasAccess(tj, safRequestContext))
-				.collect(Collectors.toList());
+		final List<TilgangJournalpost> filteredTilgangJournalpostList = Flowable.fromIterable(tilgangJournalpostList)
+				.flatMap(tilgangJournalpost ->
+						Flowable.just(tilgangJournalpost)
+								.observeOn(Schedulers.io())
+								.filter(tj -> pep4.hasAccess(tj, safRequestContext))
+				).toList()
+				.blockingGet();
 
 		return visningsmodellRepository.findJournalposter(filteredTilgangJournalpostList.stream().map(TilgangJournalpost::getJournalpostId).collect(Collectors.toList()), safRequestContext);
 	}
