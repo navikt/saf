@@ -23,7 +23,9 @@ public interface JoarkAntiCorruptionLayer {
 											 LocalDate fraDato,
 											 List<Tema> inkluderTema,
 											 List<Journalposttype> inkluderJournalposttyper,
-											 List<Journalstatus> inkluderJournalstatuses);
+											 List<Journalstatus> inkluderJournalstatuses,
+											 int foerste,
+											 String peker);
 
 	TilgangJournalpost hentTilgangJournalpost(String journalpostId, String dokumentId, String variantFormat);
 

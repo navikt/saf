@@ -62,14 +62,15 @@ class JoarkAntiCorruptionLayerImpl implements JoarkAntiCorruptionLayer {
 													LocalDate fraDato,
 													List<Tema> inkluderTema,
 													List<Journalposttype> inkluderJournalposttyper,
-													List<Journalstatus> inkluderJournalstatuses) {
+													List<Journalstatus> inkluderJournalstatuses,
+													int foerste,
+													String peker) {
 		List<String> alleIdenter = tilgangBruker.getHistoriskeIdenter()
 				.stream()
 				.map(TilgangIdent::getIdentifikator)
 				.collect(Collectors.toList());
 		alleIdenter.add(tilgangBruker.getFoedselsnr());
 		HentJournalpostBulkResponseTo responseTo = hentJournalsakinfo.hentJournalpostBulk(HentJournalpostBulkRequestTo.builder()
-				.aktoerId(tilgangBruker.getAktoerId())
 				.alleIdenter(alleIdenter)
 				.inkluderJournalpostType(inkluderJournalposttyper.stream()
 						.map(jt -> JournalpostTypeCode.valueOf(jt.name()))
@@ -84,6 +85,8 @@ class JoarkAntiCorruptionLayerImpl implements JoarkAntiCorruptionLayer {
 				.psakSakIds(tilgangSakList.stream()
 						.filter(tilgangSak -> Arkivsakssystem.PSAK.name().equals(tilgangSak.getArkivsaksystem()))
 						.map(TilgangSak::getArkivsaksnummer).limit(SAK_MAX_SIZE).collect(Collectors.toList()))
+				.foerste(foerste)
+				.peker(peker)
 				.build());
 
 		return responseTo.getTilgangJournalposter();

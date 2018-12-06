@@ -5,7 +5,7 @@ import no.nav.saf.domain.tilgangsmodell.TilgangDokumentInfo;
 import no.nav.saf.domain.tilgangsmodell.TilgangJournalpost;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
-import no.nav.saf.tjeneste.visningsmodell.Brukeridentifikator;
+import no.nav.saf.tjeneste.argumenter.BrukerIdInput;
 import no.nav.saf.tjeneste.visningsmodell.kode.Journalposttype;
 import no.nav.saf.tjeneste.visningsmodell.kode.Journalstatus;
 import no.nav.saf.tjeneste.visningsmodell.kode.Tema;
@@ -17,7 +17,7 @@ import java.util.List;
  * @author Joakim Bjørnstad, Jbit AS
  */
 public interface TilgangsmodellRepository {
-	TilgangBruker findTilgangBruker(Brukeridentifikator brukeridentifikator);
+	TilgangBruker findTilgangBruker(BrukerIdInput brukerIdInput);
 
 	List<TilgangBruker> findTilgangBrukerList(String fagsakId, String fagsaksystem);
 
@@ -25,13 +25,13 @@ public interface TilgangsmodellRepository {
 
 	List<TilgangSak> findTilgangSaker(TilgangBruker tilgangBruker, List<Tema> tema, SafRequestContext safRequestContext);
 
-	List<TilgangSak> findTilgangSakListByTilgangBruker(TilgangBruker tilgangBruker, List<Tema> tema);
-
 	List<TilgangJournalpost> findTilgangJournalposter(TilgangBruker tilgangBruker,
 													  List<TilgangSak> tilgangSakList,
 													  LocalDate fraDato,
 													  List<Tema> inkluderTema, List<Journalposttype> inkluderJournalposttyper,
 													  List<Journalstatus> inkluderJournalstatuses,
+													  int foerste,
+													  String peker,
 													  SafRequestContext safRequestContext);
 
 	TilgangJournalpost findTilgangJournalpost(String journalpostId, String dokumentId, String variantFormat);

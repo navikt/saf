@@ -4,7 +4,9 @@ package no.nav.saf.tjeneste.visningsmodell.kode;
  * @author Joakim Bjørnstad, Jbit AS
  */
 public enum Datotype {
-	OPPRETTET_DATO,
-	EKSPEDERT_DATO,
-	MOTTATT_DATO
+	DATO_OPPRETTET,
+	DATO_EKSPEDERT,
+	DATO_MOTTATT,
+	DATO_SENDT_PRINT,
+	DATO_JOURNALFOERT
 }

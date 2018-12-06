@@ -14,7 +14,7 @@ import no.nav.saf.domain.tilgangsmodell.TilgangDokumentInfo;
 import no.nav.saf.domain.tilgangsmodell.TilgangJournalpost;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
-import no.nav.saf.tjeneste.visningsmodell.Brukeridentifikator;
+import no.nav.saf.tjeneste.argumenter.BrukerIdInput;
 import no.nav.saf.tjeneste.visningsmodell.kode.Arkivsakssystem;
 import no.nav.saf.tjeneste.visningsmodell.kode.Journalposttype;
 import no.nav.saf.tjeneste.visningsmodell.kode.Journalstatus;
@@ -57,18 +57,18 @@ public class TilgangsmodellRepositoryImpl implements TilgangsmodellRepository {
 
 	@Override
 	@Cacheable(cacheNames = LokalCacheConfig.TILGANGSMODELL_REPO_BRUKER_CACHE)
-	public TilgangBruker findTilgangBruker(Brukeridentifikator brukeridentifikator) {
+	public TilgangBruker findTilgangBruker(BrukerIdInput brukerIdInput) {
 		try {
-			switch (brukeridentifikator.getIdentType()) {
+			switch (brukerIdInput.getIdentType()) {
 				case AKTOERID:
-					return aktoerAntiCorruptionLayer.hentTilgangBrukerByAktoerId(brukeridentifikator.getIdent());
-				case FOEDSELSNUMMER:
-					return aktoerAntiCorruptionLayer.hentTilgangBrukerByFoedselsnummer(brukeridentifikator.getIdent());
+					return aktoerAntiCorruptionLayer.hentTilgangBrukerByAktoerId(brukerIdInput.getIdent());
+				case FNR:
+					return aktoerAntiCorruptionLayer.hentTilgangBrukerByFoedselsnummer(brukerIdInput.getIdent());
 				default:
 					return null;
 			}
 		} catch (Exception e) {
-			log.warn("findTilgangBruker feilet ved oppslag av ident. Brukertype={}", brukeridentifikator.getIdentType(), e);
+			log.warn("findTilgangBruker feilet ved oppslag av ident. Brukertype={}", brukerIdInput.getIdentType(), e);
 		}
 		return null;
 	}
@@ -115,47 +115,18 @@ public class TilgangsmodellRepositoryImpl implements TilgangsmodellRepository {
 				}
 			}).subscribeOn(Schedulers.io());
 			List<Arkivsak> arkivsaker = Observable.concat(gsaker, psaker)
-					.flatMapIterable(item -> item)
+					.flatMapIterable(items -> items)
 					.toList().blockingGet();
-			safRequestContext.getParameterContext().putParameters(arkivsaker.stream()
-					.collect(Collectors.toMap(arkivsak -> "sakId=" + arkivsak.getArkivsaksnummer() + "-" + arkivsak.getArkivsaksystem(),
-							arkivsak -> arkivsak, (
-									arkivsak1, arkivsak2) -> {
-								// Ignorerer duplikate arkivsaker
-								return arkivsak1;
-							})
-					));
-			return arkivsaker.stream().map(arkivsak ->
-					TilgangSak.builder()
-							.arkivsaksnummer(arkivsak.getArkivsaksnummer())
-							.arkivsaksystem(arkivsak.getArkivsaksystem().name())
-							.tema(arkivsak.getTema().name())
-							.build()
+			return arkivsaker.stream().map(arkivsak -> {
+				safRequestContext.getRequestCache().putObject(arkivsak.getKey(), arkivsak);
+						return TilgangSak.builder()
+								.arkivsaksnummer(arkivsak.getArkivsaksnummer())
+								.arkivsaksystem(arkivsak.getArkivsaksystem().name())
+								.tema(arkivsak.getTema().name())
+								.build();
+					}
 			).collect(Collectors.toList());
 		} catch (Exception e) {
-			return new ArrayList<>();
-		}
-	}
-
-	@Override
-	@Cacheable(cacheNames = LokalCacheConfig.TILGANGSMODELL_REPO_SAK_CACHE, key = "#tilgangBruker.aktoerId + '_' + #tema")
-	public List<TilgangSak> findTilgangSakListByTilgangBruker(final TilgangBruker tilgangBruker, final List<Tema> tema) {
-		try {
-			Observable<List<TilgangSak>> gsaker = Observable.fromCallable(() ->
-					gsakAntiCorruptionLayer.findTilgangSakListByAktoerId(tilgangBruker.getAktoerId(), tema))
-					.subscribeOn(Schedulers.io());
-			Observable<List<TilgangSak>> psaker = Observable.fromCallable(() -> {
-				if (!Collections.disjoint(tema, PENSJON)) {
-					return pensjonSakAntiCorruptionLayer.hentTilgangSakList(tilgangBruker.getFoedselsnr());
-				} else {
-					return new ArrayList<TilgangSak>();
-				}
-			}).subscribeOn(Schedulers.io());
-			return Observable.concat(gsaker, psaker)
-					.flatMapIterable(item -> item)
-					.toList().blockingGet();
-		} catch (Exception e) {
-			log.warn("FindTilgangSakListByAktoerId feilet ved oppslag av aktoer={}", tilgangBruker.getAktoerId(), e);
 			return new ArrayList<>();
 		}
 	}
@@ -166,24 +137,17 @@ public class TilgangsmodellRepositoryImpl implements TilgangsmodellRepository {
 															 LocalDate fraDato,
 															 List<Tema> inkluderTema, List<Journalposttype> inkluderJournalposttyper,
 															 List<Journalstatus> inkluderJournalstatuses,
+															 int foerste,
+															 String peker,
 															 SafRequestContext safRequestContext) {
 		try {
 			List<JournalpostDto> journalposter = joarkAntiCorruptionLayer.hentJournalpostBulk(tilgangBruker,
-					tilgangSakList,
-					fraDato,
-					inkluderTema,
-					inkluderJournalposttyper,
-					inkluderJournalstatuses);
-			safRequestContext.getParameterContext().putParameters(journalposter.stream()
-					.collect(Collectors.toMap(journalpostDto -> "journalpostId=" + journalpostDto.getJournalpostId().toString(),
-							journalpostDto -> journalpostDto, (
-									journalpostDto1, journalpostDto2) -> {
-								// Ignorerer duplikate journalpostId
-								return journalpostDto1;
-							})
-					));
+					tilgangSakList, fraDato, inkluderTema, inkluderJournalposttyper, inkluderJournalstatuses, foerste, peker);
 			return journalposter.stream()
-					.map(this::mapTilgangJournalpost)
+					.map(journalpostDto -> {
+						safRequestContext.getRequestCache().putObject(journalpostDto.getJournalpostId().toString(), journalpostDto);
+						return mapTilgangJournalpost(journalpostDto);
+					})
 					.collect(Collectors.toList());
 		} catch (Exception e) {
 			log.warn("HentTilgangJournalpostListByArkivsaker feilet ved oppslag av arkivsaker={}.",
@@ -266,8 +230,8 @@ public class TilgangsmodellRepositoryImpl implements TilgangsmodellRepository {
 			}
 		} catch (Exception e) {
 			log.warn("findTilgangBrukerBySakId feilet ved oppslag på sakId={}. Feilmelding={}", sakId, e.getMessage());
+			return null;
 		}
-		return null;
 	}
 
 

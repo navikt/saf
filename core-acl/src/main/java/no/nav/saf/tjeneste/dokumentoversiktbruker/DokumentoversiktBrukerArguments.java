@@ -1,7 +1,7 @@
 package no.nav.saf.tjeneste.dokumentoversiktbruker;
 
 import lombok.Value;
-import no.nav.saf.tjeneste.visningsmodell.Brukeridentifikator;
+import no.nav.saf.tjeneste.argumenter.BrukerIdInput;
 import no.nav.saf.tjeneste.visningsmodell.kode.Journalposttype;
 import no.nav.saf.tjeneste.visningsmodell.kode.Journalstatus;
 import no.nav.saf.tjeneste.visningsmodell.kode.Tema;
@@ -14,39 +14,45 @@ import java.util.List;
  */
 @Value
 public class DokumentoversiktBrukerArguments {
-	private final Brukeridentifikator brukeridentifikator;
+	private final BrukerIdInput brukerIdInput;
 	private final LocalDate fraDato;
 	private final List<Tema> tema;
 	private final List<Journalposttype> journalposttyper;
 	private final List<Journalstatus> journalstatuser;
 	private final boolean visFeilregistrerte;
+	private final int foerste;
+	private final String etter;
 
-	public DokumentoversiktBrukerArguments(Brukeridentifikator brukeridentifikator,
+	public DokumentoversiktBrukerArguments(BrukerIdInput brukerIdInput,
 										   LocalDate fraDato,
 										   List<Tema> tema,
 										   List<Journalposttype> journalposttyper,
-										   List<Journalstatus> journalstatuser) {
-		this.brukeridentifikator = brukeridentifikator;
+										   List<Journalstatus> journalstatuser,
+										   int foerste,
+										   String etter) {
+		this.brukerIdInput = brukerIdInput;
 		if (fraDato == null) {
 			this.fraDato = LocalDate.of(1, 1, 1);
 		} else {
 			this.fraDato = fraDato;
 		}
 		if(tema.isEmpty()) {
-			this.tema = Tema.asList();
+			this.tema = Tema.ALL;
 		} else {
 			this.tema = tema;
 		}
 		if (journalposttyper.isEmpty()) {
-			this.journalposttyper = Journalposttype.asList();
+			this.journalposttyper = Journalposttype.ALL;
 		} else {
 			this.journalposttyper = journalposttyper;
 		}
 		if (journalstatuser.isEmpty()) {
-			this.journalstatuser = Journalstatus.asList();
+			this.journalstatuser = Journalstatus.ALL;
 		} else {
 			this.journalstatuser = journalstatuser;
 		}
 		this.visFeilregistrerte = this.journalstatuser.contains(Journalstatus.FEILREGISTRERT);
+		this.foerste = foerste;
+		this.etter = etter;
 	}
 }

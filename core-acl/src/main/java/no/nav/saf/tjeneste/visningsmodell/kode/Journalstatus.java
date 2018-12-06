@@ -19,6 +19,8 @@ public enum Journalstatus {
 	RESERVERT,
 	OPPLASTING_DOKUMENT;
 
+	public static final List<Journalstatus> ALL = asList();
+
 	public static List<Journalstatus> asList() {
 		return Arrays.asList(values());
 	}

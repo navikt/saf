@@ -16,20 +16,24 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 
 /**
- *
  * @author Joakim Bjørnstad, Jbit AS
  */
 @Configuration
 public class TomcatConfig {
 	// Kopiert fra https://github.com/spring-projects/spring-boot/issues/4657#issuecomment-422561557
 	@Bean
-	public WebServerFactoryCustomizer tomcatCustomizer() {
+	WebServerFactoryCustomizer tomcatCustomizer() {
 		return factory -> {
 			if (factory instanceof TomcatServletWebServerFactory) {
 				((TomcatServletWebServerFactory) factory)
-						.addConnectorCustomizers(new GracefulShutdown());
+						.addConnectorCustomizers(gracefulShutdown());
 			}
 		};
+	}
+
+	@Bean
+	GracefulShutdown gracefulShutdown() {
+		return new GracefulShutdown();
 	}
 
 	private static class GracefulShutdown implements TomcatConnectorCustomizer,
@@ -49,15 +53,14 @@ public class TomcatConfig {
 			Executor executor = this.connector.getProtocolHandler().getExecutor();
 			if (executor instanceof ThreadPoolExecutor) {
 				try {
-					log.info("Graceful shutdown initiated");
+					log.info("Graceful shutdown initiated. 30s until kill.");
 					ThreadPoolExecutor threadPoolExecutor = (ThreadPoolExecutor) executor;
 					threadPoolExecutor.shutdown();
 					if (!threadPoolExecutor.awaitTermination(30, TimeUnit.SECONDS)) {
 						log.warn("Tomcat thread pool did not shut down gracefully within "
 								+ "30 seconds. Proceeding with forceful shutdown");
 					}
-				}
-				catch (InterruptedException ex) {
+				} catch (InterruptedException ex) {
 					Thread.currentThread().interrupt();
 				}
 			}
