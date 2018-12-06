@@ -9,6 +9,8 @@ import no.nav.saf.exceptions.SafFunctionalException;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tjeneste.dokumentoversiktbruker.DokumentoversiktBrukerArguments;
 import no.nav.saf.tjeneste.dokumentoversiktbruker.DokumentoversiktBrukerCoordinator;
+import no.nav.saf.tjeneste.dokumentoversiktbruker.DokumentoversiktFagsakArguments;
+import no.nav.saf.tjeneste.dokumentoversiktbruker.DokumentoversiktFagsakCoordinator;
 import no.nav.saf.tjeneste.visningsmodell.Brukeridentifikator;
 import no.nav.saf.tjeneste.visningsmodell.Journalpost;
 import no.nav.saf.tjeneste.visningsmodell.kode.Journalposttype;
@@ -29,11 +31,14 @@ import java.util.List;
 @Slf4j
 public class DokumentoversiktWiring {
 	private final DokumentoversiktBrukerCoordinator dokumentoversiktBrukerCoordinator;
+	private final DokumentoversiktFagsakCoordinator dokumentoversiktFagsakCoordinator;
 	private final ObjectMapper mapper = new ObjectMapper();
 
 	@Inject
-	public DokumentoversiktWiring(DokumentoversiktBrukerCoordinator dokumentoversiktBrukerCoordinator) {
+	public DokumentoversiktWiring(DokumentoversiktBrukerCoordinator dokumentoversiktBrukerCoordinator,
+								  DokumentoversiktFagsakCoordinator dokumentoversiktFagsakCoordinator) {
 		this.dokumentoversiktBrukerCoordinator = dokumentoversiktBrukerCoordinator;
+		this.dokumentoversiktFagsakCoordinator = dokumentoversiktFagsakCoordinator;
 	}
 
 	public RuntimeWiring createRuntimeWiring() {
@@ -57,6 +62,26 @@ public class DokumentoversiktWiring {
 								new DokumentoversiktBrukerArguments(brukeridentifikator, fraDato, tema, journalposttyper, journalstatuser),
 								safRequestContext);
 						logDokumentoversiktBrukerQueryDone(journalposter.size(), brukeridentifikator);
+						return journalposter;
+					} catch (SafFunctionalException e) {
+						return new DataFetcherResult<List<Journalpost>>(new ArrayList<>(), Collections.singletonList(e));
+					}
+				}))
+				.type("Query", typeWiring -> typeWiring.dataFetcher("dokumentoversiktFagsak", environment -> {
+					String fagsakId = environment.getArgument("fagsakId");
+					String fagsaksystem = environment.getArgument("fagsaksystem");
+					log.info("dokumentoversiktFagsak hentes for fagsakId={} og fagsaksystem={}", fagsakId, fagsaksystem);
+					LocalDate fraDato = environment.getArgument("fraDato");
+					List<Tema> tema = environment.getArgument("tema");
+					List<Journalposttype> journalposttyper = environment.getArgument("journalposttyper");
+					List<Journalstatus> journalstatuser = environment.getArgument("journalstatuser");
+					SafRequestContext safRequestContext = environment.getContext();
+					try {
+						List<Journalpost> journalposter = dokumentoversiktFagsakCoordinator.findJournalposter(
+								new DokumentoversiktFagsakArguments(fagsakId, fagsaksystem, fraDato, tema, journalposttyper, journalstatuser),
+								safRequestContext);
+						log.info("dokumentoversiktBruker returnerer {} journalposter for  for fagsakId={} og fagsaksystem={}",
+								journalposter.size(), fagsakId, fagsaksystem);
 						return journalposter;
 					} catch (SafFunctionalException e) {
 						return new DataFetcherResult<List<Journalpost>>(new ArrayList<>(), Collections.singletonList(e));
@@ -87,7 +112,8 @@ public class DokumentoversiktWiring {
 	private void logDokumentoversiktBrukerQueryDone(int numJournalposter, Brukeridentifikator brukeridentifikator) {
 		switch (brukeridentifikator.getIdentType()) {
 			case AKTOERID:
-				log.info("dokumentoversiktBruker returnerer {} journalposter for bruker med aktoerId={}", numJournalposter, brukeridentifikator.getIdent());
+				log.info("dokumentoversiktBruker returnerer {} journalposter for bruker med aktoerId={}", numJournalposter, brukeridentifikator
+						.getIdent());
 				break;
 			case FOEDSELSNUMMER:
 				log.info("dokumentoversiktBruker returnerer {} journalposter for bruker med fødselsnummer={}", numJournalposter, "*****"); // vi kan ikke logge fnr

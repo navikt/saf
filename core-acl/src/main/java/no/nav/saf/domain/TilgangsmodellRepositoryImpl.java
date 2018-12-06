@@ -74,6 +74,33 @@ public class TilgangsmodellRepositoryImpl implements TilgangsmodellRepository {
 	}
 
 	@Override
+	@Cacheable(cacheNames = LokalCacheConfig.TILGANGSMODELL_REPO_BRUKER_CACHE)
+	public List<TilgangBruker> findTilgangBrukerList(String fagsakId, String fagsaksystem) {
+		try {
+			List<String> aktoerIdList = gsakAntiCorruptionLayer.findAktoerIdListByFagsakIdAndFagsaksystem(fagsakId, fagsaksystem);
+			if (aktoerIdList.isEmpty()) {
+				return new ArrayList<>();
+			} else {
+				return aktoerAntiCorruptionLayer.hentTilgangBrukerListByAktoerIdList(aktoerIdList);
+			}
+		} catch (Exception e) {
+			log.warn("findTilgangBruker feilet ved oppslag. fagsakId={}, fagsaksystem={}", fagsakId, fagsaksystem, e);
+		}
+		return new ArrayList<>();
+	}
+
+	@Override
+	@Cacheable(cacheNames = LokalCacheConfig.TILGANGSMODELL_REPO_SAK_CACHE)
+	public List<TilgangSak> findTilgangSakList(String fagsakId, String fagsaksystem) {
+		try {
+			return gsakAntiCorruptionLayer.findTilgangSakListByFagsakIdAndFagsaksystem(fagsakId, fagsaksystem);
+		} catch (Exception e) {
+			log.warn("findTilgangSakList feilet ved for fagsakId={} og fagsaksystem={}.", fagsakId, fagsaksystem);
+		}
+		return new ArrayList<>();
+	}
+
+	@Override
 	@Cacheable(cacheNames = LokalCacheConfig.TILGANGSMODELL_REPO_SAK_CACHE, key = "#tilgangBruker.aktoerId + '_' + #tema")
 	public List<TilgangSak> findTilgangSaker(final TilgangBruker tilgangBruker, final List<Tema> tema, SafRequestContext safRequestContext) {
 		try {
@@ -91,7 +118,7 @@ public class TilgangsmodellRepositoryImpl implements TilgangsmodellRepository {
 					.flatMapIterable(item -> item)
 					.toList().blockingGet();
 			safRequestContext.getParameterContext().putParameters(arkivsaker.stream()
-					.collect(Collectors.toMap(arkivsak -> "sakId=" + arkivsak.getArkivsaksnummer() + "-" + arkivsak.getArkivsaksystem() ,
+					.collect(Collectors.toMap(arkivsak -> "sakId=" + arkivsak.getArkivsaksnummer() + "-" + arkivsak.getArkivsaksystem(),
 							arkivsak -> arkivsak, (
 									arkivsak1, arkivsak2) -> {
 								// Ignorerer duplikate arkivsaker
@@ -239,8 +266,8 @@ public class TilgangsmodellRepositoryImpl implements TilgangsmodellRepository {
 			}
 		} catch (Exception e) {
 			log.warn("findTilgangBrukerBySakId feilet ved oppslag på sakId={}. Feilmelding={}", sakId, e.getMessage());
-			return null;
 		}
+		return null;
 	}
 
 
