@@ -23,6 +23,8 @@ public class HentJournalpostBulkRequestTo {
 	private final List<JournalpostTypeCode> inkluderJournalpostType;
 	private final boolean visFeilregistrerte;
 	private final List<String> alleIdenter;
-	private final int foerste;
-	private final String peker;
+	private final Integer foerste;
+	private final String etterPeker;
+	private final Integer siste;
+	private final String foerPeker;
 }

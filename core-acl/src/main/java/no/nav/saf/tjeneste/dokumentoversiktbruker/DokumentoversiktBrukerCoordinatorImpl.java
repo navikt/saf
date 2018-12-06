@@ -9,6 +9,7 @@ import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.pep.Pep;
 import no.nav.saf.tjeneste.visningsmodell.DokumentInfo;
+import no.nav.saf.tjeneste.visningsmodell.Dokumentoversikt;
 import no.nav.saf.tjeneste.visningsmodell.Journalpost;
 import org.springframework.stereotype.Component;
 
@@ -25,6 +26,7 @@ import java.util.stream.Collectors;
 @Component
 public class DokumentoversiktBrukerCoordinatorImpl implements DokumentoversiktBrukerCoordinator {
 
+	private final SideInfoMapper sideInfoMapper = new SideInfoMapper();
 	private final TilgangsmodellRepository tilgangsmodellRepository;
 	private final DokumentoversiktBrukerVisningsmodellRepository visningsmodellRepository;
 	private final Pep<TilgangBruker> pep1;
@@ -48,13 +50,13 @@ public class DokumentoversiktBrukerCoordinatorImpl implements DokumentoversiktBr
 	}
 
 	@Override
-	public List<Journalpost> findJournalposter(final DokumentoversiktBrukerArguments dokumentoversiktBrukerArguments, final SafRequestContext safRequestContext) {
+	public Dokumentoversikt hentDokumentoversikt(DokumentoversiktBrukerArguments dokumentoversiktBrukerArguments, SafRequestContext safRequestContext) {
 		final TilgangBruker tilgangBruker = tilgangsmodellRepository.findTilgangBruker(dokumentoversiktBrukerArguments.getBrukerIdInput());
 		safRequestContext.getRequestCache().putObject("tilgangBruker", tilgangBruker);
 		boolean pep1Access = this.pep1.hasAccess(tilgangBruker, safRequestContext);
 
 		if (!pep1Access) {
-			return new ArrayList<>();
+			return Dokumentoversikt.empty();
 		}
 
 		final List<TilgangSak> tilgangSakList = tilgangsmodellRepository.findTilgangSaker(tilgangBruker, dokumentoversiktBrukerArguments.getTema(), safRequestContext);
@@ -75,7 +77,9 @@ public class DokumentoversiktBrukerCoordinatorImpl implements DokumentoversiktBr
 				dokumentoversiktBrukerArguments.getJournalposttyper(),
 				dokumentoversiktBrukerArguments.getJournalstatuser(),
 				dokumentoversiktBrukerArguments.getFoerste(),
-				dokumentoversiktBrukerArguments.getEtter(),
+				dokumentoversiktBrukerArguments.getEtterPeker(),
+				dokumentoversiktBrukerArguments.getSiste(),
+				dokumentoversiktBrukerArguments.getFoerPeker(),
 				safRequestContext
 		);
 
@@ -87,10 +91,20 @@ public class DokumentoversiktBrukerCoordinatorImpl implements DokumentoversiktBr
 				).toList()
 				.blockingGet();
 
-		return visningsmodellRepository.findJournalposter(filteredTilgangJournalpostList.stream()
+		List<Journalpost> visningJournalposter = visningsmodellRepository.findJournalposter(filteredTilgangJournalpostList.stream()
 				.map(TilgangJournalpost::getJournalpostId)
 				.sorted(Comparator.reverseOrder())
 				.collect(Collectors.toList()), safRequestContext);
+
+		return Dokumentoversikt.builder()
+				.journalposter(visningJournalposter)
+				.sideInfo(sideInfoMapper.mapSideInfo(dokumentoversiktBrukerArguments, visningJournalposter))
+				.build();
+	}
+
+	@Override
+	public List<Journalpost> findJournalposter(final DokumentoversiktBrukerArguments dokumentoversiktBrukerArguments, final SafRequestContext safRequestContext) {
+		return new ArrayList<>();
 	}
 
 	@Override
