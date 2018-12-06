@@ -113,9 +113,6 @@ type Journalpost {
 
     # TODO
     dokumenter: [DokumentInfo]
-
-    # En peker til bruk i paginering
-    peker: String!
 }
 
 # TODO

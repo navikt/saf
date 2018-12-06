@@ -98,7 +98,7 @@ public class DokumentoversiktBrukerCoordinatorImpl implements DokumentoversiktBr
 
 		return Dokumentoversikt.builder()
 				.journalposter(visningJournalposter)
-				.sideInfo(sideInfoMapper.mapSideInfo(dokumentoversiktBrukerArguments, visningJournalposter))
+				.sideInfo(sideInfoMapper.mapSideInfo(visningJournalposter, safRequestContext))
 				.build();
 	}
 

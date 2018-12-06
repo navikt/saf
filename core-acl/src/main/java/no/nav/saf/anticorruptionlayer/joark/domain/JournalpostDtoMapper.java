@@ -23,7 +23,6 @@ import no.nav.saf.tjeneste.visningsmodell.kode.Variantformat;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -65,7 +64,6 @@ public class JournalpostDtoMapper {
 										.variantformat(Variantformat.valueOf(dokumentInfoDto.getVariantFormat().name()))
 										.build()))
 								.build()).collect(Collectors.toList()))
-				.peker(Base64.getEncoder().encodeToString(journalpostId.getBytes()))
 				.build();
 	}
 
