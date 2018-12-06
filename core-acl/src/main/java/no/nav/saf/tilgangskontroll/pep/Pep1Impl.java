@@ -16,7 +16,6 @@ import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlRequest;
 import no.nav.saf.tilgangskontroll.abac.dto.response.Decision;
 import no.nav.saf.tilgangskontroll.abac.dto.response.XacmlResponse;
 import no.nav.saf.tilgangskontroll.abac.service.AbacService;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
@@ -43,7 +42,7 @@ public class Pep1Impl implements Pep<TilgangBruker> {
 	}
 
 	@Override
-	@Cacheable(key = "{#safRequestContext.saksbehandlerId, #ressurs.foedselsnr, #ressurs.aktoerId}")
+//	@Cacheable(key = "{#safRequestContext.saksbehandlerId, #ressurs.foedselsnr, #ressurs.aktoerId}")
 	public boolean hasAccess(TilgangBruker ressurs, SafRequestContext safRequestContext) {
 		if (ressurs == null) {
 			log.warn("Pep1 mangler tilstrekkelig datagrunnlag for å kunne gjennomføre tilgangskontroll");
