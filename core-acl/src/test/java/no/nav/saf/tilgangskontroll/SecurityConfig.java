@@ -1,4 +1,4 @@
-package no.nav.saf.tilgangskontroll.testconfig;
+package no.nav.saf.tilgangskontroll;
 
 import static java.lang.String.format;
 import static org.mockito.Mockito.mock;

@@ -61,7 +61,9 @@ public class Pep1Impl implements Pep<TilgangBruker> {
 		} else {
 			return false;
 		}
+
 		XacmlResponse response = abacService.evaluate(request);
+
 		return Decision.PERMIT.equals(response.getDecision());
 	}
 
