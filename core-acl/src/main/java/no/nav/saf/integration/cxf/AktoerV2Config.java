@@ -30,8 +30,6 @@ public class AktoerV2Config extends AbstractCxfEndpointConfig {
 		setReceiveTimeout(readtimeoutms);
 		setConnectTimeout(connectiontimeoutms);
 		addFeature(new WSAddressingFeature());
-		addLoggingInInterceptor();
-		addLoggingOutInterceptor();
 //		addHandler(new MDCUsernameTokenOutHandler());  TODO Add CallId and AppId to SOAP header?
 		AktoerV2 aktoerV2 = createPort(AktoerV2.class);
 		configureSTSSamlToken(aktoerV2);
