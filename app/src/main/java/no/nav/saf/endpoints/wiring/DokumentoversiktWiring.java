@@ -77,10 +77,12 @@ public class DokumentoversiktWiring {
 					List<Tema> tema = environment.getArgument("tema");
 					List<Journalposttype> journalposttyper = environment.getArgument("journalposttyper");
 					List<Journalstatus> journalstatuser = environment.getArgument("journalstatuser");
+					int foerste = environment.getArgument("foerste");
+					String peker = environment.getArgument("etter");
 					SafRequestContext safRequestContext = environment.getContext();
 					try {
 						List<Journalpost> journalposter = dokumentoversiktFagsakCoordinator.findJournalposter(
-								new DokumentoversiktFagsakArguments(fagsakId, fagsaksystem, fraDato, tema, journalposttyper, journalstatuser),
+								new DokumentoversiktFagsakArguments(fagsakId, fagsaksystem, fraDato, tema, journalposttyper, journalstatuser, foerste, peker),
 								safRequestContext);
 						log.info("dokumentoversiktBruker returnerer {} journalposter for  for fagsakId={} og fagsaksystem={}",
 								journalposter.size(), fagsakId, fagsaksystem);

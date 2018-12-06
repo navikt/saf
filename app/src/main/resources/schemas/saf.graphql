@@ -45,7 +45,7 @@ type Query {
         fagsakId: String!
 
         # TODO
-        fagsaksystem: String
+        fagsaksystem: String!
 
         # TODO
         fraDato: Date = null

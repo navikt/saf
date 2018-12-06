@@ -51,9 +51,6 @@ public class DokumentoversiktFagsakCoordinatorImpl implements DokumentoversiktFa
 		final String fagsaksystem = dokumentoversiktFagsakArguments.getFagsaksystem();
 
 		final List<TilgangBruker> tilgangBrukerList = tilgangsmodellRepository.findTilgangBrukerList(fagsakId, fagsaksystem);
-		tilgangBrukerList.stream()
-				.forEach(tilgangBruker -> safRequestContext.getParameterContext().putParameter("tilgangBruker", tilgangBruker));
-
 
 		List<TilgangBruker> filteredTilgangBrukerList = Flowable.fromIterable(tilgangBrukerList)
 				.flatMap(tilgangBruker ->
@@ -96,6 +93,8 @@ public class DokumentoversiktFagsakCoordinatorImpl implements DokumentoversiktFa
 						dokumentoversiktFagsakArguments.getTema(),
 						dokumentoversiktFagsakArguments.getJournalposttyper(),
 						dokumentoversiktFagsakArguments.getJournalstatuser(),
+						dokumentoversiktFagsakArguments.getFoerste(),
+						dokumentoversiktFagsakArguments.getEtter(),
 						safRequestContext).stream())
 				.collect(Collectors.toList());
 

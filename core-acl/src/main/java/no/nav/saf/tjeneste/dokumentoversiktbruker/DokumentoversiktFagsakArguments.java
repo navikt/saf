@@ -21,13 +21,17 @@ public class DokumentoversiktFagsakArguments {
 	private final List<Journalposttype> journalposttyper;
 	private final List<Journalstatus> journalstatuser;
 	private final boolean visFeilregistrerte;
+	private final int foerste;
+	private final String etter;
 
 	public DokumentoversiktFagsakArguments(String fagsakId,
 										   String fagsaksystem,
 										   LocalDate fraDato,
 										   List<Tema> tema,
 										   List<Journalposttype> journalposttyper,
-										   List<Journalstatus> journalstatuser) {
+										   List<Journalstatus> journalstatuser,
+										   int foerste,
+										   String etter) {
 		this.fagsakId = fagsakId;
 		this.fagsaksystem = fagsaksystem;
 		if (fraDato == null) {
@@ -51,5 +55,7 @@ public class DokumentoversiktFagsakArguments {
 			this.journalstatuser = journalstatuser;
 		}
 		this.visFeilregistrerte = this.journalstatuser.contains(Journalstatus.FEILREGISTRERT);
+		this.foerste = foerste;
+		this.etter = etter;
 	}
 }
