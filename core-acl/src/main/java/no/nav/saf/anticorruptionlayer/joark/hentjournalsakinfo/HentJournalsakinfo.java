@@ -1,5 +1,7 @@
 package no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo;
 
+import static no.nav.saf.cache.LokalCacheConfig.HENT_TILGANG_JOURNALPOST_CACHE;
+
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.HentJournalpostBulkRequestTo;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.HentJournalpostBulkResponseTo;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark901.HentTilgangJournalpostResponseTo;
@@ -10,6 +12,7 @@ import no.nav.saf.integration.fasit.ServiceuserAlias;
 import no.nav.saf.metrics.Monitor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
@@ -47,7 +50,7 @@ public class HentJournalsakinfo {
 		return response.getBody();
 	}
 
-//	@Cacheable(cacheNames = HENT_TILGANG_JOURNALPOST_CACHE)
+	@Cacheable(cacheNames = HENT_TILGANG_JOURNALPOST_CACHE)
 	@Monitor(value = "dok_consumer", extraTags = {"process", "hentTilgangJournalpost"}, histogram = true)
 	public HentTilgangJournalpostResponseTo hentTilgangJournalpost(String journalpostId, String dokumentId, String variantFormat) {
 		return restTemplate.getForObject("/henttilgangjournalpost/{journalpostId}/{dokumentId}/{variantFormat}", HentTilgangJournalpostResponseTo.class, journalpostId, dokumentId, variantFormat);
