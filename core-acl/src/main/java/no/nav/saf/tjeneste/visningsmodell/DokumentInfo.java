@@ -17,5 +17,7 @@ public class DokumentInfo {
 	private final String navSkjemaId;
 	private final boolean saksbehandlerHarTilgang;
 	@Builder.Default
+	private final List<LogiskVedlegg> logiskeVedlegg = new ArrayList<>();
+	@Builder.Default
 	private final List<Dokumentvariant> dokumentvarianter = new ArrayList<>();
 }

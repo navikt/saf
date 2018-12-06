@@ -175,7 +175,14 @@ type DokumentInfo {
     saksbehandlerHarTilgang: Boolean
 
     # TODO
-    dokumentvarianter: [Dokumentvariant]
+    logiskeVedlegg: [LogiskVedlegg]!
+
+    # TODO
+    dokumentvarianter: [Dokumentvariant]!
+}
+
+type LogiskVedlegg {
+    tittel: String
 }
 
 # TODO

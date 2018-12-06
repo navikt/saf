@@ -11,6 +11,7 @@ import no.nav.saf.tjeneste.visningsmodell.Bruker;
 import no.nav.saf.tjeneste.visningsmodell.DokumentInfo;
 import no.nav.saf.tjeneste.visningsmodell.Dokumentvariant;
 import no.nav.saf.tjeneste.visningsmodell.Journalpost;
+import no.nav.saf.tjeneste.visningsmodell.LogiskVedlegg;
 import no.nav.saf.tjeneste.visningsmodell.RelevantDato;
 import no.nav.saf.tjeneste.visningsmodell.Sak;
 import no.nav.saf.tjeneste.visningsmodell.kode.Arkivsakssystem;
@@ -63,13 +64,16 @@ public class JournalpostDtoMapper {
 								.dokumentvarianter(Collections.singletonList(Dokumentvariant.builder()
 										.variantformat(Variantformat.valueOf(dokumentInfoDto.getVariantFormat().name()))
 										.build()))
+								.logiskeVedlegg(dokumentInfoDto.getLogiske().stream()
+										.map(logiskVedleggDto -> new LogiskVedlegg(logiskVedleggDto.getTittel()))
+										.collect(Collectors.toList()))
 								.build()).collect(Collectors.toList()))
 				.build();
 	}
 
 	private Bruker mapBruker(RequestCache requestCache) {
 		TilgangBruker tilgangBruker = requestCache.getObject("tilgangBruker");
-		if(tilgangBruker == null) {
+		if (tilgangBruker == null) {
 			return null;
 		}
 		return new Bruker(Brukertype.PERSON, tilgangBruker.getFoedselsnr());
@@ -97,7 +101,7 @@ public class JournalpostDtoMapper {
 
 	private Journalstatus mapJournalstatus(JournalpostDto journalpostDto) {
 		SaksrelasjonDto saksrelasjon = journalpostDto.getSaksrelasjon();
-		if (saksrelasjon != null &&  saksrelasjon.getFeilregistrert() != null && saksrelasjon.getFeilregistrert()) {
+		if (saksrelasjon != null && saksrelasjon.getFeilregistrert() != null && saksrelasjon.getFeilregistrert()) {
 			return Journalstatus.FEILREGISTRERT;
 		} else {
 			return journalpostDto.getJournalstatus().toSafJournalStatus();
@@ -119,7 +123,7 @@ public class JournalpostDtoMapper {
 				}
 				// fall gjennom
 			case U:
-				if(journalpostDto.getSendtPrintDato() != null) {
+				if (journalpostDto.getSendtPrintDato() != null) {
 					relevanteDatoer.add(new RelevantDato(journalpostDto.getEkspedertDato(), Datotype.DATO_SENDT_PRINT));
 				}
 				if (journalpostDto.getEkspedertDato() != null) {
