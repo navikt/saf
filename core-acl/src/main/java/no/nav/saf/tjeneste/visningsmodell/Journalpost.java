@@ -32,4 +32,6 @@ public class Journalpost {
 	private final List<RelevantDato> relevanteDatoer = new ArrayList<>();
 	@Builder.Default
 	private final List<DokumentInfo> dokumenter = new ArrayList<>();
+
+	private final String peker;
 }

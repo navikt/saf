@@ -22,11 +22,21 @@ type Query {
         # TODO
         tema: [Tema] = []
 
-        # TODO
+        # Velger journalpostene som har de spesifiserte journalposttypene
+        # **Standardverdi**: `I, U, N`
+        # TODO legge til default støtte for enum verdier
         journalposttyper: [Journalposttype] = []
 
-        # TODO
+        # Velger journalpostene som har de spesifiserte journalstatusene.
+        # **Standardverdi**: `FERDIGSTILT, JOURNALFOERT, EKSPEDERT`
+        # TODO legge til default støtte for enum verdier
         journalstatuser: [Journalstatus] = []
+
+        # Returnerer de første *n* journalpostene i listen
+        foerste: Int = 30
+
+        # Returnerer journalpostene i listen som kommer etter den angitte pekeren
+        etter: String
     ): [Journalpost]!
 }
 
@@ -73,6 +83,10 @@ type Journalpost {
 
     # TODO
     dokumenter: [DokumentInfo]
+
+    # En peker til bruk i paginering
+    peker: String!
+
 }
 
 # TODO
