@@ -9,11 +9,14 @@ import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.pep.Pep;
 import no.nav.saf.tjeneste.visningsmodell.DokumentInfo;
+import no.nav.saf.tjeneste.visningsmodell.Dokumentoversikt;
 import no.nav.saf.tjeneste.visningsmodell.Journalpost;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,6 +26,7 @@ import java.util.stream.Collectors;
 @Component
 public class DokumentoversiktFagsakCoordinatorImpl implements DokumentoversiktFagsakCoordinator {
 
+	private final SideInfoMapper sideInfoMapper = new SideInfoMapper();
 	private final TilgangsmodellRepository tilgangsmodellRepository;
 	private final DokumentoversiktBrukerVisningsmodellRepository visningsmodellRepository;
 	private final Pep<TilgangBruker> pep1;
@@ -46,7 +50,7 @@ public class DokumentoversiktFagsakCoordinatorImpl implements DokumentoversiktFa
 	}
 
 	@Override
-	public List<Journalpost> findJournalposter(final DokumentoversiktFagsakArguments dokumentoversiktFagsakArguments, final SafRequestContext safRequestContext) {
+	public Dokumentoversikt hentDokumentoversikt(DokumentoversiktFagsakArguments dokumentoversiktFagsakArguments, SafRequestContext safRequestContext) {
 		final String fagsakId = dokumentoversiktFagsakArguments.getFagsakId();
 		final String fagsaksystem = dokumentoversiktFagsakArguments.getFagsaksystem();
 
@@ -61,7 +65,7 @@ public class DokumentoversiktFagsakCoordinatorImpl implements DokumentoversiktFa
 				.blockingGet();
 
 		final List<String> filteredAktoerIdListTilgangBruker = filteredTilgangBrukerList.stream()
-				.map(tilgangBruker -> tilgangBruker.getAktoerId())
+				.map(TilgangBruker::getAktoerId)
 				.collect(Collectors.toList());
 
 		final List<TilgangSak> tilgangSakList = tilgangsmodellRepository.findTilgangSakList(fagsakId, fagsaksystem).stream()
@@ -78,25 +82,25 @@ public class DokumentoversiktFagsakCoordinatorImpl implements DokumentoversiktFa
 				.blockingGet();
 
 		final List<String> filteredAktoerIdListTilgangSak = filteredTilgangSakList.stream()
-				.map(tilgangSak -> tilgangSak.getAktoerId())
+				.map(TilgangSak::getAktoerId)
 				.collect(Collectors.toList());
 
 		final List<TilgangBruker> finalTilgangBrukerList = filteredTilgangBrukerList.stream()
 				.filter(tilgangBruker -> filteredAktoerIdListTilgangSak.contains(tilgangBruker.getAktoerId()))
 				.collect(Collectors.toList());
 
-		final List<TilgangJournalpost> tilgangJournalpostList = finalTilgangBrukerList.stream()
-				.flatMap(tilgangBruker -> tilgangsmodellRepository.findTilgangJournalposter(
-						tilgangBruker,
-						filteredTilgangSakList,
-						dokumentoversiktFagsakArguments.getFraDato(),
-						dokumentoversiktFagsakArguments.getTema(),
-						dokumentoversiktFagsakArguments.getJournalposttyper(),
-						dokumentoversiktFagsakArguments.getJournalstatuser(),
-						dokumentoversiktFagsakArguments.getFoerste(),
-						dokumentoversiktFagsakArguments.getEtter(),
-						safRequestContext).stream())
-				.collect(Collectors.toList());
+		final List<TilgangJournalpost> tilgangJournalpostList = tilgangsmodellRepository.findTilgangJournalposter(
+				finalTilgangBrukerList,
+				filteredTilgangSakList,
+				dokumentoversiktFagsakArguments.getFraDato(),
+				dokumentoversiktFagsakArguments.getTema(),
+				dokumentoversiktFagsakArguments.getJournalposttyper(),
+				dokumentoversiktFagsakArguments.getJournalstatuser(),
+				dokumentoversiktFagsakArguments.getFoerste(),
+				dokumentoversiktFagsakArguments.getEtterPeker(),
+				dokumentoversiktFagsakArguments.getSiste(),
+				dokumentoversiktFagsakArguments.getFoerPeker(),
+				safRequestContext);
 
 		final List<TilgangJournalpost> filteredTilgangJournalpostList = Flowable.fromIterable(tilgangJournalpostList)
 				.flatMap(tilgangJournalpost ->
@@ -106,9 +110,19 @@ public class DokumentoversiktFagsakCoordinatorImpl implements DokumentoversiktFa
 				).toList()
 				.blockingGet();
 
-		return visningsmodellRepository.findJournalposter(filteredTilgangJournalpostList.stream()
+		List<Journalpost> journalposter = visningsmodellRepository.findJournalposter(filteredTilgangJournalpostList.stream()
 				.map(TilgangJournalpost::getJournalpostId)
+				.sorted(Comparator.reverseOrder())
 				.collect(Collectors.toList()), safRequestContext);
+		return Dokumentoversikt.builder()
+				.journalposter(journalposter)
+				.sideInfo(sideInfoMapper.mapSideInfo(journalposter, safRequestContext))
+				.build();
+	}
+
+	@Override
+	public List<Journalpost> findJournalposter(final DokumentoversiktFagsakArguments dokumentoversiktFagsakArguments, final SafRequestContext safRequestContext) {
+		return new ArrayList<>();
 	}
 
 	@Override

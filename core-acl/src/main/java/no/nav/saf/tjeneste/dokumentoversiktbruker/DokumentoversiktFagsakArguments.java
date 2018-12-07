@@ -21,8 +21,10 @@ public class DokumentoversiktFagsakArguments {
 	private final List<Journalposttype> journalposttyper;
 	private final List<Journalstatus> journalstatuser;
 	private final boolean visFeilregistrerte;
-	private final int foerste;
-	private final String etter;
+	private final Integer foerste;
+	private final String etterPeker;
+	private final Integer siste;
+	private final String foerPeker;
 
 	public DokumentoversiktFagsakArguments(String fagsakId,
 										   String fagsaksystem,
@@ -30,8 +32,10 @@ public class DokumentoversiktFagsakArguments {
 										   List<Tema> tema,
 										   List<Journalposttype> journalposttyper,
 										   List<Journalstatus> journalstatuser,
-										   int foerste,
-										   String etter) {
+										   Integer foerste,
+										   String etterPeker,
+										   Integer siste,
+										   String foerPeker) {
 		this.fagsakId = fagsakId;
 		this.fagsaksystem = fagsaksystem;
 		if (fraDato == null) {
@@ -56,6 +60,8 @@ public class DokumentoversiktFagsakArguments {
 		}
 		this.visFeilregistrerte = this.journalstatuser.contains(Journalstatus.FEILREGISTRERT);
 		this.foerste = foerste;
-		this.etter = etter;
+		this.etterPeker = etterPeker;
+		this.siste = siste;
+		this.foerPeker = foerPeker;
 	}
 }

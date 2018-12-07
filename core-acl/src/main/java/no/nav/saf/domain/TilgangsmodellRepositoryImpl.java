@@ -118,7 +118,7 @@ public class TilgangsmodellRepositoryImpl implements TilgangsmodellRepository {
 					.flatMapIterable(items -> items)
 					.toList().blockingGet();
 			return arkivsaker.stream().map(arkivsak -> {
-				safRequestContext.getRequestCache().putObject(arkivsak.getKey(), arkivsak);
+						safRequestContext.getRequestCache().putObject(arkivsak.getKey(), arkivsak);
 						return TilgangSak.builder()
 								.arkivsaksnummer(arkivsak.getArkivsaksnummer())
 								.arkivsaksystem(arkivsak.getArkivsaksystem().name())
@@ -132,7 +132,7 @@ public class TilgangsmodellRepositoryImpl implements TilgangsmodellRepository {
 	}
 
 	@Override
-	public List<TilgangJournalpost> findTilgangJournalposter(TilgangBruker tilgangBruker,
+	public List<TilgangJournalpost> findTilgangJournalposter(List<TilgangBruker> tilgangBrukere,
 															 List<TilgangSak> tilgangSakList,
 															 LocalDate fraDato,
 															 List<Tema> inkluderTema, List<Journalposttype> inkluderJournalposttyper,
@@ -140,7 +140,8 @@ public class TilgangsmodellRepositoryImpl implements TilgangsmodellRepository {
 															 Integer foerste, String etterPeker, Integer siste, String foerPeker,
 															 SafRequestContext safRequestContext) {
 		try {
-			List<JournalpostDto> journalposter = joarkAntiCorruptionLayer.hentJournalpostBulk(tilgangBruker,
+			List<String> identer = tilgangBrukere.stream().flatMap(t -> t.getAlleIdenter().stream()).collect(Collectors.toList());
+			List<JournalpostDto> journalposter = joarkAntiCorruptionLayer.hentJournalpostBulk(identer,
 					tilgangSakList, fraDato, inkluderTema, inkluderJournalposttyper, inkluderJournalstatuses, foerste, etterPeker, siste, foerPeker);
 			return journalposter.stream()
 					.map(journalpostDto -> {

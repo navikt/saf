@@ -158,7 +158,7 @@ class GsakAntiCorruptionLayerImpl implements GsakAntiCorruptionLayer {
 		List<GsakSakerTo> gsakSakerToList = gsakConsumer.hentSakerByFagsakIdAndFagsaksystem(fagsakId, fagsaksystem);
 		return gsakSakerToList == null || gsakSakerToList.isEmpty() ? new ArrayList<>() :
 				gsakSakerToList.stream()
-						.map(gsakSakerTo -> gsakSakerTo.getAktoerId())
+						.map(GsakSakerTo::getAktoerId)
 						.distinct()
 						.collect(Collectors.toList());
 	}

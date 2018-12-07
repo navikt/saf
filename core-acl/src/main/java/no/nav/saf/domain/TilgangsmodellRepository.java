@@ -25,7 +25,7 @@ public interface TilgangsmodellRepository {
 
 	List<TilgangSak> findTilgangSaker(TilgangBruker tilgangBruker, List<Tema> tema, SafRequestContext safRequestContext);
 
-	List<TilgangJournalpost> findTilgangJournalposter(TilgangBruker tilgangBruker,
+	List<TilgangJournalpost> findTilgangJournalposter(List<TilgangBruker> tilgangBrukere,
 													  List<TilgangSak> tilgangSakList,
 													  LocalDate fraDato,
 													  List<Tema> inkluderTema, List<Journalposttype> inkluderJournalposttyper,

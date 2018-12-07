@@ -18,7 +18,7 @@ import java.util.List;
  */
 public interface JoarkAntiCorruptionLayer {
 
-	List<JournalpostDto> hentJournalpostBulk(TilgangBruker tilgangBruker,
+	List<JournalpostDto> hentJournalpostBulk(List<String> identer,
 											 List<TilgangSak> tilgangSakList,
 											 LocalDate fraDato,
 											 List<Tema> inkluderTema,

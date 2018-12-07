@@ -25,7 +25,6 @@ import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -48,6 +47,9 @@ public class AktoerV2Consumer {
 			backoff = @Backoff(delay = DELAY_SHORT_AKTOER_V2, multiplier = MULTIPLIER_SHORT_AKTOER_V2))
 	@Monitor(value = "dok_consumer", extraTags = {"process", "hentIdentForAktoerId"}, histogram = true)
 	public HentIdentForAktoerIdResponseTo hentIdentForAktoerId(String aktoerId) {
+		if(log.isDebugEnabled()) {
+			log.debug("henter ident for aktoerId={}", aktoerId);
+		}
 		HentIdentForAktoerIdRequest request = new HentIdentForAktoerIdRequest();
 		request.setAktoerId(aktoerId);
 		try {
@@ -68,6 +70,10 @@ public class AktoerV2Consumer {
 			maxAttempts = MAX_ATTEMPTS_SHORT_AKTOER_V2,
 			backoff = @Backoff(delay = DELAY_SHORT_AKTOER_V2, multiplier = MULTIPLIER_SHORT_AKTOER_V2))
 	public HentAktoerIdForIdentResponseTo hentAktoerIdForIdent(String ident) {
+		if(log.isDebugEnabled()) {
+			log.debug("henter aktoerId for ident={}", ident);
+		}
+
 		HentAktoerIdForIdentRequest request = new HentAktoerIdForIdentRequest();
 		request.setIdent(ident);
 		try {
@@ -92,8 +98,11 @@ public class AktoerV2Consumer {
 			backoff = @Backoff(delay = DELAY_SHORT_AKTOER_V2, multiplier = MULTIPLIER_SHORT_AKTOER_V2))
 	@Monitor(value = "dok_consumer", extraTags = {"process", "hentIdentForAktoerId"}, histogram = true)
 	public List<HentIdentForAktoerIdListeResponseTo> hentIdentForAktoerIdListe(List<String> aktoerIdListe) {
+		if(log.isDebugEnabled()) {
+			log.debug("henter ident for aktoerIdListe={}", aktoerIdListe);
+		}
 		HentIdentForAktoerIdListeRequest request = new HentIdentForAktoerIdListeRequest();
-		request.getAktoerIdListe().addAll(new ArrayList<>(aktoerIdListe));
+		request.getAktoerIdListe().addAll(aktoerIdListe);
 		try {
 			HentIdentForAktoerIdListeResponse response = aktoerV2.hentIdentForAktoerIdListe(request);
 			checkAndLogErrors(response);
@@ -103,7 +112,7 @@ public class AktoerV2Consumer {
 							.foedselsnr(e.getGjeldendeIdent().getTpsId())
 							.aktoerId(e.getAktoerId())
 							.historiskeIdenter(e.getHistoriskIdentListe().stream()
-									.map(identDetaljer -> identDetaljer.getTpsId())
+									.map(IdentDetaljer::getTpsId)
 									.collect(Collectors.toList()))
 							.build())
 					.collect(Collectors.toList());

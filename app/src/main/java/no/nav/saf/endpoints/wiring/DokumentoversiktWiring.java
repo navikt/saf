@@ -57,27 +57,17 @@ public class DokumentoversiktWiring {
 						logDokumentoversiktBrukerQueryDone(dokumentoversikt.getJournalposter().size(), arguments.getBrukerIdInput());
 						return dokumentoversikt;
 					} catch (SafFunctionalException e) {
-						return new DataFetcherResult<List<Journalpost>>(new ArrayList<>(), Collections.singletonList(e));
+						return new DataFetcherResult<Dokumentoversikt>(Dokumentoversikt.empty(), Collections.singletonList(e));
 					}
 				}))
 				.type("Query", typeWiring -> typeWiring.dataFetcher("dokumentoversiktFagsak", environment -> {
-					String fagsakId = environment.getArgument("fagsakId");
-					String fagsaksystem = environment.getArgument("fagsaksystem");
-					log.info("dokumentoversiktFagsak hentes for fagsakId={} og fagsaksystem={}", fagsakId, fagsaksystem);
-					LocalDate fraDato = environment.getArgument("fraDato");
-					List<Tema> tema = environment.getArgument("tema");
-					List<Journalposttype> journalposttyper = environment.getArgument("journalposttyper");
-					List<Journalstatus> journalstatuser = environment.getArgument("journalstatuser");
-					int foerste = environment.getArgument("foerste");
-					String peker = environment.getArgument("etter");
+					DokumentoversiktFagsakArguments arguments = mapDokumentoversiktFagsakArguments(environment);
 					SafRequestContext safRequestContext = environment.getContext();
 					try {
-						List<Journalpost> journalposter = dokumentoversiktFagsakCoordinator.findJournalposter(
-								new DokumentoversiktFagsakArguments(fagsakId, fagsaksystem, fraDato, tema, journalposttyper, journalstatuser, foerste, peker),
-								safRequestContext);
-						log.info("dokumentoversiktBruker returnerer {} journalposter for  for fagsakId={} og fagsaksystem={}",
-								journalposter.size(), fagsakId, fagsaksystem);
-						return journalposter;
+						Dokumentoversikt dokumentoversikt = dokumentoversiktFagsakCoordinator.hentDokumentoversikt(arguments, safRequestContext);
+						log.info("dokumentoversiktFagsak returnerer {} journalposter for  for fagsakId={} og fagsaksystem={}",
+								dokumentoversikt.getJournalposter().size(), arguments.getFagsakId(), arguments.getFagsaksystem());
+						return dokumentoversikt;
 					} catch (SafFunctionalException e) {
 						return new DataFetcherResult<Dokumentoversikt>(Dokumentoversikt.empty(), Collections.singletonList(e));
 					}
@@ -109,6 +99,27 @@ public class DokumentoversiktWiring {
 		Integer siste = environment.getArgument("siste");
 		String foerPeker = environment.getArgument("foer");
 		return new DokumentoversiktBrukerArguments(brukerIdInput, fraDato, tema, journalposttyper, journalstatuser, foerste, etterPeker, siste, foerPeker);
+	}
+
+	private DokumentoversiktFagsakArguments mapDokumentoversiktFagsakArguments(DataFetchingEnvironment environment) {
+		String fagsakId = environment.getArgument("fagsakId");
+		String fagsaksystem = environment.getArgument("fagsaksystem");
+		log.info("dokumentoversiktFagsak hentes for fagsakId={} og fagsaksystem={}", fagsakId, fagsaksystem);
+		LocalDate fraDato = environment.getArgument("fraDato");
+		List<Tema> tema = environment.getArgument("tema");
+		List<Journalposttype> journalposttyper = environment.getArgument("journalposttyper");
+		List<Journalstatus> journalstatuser = environment.getArgument("journalstatuser");
+		if(environment.getArgument("foerste") != null && environment.getArgument("siste") != null) {
+			throw new IllegalArgumentException("Det er ikke tillatt å angi både `foerste` og `siste` for å paginere.");
+		}
+		if(environment.getArgument("foerste") != null && environment.getArgument("siste") != null) {
+			throw new IllegalArgumentException("Du må angi en `foerste` eller en `siste` verdi for å paginere.");
+		}
+		Integer foerste = environment.getArgument("foerste");
+		String etterPeker = environment.getArgument("etter");
+		Integer siste = environment.getArgument("siste");
+		String foerPeker = environment.getArgument("foer");
+		return new DokumentoversiktFagsakArguments(fagsakId, fagsaksystem, fraDato, tema, journalposttyper, journalstatuser, foerste, etterPeker, siste, foerPeker);
 	}
 
 	private void logDokumentoversiktBrukerQueryInit(BrukerIdInput brukerIdInput) {

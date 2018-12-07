@@ -16,6 +16,7 @@ import org.springframework.stereotype.Component;
 import javax.inject.Inject;
 import javax.inject.Named;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -70,7 +71,7 @@ public class DokumentoversiktBrukerCoordinatorImpl implements DokumentoversiktBr
 				.blockingGet();
 
 		final List<TilgangJournalpost> tilgangJournalpostList = tilgangsmodellRepository.findTilgangJournalposter(
-				tilgangBruker,
+				Collections.singletonList(tilgangBruker),
 				filteredTilgangSakList,
 				dokumentoversiktBrukerArguments.getFraDato(),
 				dokumentoversiktBrukerArguments.getTema(),
