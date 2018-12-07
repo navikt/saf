@@ -15,7 +15,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>no.nav.saf</groupId>
-			<artifactId>core-acl</artifactId>
+			<artifactId>core</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>no.nav.saf</groupId>
