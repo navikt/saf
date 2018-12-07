@@ -19,7 +19,6 @@ import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark901.Tilgang
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark920.HentDokumentResponseTo;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.domain.tilgangsmodell.TilgangDokumentInfo;
-import no.nav.saf.domain.tilgangsmodell.TilgangIdent;
 import no.nav.saf.domain.tilgangsmodell.TilgangJournalpost;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 import no.nav.saf.exceptions.SafFunctionalException;
@@ -57,18 +56,13 @@ class JoarkAntiCorruptionLayerImpl implements JoarkAntiCorruptionLayer {
 	}
 
 	@Override
-	public List<JournalpostDto> hentJournalpostBulk(TilgangBruker tilgangBruker,
+	public List<JournalpostDto> hentJournalpostBulk(List<String> alleIdenter,
 													List<TilgangSak> tilgangSakList,
 													LocalDate fraDato,
 													List<Tema> inkluderTema,
 													List<Journalposttype> inkluderJournalposttyper,
 													List<Journalstatus> inkluderJournalstatuses,
 													Integer foerste, String etterPeker, Integer siste, String foerPeker) {
-		List<String> alleIdenter = tilgangBruker.getHistoriskeIdenter()
-				.stream()
-				.map(TilgangIdent::getIdentifikator)
-				.collect(Collectors.toList());
-		alleIdenter.add(tilgangBruker.getFoedselsnr());
 		HentJournalpostBulkResponseTo responseTo = hentJournalsakinfo.hentJournalpostBulk(HentJournalpostBulkRequestTo.builder()
 				.alleIdenter(alleIdenter)
 				.inkluderJournalpostType(inkluderJournalposttyper.stream()

@@ -74,6 +74,33 @@ public class TilgangsmodellRepositoryImpl implements TilgangsmodellRepository {
 	}
 
 	@Override
+	@Cacheable(cacheNames = LokalCacheConfig.TILGANGSMODELL_REPO_BRUKER_CACHE)
+	public List<TilgangBruker> findTilgangBrukerList(String fagsakId, String fagsaksystem) {
+		try {
+			List<String> aktoerIdList = gsakAntiCorruptionLayer.findAktoerIdListByFagsakIdAndFagsaksystem(fagsakId, fagsaksystem);
+			if (aktoerIdList.isEmpty()) {
+				return new ArrayList<>();
+			} else {
+				return aktoerAntiCorruptionLayer.hentTilgangBrukerListByAktoerIdList(aktoerIdList);
+			}
+		} catch (Exception e) {
+			log.warn("findTilgangBruker feilet ved oppslag. fagsakId={}, fagsaksystem={}", fagsakId, fagsaksystem, e);
+		}
+		return new ArrayList<>();
+	}
+
+	@Override
+	@Cacheable(cacheNames = LokalCacheConfig.TILGANGSMODELL_REPO_SAK_CACHE)
+	public List<TilgangSak> findTilgangSakList(String fagsakId, String fagsaksystem) {
+		try {
+			return gsakAntiCorruptionLayer.findTilgangSakListByFagsakIdAndFagsaksystem(fagsakId, fagsaksystem);
+		} catch (Exception e) {
+			log.warn("findTilgangSakList feilet ved for fagsakId={} og fagsaksystem={}.", fagsakId, fagsaksystem);
+		}
+		return new ArrayList<>();
+	}
+
+	@Override
 	@Cacheable(cacheNames = LokalCacheConfig.TILGANGSMODELL_REPO_SAK_CACHE, key = "#tilgangBruker.aktoerId + '_' + #tema")
 	public List<TilgangSak> findTilgangSaker(final TilgangBruker tilgangBruker, final List<Tema> tema, SafRequestContext safRequestContext) {
 		try {
@@ -91,7 +118,7 @@ public class TilgangsmodellRepositoryImpl implements TilgangsmodellRepository {
 					.flatMapIterable(items -> items)
 					.toList().blockingGet();
 			return arkivsaker.stream().map(arkivsak -> {
-				safRequestContext.getRequestCache().putObject(arkivsak.getKey(), arkivsak);
+						safRequestContext.getRequestCache().putObject(arkivsak.getKey(), arkivsak);
 						return TilgangSak.builder()
 								.arkivsaksnummer(arkivsak.getArkivsaksnummer())
 								.arkivsaksystem(arkivsak.getArkivsaksystem().name())
@@ -105,7 +132,7 @@ public class TilgangsmodellRepositoryImpl implements TilgangsmodellRepository {
 	}
 
 	@Override
-	public List<TilgangJournalpost> findTilgangJournalposter(TilgangBruker tilgangBruker,
+	public List<TilgangJournalpost> findTilgangJournalposter(List<TilgangBruker> tilgangBrukere,
 															 List<TilgangSak> tilgangSakList,
 															 LocalDate fraDato,
 															 List<Tema> inkluderTema, List<Journalposttype> inkluderJournalposttyper,
@@ -113,7 +140,8 @@ public class TilgangsmodellRepositoryImpl implements TilgangsmodellRepository {
 															 Integer foerste, String etterPeker, Integer siste, String foerPeker,
 															 SafRequestContext safRequestContext) {
 		try {
-			List<JournalpostDto> journalposter = joarkAntiCorruptionLayer.hentJournalpostBulk(tilgangBruker,
+			List<String> identer = tilgangBrukere.stream().flatMap(t -> t.getAlleIdenter().stream()).collect(Collectors.toList());
+			List<JournalpostDto> journalposter = joarkAntiCorruptionLayer.hentJournalpostBulk(identer,
 					tilgangSakList, fraDato, inkluderTema, inkluderJournalposttyper, inkluderJournalstatuses, foerste, etterPeker, siste, foerPeker);
 			return journalposter.stream()
 					.map(journalpostDto -> {

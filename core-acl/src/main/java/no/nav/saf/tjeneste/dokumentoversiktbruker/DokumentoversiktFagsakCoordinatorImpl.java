@@ -16,7 +16,6 @@ import org.springframework.stereotype.Component;
 import javax.inject.Inject;
 import javax.inject.Named;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -25,7 +24,7 @@ import java.util.stream.Collectors;
  * @author Joakim Bjørnstad, Jbit AS
  */
 @Component
-public class DokumentoversiktBrukerCoordinatorImpl implements DokumentoversiktBrukerCoordinator {
+public class DokumentoversiktFagsakCoordinatorImpl implements DokumentoversiktFagsakCoordinator {
 
 	private final SideInfoMapper sideInfoMapper = new SideInfoMapper();
 	private final TilgangsmodellRepository tilgangsmodellRepository;
@@ -36,7 +35,7 @@ public class DokumentoversiktBrukerCoordinatorImpl implements DokumentoversiktBr
 	private final Pep<TilgangJournalpost> pep4;
 
 	@Inject
-	public DokumentoversiktBrukerCoordinatorImpl(TilgangsmodellRepository tilgangsmodellRepository,
+	public DokumentoversiktFagsakCoordinatorImpl(TilgangsmodellRepository tilgangsmodellRepository,
 												 DokumentoversiktBrukerVisningsmodellRepository visningsmodellRepository,
 												 @Named("pep1") Pep<TilgangBruker> pep1,
 												 @Named("pep2") Pep<TilgangSak> pep2,
@@ -51,16 +50,28 @@ public class DokumentoversiktBrukerCoordinatorImpl implements DokumentoversiktBr
 	}
 
 	@Override
-	public Dokumentoversikt hentDokumentoversikt(DokumentoversiktBrukerArguments dokumentoversiktBrukerArguments, SafRequestContext safRequestContext) {
-		final TilgangBruker tilgangBruker = tilgangsmodellRepository.findTilgangBruker(dokumentoversiktBrukerArguments.getBrukerIdInput());
-		safRequestContext.getRequestCache().putObject("tilgangBruker", tilgangBruker);
-		boolean pep1Access = this.pep1.hasAccess(tilgangBruker, safRequestContext);
+	public Dokumentoversikt hentDokumentoversikt(DokumentoversiktFagsakArguments dokumentoversiktFagsakArguments, SafRequestContext safRequestContext) {
+		final String fagsakId = dokumentoversiktFagsakArguments.getFagsakId();
+		final String fagsaksystem = dokumentoversiktFagsakArguments.getFagsaksystem();
 
-		if (!pep1Access) {
-			return Dokumentoversikt.empty();
-		}
+		final List<TilgangBruker> tilgangBrukerList = tilgangsmodellRepository.findTilgangBrukerList(fagsakId, fagsaksystem);
 
-		final List<TilgangSak> tilgangSakList = tilgangsmodellRepository.findTilgangSaker(tilgangBruker, dokumentoversiktBrukerArguments.getTema(), safRequestContext);
+		List<TilgangBruker> filteredTilgangBrukerList = Flowable.fromIterable(tilgangBrukerList)
+				.flatMap(tilgangBruker ->
+						Flowable.just(tilgangBruker)
+								.observeOn(Schedulers.io())
+								.filter(ts -> pep1.hasAccess(ts, safRequestContext))
+				).toList()
+				.blockingGet();
+
+		final List<String> filteredAktoerIdListTilgangBruker = filteredTilgangBrukerList.stream()
+				.map(TilgangBruker::getAktoerId)
+				.collect(Collectors.toList());
+
+		final List<TilgangSak> tilgangSakList = tilgangsmodellRepository.findTilgangSakList(fagsakId, fagsaksystem).stream()
+				.filter(tilgangSak -> filteredAktoerIdListTilgangBruker.contains(tilgangSak.getAktoerId()))
+				.collect(Collectors.toList());
+
 		List<TilgangSak> filteredTilgangSakList = Flowable.fromIterable(tilgangSakList)
 				.flatMap(tilgangSak ->
 						Flowable.just(tilgangSak)
@@ -70,19 +81,26 @@ public class DokumentoversiktBrukerCoordinatorImpl implements DokumentoversiktBr
 				).toList()
 				.blockingGet();
 
+		final List<String> filteredAktoerIdListTilgangSak = filteredTilgangSakList.stream()
+				.map(TilgangSak::getAktoerId)
+				.collect(Collectors.toList());
+
+		final List<TilgangBruker> finalTilgangBrukerList = filteredTilgangBrukerList.stream()
+				.filter(tilgangBruker -> filteredAktoerIdListTilgangSak.contains(tilgangBruker.getAktoerId()))
+				.collect(Collectors.toList());
+
 		final List<TilgangJournalpost> tilgangJournalpostList = tilgangsmodellRepository.findTilgangJournalposter(
-				Collections.singletonList(tilgangBruker),
+				finalTilgangBrukerList,
 				filteredTilgangSakList,
-				dokumentoversiktBrukerArguments.getFraDato(),
-				dokumentoversiktBrukerArguments.getTema(),
-				dokumentoversiktBrukerArguments.getJournalposttyper(),
-				dokumentoversiktBrukerArguments.getJournalstatuser(),
-				dokumentoversiktBrukerArguments.getFoerste(),
-				dokumentoversiktBrukerArguments.getEtterPeker(),
-				dokumentoversiktBrukerArguments.getSiste(),
-				dokumentoversiktBrukerArguments.getFoerPeker(),
-				safRequestContext
-		);
+				dokumentoversiktFagsakArguments.getFraDato(),
+				dokumentoversiktFagsakArguments.getTema(),
+				dokumentoversiktFagsakArguments.getJournalposttyper(),
+				dokumentoversiktFagsakArguments.getJournalstatuser(),
+				dokumentoversiktFagsakArguments.getFoerste(),
+				dokumentoversiktFagsakArguments.getEtterPeker(),
+				dokumentoversiktFagsakArguments.getSiste(),
+				dokumentoversiktFagsakArguments.getFoerPeker(),
+				safRequestContext);
 
 		final List<TilgangJournalpost> filteredTilgangJournalpostList = Flowable.fromIterable(tilgangJournalpostList)
 				.flatMap(tilgangJournalpost ->
@@ -92,19 +110,18 @@ public class DokumentoversiktBrukerCoordinatorImpl implements DokumentoversiktBr
 				).toList()
 				.blockingGet();
 
-		List<Journalpost> visningJournalposter = visningsmodellRepository.findJournalposter(filteredTilgangJournalpostList.stream()
+		List<Journalpost> journalposter = visningsmodellRepository.findJournalposter(filteredTilgangJournalpostList.stream()
 				.map(TilgangJournalpost::getJournalpostId)
 				.sorted(Comparator.reverseOrder())
 				.collect(Collectors.toList()), safRequestContext);
-
 		return Dokumentoversikt.builder()
-				.journalposter(visningJournalposter)
-				.sideInfo(sideInfoMapper.mapSideInfo(visningJournalposter, safRequestContext))
+				.journalposter(journalposter)
+				.sideInfo(sideInfoMapper.mapSideInfo(journalposter, safRequestContext))
 				.build();
 	}
 
 	@Override
-	public List<Journalpost> findJournalposter(final DokumentoversiktBrukerArguments dokumentoversiktBrukerArguments, final SafRequestContext safRequestContext) {
+	public List<Journalpost> findJournalposter(final DokumentoversiktFagsakArguments dokumentoversiktFagsakArguments, final SafRequestContext safRequestContext) {
 		return new ArrayList<>();
 	}
 

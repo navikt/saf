@@ -37,7 +37,7 @@ public class GsakConsumer {
 						ServiceuserAlias serviceuserAlias) {
 		this.gsakApiUrl = gsakApiUrl;
 		this.restTemplate = restTemplateBuilder
-				.setReadTimeout(Duration.ofSeconds(10))
+				.setReadTimeout(Duration.ofSeconds(20))
 				.setConnectTimeout(Duration.ofSeconds(5))
 				.basicAuthentication(serviceuserAlias.getUsername(), serviceuserAlias.getPassword()).build();
 	}
@@ -51,7 +51,7 @@ public class GsakConsumer {
 	}
 
 	@Cacheable(cacheNames = LokalCacheConfig.SAKER_BY_AKTOER_ID_CACHE, key = "#aktoerId + '_' + #tema")
-	@Monitor(value = "dok_consumer", extraTags = {"process", "hentSakerByAktoerIdWithTemakode"}, histogram = true)
+	@Monitor(value = "dok_consumer", extraTags = {"process", "hentSakerByAktoerId"}, histogram = true)
 	public List<GsakSakerTo> hentSakerByAktoerId(final String aktoerId, final Tema tema) {
 		UriComponentsBuilder uri = UriComponentsBuilder.fromHttpUrl(gsakApiUrl)
 				.queryParam("aktoerId", aktoerId)
@@ -59,7 +59,14 @@ public class GsakConsumer {
 		return hentSaker(uri.toUriString());
 	}
 
-	//todo hentSakeByFagsakId
+	@Cacheable(cacheNames = LokalCacheConfig.SAKER_BY_FAGSAK_ID_CACHE, key = "#fagsakId + '_' + #fagsaksystem")
+	@Monitor(value = "dok_consumer", extraTags = {"process", "hentSakerByFagsakIdAndFagsaksystem"}, histogram = true)
+	public List<GsakSakerTo> hentSakerByFagsakIdAndFagsaksystem(final String fagsakId, final String fagsaksystem) {
+		UriComponentsBuilder uri = UriComponentsBuilder.fromHttpUrl(gsakApiUrl)
+				.queryParam("fagsakNr", fagsakId)
+				.queryParam("applikasjon", fagsaksystem);
+		return hentSaker(uri.toUriString());
+	}
 
 	private List<GsakSakerTo> hentSaker(final String uri) {
 		if(log.isDebugEnabled()) {

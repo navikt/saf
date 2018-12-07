@@ -19,9 +19,13 @@ import java.util.List;
 public interface TilgangsmodellRepository {
 	TilgangBruker findTilgangBruker(BrukerIdInput brukerIdInput);
 
+	List<TilgangBruker> findTilgangBrukerList(String fagsakId, String fagsaksystem);
+
+	List<TilgangSak> findTilgangSakList(String fagsakId, String fagsaksystem);
+
 	List<TilgangSak> findTilgangSaker(TilgangBruker tilgangBruker, List<Tema> tema, SafRequestContext safRequestContext);
 
-	List<TilgangJournalpost> findTilgangJournalposter(TilgangBruker tilgangBruker,
+	List<TilgangJournalpost> findTilgangJournalposter(List<TilgangBruker> tilgangBrukere,
 													  List<TilgangSak> tilgangSakList,
 													  LocalDate fraDato,
 													  List<Tema> inkluderTema, List<Journalposttype> inkluderJournalposttyper,
