@@ -30,7 +30,7 @@ public abstract class AbacLogger {
 	}
 
 	String mapResponse(final XacmlResponse xacmlResponse) {
-		return "Authorization Response: " +
+		return " Authorization Response: " +
 				"decision=" + xacmlResponse.getDecision().getValue() +
 				(
 						xacmlResponse.getAdvices().isEmpty() ? "" :

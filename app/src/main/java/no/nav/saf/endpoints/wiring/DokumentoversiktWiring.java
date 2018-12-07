@@ -74,7 +74,7 @@ public class DokumentoversiktWiring {
 		if(environment.getArgument("foerste") != null && environment.getArgument("siste") != null) {
 			throw new IllegalArgumentException("Det er ikke tillatt å angi både `foerste` og `siste` for å paginere.");
 		}
-		if(environment.getArgument("foerste") != null && environment.getArgument("siste") != null) {
+		if(environment.getArgument("foerste") == null && environment.getArgument("siste") == null) {
 			throw new IllegalArgumentException("Du må angi en `foerste` eller en `siste` verdi for å paginere.");
 		}
 		Integer foerste = environment.getArgument("foerste");
