@@ -1,4 +1,4 @@
-package no.nav.saf.tjeneste.dokumentoversiktbruker;
+package no.nav.saf.query.dokumentoversikt;
 
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tjeneste.visningsmodell.DokumentInfo;

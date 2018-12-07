@@ -11,6 +11,7 @@
 	<modules>
 		<module>app</module>
 		<module>core</module>
+		<module>dokumentoversikt</module>
 		<module>graphiql</module>
 	</modules>
 	<parent>
@@ -48,12 +49,17 @@
 			<dependency>
 				<groupId>no.nav.saf</groupId>
 				<artifactId>core</artifactId>
-				<version>1-SNAPSHOT</version>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>no.nav.saf</groupId>
+				<artifactId>dokumentoversikt</artifactId>
+				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>no.nav.saf</groupId>
 				<artifactId>graphiql</artifactId>
-				<version>1-SNAPSHOT</version>
+				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>io.reactivex.rxjava2</groupId>

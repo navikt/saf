@@ -1,4 +1,4 @@
-package no.nav.saf.tjeneste.dokumentoversiktbruker;
+package no.nav.saf.query.dokumentoversikt;
 
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.JournalpostDto;
 import no.nav.saf.tilgangskontroll.SafRequestContext;

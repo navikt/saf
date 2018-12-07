@@ -1,4 +1,4 @@
-package no.nav.saf.tjeneste.dokumentoversiktbruker;
+package no.nav.saf.query.dokumentoversikt.fagsak;
 
 import lombok.Value;
 import no.nav.saf.tjeneste.argumenter.FagsakIdInput;

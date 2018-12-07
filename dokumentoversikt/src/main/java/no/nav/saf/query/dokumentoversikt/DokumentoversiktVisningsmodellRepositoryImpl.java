@@ -1,4 +1,4 @@
-package no.nav.saf.tjeneste.dokumentoversiktbruker;
+package no.nav.saf.query.dokumentoversikt;
 
 import no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoMapper;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.JournalpostDto;
@@ -15,11 +15,11 @@ import java.util.stream.Collectors;
  * @author Joakim Bjørnstad, Jbit AS
  */
 @Component
-public class DokumentoversiktBrukerVisningsmodellRepositoryImpl implements DokumentoversiktBrukerVisningsmodellRepository {
+class DokumentoversiktVisningsmodellRepositoryImpl implements DokumentoversiktVisningsmodellRepository {
 	private final JournalpostDtoMapper journalpostDtoMapper;
 
 	@Inject
-	public DokumentoversiktBrukerVisningsmodellRepositoryImpl(JournalpostDtoMapper journalpostDtoMapper) {
+	public DokumentoversiktVisningsmodellRepositoryImpl(JournalpostDtoMapper journalpostDtoMapper) {
 		this.journalpostDtoMapper = journalpostDtoMapper;
 	}
 

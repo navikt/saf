@@ -1,4 +1,4 @@
-package no.nav.saf.tjeneste.dokumentoversiktbruker;
+package no.nav.saf.query.dokumentoversikt.fagsak;
 
 import io.reactivex.Flowable;
 import io.reactivex.schedulers.Schedulers;
@@ -6,6 +6,8 @@ import no.nav.saf.domain.TilgangsmodellRepository;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.domain.tilgangsmodell.TilgangJournalpost;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
+import no.nav.saf.query.dokumentoversikt.DokumentoversiktVisningsmodellRepository;
+import no.nav.saf.query.dokumentoversikt.SideInfoMapper;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.pep.Pep;
 import no.nav.saf.tjeneste.argumenter.FagsakIdInput;
@@ -27,7 +29,7 @@ class DokumentoversiktFagsakCoordinatorImpl implements DokumentoversiktFagsakCoo
 
 	private final SideInfoMapper sideInfoMapper = new SideInfoMapper();
 	private final TilgangsmodellRepository tilgangsmodellRepository;
-	private final DokumentoversiktBrukerVisningsmodellRepository visningsmodellRepository;
+	private final DokumentoversiktVisningsmodellRepository visningsmodellRepository;
 	private final Pep<TilgangBruker> pep1;
 	private final Pep<TilgangSak> pep2;
 	private final Pep<TilgangSak> pep3;
@@ -35,7 +37,7 @@ class DokumentoversiktFagsakCoordinatorImpl implements DokumentoversiktFagsakCoo
 
 	@Inject
 	public DokumentoversiktFagsakCoordinatorImpl(TilgangsmodellRepository tilgangsmodellRepository,
-												 DokumentoversiktBrukerVisningsmodellRepository visningsmodellRepository,
+												 DokumentoversiktVisningsmodellRepository visningsmodellRepository,
 												 @Named("pep1") Pep<TilgangBruker> pep1,
 												 @Named("pep2") Pep<TilgangSak> pep2,
 												 @Named("pep3") Pep<TilgangSak> pep3,
