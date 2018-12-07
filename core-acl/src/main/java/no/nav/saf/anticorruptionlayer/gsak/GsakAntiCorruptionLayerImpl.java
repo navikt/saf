@@ -39,7 +39,7 @@ class GsakAntiCorruptionLayerImpl implements GsakAntiCorruptionLayer {
 							.arkivsaksnummer(gsak.getId().toString())
 							.arkivsaksystem(Arkivsakssystem.GSAK)
 							.fagsaksnummer(gsak.getFagsakNr())
-							.fagsystem(gsak.getApplikasjon())
+							.fagsaksystem(gsak.getApplikasjon())
 							.tema(Tema.valueOf(gsak.getTema()))
 							.datoOpprettet(gsak.getOpprettetTidspunkt().toLocalDateTime())
 							.build())
@@ -67,16 +67,7 @@ class GsakAntiCorruptionLayerImpl implements GsakAntiCorruptionLayer {
 								.collect(Collectors.toList());
 			}
 
-			return gsakSakerToFiltered.stream()
-					.map(gsak -> Arkivsak.builder()
-							.arkivsaksnummer(gsak.getId().toString())
-							.arkivsaksystem(Arkivsakssystem.GSAK)
-							.fagsaksnummer(gsak.getFagsakNr())
-							.fagsystem(gsak.getApplikasjon())
-							.tema(Tema.valueOf(gsak.getTema()))
-							.datoOpprettet(gsak.getOpprettetTidspunkt().toLocalDateTime())
-							.build())
-					.collect(Collectors.toList());
+			return mapToArkivsak(gsakSakerToFiltered);
 		} catch (Exception e) {
 			log.warn("Klarte ikke hente gsaker for aktoerId={}", aktoerId, e);
 			return new ArrayList<>();
@@ -136,22 +127,39 @@ class GsakAntiCorruptionLayerImpl implements GsakAntiCorruptionLayer {
 	}
 
 	@Override
-	public List<TilgangSak> findTilgangSakListByFagsakIdAndFagsaksystem(final String fagsakId, final String fagsaksystem) {
-		List<GsakSakerTo> gsakSakerToList = gsakConsumer.hentSakerByFagsakIdAndFagsaksystem(fagsakId, fagsaksystem);
-		return gsakSakerToList == null || gsakSakerToList.isEmpty() ? new ArrayList<>() :
-				gsakSakerToList.stream()
-						.map(gsakSakerTo -> TilgangSak.builder()
-								.aktoerId(gsakSakerTo.getAktoerId())
-								.arkivsaksnummer(gsakSakerTo.getId().toString())
-								.arkivsaksystem(Arkivsakssystem.GSAK.name())
-								.fagsystem(gsakSakerTo.getApplikasjon())
-								.fagsaknummer(gsakSakerTo.getFagsakNr())
-								.tema(gsakSakerTo.getTema())
-								.orgnummer(gsakSakerTo.getOrgnr())
-								.build())
-						.collect(Collectors.toList());
+	public List<Arkivsak> findTilgangSakListByFagsakIdAndFagsaksystem(final String fagsakId, final String fagsaksystem, final List<Tema> tema) {
+		try {
+			List<GsakSakerTo> gsakSakerToFiltered;
+			if (tema.isEmpty()) {
+				return new ArrayList<>();
+			} else {
+				List<GsakSakerTo> gsakSakerTo = gsakConsumer.hentSakerByFagsakIdAndFagsaksystem(fagsakId, fagsaksystem);
+				gsakSakerToFiltered =
+						gsakSakerTo.stream()
+								.filter(gsak -> tema.contains(mapToTema(gsak.getTema())))
+								.collect(Collectors.toList());
+			}
+			return mapToArkivsak(gsakSakerToFiltered);
+		} catch (Exception e) {
+			log.warn("Klarte ikke hente gsaker for fagsakId={}, fagsaksystem={}", fagsakId, fagsaksystem, e);
+			return new ArrayList<>();
+		}
 	}
 
+	private List<Arkivsak> mapToArkivsak(List<GsakSakerTo> gsakSakerToFiltered) {
+		return gsakSakerToFiltered.stream()
+				.map(gsak -> Arkivsak.builder()
+						.aktoerId(gsak.getAktoerId())
+						.orgnummer(gsak.getOrgnr())
+						.arkivsaksnummer(gsak.getId().toString())
+						.arkivsaksystem(Arkivsakssystem.GSAK)
+						.fagsaksnummer(gsak.getFagsakNr())
+						.fagsaksystem(gsak.getApplikasjon())
+						.tema(Tema.valueOf(gsak.getTema()))
+						.datoOpprettet(gsak.getOpprettetTidspunkt().toLocalDateTime())
+						.build())
+				.collect(Collectors.toList());
+	}
 
 	@Override
 	public List<String> findAktoerIdListByFagsakIdAndFagsaksystem(final String fagsakId, final String fagsaksystem) {

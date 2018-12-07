@@ -92,7 +92,7 @@ public class JournalpostDtoMapper {
 					.arkivsaksnummer(arkivsak.getArkivsaksnummer())
 					.arkivsaksystem(arkivsak.getArkivsaksystem())
 					.fagsaksnummer(arkivsak.getFagsaksnummer())
-					.fagsystem(arkivsak.getFagsystem())
+					.fagsaksystem(arkivsak.getFagsaksystem())
 					.tema(arkivsak.getTema())
 					.datoOpprettet(arkivsak.getDatoOpprettet())
 					.build();

@@ -67,7 +67,7 @@ public class DokumentoversiktFagsakCoordinatorImpl implements DokumentoversiktFa
 				.map(TilgangBruker::getAktoerId)
 				.collect(Collectors.toList());
 
-		final List<TilgangSak> tilgangSakList = tilgangsmodellRepository.findTilgangSakList(fagsakIdInput).stream()
+		final List<TilgangSak> tilgangSakList = tilgangsmodellRepository.findTilgangSaker(fagsakIdInput, dokumentoversiktFagsakArguments.getTema(), safRequestContext).stream()
 				.filter(tilgangSak -> filteredAktoerIdListTilgangBruker.contains(tilgangSak.getAktoerId()))
 				.collect(Collectors.toList());
 

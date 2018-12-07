@@ -198,10 +198,10 @@ type Sak {
     arkivsaksystem: Arkivsaksystem
 
     # TODO
-    fagsaknummer: String
+    fagsaksnummer: String
 
     # TODO
-    fagsystem: String
+    fagsaksystem: String
 
     # TODO
     datoOpprettet: DateTime

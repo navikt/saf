@@ -13,10 +13,12 @@ import java.time.LocalDateTime;
 @Value
 @Builder
 public class Arkivsak {
+	private final String aktoerId;
+	private final String orgnummer;
 	private final String arkivsaksnummer;
 	private final Arkivsakssystem arkivsaksystem;
 	private final String fagsaksnummer;
-	private final String fagsystem;
+	private final String fagsaksystem;
 	private final Tema tema;
 	private final LocalDateTime datoOpprettet;
 

@@ -22,7 +22,7 @@ public interface TilgangsmodellRepository {
 
 	List<TilgangBruker> findTilgangBrukerList(FagsakIdInput fagsakIdInput);
 
-	List<TilgangSak> findTilgangSakList(FagsakIdInput fagsakIdInput);
+	List<TilgangSak> findTilgangSaker(FagsakIdInput fagsakIdInput, List<Tema> tema, SafRequestContext safRequestContext);
 
 	List<TilgangSak> findTilgangSaker(TilgangBruker tilgangBruker, List<Tema> tema, SafRequestContext safRequestContext);
 

@@ -92,9 +92,19 @@ public class TilgangsmodellRepositoryImpl implements TilgangsmodellRepository {
 
 	@Override
 	@Cacheable(cacheNames = LokalCacheConfig.TILGANGSMODELL_REPO_SAK_CACHE)
-	public List<TilgangSak> findTilgangSakList(FagsakIdInput fagsakIdInput) {
+	public List<TilgangSak> findTilgangSaker(final FagsakIdInput fagsakIdInput, final List<Tema> tema, final SafRequestContext safRequestContext) {
 		try {
-			return gsakAntiCorruptionLayer.findTilgangSakListByFagsakIdAndFagsaksystem(fagsakIdInput.getId(), fagsakIdInput.getIdSystem());
+			List<Arkivsak> arkivsaker = gsakAntiCorruptionLayer.findTilgangSakListByFagsakIdAndFagsaksystem(fagsakIdInput.getId(), fagsakIdInput.getIdSystem(), tema);
+			return arkivsaker.stream().map(arkivsak -> {
+				safRequestContext.getRequestCache().putObject(arkivsak.getKey(), arkivsak);
+				return TilgangSak.builder()
+						.aktoerId(arkivsak.getAktoerId())
+						.orgnummer(arkivsak.getOrgnummer())
+						.arkivsaksnummer(arkivsak.getArkivsaksnummer())
+						.arkivsaksystem(arkivsak.getArkivsaksystem().name())
+						.tema(arkivsak.getTema().name())
+						.build();
+			}).collect(Collectors.toList());
 		} catch (Exception e) {
 			log.warn("findTilgangSakList feilet ved for fagsakId={}.", fagsakIdInput);
 		}
@@ -103,7 +113,7 @@ public class TilgangsmodellRepositoryImpl implements TilgangsmodellRepository {
 
 	@Override
 	@Cacheable(cacheNames = LokalCacheConfig.TILGANGSMODELL_REPO_SAK_CACHE, key = "#tilgangBruker.aktoerId + '_' + #tema")
-	public List<TilgangSak> findTilgangSaker(final TilgangBruker tilgangBruker, final List<Tema> tema, SafRequestContext safRequestContext) {
+	public List<TilgangSak> findTilgangSaker(final TilgangBruker tilgangBruker, final List<Tema> tema, final SafRequestContext safRequestContext) {
 		try {
 			Observable<List<Arkivsak>> gsaker = Observable.fromCallable(() ->
 					gsakAntiCorruptionLayer.findArkivsaker(tilgangBruker.getAktoerId(), tema))

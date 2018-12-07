@@ -12,7 +12,7 @@ public enum Kanal {
 	NAV_NO("Ditt NAV"),
 	PSELV("Selvbetjening Pesys"),
 	SENTRAL_UTSKRIFT("Sentral utskrift"),
-	SDP("Sikkert Digital Post"),
+	SDP("Digital postkasse til innbyggere"),
 	SKAN_NETS("Skanning Nets"),
 	SKAN_PEN("Skanning Pensjon"),
 	INGEN_DISTRIBUSJON("Ingen distribusjon");
