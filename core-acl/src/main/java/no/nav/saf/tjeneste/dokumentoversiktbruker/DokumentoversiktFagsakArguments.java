@@ -1,6 +1,7 @@
 package no.nav.saf.tjeneste.dokumentoversiktbruker;
 
 import lombok.Value;
+import no.nav.saf.tjeneste.argumenter.FagsakIdInput;
 import no.nav.saf.tjeneste.visningsmodell.kode.Journalposttype;
 import no.nav.saf.tjeneste.visningsmodell.kode.Journalstatus;
 import no.nav.saf.tjeneste.visningsmodell.kode.Tema;
@@ -14,8 +15,7 @@ import java.util.List;
 @Value
 public class DokumentoversiktFagsakArguments {
 
-	private final String fagsakId;
-	private final String fagsaksystem;
+	private final FagsakIdInput fagsakIdInput;
 	private final LocalDate fraDato;
 	private final List<Tema> tema;
 	private final List<Journalposttype> journalposttyper;
@@ -26,8 +26,7 @@ public class DokumentoversiktFagsakArguments {
 	private final Integer siste;
 	private final String foerPeker;
 
-	public DokumentoversiktFagsakArguments(String fagsakId,
-										   String fagsaksystem,
+	public DokumentoversiktFagsakArguments(FagsakIdInput fagsakIdInput,
 										   LocalDate fraDato,
 										   List<Tema> tema,
 										   List<Journalposttype> journalposttyper,
@@ -36,8 +35,7 @@ public class DokumentoversiktFagsakArguments {
 										   String etterPeker,
 										   Integer siste,
 										   String foerPeker) {
-		this.fagsakId = fagsakId;
-		this.fagsaksystem = fagsaksystem;
+		this.fagsakIdInput = fagsakIdInput;
 		if (fraDato == null) {
 			this.fraDato = LocalDate.of(1, 1, 1);
 		} else {

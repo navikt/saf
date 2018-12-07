@@ -15,6 +15,7 @@ import no.nav.saf.domain.tilgangsmodell.TilgangJournalpost;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tjeneste.argumenter.BrukerIdInput;
+import no.nav.saf.tjeneste.argumenter.FagsakIdInput;
 import no.nav.saf.tjeneste.visningsmodell.kode.Arkivsakssystem;
 import no.nav.saf.tjeneste.visningsmodell.kode.Journalposttype;
 import no.nav.saf.tjeneste.visningsmodell.kode.Journalstatus;
@@ -59,43 +60,43 @@ public class TilgangsmodellRepositoryImpl implements TilgangsmodellRepository {
 	@Cacheable(cacheNames = LokalCacheConfig.TILGANGSMODELL_REPO_BRUKER_CACHE)
 	public TilgangBruker findTilgangBruker(BrukerIdInput brukerIdInput) {
 		try {
-			switch (brukerIdInput.getIdentType()) {
+			switch (brukerIdInput.getIdType()) {
 				case AKTOERID:
-					return aktoerAntiCorruptionLayer.hentTilgangBrukerByAktoerId(brukerIdInput.getIdent());
+					return aktoerAntiCorruptionLayer.hentTilgangBrukerByAktoerId(brukerIdInput.getId());
 				case FNR:
-					return aktoerAntiCorruptionLayer.hentTilgangBrukerByFoedselsnummer(brukerIdInput.getIdent());
+					return aktoerAntiCorruptionLayer.hentTilgangBrukerByFoedselsnummer(brukerIdInput.getId());
 				default:
 					return null;
 			}
 		} catch (Exception e) {
-			log.warn("findTilgangBruker feilet ved oppslag av ident. Brukertype={}", brukerIdInput.getIdentType(), e);
+			log.warn("findTilgangBruker feilet ved oppslag av id. Brukertype={}", brukerIdInput.getIdType(), e);
 		}
 		return null;
 	}
 
 	@Override
 	@Cacheable(cacheNames = LokalCacheConfig.TILGANGSMODELL_REPO_BRUKER_CACHE)
-	public List<TilgangBruker> findTilgangBrukerList(String fagsakId, String fagsaksystem) {
+	public List<TilgangBruker> findTilgangBrukerList(FagsakIdInput fagsakIdInput) {
 		try {
-			List<String> aktoerIdList = gsakAntiCorruptionLayer.findAktoerIdListByFagsakIdAndFagsaksystem(fagsakId, fagsaksystem);
+			List<String> aktoerIdList = gsakAntiCorruptionLayer.findAktoerIdListByFagsakIdAndFagsaksystem(fagsakIdInput.getId(), fagsakIdInput.getIdSystem());
 			if (aktoerIdList.isEmpty()) {
 				return new ArrayList<>();
 			} else {
 				return aktoerAntiCorruptionLayer.hentTilgangBrukerListByAktoerIdList(aktoerIdList);
 			}
 		} catch (Exception e) {
-			log.warn("findTilgangBruker feilet ved oppslag. fagsakId={}, fagsaksystem={}", fagsakId, fagsaksystem, e);
+			log.warn("findTilgangBruker feilet ved oppslag. fagsakId={}", fagsakIdInput, e);
 		}
 		return new ArrayList<>();
 	}
 
 	@Override
 	@Cacheable(cacheNames = LokalCacheConfig.TILGANGSMODELL_REPO_SAK_CACHE)
-	public List<TilgangSak> findTilgangSakList(String fagsakId, String fagsaksystem) {
+	public List<TilgangSak> findTilgangSakList(FagsakIdInput fagsakIdInput) {
 		try {
-			return gsakAntiCorruptionLayer.findTilgangSakListByFagsakIdAndFagsaksystem(fagsakId, fagsaksystem);
+			return gsakAntiCorruptionLayer.findTilgangSakListByFagsakIdAndFagsaksystem(fagsakIdInput.getId(), fagsakIdInput.getIdSystem());
 		} catch (Exception e) {
-			log.warn("findTilgangSakList feilet ved for fagsakId={} og fagsaksystem={}.", fagsakId, fagsaksystem);
+			log.warn("findTilgangSakList feilet ved for fagsakId={}.", fagsakIdInput);
 		}
 		return new ArrayList<>();
 	}

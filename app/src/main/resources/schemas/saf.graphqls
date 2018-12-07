@@ -9,6 +9,36 @@ schema {
     query: Query
 }
 
+# TODO
+input BrukerIdInput {
+    # TODO
+    id: String!
+
+    # TODO
+    idType: BrukerIdType!
+}
+
+# TODO
+enum BrukerIdType {
+    # Aktørid TODO
+    AKTOERID
+
+    # Fødselsnummer TODO
+    FNR
+
+    # Organisasjonsnummer TODO
+    ORGNR
+}
+
+# TODO
+input FagsakIdInput {
+    # TODO
+    id: String!
+
+    # TODO
+    idSystem: String!
+}
+
 # Query roten til SAF GraphQL API.
 type Query {
     # Returnerer dokumentoversikten til en bruker.
@@ -48,13 +78,10 @@ type Query {
     # Returnerer en liste over alle dokumenter tilknyttet en fagsak.
     dokumentoversiktFagsak(
         # TODO
-        fagsakId: String!
+        fagsakId: FagsakIdInput!
 
         # TODO
-        fagsaksystem: String!
-
-        # TODO
-        fraDato: Date = null
+        fraDato: Date
 
         # TODO
         tema: [Tema] = []
@@ -247,27 +274,6 @@ enum Datotype {
 
 	# TODO
 	DATO_JOURNALFOERT
-}
-
-# TODO
-input BrukerIdInput {
-    # TODO
-    ident: String!
-
-    # TODO
-    identType: BrukerIdInputType!
-}
-
-# TODO
-enum BrukerIdInputType {
-    # Aktørid
-    AKTOERID
-
-    # Fødselsnummer
-    FNR
-
-    # Organisasjonsnummer
-    ORGNR
 }
 
 # TODO

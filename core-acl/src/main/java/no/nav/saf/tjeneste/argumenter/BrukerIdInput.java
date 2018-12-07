@@ -1,16 +1,12 @@
 package no.nav.saf.tjeneste.argumenter;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Value;
 
 /**
  * @author Sigurd Midttun, Visma Consulting.
  */
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
+@Value
 public class BrukerIdInput {
-	private String ident;
-	private BrukerIdInputType identType;
+	private String id;
+	private BrukerIdType idType;
 }

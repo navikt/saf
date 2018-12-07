@@ -6,6 +6,7 @@ import no.nav.saf.domain.tilgangsmodell.TilgangJournalpost;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tjeneste.argumenter.BrukerIdInput;
+import no.nav.saf.tjeneste.argumenter.FagsakIdInput;
 import no.nav.saf.tjeneste.visningsmodell.kode.Journalposttype;
 import no.nav.saf.tjeneste.visningsmodell.kode.Journalstatus;
 import no.nav.saf.tjeneste.visningsmodell.kode.Tema;
@@ -19,9 +20,9 @@ import java.util.List;
 public interface TilgangsmodellRepository {
 	TilgangBruker findTilgangBruker(BrukerIdInput brukerIdInput);
 
-	List<TilgangBruker> findTilgangBrukerList(String fagsakId, String fagsaksystem);
+	List<TilgangBruker> findTilgangBrukerList(FagsakIdInput fagsakIdInput);
 
-	List<TilgangSak> findTilgangSakList(String fagsakId, String fagsaksystem);
+	List<TilgangSak> findTilgangSakList(FagsakIdInput fagsakIdInput);
 
 	List<TilgangSak> findTilgangSaker(TilgangBruker tilgangBruker, List<Tema> tema, SafRequestContext safRequestContext);
 

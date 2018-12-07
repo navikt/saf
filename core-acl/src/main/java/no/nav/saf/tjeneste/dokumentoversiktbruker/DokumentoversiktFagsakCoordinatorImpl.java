@@ -8,6 +8,7 @@ import no.nav.saf.domain.tilgangsmodell.TilgangJournalpost;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.pep.Pep;
+import no.nav.saf.tjeneste.argumenter.FagsakIdInput;
 import no.nav.saf.tjeneste.visningsmodell.DokumentInfo;
 import no.nav.saf.tjeneste.visningsmodell.Dokumentoversikt;
 import no.nav.saf.tjeneste.visningsmodell.Journalpost;
@@ -51,10 +52,8 @@ public class DokumentoversiktFagsakCoordinatorImpl implements DokumentoversiktFa
 
 	@Override
 	public Dokumentoversikt hentDokumentoversikt(DokumentoversiktFagsakArguments dokumentoversiktFagsakArguments, SafRequestContext safRequestContext) {
-		final String fagsakId = dokumentoversiktFagsakArguments.getFagsakId();
-		final String fagsaksystem = dokumentoversiktFagsakArguments.getFagsaksystem();
-
-		final List<TilgangBruker> tilgangBrukerList = tilgangsmodellRepository.findTilgangBrukerList(fagsakId, fagsaksystem);
+		final FagsakIdInput fagsakIdInput = dokumentoversiktFagsakArguments.getFagsakIdInput();
+		final List<TilgangBruker> tilgangBrukerList = tilgangsmodellRepository.findTilgangBrukerList(fagsakIdInput);
 
 		List<TilgangBruker> filteredTilgangBrukerList = Flowable.fromIterable(tilgangBrukerList)
 				.flatMap(tilgangBruker ->
@@ -68,7 +67,7 @@ public class DokumentoversiktFagsakCoordinatorImpl implements DokumentoversiktFa
 				.map(TilgangBruker::getAktoerId)
 				.collect(Collectors.toList());
 
-		final List<TilgangSak> tilgangSakList = tilgangsmodellRepository.findTilgangSakList(fagsakId, fagsaksystem).stream()
+		final List<TilgangSak> tilgangSakList = tilgangsmodellRepository.findTilgangSakList(fagsakIdInput).stream()
 				.filter(tilgangSak -> filteredAktoerIdListTilgangBruker.contains(tilgangSak.getAktoerId()))
 				.collect(Collectors.toList());
 
