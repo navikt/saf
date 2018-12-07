@@ -16,7 +16,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.1.0.RELEASE</version>
+		<version>2.1.1.RELEASE</version>
 	</parent>
 
 	<properties>
@@ -29,8 +29,8 @@
 		<cxf.version>3.2.7</cxf.version>
 		<graphql-java.version>11.0</graphql-java.version>
 		<abac-attribute-constants>3.4.4</abac-attribute-constants>
-		<pensjon-sak-v1.version>1.0.1-SNAPSHOT</pensjon-sak-v1.version>
-		<rxjava.version>2.2.3</rxjava.version>
+		<pensjon-sak-v1.version>1.0.1</pensjon-sak-v1.version>
+		<rxjava.version>2.2.4</rxjava.version>
 		<java-jwt.version>3.4.1</java-jwt.version>
 		<logstash-logback-encoder.version>5.2</logstash-logback-encoder.version>
 		<logback-syslog4j.version>1.0.0</logback-syslog4j.version>
@@ -165,13 +165,7 @@
 			<dependency>
 				<groupId>com.github.tomakehurst</groupId>
 				<artifactId>wiremock-standalone</artifactId>
-				<version>2.14.0</version>
-				<scope>test</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.mockito</groupId>
-				<artifactId>mockito-junit-jupiter</artifactId>
-				<version>2.23.0</version>
+				<version>2.19.0</version>
 				<scope>test</scope>
 			</dependency>
 		</dependencies>
