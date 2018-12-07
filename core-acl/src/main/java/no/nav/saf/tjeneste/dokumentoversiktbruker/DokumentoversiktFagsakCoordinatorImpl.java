@@ -9,14 +9,12 @@ import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.pep.Pep;
 import no.nav.saf.tjeneste.argumenter.FagsakIdInput;
-import no.nav.saf.tjeneste.visningsmodell.DokumentInfo;
 import no.nav.saf.tjeneste.visningsmodell.Dokumentoversikt;
 import no.nav.saf.tjeneste.visningsmodell.Journalpost;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -25,7 +23,7 @@ import java.util.stream.Collectors;
  * @author Joakim Bjørnstad, Jbit AS
  */
 @Component
-public class DokumentoversiktFagsakCoordinatorImpl implements DokumentoversiktFagsakCoordinator {
+class DokumentoversiktFagsakCoordinatorImpl implements DokumentoversiktFagsakCoordinator {
 
 	private final SideInfoMapper sideInfoMapper = new SideInfoMapper();
 	private final TilgangsmodellRepository tilgangsmodellRepository;
@@ -119,14 +117,4 @@ public class DokumentoversiktFagsakCoordinatorImpl implements DokumentoversiktFa
 				.build();
 	}
 
-	@Override
-	public List<Journalpost> findJournalposter(final DokumentoversiktFagsakArguments dokumentoversiktFagsakArguments, final SafRequestContext safRequestContext) {
-		return new ArrayList<>();
-	}
-
-	@Override
-	public List<DokumentInfo> findDokumenter(final Journalpost journalpost, final SafRequestContext safRequestContext) {
-		// TODO MMA-1092 Pep4 for TilgangDokument her (er dette allerede er avklart i TilgangJournalpost så må context vite om dette)
-		return journalpost.getDokumenter();
-	}
 }

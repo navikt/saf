@@ -12,6 +12,7 @@ import no.nav.saf.tjeneste.argumenter.BrukerIdType;
 import no.nav.saf.tjeneste.argumenter.FagsakIdInput;
 import no.nav.saf.tjeneste.dokumentoversiktbruker.DokumentoversiktBrukerArguments;
 import no.nav.saf.tjeneste.dokumentoversiktbruker.DokumentoversiktBrukerCoordinator;
+import no.nav.saf.tjeneste.dokumentoversiktbruker.DokumentoversiktCoordinator;
 import no.nav.saf.tjeneste.dokumentoversiktbruker.DokumentoversiktFagsakArguments;
 import no.nav.saf.tjeneste.dokumentoversiktbruker.DokumentoversiktFagsakCoordinator;
 import no.nav.saf.tjeneste.visningsmodell.Dokumentoversikt;
@@ -33,12 +34,15 @@ import java.util.Map;
 @Component
 @Slf4j
 public class DokumentoversiktWiring {
+	private final DokumentoversiktCoordinator dokumentoversiktCoordinator;
 	private final DokumentoversiktBrukerCoordinator dokumentoversiktBrukerCoordinator;
 	private final DokumentoversiktFagsakCoordinator dokumentoversiktFagsakCoordinator;
 
 	@Inject
-	public DokumentoversiktWiring(DokumentoversiktBrukerCoordinator dokumentoversiktBrukerCoordinator,
+	public DokumentoversiktWiring(DokumentoversiktCoordinator dokumentoversiktCoordinator,
+								  DokumentoversiktBrukerCoordinator dokumentoversiktBrukerCoordinator,
 								  DokumentoversiktFagsakCoordinator dokumentoversiktFagsakCoordinator) {
+		this.dokumentoversiktCoordinator = dokumentoversiktCoordinator;
 		this.dokumentoversiktBrukerCoordinator = dokumentoversiktBrukerCoordinator;
 		this.dokumentoversiktFagsakCoordinator = dokumentoversiktFagsakCoordinator;
 	}
@@ -76,7 +80,7 @@ public class DokumentoversiktWiring {
 				.type("Journalpost", typeWiring -> typeWiring.dataFetcher("dokumenter", environment -> {
 					Journalpost journalpost = environment.getSource();
 					final SafRequestContext safRequestContext = environment.getContext();
-					return dokumentoversiktBrukerCoordinator.findDokumenter(journalpost, safRequestContext);
+					return dokumentoversiktCoordinator.findDokumenter(journalpost, safRequestContext);
 				}))
 				.build();
 	}
@@ -84,16 +88,16 @@ public class DokumentoversiktWiring {
 	// TODO refaktor DokumentoversiktBrukerArguments og DokumentoversiktFagsakArguments
 	private DokumentoversiktBrukerArguments mapDokumentoversiktBrukerArguments(DataFetchingEnvironment environment) {
 		Map<String, Object> brukerId = environment.getArgument("brukerId");
-		BrukerIdInput brukerIdInput = new BrukerIdInput((String)brukerId.get("id"), BrukerIdType.valueOf((String) brukerId.get("idType")));
+		BrukerIdInput brukerIdInput = new BrukerIdInput((String) brukerId.get("id"), BrukerIdType.valueOf((String) brukerId.get("idType")));
 		logDokumentoversiktBrukerQueryInit(brukerIdInput);
 		LocalDate fraDato = environment.getArgument("fraDato");
 		List<Tema> tema = environment.getArgument("tema");
 		List<Journalposttype> journalposttyper = environment.getArgument("journalposttyper");
 		List<Journalstatus> journalstatuser = environment.getArgument("journalstatuser");
-		if(environment.getArgument("foerste") != null && environment.getArgument("siste") != null) {
+		if (environment.getArgument("foerste") != null && environment.getArgument("siste") != null) {
 			throw new IllegalArgumentException("Det er ikke tillatt å angi både `foerste` og `siste` for å paginere.");
 		}
-		if(environment.getArgument("foerste") == null && environment.getArgument("siste") == null) {
+		if (environment.getArgument("foerste") == null && environment.getArgument("siste") == null) {
 			throw new IllegalArgumentException("Du må angi en `foerste` eller en `siste` verdi for å paginere.");
 		}
 		Integer foerste = environment.getArgument("foerste");
@@ -106,16 +110,16 @@ public class DokumentoversiktWiring {
 	// TODO refaktor DokumentoversiktBrukerArguments og DokumentoversiktFagsakArguments
 	private DokumentoversiktFagsakArguments mapDokumentoversiktFagsakArguments(DataFetchingEnvironment environment) {
 		Map<String, Object> fagsakId = environment.getArgument("fagsakId");
-		FagsakIdInput fagsakIdInput = new FagsakIdInput((String)fagsakId.get("id"), (String) fagsakId.get("idSystem"));
+		FagsakIdInput fagsakIdInput = new FagsakIdInput((String) fagsakId.get("id"), (String) fagsakId.get("idSystem"));
 		log.info("dokumentoversiktFagsak hentes for fagsakId={}", fagsakIdInput);
 		LocalDate fraDato = environment.getArgument("fraDato");
 		List<Tema> tema = environment.getArgument("tema");
 		List<Journalposttype> journalposttyper = environment.getArgument("journalposttyper");
 		List<Journalstatus> journalstatuser = environment.getArgument("journalstatuser");
-		if(environment.getArgument("foerste") != null && environment.getArgument("siste") != null) {
+		if (environment.getArgument("foerste") != null && environment.getArgument("siste") != null) {
 			throw new IllegalArgumentException("Det er ikke tillatt å angi både `foerste` og `siste` for å paginere.");
 		}
-		if(environment.getArgument("foerste") != null && environment.getArgument("siste") != null) {
+		if (environment.getArgument("foerste") != null && environment.getArgument("siste") != null) {
 			throw new IllegalArgumentException("Du må angi en `foerste` eller en `siste` verdi for å paginere.");
 		}
 		Integer foerste = environment.getArgument("foerste");

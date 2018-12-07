@@ -6,7 +6,6 @@ import no.nav.saf.anticorruptionlayer.gsak.hentgsaksaker.GsakSakerTo;
 import no.nav.saf.domain.Arkivsak;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
-import no.nav.saf.tjeneste.visningsmodell.Sak;
 import no.nav.saf.tjeneste.visningsmodell.kode.Arkivsakssystem;
 import no.nav.saf.tjeneste.visningsmodell.kode.Tema;
 import org.springframework.stereotype.Component;
@@ -30,27 +29,6 @@ class GsakAntiCorruptionLayerImpl implements GsakAntiCorruptionLayer {
 	}
 
 	@Override
-	public List<Sak> findSakerByAktoerId(final String aktoerId) {
-		try {
-			List<GsakSakerTo> gsakSakerTo = gsakConsumer.hentSakerByAktoerId(aktoerId);
-
-			return gsakSakerTo.stream()
-					.map(gsak -> Sak.builder()
-							.arkivsaksnummer(gsak.getId().toString())
-							.arkivsaksystem(Arkivsakssystem.GSAK)
-							.fagsaksnummer(gsak.getFagsakNr())
-							.fagsaksystem(gsak.getApplikasjon())
-							.tema(Tema.valueOf(gsak.getTema()))
-							.datoOpprettet(gsak.getOpprettetTidspunkt().toLocalDateTime())
-							.build())
-					.collect(Collectors.toList());
-		} catch (Exception e) {
-			log.warn("Klarte ikke hente gsaker for aktoerId={}", aktoerId, e);
-			return new ArrayList<>();
-		}
-	}
-
-	@Override
 	public List<Arkivsak> findArkivsaker(final String aktoerId, final List<Tema> tema) {
 		try {
 			List<GsakSakerTo> gsakSakerToFiltered;
@@ -68,36 +46,6 @@ class GsakAntiCorruptionLayerImpl implements GsakAntiCorruptionLayer {
 			}
 
 			return mapToArkivsak(gsakSakerToFiltered);
-		} catch (Exception e) {
-			log.warn("Klarte ikke hente gsaker for aktoerId={}", aktoerId, e);
-			return new ArrayList<>();
-		}
-	}
-
-	@Override
-	public List<TilgangSak> findTilgangSakListByAktoerId(final String aktoerId, final List<Tema> tema) {
-		try {
-			List<GsakSakerTo> gsakSakerToFiltered;
-
-			if (tema.isEmpty()) {
-				return new ArrayList<>();
-			} else if (tema.size() == 1) {
-				gsakSakerToFiltered = gsakConsumer.hentSakerByAktoerId(aktoerId, tema.get(0));
-			} else {
-				List<GsakSakerTo> gsakSakerTo = gsakConsumer.hentSakerByAktoerId(aktoerId);
-				gsakSakerToFiltered =
-						gsakSakerTo.stream()
-								.filter(gsak -> tema.contains(mapToTema(gsak.getTema())))
-								.collect(Collectors.toList());
-			}
-
-			return gsakSakerToFiltered.stream()
-					.map(gsak -> TilgangSak.builder()
-							.arkivsaksnummer(gsak.getId().toString())
-							.arkivsaksystem(Arkivsakssystem.GSAK.name())
-							.tema(gsak.getTema())
-							.build())
-					.collect(Collectors.toList());
 		} catch (Exception e) {
 			log.warn("Klarte ikke hente gsaker for aktoerId={}", aktoerId, e);
 			return new ArrayList<>();
