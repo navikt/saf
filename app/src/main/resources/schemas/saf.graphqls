@@ -44,6 +44,43 @@ type Query {
         # Returnerer journalpostene i listen som kommer før den angitte pekeren.
         foer: String
     ): Dokumentoversikt!
+
+    # Returnerer en liste over alle dokumenter tilknyttet en fagsak.
+    dokumentoversiktFagsak(
+        # TODO
+        fagsakId: String!
+
+        # TODO
+        fagsaksystem: String!
+
+        # TODO
+        fraDato: Date = null
+
+        # TODO
+        tema: [Tema] = []
+
+        # Velger journalpostene som har de spesifiserte journalposttypene
+        # **Standardverdi**: `I, U, N`
+        # TODO legge til default støtte for enum verdier
+        journalposttyper: [Journalposttype] = []
+
+        # Velger journalpostene som har de spesifiserte journalstatusene.
+        # **Standardverdi**: `FERDIGSTILT, JOURNALFOERT, EKSPEDERT`
+        # TODO legge til default støtte for enum verdier
+        journalstatuser: [Journalstatus] = []
+
+        # Returnerer de første *n* journalpostene i listen.
+        foerste: Int
+
+        # Returnerer journalpostene i listen som kommer etter den angitte pekeren.
+        etter: String
+
+        # Returnerer de siste *n* journalpostene i listen.
+        siste: Int
+
+        # Returnerer journalpostene i listen som kommer før den angitte pekeren.
+        foer: String
+     ): Dokumentoversikt!
 }
 
 # Dokumentoversikt

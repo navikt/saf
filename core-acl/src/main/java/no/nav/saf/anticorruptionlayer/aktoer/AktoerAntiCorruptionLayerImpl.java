@@ -2,11 +2,13 @@ package no.nav.saf.anticorruptionlayer.aktoer;
 
 import no.nav.saf.anticorruptionlayer.aktoer.aktoerv2.AktoerV2Consumer;
 import no.nav.saf.anticorruptionlayer.aktoer.domain.HentAktoerIdForIdentResponseTo;
+import no.nav.saf.anticorruptionlayer.aktoer.domain.HentIdentForAktoerIdListeResponseTo;
 import no.nav.saf.anticorruptionlayer.aktoer.domain.HentIdentForAktoerIdResponseTo;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.domain.tilgangsmodell.TilgangIdent;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -43,4 +45,21 @@ class AktoerAntiCorruptionLayerImpl implements AktoerAntiCorruptionLayer {
 						.map(ident -> TilgangIdent.builder().identifikator(ident).build()).collect(Collectors.toList()))
 				.build();
 	}
+
+	@Override
+	public List<TilgangBruker> hentTilgangBrukerListByAktoerIdList(List<String> aktoerIdList) {
+		List<HentIdentForAktoerIdListeResponseTo> responseTo = aktoerV2Consumer.hentIdentForAktoerIdListe(aktoerIdList);
+
+		return responseTo.stream()
+				.map(to -> TilgangBruker.builder()
+						.foedselsnr(to.getFoedselsnr())
+						.aktoerId(to.getAktoerId())
+						.historiskeIdenter(to.getHistoriskeIdenter().stream()
+								.map(ident -> TilgangIdent.builder().identifikator(ident).build())
+								.collect(Collectors.toList()))
+						.build())
+				.collect(Collectors.toList());
+	}
+
+
 }

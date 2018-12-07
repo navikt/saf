@@ -13,11 +13,11 @@ import org.springframework.stereotype.Component;
 public class ApplikasjonsLogger extends AbacLogger {
 
 	public void logAbacDeny(final XacmlRequest xacmlRequest, final XacmlResponse xacmlResponse) {
-		log.warn("{}{};", mapRequest(xacmlRequest), mapResponse(xacmlResponse));
+		log.warn("{}. {};", mapRequest(xacmlRequest), mapResponse(xacmlResponse));
 	}
 
 	public void logAbacPermit(final XacmlRequest xacmlRequest, final XacmlResponse xacmlResponse) {
-		log.info("{}{};", mapRequest(xacmlRequest), mapResponse(xacmlResponse));
+		log.info("{}. {};", mapRequest(xacmlRequest), mapResponse(xacmlResponse));
 	}
 
 }

@@ -135,6 +135,33 @@ class GsakAntiCorruptionLayerImpl implements GsakAntiCorruptionLayer {
 				.build();
 	}
 
+	@Override
+	public List<TilgangSak> findTilgangSakListByFagsakIdAndFagsaksystem(final String fagsakId, final String fagsaksystem) {
+		List<GsakSakerTo> gsakSakerToList = gsakConsumer.hentSakerByFagsakIdAndFagsaksystem(fagsakId, fagsaksystem);
+		return gsakSakerToList == null || gsakSakerToList.isEmpty() ? new ArrayList<>() :
+				gsakSakerToList.stream()
+						.map(gsakSakerTo -> TilgangSak.builder()
+								.aktoerId(gsakSakerTo.getAktoerId())
+								.arkivsaksnummer(gsakSakerTo.getId().toString())
+								.arkivsaksystem(Arkivsakssystem.GSAK.name())
+								.fagsystem(gsakSakerTo.getApplikasjon())
+								.fagsaknummer(gsakSakerTo.getFagsakNr())
+								.tema(gsakSakerTo.getTema())
+								.orgnummer(gsakSakerTo.getOrgnr())
+								.build())
+						.collect(Collectors.toList());
+	}
+
+
+	@Override
+	public List<String> findAktoerIdListByFagsakIdAndFagsaksystem(final String fagsakId, final String fagsaksystem) {
+		List<GsakSakerTo> gsakSakerToList = gsakConsumer.hentSakerByFagsakIdAndFagsaksystem(fagsakId, fagsaksystem);
+		return gsakSakerToList == null || gsakSakerToList.isEmpty() ? new ArrayList<>() :
+				gsakSakerToList.stream()
+						.map(GsakSakerTo::getAktoerId)
+						.distinct()
+						.collect(Collectors.toList());
+	}
 
 	@Override
 	public TilgangBruker findTilgangBrukerBySakId(final String sakId) {
