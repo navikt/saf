@@ -5,6 +5,8 @@ import lombok.NoArgsConstructor;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.DokumentStatusCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.VariantFormatCode;
 
+import java.util.List;
+
 /**
  * @author Joakim Bjørnstad, Jbit AS
  */
@@ -16,4 +18,5 @@ public class DokumentInfoDto {
 	private String brevkode;
 	private VariantFormatCode variantFormat;
 	private String tittel;
+	private List<LogiskVedleggDto> logiske;
 }

@@ -1,0 +1,21 @@
+{
+ dokumentoversiktBruker(brukeridentifikator:{ident: "***gammelt_fnr***59", identType: AKTOERID}, fraDato:"1900-09-15") {
+   journalpostId
+   journalposttype
+   journalstatus
+   tema
+   temanavn
+   sak {
+     arkivsaksnummer
+     arkivsaksystem
+     fagsaknummer
+     fagsystem
+     datoOpprettet
+   }
+   dokumenter {
+     dokumentId
+     tittel
+     saksbehandlerHarTilgang
+   }
+ }
+}

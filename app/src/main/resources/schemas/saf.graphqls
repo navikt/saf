@@ -1,28 +1,28 @@
-# ISO-8601 representasjon for en kalenderdato. YYYY-MM-DD. Eksempel: 2018-01-01
+# ISO-8601 representasjon for en kalenderdato. YYYY-MM-DD. Eksempel: 2018-01-01.
 scalar Date
 
-# ISO-8601 representasjon for en kalenderdato med tid, trunkert til nærmeste sekund. YYYY-MM-DD'T'hh:mm:ss. Eksempel: 2018-01-01T12:00:00
+# ISO-8601 representasjon for en kalenderdato med tid, trunkert til nærmeste sekund. YYYY-MM-DD'T'hh:mm:ss. Eksempel: 2018-01-01T12:00:00.
 scalar DateTime
 
 schema {
-    # Alle spørringer mot SAF GraphQL API
+    # Alle spørringer mot SAF GraphQL API.
     query: Query
 }
 
-# Query roten til SAF GraphQL API
+# Query roten til SAF GraphQL API.
 type Query {
-    # Returnerer en liste over alle dokumenter tilknyttet en bruker
+    # Returnerer dokumentoversikten til en bruker.
     dokumentoversiktBruker(
-        # TODO
+        # Hent dokumentoversikten til den angitte brukeren.
         brukerId: BrukerIdInput!
 
-        # TODO
-        fraDato: Date = null
+         # TODO
+        fraDato: Date
 
         # TODO
         tema: [Tema] = []
 
-        # Velger journalpostene som har de spesifiserte journalposttypene
+        # Velger journalpostene som har de spesifiserte journalposttypene.
         # **Standardverdi**: `I, U, N`
         # TODO legge til default støtte for enum verdier
         journalposttyper: [Journalposttype] = []
@@ -32,11 +32,27 @@ type Query {
         # TODO legge til default støtte for enum verdier
         journalstatuser: [Journalstatus] = []
 
-        # Returnerer de første *n* journalpostene i listen
-        foerste: Int = 30
+        # Returnerer de første *n* journalpostene i listen.
+        foerste: Int
 
-        # Returnerer journalpostene i listen som kommer etter den angitte pekeren
+        # Returnerer journalpostene i listen som kommer etter den angitte pekeren.
         etter: String
+
+        # Returnerer de siste *n* journalpostene i listen.
+        siste: Int
+
+        # Returnerer journalpostene i listen som kommer før den angitte pekeren.
+        foer: String
+    ): Dokumentoversikt!
+}
+
+# Dokumentoversikt
+type Dokumentoversikt {
+    # En liste av journalposter.
+    journalposter: [Journalpost]!
+
+    # Informasjon for å hjelpe med paginering.
+    sideInfo: SideInfo!
     ): [Journalpost]!
 
     # Returnerer en liste over alle dokumenter tilknyttet en fagsak.
@@ -71,9 +87,25 @@ type Query {
          ): [Journalpost]!
 }
 
-# TODO
+# Informasjon om paginering
+type SideInfo {
+    # Når man paginerer forover, pekeren for å fortsette.
+    sluttpeker: String
+
+    # Når man paginerer forover, finnes det flere sider?
+    finnesNesteSide: Boolean!
+
+    # Når man paginerer bakover, pekeren for å fortsette.
+    startpeker: String
+
+    # Når man paginerer bakover, finnes det flere sider?
+    finnesForrigeSide: Boolean!
+}
+
+# Et sett dokumenter som er sendt/mottatt samlet, og har felles arkivmetadata som tema, avsender, arkivsak og sakspart.
+# En journalpost kan bestå av ett eller flere dokumenter.
 type Journalpost {
-    # TODO
+    # Identifiserer en Journalpost
     journalpostId: String!
 
     # TODO
@@ -114,10 +146,6 @@ type Journalpost {
 
     # TODO
     dokumenter: [DokumentInfo]
-
-    # En peker til bruk i paginering
-    peker: String!
-
 }
 
 # TODO
@@ -147,7 +175,7 @@ type Sak {
     datoOpprettet: DateTime
 }
 
-# TODO
+# Person eller organisasjon som har et forhold til NAV, f.eks. som mottaker av tjenester eller ytelser.
 type Bruker {
     # TODO
     brukertype: Brukertype
@@ -180,7 +208,16 @@ type DokumentInfo {
     saksbehandlerHarTilgang: Boolean
 
     # TODO
-    dokumentvarianter: [Dokumentvariant]
+    logiskeVedlegg: [LogiskVedlegg]!
+
+    # TODO
+    dokumentvarianter: [Dokumentvariant]!
+}
+
+# TODO
+type LogiskVedlegg {
+    # TODO
+    tittel: String
 }
 
 # TODO
@@ -232,6 +269,7 @@ enum BrukerIdInputType {
 enum Arkivsaksystem {
     # TODO
     GSAK
+
     # TODO
     PSAK
 }

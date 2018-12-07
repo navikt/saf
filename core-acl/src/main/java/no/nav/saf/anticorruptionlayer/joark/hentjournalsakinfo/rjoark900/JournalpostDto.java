@@ -18,6 +18,8 @@ import java.util.List;
 @NoArgsConstructor
 public class JournalpostDto {
 	private Long journalpostId;
+	private Long prevJournalpostId;
+	private Long nextJournalpostId;
 	private String journalForendeEnhetId;
 	private String innhold;
 	private FagomradeCode fagomrade;

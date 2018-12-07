@@ -1,4 +1,4 @@
-package no.nav.saf.tilgangskontroll.testconfig;
+package no.nav.saf.endpoints.testconfig;
 
 import no.nav.saf.integration.fasit.ServiceuserAlias;
 import no.nav.saf.integration.sts.STSConfig;

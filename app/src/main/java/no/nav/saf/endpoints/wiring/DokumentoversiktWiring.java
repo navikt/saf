@@ -2,6 +2,7 @@ package no.nav.saf.endpoints.wiring;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import graphql.execution.DataFetcherResult;
+import graphql.schema.DataFetchingEnvironment;
 import graphql.schema.idl.NaturalEnumValuesProvider;
 import graphql.schema.idl.RuntimeWiring;
 import lombok.extern.slf4j.Slf4j;
@@ -12,6 +13,7 @@ import no.nav.saf.tjeneste.dokumentoversiktbruker.DokumentoversiktBrukerArgument
 import no.nav.saf.tjeneste.dokumentoversiktbruker.DokumentoversiktBrukerCoordinator;
 import no.nav.saf.tjeneste.dokumentoversiktbruker.DokumentoversiktFagsakArguments;
 import no.nav.saf.tjeneste.dokumentoversiktbruker.DokumentoversiktFagsakCoordinator;
+import no.nav.saf.tjeneste.visningsmodell.Dokumentoversikt;
 import no.nav.saf.tjeneste.visningsmodell.Journalpost;
 import no.nav.saf.tjeneste.visningsmodell.kode.Journalposttype;
 import no.nav.saf.tjeneste.visningsmodell.kode.Journalstatus;
@@ -20,7 +22,6 @@ import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -49,22 +50,12 @@ public class DokumentoversiktWiring {
 				.type("Journalposttype", typeWiring -> typeWiring.enumValues(new NaturalEnumValuesProvider<>(Journalposttype.class)))
 				.type("Journalstatus", typeWiring -> typeWiring.enumValues(new NaturalEnumValuesProvider<>(Journalstatus.class)))
 				.type("Query", typeWiring -> typeWiring.dataFetcher("dokumentoversiktBruker", environment -> {
-					Object brukerId = environment.getArgument("brukerId");
-					BrukerIdInput brukerIdInput = mapper.convertValue(brukerId, BrukerIdInput.class);
-					logDokumentoversiktBrukerQueryInit(brukerIdInput);
-					LocalDate fraDato = environment.getArgument("fraDato");
-					List<Tema> tema = environment.getArgument("tema");
-					List<Journalposttype> journalposttyper = environment.getArgument("journalposttyper");
-					List<Journalstatus> journalstatuser = environment.getArgument("journalstatuser");
-					int foerste = environment.getArgument("foerste");
-					String peker = environment.getArgument("etter");
-					SafRequestContext safRequestContext = environment.getContext();
 					try {
-						List<Journalpost> journalposter = dokumentoversiktBrukerCoordinator.findJournalposter(
-								new DokumentoversiktBrukerArguments(brukerIdInput, fraDato, tema, journalposttyper, journalstatuser, foerste, peker),
-								safRequestContext);
-						logDokumentoversiktBrukerQueryDone(journalposter.size(), brukerIdInput);
-						return journalposter;
+						DokumentoversiktBrukerArguments arguments = mapDokumentoversiktBrukerArguments(environment);
+						SafRequestContext safRequestContext = environment.getContext();
+						Dokumentoversikt dokumentoversikt = dokumentoversiktBrukerCoordinator.hentDokumentoversikt(arguments, safRequestContext);
+						logDokumentoversiktBrukerQueryDone(dokumentoversikt.getJournalposter().size(), arguments.getBrukerIdInput());
+						return dokumentoversikt;
 					} catch (SafFunctionalException e) {
 						return new DataFetcherResult<List<Journalpost>>(new ArrayList<>(), Collections.singletonList(e));
 					}
@@ -88,7 +79,7 @@ public class DokumentoversiktWiring {
 								journalposter.size(), fagsakId, fagsaksystem);
 						return journalposter;
 					} catch (SafFunctionalException e) {
-						return new DataFetcherResult<List<Journalpost>>(new ArrayList<>(), Collections.singletonList(e));
+						return new DataFetcherResult<Dokumentoversikt>(Dokumentoversikt.empty(), Collections.singletonList(e));
 					}
 				}))
 				.type("Journalpost", typeWiring -> typeWiring.dataFetcher("dokumenter", environment -> {
@@ -97,6 +88,27 @@ public class DokumentoversiktWiring {
 					return dokumentoversiktBrukerCoordinator.findDokumenter(journalpost, safRequestContext);
 				}))
 				.build();
+	}
+
+	private DokumentoversiktBrukerArguments mapDokumentoversiktBrukerArguments(DataFetchingEnvironment environment) {
+		Object brukerId = environment.getArgument("brukerId");
+		BrukerIdInput brukerIdInput = mapper.convertValue(brukerId, BrukerIdInput.class);
+		logDokumentoversiktBrukerQueryInit(brukerIdInput);
+		LocalDate fraDato = environment.getArgument("fraDato");
+		List<Tema> tema = environment.getArgument("tema");
+		List<Journalposttype> journalposttyper = environment.getArgument("journalposttyper");
+		List<Journalstatus> journalstatuser = environment.getArgument("journalstatuser");
+		if(environment.getArgument("foerste") != null && environment.getArgument("siste") != null) {
+			throw new IllegalArgumentException("Det er ikke tillatt å angi både `foerste` og `siste` for å paginere.");
+		}
+		if(environment.getArgument("foerste") != null && environment.getArgument("siste") != null) {
+			throw new IllegalArgumentException("Du må angi en `foerste` eller en `siste` verdi for å paginere.");
+		}
+		Integer foerste = environment.getArgument("foerste");
+		String etterPeker = environment.getArgument("etter");
+		Integer siste = environment.getArgument("siste");
+		String foerPeker = environment.getArgument("foer");
+		return new DokumentoversiktBrukerArguments(brukerIdInput, fraDato, tema, journalposttyper, journalstatuser, foerste, etterPeker, siste, foerPeker);
 	}
 
 	private void logDokumentoversiktBrukerQueryInit(BrukerIdInput brukerIdInput) {

@@ -2,7 +2,6 @@ package no.nav.saf;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import no.nav.saf.tilgangskontroll.testconfig.STSTestConfig;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -17,7 +16,7 @@ import javax.inject.Inject;
  * @author Joakim Bjørnstad, Jbit AS
  */
 @ExtendWith(SpringExtension.class)
-@SpringBootTest(classes = {Application.class, STSTestConfig.class}, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(classes = {Application.class}, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("itest")
 class ApplicationIT {
 	@Inject

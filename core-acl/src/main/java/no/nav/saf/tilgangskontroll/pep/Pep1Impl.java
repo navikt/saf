@@ -42,7 +42,6 @@ public class Pep1Impl implements Pep<TilgangBruker> {
 	}
 
 	@Override
-//	@Cacheable(key = "{#safRequestContext.saksbehandlerId, #ressurs.foedselsnr, #ressurs.aktoerId}")
 	public boolean hasAccess(TilgangBruker ressurs, SafRequestContext safRequestContext) {
 		if (ressurs == null) {
 			log.warn("Pep1 mangler tilstrekkelig datagrunnlag for å kunne gjennomføre tilgangskontroll");
@@ -62,7 +61,9 @@ public class Pep1Impl implements Pep<TilgangBruker> {
 		} else {
 			return false;
 		}
+
 		XacmlResponse response = abacService.evaluate(request);
+
 		return Decision.PERMIT.equals(response.getDecision());
 	}
 
