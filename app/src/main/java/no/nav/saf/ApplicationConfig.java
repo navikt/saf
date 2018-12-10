@@ -7,7 +7,6 @@ import no.nav.saf.metrics.DokMonitoringAspect;
 import no.nav.saf.platform.TomcatConfig;
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.HttpClients;
-import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -36,12 +35,7 @@ public class ApplicationConfig {
 
 	@Bean
 	HttpClient httpClient() {
-		PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager();
-		connectionManager.setMaxTotal(200);
-		connectionManager.setDefaultMaxPerRoute(200);
-		return HttpClients.custom()
-				.setConnectionManager(connectionManager)
-				.build();
+		return HttpClients.createDefault();
 	}
 
 	@Bean
