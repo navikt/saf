@@ -46,7 +46,7 @@ public class HentJournalsakinfo {
 
 	@Monitor(value = "dok_consumer", extraTags = {"process", "hentJournalpostBulk"}, histogram = true)
 	public HentJournalpostBulkResponseTo hentJournalpostBulk(HentJournalpostBulkRequestTo request) {
-		ResponseEntity<HentJournalpostBulkResponseTo> response = restTemplate.postForEntity("/hentjournalpostbulk", request, HentJournalpostBulkResponseTo.class);
+		ResponseEntity<HentJournalpostBulkResponseTo> response = restTemplate.postForEntity("/finnjournalposter", request, HentJournalpostBulkResponseTo.class);
 		return response.getBody();
 	}
 
