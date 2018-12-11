@@ -1,5 +1,7 @@
 package no.nav.saf.anticorruptionlayer.joark.domain;
 
+import static no.nav.saf.domain.DomainConstants.TILGANG_BRUKER;
+
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.FagomradeCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.FagsystemCode;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.JournalpostDto;
@@ -48,8 +50,8 @@ public class JournalpostDtoMapper {
 				.journalstatus(mapJournalstatus(journalpostDto))
 				.tema(FagomradeCode.toSafJournalstatus(journalpostDto.getFagomrade()))
 				.temanavn(FagomradeCode.toSafJournalstatus(journalpostDto.getFagomrade()).getTemanavn())
-				.sak(mapSak(journalpostDto, requestCache))
-				.bruker(mapBruker(requestCache))
+				.sak(mapSak(journalpostDto.getSaksrelasjon(), requestCache))
+				.bruker(mapBruker(journalpostDto.getSaksrelasjon(), requestCache))
 				.avsenderMottakerNavn(journalpostDto.getAvsenderMottakerNavn())
 				.journalfortAvNavn(journalpostDto.getJournalfortAvNavn())
 				.kanal(kanal)
@@ -71,16 +73,20 @@ public class JournalpostDtoMapper {
 				.build();
 	}
 
-	private Bruker mapBruker(RequestCache requestCache) {
-		TilgangBruker tilgangBruker = requestCache.getObject("tilgangBruker");
-		if (tilgangBruker == null) {
+	private Bruker mapBruker(SaksrelasjonDto saksrelasjon, RequestCache requestCache) {
+		if (saksrelasjon == null) {
 			return null;
 		}
-		return new Bruker(Brukertype.PERSON, tilgangBruker.getFoedselsnr());
+
+		Bruker bruker = getBrukerFromArkivsakCache(saksrelasjon, requestCache);
+		if (bruker == null) {
+			return getBrukerFromArkivsakCache(saksrelasjon, requestCache);
+		} else {
+			return bruker;
+		}
 	}
 
-	private Sak mapSak(JournalpostDto journalpostDto, RequestCache requestCache) {
-		SaksrelasjonDto saksrelasjon = journalpostDto.getSaksrelasjon();
+	private Sak mapSak(SaksrelasjonDto saksrelasjon, RequestCache requestCache) {
 		if (saksrelasjon == null) {
 			return null;
 		} else {
@@ -173,6 +179,32 @@ public class JournalpostDtoMapper {
 				return Arkivsakssystem.GSAK.name();
 			default:
 				return "";
+		}
+	}
+
+	//journalposten er endelig journalført
+	private Bruker getBrukerFromArkivsakCache(SaksrelasjonDto saksrelasjon, RequestCache requestCache) {
+		Arkivsak arkivsak = requestCache.getObject(saksrelasjon.getSakId() + mapJoarkFagsystem(saksrelasjon.getFagsystem()));
+		if (arkivsak == null) {
+			return null;
+		}
+		if (arkivsak.isBrukerPerson()) {
+			return new Bruker(Brukertype.PERSON, arkivsak.getAktoerId());
+		} else {
+			return new Bruker(Brukertype.ORGANISASJON, arkivsak.getOrgnummer());
+		}
+	}
+
+	//journalposten er midlertidig journalført
+	private Bruker getBrukerFromTilgangBrukerCache(SaksrelasjonDto saksrelasjon, RequestCache requestCache) {
+		TilgangBruker tilgangBruker = requestCache.getObject(TILGANG_BRUKER);
+		if (tilgangBruker == null) {
+			return null;
+		}
+		if (tilgangBruker.isBrukerPerson()) {
+			return new Bruker(Brukertype.PERSON, tilgangBruker.getAktoerId());
+		} else {
+			return new Bruker(Brukertype.ORGANISASJON, tilgangBruker.getOrgnummer());
 		}
 	}
 }

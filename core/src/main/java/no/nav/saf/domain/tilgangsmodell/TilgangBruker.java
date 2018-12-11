@@ -19,6 +19,7 @@ import java.util.stream.Collectors;
 public class TilgangBruker implements SecModel {
 	private final String foedselsnr;
 	private final String aktoerId;
+	private final String orgnummer;
 	@Builder.Default
 	private final List<TilgangIdent> historiskeIdenter = new ArrayList<>();
 	@Getter(AccessLevel.NONE)
@@ -31,5 +32,9 @@ public class TilgangBruker implements SecModel {
 				.collect(Collectors.toList());
 		alleIdenter.add(foedselsnr);
 		return alleIdenter;
+	}
+
+	public boolean isBrukerPerson() {
+		return orgnummer == null;
 	}
 }

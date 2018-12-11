@@ -9,4 +9,8 @@ import lombok.Value;
 public class BrukerIdInput {
 	private String id;
 	private BrukerIdType idType;
+
+	public boolean isPersonBruker(){
+		return !idType.equals(BrukerIdType.ORGNR);
+	}
 }

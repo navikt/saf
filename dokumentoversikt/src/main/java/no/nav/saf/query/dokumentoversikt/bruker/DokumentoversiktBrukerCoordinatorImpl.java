@@ -1,5 +1,7 @@
 package no.nav.saf.query.dokumentoversikt.bruker;
 
+import static no.nav.saf.domain.DomainConstants.TILGANG_BRUKER;
+
 import io.reactivex.Flowable;
 import io.reactivex.schedulers.Schedulers;
 import no.nav.saf.domain.TilgangsmodellRepository;
@@ -52,15 +54,26 @@ class DokumentoversiktBrukerCoordinatorImpl implements DokumentoversiktBrukerCoo
 
 	@Override
 	public Dokumentoversikt hentDokumentoversikt(DokumentoversiktBrukerArguments dokumentoversiktBrukerArguments, SafRequestContext safRequestContext) {
-		final TilgangBruker tilgangBruker = tilgangsmodellRepository.findTilgangBruker(dokumentoversiktBrukerArguments.getBrukerIdInput());
-		safRequestContext.getRequestCache().putObject("tilgangBruker", tilgangBruker);
-		boolean pep1Access = this.pep1.hasAccess(tilgangBruker, safRequestContext);
+		TilgangBruker tilgangBruker;
+		if (dokumentoversiktBrukerArguments.getBrukerIdInput().isPersonBruker()) {
+			tilgangBruker = tilgangsmodellRepository.findTilgangBruker(dokumentoversiktBrukerArguments.getBrukerIdInput());
+			safRequestContext.getRequestCache().putObject(TILGANG_BRUKER, tilgangBruker);
 
-		if (!pep1Access) {
-			return Dokumentoversikt.empty();
+			boolean pep1Access = this.pep1.hasAccess(tilgangBruker, safRequestContext);
+
+			if (!pep1Access) {
+				return Dokumentoversikt.empty();
+			}
+		} else {
+			tilgangBruker = TilgangBruker.builder()
+					.orgnummer(dokumentoversiktBrukerArguments.getBrukerIdInput().getId())
+					.build();
+			safRequestContext.getRequestCache().putObject(TILGANG_BRUKER, tilgangBruker);
 		}
 
-		final List<TilgangSak> tilgangSakList = tilgangsmodellRepository.findTilgangSaker(tilgangBruker, dokumentoversiktBrukerArguments.getTema(), safRequestContext);
+		//TODO denne må håndtere at bruker er organisasjon
+		final List<TilgangSak> tilgangSakList = tilgangsmodellRepository.findTilgangSaker(tilgangBruker, dokumentoversiktBrukerArguments
+				.getTema(), safRequestContext);
 		List<TilgangSak> filteredTilgangSakList = Flowable.fromIterable(tilgangSakList)
 				.flatMap(tilgangSak ->
 						Flowable.just(tilgangSak)

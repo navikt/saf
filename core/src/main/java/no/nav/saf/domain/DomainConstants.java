@@ -6,6 +6,7 @@ package no.nav.saf.domain;
 public final class DomainConstants {
 
 	public static final String SAF = "saf";
+	public static final String TILGANG_BRUKER = "tilgangBruker";
 
 	private DomainConstants() { }
 
