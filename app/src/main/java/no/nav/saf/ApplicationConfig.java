@@ -37,7 +37,7 @@ public class ApplicationConfig {
 	@Bean
 	HttpClient httpClient() {
 		PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager();
-		connectionManager.setMaxTotal(200);
+		connectionManager.setMaxTotal(600);
 		connectionManager.setDefaultMaxPerRoute(200);
 		return HttpClients.custom()
 				.setConnectionManager(connectionManager)
