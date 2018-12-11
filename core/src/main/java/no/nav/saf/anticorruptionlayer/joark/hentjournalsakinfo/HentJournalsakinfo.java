@@ -2,8 +2,8 @@ package no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo;
 
 import static no.nav.saf.cache.LokalCacheConfig.HENT_TILGANG_JOURNALPOST_CACHE;
 
-import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.HentJournalpostBulkRequestTo;
-import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.HentJournalpostBulkResponseTo;
+import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.FinnJournalposterRequestTo;
+import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.FinnJournalposterResponseTo;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark901.HentTilgangJournalpostResponseTo;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark920.HentDokumentResponseTo;
 import no.nav.saf.exceptions.DokumentIkkeFunnetException;
@@ -45,8 +45,8 @@ public class HentJournalsakinfo {
 	}
 
 	@Monitor(value = "dok_consumer", extraTags = {"process", "hentJournalpostBulk"}, histogram = true)
-	public HentJournalpostBulkResponseTo hentJournalpostBulk(HentJournalpostBulkRequestTo request) {
-		ResponseEntity<HentJournalpostBulkResponseTo> response = restTemplate.postForEntity("/hentjournalpostbulk", request, HentJournalpostBulkResponseTo.class);
+	public FinnJournalposterResponseTo finnJournalposter(FinnJournalposterRequestTo request) {
+		ResponseEntity<FinnJournalposterResponseTo> response = restTemplate.postForEntity("/finnjournalposter", request, FinnJournalposterResponseTo.class);
 		return response.getBody();
 	}
 

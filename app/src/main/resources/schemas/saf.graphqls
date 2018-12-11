@@ -121,6 +121,9 @@ type Dokumentoversikt {
 
 # Informasjon om paginering
 type SideInfo {
+    # Totalt antall resultater for paginering.
+    totaltAntall: Int
+
     # Når man paginerer forover, pekeren for å fortsette.
     sluttpeker: String
 

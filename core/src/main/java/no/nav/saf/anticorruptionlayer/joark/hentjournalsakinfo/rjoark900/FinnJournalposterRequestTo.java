@@ -13,7 +13,7 @@ import java.util.List;
  */
 @Data
 @Builder
-public class HentJournalpostBulkRequestTo {
+public class FinnJournalposterRequestTo {
 	private final String aktoerId;
 	private final List<String> gsakSakIds;
 	private final List<String> psakSakIds;
