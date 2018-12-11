@@ -29,7 +29,7 @@ class PensjonSakAntiCorruptionLayerImpl implements PensjonSakAntiCorruptionLayer
 	@Override
 	public List<Arkivsak> findArkivsaker(final String foedselsnummer, final List<Tema> tema) {
 		try {
-			if (tema.isEmpty()) {
+			if (foedselsnummer == null || tema.isEmpty()) {
 				return new ArrayList<>();
 			} else {
 				return pensjonSakConsumer.hentSakSammendragListe(foedselsnummer).stream()

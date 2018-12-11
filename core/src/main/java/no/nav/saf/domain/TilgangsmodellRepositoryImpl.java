@@ -78,7 +78,8 @@ public class TilgangsmodellRepositoryImpl implements TilgangsmodellRepository {
 	@Cacheable(cacheNames = LokalCacheConfig.TILGANGSMODELL_REPO_BRUKER_CACHE)
 	public List<TilgangBruker> findTilgangBrukerList(FagsakIdInput fagsakIdInput) {
 		try {
-			List<String> aktoerIdList = gsakAntiCorruptionLayer.findAktoerIdListByFagsakIdAndFagsaksystem(fagsakIdInput.getId(), fagsakIdInput.getIdSystem());
+			List<String> aktoerIdList = gsakAntiCorruptionLayer.findAktoerIdListByFagsakIdAndFagsaksystem(fagsakIdInput.getId(), fagsakIdInput
+					.getIdSystem());
 			if (aktoerIdList.isEmpty()) {
 				return new ArrayList<>();
 			} else {
@@ -94,7 +95,8 @@ public class TilgangsmodellRepositoryImpl implements TilgangsmodellRepository {
 	@Cacheable(cacheNames = LokalCacheConfig.TILGANGSMODELL_REPO_SAK_CACHE)
 	public List<TilgangSak> findTilgangSaker(final FagsakIdInput fagsakIdInput, final List<Tema> tema, final SafRequestContext safRequestContext) {
 		try {
-			List<Arkivsak> arkivsaker = gsakAntiCorruptionLayer.findTilgangSakListByFagsakIdAndFagsaksystem(fagsakIdInput.getId(), fagsakIdInput.getIdSystem(), tema);
+			List<Arkivsak> arkivsaker = gsakAntiCorruptionLayer.findTilgangSakListByFagsakIdAndFagsaksystem(fagsakIdInput.getId(), fagsakIdInput
+					.getIdSystem(), tema);
 			return arkivsaker.stream().map(arkivsak -> {
 				safRequestContext.getRequestCache().putObject(arkivsak.getKey(), arkivsak);
 				return TilgangSak.builder()
@@ -112,11 +114,14 @@ public class TilgangsmodellRepositoryImpl implements TilgangsmodellRepository {
 	}
 
 	@Override
-	@Cacheable(cacheNames = LokalCacheConfig.TILGANGSMODELL_REPO_SAK_CACHE, key = "#tilgangBruker.aktoerId + '_' + #tema")
+	@Cacheable(cacheNames = LokalCacheConfig.TILGANGSMODELL_REPO_SAK_CACHE, key = "#tilgangBruker.aktoerId + '_' + #tilgangBruker.orgnummer + '_' + #tema")
 	public List<TilgangSak> findTilgangSaker(final TilgangBruker tilgangBruker, final List<Tema> tema, final SafRequestContext safRequestContext) {
 		try {
-			Observable<List<Arkivsak>> gsaker = Observable.fromCallable(() ->
-					gsakAntiCorruptionLayer.findArkivsaker(tilgangBruker.getAktoerId(), tema))
+			Observable<List<Arkivsak>> gsakerFromOrgnr = Observable.fromCallable(() ->
+					gsakAntiCorruptionLayer.findArkivsakerByOrgnr(tilgangBruker.getOrgnummer(), tema))
+					.subscribeOn(Schedulers.io());
+			Observable<List<Arkivsak>> gsakerFromAktoerId = Observable.fromCallable(() ->
+					gsakAntiCorruptionLayer.findArkivsakerByAktoerId(tilgangBruker.getAktoerId(), tema))
 					.subscribeOn(Schedulers.io());
 			Observable<List<Arkivsak>> psaker = Observable.fromCallable(() -> {
 				if (!Collections.disjoint(tema, PENSJON)) {
@@ -125,7 +130,7 @@ public class TilgangsmodellRepositoryImpl implements TilgangsmodellRepository {
 					return new ArrayList<Arkivsak>();
 				}
 			}).subscribeOn(Schedulers.io());
-			List<Arkivsak> arkivsaker = Observable.concat(gsaker, psaker)
+			List<Arkivsak> arkivsaker = Observable.concat(gsakerFromOrgnr, gsakerFromAktoerId, psaker)
 					.flatMapIterable(items -> items)
 					.toList().blockingGet();
 			return arkivsaker.stream().map(arkivsak -> {
@@ -151,12 +156,15 @@ public class TilgangsmodellRepositoryImpl implements TilgangsmodellRepository {
 															 Integer foerste, String etterPeker, Integer siste, String foerPeker,
 															 SafRequestContext safRequestContext) {
 		try {
-			List<String> identer = tilgangBrukere.stream().flatMap(t -> t.getAlleIdenter().stream()).collect(Collectors.toList());
+			List<String> identer = tilgangBrukere.stream()
+					.flatMap(t -> t.getAlleIdenter().stream())
+					.collect(Collectors.toList());
 			List<JournalpostDto> journalposter = joarkAntiCorruptionLayer.hentJournalpostBulk(identer,
 					tilgangSakList, fraDato, inkluderTema, inkluderJournalposttyper, inkluderJournalstatuses, foerste, etterPeker, siste, foerPeker);
 			return journalposter.stream()
 					.map(journalpostDto -> {
-						safRequestContext.getRequestCache().putObject(journalpostDto.getJournalpostId().toString(), journalpostDto);
+						safRequestContext.getRequestCache()
+								.putObject(journalpostDto.getJournalpostId().toString(), journalpostDto);
 						return mapTilgangJournalpost(journalpostDto);
 					})
 					.collect(Collectors.toList());
