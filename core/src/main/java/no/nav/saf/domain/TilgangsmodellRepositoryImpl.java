@@ -39,6 +39,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class TilgangsmodellRepositoryImpl implements TilgangsmodellRepository {
 	public static final EnumSet<Tema> PENSJON = EnumSet.of(Tema.PEN, Tema.UFO);
+	public static final int MAX_ARKIVSAKER_LOGG = 1000;
 
 	private final AktoerAntiCorruptionLayer aktoerAntiCorruptionLayer;
 	private final GsakAntiCorruptionLayer gsakAntiCorruptionLayer;
@@ -161,8 +162,13 @@ public class TilgangsmodellRepositoryImpl implements TilgangsmodellRepository {
 					})
 					.collect(Collectors.toList());
 		} catch (Exception e) {
-			log.warn("HentTilgangJournalpostListByArkivsaker feilet ved oppslag av arkivsaker={}.",
-					tilgangSakList.stream().map(TilgangSak::getArkivsaksnummer).collect(Collectors.toList()), e);
+			if (tilgangSakList.size() < MAX_ARKIVSAKER_LOGG) {
+				List<String> arkivsaksId = tilgangSakList.stream().map(TilgangSak::getArkivsaksnummer).collect(Collectors.toList());
+				log.warn("finnJournalposter feilet ved henting av journalposter på arkivsaker={}.",
+						arkivsaksId, e);
+			} else {
+				log.warn("finnJournalposter feilet ved henting av journalposter på arkivsaker. Det var flere enn 1000 arkivsaker. Disse logges ikke da så lange logglinjer ikke støttes i logstash.", e);
+			}
 			return new ArrayList<>();
 		}
 	}
