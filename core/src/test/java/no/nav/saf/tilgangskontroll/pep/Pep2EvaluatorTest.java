@@ -52,7 +52,6 @@ public class Pep2EvaluatorTest extends AbstractPepTest {
 
 		assertEquals(SAF, capturedRequest.getResources().get(0).getValue().toString());
 		assertEquals(RESOURCE_SAF_TEMA, capturedRequest.getResources().get(1).getValue().toString());
-		assertEquals(TEST_TEMA, capturedRequest.getResources().get(2).getValue().toString());
 
 	}
 
