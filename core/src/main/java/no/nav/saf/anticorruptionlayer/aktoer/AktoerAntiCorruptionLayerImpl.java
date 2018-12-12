@@ -8,6 +8,7 @@ import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.domain.tilgangsmodell.TilgangIdent;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -48,6 +49,10 @@ class AktoerAntiCorruptionLayerImpl implements AktoerAntiCorruptionLayer {
 
 	@Override
 	public List<TilgangBruker> hentTilgangBrukerListByAktoerIdList(List<String> aktoerIdList) {
+		if (aktoerIdList.isEmpty()) {
+			return new ArrayList<>();
+		}
+
 		List<HentIdentForAktoerIdListeResponseTo> responseTo = aktoerV2Consumer.hentIdentForAktoerIdListe(aktoerIdList);
 
 		return responseTo.stream()

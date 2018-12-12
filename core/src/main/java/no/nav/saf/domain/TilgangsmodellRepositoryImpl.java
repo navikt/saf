@@ -1,5 +1,8 @@
 package no.nav.saf.domain;
 
+import static no.nav.saf.domain.DomainConstants.AKTOER_ID_LIST;
+import static no.nav.saf.domain.DomainConstants.ORGNR_LIST;
+
 import io.reactivex.Observable;
 import io.reactivex.schedulers.Schedulers;
 import lombok.extern.slf4j.Slf4j;
@@ -30,7 +33,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @author Joakim Bjørnstad, Jbit AS
@@ -78,15 +83,20 @@ public class TilgangsmodellRepositoryImpl implements TilgangsmodellRepository {
 	@Cacheable(cacheNames = LokalCacheConfig.TILGANGSMODELL_REPO_BRUKER_CACHE)
 	public List<TilgangBruker> findTilgangBrukerList(FagsakIdInput fagsakIdInput) {
 		try {
-			List<String> aktoerIdList = gsakAntiCorruptionLayer.findAktoerIdListByFagsakIdAndFagsaksystem(fagsakIdInput.getId(), fagsakIdInput
+			Map<String, List<String>> IdLists = gsakAntiCorruptionLayer.findIdListsByFagsakIdAndFagsaksystem(fagsakIdInput.getId(), fagsakIdInput
 					.getIdSystem());
-			if (aktoerIdList.isEmpty()) {
+			if (IdLists.isEmpty()) {
 				return new ArrayList<>();
-			} else {
-				return aktoerAntiCorruptionLayer.hentTilgangBrukerListByAktoerIdList(aktoerIdList);
 			}
+
+			List<TilgangBruker> tilgangBrukerPerson = aktoerAntiCorruptionLayer.hentTilgangBrukerListByAktoerIdList(IdLists.get(AKTOER_ID_LIST));
+			List<TilgangBruker> tilgangbrukerOrganisasjon = IdLists.get(ORGNR_LIST).stream()
+					.map(orgnr -> TilgangBruker.builder().orgnummer(orgnr).build())
+					.collect(Collectors.toList());
+
+			return Stream.concat(tilgangBrukerPerson.stream(), tilgangbrukerOrganisasjon.stream()).collect(Collectors.toList());
 		} catch (Exception e) {
-			log.warn("findTilgangBruker feilet ved oppslag. fagsakId={}", fagsakIdInput, e);
+			log.warn("findTilgangBrukerList feilet ved oppslag. fagsakIdInput={}", fagsakIdInput, e);
 		}
 		return new ArrayList<>();
 	}

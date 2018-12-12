@@ -1,5 +1,8 @@
 package no.nav.saf.anticorruptionlayer.gsak;
 
+import static no.nav.saf.domain.DomainConstants.AKTOER_ID_LIST;
+import static no.nav.saf.domain.DomainConstants.ORGNR_LIST;
+
 import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.anticorruptionlayer.gsak.hentgsaksaker.GsakConsumer;
 import no.nav.saf.anticorruptionlayer.gsak.hentgsaksaker.GsakSakerTo;
@@ -12,7 +15,9 @@ import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -134,13 +139,28 @@ class GsakAntiCorruptionLayerImpl implements GsakAntiCorruptionLayer {
 	}
 
 	@Override
-	public List<String> findAktoerIdListByFagsakIdAndFagsaksystem(final String fagsakId, final String fagsaksystem) {
+	public Map<String, List<String>> findIdListsByFagsakIdAndFagsaksystem(final String fagsakId, final String fagsaksystem) {
 		List<GsakSakerTo> gsakSakerToList = gsakConsumer.hentSakerByFagsakIdAndFagsaksystem(fagsakId, fagsaksystem);
-		return gsakSakerToList == null || gsakSakerToList.isEmpty() ? new ArrayList<>() :
-				gsakSakerToList.stream()
-						.map(GsakSakerTo::getAktoerId)
-						.distinct()
-						.collect(Collectors.toList());
+
+		if (gsakSakerToList == null || gsakSakerToList.isEmpty()) {
+			return new HashMap<>();
+		}
+
+		List<String> aktoerIdList = new ArrayList<>();
+		List<String> orgnrList = new ArrayList<>();
+		gsakSakerToList.stream().forEach(gsakSakerTo -> {
+			if (gsakSakerTo.getAktoerId() != null) {
+				aktoerIdList.add(gsakSakerTo.getAktoerId());
+			} else if (gsakSakerTo.getOrgnr() != null) {
+				orgnrList.add(gsakSakerTo.getOrgnr());
+			}
+		});
+
+		Map<String, List<String>> outMap = new HashMap<>();
+		outMap.put(AKTOER_ID_LIST, aktoerIdList.stream().distinct().collect(Collectors.toList()));
+		outMap.put(ORGNR_LIST, orgnrList.stream().distinct().collect(Collectors.toList()));
+
+		return outMap;
 	}
 
 	@Override
