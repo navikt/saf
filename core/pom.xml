@@ -77,7 +77,11 @@
 		</dependency>
 		<dependency>
 			<groupId>no.nav.abac.policies</groupId>
-			<artifactId>abac-attribute-constants</artifactId>
+			<artifactId>abac-common-attributes-alfa</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>no.nav.abac.policies</groupId>
+			<artifactId>abac-saf-policies-alfa</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>no.nav.sbl</groupId>
