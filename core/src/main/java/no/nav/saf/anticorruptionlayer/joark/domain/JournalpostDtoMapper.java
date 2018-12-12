@@ -82,7 +82,7 @@ public class JournalpostDtoMapper {
 		if (bruker != null) {
 			return bruker;
 		} else {
-			return getBrukerFromTilgangBrukerCache(saksrelasjon, requestCache);
+			return getBrukerFromTilgangBrukerCache(requestCache);
 		}
 	}
 
@@ -196,7 +196,7 @@ public class JournalpostDtoMapper {
 	}
 
 	//journalposten er midlertidig journalført
-	private Bruker getBrukerFromTilgangBrukerCache(SaksrelasjonDto saksrelasjon, RequestCache requestCache) {
+	private Bruker getBrukerFromTilgangBrukerCache(RequestCache requestCache) {
 		TilgangBruker tilgangBruker = requestCache.getObject(TILGANG_BRUKER);
 		if (tilgangBruker == null) {
 			return null;
