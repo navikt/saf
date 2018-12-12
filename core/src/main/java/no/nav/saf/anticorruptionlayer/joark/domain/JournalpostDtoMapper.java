@@ -79,10 +79,10 @@ public class JournalpostDtoMapper {
 		}
 
 		Bruker bruker = getBrukerFromArkivsakCache(saksrelasjon, requestCache);
-		if (bruker == null) {
-			return getBrukerFromArkivsakCache(saksrelasjon, requestCache);
-		} else {
+		if (bruker != null) {
 			return bruker;
+		} else {
+			return getBrukerFromTilgangBrukerCache(saksrelasjon, requestCache);
 		}
 	}
 
