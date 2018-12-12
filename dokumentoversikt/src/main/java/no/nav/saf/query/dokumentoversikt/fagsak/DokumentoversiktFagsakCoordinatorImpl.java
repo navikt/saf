@@ -17,6 +17,7 @@ import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -80,16 +81,8 @@ class DokumentoversiktFagsakCoordinatorImpl implements DokumentoversiktFagsakCoo
 				).toList()
 				.blockingGet();
 
-		final List<String> filteredAktoerIdListTilgangSak = filteredTilgangSakList.stream()
-				.map(TilgangSak::getAktoerId)
-				.collect(Collectors.toList());
-
-		final List<TilgangBruker> finalTilgangBrukerList = filteredTilgangBrukerList.stream()
-				.filter(tilgangBruker -> filteredAktoerIdListTilgangSak.contains(tilgangBruker.getAktoerId()))
-				.collect(Collectors.toList());
-
 		final List<TilgangJournalpost> tilgangJournalpostList = tilgangsmodellRepository.findTilgangJournalposter(
-				finalTilgangBrukerList,
+				new ArrayList<>(),
 				filteredTilgangSakList,
 				dokumentoversiktFagsakArguments.getFraDato(),
 				dokumentoversiktFagsakArguments.getTema(),

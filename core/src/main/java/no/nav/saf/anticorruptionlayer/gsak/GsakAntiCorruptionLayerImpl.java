@@ -1,5 +1,8 @@
 package no.nav.saf.anticorruptionlayer.gsak;
 
+import static no.nav.saf.domain.DomainConstants.AKTOER_ID_LIST;
+import static no.nav.saf.domain.DomainConstants.ORGNR_LIST;
+
 import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.anticorruptionlayer.gsak.hentgsaksaker.GsakConsumer;
 import no.nav.saf.anticorruptionlayer.gsak.hentgsaksaker.GsakSakerTo;
@@ -12,7 +15,9 @@ import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -29,11 +34,11 @@ class GsakAntiCorruptionLayerImpl implements GsakAntiCorruptionLayer {
 	}
 
 	@Override
-	public List<Arkivsak> findArkivsaker(final String aktoerId, final List<Tema> tema) {
+	public List<Arkivsak> findArkivsakerByAktoerId(final String aktoerId, final List<Tema> tema) {
 		try {
 			List<GsakSakerTo> gsakSakerToFiltered;
 
-			if (tema.isEmpty()) {
+			if (aktoerId == null || tema.isEmpty()) {
 				return new ArrayList<>();
 			} else if (tema.size() == 1) {
 				gsakSakerToFiltered = gsakConsumer.hentSakerByAktoerId(aktoerId, tema.get(0));
@@ -48,6 +53,30 @@ class GsakAntiCorruptionLayerImpl implements GsakAntiCorruptionLayer {
 			return mapToArkivsak(gsakSakerToFiltered);
 		} catch (Exception e) {
 			log.warn("Klarte ikke hente gsaker for aktoerId={}", aktoerId, e);
+			return new ArrayList<>();
+		}
+	}
+
+	@Override
+	public List<Arkivsak> findArkivsakerByOrgnr(final String orgnr, final List<Tema> tema) {
+		try {
+			List<GsakSakerTo> gsakSakerToFiltered;
+
+			if (orgnr == null || tema.isEmpty()) {
+				return new ArrayList<>();
+			} else if (tema.size() == 1) {
+				gsakSakerToFiltered = gsakConsumer.hentSakerByOrgNr(orgnr, tema.get(0));
+			} else {
+				List<GsakSakerTo> gsakSakerTo = gsakConsumer.hentSakerByOrgNr(orgnr);
+				gsakSakerToFiltered =
+						gsakSakerTo.stream()
+								.filter(gsak -> tema.contains(mapToTema(gsak.getTema())))
+								.collect(Collectors.toList());
+			}
+
+			return mapToArkivsak(gsakSakerToFiltered);
+		} catch (Exception e) {
+			log.warn("Klarte ikke hente gsaker for orgnr={}", orgnr, e);
 			return new ArrayList<>();
 		}
 	}
@@ -110,20 +139,46 @@ class GsakAntiCorruptionLayerImpl implements GsakAntiCorruptionLayer {
 	}
 
 	@Override
-	public List<String> findAktoerIdListByFagsakIdAndFagsaksystem(final String fagsakId, final String fagsaksystem) {
+	public Map<String, List<String>> findIdListsByFagsakIdAndFagsaksystem(final String fagsakId, final String fagsaksystem) {
 		List<GsakSakerTo> gsakSakerToList = gsakConsumer.hentSakerByFagsakIdAndFagsaksystem(fagsakId, fagsaksystem);
-		return gsakSakerToList == null || gsakSakerToList.isEmpty() ? new ArrayList<>() :
-				gsakSakerToList.stream()
-						.map(GsakSakerTo::getAktoerId)
-						.distinct()
-						.collect(Collectors.toList());
+
+		if (gsakSakerToList == null || gsakSakerToList.isEmpty()) {
+			return new HashMap<>();
+		}
+
+		List<String> aktoerIdList = new ArrayList<>();
+		List<String> orgnrList = new ArrayList<>();
+		gsakSakerToList.stream().forEach(gsakSakerTo -> {
+			if (gsakSakerTo.getAktoerId() != null) {
+				aktoerIdList.add(gsakSakerTo.getAktoerId());
+			} else if (gsakSakerTo.getOrgnr() != null) {
+				orgnrList.add(gsakSakerTo.getOrgnr());
+			}
+		});
+
+		Map<String, List<String>> outMap = new HashMap<>();
+		outMap.put(AKTOER_ID_LIST, aktoerIdList.stream().distinct().collect(Collectors.toList()));
+		outMap.put(ORGNR_LIST, orgnrList.stream().distinct().collect(Collectors.toList()));
+
+		return outMap;
 	}
 
 	@Override
 	public TilgangBruker findTilgangBrukerBySakId(final String sakId) {
 		GsakSakerTo gsakSakerTo = gsakConsumer.hentSakBySakId(sakId);
-		return gsakSakerTo == null ? null : TilgangBruker.builder()
-				.aktoerId(gsakSakerTo.getAktoerId())
-				.build();
+		TilgangBruker tilgangBruker = null;
+
+		if (gsakSakerTo == null) {
+			//noop
+		} else if (gsakSakerTo.getAktoerId() != null) {
+			tilgangBruker = TilgangBruker.builder()
+					.aktoerId(gsakSakerTo.getAktoerId())
+					.build();
+		} else if (gsakSakerTo.getOrgnr() != null) {
+			tilgangBruker = TilgangBruker.builder()
+					.orgnummer(gsakSakerTo.getOrgnr())
+					.build();
+		}
+		return tilgangBruker;
 	}
 }

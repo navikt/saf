@@ -111,7 +111,7 @@ public class DokumentoversiktWiring {
 	private DokumentoversiktFagsakArguments mapDokumentoversiktFagsakArguments(DataFetchingEnvironment environment) {
 		Map<String, Object> fagsakId = environment.getArgument("fagsakId");
 		FagsakIdInput fagsakIdInput = new FagsakIdInput((String) fagsakId.get("fagsaksnummer"), (String) fagsakId.get("fagsaksystem"));
-		log.info("dokumentoversiktFagsak hentes for fagsakId={}", fagsakIdInput);
+		log.info("dokumentoversiktFagsak hentes for fagsakIdInput={}", fagsakIdInput);
 		LocalDate fraDato = environment.getArgument("fraDato");
 		List<Tema> tema = environment.getArgument("tema");
 		List<Journalposttype> journalposttyper = environment.getArgument("journalposttyper");

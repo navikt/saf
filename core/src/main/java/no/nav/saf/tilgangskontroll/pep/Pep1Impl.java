@@ -46,6 +46,8 @@ public class Pep1Impl implements Pep<TilgangBruker> {
 		if (ressurs == null) {
 			log.warn("Pep1 mangler tilstrekkelig datagrunnlag for å kunne gjennomføre tilgangskontroll");
 			return false;
+		} else if (ressurs.getOrgnummer() != null) {
+			return true;
 		}
 
 		XacmlRequest request = new XacmlRequest();

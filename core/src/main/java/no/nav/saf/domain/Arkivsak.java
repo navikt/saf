@@ -25,4 +25,8 @@ public class Arkivsak {
 	public String getKey() {
 		return arkivsaksnummer + arkivsaksystem;
 	}
+
+	public boolean isBrukerPerson() {
+		return orgnummer == null;
+	}
 }

@@ -59,6 +59,23 @@ public class GsakConsumer {
 		return hentSaker(uri.toUriString());
 	}
 
+	@Cacheable(cacheNames = LokalCacheConfig.SAKER_BY_ORG_NR_CACHE, key = "#orgNr")
+	@Monitor(value = "dok_consumer", extraTags = {"process", "hentSakerByOrgNr"}, histogram = true)
+	public List<GsakSakerTo> hentSakerByOrgNr(final String orgNr) {
+		UriComponentsBuilder uri = UriComponentsBuilder.fromHttpUrl(gsakApiUrl)
+				.queryParam("orgnr", orgNr);
+		return hentSaker(uri.toUriString());
+	}
+
+	@Cacheable(cacheNames = LokalCacheConfig.SAKER_BY_ORG_NR_CACHE, key = "#orgNr + '_' + #tema")
+	@Monitor(value = "dok_consumer", extraTags = {"process", "hentSakerByOrgNr"}, histogram = true)
+	public List<GsakSakerTo> hentSakerByOrgNr(final String orgNr, final Tema tema) {
+		UriComponentsBuilder uri = UriComponentsBuilder.fromHttpUrl(gsakApiUrl)
+				.queryParam("orgnr", orgNr)
+				.queryParam("tema", tema.toString());
+		return hentSaker(uri.toUriString());
+	}
+
 	@Cacheable(cacheNames = LokalCacheConfig.SAKER_BY_FAGSAK_ID_CACHE, key = "#fagsakId + '_' + #fagsaksystem")
 	@Monitor(value = "dok_consumer", extraTags = {"process", "hentSakerByFagsakIdAndFagsaksystem"}, histogram = true)
 	public List<GsakSakerTo> hentSakerByFagsakIdAndFagsaksystem(final String fagsakId, final String fagsaksystem) {
@@ -69,7 +86,7 @@ public class GsakConsumer {
 	}
 
 	private List<GsakSakerTo> hentSaker(final String uri) {
-		if(log.isDebugEnabled()) {
+		if (log.isDebugEnabled()) {
 			log.debug("Henter gsaker uri={}", uri);
 		}
 		try {
@@ -92,7 +109,8 @@ public class GsakConsumer {
 		try {
 			HttpHeaders headers = new HttpHeaders();
 			headers.set("X-Correlation-ID", UUID.randomUUID().toString());
-			return restTemplate.exchange(gsakApiUrl + "/{sakId}", HttpMethod.GET, new HttpEntity<>(headers), GsakSakerTo.class, sakId).getBody();
+			return restTemplate.exchange(gsakApiUrl + "/{sakId}", HttpMethod.GET, new HttpEntity<>(headers), GsakSakerTo.class, sakId)
+					.getBody();
 		} catch (HttpServerErrorException e) {
 			throw new SafTechnicalException(String.format("getGsaksaker feilet teknisk med statusKode=%s. Feilmelding=%s", e
 					.getStatusCode(), e.getMessage()), e, e.getStatusCode());

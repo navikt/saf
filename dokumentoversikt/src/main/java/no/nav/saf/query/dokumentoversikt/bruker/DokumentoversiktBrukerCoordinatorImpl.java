@@ -1,5 +1,7 @@
 package no.nav.saf.query.dokumentoversikt.bruker;
 
+import static no.nav.saf.domain.DomainConstants.TILGANG_BRUKER;
+
 import io.reactivex.Flowable;
 import io.reactivex.schedulers.Schedulers;
 import no.nav.saf.domain.TilgangsmodellRepository;
@@ -10,6 +12,7 @@ import no.nav.saf.query.dokumentoversikt.DokumentoversiktVisningsmodellRepositor
 import no.nav.saf.query.dokumentoversikt.SideInfoMapper;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.pep.Pep;
+import no.nav.saf.tjeneste.argumenter.BrukerIdInput;
 import no.nav.saf.tjeneste.visningsmodell.Dokumentoversikt;
 import no.nav.saf.tjeneste.visningsmodell.Journalpost;
 import org.springframework.stereotype.Component;
@@ -52,15 +55,17 @@ class DokumentoversiktBrukerCoordinatorImpl implements DokumentoversiktBrukerCoo
 
 	@Override
 	public Dokumentoversikt hentDokumentoversikt(DokumentoversiktBrukerArguments dokumentoversiktBrukerArguments, SafRequestContext safRequestContext) {
-		final TilgangBruker tilgangBruker = tilgangsmodellRepository.findTilgangBruker(dokumentoversiktBrukerArguments.getBrukerIdInput());
-		safRequestContext.getRequestCache().putObject("tilgangBruker", tilgangBruker);
+		TilgangBruker tilgangBruker = getTilgangBruker(dokumentoversiktBrukerArguments.getBrukerIdInput());
+		safRequestContext.getRequestCache().putObject(TILGANG_BRUKER, tilgangBruker);
+
 		boolean pep1Access = this.pep1.hasAccess(tilgangBruker, safRequestContext);
 
 		if (!pep1Access) {
 			return Dokumentoversikt.empty();
 		}
 
-		final List<TilgangSak> tilgangSakList = tilgangsmodellRepository.findTilgangSaker(tilgangBruker, dokumentoversiktBrukerArguments.getTema(), safRequestContext);
+		final List<TilgangSak> tilgangSakList = tilgangsmodellRepository.findTilgangSaker(tilgangBruker, dokumentoversiktBrukerArguments
+				.getTema(), safRequestContext);
 		List<TilgangSak> filteredTilgangSakList = Flowable.fromIterable(tilgangSakList)
 				.flatMap(tilgangSak ->
 						Flowable.just(tilgangSak)
@@ -103,4 +108,13 @@ class DokumentoversiktBrukerCoordinatorImpl implements DokumentoversiktBrukerCoo
 				.build();
 	}
 
+	private TilgangBruker getTilgangBruker(BrukerIdInput brukerIdInput) {
+		if (brukerIdInput.isPersonBruker()) {
+			return tilgangsmodellRepository.findTilgangBruker(brukerIdInput);
+		} else {
+			return TilgangBruker.builder()
+					.orgnummer(brukerIdInput.getId())
+					.build();
+		}
+	}
 }
