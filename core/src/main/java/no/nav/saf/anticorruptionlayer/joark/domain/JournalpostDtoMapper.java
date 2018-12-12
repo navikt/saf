@@ -151,7 +151,7 @@ public class JournalpostDtoMapper {
 		switch (journalpostDto.getJournalposttype()) {
 			case I:
 				if (journalpostDto.getMottakskanal() == null) {
-					return null;
+					return mapManglendeMottakskanal(journalpostDto);
 				}
 				return journalpostDto.getMottakskanal().getSafKanal();
 			case U:
@@ -166,11 +166,17 @@ public class JournalpostDtoMapper {
 		}
 	}
 
+	private Kanal mapManglendeMottakskanal(JournalpostDto journalpostDto) {
+		return null;
+	}
+
 	private Kanal mapManglendeUtsendingskanal(JournalpostDto journalpostDto) {
 		switch (journalpostDto.getJournalstatus()) {
 			case FL:
 				return Kanal.LOKAL_UTSKRIFT;
 			case FS:
+				return Kanal.SENTRAL_UTSKRIFT;
+			case E:
 				return Kanal.SENTRAL_UTSKRIFT;
 			default:
 				return null;

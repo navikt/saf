@@ -216,10 +216,10 @@ type Sak {
 # Person eller organisasjon som har et forhold til NAV, f.eks. som mottaker av tjenester eller ytelser.
 type Bruker {
     # TODO
-    id: String!
+    id: String
 
     # TODO
-    type: BrukerIdType!
+    type: BrukerIdType
 }
 
 # TODO
