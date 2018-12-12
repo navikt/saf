@@ -2,7 +2,7 @@ team: teamdokumenthandtering
 image: "repo.adeo.no:5443/dok/saf"
 replicas:
   min: 2
-  max: 4
+  max: 8
   cpuThresholdPercentage: 50
 port: 8080
 healthcheck:
