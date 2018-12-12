@@ -197,7 +197,7 @@ public class JournalpostDtoMapper {
 	//journalposten er endelig journalført
 	private Bruker getBrukerFromArkivsakCache(SaksrelasjonDto saksrelasjon, RequestCache requestCache) {
 		Arkivsak arkivsak = requestCache.getObject(saksrelasjon.getSakId() + mapJoarkFagsystem(saksrelasjon.getFagsystem()));
-		if (arkivsak == null) {
+		if (arkivsak == null || arkivsak.isBrukerInfoMissing()) {
 			return null;
 		}
 		if (arkivsak.isBrukerPerson()) {
