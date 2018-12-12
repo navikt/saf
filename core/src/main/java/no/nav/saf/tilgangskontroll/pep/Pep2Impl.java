@@ -56,8 +56,7 @@ public class Pep2Impl implements Pep<TilgangSak> {
 				request.resource(RESOURCE_FELLES_RESOURCE_TYPE, RESOURCE_SAF_TEMA);
 			}
 		} else {
-			// todo Hvordan behandle blankt tema?
-			return false;
+			return true;
 		}
 
 		XacmlResponse response = abacService.evaluate(request);
