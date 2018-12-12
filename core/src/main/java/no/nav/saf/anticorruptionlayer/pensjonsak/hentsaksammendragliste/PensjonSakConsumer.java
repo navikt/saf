@@ -54,6 +54,10 @@ public class PensjonSakConsumer {
 
 		try {
 			WSHentSakSammendragListeResponse response = pensjonSakV1.hentSakSammendragListe(request);
+
+			if (log.isDebugEnabled()) {
+				log.debug("Hentet ferdig psaker for foedselsnummer={}", personident);
+			}
 			return response.getSakSammendragListe().stream().map(saksammendrag ->
 					PsakSakerTo.builder()
 							.sakNr(saksammendrag.getSakId())

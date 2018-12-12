@@ -96,8 +96,8 @@ class GsakAntiCorruptionLayerImpl implements GsakAntiCorruptionLayer {
 				.aktoerId(gsakSakerTo.getAktoerId())
 				.arkivsaksnummer(gsakSakerTo.getId().toString())
 				.arkivsaksystem(Arkivsakssystem.GSAK.name())
-				.fagsystem(gsakSakerTo.getApplikasjon())
-				.fagsaknummer(gsakSakerTo.getFagsakNr())
+				.fagsaksystem(gsakSakerTo.getApplikasjon())
+				.fagsaksnummer(gsakSakerTo.getFagsakNr())
 				.tema(gsakSakerTo.getTema())
 				.orgnummer(gsakSakerTo.getOrgnr())
 				.build();

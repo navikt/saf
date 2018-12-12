@@ -3,8 +3,6 @@ package no.nav.saf.anticorruptionlayer.pensjonsak;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.anticorruptionlayer.pensjonsak.hentsaksammendragliste.PensjonSakConsumer;
 import no.nav.saf.domain.Arkivsak;
-import no.nav.saf.domain.tilgangsmodell.TilgangSak;
-import no.nav.saf.tjeneste.visningsmodell.Sak;
 import no.nav.saf.tjeneste.visningsmodell.kode.Arkivsakssystem;
 import no.nav.saf.tjeneste.visningsmodell.kode.Tema;
 import org.springframework.stereotype.Component;
@@ -18,7 +16,7 @@ import java.util.stream.Collectors;
 @Component
 class PensjonSakAntiCorruptionLayerImpl implements PensjonSakAntiCorruptionLayer {
 
-	public static final String PSAK_FAGSYSTEM = "AT06";
+	private static final String PSAK_FAGSYSTEM = "PP01";
 	private final PensjonSakConsumer pensjonSakConsumer;
 
 	@Inject
@@ -49,42 +47,6 @@ class PensjonSakAntiCorruptionLayerImpl implements PensjonSakAntiCorruptionLayer
 			return new ArrayList<>();
 		}
 	}
-
-	@Override
-	public List<TilgangSak> hentTilgangSakList(final String foedselsnummer) {
-		try {
-			return pensjonSakConsumer.hentSakSammendragListe(foedselsnummer).stream()
-					.map(psak -> TilgangSak.builder()
-							.arkivsaksnummer(psak.getSakNr())
-							.arkivsaksystem(String.valueOf(Arkivsakssystem.PSAK))
-							.tema(psak.getTema())
-							.build())
-					.collect(Collectors.toList());
-		} catch (Exception e) {
-			log.warn("Klarte ikke hente pensjonssaker for foedelsnummer={}", "*****", e);
-			return new ArrayList<>();
-		}
-	}
-
-	@Override
-	public List<Sak> hentSakerByFoedselsnummer(final String foedselsnummer) {
-		try {
-			return pensjonSakConsumer.hentSakSammendragListe(foedselsnummer).stream()
-					.map(psak -> Sak.builder()
-							.arkivsaksnummer(psak.getSakNr())
-							.arkivsaksystem(Arkivsakssystem.PSAK)
-							.fagsaksnummer(psak.getSakNr())
-							.fagsaksystem(PSAK_FAGSYSTEM)
-							.tema(Tema.valueOf(psak.getTema()))
-							.datoOpprettet(psak.getDatoOpprettet())
-							.build())
-					.collect(Collectors.toList());
-		} catch (Exception e) {
-			log.warn("Klarte ikke hente pensjonssaker for foedelsnummer={}", "*****", e);
-			return new ArrayList<>();
-		}
-	}
-
 
 	private Tema mapToTema(String tema) {
 		try {

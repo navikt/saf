@@ -36,6 +36,9 @@ public class Pep2Impl implements Pep<TilgangSak> {
 
 	@Override
 	public boolean hasAccess(TilgangSak ressurs, SafRequestContext safRequestContext) {
+		if(log.isTraceEnabled()) {
+			log.trace("Pep2 evaluerer arkivsak={}, arkivsaksystem={}, tema={}", ressurs.getArkivsaksnummer(), ressurs.getArkivsaksystem(), ressurs.getTema());
+		}
 		if (ressurs == null) {
 			log.warn("Pep2 mangler tilstrekkelig datagrunnlag for å kunne gjennomføre tilgangskontroll");
 			return false;

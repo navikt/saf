@@ -4,6 +4,7 @@ import static no.nav.saf.domain.DomainConstants.TILGANG_BRUKER;
 
 import io.reactivex.Flowable;
 import io.reactivex.schedulers.Schedulers;
+import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.domain.TilgangsmodellRepository;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.domain.tilgangsmodell.TilgangJournalpost;
@@ -12,7 +13,6 @@ import no.nav.saf.query.dokumentoversikt.DokumentoversiktVisningsmodellRepositor
 import no.nav.saf.query.dokumentoversikt.SideInfoMapper;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.pep.Pep;
-import no.nav.saf.tjeneste.argumenter.BrukerIdInput;
 import no.nav.saf.tjeneste.visningsmodell.Dokumentoversikt;
 import no.nav.saf.tjeneste.visningsmodell.Journalpost;
 import org.springframework.stereotype.Component;
@@ -27,6 +27,7 @@ import java.util.stream.Collectors;
 /**
  * @author Joakim Bjørnstad, Jbit AS
  */
+@Slf4j
 @Component
 class DokumentoversiktBrukerCoordinatorImpl implements DokumentoversiktBrukerCoordinator {
 
@@ -55,7 +56,7 @@ class DokumentoversiktBrukerCoordinatorImpl implements DokumentoversiktBrukerCoo
 
 	@Override
 	public Dokumentoversikt hentDokumentoversikt(DokumentoversiktBrukerArguments dokumentoversiktBrukerArguments, SafRequestContext safRequestContext) {
-		TilgangBruker tilgangBruker = getTilgangBruker(dokumentoversiktBrukerArguments.getBrukerIdInput());
+		TilgangBruker tilgangBruker = tilgangsmodellRepository.findTilgangBruker(dokumentoversiktBrukerArguments.getBrukerIdInput());
 		safRequestContext.getRequestCache().putObject(TILGANG_BRUKER, tilgangBruker);
 
 		boolean pep1Access = this.pep1.hasAccess(tilgangBruker, safRequestContext);
@@ -64,16 +65,15 @@ class DokumentoversiktBrukerCoordinatorImpl implements DokumentoversiktBrukerCoo
 			return Dokumentoversikt.empty();
 		}
 
-		final List<TilgangSak> tilgangSakList = tilgangsmodellRepository.findTilgangSaker(tilgangBruker, dokumentoversiktBrukerArguments
+		final Flowable<TilgangSak> tilgangSakFlow = tilgangsmodellRepository.findTilgangSaker(tilgangBruker, dokumentoversiktBrukerArguments
 				.getTema(), safRequestContext);
-		List<TilgangSak> filteredTilgangSakList = Flowable.fromIterable(tilgangSakList)
-				.flatMap(tilgangSak ->
-						Flowable.just(tilgangSak)
-								.observeOn(Schedulers.io())
-								.filter(ts -> pep2.hasAccess(ts, safRequestContext))
-								.filter(ts -> pep3.hasAccess(ts, safRequestContext))
-				).toList()
-				.blockingGet();
+		List<TilgangSak> filteredTilgangSakList = tilgangSakFlow
+				.parallel(10)
+				.runOn(Schedulers.io())
+				.filter(ts -> pep2.hasAccess(ts, safRequestContext))
+				.filter(ts -> pep3.hasAccess(ts, safRequestContext))
+				.sequential()
+				.toList().blockingGet();
 
 		final List<TilgangJournalpost> tilgangJournalpostList = tilgangsmodellRepository.findTilgangJournalposter(
 				Collections.singletonList(tilgangBruker),
@@ -90,11 +90,11 @@ class DokumentoversiktBrukerCoordinatorImpl implements DokumentoversiktBrukerCoo
 		);
 
 		final List<TilgangJournalpost> filteredTilgangJournalpostList = Flowable.fromIterable(tilgangJournalpostList)
-				.flatMap(tilgangJournalpost ->
-						Flowable.just(tilgangJournalpost)
-								.observeOn(Schedulers.io())
-								.filter(tj -> pep4.hasAccess(tj, safRequestContext))
-				).toList()
+				.parallel(10)
+				.runOn(Schedulers.io())
+				.filter(tj -> pep4.hasAccess(tj, safRequestContext))
+				.sequential()
+				.toList()
 				.blockingGet();
 
 		List<Journalpost> visningJournalposter = visningsmodellRepository.findJournalposter(filteredTilgangJournalpostList.stream()
@@ -106,15 +106,5 @@ class DokumentoversiktBrukerCoordinatorImpl implements DokumentoversiktBrukerCoo
 				.journalposter(visningJournalposter)
 				.sideInfo(sideInfoMapper.mapSideInfo(visningJournalposter, safRequestContext))
 				.build();
-	}
-
-	private TilgangBruker getTilgangBruker(BrukerIdInput brukerIdInput) {
-		if (brukerIdInput.isPersonBruker()) {
-			return tilgangsmodellRepository.findTilgangBruker(brukerIdInput);
-		} else {
-			return TilgangBruker.builder()
-					.orgnummer(brukerIdInput.getId())
-					.build();
-		}
 	}
 }

@@ -94,6 +94,9 @@ public class GsakConsumer {
 			headers.set("X-Correlation-ID", UUID.randomUUID().toString());
 			ResponseEntity<List<GsakSakerTo>> response = restTemplate.exchange(uri, HttpMethod.GET, new HttpEntity<>(headers), new ParameterizedTypeReference<List<GsakSakerTo>>() {
 			});
+			if (log.isDebugEnabled()) {
+				log.debug("Hentet ferdig gsaker uri={}", uri);
+			}
 			return response.getBody();
 		} catch (HttpServerErrorException e) {
 			throw new SafTechnicalException(String.format("getGsaksaker feilet teknisk med statusKode=%s. Feilmelding=%s", e

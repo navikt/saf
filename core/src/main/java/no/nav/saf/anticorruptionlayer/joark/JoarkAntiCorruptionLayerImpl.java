@@ -55,12 +55,12 @@ class JoarkAntiCorruptionLayerImpl implements JoarkAntiCorruptionLayer {
 
 	@Override
 	public List<JournalpostDto> finnJournalposter(List<String> alleIdenter,
-													List<TilgangSak> tilgangSakList,
-													LocalDate fraDato,
-													List<Tema> inkluderTema,
-													List<Journalposttype> inkluderJournalposttyper,
-													List<Journalstatus> inkluderJournalstatuses,
-													Integer foerste, String etterPeker, Integer siste, String foerPeker) {
+												  List<TilgangSak> tilgangSakList,
+												  LocalDate fraDato,
+												  List<Tema> inkluderTema,
+												  List<Journalposttype> inkluderJournalposttyper,
+												  List<Journalstatus> inkluderJournalstatuses,
+												  Integer foerste, String etterPeker, Integer siste, String foerPeker) {
 		FinnJournalposterResponseTo responseTo = hentJournalsakinfo.finnJournalposter(FinnJournalposterRequestTo.builder()
 				.alleIdenter(alleIdenter)
 				.inkluderJournalpostType(inkluderJournalposttyper.stream()

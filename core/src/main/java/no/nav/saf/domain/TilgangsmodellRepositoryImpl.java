@@ -3,7 +3,7 @@ package no.nav.saf.domain;
 import static no.nav.saf.domain.DomainConstants.AKTOER_ID_LIST;
 import static no.nav.saf.domain.DomainConstants.ORGNR_LIST;
 
-import io.reactivex.Observable;
+import io.reactivex.Flowable;
 import io.reactivex.schedulers.Schedulers;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.anticorruptionlayer.aktoer.AktoerAntiCorruptionLayer;
@@ -30,6 +30,7 @@ import javax.inject.Inject;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
@@ -71,6 +72,10 @@ public class TilgangsmodellRepositoryImpl implements TilgangsmodellRepository {
 					return aktoerAntiCorruptionLayer.hentTilgangBrukerByAktoerId(brukerIdInput.getId());
 				case FNR:
 					return aktoerAntiCorruptionLayer.hentTilgangBrukerByFoedselsnummer(brukerIdInput.getId());
+				case ORGNR:
+					return TilgangBruker.builder()
+							.orgnummer(brukerIdInput.getId())
+							.build();
 				default:
 					return null;
 			}
@@ -125,35 +130,37 @@ public class TilgangsmodellRepositoryImpl implements TilgangsmodellRepository {
 
 	@Override
 	@Cacheable(cacheNames = LokalCacheConfig.TILGANGSMODELL_REPO_SAK_CACHE, key = "#tilgangBruker.aktoerId + '_' + #tilgangBruker.orgnummer + '_' + #tema")
-	public List<TilgangSak> findTilgangSaker(final TilgangBruker tilgangBruker, final List<Tema> tema, final SafRequestContext safRequestContext) {
+	public Flowable<TilgangSak> findTilgangSaker(final TilgangBruker tilgangBruker, final List<Tema> tema, final SafRequestContext safRequestContext) {
 		try {
-			Observable<List<Arkivsak>> gsakerFromOrgnr = Observable.fromCallable(() ->
+			Flowable<List<Arkivsak>> gsakerFromOrgnr = Flowable.fromCallable(() ->
 					gsakAntiCorruptionLayer.findArkivsakerByOrgnr(tilgangBruker.getOrgnummer(), tema))
 					.subscribeOn(Schedulers.io());
-			Observable<List<Arkivsak>> gsakerFromAktoerId = Observable.fromCallable(() ->
+			Flowable<List<Arkivsak>> gsakerFromAktoerId = Flowable.fromCallable(() ->
 					gsakAntiCorruptionLayer.findArkivsakerByAktoerId(tilgangBruker.getAktoerId(), tema))
 					.subscribeOn(Schedulers.io());
-			Observable<List<Arkivsak>> psaker = Observable.fromCallable(() -> {
+			Flowable<List<Arkivsak>> psaker = Flowable.fromCallable(() -> {
 				if (!Collections.disjoint(tema, PENSJON)) {
 					return pensjonSakAntiCorruptionLayer.findArkivsaker(tilgangBruker.getFoedselsnr(), tema);
 				} else {
 					return new ArrayList<Arkivsak>();
 				}
 			}).subscribeOn(Schedulers.io());
-			List<Arkivsak> arkivsaker = Observable.concat(gsakerFromOrgnr, gsakerFromAktoerId, psaker)
+			return Flowable.merge(Arrays.asList(gsakerFromOrgnr, gsakerFromAktoerId, psaker), 3)
 					.flatMapIterable(items -> items)
-					.toList().blockingGet();
-			return arkivsaker.stream().map(arkivsak -> {
+					.map(arkivsak -> {
 						safRequestContext.getRequestCache().putObject(arkivsak.getKey(), arkivsak);
 						return TilgangSak.builder()
+								.aktoerId(arkivsak.getAktoerId())
+								.orgnummer(arkivsak.getOrgnummer())
+								.fagsaksnummer(arkivsak.getFagsaksnummer())
+								.fagsaksystem(arkivsak.getFagsaksystem())
 								.arkivsaksnummer(arkivsak.getArkivsaksnummer())
 								.arkivsaksystem(arkivsak.getArkivsaksystem().name())
 								.tema(arkivsak.getTema().name())
 								.build();
-					}
-			).collect(Collectors.toList());
+					});
 		} catch (Exception e) {
-			return new ArrayList<>();
+			return Flowable.empty();
 		}
 	}
 
