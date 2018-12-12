@@ -8,8 +8,8 @@ import no.nav.saf.anticorruptionlayer.joark.domain.SafToJoarkJournalstatusMapper
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.FagomradeCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.JournalpostTypeCode;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.HentJournalsakinfo;
-import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.HentJournalpostBulkRequestTo;
-import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.HentJournalpostBulkResponseTo;
+import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.FinnJournalposterRequestTo;
+import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.FinnJournalposterResponseTo;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.JournalpostDto;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark901.HentTilgangJournalpostResponseTo;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark901.TilgangBrukerDto;
@@ -44,8 +44,6 @@ import java.util.stream.Collectors;
 @Component
 @Slf4j
 class JoarkAntiCorruptionLayerImpl implements JoarkAntiCorruptionLayer {
-	// Joark bruker in query og max antall elementer er 1000 i Oracle.
-	private static final int SAK_MAX_SIZE = 1000;
 	private final HentJournalsakinfo hentJournalsakinfo;
 	private final SafToJoarkJournalstatusMapper safToJoarkJournalstatusMapper;
 
@@ -56,14 +54,14 @@ class JoarkAntiCorruptionLayerImpl implements JoarkAntiCorruptionLayer {
 	}
 
 	@Override
-	public List<JournalpostDto> hentJournalpostBulk(List<String> alleIdenter,
+	public List<JournalpostDto> finnJournalposter(List<String> alleIdenter,
 													List<TilgangSak> tilgangSakList,
 													LocalDate fraDato,
 													List<Tema> inkluderTema,
 													List<Journalposttype> inkluderJournalposttyper,
 													List<Journalstatus> inkluderJournalstatuses,
 													Integer foerste, String etterPeker, Integer siste, String foerPeker) {
-		HentJournalpostBulkResponseTo responseTo = hentJournalsakinfo.hentJournalpostBulk(HentJournalpostBulkRequestTo.builder()
+		FinnJournalposterResponseTo responseTo = hentJournalsakinfo.finnJournalposter(FinnJournalposterRequestTo.builder()
 				.alleIdenter(alleIdenter)
 				.inkluderJournalpostType(inkluderJournalposttyper.stream()
 						.map(jt -> JournalpostTypeCode.valueOf(jt.name()))
@@ -74,10 +72,10 @@ class JoarkAntiCorruptionLayerImpl implements JoarkAntiCorruptionLayer {
 				.fraDato(fraDato.toString())
 				.gsakSakIds(tilgangSakList.stream()
 						.filter(tilgangSak -> Arkivsakssystem.GSAK.name().equals(tilgangSak.getArkivsaksystem()))
-						.map(TilgangSak::getArkivsaksnummer).limit(SAK_MAX_SIZE).collect(Collectors.toList()))
+						.map(TilgangSak::getArkivsaksnummer).collect(Collectors.toList()))
 				.psakSakIds(tilgangSakList.stream()
 						.filter(tilgangSak -> Arkivsakssystem.PSAK.name().equals(tilgangSak.getArkivsaksystem()))
-						.map(TilgangSak::getArkivsaksnummer).limit(SAK_MAX_SIZE).collect(Collectors.toList()))
+						.map(TilgangSak::getArkivsaksnummer).collect(Collectors.toList()))
 				.foerste(foerste)
 				.etterPeker(etterPeker)
 				.siste(siste)

@@ -7,8 +7,9 @@ import lombok.Value;
  */
 @Value
 public class SideInfo {
-	private static final SideInfo EMPTY_SIDE_INFO = new SideInfo(null, false, null, false);
+	private static final SideInfo EMPTY_SIDE_INFO = new SideInfo(0,null, false, null, false);
 
+	private final int totaltAntall;
 	private final String sluttpeker;
 	private final boolean finnesNesteSide;
 	private final String startpeker;

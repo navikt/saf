@@ -88,7 +88,7 @@ public class DokumentoversiktWiring {
 	// TODO refaktor DokumentoversiktBrukerArguments og DokumentoversiktFagsakArguments
 	private DokumentoversiktBrukerArguments mapDokumentoversiktBrukerArguments(DataFetchingEnvironment environment) {
 		Map<String, Object> brukerId = environment.getArgument("brukerId");
-		BrukerIdInput brukerIdInput = new BrukerIdInput((String) brukerId.get("id"), BrukerIdType.valueOf((String) brukerId.get("idType")));
+		BrukerIdInput brukerIdInput = new BrukerIdInput((String) brukerId.get("id"), BrukerIdType.valueOf((String) brukerId.get("type")));
 		logDokumentoversiktBrukerQueryInit(brukerIdInput);
 		LocalDate fraDato = environment.getArgument("fraDato");
 		List<Tema> tema = environment.getArgument("tema");
@@ -110,7 +110,7 @@ public class DokumentoversiktWiring {
 	// TODO refaktor DokumentoversiktBrukerArguments og DokumentoversiktFagsakArguments
 	private DokumentoversiktFagsakArguments mapDokumentoversiktFagsakArguments(DataFetchingEnvironment environment) {
 		Map<String, Object> fagsakId = environment.getArgument("fagsakId");
-		FagsakIdInput fagsakIdInput = new FagsakIdInput((String) fagsakId.get("id"), (String) fagsakId.get("idSystem"));
+		FagsakIdInput fagsakIdInput = new FagsakIdInput((String) fagsakId.get("fagsaksnummer"), (String) fagsakId.get("fagsaksystem"));
 		log.info("dokumentoversiktFagsak hentes for fagsakId={}", fagsakIdInput);
 		LocalDate fraDato = environment.getArgument("fraDato");
 		List<Tema> tema = environment.getArgument("tema");
@@ -130,7 +130,7 @@ public class DokumentoversiktWiring {
 	}
 
 	private void logDokumentoversiktBrukerQueryInit(BrukerIdInput brukerIdInput) {
-		switch (brukerIdInput.getIdType()) {
+		switch (brukerIdInput.getType()) {
 			case AKTOERID:
 				log.info("dokumentoversiktBruker hentes for bruker med aktoerId={}", brukerIdInput.getId());
 				break;
@@ -144,7 +144,7 @@ public class DokumentoversiktWiring {
 	}
 
 	private void logDokumentoversiktBrukerQueryDone(int numJournalposter, BrukerIdInput brukerIdInput) {
-		switch (brukerIdInput.getIdType()) {
+		switch (brukerIdInput.getType()) {
 			case AKTOERID:
 				log.info("dokumentoversiktBruker returnerer {} journalposter for bruker med aktoerId={}", numJournalposter, brukerIdInput
 						.getId());

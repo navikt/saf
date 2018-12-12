@@ -72,7 +72,7 @@ public class JournalpostDtoMapper {
 	}
 
 	private Bruker mapBruker(RequestCache requestCache) {
-		TilgangBruker tilgangBruker = requestCache.getObject("tilgangBruker");
+		TilgangBruker tilgangBruker = requestCache.getObject("nøkkel");
 		if (tilgangBruker == null) {
 			return null;
 		}

@@ -15,7 +15,7 @@ input BrukerIdInput {
     id: String!
 
     # TODO
-    idType: BrukerIdType!
+    type: BrukerIdType!
 }
 
 # TODO
@@ -33,10 +33,10 @@ enum BrukerIdType {
 # TODO
 input FagsakIdInput {
     # TODO
-    id: String!
+    fagsaksnummer: String!
 
     # TODO
-    idSystem: String!
+    fagsaksystem: String!
 }
 
 # Query roten til SAF GraphQL API.
@@ -121,6 +121,9 @@ type Dokumentoversikt {
 
 # Informasjon om paginering
 type SideInfo {
+    # Totalt antall resultater for paginering.
+    totaltAntall: Int
+
     # Når man paginerer forover, pekeren for å fortsette.
     sluttpeker: String
 

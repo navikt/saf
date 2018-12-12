@@ -8,5 +8,5 @@ import lombok.Value;
 @Value
 public class BrukerIdInput {
 	private String id;
-	private BrukerIdType idType;
+	private BrukerIdType type;
 }

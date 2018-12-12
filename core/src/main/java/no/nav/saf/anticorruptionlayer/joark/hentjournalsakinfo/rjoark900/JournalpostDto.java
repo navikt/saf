@@ -20,6 +20,7 @@ public class JournalpostDto {
 	private Long journalpostId;
 	private Long prevJournalpostId;
 	private Long nextJournalpostId;
+	private Long totaltAntall;
 	private String journalForendeEnhetId;
 	private String innhold;
 	private FagomradeCode fagomrade;
