@@ -1,5 +1,6 @@
 package no.nav.saf.tilgangskontroll.pep;
 
+import static no.nav.abac.saf.xacml.SafAttributter.RESOURCE_SAF_JOURNALPOST;
 import static no.nav.abac.saf.xacml.SafAttributter.RESOURCE_SAF_TEMA;
 import static no.nav.saf.domain.DomainConstants.SAF;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -12,6 +13,7 @@ import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlRequest;
 import no.nav.saf.tilgangskontroll.abac.dto.response.Decision;
 import no.nav.saf.tilgangskontroll.abac.dto.response.XacmlResponse;
+import no.nav.saf.tjeneste.visningsmodell.kode.Tema;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
@@ -52,6 +54,29 @@ public class Pep2EvaluatorTest extends AbstractPepTest {
 		assertEquals(RESOURCE_SAF_TEMA, capturedRequest.getResources().get(1).getValue().toString());
 		assertEquals(TEST_TEMA, capturedRequest.getResources().get(2).getValue().toString());
 
+	}
+
+	@Test
+	public void pep2FarHappyPath() {
+
+		when(abacService.evaluate(any(XacmlRequest.class))).thenReturn(new XacmlResponse(Decision.PERMIT, null, null, null));
+		ArgumentCaptor<XacmlRequest> request = ArgumentCaptor.forClass(XacmlRequest.class);
+
+		boolean hasAccess = pep2.hasAccess(TilgangSak.builder()
+				.tema(Tema.FAR.name())
+				.build(), new SafRequestContext(OIDC_TOKEN_PERSON_USER_TEST));
+
+		verify(abacService).evaluate(request.capture());
+		XacmlRequest capturedRequest = request.getValue();
+
+		assertEquals(Boolean.TRUE, hasAccess);
+
+		assertEquals(new SafRequestContext(OIDC_TOKEN_PERSON_USER_TEST).getSecurityContext().getOidcTokenBody(), capturedRequest.getEnvironments().get(0).getValue().toString());
+		assertEquals(SAF, capturedRequest.getEnvironments().get(1).getValue().toString());
+
+		assertEquals(SAF, capturedRequest.getResources().get(0).getValue().toString());
+		assertEquals(Tema.FAR.name(), capturedRequest.getResources().get(1).getValue().toString());
+		assertEquals(RESOURCE_SAF_JOURNALPOST, capturedRequest.getResources().get(2).getValue().toString());
 	}
 
 	@Test

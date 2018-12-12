@@ -4,7 +4,7 @@ import static no.nav.abac.common.xacml.CommonAttributter.ENVIRONMENT_FELLES_OIDC
 import static no.nav.abac.common.xacml.CommonAttributter.ENVIRONMENT_FELLES_PEP_ID;
 import static no.nav.abac.common.xacml.CommonAttributter.RESOURCE_FELLES_DOMENE;
 import static no.nav.abac.common.xacml.CommonAttributter.RESOURCE_FELLES_RESOURCE_TYPE;
-import static no.nav.abac.common.xacml.CommonAttributter.RESOURCE_FELLES_TEMA;
+import static no.nav.abac.saf.xacml.SafAttributter.RESOURCE_SAF_JOURNALPOST;
 import static no.nav.abac.saf.xacml.SafAttributter.RESOURCE_SAF_TEMA;
 import static no.nav.saf.domain.DomainConstants.SAF;
 
@@ -15,6 +15,7 @@ import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlRequest;
 import no.nav.saf.tilgangskontroll.abac.dto.response.Decision;
 import no.nav.saf.tilgangskontroll.abac.dto.response.XacmlResponse;
 import no.nav.saf.tilgangskontroll.abac.service.AbacService;
+import no.nav.saf.tjeneste.visningsmodell.kode.Tema;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
@@ -40,27 +41,26 @@ public class Pep2Impl implements Pep<TilgangSak> {
 			return false;
 		}
 
-//		Vi må implementere ferdig Pep2 tematilgang.
-//		Input er en liste av TilgangSak.
-
 		XacmlRequest request = new XacmlRequest();
 
 		request.environment(ENVIRONMENT_FELLES_OIDC_TOKEN_BODY, safRequestContext.getSecurityContext().getOidcTokenBody());
 		request.environment(ENVIRONMENT_FELLES_PEP_ID, SAF);
 		request.resource(RESOURCE_FELLES_DOMENE, SAF);
-		request.resource(RESOURCE_FELLES_RESOURCE_TYPE, RESOURCE_SAF_TEMA);
 
 		if (ressurs.getTema() != null) {
-			request.resource(RESOURCE_FELLES_TEMA, ressurs.getTema());
+
+			if (ressurs.getTema().equals(Tema.FAR.name())) {
+				request.resource(RESOURCE_SAF_TEMA, Tema.FAR.name());
+				request.resource(RESOURCE_FELLES_RESOURCE_TYPE, RESOURCE_SAF_JOURNALPOST);
+			} else {
+				request.resource(RESOURCE_FELLES_RESOURCE_TYPE, RESOURCE_SAF_TEMA);
+			}
 		} else {
-			// log error? todo diskuter tilfellet med blankt tema.
+			// todo Hvordan behandle blankt tema?
 			return false;
 		}
 
-		//todo For øyeblikket skal return true brukes uansett, til aksys har sitt på plass.
 		XacmlResponse response = abacService.evaluate(request);
 		return Decision.PERMIT.equals(response.getDecision());
-
-//		return true;
 	}
 }
