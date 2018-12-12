@@ -18,13 +18,13 @@ import java.util.List;
  */
 public interface JoarkAntiCorruptionLayer {
 
-	List<JournalpostDto> hentJournalpostBulk(List<String> identer,
-											 List<TilgangSak> tilgangSakList,
-											 LocalDate fraDato,
-											 List<Tema> inkluderTema,
-											 List<Journalposttype> inkluderJournalposttyper,
-											 List<Journalstatus> inkluderJournalstatuses,
-											 Integer foerste, String etterPeker, Integer siste, String foerPeker);
+	List<JournalpostDto> finnJournalposter(List<String> identer,
+										   List<TilgangSak> tilgangSakList,
+										   LocalDate fraDato,
+										   List<Tema> inkluderTema,
+										   List<Journalposttype> inkluderJournalposttyper,
+										   List<Journalstatus> inkluderJournalstatuses,
+										   Integer foerste, String etterPeker, Integer siste, String foerPeker);
 
 	TilgangJournalpost hentTilgangJournalpost(String journalpostId, String dokumentId, String variantFormat);
 

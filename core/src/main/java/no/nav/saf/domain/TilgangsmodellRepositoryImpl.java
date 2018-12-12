@@ -44,6 +44,7 @@ import java.util.stream.Stream;
 @Slf4j
 public class TilgangsmodellRepositoryImpl implements TilgangsmodellRepository {
 	public static final EnumSet<Tema> PENSJON = EnumSet.of(Tema.PEN, Tema.UFO);
+	public static final int MAX_ARKIVSAKER_LOGG = 1000;
 
 	private final AktoerAntiCorruptionLayer aktoerAntiCorruptionLayer;
 	private final GsakAntiCorruptionLayer gsakAntiCorruptionLayer;
@@ -65,7 +66,7 @@ public class TilgangsmodellRepositoryImpl implements TilgangsmodellRepository {
 	@Cacheable(cacheNames = LokalCacheConfig.TILGANGSMODELL_REPO_BRUKER_CACHE)
 	public TilgangBruker findTilgangBruker(BrukerIdInput brukerIdInput) {
 		try {
-			switch (brukerIdInput.getIdType()) {
+			switch (brukerIdInput.getType()) {
 				case AKTOERID:
 					return aktoerAntiCorruptionLayer.hentTilgangBrukerByAktoerId(brukerIdInput.getId());
 				case FNR:
@@ -74,7 +75,7 @@ public class TilgangsmodellRepositoryImpl implements TilgangsmodellRepository {
 					return null;
 			}
 		} catch (Exception e) {
-			log.warn("findTilgangBruker feilet ved oppslag av id. Brukertype={}", brukerIdInput.getIdType(), e);
+			log.warn("findTilgangBruker feilet ved oppslag av id. Brukertype={}", brukerIdInput.getType(), e);
 		}
 		return null;
 	}
@@ -83,8 +84,8 @@ public class TilgangsmodellRepositoryImpl implements TilgangsmodellRepository {
 	@Cacheable(cacheNames = LokalCacheConfig.TILGANGSMODELL_REPO_BRUKER_CACHE)
 	public List<TilgangBruker> findTilgangBrukerList(FagsakIdInput fagsakIdInput) {
 		try {
-			Map<String, List<String>> idLists = gsakAntiCorruptionLayer.findIdListsByFagsakIdAndFagsaksystem(fagsakIdInput.getId(), fagsakIdInput
-					.getIdSystem());
+			Map<String, List<String>> idLists = gsakAntiCorruptionLayer.findIdListsByFagsakIdAndFagsaksystem(fagsakIdInput.getFagsaksnummer(), fagsakIdInput
+					.getFagsaksystem());
 			if (idLists.isEmpty()) {
 				return new ArrayList<>();
 			}
@@ -105,8 +106,7 @@ public class TilgangsmodellRepositoryImpl implements TilgangsmodellRepository {
 	@Cacheable(cacheNames = LokalCacheConfig.TILGANGSMODELL_REPO_SAK_CACHE)
 	public List<TilgangSak> findTilgangSaker(final FagsakIdInput fagsakIdInput, final List<Tema> tema, final SafRequestContext safRequestContext) {
 		try {
-			List<Arkivsak> arkivsaker = gsakAntiCorruptionLayer.findTilgangSakListByFagsakIdAndFagsaksystem(fagsakIdInput.getId(), fagsakIdInput
-					.getIdSystem(), tema);
+			List<Arkivsak> arkivsaker = gsakAntiCorruptionLayer.findTilgangSakListByFagsakIdAndFagsaksystem(fagsakIdInput.getFagsaksnummer(), fagsakIdInput.getFagsaksystem(), tema);
 			return arkivsaker.stream().map(arkivsak -> {
 				safRequestContext.getRequestCache().putObject(arkivsak.getKey(), arkivsak);
 				return TilgangSak.builder()
@@ -166,21 +166,23 @@ public class TilgangsmodellRepositoryImpl implements TilgangsmodellRepository {
 															 Integer foerste, String etterPeker, Integer siste, String foerPeker,
 															 SafRequestContext safRequestContext) {
 		try {
-			List<String> identer = tilgangBrukere.stream()
-					.flatMap(t -> t.getAlleIdenter().stream())
-					.collect(Collectors.toList());
-			List<JournalpostDto> journalposter = joarkAntiCorruptionLayer.hentJournalpostBulk(identer,
+			List<String> identer = tilgangBrukere.stream().flatMap(t -> t.getAlleIdenter().stream()).collect(Collectors.toList());
+			List<JournalpostDto> journalposter = joarkAntiCorruptionLayer.finnJournalposter(identer,
 					tilgangSakList, fraDato, inkluderTema, inkluderJournalposttyper, inkluderJournalstatuses, foerste, etterPeker, siste, foerPeker);
 			return journalposter.stream()
 					.map(journalpostDto -> {
-						safRequestContext.getRequestCache()
-								.putObject(journalpostDto.getJournalpostId().toString(), journalpostDto);
+						safRequestContext.getRequestCache().putObject(journalpostDto.getJournalpostId().toString(), journalpostDto);
 						return mapTilgangJournalpost(journalpostDto);
 					})
 					.collect(Collectors.toList());
 		} catch (Exception e) {
-			log.warn("HentTilgangJournalpostListByArkivsaker feilet ved oppslag av arkivsaker={}.",
-					tilgangSakList.stream().map(TilgangSak::getArkivsaksnummer).collect(Collectors.toList()), e);
+			if (tilgangSakList.size() < MAX_ARKIVSAKER_LOGG) {
+				List<String> arkivsaksId = tilgangSakList.stream().map(TilgangSak::getArkivsaksnummer).collect(Collectors.toList());
+				log.warn("finnJournalposter feilet ved henting av journalposter på arkivsaker={}.",
+						arkivsaksId, e);
+			} else {
+				log.warn("finnJournalposter feilet ved henting av journalposter på arkivsaker. Det var flere enn 1000 arkivsaker. Disse logges ikke da så lange logglinjer ikke støttes i logstash.", e);
+			}
 			return new ArrayList<>();
 		}
 	}
