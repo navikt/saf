@@ -177,6 +177,9 @@ type Journalpost {
     kanalnavn: String
 
     # TODO
+    datoOpprettet: DateTime!
+
+    # TODO
     relevanteDatoer: [RelevantDato]
 
     # TODO
@@ -186,10 +189,10 @@ type Journalpost {
 # TODO
 type RelevantDato {
     # TODO
-    dato: DateTime
+    dato: DateTime!
 
     # TODO
-    datotype: Datotype
+    datotype: Datotype!
 }
 
 # TODO
@@ -213,10 +216,10 @@ type Sak {
 # Person eller organisasjon som har et forhold til NAV, f.eks. som mottaker av tjenester eller ytelser.
 type Bruker {
     # TODO
-    brukertype: Brukertype
+    id: String!
 
     # TODO
-    identifikator: String
+    type: BrukerIdType!
 }
 
 # TODO

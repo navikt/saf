@@ -1,6 +1,7 @@
 package no.nav.saf.anticorruptionlayer.joark.domain;
 
 import static no.nav.saf.domain.DomainConstants.TILGANG_BRUKER;
+import static no.nav.saf.tjeneste.visningsmodell.RelevantDato.INVALID_DATE;
 
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.FagomradeCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.FagsystemCode;
@@ -9,6 +10,7 @@ import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.Saksrel
 import no.nav.saf.domain.Arkivsak;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.tilgangskontroll.RequestCache;
+import no.nav.saf.tjeneste.argumenter.BrukerIdType;
 import no.nav.saf.tjeneste.visningsmodell.Bruker;
 import no.nav.saf.tjeneste.visningsmodell.DokumentInfo;
 import no.nav.saf.tjeneste.visningsmodell.Dokumentvariant;
@@ -17,7 +19,6 @@ import no.nav.saf.tjeneste.visningsmodell.LogiskVedlegg;
 import no.nav.saf.tjeneste.visningsmodell.RelevantDato;
 import no.nav.saf.tjeneste.visningsmodell.Sak;
 import no.nav.saf.tjeneste.visningsmodell.kode.Arkivsakssystem;
-import no.nav.saf.tjeneste.visningsmodell.kode.Brukertype;
 import no.nav.saf.tjeneste.visningsmodell.kode.Datotype;
 import no.nav.saf.tjeneste.visningsmodell.kode.Journalposttype;
 import no.nav.saf.tjeneste.visningsmodell.kode.Journalstatus;
@@ -25,6 +26,8 @@ import no.nav.saf.tjeneste.visningsmodell.kode.Kanal;
 import no.nav.saf.tjeneste.visningsmodell.kode.Variantformat;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -37,6 +40,7 @@ import java.util.stream.Collectors;
  */
 @Component
 public class JournalpostDtoMapper {
+
 	public Journalpost mapJournalpostDto(final JournalpostDto journalpostDto, final RequestCache requestCache) {
 		if (journalpostDto == null) {
 			return null;
@@ -56,6 +60,7 @@ public class JournalpostDtoMapper {
 				.journalfortAvNavn(journalpostDto.getJournalfortAvNavn())
 				.kanal(kanal)
 				.kanalnavn(kanal == null ? null : kanal.getKanalnavn())
+				.datoOpprettet(journalpostDto.getDatoOpprettet() == null ? INVALID_DATE : LocalDateTime.from(journalpostDto.getDatoOpprettet().toInstant().atZone(ZoneId.systemDefault())))
 				.relevanteDatoer(mapRelevanteDatoer(journalpostDto))
 				.dokumenter(journalpostDto.getDokumenter().stream()
 						.map(dokumentInfoDto -> DokumentInfo.builder()
@@ -127,18 +132,19 @@ public class JournalpostDtoMapper {
 				if (journalpostDto.getMottattDato() != null) {
 					relevanteDatoer.add(new RelevantDato(journalpostDto.getMottattDato(), Datotype.DATO_MOTTATT));
 				}
-				// fall gjennom
+				break;
 			case U:
 				if (journalpostDto.getSendtPrintDato() != null) {
-					relevanteDatoer.add(new RelevantDato(journalpostDto.getEkspedertDato(), Datotype.DATO_SENDT_PRINT));
+					relevanteDatoer.add(new RelevantDato(journalpostDto.getSendtPrintDato(), Datotype.DATO_SENDT_PRINT));
 				}
 				if (journalpostDto.getEkspedertDato() != null) {
 					relevanteDatoer.add(new RelevantDato(journalpostDto.getEkspedertDato(), Datotype.DATO_EKSPEDERT));
 				}
-				// fall gjennom
+				break;
 			default:
 				return relevanteDatoer;
 		}
+		return relevanteDatoer;
 	}
 
 	private Kanal mapKanal(JournalpostDto journalpostDto) {
@@ -189,9 +195,9 @@ public class JournalpostDtoMapper {
 			return null;
 		}
 		if (arkivsak.isBrukerPerson()) {
-			return new Bruker(Brukertype.PERSON, arkivsak.getAktoerId());
+			return new Bruker(arkivsak.getAktoerId(), BrukerIdType.AKTOERID);
 		} else {
-			return new Bruker(Brukertype.ORGANISASJON, arkivsak.getOrgnummer());
+			return new Bruker(arkivsak.getOrgnummer(), BrukerIdType.ORGNR);
 		}
 	}
 
@@ -202,9 +208,9 @@ public class JournalpostDtoMapper {
 			return null;
 		}
 		if (tilgangBruker.isBrukerPerson()) {
-			return new Bruker(Brukertype.PERSON, tilgangBruker.getAktoerId());
+			return new Bruker(tilgangBruker.getAktoerId(), BrukerIdType.AKTOERID);
 		} else {
-			return new Bruker(Brukertype.ORGANISASJON, tilgangBruker.getOrgnummer());
+			return new Bruker(tilgangBruker.getOrgnummer(), BrukerIdType.ORGNR);
 		}
 	}
 }

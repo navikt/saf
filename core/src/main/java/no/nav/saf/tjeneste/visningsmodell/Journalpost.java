@@ -7,6 +7,7 @@ import no.nav.saf.tjeneste.visningsmodell.kode.Journalstatus;
 import no.nav.saf.tjeneste.visningsmodell.kode.Kanal;
 import no.nav.saf.tjeneste.visningsmodell.kode.Tema;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,6 +29,7 @@ public class Journalpost {
 	private final String journalfortAvNavn;
 	private final Kanal kanal;
 	private final String kanalnavn;
+	private final LocalDateTime datoOpprettet;
 	@Builder.Default
 	private final List<RelevantDato> relevanteDatoer = new ArrayList<>();
 	@Builder.Default

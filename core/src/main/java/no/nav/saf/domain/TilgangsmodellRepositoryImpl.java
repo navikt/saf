@@ -75,7 +75,7 @@ public class TilgangsmodellRepositoryImpl implements TilgangsmodellRepository {
 					return null;
 			}
 		} catch (Exception e) {
-			log.warn("findTilgangBruker feilet ved oppslag av id. Brukertype={}", brukerIdInput.getType(), e);
+			log.warn("findTilgangBruker feilet ved oppslag av id. type={}", brukerIdInput.getType(), e);
 		}
 		return null;
 	}
