@@ -83,14 +83,14 @@ public class TilgangsmodellRepositoryImpl implements TilgangsmodellRepository {
 	@Cacheable(cacheNames = LokalCacheConfig.TILGANGSMODELL_REPO_BRUKER_CACHE)
 	public List<TilgangBruker> findTilgangBrukerList(FagsakIdInput fagsakIdInput) {
 		try {
-			Map<String, List<String>> IdLists = gsakAntiCorruptionLayer.findIdListsByFagsakIdAndFagsaksystem(fagsakIdInput.getId(), fagsakIdInput
+			Map<String, List<String>> idLists = gsakAntiCorruptionLayer.findIdListsByFagsakIdAndFagsaksystem(fagsakIdInput.getId(), fagsakIdInput
 					.getIdSystem());
-			if (IdLists.isEmpty()) {
+			if (idLists.isEmpty()) {
 				return new ArrayList<>();
 			}
 
-			List<TilgangBruker> tilgangBrukerPerson = aktoerAntiCorruptionLayer.hentTilgangBrukerListByAktoerIdList(IdLists.get(AKTOER_ID_LIST));
-			List<TilgangBruker> tilgangbrukerOrganisasjon = IdLists.get(ORGNR_LIST).stream()
+			List<TilgangBruker> tilgangBrukerPerson = aktoerAntiCorruptionLayer.hentTilgangBrukerListByAktoerIdList(idLists.get(AKTOER_ID_LIST));
+			List<TilgangBruker> tilgangbrukerOrganisasjon = idLists.get(ORGNR_LIST).stream()
 					.map(orgnr -> TilgangBruker.builder().orgnummer(orgnr).build())
 					.collect(Collectors.toList());
 
