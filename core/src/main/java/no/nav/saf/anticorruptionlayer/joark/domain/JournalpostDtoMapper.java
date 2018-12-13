@@ -47,7 +47,7 @@ public class JournalpostDtoMapper {
 		}
 		final Kanal kanal = mapKanal(journalpostDto);
 		final String journalpostId = journalpostDto.getJournalpostId().toString();
-		return Journalpost.builder()
+		Journalpost journalpost = Journalpost.builder()
 				.journalpostId(journalpostId)
 				.tittel(journalpostDto.getInnhold())
 				.journalposttype(Journalposttype.fromJoark(journalpostDto.getJournalposttype()))
@@ -62,20 +62,23 @@ public class JournalpostDtoMapper {
 				.kanalnavn(kanal == null ? null : kanal.getKanalnavn())
 				.datoOpprettet(journalpostDto.getDatoOpprettet() == null ? INVALID_DATE : LocalDateTime.from(journalpostDto.getDatoOpprettet().toInstant().atZone(ZoneId.systemDefault())))
 				.relevanteDatoer(mapRelevanteDatoer(journalpostDto))
-				.dokumenter(journalpostDto.getDokumenter().stream()
-						.map(dokumentInfoDto -> DokumentInfo.builder()
-								.dokumentId(dokumentInfoDto.getDokumentInfoId())
-								.tittel(dokumentInfoDto.getTittel())
-								.navSkjemaId(dokumentInfoDto.getBrevkode())
-								.saksbehandlerHarTilgang(true) //TODO
-								.dokumentvarianter(Collections.singletonList(Dokumentvariant.builder()
-										.variantformat(Variantformat.valueOf(dokumentInfoDto.getVariantFormat().name()))
-										.build()))
-								.logiskeVedlegg(dokumentInfoDto.getLogiske().stream()
-										.map(logiskVedleggDto -> new LogiskVedlegg(logiskVedleggDto.getTittel()))
-										.collect(Collectors.toList()))
-								.build()).collect(Collectors.toList()))
 				.build();
+		List<DokumentInfo> dokumenter = journalpostDto.getDokumenter().stream()
+				.map(dokumentInfoDto -> DokumentInfo.builder()
+						.parent(journalpost)
+						.dokumentId(dokumentInfoDto.getDokumentInfoId())
+						.tittel(dokumentInfoDto.getTittel())
+						.navSkjemaId(dokumentInfoDto.getBrevkode())
+						.saksbehandlerHarTilgang(true) //TODO
+						.dokumentvarianter(Collections.singletonList(Dokumentvariant.builder()
+								.variantformat(Variantformat.valueOf(dokumentInfoDto.getVariantFormat().name()))
+								.build()))
+						.logiskeVedlegg(dokumentInfoDto.getLogiske().stream()
+								.map(logiskVedleggDto -> new LogiskVedlegg(logiskVedleggDto.getTittel()))
+								.collect(Collectors.toList()))
+						.build()).collect(Collectors.toList());
+		journalpost.getDokumenter().addAll(dokumenter);
+		return journalpost;
 	}
 
 	private Bruker mapBruker(SaksrelasjonDto saksrelasjon, RequestCache requestCache) {
