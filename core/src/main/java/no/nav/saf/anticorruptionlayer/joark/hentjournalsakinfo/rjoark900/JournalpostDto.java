@@ -34,6 +34,8 @@ public class JournalpostDto {
 	private Date datoOpprettet;
 	private Date mottattDato;
 	private Date journalDato;
+	private Date dokumentDato;
+	private Date avsReturDato;
 	private Date sendtPrintDato;
 	private Date ekspedertDato;
 	private List<DokumentInfoDto> dokumenter;

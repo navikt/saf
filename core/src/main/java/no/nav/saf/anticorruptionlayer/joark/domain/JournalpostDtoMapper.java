@@ -121,16 +121,16 @@ public class JournalpostDtoMapper {
 
 	private List<RelevantDato> mapRelevanteDatoer(JournalpostDto journalpostDto) {
 		List<RelevantDato> relevanteDatoer = new ArrayList<>();
-		if (journalpostDto.getDatoOpprettet() != null) {
-			relevanteDatoer.add(new RelevantDato(journalpostDto.getDatoOpprettet(), Datotype.DATO_OPPRETTET));
-		}
-		if (journalpostDto.getMottattDato() != null) {
-			relevanteDatoer.add(new RelevantDato(journalpostDto.getMottattDato(), Datotype.DATO_JOURNALFOERT));
+		if (journalpostDto.getDokumentDato() != null) {
+			relevanteDatoer.add(new RelevantDato(journalpostDto.getDokumentDato(), Datotype.DATO_DOKUMENT));
 		}
 		switch (journalpostDto.getJournalposttype()) {
 			case I:
 				if (journalpostDto.getMottattDato() != null) {
 					relevanteDatoer.add(new RelevantDato(journalpostDto.getMottattDato(), Datotype.DATO_MOTTATT));
+				}
+				if (journalpostDto.getJournalDato() != null) {
+					relevanteDatoer.add(new RelevantDato(journalpostDto.getJournalDato(), Datotype.DATO_JOURNALFOERT));
 				}
 				break;
 			case U:
@@ -139,6 +139,9 @@ public class JournalpostDtoMapper {
 				}
 				if (journalpostDto.getEkspedertDato() != null) {
 					relevanteDatoer.add(new RelevantDato(journalpostDto.getEkspedertDato(), Datotype.DATO_EKSPEDERT));
+				}
+				if (journalpostDto.getAvsReturDato() != null) {
+					relevanteDatoer.add(new RelevantDato(journalpostDto.getAvsReturDato(), Datotype.DATO_AVS_RETUR));
 				}
 				break;
 			default:
