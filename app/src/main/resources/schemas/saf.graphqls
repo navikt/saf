@@ -55,12 +55,12 @@ type Query {
         # Velger journalpostene som har de spesifiserte journalposttypene.
         # **Standardverdi**: `I, U, N`
         # TODO legge til default støtte for enum verdier
-        journalposttyper: [Journalposttype] = []
+        journalposttyper: [Journalposttype] = [I, U, N]
 
         # Velger journalpostene som har de spesifiserte journalstatusene.
         # **Standardverdi**: `FERDIGSTILT, JOURNALFOERT, EKSPEDERT`
         # TODO legge til default støtte for enum verdier
-        journalstatuser: [Journalstatus] = []
+        journalstatuser: [Journalstatus] = [FERDIGSTILT, JOURNALFOERT, EKSPEDERT]
 
         # Returnerer de første *n* journalpostene i listen.
         foerste: Int
@@ -89,12 +89,12 @@ type Query {
         # Velger journalpostene som har de spesifiserte journalposttypene
         # **Standardverdi**: `I, U, N`
         # TODO legge til default støtte for enum verdier
-        journalposttyper: [Journalposttype] = []
+        journalposttyper: [Journalposttype] = [I, U, N]
 
         # Velger journalpostene som har de spesifiserte journalstatusene.
         # **Standardverdi**: `FERDIGSTILT, JOURNALFOERT, EKSPEDERT`
         # TODO legge til default støtte for enum verdier
-        journalstatuser: [Journalstatus] = []
+        journalstatuser: [Journalstatus] = [FERDIGSTILT, JOURNALFOERT, EKSPEDERT]
 
         # Returnerer de første *n* journalpostene i listen.
         foerste: Int
