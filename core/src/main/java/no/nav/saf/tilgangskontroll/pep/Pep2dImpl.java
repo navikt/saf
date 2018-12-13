@@ -61,8 +61,7 @@ public class Pep2dImpl implements Pep<TilgangSak> {
 				);
 				safRequestContext.getRequestCache().putObject(tilgangKey, decide);
 				return decide;
-
-			} catch (RedisException | PoolException e) {
+			} catch (RedisException | PoolException | Cache.ValueRetrievalException e) {
 				boolean decide = decide(callPep2d(ressurs, safRequestContext));
 				safRequestContext.getRequestCache().putObject(tilgangKey, decide);
 				return decide;

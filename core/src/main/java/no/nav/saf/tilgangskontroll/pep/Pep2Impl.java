@@ -6,11 +6,9 @@ import static no.nav.abac.common.xacml.CommonAttributter.RESOURCE_FELLES_DOMENE;
 import static no.nav.abac.common.xacml.CommonAttributter.RESOURCE_FELLES_RESOURCE_TYPE;
 import static no.nav.abac.saf.xacml.SafAttributter.RESOURCE_SAF_JOURNALPOST;
 import static no.nav.abac.saf.xacml.SafAttributter.RESOURCE_SAF_TEMA;
-import static no.nav.saf.cache.RedisCacheConfig.TILGANG_CACHE;
 import static no.nav.saf.domain.DomainConstants.SAF;
 
 import lombok.extern.slf4j.Slf4j;
-import no.nav.saf.cache.RedisCacheConfig;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlRequest;
@@ -18,12 +16,9 @@ import no.nav.saf.tilgangskontroll.abac.dto.response.Decision;
 import no.nav.saf.tilgangskontroll.abac.dto.response.XacmlResponse;
 import no.nav.saf.tilgangskontroll.abac.service.AbacService;
 import no.nav.saf.tjeneste.visningsmodell.kode.Tema;
-import org.springframework.cache.Cache;
-import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 
 /**
  * @author Joakim Bjørnstad, Jbit AS
@@ -32,12 +27,10 @@ import javax.inject.Named;
 @Component("pep2")
 public class Pep2Impl implements Pep<TilgangSak> {
 
-	private final Cache tilgangCache;
 	private final AbacService abacService;
 
 	@Inject
-	public Pep2Impl(@Named(RedisCacheConfig.MANAGER_DISTRIBUTED) CacheManager redisCacheManager, AbacService abacService) {
-		this.tilgangCache = redisCacheManager.getCache(TILGANG_CACHE);
+	public Pep2Impl(AbacService abacService) {
 		this.abacService = abacService;
 	}
 
