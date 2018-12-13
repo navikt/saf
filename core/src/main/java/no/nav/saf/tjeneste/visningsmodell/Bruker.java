@@ -1,7 +1,6 @@
 package no.nav.saf.tjeneste.visningsmodell;
 
 import lombok.Value;
-import no.nav.saf.tjeneste.argumenter.BrukerIdType;
 
 /**
  * @author Joakim Bjørnstad, Jbit AS

@@ -10,8 +10,8 @@ import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.Saksrel
 import no.nav.saf.domain.Arkivsak;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.tilgangskontroll.RequestCache;
-import no.nav.saf.tjeneste.argumenter.BrukerIdType;
 import no.nav.saf.tjeneste.visningsmodell.Bruker;
+import no.nav.saf.tjeneste.visningsmodell.BrukerIdType;
 import no.nav.saf.tjeneste.visningsmodell.DokumentInfo;
 import no.nav.saf.tjeneste.visningsmodell.Dokumentvariant;
 import no.nav.saf.tjeneste.visningsmodell.Journalpost;

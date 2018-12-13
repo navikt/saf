@@ -65,7 +65,7 @@ public class Pep1Impl implements Pep<TilgangBruker> {
 		}
 
 		XacmlResponse response = abacService.evaluate(request);
-
+		// TODO distributed cache
 		return Decision.PERMIT.equals(response.getDecision());
 	}
 
