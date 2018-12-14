@@ -17,4 +17,14 @@ class DokumentoversiktCoordinatorImpl implements DokumentoversiktCoordinator {
 	public List<DokumentInfo> findDokumenter(Journalpost journalpost, SafRequestContext safRequestContext) {
 		return journalpost.getDokumenter();
 	}
+
+	@Override
+	public boolean findSaksbehandlerHarTilgang(Journalpost journalpost, SafRequestContext safRequestContext) {
+		try {
+			String tilgangKey = "tilgang:" + safRequestContext.getSecurityContext().getSaksbehandlerId() + ":tema=" + journalpost.getTema();
+			return safRequestContext.getRequestCache().getObject(tilgangKey);
+		} catch(NullPointerException e) {
+			return false;
+		}
+	}
 }

@@ -15,6 +15,7 @@ import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tjeneste.argumenter.BrukerIdInput;
 import no.nav.saf.tjeneste.argumenter.FagsakIdInput;
 import no.nav.saf.tjeneste.visningsmodell.BrukerIdType;
+import no.nav.saf.tjeneste.visningsmodell.DokumentInfo;
 import no.nav.saf.tjeneste.visningsmodell.Dokumentoversikt;
 import no.nav.saf.tjeneste.visningsmodell.Journalpost;
 import no.nav.saf.tjeneste.visningsmodell.kode.Journalposttype;
@@ -83,6 +84,11 @@ public class DokumentoversiktWiring {
 					Journalpost journalpost = environment.getSource();
 					final SafRequestContext safRequestContext = environment.getContext();
 					return dokumentoversiktCoordinator.findDokumenter(journalpost, safRequestContext);
+				}))
+				.type("DokumentInfo", typeWiring -> typeWiring.dataFetcher("saksbehandlerHarTilgang", environment -> {
+					Journalpost journalpost = ((DokumentInfo) environment.getSource()).getParent();
+					final SafRequestContext safRequestContext = environment.getContext();
+					return dokumentoversiktCoordinator.findSaksbehandlerHarTilgang(journalpost, safRequestContext);
 				}))
 				.build();
 	}
