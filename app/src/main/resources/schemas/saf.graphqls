@@ -267,7 +267,10 @@ type Dokumentvariant {
 # TODO
 enum Datotype {
     # TODO
-	DATO_OPPRETTET
+	DATO_DOKUMENT
+
+	# TODO
+	DATO_AVS_RETUR
 
 	# TODO
 	DATO_EKSPEDERT
