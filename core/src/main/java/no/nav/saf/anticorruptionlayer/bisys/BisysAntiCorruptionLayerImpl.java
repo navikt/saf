@@ -1,6 +1,7 @@
 package no.nav.saf.anticorruptionlayer.bisys;
 
 import no.nav.saf.domain.tilgangsmodell.TilgangRelevantTredjepart;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,6 +9,7 @@ import java.util.List;
 /**
  * @author Joakim Bjørnstad, Jbit AS
  */
+@Component
 class BisysAntiCorruptionLayerImpl implements BisysAntiCorruptionLayer {
 	@Override
 	public List<TilgangRelevantTredjepart> hentRelevanteTredjeparter(String sakId) {
