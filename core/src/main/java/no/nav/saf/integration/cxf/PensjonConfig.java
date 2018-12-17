@@ -30,7 +30,8 @@ public class PensjonConfig extends AbstractCxfEndpointConfig {
 		setReceiveTimeout(readtimeoutms);
 		setConnectTimeout(connectiontimeoutms);
 		addFeature(new WSAddressingFeature());
-
+//		addLoggingOutInterceptor();
+//		addLoggingInInterceptor();
 		PensjonSakV1 pensjonSakV1 = createPort(PensjonSakV1.class);
 		configureSTSSamlToken(pensjonSakV1);
 		return pensjonSakV1;

@@ -1,5 +1,6 @@
 package no.nav.saf.tjeneste.visningsmodell;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Value;
 
@@ -9,6 +10,7 @@ import java.util.List;
 /**
  * @author Joakim Bjørnstad, Jbit AS
  */
+@AllArgsConstructor
 @Value
 @Builder
 public class DokumentInfo {

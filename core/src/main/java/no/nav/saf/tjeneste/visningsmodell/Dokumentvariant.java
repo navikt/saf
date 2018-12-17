@@ -1,5 +1,6 @@
 package no.nav.saf.tjeneste.visningsmodell;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Value;
 import no.nav.saf.tjeneste.visningsmodell.kode.Variantformat;
@@ -9,6 +10,7 @@ import no.nav.saf.tjeneste.visningsmodell.kode.Variantformat;
  */
 @Value
 @Builder
+@AllArgsConstructor
 public class Dokumentvariant {
 	private final Variantformat variantformat;
 }

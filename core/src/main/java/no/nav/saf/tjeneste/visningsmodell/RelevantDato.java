@@ -1,5 +1,8 @@
 package no.nav.saf.tjeneste.visningsmodell;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.Value;
 import no.nav.saf.tjeneste.visningsmodell.kode.Datotype;
 
@@ -10,7 +13,9 @@ import java.util.Date;
 /**
  * @author Joakim Bjørnstad, Jbit AS
  */
-@Value
+//@Value
+	@Data
+@AllArgsConstructor
 public class RelevantDato {
 	private final LocalDateTime dato;
 	private final Datotype datotype;
