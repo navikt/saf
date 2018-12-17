@@ -145,6 +145,9 @@ public class DokumentoversiktWiring {
 			case FNR:
 				log.info("dokumentoversiktBruker hentes for bruker med fødselsnummer={}", "*****"); // vi kan ikke logge fnr
 				break;
+			case ORGNR:
+				log.info("dokumentoversiktBruker hentes for bruker med orgnr={}", brukerIdInput.getId());
+				break;
 			default:
 				// noop
 				break;
@@ -159,6 +162,10 @@ public class DokumentoversiktWiring {
 				break;
 			case FNR:
 				log.info("dokumentoversiktBruker returnerer {} journalposter for bruker med fødselsnummer={}", numJournalposter, "*****"); // vi kan ikke logge fnr
+				break;
+			case ORGNR:
+				log.info("dokumentoversiktBruker returnerer {} journalposter for bruker med orgnr={}", numJournalposter, brukerIdInput
+						.getId());
 				break;
 			default:
 				// noop
