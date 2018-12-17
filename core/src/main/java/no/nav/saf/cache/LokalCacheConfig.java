@@ -7,6 +7,7 @@ import org.springframework.cache.caffeine.CaffeineCache;
 import org.springframework.cache.support.SimpleCacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 
 import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
@@ -30,6 +31,7 @@ public class LokalCacheConfig {
 	public static final String HENT_TILGANG_JOURNALPOST_CACHE = "hentTilgangJournalpost";
 
 	@Bean
+	@Primary
 	CacheManager cacheManager() {
 		SimpleCacheManager manager = new SimpleCacheManager();
 		manager.setCaches(Arrays.asList(

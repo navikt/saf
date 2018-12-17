@@ -41,16 +41,15 @@ public class Pep2Impl implements Pep<TilgangSak> {
 			return false;
 		}
 
-		XacmlRequest request = new XacmlRequest();
-
-		request.environment(ENVIRONMENT_FELLES_OIDC_TOKEN_BODY, safRequestContext.getSecurityContext().getOidcTokenBody());
-		request.environment(ENVIRONMENT_FELLES_PEP_ID, SAF);
-		request.resource(RESOURCE_FELLES_DOMENE, SAF);
-
 		if (Tema.FAR.name().equals(ressurs.getTema())) {
 			if (log.isTraceEnabled()) {
 				log.trace("Pep2 evaluerer arkivsak={}, arkivsaksystem={}, tema={}", ressurs.getArkivsaksnummer(), ressurs.getArkivsaksystem(), ressurs.getTema());
 			}
+			XacmlRequest request = new XacmlRequest();
+
+			request.environment(ENVIRONMENT_FELLES_OIDC_TOKEN_BODY, safRequestContext.getSecurityContext().getOidcTokenBody());
+			request.environment(ENVIRONMENT_FELLES_PEP_ID, SAF);
+			request.resource(RESOURCE_FELLES_DOMENE, SAF);
 			request.resource(RESOURCE_FELLES_RESOURCE_TYPE, RESOURCE_SAF_JOURNALPOST);
 			request.resource(RESOURCE_SAF_TEMA, Tema.FAR.name());
 			XacmlResponse response = abacService.evaluate(request);

@@ -78,6 +78,9 @@ class DokumentoversiktBrukerCoordinatorImpl implements DokumentoversiktBrukerCoo
 		final Flowable<TilgangSak> tilgangSakFlow = tilgangsmodellRepository.findTilgangSaker(tilgangBruker, dokumentoversiktBrukerArguments
 				.getTema(), safRequestContext);
 		List<TilgangSak> filteredTilgangSakList = tilgangSakFlow
+				.onErrorResumeNext(throwable -> {
+					return Flowable.empty();
+				})
 				.parallel(10)
 				.runOn(Schedulers.io())
 				.filter(ts -> pep2.hasAccess(ts, safRequestContext))
