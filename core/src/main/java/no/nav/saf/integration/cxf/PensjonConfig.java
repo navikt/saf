@@ -21,8 +21,8 @@ public class PensjonConfig extends AbstractCxfEndpointConfig {
 
 	@Bean
 	public PensjonSakV1 pensjonSakV1(@Value("${serviceGateway.url}") String endpointurl,
-									 @Value("${pensjonsak.v1.readtimeoutms}") int readtimeoutms,
-									 @Value("${pensjonsak.v1.connectiontimeoutms}") int connectiontimeoutms) {
+									 @Value("${pensjonsakws.v1.readtimeoutms}") int readtimeoutms,
+									 @Value("${pensjonsakws.v1.connectiontimeoutms}") int connectiontimeoutms) {
 		setWsdlUrl(WSDL_URL);
 		setServiceName(SERVICE_QNAME);
 		setEndpointName(PORT_QNAME);

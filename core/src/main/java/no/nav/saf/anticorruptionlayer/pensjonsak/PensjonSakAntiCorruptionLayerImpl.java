@@ -1,7 +1,7 @@
 package no.nav.saf.anticorruptionlayer.pensjonsak;
 
 import lombok.extern.slf4j.Slf4j;
-import no.nav.saf.anticorruptionlayer.pensjonsak.hentsaksammendragliste.PensjonSakConsumer;
+import no.nav.saf.anticorruptionlayer.pensjonsak.hentsaksammendragliste.PensjonSakWsConsumer;
 import no.nav.saf.domain.Arkivsak;
 import no.nav.saf.tjeneste.visningsmodell.kode.Arkivsakssystem;
 import no.nav.saf.tjeneste.visningsmodell.kode.Tema;
@@ -17,11 +17,11 @@ import java.util.stream.Collectors;
 class PensjonSakAntiCorruptionLayerImpl implements PensjonSakAntiCorruptionLayer {
 
 	private static final String PSAK_FAGSYSTEM = "PP01";
-	private final PensjonSakConsumer pensjonSakConsumer;
+	private final PensjonSakWsConsumer pensjonSakWsConsumer;
 
 	@Inject
-	public PensjonSakAntiCorruptionLayerImpl(PensjonSakConsumer pensjonSakConsumer) {
-		this.pensjonSakConsumer = pensjonSakConsumer;
+	public PensjonSakAntiCorruptionLayerImpl(PensjonSakWsConsumer pensjonSakWsConsumer) {
+		this.pensjonSakWsConsumer = pensjonSakWsConsumer;
 	}
 
 	@Override
@@ -30,7 +30,7 @@ class PensjonSakAntiCorruptionLayerImpl implements PensjonSakAntiCorruptionLayer
 			if (foedselsnummer == null || tema.isEmpty()) {
 				return new ArrayList<>();
 			} else {
-				return pensjonSakConsumer.hentSakSammendragListe(foedselsnummer).stream()
+				return pensjonSakWsConsumer.hentSakSammendragListe(foedselsnummer).stream()
 						.filter(psak -> tema.contains(mapToTema(psak.getTema())))
 						.map(psak -> Arkivsak.builder()
 								.arkivsaksnummer(psak.getSakNr())

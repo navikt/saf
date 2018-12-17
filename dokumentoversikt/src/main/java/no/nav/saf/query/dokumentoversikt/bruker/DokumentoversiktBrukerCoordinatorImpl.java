@@ -5,6 +5,8 @@ import static no.nav.saf.domain.DomainConstants.TILGANG_BRUKER;
 import io.reactivex.Flowable;
 import io.reactivex.schedulers.Schedulers;
 import lombok.extern.slf4j.Slf4j;
+import no.nav.saf.anticorruptionlayer.pensjonsak.hentBrukerOgEnhetstilgangerForSak.HentBrukerForSakResponseTo;
+import no.nav.saf.anticorruptionlayer.pensjonsak.hentBrukerOgEnhetstilgangerForSak.PensjonSakRestConsumer;
 import no.nav.saf.domain.TilgangsmodellRepository;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.domain.tilgangsmodell.TilgangJournalpost;
@@ -41,6 +43,9 @@ class DokumentoversiktBrukerCoordinatorImpl implements DokumentoversiktBrukerCoo
 	private final Pep<TilgangJournalpost> pep4;
 
 	@Inject
+	PensjonSakRestConsumer pensjonSakRestConsumer;
+
+	@Inject
 	public DokumentoversiktBrukerCoordinatorImpl(TilgangsmodellRepository tilgangsmodellRepository,
 												 DokumentoversiktVisningsmodellRepository visningsmodellRepository,
 												 @Named("pep1") Pep<TilgangBruker> pep1,
@@ -59,6 +64,8 @@ class DokumentoversiktBrukerCoordinatorImpl implements DokumentoversiktBrukerCoo
 
 	@Override
 	public Dokumentoversikt hentDokumentoversikt(DokumentoversiktBrukerArguments dokumentoversiktBrukerArguments, SafRequestContext safRequestContext) {
+
+		HentBrukerForSakResponseTo hentBrukerForSakResponseTo = pensjonSakRestConsumer.hentBrukerForSak("22410742");
 		TilgangBruker tilgangBruker = tilgangsmodellRepository.findTilgangBruker(dokumentoversiktBrukerArguments.getBrukerIdInput());
 		safRequestContext.getRequestCache().putObject(TILGANG_BRUKER, tilgangBruker);
 
