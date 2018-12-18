@@ -14,6 +14,8 @@ import java.util.List;
 @Value
 @Builder
 public class DokumentInfo {
+	private final Journalpost parent;
+
 	private final String dokumentId;
 	private final String tittel;
 	private final String navSkjemaId;

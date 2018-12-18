@@ -32,7 +32,7 @@ import java.util.stream.Collectors;
 @Component
 public class PensjonSakConsumer {
 	private final PensjonSakV1 pensjonSakV1;
-	private static final int MILLI_TO_NANO_CONST = 100000;
+	private static final int MILLI_TO_NANO_CONST = 100000; //TODO Bør ikke denne være 1e6?
 
 	@Inject
 	public PensjonSakConsumer(PensjonSakV1 pensjonSakV1) {
@@ -54,6 +54,10 @@ public class PensjonSakConsumer {
 
 		try {
 			WSHentSakSammendragListeResponse response = pensjonSakV1.hentSakSammendragListe(request);
+
+			if (log.isDebugEnabled()) {
+				log.debug("Hentet ferdig psaker for foedselsnummer={}", personident);
+			}
 			return response.getSakSammendragListe().stream().map(saksammendrag ->
 					PsakSakerTo.builder()
 							.sakNr(saksammendrag.getSakId())

@@ -62,7 +62,7 @@ public enum Tema {
 	UKJ("Ukjent"),
 	VEN("Ventelønn"),
 	YRA("Yrkesrettet attføring"),
-	YRK("Yrkesskade / Menerstatning");
+	YRK("Yrkesskade");
 
 	public static final List<Tema> ALL = asList();
 	private final String temanavn;

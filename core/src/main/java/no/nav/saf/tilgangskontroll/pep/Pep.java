@@ -11,6 +11,5 @@ import no.nav.saf.tilgangskontroll.abstraction.SecModel;
  * @author Joakim Bjørnstad, Jbit AS
  */
 public interface Pep<T extends SecModel> {
-
 	boolean hasAccess(T ressurs, SafRequestContext safRequestContext);
 }

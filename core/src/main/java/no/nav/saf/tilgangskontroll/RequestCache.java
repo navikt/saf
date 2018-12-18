@@ -1,13 +1,13 @@
 package no.nav.saf.tilgangskontroll;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author Joakim Bjørnstad, Jbit AS
  */
 public class RequestCache {
-	private final Map<String, Object> requestCache = new HashMap<>(300);
+	private final Map<String, Object> requestCache = new ConcurrentHashMap<>(300);
 
 	public void putObjects(Map<String, ?> objectMap) {
 		requestCache.putAll(objectMap);

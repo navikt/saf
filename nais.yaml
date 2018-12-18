@@ -2,7 +2,7 @@ team: teamdokumenthandtering
 image: "repo.adeo.no:5443/dok/saf"
 replicas:
   min: 2
-  max: 4
+  max: 8
   cpuThresholdPercentage: 50
 port: 8080
 healthcheck:
@@ -14,6 +14,12 @@ healthcheck:
     path: /isReady
     initialDelay: 30
     timeout: 3
+redis:
+  enabled: true
+  limits:
+    memory: 128Mi
+  requests:
+    memory: 128Mi
 prometheus:
   enabled: true
   path: /actuator/prometheus

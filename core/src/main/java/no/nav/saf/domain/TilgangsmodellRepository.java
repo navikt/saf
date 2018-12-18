@@ -1,5 +1,6 @@
 package no.nav.saf.domain;
 
+import io.reactivex.Flowable;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.domain.tilgangsmodell.TilgangDokumentInfo;
 import no.nav.saf.domain.tilgangsmodell.TilgangJournalpost;
@@ -24,7 +25,7 @@ public interface TilgangsmodellRepository {
 
 	List<TilgangSak> findTilgangSaker(FagsakIdInput fagsakIdInput, List<Tema> tema, SafRequestContext safRequestContext);
 
-	List<TilgangSak> findTilgangSaker(TilgangBruker tilgangBruker, List<Tema> tema, SafRequestContext safRequestContext);
+	Flowable<TilgangSak> findTilgangSaker(TilgangBruker tilgangBruker, List<Tema> tema, SafRequestContext safRequestContext);
 
 	List<TilgangJournalpost> findTilgangJournalposter(List<TilgangBruker> tilgangBrukere,
 													  List<TilgangSak> tilgangSakList,

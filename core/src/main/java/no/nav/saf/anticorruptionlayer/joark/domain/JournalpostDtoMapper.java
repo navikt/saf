@@ -1,5 +1,8 @@
 package no.nav.saf.anticorruptionlayer.joark.domain;
 
+import static no.nav.saf.domain.DomainConstants.TILGANG_BRUKER;
+import static no.nav.saf.tjeneste.visningsmodell.RelevantDato.INVALID_DATE;
+
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.FagomradeCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.FagsystemCode;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.JournalpostDto;
@@ -8,6 +11,7 @@ import no.nav.saf.domain.Arkivsak;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.tilgangskontroll.RequestCache;
 import no.nav.saf.tjeneste.visningsmodell.Bruker;
+import no.nav.saf.tjeneste.visningsmodell.BrukerIdType;
 import no.nav.saf.tjeneste.visningsmodell.DokumentInfo;
 import no.nav.saf.tjeneste.visningsmodell.Dokumentvariant;
 import no.nav.saf.tjeneste.visningsmodell.Journalpost;
@@ -15,7 +19,6 @@ import no.nav.saf.tjeneste.visningsmodell.LogiskVedlegg;
 import no.nav.saf.tjeneste.visningsmodell.RelevantDato;
 import no.nav.saf.tjeneste.visningsmodell.Sak;
 import no.nav.saf.tjeneste.visningsmodell.kode.Arkivsakssystem;
-import no.nav.saf.tjeneste.visningsmodell.kode.Brukertype;
 import no.nav.saf.tjeneste.visningsmodell.kode.Datotype;
 import no.nav.saf.tjeneste.visningsmodell.kode.Journalposttype;
 import no.nav.saf.tjeneste.visningsmodell.kode.Journalstatus;
@@ -23,6 +26,8 @@ import no.nav.saf.tjeneste.visningsmodell.kode.Kanal;
 import no.nav.saf.tjeneste.visningsmodell.kode.Variantformat;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -35,52 +40,61 @@ import java.util.stream.Collectors;
  */
 @Component
 public class JournalpostDtoMapper {
+
 	public Journalpost mapJournalpostDto(final JournalpostDto journalpostDto, final RequestCache requestCache) {
 		if (journalpostDto == null) {
 			return null;
 		}
 		final Kanal kanal = mapKanal(journalpostDto);
 		final String journalpostId = journalpostDto.getJournalpostId().toString();
-		return Journalpost.builder()
+		Journalpost journalpost = Journalpost.builder()
 				.journalpostId(journalpostId)
 				.tittel(journalpostDto.getInnhold())
 				.journalposttype(Journalposttype.fromJoark(journalpostDto.getJournalposttype()))
 				.journalstatus(mapJournalstatus(journalpostDto))
 				.tema(FagomradeCode.toSafJournalstatus(journalpostDto.getFagomrade()))
 				.temanavn(FagomradeCode.toSafJournalstatus(journalpostDto.getFagomrade()).getTemanavn())
-				.sak(mapSak(journalpostDto, requestCache))
-				.bruker(mapBruker(requestCache))
+				.sak(mapSak(journalpostDto.getSaksrelasjon(), requestCache))
+				.bruker(mapBruker(journalpostDto.getSaksrelasjon(), requestCache))
 				.avsenderMottakerNavn(journalpostDto.getAvsenderMottakerNavn())
 				.journalfortAvNavn(journalpostDto.getJournalfortAvNavn())
 				.kanal(kanal)
 				.kanalnavn(kanal == null ? null : kanal.getKanalnavn())
+				.datoOpprettet(journalpostDto.getDatoOpprettet() == null ? INVALID_DATE : LocalDateTime.from(journalpostDto.getDatoOpprettet().toInstant().atZone(ZoneId.systemDefault())))
 				.relevanteDatoer(mapRelevanteDatoer(journalpostDto))
-				.dokumenter(journalpostDto.getDokumenter().stream()
-						.map(dokumentInfoDto -> DokumentInfo.builder()
-								.dokumentId(dokumentInfoDto.getDokumentInfoId())
-								.tittel(dokumentInfoDto.getTittel())
-								.navSkjemaId(dokumentInfoDto.getBrevkode())
-								.saksbehandlerHarTilgang(true) //TODO
-								.dokumentvarianter(Collections.singletonList(Dokumentvariant.builder()
-										.variantformat(Variantformat.valueOf(dokumentInfoDto.getVariantFormat().name()))
-										.build()))
-								.logiskeVedlegg(dokumentInfoDto.getLogiske().stream()
-										.map(logiskVedleggDto -> new LogiskVedlegg(logiskVedleggDto.getTittel()))
-										.collect(Collectors.toList()))
-								.build()).collect(Collectors.toList()))
 				.build();
+		List<DokumentInfo> dokumenter = journalpostDto.getDokumenter().stream()
+				.map(dokumentInfoDto -> DokumentInfo.builder()
+						.parent(journalpost)
+						.dokumentId(dokumentInfoDto.getDokumentInfoId())
+						.tittel(dokumentInfoDto.getTittel())
+						.navSkjemaId(dokumentInfoDto.getBrevkode())
+						.saksbehandlerHarTilgang(true) //TODO
+						.dokumentvarianter(Collections.singletonList(Dokumentvariant.builder()
+								.variantformat(Variantformat.valueOf(dokumentInfoDto.getVariantFormat().name()))
+								.build()))
+						.logiskeVedlegg(dokumentInfoDto.getLogiske().stream()
+								.map(logiskVedleggDto -> new LogiskVedlegg(logiskVedleggDto.getTittel()))
+								.collect(Collectors.toList()))
+						.build()).collect(Collectors.toList());
+		journalpost.getDokumenter().addAll(dokumenter);
+		return journalpost;
 	}
 
-	private Bruker mapBruker(RequestCache requestCache) {
-		TilgangBruker tilgangBruker = requestCache.getObject("nøkkel");
-		if (tilgangBruker == null) {
+	private Bruker mapBruker(SaksrelasjonDto saksrelasjon, RequestCache requestCache) {
+		if (saksrelasjon == null) {
 			return null;
 		}
-		return new Bruker(Brukertype.PERSON, tilgangBruker.getFoedselsnr());
+
+		Bruker bruker = getBrukerFromArkivsakCache(saksrelasjon, requestCache);
+		if (bruker != null) {
+			return bruker;
+		} else {
+			return getBrukerFromTilgangBrukerCache(requestCache);
+		}
 	}
 
-	private Sak mapSak(JournalpostDto journalpostDto, RequestCache requestCache) {
-		SaksrelasjonDto saksrelasjon = journalpostDto.getSaksrelasjon();
+	private Sak mapSak(SaksrelasjonDto saksrelasjon, RequestCache requestCache) {
 		if (saksrelasjon == null) {
 			return null;
 		} else {
@@ -110,36 +124,40 @@ public class JournalpostDtoMapper {
 
 	private List<RelevantDato> mapRelevanteDatoer(JournalpostDto journalpostDto) {
 		List<RelevantDato> relevanteDatoer = new ArrayList<>();
-		if (journalpostDto.getDatoOpprettet() != null) {
-			relevanteDatoer.add(new RelevantDato(journalpostDto.getDatoOpprettet(), Datotype.DATO_OPPRETTET));
-		}
-		if (journalpostDto.getMottattDato() != null) {
-			relevanteDatoer.add(new RelevantDato(journalpostDto.getMottattDato(), Datotype.DATO_JOURNALFOERT));
+		if (journalpostDto.getDokumentDato() != null) {
+			relevanteDatoer.add(new RelevantDato(journalpostDto.getDokumentDato(), Datotype.DATO_DOKUMENT));
 		}
 		switch (journalpostDto.getJournalposttype()) {
 			case I:
 				if (journalpostDto.getMottattDato() != null) {
 					relevanteDatoer.add(new RelevantDato(journalpostDto.getMottattDato(), Datotype.DATO_MOTTATT));
 				}
-				// fall gjennom
+				if (journalpostDto.getJournalDato() != null) {
+					relevanteDatoer.add(new RelevantDato(journalpostDto.getJournalDato(), Datotype.DATO_JOURNALFOERT));
+				}
+				break;
 			case U:
 				if (journalpostDto.getSendtPrintDato() != null) {
-					relevanteDatoer.add(new RelevantDato(journalpostDto.getEkspedertDato(), Datotype.DATO_SENDT_PRINT));
+					relevanteDatoer.add(new RelevantDato(journalpostDto.getSendtPrintDato(), Datotype.DATO_SENDT_PRINT));
 				}
 				if (journalpostDto.getEkspedertDato() != null) {
 					relevanteDatoer.add(new RelevantDato(journalpostDto.getEkspedertDato(), Datotype.DATO_EKSPEDERT));
 				}
-				// fall gjennom
+				if (journalpostDto.getAvsReturDato() != null) {
+					relevanteDatoer.add(new RelevantDato(journalpostDto.getAvsReturDato(), Datotype.DATO_AVS_RETUR));
+				}
+				break;
 			default:
 				return relevanteDatoer;
 		}
+		return relevanteDatoer;
 	}
 
 	private Kanal mapKanal(JournalpostDto journalpostDto) {
 		switch (journalpostDto.getJournalposttype()) {
 			case I:
 				if (journalpostDto.getMottakskanal() == null) {
-					return null;
+					return mapManglendeMottakskanal(journalpostDto);
 				}
 				return journalpostDto.getMottakskanal().getSafKanal();
 			case U:
@@ -154,11 +172,17 @@ public class JournalpostDtoMapper {
 		}
 	}
 
+	private Kanal mapManglendeMottakskanal(JournalpostDto journalpostDto) {
+		return null;
+	}
+
 	private Kanal mapManglendeUtsendingskanal(JournalpostDto journalpostDto) {
 		switch (journalpostDto.getJournalstatus()) {
 			case FL:
 				return Kanal.LOKAL_UTSKRIFT;
 			case FS:
+				return Kanal.SENTRAL_UTSKRIFT;
+			case E:
 				return Kanal.SENTRAL_UTSKRIFT;
 			default:
 				return null;
@@ -173,6 +197,32 @@ public class JournalpostDtoMapper {
 				return Arkivsakssystem.GSAK.name();
 			default:
 				return "";
+		}
+	}
+
+	//journalposten er endelig journalført
+	private Bruker getBrukerFromArkivsakCache(SaksrelasjonDto saksrelasjon, RequestCache requestCache) {
+		Arkivsak arkivsak = requestCache.getObject(saksrelasjon.getSakId() + mapJoarkFagsystem(saksrelasjon.getFagsystem()));
+		if (arkivsak == null || arkivsak.isBrukerInfoMissing()) {
+			return null;
+		}
+		if (arkivsak.isBrukerPerson()) {
+			return new Bruker(arkivsak.getAktoerId(), BrukerIdType.AKTOERID);
+		} else {
+			return new Bruker(arkivsak.getOrgnummer(), BrukerIdType.ORGNR);
+		}
+	}
+
+	//journalposten er midlertidig journalført
+	private Bruker getBrukerFromTilgangBrukerCache(RequestCache requestCache) {
+		TilgangBruker tilgangBruker = requestCache.getObject(TILGANG_BRUKER);
+		if (tilgangBruker == null) {
+			return null;
+		}
+		if (tilgangBruker.isBrukerPerson()) {
+			return new Bruker(tilgangBruker.getAktoerId(), BrukerIdType.AKTOERID);
+		} else {
+			return new Bruker(tilgangBruker.getOrgnummer(), BrukerIdType.ORGNR);
 		}
 	}
 }

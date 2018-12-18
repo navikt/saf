@@ -1,7 +1,0 @@
-{
-  dokumentoversiktBruker(brukerId: {id: "201545004", type: ORGNR}, foerste: 5) {
-    journalposter {
-      journalpostId
-    }
-  }
-}

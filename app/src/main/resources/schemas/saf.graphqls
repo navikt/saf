@@ -53,14 +53,10 @@ type Query {
         tema: [Tema] = []
 
         # Velger journalpostene som har de spesifiserte journalposttypene.
-        # **Standardverdi**: `I, U, N`
-        # TODO legge til default støtte for enum verdier
-        journalposttyper: [Journalposttype] = []
+        journalposttyper: [Journalposttype] = [I, U, N]
 
         # Velger journalpostene som har de spesifiserte journalstatusene.
-        # **Standardverdi**: `FERDIGSTILT, JOURNALFOERT, EKSPEDERT`
-        # TODO legge til default støtte for enum verdier
-        journalstatuser: [Journalstatus] = []
+        journalstatuser: [Journalstatus] = [FERDIGSTILT, JOURNALFOERT, EKSPEDERT]
 
         # Returnerer de første *n* journalpostene i listen.
         foerste: Int
@@ -89,12 +85,12 @@ type Query {
         # Velger journalpostene som har de spesifiserte journalposttypene
         # **Standardverdi**: `I, U, N`
         # TODO legge til default støtte for enum verdier
-        journalposttyper: [Journalposttype] = []
+        journalposttyper: [Journalposttype] = [I, U, N]
 
         # Velger journalpostene som har de spesifiserte journalstatusene.
         # **Standardverdi**: `FERDIGSTILT, JOURNALFOERT, EKSPEDERT`
         # TODO legge til default støtte for enum verdier
-        journalstatuser: [Journalstatus] = []
+        journalstatuser: [Journalstatus] = [FERDIGSTILT, JOURNALFOERT, EKSPEDERT]
 
         # Returnerer de første *n* journalpostene i listen.
         foerste: Int
@@ -177,6 +173,9 @@ type Journalpost {
     kanalnavn: String
 
     # TODO
+    datoOpprettet: DateTime!
+
+    # TODO
     relevanteDatoer: [RelevantDato]
 
     # TODO
@@ -186,10 +185,10 @@ type Journalpost {
 # TODO
 type RelevantDato {
     # TODO
-    dato: DateTime
+    dato: DateTime!
 
     # TODO
-    datotype: Datotype
+    datotype: Datotype!
 }
 
 # TODO
@@ -213,10 +212,10 @@ type Sak {
 # Person eller organisasjon som har et forhold til NAV, f.eks. som mottaker av tjenester eller ytelser.
 type Bruker {
     # TODO
-    brukertype: Brukertype
+    id: String
 
     # TODO
-    identifikator: String
+    type: BrukerIdType
 }
 
 # TODO
@@ -264,7 +263,10 @@ type Dokumentvariant {
 # TODO
 enum Datotype {
     # TODO
-	DATO_OPPRETTET
+	DATO_DOKUMENT
+
+	# TODO
+	DATO_AVS_RETUR
 
 	# TODO
 	DATO_EKSPEDERT

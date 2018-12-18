@@ -13,8 +13,9 @@ import no.nav.saf.query.dokumentoversikt.fagsak.DokumentoversiktFagsakArguments;
 import no.nav.saf.query.dokumentoversikt.fagsak.DokumentoversiktFagsakCoordinator;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tjeneste.argumenter.BrukerIdInput;
-import no.nav.saf.tjeneste.argumenter.BrukerIdType;
 import no.nav.saf.tjeneste.argumenter.FagsakIdInput;
+import no.nav.saf.tjeneste.visningsmodell.BrukerIdType;
+import no.nav.saf.tjeneste.visningsmodell.DokumentInfo;
 import no.nav.saf.tjeneste.visningsmodell.Dokumentoversikt;
 import no.nav.saf.tjeneste.visningsmodell.Journalpost;
 import no.nav.saf.tjeneste.visningsmodell.kode.Journalposttype;
@@ -27,6 +28,7 @@ import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author Joakim Bjørnstad, Jbit AS
@@ -59,7 +61,8 @@ public class DokumentoversiktWiring {
 						DokumentoversiktBrukerArguments arguments = mapDokumentoversiktBrukerArguments(environment);
 						SafRequestContext safRequestContext = environment.getContext();
 						Dokumentoversikt dokumentoversikt = dokumentoversiktBrukerCoordinator.hentDokumentoversikt(arguments, safRequestContext);
-						logDokumentoversiktBrukerQueryDone(dokumentoversikt.getJournalposter().size(), arguments.getBrukerIdInput());
+						logDokumentoversiktBrukerQueryDone(dokumentoversikt.getJournalposter()
+								.size(), arguments.getBrukerIdInput());
 						return dokumentoversikt;
 					} catch (SafFunctionalException e) {
 						return new DataFetcherResult<Dokumentoversikt>(Dokumentoversikt.empty(), Collections.singletonList(e));
@@ -82,6 +85,11 @@ public class DokumentoversiktWiring {
 					final SafRequestContext safRequestContext = environment.getContext();
 					return dokumentoversiktCoordinator.findDokumenter(journalpost, safRequestContext);
 				}))
+				.type("DokumentInfo", typeWiring -> typeWiring.dataFetcher("saksbehandlerHarTilgang", environment -> {
+					Journalpost journalpost = ((DokumentInfo) environment.getSource()).getParent();
+					final SafRequestContext safRequestContext = environment.getContext();
+					return dokumentoversiktCoordinator.findSaksbehandlerHarTilgang(journalpost, safRequestContext);
+				}))
 				.build();
 	}
 
@@ -92,8 +100,8 @@ public class DokumentoversiktWiring {
 		logDokumentoversiktBrukerQueryInit(brukerIdInput);
 		LocalDate fraDato = environment.getArgument("fraDato");
 		List<Tema> tema = environment.getArgument("tema");
-		List<Journalposttype> journalposttyper = environment.getArgument("journalposttyper");
-		List<Journalstatus> journalstatuser = environment.getArgument("journalstatuser");
+		List<Journalposttype> journalposttyper = getJournalposttypeList(environment);
+		List<Journalstatus> journalstatuser = getJournalstatusList(environment);
 		if (environment.getArgument("foerste") != null && environment.getArgument("siste") != null) {
 			throw new IllegalArgumentException("Det er ikke tillatt å angi både `foerste` og `siste` for å paginere.");
 		}
@@ -111,11 +119,11 @@ public class DokumentoversiktWiring {
 	private DokumentoversiktFagsakArguments mapDokumentoversiktFagsakArguments(DataFetchingEnvironment environment) {
 		Map<String, Object> fagsakId = environment.getArgument("fagsakId");
 		FagsakIdInput fagsakIdInput = new FagsakIdInput((String) fagsakId.get("fagsaksnummer"), (String) fagsakId.get("fagsaksystem"));
-		log.info("dokumentoversiktFagsak hentes for fagsakId={}", fagsakIdInput);
+		log.info("dokumentoversiktFagsak hentes for fagsakIdInput={}", fagsakIdInput);
 		LocalDate fraDato = environment.getArgument("fraDato");
 		List<Tema> tema = environment.getArgument("tema");
-		List<Journalposttype> journalposttyper = environment.getArgument("journalposttyper");
-		List<Journalstatus> journalstatuser = environment.getArgument("journalstatuser");
+		List<Journalposttype> journalposttyper = getJournalposttypeList(environment);
+		List<Journalstatus> journalstatuser = getJournalstatusList(environment);
 		if (environment.getArgument("foerste") != null && environment.getArgument("siste") != null) {
 			throw new IllegalArgumentException("Det er ikke tillatt å angi både `foerste` og `siste` for å paginere.");
 		}
@@ -156,5 +164,19 @@ public class DokumentoversiktWiring {
 				// noop
 				break;
 		}
+	}
+
+	List<Journalposttype> getJournalposttypeList(DataFetchingEnvironment environment) {
+		List<Object> journalstatuserObjectList = environment.getArgument("journalposttyper");
+		return journalstatuserObjectList.stream()
+				.map(journalstatus -> Journalposttype.valueOf(journalstatus.toString()))
+				.collect(Collectors.toList());
+	}
+
+	List<Journalstatus> getJournalstatusList(DataFetchingEnvironment environment) {
+		List<Object> journalstatuserObjectList = environment.getArgument("journalstatuser");
+		return journalstatuserObjectList.stream()
+				.map(journalstatus -> Journalstatus.valueOf(journalstatus.toString()))
+				.collect(Collectors.toList());
 	}
 }

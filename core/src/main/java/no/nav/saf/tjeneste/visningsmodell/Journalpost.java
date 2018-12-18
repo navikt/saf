@@ -9,6 +9,7 @@ import no.nav.saf.tjeneste.visningsmodell.kode.Journalstatus;
 import no.nav.saf.tjeneste.visningsmodell.kode.Kanal;
 import no.nav.saf.tjeneste.visningsmodell.kode.Tema;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -29,6 +30,7 @@ public class Journalpost {
 	private final String journalfortAvNavn;
 	private final Kanal kanal;
 	private final String kanalnavn;
+	private final LocalDateTime datoOpprettet;
 	private final List<RelevantDato> relevanteDatoer;
 	private final List<DokumentInfo> dokumenter;
 
@@ -45,6 +47,7 @@ public class Journalpost {
 					   @JsonProperty("journalfortAvNavn") String journalfortAvNavn,
 					   @JsonProperty("kanal") Kanal kanal,
 					   @JsonProperty("kanalnavn") String kanalnavn,
+					   @JsonProperty("datoOpprettet") LocalDateTime datoOpprettet,
 					   @JsonProperty("relevantDatoer") List<RelevantDato> relevantDatoer,
 					   @JsonProperty("dokumenter") List<DokumentInfo> dokumenter
 	) {
@@ -60,6 +63,7 @@ public class Journalpost {
 		this.journalfortAvNavn = journalfortAvNavn;
 		this.kanal = kanal;
 		this.kanalnavn = kanalnavn;
+		this.datoOpprettet = datoOpprettet;
 		this.relevanteDatoer = relevantDatoer;
 		this.dokumenter = dokumenter;
 	}

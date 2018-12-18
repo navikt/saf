@@ -17,8 +17,8 @@ public class TilgangSak implements SecModel {
 	private final String orgnummer;
 	private final String arkivsaksnummer;
 	private final String arkivsaksystem;
-	private final String fagsaknummer;
-	private final String fagsystem;
+	private final String fagsaksnummer;
+	private final String fagsaksystem;
 	private final List<TilgangRelevantTredjepart> relevanteTredjeparter;
 	private final String tema;
 }

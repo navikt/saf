@@ -32,8 +32,13 @@ public class Pep3Impl implements Pep<TilgangSak> {
 		}
 
 		XacmlRequest request = new XacmlRequest();
+		if(log.isTraceEnabled()) {
+			log.trace("Pep3 evaluerer arkivsak={}, arkivsaksystem={}, tema={}", ressurs.getArkivsaksnummer(), ressurs.getArkivsaksystem(), ressurs.getTema());
+		}
 		//TODO Populate request and perform call to pdp
-
+		if (log.isTraceEnabled()) {
+			log.trace("Pep3 ferdig evaluert arkivsak={}, arkivsaksystem={}, tema={}", ressurs.getArkivsaksnummer(), ressurs.getArkivsaksystem(), ressurs.getTema());
+		}
 		return !(ressurs.getTema().equals(Tema.BID.name()) || ressurs.getTema().equals(Tema.FAR.name()));
 	}
 }

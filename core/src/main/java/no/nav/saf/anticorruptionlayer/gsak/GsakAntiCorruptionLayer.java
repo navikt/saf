@@ -6,19 +6,22 @@ import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 import no.nav.saf.tjeneste.visningsmodell.kode.Tema;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Joakim Bjørnstad, Jbit AS
  */
 public interface GsakAntiCorruptionLayer {
 
-	List<Arkivsak> findArkivsaker(String aktoerId, List<Tema> tema);
+	List<Arkivsak> findArkivsakerByAktoerId(String aktoerId, List<Tema> tema);
+
+	List<Arkivsak> findArkivsakerByOrgnr(String orgnr, List<Tema> tema);
 
 	TilgangSak findTilgangSakBySakId(String sakId);
 
 	List<Arkivsak> findTilgangSakListByFagsakIdAndFagsaksystem(String fagsakId, String fagsaksystem, List<Tema> tema);
 
-	List<String> findAktoerIdListByFagsakIdAndFagsaksystem(String fagsakId, String fagsaksystem);
+	Map<String, List<String>> findIdListsByFagsakIdAndFagsaksystem(String fagsakId, String fagsaksystem);
 
 	TilgangBruker findTilgangBrukerBySakId(String sakId);
 }

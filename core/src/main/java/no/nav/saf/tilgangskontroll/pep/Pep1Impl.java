@@ -1,11 +1,11 @@
 package no.nav.saf.tilgangskontroll.pep;
 
-import static no.nav.abac.xacml.NavAttributter.ENVIRONMENT_FELLES_OIDC_TOKEN_BODY;
-import static no.nav.abac.xacml.NavAttributter.ENVIRONMENT_FELLES_PEP_ID;
-import static no.nav.abac.xacml.NavAttributter.RESOURCE_FELLES_DOMENE;
-import static no.nav.abac.xacml.NavAttributter.RESOURCE_FELLES_PERSON_AKTOERID_RESOURCE;
-import static no.nav.abac.xacml.NavAttributter.RESOURCE_FELLES_PERSON_FNR;
-import static no.nav.abac.xacml.NavAttributter.RESOURCE_FELLES_RESOURCE_TYPE;
+import static no.nav.abac.common.xacml.CommonAttributter.ENVIRONMENT_FELLES_OIDC_TOKEN_BODY;
+import static no.nav.abac.common.xacml.CommonAttributter.ENVIRONMENT_FELLES_PEP_ID;
+import static no.nav.abac.common.xacml.CommonAttributter.RESOURCE_FELLES_DOMENE;
+import static no.nav.abac.common.xacml.CommonAttributter.RESOURCE_FELLES_PERSON_AKTOERID_RESOURCE;
+import static no.nav.abac.common.xacml.CommonAttributter.RESOURCE_FELLES_PERSON_FNR;
+import static no.nav.abac.common.xacml.CommonAttributter.RESOURCE_FELLES_RESOURCE_TYPE;
 import static no.nav.saf.domain.DomainConstants.SAF;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_SAF_JOURNALPOST;
 
@@ -46,6 +46,8 @@ public class Pep1Impl implements Pep<TilgangBruker> {
 		if (ressurs == null) {
 			log.warn("Pep1 mangler tilstrekkelig datagrunnlag for å kunne gjennomføre tilgangskontroll");
 			return false;
+		} else if (ressurs.getOrgnummer() != null) {
+			return true;
 		}
 
 		XacmlRequest request = new XacmlRequest();
@@ -63,7 +65,7 @@ public class Pep1Impl implements Pep<TilgangBruker> {
 		}
 
 		XacmlResponse response = abacService.evaluate(request);
-
+		// TODO distributed cache
 		return Decision.PERMIT.equals(response.getDecision());
 	}
 
