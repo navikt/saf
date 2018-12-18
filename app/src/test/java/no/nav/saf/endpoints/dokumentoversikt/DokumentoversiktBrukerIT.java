@@ -207,7 +207,6 @@ public class DokumentoversiktBrukerIT extends AbstractItest {
 	}
 
 	@Test
-	@Disabled
 	public void HentSakerByAktoerIdGsakTechnicalFail() throws IOException, URISyntaxException {
 		abacPermit();
 		stubFor(post("/aktoerv2")
@@ -243,7 +242,6 @@ public class DokumentoversiktBrukerIT extends AbstractItest {
 	}
 
 	@Test
-	@Disabled
 	public void HentSakerByAktoerIdGsakFunctionalFail() throws IOException, URISyntaxException {
 		abacPermit();
 		stubFor(post("/aktoerv2")
