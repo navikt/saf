@@ -9,6 +9,7 @@ import no.nav.saf.domain.tilgangsmodell.TilgangJournalpost;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 import no.nav.saf.query.dokumentoversikt.DokumentoversiktVisningsmodellRepository;
 import no.nav.saf.query.dokumentoversikt.SideInfoMapper;
+import no.nav.saf.query.dokumentoversikt.arguments.DokumentoversiktPagination;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.pep.Pep;
 import no.nav.saf.tjeneste.argumenter.FagsakIdInput;
@@ -74,7 +75,7 @@ class DokumentoversiktFagsakCoordinatorImpl implements DokumentoversiktFagsakCoo
 				.map(TilgangBruker::getAktoerId)
 				.collect(Collectors.toList());
 
-		final List<TilgangSak> tilgangSakList = tilgangsmodellRepository.findTilgangSaker(fagsakIdInput, dokumentoversiktFagsakArguments.getTema(), safRequestContext).stream()
+		final List<TilgangSak> tilgangSakList = tilgangsmodellRepository.findTilgangSaker(fagsakIdInput, dokumentoversiktFagsakArguments.getFilters().getTema(), safRequestContext).stream()
 				.filter(tilgangSak -> filteredAktoerIdListTilgangBruker.contains(tilgangSak.getAktoerId()))
 				.collect(Collectors.toList());
 
@@ -91,14 +92,14 @@ class DokumentoversiktFagsakCoordinatorImpl implements DokumentoversiktFagsakCoo
 		final List<TilgangJournalpost> tilgangJournalpostList = tilgangsmodellRepository.findTilgangJournalposter(
 				new ArrayList<>(),
 				filteredTilgangSakList,
-				dokumentoversiktFagsakArguments.getFraDato(),
-				dokumentoversiktFagsakArguments.getTema(),
-				dokumentoversiktFagsakArguments.getJournalposttyper(),
-				dokumentoversiktFagsakArguments.getJournalstatuser(),
-				dokumentoversiktFagsakArguments.getFoerste(),
-				dokumentoversiktFagsakArguments.getEtterPeker(),
-				dokumentoversiktFagsakArguments.getSiste(),
-				dokumentoversiktFagsakArguments.getFoerPeker(),
+				dokumentoversiktFagsakArguments.getFilters().getFraDato(),
+				dokumentoversiktFagsakArguments.getFilters().getTema(),
+				dokumentoversiktFagsakArguments.getFilters().getJournalposttyper(),
+				dokumentoversiktFagsakArguments.getFilters().getJournalstatuser(),
+				((DokumentoversiktPagination.SeekPagination) dokumentoversiktFagsakArguments.getPagination()).getFoerste(),
+				((DokumentoversiktPagination.SeekPagination) dokumentoversiktFagsakArguments.getPagination()).getEtterPeker(),
+				((DokumentoversiktPagination.SeekPagination) dokumentoversiktFagsakArguments.getPagination()).getSiste(),
+				((DokumentoversiktPagination.SeekPagination) dokumentoversiktFagsakArguments.getPagination()).getFoerPeker(),
 				safRequestContext);
 
 		final List<TilgangJournalpost> filteredTilgangJournalpostList = Flowable.fromIterable(tilgangJournalpostList)
