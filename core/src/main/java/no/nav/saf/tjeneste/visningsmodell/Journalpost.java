@@ -1,9 +1,6 @@
 package no.nav.saf.tjeneste.visningsmodell;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
-import lombok.Data;
 import lombok.Value;
 import no.nav.saf.tjeneste.visningsmodell.kode.Journalposttype;
 import no.nav.saf.tjeneste.visningsmodell.kode.Journalstatus;
@@ -34,41 +31,7 @@ public class Journalpost {
 	private final String kanalnavn;
 	private final LocalDateTime datoOpprettet;
 	@Builder.Default
-	private final List<RelevantDato> relevanteDatoer  = new ArrayList<>();
+	private final List<RelevantDato> relevanteDatoer = new ArrayList<>();
 	@Builder.Default
 	private final List<DokumentInfo> dokumenter = new ArrayList<>();
-
-	@JsonCreator
-	public Journalpost(@JsonProperty("journalpostId") String journalpostId,
-					   @JsonProperty("tittel") String tittel,
-					   @JsonProperty("journalposttype") Journalposttype journalposttype,
-					   @JsonProperty("journalstatus") Journalstatus journalstatus,
-					   @JsonProperty("tema") Tema tema,
-					   @JsonProperty("temanavn") String temanavn,
-					   @JsonProperty("sak") Sak sak,
-					   @JsonProperty("bruker") Bruker bruker,
-					   @JsonProperty("avsenderMottakerNavn") String avsenderMottakerNavn,
-					   @JsonProperty("journalfortAvNavn") String journalfortAvNavn,
-					   @JsonProperty("kanal") Kanal kanal,
-					   @JsonProperty("kanalnavn") String kanalnavn,
-					   @JsonProperty("datoOpprettet") LocalDateTime datoOpprettet,
-					   @JsonProperty("relevantDatoer") List<RelevantDato> relevantDatoer,
-					   @JsonProperty("dokumenter") List<DokumentInfo> dokumenter
-	) {
-		this.journalpostId = journalpostId;
-		this.tittel = tittel;
-		this.journalposttype = journalposttype;
-		this.journalstatus = journalstatus;
-		this.tema = tema;
-		this.temanavn = temanavn;
-		this.sak = sak;
-		this.bruker = bruker;
-		this.avsenderMottakerNavn = avsenderMottakerNavn;
-		this.journalfortAvNavn = journalfortAvNavn;
-		this.kanal = kanal;
-		this.kanalnavn = kanalnavn;
-		this.datoOpprettet = datoOpprettet;
-		this.relevanteDatoer = relevantDatoer;
-		this.dokumenter = dokumenter;
-	}
 }

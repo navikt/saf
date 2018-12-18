@@ -1,7 +1,6 @@
 package no.nav.saf.tjeneste.visningsmodell;
 
 import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import lombok.Value;
 
 /**
