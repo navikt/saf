@@ -1,6 +1,7 @@
 package no.nav.saf.anticorruptionlayer.pensjonsak;
 
 import lombok.extern.slf4j.Slf4j;
+import no.nav.saf.anticorruptionlayer.pensjonsak.hentBrukerForSak.PensjonSakRestConsumer;
 import no.nav.saf.anticorruptionlayer.pensjonsak.hentsaksammendragliste.PensjonSakWsConsumer;
 import no.nav.saf.domain.Arkivsak;
 import no.nav.saf.tjeneste.visningsmodell.kode.Arkivsakssystem;
@@ -18,10 +19,12 @@ class PensjonSakAntiCorruptionLayerImpl implements PensjonSakAntiCorruptionLayer
 
 	private static final String PSAK_FAGSYSTEM = "PP01";
 	private final PensjonSakWsConsumer pensjonSakWsConsumer;
+	private final PensjonSakRestConsumer pensjonSakRestConsumer;
 
 	@Inject
-	public PensjonSakAntiCorruptionLayerImpl(PensjonSakWsConsumer pensjonSakWsConsumer) {
+	public PensjonSakAntiCorruptionLayerImpl(PensjonSakWsConsumer pensjonSakWsConsumer, PensjonSakRestConsumer pensjonSakRestConsumer) {
 		this.pensjonSakWsConsumer = pensjonSakWsConsumer;
+		this.pensjonSakRestConsumer = pensjonSakRestConsumer;
 	}
 
 	@Override
@@ -45,6 +48,16 @@ class PensjonSakAntiCorruptionLayerImpl implements PensjonSakAntiCorruptionLayer
 		} catch (Exception e) {
 			log.warn("Klarte ikke hente pensjonssaker for foedelsnummer={}", "*****", e);
 			return new ArrayList<>();
+		}
+	}
+
+	@Override
+	public String findFoedselsnummerBySakId(String sakId) {
+		try {
+			return pensjonSakRestConsumer.hentBrukerForSak(sakId).getFnr();
+		} catch (Exception e) {
+			log.warn("Klarte ikke å hente brukerId (fødselsnummer) for sakId={]", sakId, e);
+			return null;
 		}
 	}
 

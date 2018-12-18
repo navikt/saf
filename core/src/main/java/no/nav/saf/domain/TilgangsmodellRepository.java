@@ -21,7 +21,7 @@ import java.util.List;
 public interface TilgangsmodellRepository {
 	TilgangBruker findTilgangBruker(BrukerIdInput brukerIdInput);
 
-	List<TilgangBruker> findTilgangBrukerList(FagsakIdInput fagsakIdInput);
+	Flowable<TilgangBruker> findTilgangBrukerList(FagsakIdInput fagsakIdInput, List<Tema> temaList);
 
 	List<TilgangSak> findTilgangSaker(FagsakIdInput fagsakIdInput, List<Tema> tema, SafRequestContext safRequestContext);
 

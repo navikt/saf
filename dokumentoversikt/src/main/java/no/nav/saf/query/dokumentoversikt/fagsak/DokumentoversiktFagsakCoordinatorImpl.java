@@ -1,7 +1,6 @@
 package no.nav.saf.query.dokumentoversikt.fagsak;
 
 import io.reactivex.Flowable;
-import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 import no.nav.saf.domain.TilgangsmodellRepository;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
@@ -14,7 +13,6 @@ import no.nav.saf.tilgangskontroll.pep.Pep;
 import no.nav.saf.tjeneste.argumenter.FagsakIdInput;
 import no.nav.saf.tjeneste.visningsmodell.Dokumentoversikt;
 import no.nav.saf.tjeneste.visningsmodell.Journalpost;
-import org.reactivestreams.Publisher;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
@@ -59,10 +57,13 @@ class DokumentoversiktFagsakCoordinatorImpl implements DokumentoversiktFagsakCoo
 	@Override
 	public Dokumentoversikt hentDokumentoversikt(DokumentoversiktFagsakArguments dokumentoversiktFagsakArguments, SafRequestContext safRequestContext) {
 		final FagsakIdInput fagsakIdInput = dokumentoversiktFagsakArguments.getFagsakIdInput();
-		final List<TilgangBruker> tilgangBrukerList = tilgangsmodellRepository.findTilgangBrukerList(fagsakIdInput);
+		final Flowable<TilgangBruker> tilgangBrukerListFlow = tilgangsmodellRepository.findTilgangBrukerList(fagsakIdInput, dokumentoversiktFagsakArguments
+				.getTema());
 
-		List<TilgangBruker> filteredTilgangBrukerList = Flowable.fromIterable(tilgangBrukerList)
-				.onErrorResumeNext((Function<Throwable, Publisher<? extends TilgangBruker>>) Flowable::error)
+		List<TilgangBruker> filteredTilgangBrukerList = tilgangBrukerListFlow
+				.onErrorResumeNext(throwable -> {
+					return Flowable.empty();
+				})
 				.parallel(10)
 				.runOn(Schedulers.io())
 				.filter(ts -> pep1.hasAccess(ts, safRequestContext))

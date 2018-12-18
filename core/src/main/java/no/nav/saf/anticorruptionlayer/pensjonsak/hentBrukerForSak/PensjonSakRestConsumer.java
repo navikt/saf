@@ -1,4 +1,4 @@
-package no.nav.saf.anticorruptionlayer.pensjonsak.hentBrukerOgEnhetstilgangerForSak;
+package no.nav.saf.anticorruptionlayer.pensjonsak.hentBrukerForSak;
 
 import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.cache.LokalCacheConfig;
@@ -28,13 +28,13 @@ public class PensjonSakRestConsumer {
 	public PensjonSakRestConsumer(RestTemplateBuilder restTemplateBuilder,
 								  @Value("${pensjonsakrs.v1.url}") String pensjonsakApiUrl,
 								  ServiceuserAlias serviceuserAlias,
-								  //TODO ta bort når srvsaf har fått AD-tilgang til pensjon
-								  @Value("${serviceuserpensjon.}") String serviceuserpensjonUsername,
+								  @Value("${serviceuserpensjon.username}") String serviceuserpensjonUsername,
 								  @Value("${serviceuserpensjon.password}") String serviceuserpensjonPassword) {
 		this.pensjonsakApiUrl = pensjonsakApiUrl;
 		this.restTemplate = restTemplateBuilder
 				.setReadTimeout(Duration.ofSeconds(20))
 				.setConnectTimeout(Duration.ofSeconds(5))
+				//TODO erstatt med serviceuserAlias når srvsaf har fått AD-tilgang til pensjon
 				.basicAuthentication(serviceuserpensjonUsername, serviceuserpensjonPassword).build();
 	}
 

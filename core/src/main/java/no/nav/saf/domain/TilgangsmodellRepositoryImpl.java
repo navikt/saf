@@ -87,7 +87,29 @@ public class TilgangsmodellRepositoryImpl implements TilgangsmodellRepository {
 
 	@Override
 	@Cacheable(cacheNames = LokalCacheConfig.TILGANGSMODELL_REPO_BRUKER_CACHE)
-	public List<TilgangBruker> findTilgangBrukerList(FagsakIdInput fagsakIdInput) {
+	public Flowable<TilgangBruker> findTilgangBrukerList(FagsakIdInput fagsakIdInput, List<Tema> temaList) {
+		try {
+			Flowable<List<TilgangBruker>> aktoerIdListGsak = Flowable.fromCallable(() ->
+					findTilgangBrukerListForGsaksakerByFagsakIdAndFagsaksystem(fagsakIdInput))
+					.subscribeOn(Schedulers.io());
+			Flowable<List<TilgangBruker>> aktoerIdListPsak = Flowable.fromCallable(() -> {
+				if (!Collections.disjoint(temaList, PENSJON)) {
+					return findTilgangBrukerListForPensjonsakerByFagsakId(fagsakIdInput);
+				} else {
+					return new ArrayList<TilgangBruker>();
+				}
+			}).subscribeOn(Schedulers.io());
+
+			return Flowable.merge(Arrays.asList(aktoerIdListGsak, aktoerIdListPsak), 2)
+					.flatMapIterable(items -> items);
+		} catch (Exception e) {
+			log.warn("findTilgangBrukerList feilet ved oppslag. fagsakIdInput={}", fagsakIdInput, e);
+		}
+		return Flowable.empty();
+	}
+
+
+	private List<TilgangBruker> findTilgangBrukerListForGsaksakerByFagsakIdAndFagsaksystem(FagsakIdInput fagsakIdInput) {
 		try {
 			Map<String, List<String>> idLists = gsakAntiCorruptionLayer.findIdListsByFagsakIdAndFagsaksystem(fagsakIdInput.getFagsaksnummer(), fagsakIdInput
 					.getFagsaksystem());
@@ -102,9 +124,19 @@ public class TilgangsmodellRepositoryImpl implements TilgangsmodellRepository {
 
 			return Stream.concat(tilgangBrukerPerson.stream(), tilgangbrukerOrganisasjon.stream()).collect(Collectors.toList());
 		} catch (Exception e) {
-			log.warn("findTilgangBrukerList feilet ved oppslag. fagsakIdInput={}", fagsakIdInput, e);
+			log.warn("findTilgangBrukerListForGsaksakerByFagsakIdAndFagsaksystem feilet ved oppslag. fagsakIdInput={}", fagsakIdInput, e);
+			return new ArrayList<>();
 		}
-		return new ArrayList<>();
+	}
+
+	private List<TilgangBruker> findTilgangBrukerListForPensjonsakerByFagsakId(FagsakIdInput fagsakIdInput) {
+		try {
+			String fnr = pensjonSakAntiCorruptionLayer.findFoedselsnummerBySakId(fagsakIdInput.getFagsaksnummer());
+			return Arrays.asList(aktoerAntiCorruptionLayer.hentTilgangBrukerByFoedselsnummer(fnr));
+		} catch (Exception e) {
+			log.warn("findTilgangBrukerListForPensjonsakerByFagsakId feilet ved oppslag. fagsakIdInput={}", fagsakIdInput, e);
+			return new ArrayList<>();
+		}
 	}
 
 	@Override

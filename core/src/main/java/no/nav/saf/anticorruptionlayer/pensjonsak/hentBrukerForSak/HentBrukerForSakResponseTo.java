@@ -1,4 +1,4 @@
-package no.nav.saf.anticorruptionlayer.pensjonsak.hentBrukerOgEnhetstilgangerForSak;
+package no.nav.saf.anticorruptionlayer.pensjonsak.hentBrukerForSak;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
