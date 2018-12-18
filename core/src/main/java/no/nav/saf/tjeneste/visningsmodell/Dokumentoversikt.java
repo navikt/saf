@@ -14,8 +14,8 @@ import java.util.List;
 @Value
 @Builder
 public class Dokumentoversikt {
-
-	private final List<Journalpost> journalposter;
+	@Builder.Default
+	private final List<Journalpost> journalposter = new ArrayList<>();
 	private final SideInfo sideInfo;
 
 	public static Dokumentoversikt empty() {

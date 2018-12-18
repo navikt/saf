@@ -60,7 +60,9 @@ class DokumentoversiktBrukerCoordinatorImpl implements DokumentoversiktBrukerCoo
 	@Override
 	public Dokumentoversikt hentDokumentoversikt(DokumentoversiktBrukerArguments dokumentoversiktBrukerArguments, SafRequestContext safRequestContext) {
 		TilgangBruker tilgangBruker = tilgangsmodellRepository.findTilgangBruker(dokumentoversiktBrukerArguments.getBrukerIdInput());
-		safRequestContext.getRequestCache().putObject(TILGANG_BRUKER, tilgangBruker);
+		if (tilgangBruker != null) {
+			safRequestContext.getRequestCache().putObject(TILGANG_BRUKER, tilgangBruker);
+		}
 
 		boolean pep1Access = this.pep1.hasAccess(tilgangBruker, safRequestContext);
 

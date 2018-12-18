@@ -4,18 +4,20 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 import lombok.Data;
+import lombok.Value;
 import no.nav.saf.tjeneste.visningsmodell.kode.Journalposttype;
 import no.nav.saf.tjeneste.visningsmodell.kode.Journalstatus;
 import no.nav.saf.tjeneste.visningsmodell.kode.Kanal;
 import no.nav.saf.tjeneste.visningsmodell.kode.Tema;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * @author Joakim Bjørnstad, Jbit AS
  */
-@Data
+@Value
 @Builder
 public class Journalpost {
 	private final String journalpostId;
@@ -31,8 +33,10 @@ public class Journalpost {
 	private final Kanal kanal;
 	private final String kanalnavn;
 	private final LocalDateTime datoOpprettet;
-	private final List<RelevantDato> relevanteDatoer;
-	private final List<DokumentInfo> dokumenter;
+	@Builder.Default
+	private final List<RelevantDato> relevanteDatoer  = new ArrayList<>();
+	@Builder.Default
+	private final List<DokumentInfo> dokumenter = new ArrayList<>();
 
 	@JsonCreator
 	public Journalpost(@JsonProperty("journalpostId") String journalpostId,

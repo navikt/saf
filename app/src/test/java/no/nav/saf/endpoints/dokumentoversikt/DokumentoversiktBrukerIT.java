@@ -11,7 +11,9 @@ import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import no.nav.saf.endpoints.AbstractItest;
@@ -32,8 +34,6 @@ import java.net.URISyntaxException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-//import static org.springframework.cloud.contract.wiremock.restdocs.WireMockRestDocs.verify;
-
 /**
  * @author Sigurd Midttun, Visma Consulting.
  */
@@ -41,6 +41,7 @@ public class DokumentoversiktBrukerIT extends AbstractItest {
 
 	private static final String AKTOER_ID = "***gammelt_fnr***59";
 	private static final String FNR = "***gammelt_fnr***";
+	private static final String ORG_NR = "201545004";
 
 	private ObjectMapper objectMapper = new ObjectMapper();
 
@@ -53,19 +54,19 @@ public class DokumentoversiktBrukerIT extends AbstractItest {
 		stubFor(post("/sts")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withBodyFile("sts/sts-happy.xml")));
-		stubFor(post("/hentjournalsakinfo/finnjournalposter")
-				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
-						.withHeader(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType())
-						.withBodyFile("joark/finnjournalposter-happy.json")));
 		stubFor(get("/gsak?aktoerId=" + AKTOER_ID)
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType())
 						.withBodyFile("gsak/gsak-sakerBySaksId-happy.json")));
+		stubFor(post("/hentjournalsakinfo/finnjournalposter")
+				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
+						.withHeader(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType())
+						.withBodyFile("joark/finnjournalposter-happy.json")));
 		stubFor(post("/servicegw")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withBodyFile("psak/psak-hentSakSammendragListe-happy.xml")));
 
-		GraphQLRequest request = new GraphQLRequest(stringFromClasspath("dokumentoversiktBruker/query-aktoerid-happy"), null, null);
+		GraphQLRequest request = new GraphQLRequest(stringFromClasspath("dokumentoversiktBruker/query-aktoerid"), null, null);
 		RequestEntity<GraphQLRequest> requestEntity = new RequestEntity<>(request, createHeaders(), HttpMethod.POST, new URI("/graphql"));
 
 		ResponseEntity<LinkedHashMap> responseEntity = restTemplate.exchange(requestEntity, LinkedHashMap.class);
@@ -95,19 +96,19 @@ public class DokumentoversiktBrukerIT extends AbstractItest {
 		stubFor(post("/sts")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withBodyFile("sts/sts-happy.xml")));
-		stubFor(post("/hentjournalsakinfo/finnjournalposter")
-				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
-						.withHeader(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType())
-						.withBodyFile("joark/finnjournalposter-happy.json")));
 		stubFor(get("/gsak?aktoerId=" + AKTOER_ID)
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType())
 						.withBodyFile("gsak/gsak-sakerBySaksId-happy.json")));
+		stubFor(post("/hentjournalsakinfo/finnjournalposter")
+				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
+						.withHeader(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType())
+						.withBodyFile("joark/finnjournalposter-happy.json")));
 		stubFor(post("/servicegw")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withBodyFile("psak/psak-hentSakSammendragListe-happy.xml")));
 
-		GraphQLRequest request = new GraphQLRequest(stringFromClasspath("dokumentoversiktBruker/query-fnr-happy"), null, null);
+		GraphQLRequest request = new GraphQLRequest(stringFromClasspath("dokumentoversiktBruker/query-fnr"), null, null);
 		RequestEntity<GraphQLRequest> requestEntity = new RequestEntity<>(request, createHeaders(), HttpMethod.POST, new URI("/graphql"));
 
 		ResponseEntity<LinkedHashMap> responseEntity = restTemplate.exchange(requestEntity, LinkedHashMap.class);
@@ -130,27 +131,21 @@ public class DokumentoversiktBrukerIT extends AbstractItest {
 
 
 	@Test
-	public void shouldHentDokumentoversiktBrukerWithOrgNr() throws IOException, URISyntaxException{
+	public void shouldHentDokumentoversiktBrukerWithOrgNr() throws IOException, URISyntaxException {
 		abacPermit();
-		stubFor(post("/aktoerv2")
-				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
-						.withBodyFile("aktoerV2/hentIdentForOrgnr-happy.xml")));
 		stubFor(post("/sts")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withBodyFile("sts/sts-happy.xml")));
+		stubFor(get("/gsak?orgnr=" + ORG_NR)
+				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
+						.withHeader(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType())
+						.withBodyFile("gsak/gsak-sakerBySaksId-happy.json")));
 		stubFor(post("/hentjournalsakinfo/finnjournalposter")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType())
 						.withBodyFile("joark/finnjournalposter-happy.json")));
-		stubFor(get("/gsak?aktoerId=" + AKTOER_ID)
-				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
-						.withHeader(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType())
-						.withBodyFile("gsak/gsak-sakerBySaksId-happy.json")));
-		stubFor(post("/servicegw")
-				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
-						.withBodyFile("psak/psak-hentSakSammendragListe-happy.xml")));
 
-		GraphQLRequest request = new GraphQLRequest(stringFromClasspath("dokumentoversiktBruker/query-fnr-happy"), null, null);
+		GraphQLRequest request = new GraphQLRequest(stringFromClasspath("dokumentoversiktBruker/query-orgnr"), null, null);
 		RequestEntity<GraphQLRequest> requestEntity = new RequestEntity<>(request, createHeaders(), HttpMethod.POST, new URI("/graphql"));
 
 		ResponseEntity<LinkedHashMap> responseEntity = restTemplate.exchange(requestEntity, LinkedHashMap.class);
@@ -162,43 +157,141 @@ public class DokumentoversiktBrukerIT extends AbstractItest {
 		assertEquals("429837329", dokumentoversikt.getJournalposter().get(1).getJournalpostId());
 		assertEquals("429812815", dokumentoversikt.getJournalposter().get(2).getJournalpostId());
 
-		verify(postRequestedFor(urlEqualTo("/aktoerv2")).withRequestBody(matchingXPath("//ident/text()", equalTo(FNR))));
-
 		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter")).withRequestBody(matchingJsonPath("$.gsakSakIds", containing("135695442"))));
 		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter")).withRequestBody(matchingJsonPath("$.gsakSakIds", containing("135695449"))));
 		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter")).withRequestBody(matchingJsonPath("$.gsakSakIds", containing("135695448"))));
 
+		verify(0, postRequestedFor(urlEqualTo("/aktoerv2")));
+		verify(0, postRequestedFor(urlEqualTo("/servicegw")));
+	}
+
+	@Test
+	public void hentIdentForAktoerIdTechnicalFail() throws IOException, URISyntaxException {
+		abacDeny();
+		stubFor(post("/aktoerv2")
+				.willReturn(aResponse().withStatus(HttpStatus.INTERNAL_SERVER_ERROR.value())
+						.withBodyFile("aktoerV2/hentIdentForAktoerId-technical-fail.xml")));
+
+		GraphQLRequest request = new GraphQLRequest(stringFromClasspath("dokumentoversiktBruker/query-aktoerid"), null, null);
+		RequestEntity<GraphQLRequest> requestEntity = new RequestEntity<>(request, createHeaders(), HttpMethod.POST, new URI("/graphql"));
+
+		ResponseEntity<LinkedHashMap> responseEntity = restTemplate.exchange(requestEntity, LinkedHashMap.class);
+		Map<String, Object> responseEntityData = (Map<String, Object>) responseEntity.getBody().get("data");
+		Dokumentoversikt dokumentoversikt = objectMapper.convertValue(responseEntityData.get("dokumentoversiktBruker"), Dokumentoversikt.class);
+
+		assertEquals(HttpStatus.OK, responseEntity.getStatusCode()); //??
+
+		verify(postRequestedFor(urlEqualTo("/aktoerv2")).withRequestBody(matchingXPath("//aktoerId/text()", equalTo(AKTOER_ID))));
+		verify(0, postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter")));
+		verify(0, postRequestedFor(urlEqualTo("/servicegw")));
+	}
+
+	@Test
+	public void hentIdentForAktoerIdFunctionalFail() throws IOException, URISyntaxException {
+		abacDeny();
+		stubFor(post("/aktoerv2")
+				.willReturn(aResponse().withStatus(HttpStatus.NOT_FOUND.value())
+						.withBodyFile("aktoerV2/hentIdentForAktoerId-functional-fail.xml")));
+		GraphQLRequest request = new GraphQLRequest(stringFromClasspath("dokumentoversiktBruker/query-aktoerid"), null, null);
+		RequestEntity<GraphQLRequest> requestEntity = new RequestEntity<>(request, createHeaders(), HttpMethod.POST, new URI("/graphql"));
+
+		ResponseEntity<LinkedHashMap> responseEntity = restTemplate.exchange(requestEntity, LinkedHashMap.class);
+		Map<String, Object> responseEntityData = (Map<String, Object>) responseEntity.getBody().get("data");
+		Dokumentoversikt dokumentoversikt = objectMapper.convertValue(responseEntityData.get("dokumentoversiktBruker"), Dokumentoversikt.class);
+
+		assertEquals(HttpStatus.OK, responseEntity.getStatusCode()); //??
+
+		verify(postRequestedFor(urlEqualTo("/aktoerv2")).withRequestBody(matchingXPath("//aktoerId/text()", equalTo(AKTOER_ID))));
+		verify(0, postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter")));
+		verify(0, postRequestedFor(urlEqualTo("/servicegw")));
+	}
+
+	@Test
+	@Disabled
+	public void HentSakerByAktoerIdGsakTechnicalFail() throws IOException, URISyntaxException {
+		abacPermit();
+		stubFor(post("/aktoerv2")
+				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
+						.withBodyFile("aktoerV2/hentIdentForAktoerId-happy.xml")));
+		stubFor(post("/sts")
+				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
+						.withBodyFile("sts/sts-happy.xml")));
+		stubFor(get("/gsak?aktoerId=" + AKTOER_ID)
+				.willReturn(aResponse().withStatus(HttpStatus.INTERNAL_SERVER_ERROR.value())));
+		stubFor(post("/hentjournalsakinfo/finnjournalposter")
+				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
+						.withHeader(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType())
+						.withBodyFile("joark/finnjournalposter-empty.json")));
+		stubFor(post("/servicegw")
+				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
+						.withBodyFile("psak/psak-hentSakSammendragListe-happy.xml")));
+
+		GraphQLRequest request = new GraphQLRequest(stringFromClasspath("dokumentoversiktBruker/query-aktoerid"), null, null);
+		RequestEntity<GraphQLRequest> requestEntity = new RequestEntity<>(request, createHeaders(), HttpMethod.POST, new URI("/graphql"));
+
+		ResponseEntity<LinkedHashMap> responseEntity = restTemplate.exchange(requestEntity, LinkedHashMap.class);
+		Map<String, Object> responseEntityData = (Map<String, Object>) responseEntity.getBody().get("data");
+		Dokumentoversikt dokumentoversikt = objectMapper.convertValue(responseEntityData.get("dokumentoversiktBruker"), Dokumentoversikt.class);
+
+		assertTrue(dokumentoversikt.getJournalposter().isEmpty());
+		assertEquals(null, dokumentoversikt.getSideInfo());
+
+		assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+		verify(postRequestedFor(urlEqualTo("/aktoerv2")).withRequestBody(matchingXPath("//aktoerId/text()", equalTo(AKTOER_ID))));
+		verify(1, postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter")));
 		verify(postRequestedFor(urlEqualTo("/servicegw")).withRequestBody(matchingXPath("//personident/text()", equalTo("***gammelt_fnr***"))));
 	}
 
 	@Test
 	@Disabled
-	public void hentIdentForAktoerIdFail() {
+	public void HentSakerByAktoerIdGsakFunctionalFail() throws IOException, URISyntaxException {
+		abacPermit();
+		stubFor(post("/aktoerv2")
+				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
+						.withBodyFile("aktoerV2/hentIdentForAktoerId-happy.xml")));
+		stubFor(post("/sts")
+				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
+						.withBodyFile("sts/sts-happy.xml")));
+		stubFor(get("/gsak?aktoerId=" + AKTOER_ID)
+				.willReturn(aResponse().withStatus(HttpStatus.NOT_FOUND.value())));
+		stubFor(post("/hentjournalsakinfo/finnjournalposter")
+				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
+						.withHeader(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType())
+						.withBodyFile("joark/finnjournalposter-empty.json")));
+		stubFor(post("/servicegw")
+				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
+						.withBodyFile("psak/psak-hentSakSammendragListe-happy.xml")));
 
+		GraphQLRequest request = new GraphQLRequest(stringFromClasspath("dokumentoversiktBruker/query-aktoerid"), null, null);
+		RequestEntity<GraphQLRequest> requestEntity = new RequestEntity<>(request, createHeaders(), HttpMethod.POST, new URI("/graphql"));
 
+		ResponseEntity<LinkedHashMap> responseEntity = restTemplate.exchange(requestEntity, LinkedHashMap.class);
+		Map<String, Object> responseEntityData = (Map<String, Object>) responseEntity.getBody().get("data");
+		Dokumentoversikt dokumentoversikt = objectMapper.convertValue(responseEntityData.get("dokumentoversiktBruker"), Dokumentoversikt.class);
+
+		assertTrue(dokumentoversikt.getJournalposter().isEmpty());
+		assertEquals(null, dokumentoversikt.getSideInfo());
+
+		assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+		verify(postRequestedFor(urlEqualTo("/aktoerv2")).withRequestBody(matchingXPath("//aktoerId/text()", equalTo(AKTOER_ID))));
+		verify(1, postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter")));
+		verify(postRequestedFor(urlEqualTo("/servicegw")).withRequestBody(matchingXPath("//personident/text()", equalTo("***gammelt_fnr***"))));
 	}
+
 
 	@Test
 	@Disabled
-	public void finnjournalposterFail() {
-
-
-	}
-
-	@Test
-	@Disabled
-	public void gsakHentSakerByAktoerIdFail() {
-
-
+	public void finnjournalposterFail() throws IOException, URISyntaxException {
 	}
 
 	@Test
 	@Disabled
 	public void serviewgwFail() {
 
-
 	}
 
-	// todo test for om dokumentoversikt filtrerer mhp abac.
+	// todo test for om dokumentoversikt filtrerer mhp abac?
+
+	// todo vurder arametrized test for gsak, for å teste mhp aktoerid
 
 }
