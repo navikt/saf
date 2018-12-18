@@ -21,7 +21,6 @@ import no.nav.saf.endpoints.GraphQLRequest;
 import no.nav.saf.tjeneste.visningsmodell.Dokumentoversikt;
 import org.apache.http.HttpHeaders;
 import org.apache.http.entity.ContentType;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -66,7 +65,7 @@ public class DokumentoversiktBrukerIT extends AbstractItest {
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withBodyFile("psak/psak-hentSakSammendragListe-happy.xml")));
 
-		GraphQLRequest request = new GraphQLRequest(stringFromClasspath("dokumentoversiktBruker/query-aktoerid"), null, null);
+		GraphQLRequest request = new GraphQLRequest(stringFromClasspath("dokumentoversiktBruker/query-aktoerid.json"), null, null);
 		RequestEntity<GraphQLRequest> requestEntity = new RequestEntity<>(request, createHeaders(), HttpMethod.POST, new URI("/graphql"));
 
 		ResponseEntity<LinkedHashMap> responseEntity = restTemplate.exchange(requestEntity, LinkedHashMap.class);
@@ -108,7 +107,7 @@ public class DokumentoversiktBrukerIT extends AbstractItest {
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withBodyFile("psak/psak-hentSakSammendragListe-happy.xml")));
 
-		GraphQLRequest request = new GraphQLRequest(stringFromClasspath("dokumentoversiktBruker/query-fnr"), null, null);
+		GraphQLRequest request = new GraphQLRequest(stringFromClasspath("dokumentoversiktBruker/query-fnr.json"), null, null);
 		RequestEntity<GraphQLRequest> requestEntity = new RequestEntity<>(request, createHeaders(), HttpMethod.POST, new URI("/graphql"));
 
 		ResponseEntity<LinkedHashMap> responseEntity = restTemplate.exchange(requestEntity, LinkedHashMap.class);
@@ -145,7 +144,7 @@ public class DokumentoversiktBrukerIT extends AbstractItest {
 						.withHeader(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType())
 						.withBodyFile("joark/finnjournalposter-happy.json")));
 
-		GraphQLRequest request = new GraphQLRequest(stringFromClasspath("dokumentoversiktBruker/query-orgnr"), null, null);
+		GraphQLRequest request = new GraphQLRequest(stringFromClasspath("dokumentoversiktBruker/query-orgnr.json"), null, null);
 		RequestEntity<GraphQLRequest> requestEntity = new RequestEntity<>(request, createHeaders(), HttpMethod.POST, new URI("/graphql"));
 
 		ResponseEntity<LinkedHashMap> responseEntity = restTemplate.exchange(requestEntity, LinkedHashMap.class);
@@ -172,7 +171,7 @@ public class DokumentoversiktBrukerIT extends AbstractItest {
 				.willReturn(aResponse().withStatus(HttpStatus.INTERNAL_SERVER_ERROR.value())
 						.withBodyFile("aktoerV2/hentIdentForAktoerId-technical-fail.xml")));
 
-		GraphQLRequest request = new GraphQLRequest(stringFromClasspath("dokumentoversiktBruker/query-aktoerid"), null, null);
+		GraphQLRequest request = new GraphQLRequest(stringFromClasspath("dokumentoversiktBruker/query-aktoerid.json"), null, null);
 		RequestEntity<GraphQLRequest> requestEntity = new RequestEntity<>(request, createHeaders(), HttpMethod.POST, new URI("/graphql"));
 
 		ResponseEntity<LinkedHashMap> responseEntity = restTemplate.exchange(requestEntity, LinkedHashMap.class);
@@ -192,7 +191,7 @@ public class DokumentoversiktBrukerIT extends AbstractItest {
 		stubFor(post("/aktoerv2")
 				.willReturn(aResponse().withStatus(HttpStatus.NOT_FOUND.value())
 						.withBodyFile("aktoerV2/hentIdentForAktoerId-functional-fail.xml")));
-		GraphQLRequest request = new GraphQLRequest(stringFromClasspath("dokumentoversiktBruker/query-aktoerid"), null, null);
+		GraphQLRequest request = new GraphQLRequest(stringFromClasspath("dokumentoversiktBruker/query-aktoerid.json"), null, null);
 		RequestEntity<GraphQLRequest> requestEntity = new RequestEntity<>(request, createHeaders(), HttpMethod.POST, new URI("/graphql"));
 
 		ResponseEntity<LinkedHashMap> responseEntity = restTemplate.exchange(requestEntity, LinkedHashMap.class);
@@ -225,7 +224,7 @@ public class DokumentoversiktBrukerIT extends AbstractItest {
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withBodyFile("psak/psak-hentSakSammendragListe-happy.xml")));
 
-		GraphQLRequest request = new GraphQLRequest(stringFromClasspath("dokumentoversiktBruker/query-aktoerid"), null, null);
+		GraphQLRequest request = new GraphQLRequest(stringFromClasspath("dokumentoversiktBruker/query-aktoerid.json"), null, null);
 		RequestEntity<GraphQLRequest> requestEntity = new RequestEntity<>(request, createHeaders(), HttpMethod.POST, new URI("/graphql"));
 
 		ResponseEntity<LinkedHashMap> responseEntity = restTemplate.exchange(requestEntity, LinkedHashMap.class);
@@ -260,7 +259,7 @@ public class DokumentoversiktBrukerIT extends AbstractItest {
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withBodyFile("psak/psak-hentSakSammendragListe-happy.xml")));
 
-		GraphQLRequest request = new GraphQLRequest(stringFromClasspath("dokumentoversiktBruker/query-aktoerid"), null, null);
+		GraphQLRequest request = new GraphQLRequest(stringFromClasspath("dokumentoversiktBruker/query-aktoerid.json"), null, null);
 		RequestEntity<GraphQLRequest> requestEntity = new RequestEntity<>(request, createHeaders(), HttpMethod.POST, new URI("/graphql"));
 
 		ResponseEntity<LinkedHashMap> responseEntity = restTemplate.exchange(requestEntity, LinkedHashMap.class);
