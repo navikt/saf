@@ -44,7 +44,8 @@ import java.util.stream.Stream;
 @Repository
 @Slf4j
 public class TilgangsmodellRepositoryImpl implements TilgangsmodellRepository {
-	public static final EnumSet<Tema> PENSJON = EnumSet.of(Tema.PEN, Tema.UFO);
+	public static final EnumSet<Tema> TEMA_PENSJON = EnumSet.of(Tema.PEN, Tema.UFO);
+	public static final String FAGSAKSYSTEM_PENSJON = "PP01";
 	public static final int MAX_ARKIVSAKER_LOGG = 1000;
 
 	private final AktoerAntiCorruptionLayer aktoerAntiCorruptionLayer;
@@ -87,25 +88,17 @@ public class TilgangsmodellRepositoryImpl implements TilgangsmodellRepository {
 
 	@Override
 	@Cacheable(cacheNames = LokalCacheConfig.TILGANGSMODELL_REPO_BRUKER_CACHE)
-	public Flowable<TilgangBruker> findTilgangBrukerList(FagsakIdInput fagsakIdInput, List<Tema> temaList) {
+	public List<TilgangBruker> findTilgangBrukerList(FagsakIdInput fagsakIdInput, List<Tema> temaList) {
 		try {
-			Flowable<List<TilgangBruker>> aktoerIdListGsak = Flowable.fromCallable(() ->
-					findTilgangBrukerListForGsaksakerByFagsakIdAndFagsaksystem(fagsakIdInput))
-					.subscribeOn(Schedulers.io());
-			Flowable<List<TilgangBruker>> aktoerIdListPsak = Flowable.fromCallable(() -> {
-				if (!Collections.disjoint(temaList, PENSJON)) {
-					return findTilgangBrukerListForPensjonsakerByFagsakId(fagsakIdInput);
-				} else {
-					return new ArrayList<TilgangBruker>();
-				}
-			}).subscribeOn(Schedulers.io());
-
-			return Flowable.merge(Arrays.asList(aktoerIdListGsak, aktoerIdListPsak), 2)
-					.flatMapIterable(items -> items);
+			if (fagsakIdInput.getFagsaksystem().equals(FAGSAKSYSTEM_PENSJON)) {
+				return findTilgangBrukerListForPensjonsakerByFagsakId(fagsakIdInput);
+			} else {
+				return findTilgangBrukerListForGsaksakerByFagsakIdAndFagsaksystem(fagsakIdInput);
+			}
 		} catch (Exception e) {
 			log.warn("findTilgangBrukerList feilet ved oppslag. fagsakIdInput={}", fagsakIdInput, e);
 		}
-		return Flowable.empty();
+		return new ArrayList<>();
 	}
 
 
@@ -143,7 +136,8 @@ public class TilgangsmodellRepositoryImpl implements TilgangsmodellRepository {
 	@Cacheable(cacheNames = LokalCacheConfig.TILGANGSMODELL_REPO_SAK_CACHE)
 	public List<TilgangSak> findTilgangSaker(final FagsakIdInput fagsakIdInput, final List<Tema> tema, final SafRequestContext safRequestContext) {
 		try {
-			List<Arkivsak> arkivsaker = gsakAntiCorruptionLayer.findTilgangSakListByFagsakIdAndFagsaksystem(fagsakIdInput.getFagsaksnummer(), fagsakIdInput.getFagsaksystem(), tema);
+			List<Arkivsak> arkivsaker = gsakAntiCorruptionLayer.findTilgangSakListByFagsakIdAndFagsaksystem(fagsakIdInput.getFagsaksnummer(), fagsakIdInput
+					.getFagsaksystem(), tema);
 			return arkivsaker.stream().map(arkivsak -> {
 				safRequestContext.getRequestCache().putObject(arkivsak.getKey(), arkivsak);
 				return TilgangSak.builder()
@@ -171,7 +165,7 @@ public class TilgangsmodellRepositoryImpl implements TilgangsmodellRepository {
 					gsakAntiCorruptionLayer.findArkivsakerByAktoerId(tilgangBruker.getAktoerId(), tema))
 					.subscribeOn(Schedulers.io());
 			Flowable<List<Arkivsak>> psaker = Flowable.fromCallable(() -> {
-				if (!Collections.disjoint(tema, PENSJON)) {
+				if (!Collections.disjoint(tema, TEMA_PENSJON)) {
 					return pensjonSakAntiCorruptionLayer.findArkivsaker(tilgangBruker.getFoedselsnr(), tema);
 				} else {
 					return new ArrayList<Arkivsak>();
@@ -205,18 +199,23 @@ public class TilgangsmodellRepositoryImpl implements TilgangsmodellRepository {
 															 Integer foerste, String etterPeker, Integer siste, String foerPeker,
 															 SafRequestContext safRequestContext) {
 		try {
-			List<String> identer = tilgangBrukere.stream().flatMap(t -> t.getAlleIdenter().stream()).collect(Collectors.toList());
+			List<String> identer = tilgangBrukere.stream()
+					.flatMap(t -> t.getAlleIdenter().stream())
+					.collect(Collectors.toList());
 			List<JournalpostDto> journalposter = joarkAntiCorruptionLayer.finnJournalposter(identer,
 					tilgangSakList, fraDato, inkluderTema, inkluderJournalposttyper, inkluderJournalstatuses, foerste, etterPeker, siste, foerPeker);
 			return journalposter.stream()
 					.map(journalpostDto -> {
-						safRequestContext.getRequestCache().putObject(journalpostDto.getJournalpostId().toString(), journalpostDto);
+						safRequestContext.getRequestCache()
+								.putObject(journalpostDto.getJournalpostId().toString(), journalpostDto);
 						return mapTilgangJournalpost(journalpostDto);
 					})
 					.collect(Collectors.toList());
 		} catch (Exception e) {
 			if (tilgangSakList.size() < MAX_ARKIVSAKER_LOGG) {
-				List<String> arkivsaksId = tilgangSakList.stream().map(TilgangSak::getArkivsaksnummer).collect(Collectors.toList());
+				List<String> arkivsaksId = tilgangSakList.stream()
+						.map(TilgangSak::getArkivsaksnummer)
+						.collect(Collectors.toList());
 				log.warn("finnJournalposter feilet ved henting av journalposter på arkivsaker={}.",
 						arkivsaksId, e);
 			} else {

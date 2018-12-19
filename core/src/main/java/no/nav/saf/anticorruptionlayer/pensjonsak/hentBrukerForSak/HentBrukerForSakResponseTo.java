@@ -1,17 +1,12 @@
 package no.nav.saf.anticorruptionlayer.pensjonsak.hentBrukerForSak;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Value;
 
 /**
  * @author Sigurd Midttun, Visma Consulting.
  */
-@Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
+@Value
 public class HentBrukerForSakResponseTo {
-	private String fnr;
+	private final String fnr;
 }
+
