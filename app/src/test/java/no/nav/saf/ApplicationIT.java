@@ -2,6 +2,8 @@ package no.nav.saf;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import no.nav.saf.endpoints.testconfig.STSTestConfig;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

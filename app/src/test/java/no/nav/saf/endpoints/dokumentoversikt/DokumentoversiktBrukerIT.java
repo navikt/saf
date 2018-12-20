@@ -11,8 +11,8 @@ import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -22,6 +22,8 @@ import no.nav.saf.tjeneste.visningsmodell.Dokumentoversikt;
 import org.apache.http.HttpHeaders;
 import org.apache.http.entity.ContentType;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.RequestEntity;
@@ -43,6 +45,11 @@ public class DokumentoversiktBrukerIT extends AbstractItest {
 	private static final String ORG_NR = "201545004";
 
 	private ObjectMapper objectMapper = new ObjectMapper();
+
+
+	@Autowired
+	private ApplicationContext applicationContext;
+
 
 	@Test
 	public void shouldHentDokumentoversiktBrukerWithAktoerID() throws IOException, URISyntaxException {
@@ -178,7 +185,9 @@ public class DokumentoversiktBrukerIT extends AbstractItest {
 		Map<String, Object> responseEntityData = (Map<String, Object>) responseEntity.getBody().get("data");
 		Dokumentoversikt dokumentoversikt = objectMapper.convertValue(responseEntityData.get("dokumentoversiktBruker"), Dokumentoversikt.class);
 
-		assertEquals(HttpStatus.OK, responseEntity.getStatusCode()); //??
+		assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+
+		assertEquals(0, dokumentoversikt.getJournalposter().size());
 
 		verify(postRequestedFor(urlEqualTo("/aktoerv2")).withRequestBody(matchingXPath("//aktoerId/text()", equalTo(AKTOER_ID))));
 		verify(0, postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter")));
@@ -198,7 +207,9 @@ public class DokumentoversiktBrukerIT extends AbstractItest {
 		Map<String, Object> responseEntityData = (Map<String, Object>) responseEntity.getBody().get("data");
 		Dokumentoversikt dokumentoversikt = objectMapper.convertValue(responseEntityData.get("dokumentoversiktBruker"), Dokumentoversikt.class);
 
-		assertEquals(HttpStatus.OK, responseEntity.getStatusCode()); //??
+		assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+
+		assertEquals(0, dokumentoversikt.getJournalposter().size());
 
 		verify(postRequestedFor(urlEqualTo("/aktoerv2")).withRequestBody(matchingXPath("//aktoerId/text()", equalTo(AKTOER_ID))));
 		verify(0, postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter")));
@@ -232,7 +243,9 @@ public class DokumentoversiktBrukerIT extends AbstractItest {
 		Dokumentoversikt dokumentoversikt = objectMapper.convertValue(responseEntityData.get("dokumentoversiktBruker"), Dokumentoversikt.class);
 
 		assertTrue(dokumentoversikt.getJournalposter().isEmpty());
-		assertEquals(null, dokumentoversikt.getSideInfo());
+		assertNull(dokumentoversikt.getSideInfo());
+
+		assertEquals(0, dokumentoversikt.getJournalposter().size());
 
 		assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
 		verify(postRequestedFor(urlEqualTo("/aktoerv2")).withRequestBody(matchingXPath("//aktoerId/text()", equalTo(AKTOER_ID))));
@@ -267,7 +280,9 @@ public class DokumentoversiktBrukerIT extends AbstractItest {
 		Dokumentoversikt dokumentoversikt = objectMapper.convertValue(responseEntityData.get("dokumentoversiktBruker"), Dokumentoversikt.class);
 
 		assertTrue(dokumentoversikt.getJournalposter().isEmpty());
-		assertEquals(null, dokumentoversikt.getSideInfo());
+		assertNull(dokumentoversikt.getSideInfo());
+
+		assertEquals(0, dokumentoversikt.getJournalposter().size());
 
 		assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
 		verify(postRequestedFor(urlEqualTo("/aktoerv2")).withRequestBody(matchingXPath("//aktoerId/text()", equalTo(AKTOER_ID))));
@@ -275,11 +290,46 @@ public class DokumentoversiktBrukerIT extends AbstractItest {
 		verify(postRequestedFor(urlEqualTo("/servicegw")).withRequestBody(matchingXPath("//personident/text()", equalTo("***gammelt_fnr***"))));
 	}
 
-//  todo implement
-//	@Test
-//	@Disabled
-//	public void finnjournalposterFail() throws IOException, URISyntaxException {
-//	}
+	@Test
+	public void finnjournalposterFail() throws IOException, URISyntaxException {
+		abacPermit();
+		stubFor(post("/aktoerv2")
+				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
+						.withBodyFile("aktoerV2/hentIdentForAktoerId-happy.xml")));
+		stubFor(post("/sts")
+				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
+						.withBodyFile("sts/sts-happy.xml")));
+		stubFor(get("/gsak?aktoerId=" + AKTOER_ID)
+				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
+						.withHeader(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType())
+						.withBodyFile("gsak/gsak-sakerBySaksId-happy.json")));
+		stubFor(post("/hentjournalsakinfo/finnjournalposter")
+				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
+						.withHeader(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType())
+						.withBodyFile("joark/finnjournalposter-empty.json")));
+		stubFor(post("/servicegw")
+				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
+						.withBodyFile("psak/psak-hentSakSammendragListe-happy.xml")));
+
+		GraphQLRequest request = new GraphQLRequest(stringFromClasspath("dokumentoversiktBruker/query-aktoerid.json"), null, null);
+		RequestEntity<GraphQLRequest> requestEntity = new RequestEntity<>(request, createHeaders(), HttpMethod.POST, new URI("/graphql"));
+
+		ResponseEntity<LinkedHashMap> responseEntity = restTemplate.exchange(requestEntity, LinkedHashMap.class);
+		Map<String, Object> responseEntityData = (Map<String, Object>) responseEntity.getBody().get("data");
+		Dokumentoversikt dokumentoversikt = objectMapper.convertValue(responseEntityData.get("dokumentoversiktBruker"), Dokumentoversikt.class);
+
+		assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+
+		assertEquals(0, dokumentoversikt.getJournalposter().size());
+
+		verify(postRequestedFor(urlEqualTo("/aktoerv2")).withRequestBody(matchingXPath("//aktoerId/text()", equalTo(AKTOER_ID))));
+
+		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter")).withRequestBody(matchingJsonPath("$.gsakSakIds", containing("135695442"))));
+		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter")).withRequestBody(matchingJsonPath("$.gsakSakIds", containing("135695449"))));
+		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter")).withRequestBody(matchingJsonPath("$.gsakSakIds", containing("135695448"))));
+
+		verify(postRequestedFor(urlEqualTo("/servicegw")).withRequestBody(matchingXPath("//personident/text()", equalTo("***gammelt_fnr***"))));
+	}
 
 // todo implement
 //	@Test

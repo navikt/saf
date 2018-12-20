@@ -1,6 +1,5 @@
 package no.nav.saf.tjeneste.visningsmodell;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import no.nav.saf.tjeneste.visningsmodell.kode.Datotype;
 
@@ -13,9 +12,7 @@ import java.util.Date;
 /**
  * @author Joakim Bjørnstad, Jbit AS
  */
-//@Value
 @Data
-@AllArgsConstructor
 public class RelevantDato {
 	// Fallback for datoer som er påkrevd men av ukjente årsaker ikke finnes.
 	public static final LocalDateTime INVALID_DATE = LocalDateTime.of(LocalDate.of(1, 1, 1), LocalTime.of(0, 0));

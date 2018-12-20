@@ -10,7 +10,6 @@ import no.nav.saf.tjeneste.visningsmodell.kode.Variantformat;
  */
 @Value
 @Builder
-@AllArgsConstructor
 public class Dokumentvariant {
 	private final Variantformat variantformat;
 }
