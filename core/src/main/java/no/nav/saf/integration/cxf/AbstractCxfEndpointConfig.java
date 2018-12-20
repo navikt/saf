@@ -113,6 +113,6 @@ public abstract class AbstractCxfEndpointConfig {
 	void addLoggingOutInterceptor() {
 		LoggingOutInterceptor loggingOutInterceptor = new LoggingOutInterceptor();
 		loggingOutInterceptor.setPrettyLogging(true);
-		factoryBean.getInInterceptors().add(loggingOutInterceptor);
+		factoryBean.getOutInterceptors().add(loggingOutInterceptor);
 	}
 }

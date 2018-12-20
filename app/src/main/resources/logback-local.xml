@@ -17,7 +17,8 @@
 	<!--</logger>-->
 
 	<!--<logger name="org.apache.cxf" level="INFO"/>-->
-	<!--&lt;!&ndash; Set additivity to false when deployed &ndash;&gt;-->
+
+	 <!--&lt;!&ndash;Set additivity to false when deployed &ndash;&gt;-->
 	<!--<logger name="org.apache.cxf.interceptor" additivity="true">-->
 		<!--<appender-ref ref="CONSOLE"/>-->
 	<!--</logger>-->

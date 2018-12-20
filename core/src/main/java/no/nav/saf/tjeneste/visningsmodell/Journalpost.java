@@ -33,5 +33,5 @@ public class Journalpost {
 	@Builder.Default
 	private final List<RelevantDato> relevanteDatoer = new ArrayList<>();
 	@Builder.Default
-	private List<DokumentInfo> dokumenter = new ArrayList<>();
+	private final List<DokumentInfo> dokumenter = new ArrayList<>();
 }

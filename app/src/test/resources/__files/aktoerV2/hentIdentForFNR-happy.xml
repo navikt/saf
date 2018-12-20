@@ -1,0 +1,13 @@
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+	<soap:Body>
+		<ns2:hentAktoerIdForIdentResponse xmlns:ns2="http://nav.no/tjeneste/virksomhet/aktoer/v2">
+			<hentAktoerIdForIdentResponse>
+				<aktoerId>***gammelt_fnr***59</aktoerId>
+				<identHistorikk>
+					<tpsId>***gammelt_fnr***</tpsId>
+					<datoFom>2016-10-20</datoFom>
+				</identHistorikk>
+			</hentAktoerIdForIdentResponse>
+		</ns2:hentAktoerIdForIdentResponse>
+	</soap:Body>
+</soap:Envelope>
