@@ -3,6 +3,7 @@ package no.nav.saf.integration.sts;
 import no.nav.saf.integration.fasit.ServiceuserAlias;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.frontend.ClientProxy;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Component;
 @Profile({"nais", "local"})
 public class STSConfig {
 
+	@Value("${securityTokenService.url}")
 	private String stsUrl;
 	private ServiceuserAlias serviceuserAlias;
 
