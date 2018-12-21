@@ -1,4 +1,4 @@
-package no.nav.saf.anticorruptionlayer.pensjonsak.hentBrukerForSak;
+package no.nav.saf.anticorruptionlayer.pensjonsak.hentbrukerforsak;
 
 import lombok.Value;
 

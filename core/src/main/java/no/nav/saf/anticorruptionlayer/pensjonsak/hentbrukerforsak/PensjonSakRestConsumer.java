@@ -1,4 +1,4 @@
-package no.nav.saf.anticorruptionlayer.pensjonsak.hentBrukerForSak;
+package no.nav.saf.anticorruptionlayer.pensjonsak.hentbrukerforsak;
 
 import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.cache.LokalCacheConfig;
