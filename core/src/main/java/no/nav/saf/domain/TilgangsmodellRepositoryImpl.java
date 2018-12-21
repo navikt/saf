@@ -205,7 +205,7 @@ public class TilgangsmodellRepositoryImpl implements TilgangsmodellRepository {
 	}
 
 	@Override
-	@Cacheable(cacheNames = LokalCacheConfig.TILGANGSMODELL_REPO_SAK_CACHE, key = "#tilgangBrukerList.aktoerId + '_' + #tilgangBrukerList.orgnummer + '_' + #tema")
+	@Cacheable(cacheNames = LokalCacheConfig.TILGANGSMODELL_REPO_SAK_CACHE, key = "#tilgangBruker.aktoerId + '_' + #tilgangBruker.orgnummer + '_' + #tema")
 	public Flowable<TilgangSak> findTilgangSaker(final TilgangBruker tilgangBruker, final List<Tema> tema, final SafRequestContext safRequestContext) {
 		try {
 			Flowable<List<Arkivsak>> gsakerFromOrgnr = Flowable.fromCallable(() ->

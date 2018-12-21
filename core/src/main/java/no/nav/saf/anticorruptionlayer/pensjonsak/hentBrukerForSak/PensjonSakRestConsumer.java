@@ -32,7 +32,7 @@ public class PensjonSakRestConsumer {
 		this.restTemplate = restTemplateBuilder
 				.setReadTimeout(Duration.ofSeconds(20))
 				.setConnectTimeout(Duration.ofSeconds(5))
-				.basicAuthentication(serviceuserAlias.getUsername(),"yyJI4N56SAUc90Y").build();
+				.basicAuthentication(serviceuserAlias.getUsername(), serviceuserAlias.getPassword()).build();
 	}
 
 	@Cacheable(cacheNames = LokalCacheConfig.SAK_BY_SAKID_CACHE, key = "#sakId")
