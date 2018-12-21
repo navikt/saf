@@ -4,7 +4,6 @@ import lombok.Builder;
 import lombok.Value;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -18,6 +17,7 @@ public class Dokumentoversikt {
 	private final SideInfo sideInfo;
 
 	public static Dokumentoversikt empty() {
-		return new Dokumentoversikt(Collections.emptyList(), SideInfo.empty());
+		return new Dokumentoversikt(new ArrayList<>(), SideInfo.empty());
 	}
+
 }

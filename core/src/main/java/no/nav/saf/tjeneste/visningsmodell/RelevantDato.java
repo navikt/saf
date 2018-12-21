@@ -1,6 +1,6 @@
 package no.nav.saf.tjeneste.visningsmodell;
 
-import lombok.Value;
+import lombok.Data;
 import no.nav.saf.tjeneste.visningsmodell.kode.Datotype;
 
 import java.time.LocalDate;
@@ -12,7 +12,7 @@ import java.util.Date;
 /**
  * @author Joakim Bjørnstad, Jbit AS
  */
-@Value
+@Data
 public class RelevantDato {
 	// Fallback for datoer som er påkrevd men av ukjente årsaker ikke finnes.
 	public static final LocalDateTime INVALID_DATE = LocalDateTime.of(LocalDate.of(1, 1, 1), LocalTime.of(0, 0));
@@ -26,7 +26,7 @@ public class RelevantDato {
 	}
 
 	private static LocalDateTime toLocalDateTime(Date date) {
-		if(date == null) {
+		if (date == null) {
 			return INVALID_DATE;
 		}
 		return LocalDateTime.from(date.toInstant().atZone(ZoneId.systemDefault()));

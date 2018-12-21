@@ -1,0 +1,109 @@
+{
+  "tilgangJournalposter": [
+    {
+      "journalpostId": 429837417,
+      "prevJournalpostId": null,
+      "nextJournalpostId": 429837329,
+      "totaltAntall": 18,
+      "journalForendeEnhetId": "9999",
+      "innhold": "Ettersendelse: BEKREFTELSE_FRA_ARBEIDSGIVER (1x)",
+      "fagomrade": "FOR",
+      "journalstatus": "J",
+      "avsenderMottakerNavn": "LOLNES JENNY PIKENES",
+      "journalfortAvNavn": "TMOT010",
+      "mottakskanal": "NAV_NO",
+      "utsendingskanal": null,
+      "journalposttype": "I",
+      "saksrelasjon": {
+        "sakId": "135738496",
+        "feilregistrert": null,
+        "fagsystem": "FS22"
+      },
+      "datoOpprettet": "2018-12-12T20:31:17.286+0000",
+      "mottattDato": "2018-12-12T21:31:10.000+0000",
+      "journalDato": "2018-12-12T20:31:17.284+0000",
+      "sendtPrintDato": null,
+      "ekspedertDato": null,
+      "dokumenter": [
+        {
+          "dokumentInfoId": 441828510,
+          "dokumentstatus": null,
+          "brevkode": null,
+          "variantFormat": "ARKIV",
+          "tittel": "Bekreftelse fra arbeidsgiver",
+          "logiske": []
+        }
+      ]
+    },
+    {
+      "journalpostId": 429837329,
+      "prevJournalpostId": 429837417,
+      "nextJournalpostId": 429812815,
+      "totaltAntall": 18,
+      "journalForendeEnhetId": "9999",
+      "innhold": "Ettersendelse: DOK_ETTERLØNN (1x)",
+      "fagomrade": "FOR",
+      "journalstatus": "J",
+      "avsenderMottakerNavn": "LOLNES JENNY PIKENES",
+      "journalfortAvNavn": "TMOT010",
+      "mottakskanal": "NAV_NO",
+      "utsendingskanal": null,
+      "journalposttype": "I",
+      "saksrelasjon": {
+        "sakId": "135738496",
+        "feilregistrert": null,
+        "fagsystem": "FS22"
+      },
+      "datoOpprettet": "2018-12-12T08:21:59.592+0000",
+      "mottattDato": "2018-12-12T09:21:55.000+0000",
+      "journalDato": "2018-12-12T08:21:59.585+0000",
+      "sendtPrintDato": null,
+      "ekspedertDato": null,
+      "dokumenter": [
+        {
+          "dokumentInfoId": 441828384,
+          "dokumentstatus": null,
+          "brevkode": null,
+          "variantFormat": "ARKIV",
+          "tittel": "Dokumentasjon av etterlønn/sluttvederlag",
+          "logiske": []
+        }
+      ]
+    },
+    {
+      "journalpostId": 429812815,
+      "prevJournalpostId": 429837329,
+      "nextJournalpostId": 429812712,
+      "totaltAntall": 18,
+      "journalForendeEnhetId": "9999",
+      "innhold": "SØKNAD_FORELDREPENGER_FØDSEL",
+      "fagomrade": "FOR",
+      "journalstatus": "J",
+      "avsenderMottakerNavn": "LOLNES JENNY PIKENES",
+      "journalfortAvNavn": "TMOT010",
+      "mottakskanal": "NAV_NO",
+      "utsendingskanal": null,
+      "journalposttype": "I",
+      "saksrelasjon": {
+        "sakId": "135737721",
+        "feilregistrert": null,
+        "fagsystem": "FS22"
+      },
+      "datoOpprettet": "2018-12-03T09:31:32.022+0000",
+      "mottattDato": "2018-11-22T16:35:08.000+0000",
+      "journalDato": "2018-12-03T09:31:32.010+0000",
+      "sendtPrintDato": null,
+      "ekspedertDato": null,
+      "dokumenter": [
+        {
+          "dokumentInfoId": 441803683,
+          "dokumentstatus": null,
+          "brevkode": null,
+          "variantFormat": "ARKIV",
+          "tittel": "Søknad om foreldrepenger ved fødsel",
+          "logiske": []
+        }
+      ]
+    }
+  ]
+}

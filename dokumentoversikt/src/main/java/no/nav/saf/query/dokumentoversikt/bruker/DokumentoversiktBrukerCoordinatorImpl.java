@@ -11,6 +11,7 @@ import no.nav.saf.domain.tilgangsmodell.TilgangJournalpost;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 import no.nav.saf.query.dokumentoversikt.DokumentoversiktVisningsmodellRepository;
 import no.nav.saf.query.dokumentoversikt.SideInfoMapper;
+import no.nav.saf.query.dokumentoversikt.arguments.DokumentoversiktPagination;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.pep.Pep;
 import no.nav.saf.tjeneste.visningsmodell.Dokumentoversikt;
@@ -60,7 +61,9 @@ class DokumentoversiktBrukerCoordinatorImpl implements DokumentoversiktBrukerCoo
 	@Override
 	public Dokumentoversikt hentDokumentoversikt(DokumentoversiktBrukerArguments dokumentoversiktBrukerArguments, SafRequestContext safRequestContext) {
 		TilgangBruker tilgangBruker = tilgangsmodellRepository.findTilgangBruker(dokumentoversiktBrukerArguments.getBrukerIdInput());
-		safRequestContext.getRequestCache().putObject(TILGANG_BRUKER, tilgangBruker);
+		if (tilgangBruker != null) {
+			safRequestContext.getRequestCache().putObject(TILGANG_BRUKER, tilgangBruker);
+		}
 
 		boolean pep1Access = this.pep1.hasAccess(tilgangBruker, safRequestContext);
 
@@ -68,7 +71,7 @@ class DokumentoversiktBrukerCoordinatorImpl implements DokumentoversiktBrukerCoo
 			return Dokumentoversikt.empty();
 		}
 
-		final Flowable<TilgangSak> tilgangSakFlow = tilgangsmodellRepository.findTilgangSaker(tilgangBruker, dokumentoversiktBrukerArguments
+		final Flowable<TilgangSak> tilgangSakFlow = tilgangsmodellRepository.findTilgangSaker(tilgangBruker, dokumentoversiktBrukerArguments.getFilters()
 				.getTema(), safRequestContext);
 		List<TilgangSak> filteredTilgangSakList = tilgangSakFlow
 				.onErrorResumeNext(throwable -> {
@@ -85,14 +88,14 @@ class DokumentoversiktBrukerCoordinatorImpl implements DokumentoversiktBrukerCoo
 		final List<TilgangJournalpost> tilgangJournalpostList = tilgangsmodellRepository.findTilgangJournalposter(
 				Collections.singletonList(tilgangBruker),
 				filteredTilgangSakList,
-				dokumentoversiktBrukerArguments.getFraDato(),
-				dokumentoversiktBrukerArguments.getTema(),
-				dokumentoversiktBrukerArguments.getJournalposttyper(),
-				dokumentoversiktBrukerArguments.getJournalstatuser(),
-				dokumentoversiktBrukerArguments.getFoerste(),
-				dokumentoversiktBrukerArguments.getEtterPeker(),
-				dokumentoversiktBrukerArguments.getSiste(),
-				dokumentoversiktBrukerArguments.getFoerPeker(),
+				dokumentoversiktBrukerArguments.getFilters().getFraDato(),
+				dokumentoversiktBrukerArguments.getFilters().getTema(),
+				dokumentoversiktBrukerArguments.getFilters().getJournalposttyper(),
+				dokumentoversiktBrukerArguments.getFilters().getJournalstatuser(),
+				((DokumentoversiktPagination.SeekPagination) dokumentoversiktBrukerArguments.getPagination()).getFoerste(),
+				((DokumentoversiktPagination.SeekPagination) dokumentoversiktBrukerArguments.getPagination()).getEtterPeker(),
+				((DokumentoversiktPagination.SeekPagination) dokumentoversiktBrukerArguments.getPagination()).getSiste(),
+				((DokumentoversiktPagination.SeekPagination) dokumentoversiktBrukerArguments.getPagination()).getFoerPeker(),
 				safRequestContext
 		);
 

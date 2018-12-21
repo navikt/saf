@@ -34,7 +34,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * TODO behøver enhetstest
  *
  * @author Joakim Bjørnstad, Jbit AS
  */
@@ -69,7 +68,6 @@ public class JournalpostDtoMapper {
 						.dokumentId(dokumentInfoDto.getDokumentInfoId())
 						.tittel(dokumentInfoDto.getTittel())
 						.navSkjemaId(dokumentInfoDto.getBrevkode())
-						.saksbehandlerHarTilgang(true) //TODO
 						.dokumentvarianter(Collections.singletonList(Dokumentvariant.builder()
 								.variantformat(Variantformat.valueOf(dokumentInfoDto.getVariantFormat().name()))
 								.build()))
