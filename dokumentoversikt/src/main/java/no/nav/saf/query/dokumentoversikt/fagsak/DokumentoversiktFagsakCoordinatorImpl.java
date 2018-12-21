@@ -71,16 +71,10 @@ class DokumentoversiktFagsakCoordinatorImpl implements DokumentoversiktFagsakCoo
 				.toList()
 				.blockingGet();
 
-		final List<String> filteredAktoerIdListTilgangBruker = filteredTilgangBrukerList.stream()
-				.map(TilgangBruker::getAktoerId)
-				.collect(Collectors.toList());
+		final List<TilgangSak> tilgangSakList = tilgangsmodellRepository.findTilgangSaker(filteredTilgangBrukerList, fagsakIdInput, dokumentoversiktFagsakArguments
+				.getTema(), safRequestContext);
 
-		final List<TilgangSak> tilgangSakList = tilgangsmodellRepository.findTilgangSaker(fagsakIdInput, dokumentoversiktFagsakArguments
-				.getTema(), safRequestContext).stream()
-				.filter(tilgangSak -> filteredAktoerIdListTilgangBruker.contains(tilgangSak.getAktoerId()))
-				.collect(Collectors.toList());
-
-		List<TilgangSak> filteredTilgangSakList = Flowable.fromIterable(tilgangSakList)
+		final List<TilgangSak> filteredTilgangSakList = Flowable.fromIterable(tilgangSakList)
 				.parallel(10)
 				.runOn(Schedulers.io())
 				.filter(ts -> pep2.hasAccess(ts, safRequestContext))

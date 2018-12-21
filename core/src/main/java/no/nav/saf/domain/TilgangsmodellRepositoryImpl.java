@@ -134,28 +134,78 @@ public class TilgangsmodellRepositoryImpl implements TilgangsmodellRepository {
 
 	@Override
 	@Cacheable(cacheNames = LokalCacheConfig.TILGANGSMODELL_REPO_SAK_CACHE)
-	public List<TilgangSak> findTilgangSaker(final FagsakIdInput fagsakIdInput, final List<Tema> tema, final SafRequestContext safRequestContext) {
+	public List<TilgangSak> findTilgangSaker(final List<TilgangBruker> tilgangBrukerList, final FagsakIdInput fagsakIdInput, final List<Tema> tema, final SafRequestContext safRequestContext) {
+		if (fagsakIdInput.getFagsaksystem().equals(FAGSAKSYSTEM_PENSJON)) {
+			return findTilgangSakForPsaker(tilgangBrukerList, fagsakIdInput, tema, safRequestContext);
+		} else {
+			return findTilgangSakForGsaker(tilgangBrukerList, fagsakIdInput, tema, safRequestContext);
+
+		}
+	}
+
+	private List<TilgangSak> findTilgangSakForGsaker(List<TilgangBruker> tilgangBrukerList, FagsakIdInput fagsakIdInput, List<Tema> tema, SafRequestContext safRequestContext) {
 		try {
 			List<Arkivsak> arkivsaker = gsakAntiCorruptionLayer.findTilgangSakListByFagsakIdAndFagsaksystem(fagsakIdInput.getFagsaksnummer(), fagsakIdInput
 					.getFagsaksystem(), tema);
-			return arkivsaker.stream().map(arkivsak -> {
-				safRequestContext.getRequestCache().putObject(arkivsak.getKey(), arkivsak);
-				return TilgangSak.builder()
-						.aktoerId(arkivsak.getAktoerId())
-						.orgnummer(arkivsak.getOrgnummer())
-						.arkivsaksnummer(arkivsak.getArkivsaksnummer())
-						.arkivsaksystem(arkivsak.getArkivsaksystem().name())
-						.tema(arkivsak.getTema().name())
-						.build();
-			}).collect(Collectors.toList());
+			return arkivsaker.stream()
+					.filter(arkivsak -> {
+						List<String> aktoerIdList = tilgangBrukerList.stream()
+								.filter(TilgangBruker::isBrukerPerson)
+								.map(TilgangBruker::getAktoerId)
+								.collect(Collectors.toList());
+
+						List<String> orgnrList = tilgangBrukerList.stream()
+								.filter(tilgangBruker -> !tilgangBruker.isBrukerPerson())
+								.map(TilgangBruker::getOrgnummer)
+								.collect(Collectors.toList());
+
+						return aktoerIdList.contains(arkivsak.getAktoerId()) || orgnrList.contains(arkivsak.getOrgnummer());
+					})
+					.map(arkivsak -> {
+						safRequestContext.getRequestCache().putObject(arkivsak.getKey(), arkivsak);
+						return TilgangSak.builder()
+								.aktoerId(arkivsak.getAktoerId())
+								.orgnummer(arkivsak.getOrgnummer())
+								.arkivsaksnummer(arkivsak.getArkivsaksnummer())
+								.arkivsaksystem(arkivsak.getArkivsaksystem().name())
+								.tema(arkivsak.getTema().name())
+								.build();
+					}).collect(Collectors.toList());
 		} catch (Exception e) {
-			log.warn("findTilgangSakList feilet ved for fagsakId={}.", fagsakIdInput);
+			log.warn("findTilgangSakForGsaker feilet ved for fagsakIdInput={}.", fagsakIdInput);
+		}
+		return new ArrayList<>();
+	}
+
+	private List<TilgangSak> findTilgangSakForPsaker(List<TilgangBruker> tilgangBrukerList, FagsakIdInput fagsakIdInput, List<Tema> tema, SafRequestContext safRequestContext) {
+		try {
+			if (tilgangBrukerList.size() != 1) {
+				log.warn("findTilgangSakForPsaker ble kalt med null eller mer enn én bruker. Pensjonssaker kan kun ha én bruker.");
+				return new ArrayList<>();
+			}
+
+			List<Arkivsak> arkivsaker = pensjonSakAntiCorruptionLayer.findArkivsaker(tilgangBrukerList.get(0), tema);
+			return arkivsaker.stream()
+					.map(arkivsak -> {
+						safRequestContext.getRequestCache().putObject(arkivsak.getKey(), arkivsak);
+						return TilgangSak.builder()
+								.aktoerId(arkivsak.getAktoerId())
+								.fagsaksnummer(arkivsak.getFagsaksnummer())
+								.fagsaksystem(arkivsak.getFagsaksystem())
+								.arkivsaksnummer(arkivsak.getArkivsaksnummer())
+								.arkivsaksystem(arkivsak.getArkivsaksystem().name())
+								.tema(arkivsak.getTema().name())
+								.build();
+					}).collect(Collectors.toList());
+
+		} catch (Exception e) {
+			log.warn("findTilgangSakForPsaker feilet ved for fagsakIdInput={}.", fagsakIdInput);
 		}
 		return new ArrayList<>();
 	}
 
 	@Override
-	@Cacheable(cacheNames = LokalCacheConfig.TILGANGSMODELL_REPO_SAK_CACHE, key = "#tilgangBruker.aktoerId + '_' + #tilgangBruker.orgnummer + '_' + #tema")
+	@Cacheable(cacheNames = LokalCacheConfig.TILGANGSMODELL_REPO_SAK_CACHE, key = "#tilgangBrukerList.aktoerId + '_' + #tilgangBrukerList.orgnummer + '_' + #tema")
 	public Flowable<TilgangSak> findTilgangSaker(final TilgangBruker tilgangBruker, final List<Tema> tema, final SafRequestContext safRequestContext) {
 		try {
 			Flowable<List<Arkivsak>> gsakerFromOrgnr = Flowable.fromCallable(() ->
@@ -166,7 +216,7 @@ public class TilgangsmodellRepositoryImpl implements TilgangsmodellRepository {
 					.subscribeOn(Schedulers.io());
 			Flowable<List<Arkivsak>> psaker = Flowable.fromCallable(() -> {
 				if (!Collections.disjoint(tema, TEMA_PENSJON)) {
-					return pensjonSakAntiCorruptionLayer.findArkivsaker(tilgangBruker.getFoedselsnr(), tema);
+					return pensjonSakAntiCorruptionLayer.findArkivsaker(tilgangBruker, tema);
 				} else {
 					return new ArrayList<Arkivsak>();
 				}
