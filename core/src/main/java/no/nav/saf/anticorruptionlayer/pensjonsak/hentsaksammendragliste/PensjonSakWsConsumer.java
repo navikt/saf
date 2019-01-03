@@ -32,7 +32,7 @@ import java.util.stream.Collectors;
 @Component
 public class PensjonSakWsConsumer {
 	private final PensjonSakV1 pensjonSakV1;
-	private static final int MILLI_TO_NANO_CONST = 100000; //TODO Bør ikke denne være 1e6?
+	private static final int MILLI_TO_NANO_CONST = 1000000;
 
 	@Inject
 	public PensjonSakWsConsumer(PensjonSakV1 pensjonSakV1) {

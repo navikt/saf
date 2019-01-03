@@ -16,9 +16,9 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Component
-class PensjonSakAntiCorruptionLayerImpl implements PensjonSakAntiCorruptionLayer {
+public class PensjonSakAntiCorruptionLayerImpl implements PensjonSakAntiCorruptionLayer {
 
-	private static final String PSAK_FAGSYSTEM = "PP01";
+	public static final String PSAK_FAGSYSTEM = "PP01";
 	private final PensjonSakWsConsumer pensjonSakWsConsumer;
 	private final PensjonSakRestConsumer pensjonSakRestConsumer;
 

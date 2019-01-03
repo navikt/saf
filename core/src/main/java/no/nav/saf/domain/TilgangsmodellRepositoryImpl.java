@@ -1,5 +1,6 @@
 package no.nav.saf.domain;
 
+import static no.nav.saf.anticorruptionlayer.pensjonsak.PensjonSakAntiCorruptionLayerImpl.PSAK_FAGSYSTEM;
 import static no.nav.saf.domain.DomainConstants.AKTOER_ID_LIST;
 import static no.nav.saf.domain.DomainConstants.ORGNR_LIST;
 
@@ -45,7 +46,6 @@ import java.util.stream.Stream;
 @Slf4j
 public class TilgangsmodellRepositoryImpl implements TilgangsmodellRepository {
 	public static final EnumSet<Tema> TEMA_PENSJON = EnumSet.of(Tema.PEN, Tema.UFO);
-	public static final String FAGSAKSYSTEM_PENSJON = "PP01";
 	public static final int MAX_ARKIVSAKER_LOGG = 1000;
 
 	private final AktoerAntiCorruptionLayer aktoerAntiCorruptionLayer;
@@ -90,7 +90,7 @@ public class TilgangsmodellRepositoryImpl implements TilgangsmodellRepository {
 	@Cacheable(cacheNames = LokalCacheConfig.TILGANGSMODELL_REPO_BRUKER_CACHE)
 	public List<TilgangBruker> findTilgangBrukerList(FagsakIdInput fagsakIdInput, List<Tema> temaList) {
 		try {
-			if (fagsakIdInput.getFagsaksystem().equals(FAGSAKSYSTEM_PENSJON)) {
+			if (fagsakIdInput.getFagsaksystem().equals(PSAK_FAGSYSTEM)) {
 				return findTilgangBrukerListForPensjonsakerByFagsakId(fagsakIdInput);
 			} else {
 				return findTilgangBrukerListForGsaksakerByFagsakIdAndFagsaksystem(fagsakIdInput);
@@ -135,7 +135,7 @@ public class TilgangsmodellRepositoryImpl implements TilgangsmodellRepository {
 	@Override
 	@Cacheable(cacheNames = LokalCacheConfig.TILGANGSMODELL_REPO_SAK_CACHE)
 	public List<TilgangSak> findTilgangSaker(final List<TilgangBruker> tilgangBrukerList, final FagsakIdInput fagsakIdInput, final List<Tema> tema, final SafRequestContext safRequestContext) {
-		if (fagsakIdInput.getFagsaksystem().equals(FAGSAKSYSTEM_PENSJON)) {
+		if (fagsakIdInput.getFagsaksystem().equals(PSAK_FAGSYSTEM)) {
 			return findTilgangSakForPsaker(tilgangBrukerList, fagsakIdInput, tema, safRequestContext);
 		} else {
 			return findTilgangSakForGsaker(tilgangBrukerList, fagsakIdInput, tema, safRequestContext);
