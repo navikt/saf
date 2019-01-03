@@ -45,7 +45,7 @@ public class HentDokumentController {
 	@Monitor(value = "dok_request", extraTags = {"process", "hentDokument"}, histogram = true)
 	public ResponseEntity<byte[]> hentDokument(@ApiParam(name = "journalpostId", required = true) @PathVariable  String journalpostId,
 											   @ApiParam(name = "dokumentId", required = true) @PathVariable  String dokumentId,
-											   @ApiParam(name = "variantFormat", required = true, value = "format på dokumentet som skal hentes, ARKIV, ORGINAL og SLADDET er noen eksempler på dette.") @PathVariable  String variantFormat,
+											   @ApiParam(name = "variantFormat", value = "format på dokumentet som skal hentes, ARKIV, ORGINAL og SLADDET er noen eksempler på dette.", required = true) @PathVariable  String variantFormat,
 											   @ApiParam(hidden = true) @RequestHeader(value = HttpHeaders.AUTHORIZATION, required = false) String authorizationHeader) {
 
 		log.info("hentDokument har mottatt forespørsel om å hente dokument, journalpostId={}, dokumentId={}, variantFormat={}", journalpostId, dokumentId, variantFormat);
