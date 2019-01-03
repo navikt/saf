@@ -1,6 +1,6 @@
-package no.nav.saf.domain;
+package no.nav.saf.hentdokument.repo;
 
-import no.nav.saf.tjeneste.hentdokument.HentDokument;
+import no.nav.saf.domain.HentDokument;
 
 /**
  * @author Sigurd Midttun, Visma Consulting.

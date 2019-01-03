@@ -2,7 +2,6 @@ package no.nav.saf.domain.tilgangsmodell;
 
 import lombok.Builder;
 import lombok.Value;
-import no.nav.saf.tilgangskontroll.abstraction.SecModel;
 
 import java.util.List;
 
@@ -11,7 +10,7 @@ import java.util.List;
  */
 @Value
 @Builder
-public class TilgangSak implements SecModel {
+public class TilgangSak {
 	private final String aktoerId;
 	private final String foedselsnummer;
 	private final String orgnummer;

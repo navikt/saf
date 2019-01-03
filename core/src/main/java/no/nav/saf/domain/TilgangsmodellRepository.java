@@ -2,7 +2,6 @@ package no.nav.saf.domain;
 
 import io.reactivex.Flowable;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
-import no.nav.saf.domain.tilgangsmodell.TilgangDokumentInfo;
 import no.nav.saf.domain.tilgangsmodell.TilgangJournalpost;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
@@ -21,7 +20,7 @@ import java.util.List;
 public interface TilgangsmodellRepository {
 	TilgangBruker findTilgangBruker(BrukerIdInput brukerIdInput);
 
-	List<TilgangBruker> findTilgangBrukerList(FagsakIdInput fagsakIdInput, List<Tema> temaList);
+	List<TilgangBruker> findTilgangBrukerList(FagsakIdInput fagsakIdInput);
 
 	List<TilgangSak> findTilgangSaker(List<TilgangBruker> tilgangBrukerList, FagsakIdInput fagsakIdInput, List<Tema> tema, SafRequestContext safRequestContext);
 
@@ -35,15 +34,4 @@ public interface TilgangsmodellRepository {
 													  Integer foerste, String etterPeker, Integer siste, String foerPeker,
 													  SafRequestContext safRequestContext);
 
-	TilgangJournalpost findTilgangJournalpost(String journalpostId, String dokumentId, String variantFormat);
-
-	TilgangDokumentInfo findTilgangDokumentInfo(String journalpostId, String dokumentId, String variantFormat);
-
-	TilgangSak findTilgangSak(String journalpostId, String dokumentId, String variantFormat);
-
-	TilgangBruker findTilgangBruker(String journalpostId, String dokumentId, String variantFormat);
-
-	TilgangBruker findTilgangBrukerBySakId(String sakId, String arkivsaksystem);
-
-	TilgangSak findTilgangSakBySakId(String sakId, String arkivsaksystem);
 }

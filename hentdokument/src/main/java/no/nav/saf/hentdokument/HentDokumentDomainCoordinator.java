@@ -1,5 +1,6 @@
-package no.nav.saf.tjeneste.hentdokument;
+package no.nav.saf.hentdokument;
 
+import no.nav.saf.domain.HentDokument;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 
 /**

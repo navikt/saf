@@ -1,4 +1,4 @@
-package no.nav.saf.tjeneste.hentdokument;
+package no.nav.saf.hentdokument;
 
 import lombok.Builder;
 import lombok.Value;

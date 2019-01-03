@@ -1,5 +1,7 @@
 package no.nav.saf.domain;
 
+import static no.nav.saf.anticorruptionlayer.pensjonsak.PensjonSakAntiCorruptionLayerImpl.PSAK_FAGSYSTEM;
+import static no.nav.saf.anticorruptionlayer.pensjonsak.PensjonSakAntiCorruptionLayerImpl.TEMA_PENSJON;
 import static no.nav.saf.domain.DomainConstants.AKTOER_ID_LIST;
 import static no.nav.saf.domain.DomainConstants.ORGNR_LIST;
 
@@ -19,7 +21,6 @@ import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tjeneste.argumenter.BrukerIdInput;
 import no.nav.saf.tjeneste.argumenter.FagsakIdInput;
-import no.nav.saf.tjeneste.visningsmodell.kode.Arkivsakssystem;
 import no.nav.saf.tjeneste.visningsmodell.kode.Journalposttype;
 import no.nav.saf.tjeneste.visningsmodell.kode.Journalstatus;
 import no.nav.saf.tjeneste.visningsmodell.kode.Tema;
@@ -32,7 +33,6 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -44,8 +44,6 @@ import java.util.stream.Stream;
 @Repository
 @Slf4j
 public class TilgangsmodellRepositoryImpl implements TilgangsmodellRepository {
-	public static final EnumSet<Tema> TEMA_PENSJON = EnumSet.of(Tema.PEN, Tema.UFO);
-	public static final String FAGSAKSYSTEM_PENSJON = "PP01";
 	public static final int MAX_ARKIVSAKER_LOGG = 1000;
 
 	private final AktoerAntiCorruptionLayer aktoerAntiCorruptionLayer;
@@ -88,9 +86,9 @@ public class TilgangsmodellRepositoryImpl implements TilgangsmodellRepository {
 
 	@Override
 	@Cacheable(cacheNames = LokalCacheConfig.TILGANGSMODELL_REPO_BRUKER_CACHE)
-	public List<TilgangBruker> findTilgangBrukerList(FagsakIdInput fagsakIdInput, List<Tema> temaList) {
+	public List<TilgangBruker> findTilgangBrukerList(FagsakIdInput fagsakIdInput) {
 		try {
-			if (fagsakIdInput.getFagsaksystem().equals(FAGSAKSYSTEM_PENSJON)) {
+			if (fagsakIdInput.getFagsaksystem().equals(PSAK_FAGSYSTEM)) {
 				return findTilgangBrukerListForPensjonsakerByFagsakId(fagsakIdInput);
 			} else {
 				return findTilgangBrukerListForGsaksakerByFagsakIdAndFagsaksystem(fagsakIdInput);
@@ -135,7 +133,7 @@ public class TilgangsmodellRepositoryImpl implements TilgangsmodellRepository {
 	@Override
 	@Cacheable(cacheNames = LokalCacheConfig.TILGANGSMODELL_REPO_SAK_CACHE)
 	public List<TilgangSak> findTilgangSaker(final List<TilgangBruker> tilgangBrukerList, final FagsakIdInput fagsakIdInput, final List<Tema> tema, final SafRequestContext safRequestContext) {
-		if (fagsakIdInput.getFagsaksystem().equals(FAGSAKSYSTEM_PENSJON)) {
+		if (fagsakIdInput.getFagsaksystem().equals(PSAK_FAGSYSTEM)) {
 			return findTilgangSakForPsaker(tilgangBrukerList, fagsakIdInput, tema, safRequestContext);
 		} else {
 			return findTilgangSakForGsaker(tilgangBrukerList, fagsakIdInput, tema, safRequestContext);
@@ -275,83 +273,6 @@ public class TilgangsmodellRepositoryImpl implements TilgangsmodellRepository {
 		}
 	}
 
-	@Override
-	public TilgangJournalpost findTilgangJournalpost(String journalpostId, String dokumentId, String variantFormat) {
-		try {
-			return joarkAntiCorruptionLayer.hentTilgangJournalpost(journalpostId, dokumentId, variantFormat);
-		} catch (Exception e) {
-			log.warn("hentTilgangJournalpost feilet ved oppslag, journalpostId={}, dokumentId={}, variantFormat={}. Feilmelding={}",
-					journalpostId, dokumentId, variantFormat, e.getMessage());
-		}
-		return null;
-	}
-
-	@Override
-	public TilgangDokumentInfo findTilgangDokumentInfo(String journalpostId, String dokumentId, String variantFormat) {
-		try {
-			return joarkAntiCorruptionLayer.hentTilgangDokumentInfo(journalpostId, dokumentId, variantFormat);
-		} catch (Exception e) {
-			log.warn("hentTilgangDokumentInfo feilet ved oppslag, journalpostId={}, dokumentId={}, variantFormat={}. Feilmelding={}",
-					journalpostId, dokumentId, variantFormat, e.getMessage());
-		}
-		return null;
-	}
-
-	@Override
-	public TilgangSak findTilgangSak(String journalpostId, String dokumentId, String variantFormat) {
-		try {
-			return joarkAntiCorruptionLayer.hentTilgangSak(journalpostId, dokumentId, variantFormat);
-		} catch (Exception e) {
-			log.warn("hentTilgangSak feilet ved oppslag, journalpostId={}, dokumentId={}, variantFormat={}. Feilmelding={}",
-					journalpostId, dokumentId, variantFormat, e.getMessage());
-		}
-		return null;
-	}
-
-	@Override
-	public TilgangBruker findTilgangBruker(String journalpostId, String dokumentId, String variantFormat) {
-		try {
-			return joarkAntiCorruptionLayer.hentTilgangBruker(journalpostId, dokumentId, variantFormat);
-		} catch (Exception e) {
-			log.warn("hentTilgangBruker feilet ved oppslag, journalpostId={}, dokumentId={}, variantFormat={}. Feilmelding={}",
-					journalpostId, dokumentId, variantFormat, e.getMessage());
-		}
-		return null;
-	}
-
-	@Override
-	public TilgangBruker findTilgangBrukerBySakId(String sakId, String arkivsaksystem) {
-		try {
-			if (Arkivsakssystem.GSAK.name().equals(arkivsaksystem)) {
-				return gsakAntiCorruptionLayer.findTilgangBrukerBySakId(sakId);
-			} else if (Arkivsakssystem.PSAK.name().equals(arkivsaksystem)) {
-				//TODO implement call to psak
-				return null;
-			} else {
-				return null;
-			}
-		} catch (Exception e) {
-			log.warn("findTilgangBrukerBySakId feilet ved oppslag på sakId={}. Feilmelding={}", sakId, e.getMessage());
-			return null;
-		}
-	}
-
-	@Override
-	public TilgangSak findTilgangSakBySakId(String sakId, String arkivsaksystem) {
-		try {
-			if (Arkivsakssystem.GSAK.name().equals(arkivsaksystem)) {
-				return gsakAntiCorruptionLayer.findTilgangSakBySakId(sakId);
-			} else if (Arkivsakssystem.PSAK.name().equals(arkivsaksystem)) {
-				//TODO implement call to psak
-				return null;
-			} else {
-				return null;
-			}
-		} catch (Exception e) {
-			log.warn("findTilgangBrukerBySakId feilet ved oppslag på sakId={}. Feilmelding={}", sakId, e.getMessage());
-			return null;
-		}
-	}
 
 
 	private TilgangJournalpost mapTilgangJournalpost(JournalpostDto dto) {

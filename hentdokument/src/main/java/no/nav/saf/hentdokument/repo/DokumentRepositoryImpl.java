@@ -1,8 +1,8 @@
-package no.nav.saf.domain;
+package no.nav.saf.hentdokument.repo;
 
 import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.anticorruptionlayer.joark.JoarkAntiCorruptionLayer;
-import no.nav.saf.tjeneste.hentdokument.HentDokument;
+import no.nav.saf.domain.HentDokument;
 import org.springframework.stereotype.Repository;
 
 import javax.inject.Inject;

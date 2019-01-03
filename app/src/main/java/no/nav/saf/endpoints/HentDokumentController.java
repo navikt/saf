@@ -4,11 +4,11 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.Authorization;
 import lombok.extern.slf4j.Slf4j;
+import no.nav.saf.domain.HentDokument;
+import no.nav.saf.hentdokument.HentDokumentDomainCoordinator;
 import no.nav.saf.metrics.Monitor;
 import no.nav.saf.swagger.SwaggerRestHentDokument;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
-import no.nav.saf.tjeneste.hentdokument.HentDokument;
-import no.nav.saf.tjeneste.hentdokument.HentDokumentDomainCoordinator;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 
 /**
  * Endepunktet til hentDokument, som returnerer et dokument fra joark basert på journalpostId, dokumentInfoId og variantFormat".
@@ -33,7 +32,7 @@ public class HentDokumentController {
 	private final HentDokumentDomainCoordinator hentDokumentDomainCoordinator;
 
 	@Inject
-	public HentDokumentController(@Named("HentDokumentDomainCoordinatorImplPoc") HentDokumentDomainCoordinator hentDokumentDomainCoordinator) {
+	public HentDokumentController(HentDokumentDomainCoordinator hentDokumentDomainCoordinator) {
 		this.hentDokumentDomainCoordinator = hentDokumentDomainCoordinator;
 	}
 
@@ -41,12 +40,12 @@ public class HentDokumentController {
 	@SwaggerRestHentDokument
 	@GetMapping(value = "hentdokument/{journalpostId}/{dokumentId}/{variantFormat}")
 	@Monitor(value = "dok_request", extraTags = {"process", "hentDokument"}, histogram = true)
-	public ResponseEntity<byte[]> hentDokument(@ApiParam(name = "journalpostId", required = true) @PathVariable  String journalpostId,
-											   @ApiParam(name = "dokumentId", required = true) @PathVariable  String dokumentId,
-											   @ApiParam(name = "variantFormat", required = true) @PathVariable  String variantFormat,
+	public ResponseEntity<byte[]> hentDokument(@ApiParam(name = "journalpostId", required = true) @PathVariable String journalpostId,
+											   @ApiParam(name = "dokumentId", required = true) @PathVariable String dokumentId,
+											   @ApiParam(name = "variantFormat", required = true) @PathVariable String variantFormat,
 											   @ApiParam(hidden = true) @RequestHeader(value = HttpHeaders.AUTHORIZATION, required = false) String authorizationHeader) {
 
-		log.info("hentDokument har mottatt forespørsel om å hente dokument, journalpostId={}, dokumentId={}, variantFormat={}", journalpostId, dokumentId, variantFormat);
+		log.info("hentDokument har mottatt kall, journalpostId={}, dokumentId={}, variantFormat={}", journalpostId, dokumentId, variantFormat);
 		HentDokument response = hentDokumentDomainCoordinator.hentDokument(journalpostId, dokumentId, variantFormat, new SafRequestContext(authorizationHeader));
 
 		return ResponseEntity.ok()
