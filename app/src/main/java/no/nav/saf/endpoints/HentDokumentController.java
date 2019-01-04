@@ -1,5 +1,6 @@
 package no.nav.saf.endpoints;
 
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.Authorization;
@@ -27,6 +28,7 @@ import javax.inject.Inject;
  */
 @RestController
 @RequestMapping("rest/")
+@Api(tags = "hentdokument API", description = "Tilbyr henting av fysiske dokumenter")
 @Slf4j
 public class HentDokumentController {
 	private final HentDokumentDomainCoordinator hentDokumentDomainCoordinator;
@@ -36,16 +38,16 @@ public class HentDokumentController {
 		this.hentDokumentDomainCoordinator = hentDokumentDomainCoordinator;
 	}
 
-	@ApiOperation(value = "Hent dokument for angitte søkekriterier", authorizations = {@Authorization(value = "apiKey")})
+	@ApiOperation(value = "Henter fysiske dokumenter fra NAV sitt arkiv og gjør nødvendig tilgangskontroll.", authorizations = {@Authorization(value = "apiKey")})
 	@SwaggerRestHentDokument
 	@GetMapping(value = "hentdokument/{journalpostId}/{dokumentId}/{variantFormat}")
 	@Monitor(value = "dok_request", extraTags = {"process", "hentDokument"}, histogram = true)
 	public ResponseEntity<byte[]> hentDokument(@ApiParam(name = "journalpostId", required = true) @PathVariable String journalpostId,
 											   @ApiParam(name = "dokumentId", required = true) @PathVariable String dokumentId,
-											   @ApiParam(name = "variantFormat", required = true) @PathVariable String variantFormat,
+											   @ApiParam(name = "variantFormat", value = "Format på dokumentet som skal hentes, eg. ARKIV, ORGINAL, SLADDET m.fl.", required = true) @PathVariable String variantFormat,
 											   @ApiParam(hidden = true) @RequestHeader(value = HttpHeaders.AUTHORIZATION, required = false) String authorizationHeader) {
 
-		log.info("hentDokument har mottatt kall, journalpostId={}, dokumentId={}, variantFormat={}", journalpostId, dokumentId, variantFormat);
+		log.info("hentDokument har mottatt kall. journalpostId={}, dokumentId={}, variantFormat={}", journalpostId, dokumentId, variantFormat);
 		HentDokument response = hentDokumentDomainCoordinator.hentDokument(journalpostId, dokumentId, variantFormat, new SafRequestContext(authorizationHeader));
 
 		return ResponseEntity.ok()

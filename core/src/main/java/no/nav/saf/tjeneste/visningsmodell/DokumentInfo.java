@@ -1,6 +1,7 @@
 package no.nav.saf.tjeneste.visningsmodell;
 
 import lombok.Builder;
+import lombok.ToString;
 import lombok.Value;
 
 import java.util.ArrayList;
@@ -9,7 +10,9 @@ import java.util.List;
 /**
  * @author Joakim Bjørnstad, Jbit AS
  */
+
 @Value
+@ToString(exclude = "parent")
 @Builder
 public class DokumentInfo {
 	private final Journalpost parent;
