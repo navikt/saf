@@ -1,7 +1,5 @@
 package no.nav.saf.hentdokument.repo;
 
-import static no.nav.saf.anticorruptionlayer.pensjonsak.PensjonSakAntiCorruptionLayerImpl.TEMA_PENSJON;
-
 import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.anticorruptionlayer.aktoer.AktoerAntiCorruptionLayer;
 import no.nav.saf.anticorruptionlayer.gsak.GsakAntiCorruptionLayer;
@@ -16,7 +14,6 @@ import no.nav.saf.tjeneste.visningsmodell.kode.Arkivsakssystem;
 import org.springframework.stereotype.Repository;
 
 import javax.inject.Inject;
-import java.util.ArrayList;
 
 /**
  * @author Sigurd Midttun, Visma Consulting.
@@ -97,10 +94,9 @@ public class TilgangsmodellHentdokumentRepositoryImpl implements TilgangsmodellH
 		try {
 			if (Arkivsakssystem.GSAK.name().equals(arkivsaksystem)) {
 				return gsakAntiCorruptionLayer.findTilgangSakBySakId(sakId);
-			} else if (Arkivsakssystem.PSAK.name().equals(arkivsaksystem)) {
-				return findTilgangSakFromPsak(sakId, tilgangBruker);
-			} else if (arkivsaksystem == null || arkivsaksystem.isEmpty()) {
-				//Midlertidig journalført
+			} else if (Arkivsakssystem.PSAK.name().equals(arkivsaksystem)
+					|| arkivsaksystem == null || arkivsaksystem.isEmpty()) {
+				//Psak eller midlertidig journalført
 				return joarkAntiCorruptionLayer.hentTilgangSakFromSafRequestContext(safRequestContext);
 			} else {
 				return null;
@@ -112,24 +108,4 @@ public class TilgangsmodellHentdokumentRepositoryImpl implements TilgangsmodellH
 		}
 	}
 
-	private TilgangSak findTilgangSakFromPsak(String sakId, TilgangBruker tilgangBruker) {
-		Arkivsak arkivsak = pensjonSakAntiCorruptionLayer.findArkivsaker(tilgangBruker, new ArrayList<>(TEMA_PENSJON))
-				.stream()
-				.filter(sak -> sak.getArkivsaksnummer() == sakId)
-				.findAny()
-				.orElse(null);
-
-		if (arkivsak == null) {
-			return null;
-		} else {
-			return TilgangSak.builder()
-					.aktoerId(arkivsak.getAktoerId())
-					.fagsaksnummer(arkivsak.getFagsaksnummer())
-					.fagsaksystem(arkivsak.getFagsaksystem())
-					.arkivsaksnummer(arkivsak.getArkivsaksnummer())
-					.arkivsaksystem(arkivsak.getArkivsaksystem().name())
-					.tema(arkivsak.getTema().name())
-					.build();
-		}
-	}
 }

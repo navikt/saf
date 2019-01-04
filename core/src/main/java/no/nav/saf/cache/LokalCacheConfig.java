@@ -28,7 +28,6 @@ public class LokalCacheConfig {
 	public static final String TILGANGSMODELL_REPO_BRUKER_CACHE = "tilgangsmodellRepoBruker";
 	public static final String PENSJON_SAK_SAMMENDRAG_LISTE_CACHE = "pensjonSakSammendragListe";
 	public static final String TILGANGSMODELL_REPO_SAK_CACHE = "tilgangsmodellRepoSak";
-	public static final String HENT_TILGANG_JOURNALPOST_CACHE = "hentTilgangJournalpost";
 
 	@Bean
 	@Primary
@@ -62,10 +61,6 @@ public class LokalCacheConfig {
 						.maximumSize(500)
 						.build()),
 				new CaffeineCache(TILGANGSMODELL_REPO_SAK_CACHE, Caffeine.newBuilder()
-						.expireAfterWrite(10, TimeUnit.MINUTES)
-						.maximumSize(500)
-						.build()),
-				new CaffeineCache(HENT_TILGANG_JOURNALPOST_CACHE, Caffeine.newBuilder()
 						.expireAfterWrite(10, TimeUnit.MINUTES)
 						.maximumSize(500)
 						.build()),

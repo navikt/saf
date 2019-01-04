@@ -19,7 +19,7 @@ import javax.inject.Named;
  * @author Sigurd Midttun, Visma Consulting.
  */
 
-@Component("HentDokumentDomainCoordinatorImpl")
+@Component
 public class HentDokumentDomainCoordinatorImpl implements HentDokumentDomainCoordinator {
 
 	private final DokumentRepository dokumentRepository;
