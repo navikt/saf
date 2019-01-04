@@ -42,9 +42,9 @@ public class HentDokumentController {
 	@SwaggerRestHentDokument
 	@GetMapping(value = "hentdokument/{journalpostId}/{dokumentId}/{variantFormat}")
 	@Monitor(value = "dok_request", extraTags = {"process", "hentDokument"}, histogram = true)
-	public ResponseEntity<byte[]> hentDokument(@ApiParam(name = "journalpostId", required = true) @PathVariable String journalpostId,
-											   @ApiParam(name = "dokumentId", required = true) @PathVariable String dokumentId,
-											   @ApiParam(name = "variantFormat", value = "Format på dokumentet som skal hentes, eg. ARKIV, ORGINAL, SLADDET m.fl.", required = true) @PathVariable String variantFormat,
+	public ResponseEntity<byte[]> hentDokument(@ApiParam(name = "journalpostId", value = "Id for aktuell journalpost", required = true) @PathVariable String journalpostId,
+											   @ApiParam(name = "dokumentId", value = "Id for aktuelt dokument", required = true) @PathVariable String dokumentId,
+											   @ApiParam(name = "variantFormat", value = "Format på dokumentet som skal hentes eg. ARKIV, SLADDET m.fl.", required = true) @PathVariable String variantFormat,
 											   @ApiParam(hidden = true) @RequestHeader(value = HttpHeaders.AUTHORIZATION, required = false) String authorizationHeader) {
 
 		log.info("hentDokument har mottatt kall. journalpostId={}, dokumentId={}, variantFormat={}", journalpostId, dokumentId, variantFormat);
