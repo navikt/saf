@@ -70,12 +70,6 @@ type Query {
 
         # Peker til resultat etter foerste, brukes til å paginere forover.
         etter: String
-
-        # Returnerer de siste **n** journalpostene i listen.
-        siste: Int
-
-        # Returnerer journalpostene i listen som kommer før den angitte pekeren.
-        foer: String
     ): Dokumentoversikt!
 
     # * dokumentoversiktFagsak returnerer en liste over alle dokumentene tilknyttet en fagsak.  Listen er sortert omvendt kronologisk.
@@ -109,12 +103,6 @@ type Query {
 
         # Peker til resultat etter foerste, brukes til å paginere forover.
         etter: String
-
-        # Returnerer de siste **n** journalpostene i listen.
-        siste: Int
-
-        # Returnerer journalpostene i listen som kommer før den angitte pekeren.
-        foer: String
      ): Dokumentoversikt!
 }
 
