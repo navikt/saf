@@ -17,7 +17,8 @@ public enum Journalstatus {
 	AVBRUTT,
 	UKJENT_BRUKER,
 	RESERVERT,
-	OPPLASTING_DOKUMENT;
+	OPPLASTING_DOKUMENT,
+	UKJENT;
 
 	public static final List<Journalstatus> ALL = asList();
 
