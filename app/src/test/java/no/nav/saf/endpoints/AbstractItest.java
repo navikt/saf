@@ -49,7 +49,6 @@ public abstract class AbstractItest {
 
 	@BeforeEach
 	public void setUp() {
-		cacheManager.getCache(LokalCacheConfig.HENT_TILGANG_JOURNALPOST_CACHE).clear();
 		cacheManager.getCache(LokalCacheConfig.SAK_BY_SAKID_CACHE).clear();
 		cacheManager.getCache(LokalCacheConfig.TILGANGSMODELL_REPO_BRUKER_CACHE).clear();
 		cacheManager.getCache(LokalCacheConfig.PENSJON_SAK_SAMMENDRAG_LISTE_CACHE).clear();

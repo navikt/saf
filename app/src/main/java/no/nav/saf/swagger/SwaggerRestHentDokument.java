@@ -21,10 +21,10 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @ApiResponses(value = {
-		@ApiResponse(code = 200, message = "OK.", response = void.class, responseHeaders =  @ResponseHeader(name = "Content-type", description = "Dokumentets format, f.eks vil dokument av typen PDF gi Content-type \"application\\pdf\", XML gi Content type \"application\\xml\"", response = String.class)),
-		@ApiResponse(code = 400, message = "Ugyldig parametere brukt som input, dette kan for eksempel bety at variantformatet brukt ikke finnes"),
-		@ApiResponse(code = 401, message = "Kunne ikke autentisere på grunn av probleme med OIDC tokenet, dette kan bety feil format på tokenet, utgått token, eller at brukeren mangler tilgang"),
-		@ApiResponse(code = 404, message = "Dokument eller journalpost ble ikke funnet for de gitte parameterene, årsaken kan være at dokumentet ikke eksisterer")}
+		@ApiResponse(code = 200, message = "OK - dokument returneres.", response = void.class, responseHeaders =  @ResponseHeader(name = "Content-type", description = "Identifiserer filformatet til dokumentet. F.eks vil et dokument av typen PDF gi Content-type \"application\\pdf\", mens et dokument av typen XML gir Content type \"text\\xml\"", response = String.class)),
+		@ApiResponse(code = 400, message = "* Ugyldig input. JournalpostId og dokumentId må være tall og variantFormat må være en gyldig kodeverk-verdi.\n* Journalposten tilhører et ustøttet arkivsaksystem. Arkivsaksystem må være GSAK, PSAK eller NULL (midlertidig journalpost)."),
+		@ApiResponse(code = 401, message = "* Bruker mangler tilgang for å vise dokumentet.\n* Ugyldig OIDC token. Denne feilen gis dersom tokenet ikke har riktig format eller er utgått."),
+		@ApiResponse(code = 404, message = "Dokument eller journalpost ble ikke funnet.")}
 )
 public @interface SwaggerRestHentDokument {
 	@AliasFor(

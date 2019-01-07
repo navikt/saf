@@ -13,6 +13,7 @@
 		<module>core</module>
 		<module>dokumentoversikt</module>
 		<module>graphiql</module>
+		<module>hentdokument</module>
 	</modules>
 	<parent>
 		<groupId>org.springframework.boot</groupId>
@@ -54,6 +55,11 @@
 			<dependency>
 				<groupId>no.nav.saf</groupId>
 				<artifactId>dokumentoversikt</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>no.nav.saf</groupId>
+				<artifactId>hentdokument</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>

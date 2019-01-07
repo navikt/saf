@@ -60,8 +60,7 @@ class DokumentoversiktFagsakCoordinatorImpl implements DokumentoversiktFagsakCoo
 	@Override
 	public Dokumentoversikt hentDokumentoversikt(DokumentoversiktFagsakArguments dokumentoversiktFagsakArguments, SafRequestContext safRequestContext) {
 		final FagsakIdInput fagsakIdInput = dokumentoversiktFagsakArguments.getFagsakIdInput();
-		final List<TilgangBruker> tilgangBrukerList = tilgangsmodellRepository.findTilgangBrukerList(fagsakIdInput, dokumentoversiktFagsakArguments
-				.getFilters().getTema());
+		final List<TilgangBruker> tilgangBrukerList = tilgangsmodellRepository.findTilgangBrukerList(fagsakIdInput);
 
 		List<TilgangBruker> filteredTilgangBrukerList = Flowable.fromIterable(tilgangBrukerList)
 				.onErrorResumeNext((Function<Throwable, Publisher<? extends TilgangBruker>>) Flowable::error)

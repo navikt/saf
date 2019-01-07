@@ -1,11 +1,12 @@
 package no.nav.saf.anticorruptionlayer.joark;
 
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.JournalpostDto;
+import no.nav.saf.domain.Arkivsak;
+import no.nav.saf.domain.HentDokument;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
-import no.nav.saf.domain.tilgangsmodell.TilgangDokumentInfo;
 import no.nav.saf.domain.tilgangsmodell.TilgangJournalpost;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
-import no.nav.saf.tjeneste.hentdokument.HentDokument;
+import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tjeneste.visningsmodell.kode.Journalposttype;
 import no.nav.saf.tjeneste.visningsmodell.kode.Journalstatus;
 import no.nav.saf.tjeneste.visningsmodell.kode.Tema;
@@ -26,14 +27,13 @@ public interface JoarkAntiCorruptionLayer {
 										   List<Journalstatus> inkluderJournalstatuses,
 										   Integer foerste, String etterPeker, Integer siste, String foerPeker);
 
-	TilgangJournalpost hentTilgangJournalpost(String journalpostId, String dokumentId, String variantFormat);
+	TilgangJournalpost hentTilgangJournalpostFromSafRequestContext(SafRequestContext safRequestContext);
 
-	TilgangDokumentInfo hentTilgangDokumentInfo(String journalpostId, String dokumentId, String variantFormat);
+	TilgangSak hentTilgangSakFromSafRequestContext(SafRequestContext safRequestContext);
 
-	TilgangSak hentTilgangSak(String journalpostId, String dokumentId, String variantFormat);
-
-	TilgangBruker hentTilgangBruker(String journalpostId, String dokumentId, String variantFormat);
+	TilgangBruker hentTilgangBruker(SafRequestContext safRequestContext);
 
 	HentDokument hentDokument(String dokumentId, String variantFormat);
 
+	Arkivsak hentArkivsakAndCacheJournalpostDto(String journalpostId, String dokumentId, String variantFormat, SafRequestContext safRequestContex);
 }

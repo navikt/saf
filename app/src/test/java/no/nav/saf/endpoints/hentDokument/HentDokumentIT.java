@@ -205,6 +205,6 @@ public class HentDokumentIT extends AbstractItest {
 		String uri = "/rest/hentdokument/" + JOURNALPOST_ID + "/" + DOKUMENT_ID + "/" + VARIANTFORMAT.toString();
 		ResponseEntity<String> responseEntity = this.restTemplate.exchange(uri, HttpMethod.GET, createHttpEntity(), String.class);
 
-		assertEquals(HttpStatus.UNAUTHORIZED, responseEntity.getStatusCode());
+		assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, responseEntity.getStatusCode());
 	}
 }

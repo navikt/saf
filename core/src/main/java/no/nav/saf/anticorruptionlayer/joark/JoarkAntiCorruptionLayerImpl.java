@@ -2,6 +2,7 @@ package no.nav.saf.anticorruptionlayer.joark;
 
 import static no.nav.saf.anticorruptionlayer.joark.domain.kode.FagsystemCode.FS22;
 import static no.nav.saf.anticorruptionlayer.joark.domain.kode.FagsystemCode.PEN;
+import static no.nav.saf.domain.DomainConstants.TILGANG_JOURNALPOST_DTO;
 
 import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.anticorruptionlayer.joark.domain.SafToJoarkJournalstatusMapper;
@@ -12,18 +13,18 @@ import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.FinnJou
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.FinnJournalposterResponseTo;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.JournalpostDto;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark901.HentTilgangJournalpostResponseTo;
-import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark901.TilgangBrukerDto;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark901.TilgangDokumentInfoDto;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark901.TilgangJournalpostDto;
-import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark901.TilgangSakDto;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark920.HentDokumentResponseTo;
+import no.nav.saf.domain.Arkivsak;
+import no.nav.saf.domain.HentDokument;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.domain.tilgangsmodell.TilgangDokumentInfo;
 import no.nav.saf.domain.tilgangsmodell.TilgangJournalpost;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
-import no.nav.saf.exceptions.SafFunctionalException;
 import no.nav.saf.exceptions.SafTechnicalException;
-import no.nav.saf.tjeneste.hentdokument.HentDokument;
+import no.nav.saf.exceptions.UgyldigArkivsaksystemException;
+import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tjeneste.visningsmodell.kode.Arkivsakssystem;
 import no.nav.saf.tjeneste.visningsmodell.kode.Journalposttype;
 import no.nav.saf.tjeneste.visningsmodell.kode.Journalstatus;
@@ -66,7 +67,10 @@ class JoarkAntiCorruptionLayerImpl implements JoarkAntiCorruptionLayer {
 				.inkluderJournalpostType(inkluderJournalposttyper.stream()
 						.map(jt -> JournalpostTypeCode.valueOf(jt.name()))
 						.collect(Collectors.toList()))
-				.inkluderTema(inkluderTema.stream().map(FagomradeCode::fromTema).filter(Objects::nonNull).collect(Collectors.toList()))
+				.inkluderTema(inkluderTema.stream()
+						.map(FagomradeCode::fromTema)
+						.filter(Objects::nonNull)
+						.collect(Collectors.toList()))
 				.inkluderJournalStatus(safToJoarkJournalstatusMapper.map(inkluderJournalstatuses))
 				.visFeilregistrerte(inkluderJournalstatuses.contains(Journalstatus.FEILREGISTRERT))
 				.fraDato(fraDato.toString())
@@ -86,45 +90,42 @@ class JoarkAntiCorruptionLayerImpl implements JoarkAntiCorruptionLayer {
 	}
 
 	@Override
-	public TilgangJournalpost hentTilgangJournalpost(String journalpostId, String dokumentId, String variantFormat) {
-		HentTilgangJournalpostResponseTo hentTilgangJournalpostResponseTo = hentJournalsakinfo.hentTilgangJournalpost(journalpostId, dokumentId, variantFormat);
-		return mapTilgangJournalpost(hentTilgangJournalpostResponseTo.getTilgangJournalpostDto());
-	}
-
-	@Override
-	public TilgangDokumentInfo hentTilgangDokumentInfo(String journalpostId, String dokumentId, String variantFormat) {
-		HentTilgangJournalpostResponseTo hentTilgangJournalpostResponseTo = hentJournalsakinfo.hentTilgangJournalpost(journalpostId, dokumentId, variantFormat);
-		return TilgangDokumentInfo.builder()
-				.journalpostId(journalpostId)
-				.dokumentInfoId(dokumentId)
-				.variantFormat(variantFormat)
-				.dokumentstatus(hentTilgangJournalpostResponseTo.getTilgangJournalpostDto().getDokument().getDokumentstatus())
-				.brevkode(hentTilgangJournalpostResponseTo.getTilgangJournalpostDto().getDokument().getBrevkode())
-				.build();
-	}
-
-	@Override
-	public TilgangSak hentTilgangSak(String journalpostId, String dokumentId, String variantFormat) {
-		final HentTilgangJournalpostResponseTo hentTilgangJournalpostResponseTo = hentJournalsakinfo.hentTilgangJournalpost(journalpostId, dokumentId, variantFormat);
-		if (hentTilgangJournalpostResponseTo.getTilgangJournalpostDto() == null || hentTilgangJournalpostResponseTo.getTilgangJournalpostDto()
-				.getSak() == null) {
+	public TilgangJournalpost hentTilgangJournalpostFromSafRequestContext(SafRequestContext safRequestContext) {
+		TilgangJournalpostDto tilgangJournalpostDto = safRequestContext.getRequestCache().getObject(TILGANG_JOURNALPOST_DTO);
+		if (tilgangJournalpostDto == null) {
 			return null;
+		} else {
+			return mapTilgangJournalpost(tilgangJournalpostDto);
 		}
-		final TilgangSakDto tilgangSakDto = hentTilgangJournalpostResponseTo.getTilgangJournalpostDto().getSak();
-		return TilgangSak.builder()
-				.arkivsaksnummer(tilgangSakDto.getSakId())
-				.arkivsaksystem(mapJoarkFagsystem(tilgangSakDto.getFagsystem()))
-				.tema(hentTilgangJournalpostResponseTo.getTilgangJournalpostDto().getTema())
-				.build();
 	}
 
 	@Override
-	public TilgangBruker hentTilgangBruker(String journalpostId, String dokumentId, String variantFormat) {
-		HentTilgangJournalpostResponseTo hentTilgangJournalpostResponseTo = hentJournalsakinfo.hentTilgangJournalpost(journalpostId, dokumentId, variantFormat);
-		final TilgangBrukerDto tilgangBrukerDto = hentTilgangJournalpostResponseTo.getTilgangJournalpostDto().getBruker();
-		return TilgangBruker.builder()
-				.foedselsnr(tilgangBrukerDto.getBrukerId())
-				.build();
+	public TilgangSak hentTilgangSakFromSafRequestContext(SafRequestContext safRequestContext) {
+		final TilgangJournalpostDto tilgangJournalpostDto = safRequestContext.getRequestCache()
+				.getObject(TILGANG_JOURNALPOST_DTO);
+		if (tilgangJournalpostDto == null || tilgangJournalpostDto.getSak() == null) {
+			return null;
+		} else {
+			return TilgangSak.builder()
+					.arkivsaksnummer(tilgangJournalpostDto.getSak().getSakId())
+					.arkivsaksystem(mapJoarkFagsystem(tilgangJournalpostDto.getSak()
+							.getFagsystem(), tilgangJournalpostDto.getJournalpostId()))
+					.tema(tilgangJournalpostDto.getTema())
+					.build();
+		}
+	}
+
+	@Override
+	public TilgangBruker hentTilgangBruker(SafRequestContext safRequestContext) {
+		final TilgangJournalpostDto tilgangJournalpostDto = safRequestContext.getRequestCache()
+				.getObject(TILGANG_JOURNALPOST_DTO);
+		if (tilgangJournalpostDto == null || tilgangJournalpostDto.getBruker() == null) {
+			return null;
+		} else {
+			return TilgangBruker.builder()
+					.foedselsnr(tilgangJournalpostDto.getBruker().getBrukerId())
+					.build();
+		}
 	}
 
 	@Override
@@ -144,6 +145,19 @@ class JoarkAntiCorruptionLayerImpl implements JoarkAntiCorruptionLayer {
 				.build();
 	}
 
+	@Override
+	public Arkivsak hentArkivsakAndCacheJournalpostDto(String journalpostId, String dokumentId, String variantFormat, SafRequestContext safRequestContex) {
+		HentTilgangJournalpostResponseTo hentTilgangJournalpostResponseTo = hentJournalsakinfo.hentTilgangJournalpost(journalpostId, dokumentId, variantFormat);
+		safRequestContex.getRequestCache()
+				.putObject(TILGANG_JOURNALPOST_DTO, hentTilgangJournalpostResponseTo.getTilgangJournalpostDto());
+		return Arkivsak.builder()
+				.arkivsaksnummer(hentTilgangJournalpostResponseTo.getTilgangJournalpostDto().getSak().getSakId())
+				.arkivsaksystem(Arkivsakssystem.valueOf(mapJoarkFagsystem(hentTilgangJournalpostResponseTo.getTilgangJournalpostDto()
+						.getSak().getFagsystem(), hentTilgangJournalpostResponseTo.getTilgangJournalpostDto()
+						.getJournalpostId())))
+				.build();
+	}
+
 	private TilgangJournalpost mapTilgangJournalpost(TilgangJournalpostDto dto) {
 		final TilgangDokumentInfoDto tilgangDokumentInfoDto = dto.getDokument();
 		return TilgangJournalpost.builder()
@@ -151,8 +165,9 @@ class JoarkAntiCorruptionLayerImpl implements JoarkAntiCorruptionLayer {
 				.journalStatus(dto.getJournalStatus())
 				.journalpostType(dto.getJournalpostType())
 				.tema(dto.getTema())
-				.arkivsaksystem(mapJoarkFagsystem(dto.getSak().getFagsystem()))
-				.arkivsaksnummer(dto.getSak().getSakId())
+				.arkivsaksystem(mapJoarkFagsystem(dto.getSak() == null ? null : dto.getSak()
+						.getFagsystem(), dto.getJournalpostId()))
+				.arkivsaksnummer(dto.getSak() == null ? null : dto.getSak().getSakId())
 				.datoOpprettet(dto.getDatoOpprettet().toLocalDate())
 				.mottakskanal(dto.getMottakskanal())
 				.avsenderMottakerId(dto.getAvsenderMottakerId())
@@ -166,13 +181,15 @@ class JoarkAntiCorruptionLayerImpl implements JoarkAntiCorruptionLayer {
 
 	}
 
-	private String mapJoarkFagsystem(String joarkFagsystem) {
+	private String mapJoarkFagsystem(String joarkFagsystem, String journalpostId) {
 		if (FS22.name().equals(joarkFagsystem)) {
 			return Arkivsakssystem.GSAK.name();
 		} else if (PEN.name().equals(joarkFagsystem)) {
 			return Arkivsakssystem.PSAK.name();
+		} else if (joarkFagsystem == null || joarkFagsystem.isEmpty()) {
+			return null;
 		} else {
-			throw new SafFunctionalException(String.format("Arkivsaksystem må være GSAK (FS22) eller PSAK (PEN). Fikk: %s i oppslag mot hentTilgangJournalpost", joarkFagsystem));
+			throw new UgyldigArkivsaksystemException(String.format("Arkivsaksystem må være GSAK (FS22), PSAK (PEN) eller NULL (midlertidig journalpost). Journalpost med journalpostId=%s har Arkivsakssystem=%s", journalpostId, joarkFagsystem));
 		}
 	}
 }

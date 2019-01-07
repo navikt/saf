@@ -5,7 +5,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.Value;
-import no.nav.saf.tilgangskontroll.abstraction.SecModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +15,7 @@ import java.util.stream.Collectors;
  */
 @Value
 @Builder
-public class TilgangBruker implements SecModel {
+public class TilgangBruker {
 	private final String foedselsnr;
 	private final String aktoerId;
 	private final String orgnummer;

@@ -1,7 +1,6 @@
 package no.nav.saf.tilgangskontroll.pep;
 
 import no.nav.saf.tilgangskontroll.SafRequestContext;
-import no.nav.saf.tilgangskontroll.abstraction.SecModel;
 
 /**
  * Policy Enforcement Point for ABAC.
@@ -10,6 +9,6 @@ import no.nav.saf.tilgangskontroll.abstraction.SecModel;
  *
  * @author Joakim Bjørnstad, Jbit AS
  */
-public interface Pep<T extends SecModel> {
+public interface Pep<T> {
 	boolean hasAccess(T ressurs, SafRequestContext safRequestContext);
 }
