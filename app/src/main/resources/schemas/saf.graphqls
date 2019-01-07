@@ -117,20 +117,11 @@ type Dokumentoversikt {
 
 # Informasjon om paginering.
 type SideInfo {
-    # Totalt antall resultater for paginering.
-    totaltAntall: Int
-
     # Når man paginerer forover, pekeren for å fortsette.
     sluttpeker: String
 
     # True/False verdi for om neste side eksisterer, når man paginerer forover
     finnesNesteSide: Boolean!
-
-    # Når man paginerer bakover, pekeren for å fortsette.
-    startpeker: String
-
-    # True/False verdi for om neste side eksisterer , når man paginerer bakover
-    finnesForrigeSide: Boolean!
 }
 
 # * Et sett dokumenter som er sendt/mottatt samlet, og har felles arkivmetadata som *tema*, *avsender*, *arkivsak* og *sakspart*.
