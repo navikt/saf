@@ -9,92 +9,116 @@ schema {
     query: Query
 }
 
-# TODO
+# BrukerIdInput er et argument som identifiserer en aktør eller organisasjon.
 input BrukerIdInput {
-    # TODO
+    # Unik identifikator for en aktør eller organisasjon.
     id: String!
 
-    # TODO
+    # Indikator på hvilken type id som brukes i spørringen.
     type: BrukerIdType!
 }
 
-# TODO
+# Indikator på hvilken type id som brukes i spørringen.
 enum BrukerIdType {
-    # Aktørid TODO
+    # NAV aktørid for en person.
     AKTOERID
 
-    # Fødselsnummer TODO
+    # Folkeregisterets fødselsnummer for en person.
     FNR
 
-    # Organisasjonsnummer TODO
+    # Foretaksregisterets organisasjonsnummer for en juridisk person.
     ORGNR
 }
 
-# TODO
+# FagsakIdInput er et argument som identifiserer en fagsak.
 input FagsakIdInput {
-    # TODO
+    # Unik identifikator for en gitt fagsak.
     fagsaksnummer: String!
 
-    # TODO
+    # Markør for hvilket fagsystem fagsaksnummeret tilhører, for eksempel **PP01** for pensjonssaker.
     fagsaksystem: String!
 }
 
 # Query roten til SAF GraphQL API.
 type Query {
-    # Returnerer dokumentoversikten til en bruker.
+    # * dokumentoversiktBruker returnerer en liste over alle dokumentene tilknyttet en bruker.  Listen er sortert omvendt kronologisk.
+    # * Det er kun metadata om journalposter med tilhørende dokumenter som returneres. Det fysiske dokumentet kan hentes i saf - REST hentdokument.
     dokumentoversiktBruker(
-        # Hent dokumentoversikten til den angitte brukeren.
+        # Brukeren man ønsker å få ut dokumentoversikt for.
+        # Hvis argumentet ikke er angitt så returneres en feil.
         brukerId: BrukerIdInput!
 
-         # TODO
+        # Dato for eldste journalpost.
+        # Hvis angitt returneres alle journalposter fra denne datoen.
+        # Hvis null er angitt så hentes alle journalposter.
         fraDato: Date
 
-        # TODO
+        # Filter for tema.
+        # Hvis en tom liste er angitt som argument hentes journalposter på alle tema.
         tema: [Tema] = []
 
-        # Velger journalpostene som har de spesifiserte journalposttypene.
+        # Filter for journalposttype.
+        # Hvis en tom liste er angitt som argument hentes alle journalposttyper.
         journalposttyper: [Journalposttype] = [I, U, N]
 
-        # Velger journalpostene som har de spesifiserte journalstatusene.
+        # Filter for journalstatus.
+        # Hvis en tom liste er angitt som argument hentes alle journalstatuser
         journalstatuser: [Journalstatus] = [FERDIGSTILT, JOURNALFOERT, EKSPEDERT]
 
-        # Returnerer de første *n* journalpostene i listen.
+        # Første **n** resultater, brukes til å paginere forover.
         foerste: Int
 
-        # Returnerer journalpostene i listen som kommer etter den angitte pekeren.
+        # Peker til resultat etter foerste, brukes til å paginere forover.
         etter: String
+
+        # Returnerer de siste **n** journalpostene i listen.
+        siste: Int
+
+        # Returnerer journalpostene i listen som kommer før den angitte pekeren.
+        foer: String
     ): Dokumentoversikt!
 
-    # Returnerer en liste over alle dokumenter tilknyttet en fagsak.
+    # * dokumentoversiktFagsak returnerer en liste over alle dokumentene tilknyttet en fagsak.  Listen er sortert omvendt kronologisk.
+    # * Det er kun metadata om journalposter med tilhørende dokumenter som returneres. Det fysiske dokumentet kan hentes i saf - REST hentdokument.
     dokumentoversiktFagsak(
-        # TODO
+        # Fagsaken man ønsker å få ut dokumentoversikt for.
+        #  Hvis argumentet ikke er angitt så returneres en feil.
         fagsakId: FagsakIdInput!
 
-        # TODO
+        # Dato for eldste journalpost.
+        # Hvis angitt returneres alle journalposter fra denne datoen.
+        # Hvis null er angitt så hentes alle journalposter.
         fraDato: Date
 
-        # TODO
+        # Filter for tema.
+        # Hvis en tom liste er angitt som argument hentes journalposter på alle tema.
         tema: [Tema] = []
 
-        # Velger journalpostene som har de spesifiserte journalposttypene
-        # **Standardverdi**: `I, U, N`
-        # TODO legge til default støtte for enum verdier
+        # Filter for journalposttype.
+        # Hvis en tom liste er angitt som argument hentes alle journalposttyper.
+        # Standardverdi: `I, U, N`
         journalposttyper: [Journalposttype] = [I, U, N]
 
-        # Velger journalpostene som har de spesifiserte journalstatusene.
-        # **Standardverdi**: `FERDIGSTILT, JOURNALFOERT, EKSPEDERT`
-        # TODO legge til default støtte for enum verdier
+        # Filter for journalstatus.
+        # Hvis en tom liste er angitt som argument hentes alle journalstatuser.
+        # Standardverdi: `FERDIGSTILT, JOURNALFOERT, EKSPEDERT`
         journalstatuser: [Journalstatus] = [FERDIGSTILT, JOURNALFOERT, EKSPEDERT]
 
-        # Returnerer de første *n* journalpostene i listen.
+        # Første **n** resultater, brukes til å paginere forover.
         foerste: Int
 
-        # Returnerer journalpostene i listen som kommer etter den angitte pekeren.
+        # Peker til resultat etter foerste, brukes til å paginere forover.
         etter: String
+
+        # Returnerer de siste **n** journalpostene i listen.
+        siste: Int
+
+        # Returnerer journalpostene i listen som kommer før den angitte pekeren.
+        foer: String
      ): Dokumentoversikt!
 }
 
-# Dokumentoversikt
+# Dokumentoversikt er en liste av journalposter som tilfredstiller query kriteriene.
 type Dokumentoversikt {
     # En liste av journalposter.
     journalposter: [Journalpost]!
@@ -103,258 +127,332 @@ type Dokumentoversikt {
     sideInfo: SideInfo!
 }
 
-# Informasjon om paginering
+# Informasjon om paginering.
 type SideInfo {
+    # Totalt antall resultater for paginering.
+    totaltAntall: Int
+
     # Når man paginerer forover, pekeren for å fortsette.
     sluttpeker: String
 
-    # Når man paginerer forover, finnes det flere sider?
+    # True/False verdi for om neste side eksisterer, når man paginerer forover
     finnesNesteSide: Boolean!
+
+    # Når man paginerer bakover, pekeren for å fortsette.
+    startpeker: String
+
+    # True/False verdi for om neste side eksisterer , når man paginerer bakover
+    finnesForrigeSide: Boolean!
 }
 
-# Et sett dokumenter som er sendt/mottatt samlet, og har felles arkivmetadata som tema, avsender, arkivsak og sakspart.
-# En journalpost kan bestå av ett eller flere dokumenter.
+# * Et sett dokumenter som er sendt/mottatt samlet, og har felles arkivmetadata som *tema*, *avsender*, *arkivsak* og *sakspart*.
+# * En journalpost kan bestå av ett eller flere dokumenter.
 type Journalpost {
     # Identifiserer en Journalpost
     journalpostId: String!
 
-    # TODO
+    # Beskriver innholdet i forsendelsen samlet, f.eks. *"Ettersendelse til søknad om foreldrepenger"*.
     tittel: String
 
-    # TODO
+    # Sier hvorvidt journalposten er et inngående dokument (**I**), utgående dokument (**U**) eller notat (**N**).
     journalposttype: Journalposttype
 
-    # TODO
+    # Status på journalposten i joark, f.eks. **MOTTATT** eller **JOURNALFOERT**.
     journalstatus: Journalstatus
 
-    # TODO
+    # * Tema/Fagområdet som journalposten og tilhørende sak tilhører, f.eks. FOR.
+    # * Hvilket tema en journalpost har, styrer hvilke Nav-ansatte som får se metadata og dokumentene på journalposten.
     tema: Tema
 
-    # TODO
+    # Dekode av Tema, f.eks. *"Foreldrepenger"*.
     temanavn: String
 
-    # TODO
+    # Sier hvilken sak journalposten er knyttet til. En journalpost kan maksimalt være knyttet til én sak, men et dokument kan være knyttet til flere journalposter og dermed flere saker.
     sak: Sak
 
-    # TODO
+    # * Personen eller organisasjonen som dokumentene i journalposten gjelder.
+    # * Dersom journalposten er sakstilknyttet, henter SAF bruker fra GSAK/PSAK. Alternativt henter SAF den fra Joark.
     bruker: Bruker
 
-    # TODO
+    # Navnet på personen eller organisasjonen som er avsender eller mottaker av dokumentene på journalposten.
     avsenderMottakerNavn: String
 
-    # TODO
+    # * Personen i NAV som har journalført forsendelsen.
+    # * Bruken av feltet varierer, og kan inneholde den ansattesnavn eller NAV-ident. Dersom forsendelsen er automatisk journalført, kan innholdet være f.eks. et servicebruker eller et batchnavn.
     journalfortAvNavn: String
 
-    # TODO
+    # * Kanalen dokumentene ble sendt inn eller ut, f.eks. **SENTRAL_UTSKRIFT**.
+    # * Dersom kanal ikke er satt i Joark, returneres verdien **UKJENT**.
     kanal: Kanal
 
-    # TODO
+    # Dekode av Kanal, f.eks *"Sentral utskrift"*.
     kanalnavn: String
 
-    # TODO
+    # Datoen journalposten ble opprettet i Joark.
     datoOpprettet: DateTime!
 
-    # TODO
+    # * Liste over andre datoer som kan være relevante for journalposten, f.eks. **DATO_EKSPEDERT**.
+    # * Hvilke typer relevante datoer som returneres er avhengig av journalposttype.
     relevanteDatoer: [RelevantDato]
 
-    # TODO
+    # Liste av dokumenter forbundet til journalposten.
     dokumenter: [DokumentInfo]
 }
 
-# TODO
+# Dato som kan være relevant for en journalpost. De ulike journalposttypene (inngående, utgående og notat) får returnert ulike relevante datoer.
+# * For eksempel er **DATO_EKSPEDERT** kun relevant for utgående dokumenter, og **DATO_MOTTATT** kun for inngående.
 type RelevantDato {
-    # TODO
+    # ISO-8601 representasjon for en kalenderdato med tid, trunkert til nærmeste sekund. *YYYY-MM-DD'T'hh:mm:ss*.
+    # Eksempel: *2018-01-01T12:00:00*.
     dato: DateTime!
 
-    # TODO
+    # Markør for hvilken type dato som dato-feltet inneholder.
     datotype: Datotype!
 }
 
-# TODO
+#  Peker på både en arkivsak og  en fagsak. Arkivsaken er saksnummeret som journalposten journalføres mot i Joark, og identifiseres ved arkivsaksnummer + arkivsaksystem (GSAK eller PSAK). Fagsaken viser til saken slik denne er definert i fagsystemene,, og identifiseres ved fagsakId + fagsaksystem.
+# * En GSAK-arkivsak som har fagsaksystem **FS22** men ikke noen fagsakId er en *"generell sak"*. Generelle saker brukes for å journalføre informasjon som ikke passer inn på brukerens øvrige fagsaker.
+# * Dersom arkivsaksystemet er PSAK, returneres den samme verdien som både arkivsaksnummer og fagsakId.
 type Sak {
-    # TODO
+    # Saksnummer i enten GSAK eller PSAK
     arkivsaksnummer: String
 
-    # TODO
+    # * Indikerer hvor man kan finne saksparten som dokumentene er journalført mot, samt en peker til selve fagsaken.
+    # * For pensjons- og uføresaker vil arkivsaksystemet være PSAK. For alle andre sakstyper er arkivsaksystem GSAK.
     arkivsaksystem: Arkivsaksystem
 
-    # TODO
-    fagsaksnummer: String
+    # Tidspunktet saken i GSAK eller PSAK ble opprettet
+    datoOpprettet: DateTime
 
-    # TODO
+    # * Saksnummer i fagsystemet (altså ikke GSAK).
+    # * Generelle saker i GSAK har ikke fagsakId.
+    fagsakId: String
+
+    # * Verdien indikerer hvilket fagsystem (evt nummerserie for fagsaker) som fagsaken befinner seg i.
+    # * Lovlige verdier finnes i GSAK sitt kodeverk. Generelle saker i GSAK vil ha fagsaksystem **FS22**.
     fagsaksystem: String
 
-    # TODO
-    datoOpprettet: DateTime
 }
 
 # Person eller organisasjon som har et forhold til NAV, f.eks. som mottaker av tjenester eller ytelser.
 type Bruker {
-    # TODO
+    # Brukerens identifikator. For personbrukere returneres personens aktørID. For organisasjonsbrukere returneres et organisasjonsnummer.
     id: String
 
-    # TODO
+    # Angir hvilken type brukeren sin id er.
     type: BrukerIdType
 }
 
-# TODO
-enum Brukertype {
-    # TODO
-    PERSON
-
-    # TODO
-    ORGANISASJON
-}
-
-# TODO
+# Metadata tilknyttet et bestemt dokument i Joark (evt til flere varianter av samme dokument).
+# * Dokumentinfo viser ikke til den fysiske filen, men til metadata som omhandler alle eventuelle varianter av dokumentet.
 type DokumentInfo {
-    # TODO
+    # Unik identifikator per dokumentinfo
     dokumentId: String!
 
-    # TODO
+    # Dokumentets tittel, f.eks. *"Søknad om foreldrepenger ved fødsel"* eller *"Legeerklæring"*.
     tittel: String
 
-    # TODO
+    # Kode som sier noe om dokumentets innhold og oppbygning. Todo: Dersom vi går for begrep Brevkode istedetfor NavSkjemaID:
+    # * For inngående skjema er brevkoden normalt en NAV-skjemaID f.eks. *"NAV 14-05.09"*. Enkelte vedlegg har en vedleggskode som sier noe om innholdet.
+    # * For utgående dokumenter sier brevkoden hvilken brevmal som har vært benyttet ved produksjon av brevet.
     navSkjemaId: String
 
-    # TODO
-    saksbehandlerHarTilgang: Boolean
-
-    # TODO
+    # Liste over andre dokumenter som også befinner seg inne i den fysiske filen som dokumentinfo-objektet peker på.
     logiskeVedlegg: [LogiskVedlegg]!
 
-    # TODO
+    # Liste over tilgjengelige varianter av dokumentet.
     dokumentvarianter: [Dokumentvariant]!
 }
 
-# TODO
+# Et dokument som forekommer inne i en fysisk fil med et annet navn og hovedinnhold.
+# * Dette skjer hyppig under skanning av papirpost, fordi dokumenter mottatt i samme konvolutt skannes i én operasjon, og ender opp som én fil i Joark.
+# * En bruker sender inn en papirsøknad om foreldrepenger, med en legeerklæring som vedlegg. Journalposten vil da ha ett dokument med navn *"Søknad om foreldrepenger ved fødsel"*, og det logiske vedlegget *"Legerklæring"*.
 type LogiskVedlegg {
-    # TODO
+    # Tittel på det logiske vedlegget, f.eks. *"Legeerklæring"*
     tittel: String
 }
 
-# TODO
+# * En variant/versjon av et dokumentet, som er beregnet på et spesielt formål, for eksempel langtidsbevaring eller automatisk saksbehandling.
+# * SAF returnerer kun varianter i *"menneskelesbart"* filformat, som f.eks. PDF eller PNG, og de fleste dokumenter vil kun returneres i variantformat **ARKIV**.
+# * Dersom det eksisterer andre varianter av dokumentet, vil disse også returneres, gitt at saksbehandler har rettigheter som tilsier at han/hun skal vite at det finnes andre varianter.
 type Dokumentvariant {
-    # TODO
+    # Typen variant som returneres. Normalt vil dette være **ARKIV**.
+    # * Andre visningsvarianter er **SLADDET** og **SKJERMET**. **SKJERMET** krever spesielle tilganger for å åpne.
+    # * Et dokument kan ha både en **SLADDET** og en **SKJERMET** variant, men aldri flere varianter av samme type.
     variantformat: Variantformat
+
+    # Sier hvorvidt saksbehandler som gjør oppslaget vil få tilgang til å åpne denne dokumentvarianten.
+    # * Dersom verdien er false, vil tilgang bli avslått dersom saksbehandler forsøker å åpne dokumentet.
+    saksbehandlerHarTilgang: Boolean
+
+    # Sier hvorvidt brukeren (innbyggeren) vil få innsyn i denne dokumentvarianten ved pålogging på nav.no eller ikke.
+    brukerHarTilgang: Boolean!
 }
 
-# TODO
+# Beskriver en type dato som kan være relevant for en journalpost, for eksempel **DATO_OPPRETTET**. Ulike datotyper returneres for ulike journalstatuser.
 enum Datotype {
-    # TODO
-	DATO_DOKUMENT
+    # * Tidspunktet journalposten er opprettet i joark.
+    # * Returneres for alle journalposter
+    DATO_OPPRETTET
 
-	# TODO
-	DATO_AVS_RETUR
-
-	# TODO
-	DATO_EKSPEDERT
-
-	# TODO
-	DATO_MOTTATT
-
-	# TODO
+	# * Tidspunktet journalposten ble sendt til print
+    # * Returneres for utgående journalposter
 	DATO_SENDT_PRINT
 
-	# TODO
+	# * Tidspunktet journalposten ble ekspedert
+    # * Returneres for utgående journalposter
+	DATO_EKSPEDERT
+
+	# * Tidspunkt for journalføring
+    # * Returneres for inngående journalposter
 	DATO_JOURNALFOERT
+
+	# * Tidspunkt for arkivering
+    # * Returneres for inngående journalposter
+	DATO_MOTTATT
+
+	# * Dato for sist gang brevet har blitt sendt på nytt.
+    # * Returneres for utgående journalposter
+	DATO_AVS_RETUR
+
+    # * Dato på hoveddokumentet i forsendelsen. Registreres i noen tilfeller manuelt av saksbehandler.
+    # * Returneres for alle journalposter
+	DATO_DOKUMENT
+
 }
 
-# TODO
+# Indikerer hvor man kan finne saksparten som dokumentene er journalført mot, samt en peker til selve fagsaken, dersom det finnes en.
+# * For pensjons- og uføresaker vil arkivsaksystemet være PSAK. For alle andre sakstyper er arkivsaksystem GSAK.
 enum Arkivsaksystem {
-    # TODO
+    # Arkivsaksystem for alle NAV saker unntatt pensjon
     GSAK
 
-    # TODO
+    # Arkivsaksystem for pensjon
     PSAK
 }
 
-# TODO
+# Sier hvorvidt journalposten er et inngående dokument, et utgående dokument eller et notat.
 enum Journalposttype {
-    # Inngående dokument
+    # **Inngående dokument** - Dokumentasjon som er generert og sendt inn av en ekstern part. De fleste inngående dokumenter er søknader, ettersendelser av dokumentasjon til sak, eller innsendinger fra arbeidsgivere. Chatmeldinger fra brukere arkiveres også som inngående dokumenter.
 	I
 
-	# Utgående dokument
+	# **Unngående dokument** - Dokumentasjon som NAV har produsert og sendt ut til en ekstern part. De fleste utgående dokumenter er informasjons- eller vedtaksbrev til privatpersoner eller organisasjoner. SMS-varsler og chatmeldinger som sendes fra saksbehandler til brukere arkiveres også som utgående dokumenter.
 	U
 
-	# Notat
+	# **Notat** - Dokumentasjon som NAV har produsert selv, uten at formålet er å distribuere dette ut av NAV. Eksempler på notater er samtalereferater med veileder på kontaktsenter, og interne forvaltningsnotater.
 	N
 }
 
-# TODO
+# * Status på journalposten i joark, f.eks. **MOTTATT** eller **JOURNALFOERT**. Journalstatusen gir et indikasjon på hvor i journalførings- eller dokumentproduksjonsprosessen journalposten befinner seg.
+# * Journalposter som er resultat av en feilsituasjon og ikke skal hensyntas for saksbehandlinghar egne koder, som **UTGAAR** eller **AVBRUTT**.
 enum Journalstatus {
-    # TODO
+    # Journalposten er mottatt, men ikke journalført. *"Mottatt"* er et annet ord for *"arkivert"* eller *"midlertidig journalført"*
+    # * Statusen vil kun forekomme for inngående dokumenter.
     MOTTATT
 
-    # TODO
+    # Journalposten er ferdigstilt og ansvaret for videre behandling av forsendelsen er overført til fagsystemet.
+    # * Journalposter med status **JOURNALFOERT** oppfyller minimumskrav til metadata i arkivet, som for eksempel tema, sak, bruker og avsender.
     JOURNALFOERT
 
-    # TODO
+    # Journalposten med tilhørende dokumenter er ferdigstilt, og journalen er i prinsippet låst for videre endringer.
+    # * Tilsvarer statusen **JOURNALFOERT** for inngående dokumenter.
     FERDIGSTILT
 
-    # TODO
+    # Dokumentet er sendt til bruker. Statusen benyttes også når dokumentet er tilgjengeliggjort for bruker på DittNAV, og bruker er varslet.
+    # * Statusen kan forekomme for utgående dokumenter og notater.
     EKSPEDERT
 
-    # TODO
+    # Journalposten er opprettet i arkivet, men fremdeles under arbeid.
+    # * Statusen kan forekomme for utgående dokumenter og notater.
     UNDER_ARBEID
 
-    # TODO
+    # Journalposten har blitt unntatt fra saksbehandling etter at den feilaktig har blitt knyttet til en sak. Det er ikke mulig å slette en saksrelasjon, istedet settes saksrelasjonen til feilregistrert.
+    # * Statusen kan forekomme for alle journalposttyper.
     FEILREGISTRERT
 
-    # TODO
+    # Journalposten er unntatt fra saksbehandling. Status **UTGAAR** brukes stort sett ved feilsituasjoner knyttet til skanning eller journalføring.
+    # * Statusen vil kun forekomme for inngående dokumenter
     UTGAAR
 
-    # TODO
+    # Utgående dokumenter og notater kan avbrytes mens de er under arbeid, og ikke enda er ferdigstilt. Statusen **AVBRUTT** brukes stort sett ved feilsituasjoner knyttet til vedtaksproduksjon.
+    # * Statusen kan forekomme for utgående dokumenter og notater.
     AVBRUTT
 
-    # TODO
+    # Journalposten har ikke noen kjent bruker.
+    # ** NB: ** **UKJENT_BRUKER** er ikke en midlertidig status, men benyttes der det ikke er mulig å journalføre fordi man ikke klarer å identifisere brukeren forsendelsen gjelder.
+    # * Statusen kan kun forekomme for inngående dokumenter.
     UKJENT_BRUKER
 
-    # TODO
+    # Statusen benyttes bl.a. i forbindelse med brevproduksjon for å reservere 'plass' i journalen for dokumenter som skal populeres på et senere tidspunkt.
+    # Tilsvarer statusen **OPPLASTING_DOKUMENT** for inngående dokumenter.
+    # * Statusen kan forekomme for utgående dokumenter og notater
     RESERVERT
 
-    # TODO
+    # Midlertidig status på vei mot **MOTTATT**.
+    # Dersom en journalpost blir stående i status **OPPLASTING_DOKUMENT** over tid, tyder dette på at noe har gått feil under opplasting av vedlegg ved arkivering.
+    # * Statusen kan kun forekomme for inngående dokumenter.
     OPPLASTING_DOKUMENT
+
+    # Dersom statusfeltet i Joark er tomt, mappes dette til **UKJENT**
+    UKJENT
 }
 
+# Kanalen dokumentene ble mottatt i eller sendt ut på, f.eks. **SENTRAL_UTSKRIFT** eller **ALTINN**.
+# * Dersom journalposten ikke har noen kjent kanal, returneres verdien **UKJENT**
 enum Kanal {
-    # Altinn
+    # Forsendelsen er sendt inn via et Altinn-skjema.
+    # * *Kun inngående*
     ALTINN
 
-    # Utveksling av trygdeinformasjon mellom EU- og EØS-land
+    # Utveksling av trygdeinformasjon mellom EU- og EØS-land. Forsendelsen er mottatt eller distribuert inn via RINA.
+    # * *Inngående og utgående*
 	EESSI
 
-	# Elektronisk innsending
+	# Elektronisk innsending. Forsendelsen er arkivert av applikasjonen EIA.
+	# * *Kun inngående*
 	EIA
 
-	# Eksternt oppslag
+	# Eksternt oppslag, dokumentene i journalposten er hentet fra en ekstern kilde, som UDI.
+	# * *Kun inngående*
 	EKST_OPPS
 
-	# Lokal utskrift
+	# Lokal utskrift. Brevet er skrevet ut lokalt og kan være sendt i posten.
+	# * *Kun utgående og notater*
 	LOKAL_UTSKRIFT
 
-	# Ditt NAV
+	# Ditt NAV. Forsendelsen er sendt inn digitalt via selvbetjeningsløsninger på nav.no.
+	# * *inngående og utgående*
 	NAV_NO
 
-	# Selvbetjening Pesys
+	# Selvbetjening Pesys. Forsendelsen er sendt inn digitalt via selvbetjeningsløsningen til Nav Pensjon på nav.no.
+	# * *Kun inngående*
 	PSELV
 
-	# Sentral utskrift
+	# Sentral utskrift. Brevet er overført til sentral distribusjon og sendt i posten.
+	# * *Kun utgående*
 	SENTRAL_UTSKRIFT
 
-	# Sikker Digital Post
+	# Sikker Digital Post. Brevet er sendt via digital post til innbyggere.
+	# * *Kun utgående*
 	SDP
 
-	# Skanning Nets
+	# Skanning Nets. Forsendelsen er sendt inn på papir og skannet hos NETS.
+	# * *Kun inngående*
 	SKAN_NETS
 
-	# Skanning Pensjon
+	# Skanning Pensjon. Forsendelsen er sendt inn på papir og skannet på NAVs skanningssenter for pensjon og bidrag.
+    # * *Kun inngående*
 	SKAN_PEN
 
-	# Ingen distribusjon
+	# Alle journalposter med journalposttype **N** (Notat) skal mappes til "INGEN_DISTRIBUSJON"
 	INGEN_DISTRIBUSJON
+
+	# Journalposten ikke har noen kjent kanal, derfor returneres verdien **UKJENT**
+	UKJENT
 }
 
+# Temaet/Fagområdet som en journalpost og tilhørende sak tilhører, f.eks. **FOR** (foreldrepenger).
+# * Tematilgang er sentralt i tilgangstyringen til informasjonen i NAVs systemer, og ABAC policiene er formet rundt disse.
 enum Tema {
     # Arbeidsavklaringspenger
     AAP
@@ -525,10 +623,18 @@ enum Tema {
     YRK
 }
 
+# Typen variant som returneres. Dette er normalt **ARKIV**. Andre visningsvarianter er **SLADDET** og **SKJERMET**.
 enum Variantformat {
-    # TODO
+    # Den *"offisielle"* versjonen av et dokument, som er beregnet på visning og langtidsbevaring. I de fleste tilfeller er arkivvarianten lik dokumentet brukeren sendte inn eller mottok (digitalt eller på papir).
+    # * Arkivvarianten er alltid i menneskelesbart format, som PDF, PDF/A eller PNG.
+    # * Alle dokumenter har en arkivvariant, med mindre bruker har fått innvilget vedtak om sletting eller skjerming av opplysninger i arkivet.
     ARKIV
 
-    # TODO
+    # * Dette uttrykker at dokumentet er tatt ut av ordinær saksbehandling.
+    # * Dokumentet kan være manuelt utilgjengeliggjort i påvente av en klagesak, det kan være logisk slettet, eller det kan være permanent begrenset tilgang på grunn av sensitive eller feilaktige opplysninger.
     SKJERMET
+
+    # Dette er en sladdet variant av originaldokumentet. Normalt vil det også finnes en **SKJERMET** variant når det finnes en **SLADDET** variant for et dokument.
+    # * **SLADDET** variant har ikke spesiell tilgangskontroll.
+    SLADDET
 }

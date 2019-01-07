@@ -15,7 +15,8 @@ public enum Kanal {
 	SDP("Digital postkasse til innbyggere"),
 	SKAN_NETS("Skanning Nets"),
 	SKAN_PEN("Skanning Pensjon"),
-	INGEN_DISTRIBUSJON("Ingen distribusjon");
+	INGEN_DISTRIBUSJON("Ingen distribusjon"),
+	UKJENT("Ukjent");
 
 	private final String kanalnavn;
 	
