@@ -60,7 +60,8 @@ class DokumentoversiktFagsakCoordinatorImpl implements DokumentoversiktFagsakCoo
 	@Override
 	public Dokumentoversikt hentDokumentoversikt(DokumentoversiktFagsakArguments dokumentoversiktFagsakArguments, SafRequestContext safRequestContext) {
 		final FagsakIdInput fagsakIdInput = dokumentoversiktFagsakArguments.getFagsakIdInput();
-		final List<TilgangBruker> tilgangBrukerList = tilgangsmodellRepository.findTilgangBrukerList(fagsakIdInput);
+		final List<TilgangBruker> tilgangBrukerList = tilgangsmodellRepository.findTilgangBrukerList(fagsakIdInput, dokumentoversiktFagsakArguments
+				.getFilters().getTema());
 
 		List<TilgangBruker> filteredTilgangBrukerList = Flowable.fromIterable(tilgangBrukerList)
 				.onErrorResumeNext((Function<Throwable, Publisher<? extends TilgangBruker>>) Flowable::error)
@@ -71,15 +72,10 @@ class DokumentoversiktFagsakCoordinatorImpl implements DokumentoversiktFagsakCoo
 				.toList()
 				.blockingGet();
 
-		final List<String> filteredAktoerIdListTilgangBruker = filteredTilgangBrukerList.stream()
-				.map(TilgangBruker::getAktoerId)
-				.collect(Collectors.toList());
+		final List<TilgangSak> tilgangSakList = tilgangsmodellRepository.findTilgangSaker(filteredTilgangBrukerList, fagsakIdInput, dokumentoversiktFagsakArguments
+				.getFilters().getTema(), safRequestContext);
 
-		final List<TilgangSak> tilgangSakList = tilgangsmodellRepository.findTilgangSaker(fagsakIdInput, dokumentoversiktFagsakArguments.getFilters().getTema(), safRequestContext).stream()
-				.filter(tilgangSak -> filteredAktoerIdListTilgangBruker.contains(tilgangSak.getAktoerId()))
-				.collect(Collectors.toList());
-
-		List<TilgangSak> filteredTilgangSakList = Flowable.fromIterable(tilgangSakList)
+		final List<TilgangSak> filteredTilgangSakList = Flowable.fromIterable(tilgangSakList)
 				.parallel(10)
 				.runOn(Schedulers.io())
 				.filter(ts -> pep2.hasAccess(ts, safRequestContext))

@@ -1,5 +1,7 @@
 package no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.FagomradeCode;
@@ -16,6 +18,8 @@ import java.util.List;
  */
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class JournalpostDto {
 	private Long journalpostId;
 	private Long prevJournalpostId;

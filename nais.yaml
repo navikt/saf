@@ -38,6 +38,10 @@ fasitResources:
       password: SERVICEUSER_PASSWORD
   - alias: "abac.pdp.endpoint"
     resourceType: restservice
+  - alias: "HentBrukerOgEnhetstilgangerForSak"
+    resourceType: restservice
+    propertyMap:
+      url: pensjonsakrs.v1.url
   - alias: securityTokenService
     resourceType: baseurl
   - alias: Aktoer_v2

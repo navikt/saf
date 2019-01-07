@@ -5,6 +5,7 @@ import static no.nav.saf.tjeneste.visningsmodell.RelevantDato.INVALID_DATE;
 
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.FagomradeCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.FagsystemCode;
+import no.nav.saf.anticorruptionlayer.joark.domain.kode.JournalpostTypeCode;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.JournalpostDto;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.SaksrelasjonDto;
 import no.nav.saf.domain.Arkivsak;
@@ -20,7 +21,6 @@ import no.nav.saf.tjeneste.visningsmodell.RelevantDato;
 import no.nav.saf.tjeneste.visningsmodell.Sak;
 import no.nav.saf.tjeneste.visningsmodell.kode.Arkivsakssystem;
 import no.nav.saf.tjeneste.visningsmodell.kode.Datotype;
-import no.nav.saf.tjeneste.visningsmodell.kode.Journalposttype;
 import no.nav.saf.tjeneste.visningsmodell.kode.Journalstatus;
 import no.nav.saf.tjeneste.visningsmodell.kode.Kanal;
 import no.nav.saf.tjeneste.visningsmodell.kode.Variantformat;
@@ -34,7 +34,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- *
  * @author Joakim Bjørnstad, Jbit AS
  */
 @Component
@@ -49,7 +48,7 @@ public class JournalpostDtoMapper {
 		Journalpost journalpost = Journalpost.builder()
 				.journalpostId(journalpostId)
 				.tittel(journalpostDto.getInnhold())
-				.journalposttype(Journalposttype.fromJoark(journalpostDto.getJournalposttype()))
+				.journalposttype(JournalpostTypeCode.mapToJournalpostType(journalpostDto.getJournalposttype()))
 				.journalstatus(mapJournalstatus(journalpostDto))
 				.tema(FagomradeCode.toSafJournalstatus(journalpostDto.getFagomrade()))
 				.temanavn(FagomradeCode.toSafJournalstatus(journalpostDto.getFagomrade()).getTemanavn())
@@ -170,6 +169,7 @@ public class JournalpostDtoMapper {
 		}
 	}
 
+	// TODO skal lages en Kanal.UKJENT istedet, fikses etter test er fikset.
 	private Kanal mapManglendeMottakskanal(JournalpostDto journalpostDto) {
 		return null;
 	}

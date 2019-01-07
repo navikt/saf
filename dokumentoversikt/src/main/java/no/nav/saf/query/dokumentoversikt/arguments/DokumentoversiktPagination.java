@@ -18,21 +18,23 @@ public final class DokumentoversiktPagination {
 	public static class SeekPagination implements Pagination {
 		private final Integer foerste;
 		private final String etterPeker;
+		// det er ikke noe behov for å paginere bakover
+		@Deprecated
 		private final Integer siste;
+		// det er ikke noe behov for å paginere bakover
+		@Deprecated
 		private final String foerPeker;
 	}
 
 	public static Pagination create(DataFetchingEnvironment environment) {
-		if (environment.getArgument("foerste") != null && environment.getArgument("siste") != null) {
-			throw new IllegalArgumentException("Det er ikke tillatt å angi både `foerste` og `siste` for å paginere.");
-		}
-		if (environment.getArgument("foerste") == null && environment.getArgument("siste") == null) {
-			throw new IllegalArgumentException("Du må angi en `foerste` eller en `siste` verdi for å paginere.");
+		if (environment.getArgument("foerste") == null) {
+			throw new IllegalArgumentException("Du må angi en `foerste` verdi for å paginere.");
 		}
 		Integer foerste = environment.getArgument("foerste");
+		if(foerste <= 0) {
+			throw new IllegalArgumentException("`foerste` kan ikke være 0 eller negativ.");
+		}
 		String etterPeker = environment.getArgument("etter");
-		Integer siste = environment.getArgument("siste");
-		String foerPeker = environment.getArgument("foer");
-		return new SeekPagination(foerste, etterPeker, siste, foerPeker);
+		return new SeekPagination(foerste, etterPeker, null, null);
 	}
 }
