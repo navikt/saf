@@ -2,6 +2,8 @@ package no.nav.saf.anticorruptionlayer.joark;
 
 import static no.nav.saf.anticorruptionlayer.joark.domain.kode.FagsystemCode.FS22;
 import static no.nav.saf.anticorruptionlayer.joark.domain.kode.FagsystemCode.PEN;
+import static no.nav.saf.domain.DomainConstants.ORGANISASJON;
+import static no.nav.saf.domain.DomainConstants.PERSON;
 import static no.nav.saf.domain.DomainConstants.TILGANG_JOURNALPOST_DTO;
 
 import lombok.extern.slf4j.Slf4j;
@@ -13,6 +15,7 @@ import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.FinnJou
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.FinnJournalposterResponseTo;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.JournalpostDto;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark901.HentTilgangJournalpostResponseTo;
+import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark901.TilgangBrukerDto;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark901.TilgangDokumentInfoDto;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark901.TilgangJournalpostDto;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark920.HentDokumentResponseTo;
@@ -103,10 +106,12 @@ class JoarkAntiCorruptionLayerImpl implements JoarkAntiCorruptionLayer {
 	public TilgangSak hentTilgangSakFromSafRequestContext(SafRequestContext safRequestContext) {
 		final TilgangJournalpostDto tilgangJournalpostDto = safRequestContext.getRequestCache()
 				.getObject(TILGANG_JOURNALPOST_DTO);
-		if (tilgangJournalpostDto == null || tilgangJournalpostDto.getSak() == null) {
+		if (tilgangJournalpostDto == null || tilgangJournalpostDto.getSak() == null || tilgangJournalpostDto.getBruker() == null
+				|| tilgangJournalpostDto.getBruker().getBrukerId() == null) {
 			return null;
 		} else {
 			return TilgangSak.builder()
+					.foedselsnummer(tilgangJournalpostDto.getBruker().getBrukerId())
 					.arkivsaksnummer(tilgangJournalpostDto.getSak().getSakId())
 					.arkivsaksystem(mapJoarkFagsystem(tilgangJournalpostDto.getSak()
 							.getFagsystem(), tilgangJournalpostDto.getJournalpostId()))
@@ -119,12 +124,25 @@ class JoarkAntiCorruptionLayerImpl implements JoarkAntiCorruptionLayer {
 	public TilgangBruker hentTilgangBruker(SafRequestContext safRequestContext) {
 		final TilgangJournalpostDto tilgangJournalpostDto = safRequestContext.getRequestCache()
 				.getObject(TILGANG_JOURNALPOST_DTO);
-		if (tilgangJournalpostDto == null || tilgangJournalpostDto.getBruker() == null) {
+
+		if (tilgangJournalpostDto == null || tilgangJournalpostDto.getBruker() == null
+				|| tilgangJournalpostDto.getBruker().getBrukerType() == null) {
 			return null;
-		} else {
-			return TilgangBruker.builder()
-					.foedselsnr(tilgangJournalpostDto.getBruker().getBrukerId())
-					.build();
+		}
+		final TilgangBrukerDto tilgangBruker = tilgangJournalpostDto.getBruker();
+		switch (tilgangBruker.getBrukerType()) {
+			case PERSON:
+				return TilgangBruker.builder()
+						.foedselsnr(tilgangBruker.getBrukerId())
+						.build();
+			case ORGANISASJON:
+				return TilgangBruker.builder()
+						.orgnummer(tilgangBruker.getBrukerId())
+						.build();
+			default:
+				log.warn("Forventet brukerType=(PERSON, ORGANISASJON) for midlertidig journalpost med journalpostId={}. Fikk brukerType={}", tilgangJournalpostDto
+						.getJournalpostId());
+				return null;
 		}
 	}
 
