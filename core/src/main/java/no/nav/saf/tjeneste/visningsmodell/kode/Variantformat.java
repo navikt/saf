@@ -5,5 +5,6 @@ package no.nav.saf.tjeneste.visningsmodell.kode;
  */
 public enum Variantformat {
 	ARKIV,
-	SKJERMET
+	SKJERMET,
+	SLADDET
 }
