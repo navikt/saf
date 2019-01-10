@@ -172,8 +172,8 @@ class JournalpostDtoMapperTest {
 		assertEquals(1, journalpost.getDokumenter().size());
 		assertEquals(DOKUMENT_INFO_ID, journalpost.getDokumenter().get(0).getDokumentId());
 		assertEquals(VARIANT_FORMAT_CODE.toString(), journalpost.getDokumenter().get(0).getDokumentvarianter().get(0).getVariantformat().toString());
-		assertEquals(BREVKODE, journalpost.getDokumenter().get(0).getNavSkjemaId());
-		assertEquals(BREVKODE, journalpost.getDokumenter().get(0).getNavSkjemaId());
+		assertEquals(BREVKODE, journalpost.getDokumenter().get(0).getBrevkode());
+		assertEquals(BREVKODE, journalpost.getDokumenter().get(0).getBrevkode());
 		assertEquals(AKTOER_ID, journalpost.getBruker().getId());
 	}
 
