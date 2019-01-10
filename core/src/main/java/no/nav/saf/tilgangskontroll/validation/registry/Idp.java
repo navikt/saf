@@ -1,4 +1,4 @@
-package no.nav.saf.tilgangskontroll.validation;
+package no.nav.saf.tilgangskontroll.validation.registry;
 
 import lombok.Data;
 

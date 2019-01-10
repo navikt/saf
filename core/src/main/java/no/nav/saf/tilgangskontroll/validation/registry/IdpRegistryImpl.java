@@ -2,8 +2,6 @@ package no.nav.saf.tilgangskontroll.validation.registry;
 
 import static java.lang.String.format;
 
-import no.nav.saf.tilgangskontroll.validation.Idp;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

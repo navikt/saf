@@ -1,8 +1,6 @@
 package no.nav.saf.tilgangskontroll.validation.registry;
 
 
-import no.nav.saf.tilgangskontroll.validation.Idp;
-
 import java.util.List;
 
 /**

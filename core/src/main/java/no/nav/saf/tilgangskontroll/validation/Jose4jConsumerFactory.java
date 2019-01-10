@@ -3,6 +3,7 @@ package no.nav.saf.tilgangskontroll.validation;
 import static java.lang.String.format;
 
 import no.nav.saf.exceptions.OidcAuthorizationException;
+import no.nav.saf.tilgangskontroll.validation.registry.Idp;
 import org.jose4j.http.SimpleGet;
 import org.jose4j.jwk.HttpsJwks;
 import org.jose4j.jwt.consumer.JwtConsumer;

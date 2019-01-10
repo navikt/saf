@@ -14,9 +14,12 @@ public class SafSecurityContext {
 	private static final String OIDC_TOKEN_PREFIX = "Bearer ";
 	private final String oidcTokenBody;
 	private final String saksbehandlerId;
+	private final OidcValidatorTool oidcValidatorTool;
 
-	SafSecurityContext(String authorizationHeader) {
+	SafSecurityContext(String authorizationHeader,
+					   OidcValidatorTool oidcValidatorTool) {
 		this.saksbehandlerId = getSubjectFromToken(authorizationHeader);
+		this.oidcValidatorTool = oidcValidatorTool;
 		this.oidcTokenBody = getOidcTokenBody(authorizationHeader);
 	}
 
@@ -25,13 +28,8 @@ public class SafSecurityContext {
 			return null;
 		}
 
-		if (OidcValidatorTool.validate(authorizationHeader)) {
-			try {
-				return JWT.decode(authorizationHeader.split(OIDC_TOKEN_PREFIX)[1]).getPayload();
-			} catch (JWTDecodeException e) {
-				log.error("Konsument satte ugyldig OIDC-Token i header.", e);
-				return null;
-			}
+		if (oidcValidatorTool.validate(authorizationHeader)) {
+			return JWT.decode(authorizationHeader.split(OIDC_TOKEN_PREFIX)[1]).getPayload();
 		} else {
 			return null;
 		}
@@ -51,12 +49,7 @@ public class SafSecurityContext {
 	}
 
 	public String getOidcTokenBody() {
-		if (oidcTokenBody == null) {
-			throw new OidcAuthorizationException("Autentiseringsmekanisme er ikke støttet. " +
-					"Kun OIDC-token (JWT via OAuth 2.0) med header \"Authorization\" : \"Bearer {token}\" er tillatt.");
-		} else {
-			return oidcTokenBody;
-		}
+		return oidcTokenBody;
 	}
 
 	public String getSaksbehandlerId() {

@@ -10,6 +10,7 @@ import no.nav.saf.hentdokument.HentDokumentDomainCoordinator;
 import no.nav.saf.metrics.Monitor;
 import no.nav.saf.swagger.SwaggerRestHentDokument;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
+import no.nav.saf.tilgangskontroll.validation.OidcValidatorTool;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,10 +33,13 @@ import javax.inject.Inject;
 @Slf4j
 public class HentDokumentController {
 	private final HentDokumentDomainCoordinator hentDokumentDomainCoordinator;
+	private final OidcValidatorTool oidcValidatorTool;
 
 	@Inject
-	public HentDokumentController(HentDokumentDomainCoordinator hentDokumentDomainCoordinator) {
+	public HentDokumentController(HentDokumentDomainCoordinator hentDokumentDomainCoordinator,
+								  OidcValidatorTool oidcValidatorTool) {
 		this.hentDokumentDomainCoordinator = hentDokumentDomainCoordinator;
+		this.oidcValidatorTool = oidcValidatorTool;
 	}
 
 	@ApiOperation(value = "Henter fysiske dokumenter fra NAV sitt arkiv og gjør nødvendig tilgangskontroll.", authorizations = {@Authorization(value = "apiKey")})
@@ -48,7 +52,7 @@ public class HentDokumentController {
 											   @ApiParam(hidden = true) @RequestHeader(value = HttpHeaders.AUTHORIZATION, required = false) String authorizationHeader) {
 
 		log.info("hentDokument har mottatt kall. journalpostId={}, dokumentId={}, variantFormat={}", journalpostId, dokumentId, variantFormat);
-		HentDokument response = hentDokumentDomainCoordinator.hentDokument(journalpostId, dokumentId, variantFormat, new SafRequestContext(authorizationHeader));
+		HentDokument response = hentDokumentDomainCoordinator.hentDokument(journalpostId, dokumentId, variantFormat, new SafRequestContext(authorizationHeader, oidcValidatorTool));
 
 		return ResponseEntity.ok()
 				.contentType(response.getMediaType())

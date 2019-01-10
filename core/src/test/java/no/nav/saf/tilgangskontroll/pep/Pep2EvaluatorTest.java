@@ -12,10 +12,12 @@ import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlRequest;
 import no.nav.saf.tilgangskontroll.abac.dto.response.Decision;
 import no.nav.saf.tilgangskontroll.abac.dto.response.XacmlResponse;
+import no.nav.saf.tilgangskontroll.validation.OidcValidatorTool;
 import no.nav.saf.tjeneste.visningsmodell.kode.Tema;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
 
 /**
  * @author Sigurd Midttun, Visma Consulting.
@@ -26,21 +28,26 @@ public class Pep2EvaluatorTest extends AbstractPepTest {
 	@InjectMocks
 	private Pep2Impl pep2;
 
+	@Mock
+	private OidcValidatorTool oidcValidatorTool;
+
 	@Test
 	public void pep2dFarHappyPath() {
 		when(abacService.evaluate(any(XacmlRequest.class))).thenReturn(new XacmlResponse(Decision.PERMIT, null, null, null));
+		when(oidcValidatorTool.validate(OIDC_TOKEN_PERSON_USER_TEST)).thenReturn(true);
+
 		ArgumentCaptor<XacmlRequest> request = ArgumentCaptor.forClass(XacmlRequest.class);
 
 		boolean hasAccess = pep2.hasAccess(TilgangSak.builder()
 				.tema(Tema.FAR.name())
-				.build(), new SafRequestContext(OIDC_TOKEN_PERSON_USER_TEST));
+				.build(), new SafRequestContext(OIDC_TOKEN_PERSON_USER_TEST, oidcValidatorTool));
 
 		verify(abacService).evaluate(request.capture());
 		XacmlRequest capturedRequest = request.getValue();
 
 		assertEquals(Boolean.TRUE, hasAccess);
 
-		assertEquals(new SafRequestContext(OIDC_TOKEN_PERSON_USER_TEST).getSecurityContext().getOidcTokenBody(), capturedRequest.getEnvironments().get(0).getValue().toString());
+		assertEquals(new SafRequestContext(OIDC_TOKEN_PERSON_USER_TEST, oidcValidatorTool).getSecurityContext().getOidcTokenBody(), capturedRequest.getEnvironments().get(0).getValue().toString());
 		assertEquals(SAF, capturedRequest.getEnvironments().get(1).getValue().toString());
 
 		assertEquals(SAF, capturedRequest.getResources().get(0).getValue().toString());

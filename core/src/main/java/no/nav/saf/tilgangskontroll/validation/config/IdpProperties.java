@@ -1,7 +1,7 @@
 package no.nav.saf.tilgangskontroll.validation.config;
 
 import lombok.Data;
-import no.nav.saf.tilgangskontroll.validation.Idp;
+import no.nav.saf.tilgangskontroll.validation.registry.Idp;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.validation.annotation.Validated;
 
