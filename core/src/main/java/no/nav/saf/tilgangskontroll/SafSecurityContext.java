@@ -4,6 +4,7 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.exceptions.JWTDecodeException;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.exceptions.OidcAuthorizationException;
+import no.nav.saf.tilgangskontroll.validation.OidcValidatorTool;
 
 /**
  * @author Joakim Bjørnstad, Jbit AS
@@ -23,12 +24,18 @@ public class SafSecurityContext {
 		if (isNotValidAuthorizationHeader(authorizationHeader)) {
 			return null;
 		}
-		try {
-			return JWT.decode(authorizationHeader.split(OIDC_TOKEN_PREFIX)[1]).getPayload();
-		} catch (JWTDecodeException e) {
-			log.error("Konsument satte ugyldig OIDC-Token i header.", e);
+
+		if (OidcValidatorTool.validate(authorizationHeader)) {
+			try {
+				return JWT.decode(authorizationHeader.split(OIDC_TOKEN_PREFIX)[1]).getPayload();
+			} catch (JWTDecodeException e) {
+				log.error("Konsument satte ugyldig OIDC-Token i header.", e);
+				return null;
+			}
+		} else {
 			return null;
 		}
+
 	}
 
 	private String getSubjectFromToken(String authorizationHeader) {

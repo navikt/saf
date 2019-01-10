@@ -8,7 +8,7 @@ package no.nav.saf;
 //
 //
 import lombok.experimental.UtilityClass;
-//import no.nav.freg.security.test.oidc.tools.JwtClaimsBuilder;
+//import no.nav.freg.validation.test.oidc.tools.JwtClaimsBuilder;
 //import org.jose4j.jwt.JwtClaims;
 //
 //import java.time.LocalDateTime;
