@@ -231,10 +231,10 @@ type DokumentInfo {
     # Dokumentets tittel, f.eks. *"Søknad om foreldrepenger ved fødsel"* eller *"Legeerklæring"*.
     tittel: String
 
-    # Kode som sier noe om dokumentets innhold og oppbygning. Todo: Dersom vi går for begrep Brevkode istedetfor NavSkjemaID:
+    # Kode som sier noe om dokumentets innhold og oppbygning.
     # * For inngående skjema er brevkoden normalt en NAV-skjemaID f.eks. *"NAV 14-05.09"*. Enkelte vedlegg har en vedleggskode som sier noe om innholdet.
     # * For utgående dokumenter sier brevkoden hvilken brevmal som har vært benyttet ved produksjon av brevet.
-    navSkjemaId: String
+    brevkode: String
 
     # Liste over andre dokumenter som også befinner seg inne i den fysiske filen som dokumentinfo-objektet peker på.
     logiskeVedlegg: [LogiskVedlegg]!
