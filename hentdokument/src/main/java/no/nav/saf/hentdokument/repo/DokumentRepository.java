@@ -7,6 +7,6 @@ import no.nav.saf.domain.HentDokument;
  */
 public interface DokumentRepository {
 
-	HentDokument findDokument(String dokumentId, String variantFormat);
+	HentDokument findDokument(String dokumentInfoId, String variantFormat);
 
 }

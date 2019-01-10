@@ -50,31 +50,31 @@ public class HentJournalsakinfo {
 	}
 
 	@Monitor(value = "dok_consumer", extraTags = {"process", "hentTilgangJournalpost"}, histogram = true)
-	public HentTilgangJournalpostResponseTo hentTilgangJournalpost(String journalpostId, String dokumentId, String variantFormat) {
+	public HentTilgangJournalpostResponseTo hentTilgangJournalpost(String journalpostId, String dokumentInfoId, String variantFormat) {
 		try {
-			return restTemplate.getForObject("/henttilgangjournalpost/{journalpostId}/{dokumentId}/{variantFormat}", HentTilgangJournalpostResponseTo.class, journalpostId, dokumentId, variantFormat);
+			return restTemplate.getForObject("/henttilgangjournalpost/{journalpostId}/{dokumentInfoId}/{variantFormat}", HentTilgangJournalpostResponseTo.class, journalpostId, dokumentInfoId, variantFormat);
 		} catch (HttpServerErrorException e) {
 			throw new SafTechnicalException(String.format("henttilgangjournalpost feilet teknisk med statusKode=%s. Feilmelding=%s", e
 					.getStatusCode(), e.getMessage()), e, e.getStatusCode());
 		} catch (HttpClientErrorException e) {
 			switch (e.getStatusCode()) {
 				case NOT_FOUND:
-					throw new DokumentIkkeFunnetException(String.format("Journalpost med journalpostId=%s og tilknyttet dokumentId=%s og variantFormat=%s ikke funnet i Joark.",
-							journalpostId, dokumentId, variantFormat));
+					throw new DokumentIkkeFunnetException(String.format("Journalpost med journalpostId=%s og tilknyttet dokumentInfoId=%s og variantFormat=%s ikke funnet i Joark.",
+							journalpostId, dokumentInfoId, variantFormat));
 				case BAD_REQUEST:
-					throw new UgyldigInputException(String.format("Ugyldig input: journalpostId=%s, dokumentId=%s, variantFormat=%s. JournalpostId og dokumentId må være tall og variantFormat må være en gyldig kodeverk-verdi, eg. ARKIV, ORIGINAL, SLADDET mfl.",
-							journalpostId, dokumentId, variantFormat));
+					throw new UgyldigInputException(String.format("Ugyldig input: journalpostId=%s, dokumentInfoId=%s, variantFormat=%s. JournalpostId og dokumentInfoId må være tall og variantFormat må være en gyldig kodeverk-verdi, eg. ARKIV, ORIGINAL, SLADDET mfl.",
+							journalpostId, dokumentInfoId, variantFormat));
 				default:
-					throw new SafFunctionalException(String.format("hentTilgangJournalpost feilet funksjonelt. journalpostId=%s, dokumentId=%s og variantFormat=%s. Feilmelding=%s",
-							journalpostId, dokumentId, variantFormat, e.getMessage()));
+					throw new SafFunctionalException(String.format("hentTilgangJournalpost feilet funksjonelt. journalpostId=%s, dokumentInfoId=%s og variantFormat=%s. Feilmelding=%s",
+							journalpostId, dokumentInfoId, variantFormat, e.getMessage()));
 			}
 		}
 	}
 
 	@Monitor(value = "dok_consumer", extraTags = {"process", "hentDokument"}, histogram = true)
-	public HentDokumentResponseTo hentDokument(String dokumentId, String variantFormat) {
+	public HentDokumentResponseTo hentDokument(String dokumentInfoId, String variantFormat) {
 		try {
-			ResponseEntity<String> response = restTemplate.getForEntity("/hentdokument/{dokumentId}/{variantFormat}", String.class, dokumentId, variantFormat);
+			ResponseEntity<String> response = restTemplate.getForEntity("/hentdokument/{dokumentInfoId}/{variantFormat}", String.class, dokumentInfoId, variantFormat);
 
 			return HentDokumentResponseTo.builder()
 					.dokument(response.getBody())
@@ -84,8 +84,8 @@ public class HentJournalsakinfo {
 			throw new SafTechnicalException(String.format("hentDokument feilet teknisk med statusKode=%s. Feilmelding=%s", e
 					.getStatusCode(), e.getMessage()), e, e.getStatusCode());
 		} catch (HttpClientErrorException e) {
-			throw new DokumentIkkeFunnetException(String.format("Dokument med dokumentId=%s og variantFormat=%s ikke funnet. Feilmelding=%s",
-					dokumentId, variantFormat, e.getMessage()));
+			throw new DokumentIkkeFunnetException(String.format("Dokument med dokumentInfoId=%s og variantFormat=%s ikke funnet. Feilmelding=%s",
+					dokumentInfoId, variantFormat, e.getMessage()));
 		}
 	}
 }

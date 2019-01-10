@@ -64,7 +64,7 @@ public class JournalpostDtoMapper {
 		List<DokumentInfo> dokumenter = journalpostDto.getDokumenter().stream()
 				.map(dokumentInfoDto -> DokumentInfo.builder()
 						.parent(journalpost)
-						.dokumentId(dokumentInfoDto.getDokumentInfoId())
+						.dokumentInfoId(dokumentInfoDto.getDokumentInfoId())
 						.tittel(dokumentInfoDto.getTittel())
 						.navSkjemaId(dokumentInfoDto.getBrevkode())
 						.dokumentvarianter(Collections.singletonList(Dokumentvariant.builder()

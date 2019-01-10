@@ -147,13 +147,13 @@ class JoarkAntiCorruptionLayerImpl implements JoarkAntiCorruptionLayer {
 	}
 
 	@Override
-	public HentDokument hentDokument(String dokumentId, String variantFormat) {
-		HentDokumentResponseTo responseTo = hentJournalsakinfo.hentDokument(dokumentId, variantFormat);
+	public HentDokument hentDokument(String dokumentInfoId, String variantFormat) {
+		HentDokumentResponseTo responseTo = hentJournalsakinfo.hentDokument(dokumentInfoId, variantFormat);
 		byte[] dokumentByteArray;
 		try {
 			dokumentByteArray = Base64.getDecoder().decode(responseTo.getDokument());
 		} catch (Exception e) {
-			throw new SafTechnicalException(String.format("Kunne ikke dekode dokument, dokumentId=%s, variantFormat=%s. Feilmelding=%s", dokumentId, variantFormat, e
+			throw new SafTechnicalException(String.format("Kunne ikke dekode dokument, dokumentInfoId=%s, variantFormat=%s. Feilmelding=%s", dokumentInfoId, variantFormat, e
 					.getMessage()), e);
 		}
 
@@ -164,8 +164,8 @@ class JoarkAntiCorruptionLayerImpl implements JoarkAntiCorruptionLayer {
 	}
 
 	@Override
-	public Arkivsak hentArkivsakAndCacheJournalpostDto(String journalpostId, String dokumentId, String variantFormat, SafRequestContext safRequestContex) {
-		HentTilgangJournalpostResponseTo hentTilgangJournalpostResponseTo = hentJournalsakinfo.hentTilgangJournalpost(journalpostId, dokumentId, variantFormat);
+	public Arkivsak hentArkivsakAndCacheJournalpostDto(String journalpostId, String dokumentInfoId, String variantFormat, SafRequestContext safRequestContex) {
+		HentTilgangJournalpostResponseTo hentTilgangJournalpostResponseTo = hentJournalsakinfo.hentTilgangJournalpost(journalpostId, dokumentInfoId, variantFormat);
 		safRequestContex.getRequestCache()
 				.putObject(TILGANG_JOURNALPOST_DTO, hentTilgangJournalpostResponseTo.getTilgangJournalpostDto());
 		return Arkivsak.builder()

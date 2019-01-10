@@ -226,7 +226,7 @@ type Bruker {
 # * Dokumentinfo viser ikke til den fysiske filen, men til metadata som omhandler alle eventuelle varianter av dokumentet.
 type DokumentInfo {
     # Unik identifikator per dokumentinfo
-    dokumentId: String!
+    dokumentInfoId: String!
 
     # Dokumentets tittel, f.eks. *"Søknad om foreldrepenger ved fødsel"* eller *"Legeerklæring"*.
     tittel: String

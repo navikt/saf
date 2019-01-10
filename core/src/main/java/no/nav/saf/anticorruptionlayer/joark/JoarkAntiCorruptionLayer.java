@@ -33,7 +33,7 @@ public interface JoarkAntiCorruptionLayer {
 
 	TilgangBruker hentTilgangBruker(SafRequestContext safRequestContext);
 
-	HentDokument hentDokument(String dokumentId, String variantFormat);
+	HentDokument hentDokument(String dokumentInfoId, String variantFormat);
 
-	Arkivsak hentArkivsakAndCacheJournalpostDto(String journalpostId, String dokumentId, String variantFormat, SafRequestContext safRequestContex);
+	Arkivsak hentArkivsakAndCacheJournalpostDto(String journalpostId, String dokumentInfoId, String variantFormat, SafRequestContext safRequestContex);
 }

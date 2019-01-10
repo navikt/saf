@@ -170,7 +170,7 @@ class JournalpostDtoMapperTest {
 
 		assertEquals(LocalDateTime.from(DATO_OPPRETTET.toInstant().atZone(ZoneId.systemDefault())), LocalDateTime.from(journalpost.getDatoOpprettet()));
 		assertEquals(1, journalpost.getDokumenter().size());
-		assertEquals(DOKUMENT_INFO_ID, journalpost.getDokumenter().get(0).getDokumentId());
+		assertEquals(DOKUMENT_INFO_ID, journalpost.getDokumenter().get(0).getDokumentInfoId());
 		assertEquals(VARIANT_FORMAT_CODE.toString(), journalpost.getDokumenter().get(0).getDokumentvarianter().get(0).getVariantformat().toString());
 		assertEquals(BREVKODE, journalpost.getDokumenter().get(0).getNavSkjemaId());
 		assertEquals(BREVKODE, journalpost.getDokumenter().get(0).getNavSkjemaId());

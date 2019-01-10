@@ -81,8 +81,8 @@ public class TilgangsmodellHentdokumentRepositoryImpl implements TilgangsmodellH
 	}
 
 	@Override
-	public Arkivsak findArkivsakAndCacheJournalpostDto(String journalpostId, String dokumentId, String variantFormat, SafRequestContext safRequestContext) {
-		return joarkAntiCorruptionLayer.hentArkivsakAndCacheJournalpostDto(journalpostId, dokumentId, variantFormat, safRequestContext);
+	public Arkivsak findArkivsakAndCacheJournalpostDto(String journalpostId, String dokumentInfoId, String variantFormat, SafRequestContext safRequestContext) {
+		return joarkAntiCorruptionLayer.hentArkivsakAndCacheJournalpostDto(journalpostId, dokumentInfoId, variantFormat, safRequestContext);
 	}
 
 	@Override
