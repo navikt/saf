@@ -14,7 +14,7 @@ public class SafSecurityContext {
 	private final String oidcTokenBody;
 	private final String saksbehandlerId;
 
-	SafSecurityContext(String authorizationHeader) {
+	public SafSecurityContext(String authorizationHeader) {
 		this.saksbehandlerId = getSubjectFromToken(authorizationHeader);
 		this.oidcTokenBody = getOidcTokenBody(authorizationHeader);
 	}
