@@ -11,4 +11,5 @@ import lombok.NoArgsConstructor;
 public class TilgangBrukerDto {
 
 	private String brukerId;
+	private String brukerType;
 }

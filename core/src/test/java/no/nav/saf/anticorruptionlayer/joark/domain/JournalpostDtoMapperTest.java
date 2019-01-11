@@ -20,6 +20,7 @@ import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.Saksrel
 import no.nav.saf.domain.Arkivsak;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.tilgangskontroll.RequestCache;
+import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tjeneste.visningsmodell.Journalpost;
 import no.nav.saf.tjeneste.visningsmodell.RelevantDato;
 import no.nav.saf.tjeneste.visningsmodell.kode.Arkivsakssystem;
@@ -39,6 +40,8 @@ import java.util.List;
  * @author Joakim Bjørnstad, Jbit AS
  */
 class JournalpostDtoMapperTest {
+
+	private static final String OIDC_TOKEN_PERSON = "Bearer " + "eyAidHlwIjogIkpXVCIsICJraWQiOiAiU0gxSWVSU2sxT1VGSDNzd1orRXVVcTE5VHZRPSIsICJhbGciOiAiUlMyNTYiIH0.eyAiYXRfaGFzaCI6ICJvNFUwMVhKNmlnRmw0VGYwdFRkYjR3IiwgInN1YiI6ICJaOTkwNDI0IiwgImF1ZGl0VHJhY2tpbmdJZCI6ICJlYTdmNWUxMi1jYjZjLTQ1ZjUtYmViMi0wYjVkYmI5ZDQ3YTItMTMzNzkzNCIsICJpc3MiOiAiaHR0cHM6Ly9pc3NvLXQuYWRlby5ubzo0NDMvaXNzby9vYXV0aDIiLCAidG9rZW5OYW1lIjogImlkX3Rva2VuIiwgImF1ZCI6ICJpZGEtdCIsICJjX2hhc2giOiAiRnJwNzhwdlJZU0VPMExjUktPUFdWdyIsICJvcmcuZm9yZ2Vyb2NrLm9wZW5pZGNvbm5lY3Qub3BzIjogIjJjYjQ2OGU4LThmMjItNGY1NS1hYTQ4LWM1NWExYjA4YmQ1ZiIsICJhenAiOiAiaWRhLXQiLCAiYXV0aF90aW1lIjogMTU0MzU3Nzk3MiwgInJlYWxtIjogIi8iLCAiZXhwIjogMTU0MzU4MTU3MiwgInRva2VuVHlwZSI6ICJKV1RUb2tlbiIsICJpYXQiOiAxNTQzNTc3OTcyIH0.NRgKaZhZ7qbBbJMUj_l9kzGOv7yOJVRVZDqmK0-G9lxzZs4jW1AtvFWqJRO9dd_djlIOGXz93UnuMNpWYWuoUd_S9gVc53yUjquzrys1IK8Zjd89smEl_9QP3ya8z7ISv48DciJORxdB2XT8rr2qpltYjKrCE2QmmK2ctAhy9QuFwEoZnctrR8IDKhUJCGd8LXPXddNRNEDL4-A47KwkF0UcfoDzPXznyZ2cbV4IkT3zvGqqwO3hovdrpadBdf204hClcmETYN3frRh1qHuTUqrBL7ualfqs-eDa4FKd77Mwu02LqPQGVpt8Ebebtv3OlS28YDchx8ng_P05okSjZg";
 
 	private static final String DOKUMENT_INFO_ID = "1234";
 	private static final VariantFormatCode VARIANT_FORMAT_CODE = VariantFormatCode.ARKIV;
@@ -71,7 +74,7 @@ class JournalpostDtoMapperTest {
 		JournalpostDto journalpostDto = buildJournalpostDtoUtgaaendeType(JournalStatusCode.E);
 		RequestCache requestCache = createArkivsakCacheRequestCache();
 
-		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, requestCache);
+		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, requestCache, null);
 
 		assertCommonMetadata(journalpost);
 
@@ -83,7 +86,7 @@ class JournalpostDtoMapperTest {
 		assertThat(journalpost.getRelevanteDatoer(), hasItem(new RelevantDato(AVS_RETUR_DATO, Datotype.DATO_AVS_RETUR)));
 		assertThat(journalpost.getRelevanteDatoer(), hasItem(new RelevantDato(SENDT_PRINT_DATO, Datotype.DATO_SENDT_PRINT)));
 		assertThat(journalpost.getRelevanteDatoer(), hasItem(new RelevantDato(EKSPEDERT_DATO, Datotype.DATO_EKSPEDERT)));
-		assertThat(journalpost.getRelevanteDatoer(), not(hasItem(new RelevantDato(MOTTAT_DATO, Datotype.DATO_MOTTATT))));
+		assertThat(journalpost.getRelevanteDatoer(), not(hasItem(new RelevantDato(MOTTAT_DATO, Datotype.DATO_REGISTRERT))));
 		assertThat(journalpost.getRelevanteDatoer(), not(hasItem(new RelevantDato(JOURNAL_DATO, Datotype.DATO_JOURNALFOERT))));
 	}
 
@@ -93,7 +96,7 @@ class JournalpostDtoMapperTest {
 		JournalpostDto journalpostDto = buildJournalpostDtoInngaaendeType();
 		RequestCache requestCache = createTilgangBrukerRequestCache();
 
-		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, requestCache);
+		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, requestCache, null);
 
 		assertCommonMetadata(journalpost);
 
@@ -105,7 +108,7 @@ class JournalpostDtoMapperTest {
 		assertThat(journalpost.getRelevanteDatoer(), not(hasItem(new RelevantDato(AVS_RETUR_DATO, Datotype.DATO_AVS_RETUR))));
 		assertThat(journalpost.getRelevanteDatoer(), not(hasItem(new RelevantDato(SENDT_PRINT_DATO, Datotype.DATO_SENDT_PRINT))));
 		assertThat(journalpost.getRelevanteDatoer(), not(hasItem(new RelevantDato(EKSPEDERT_DATO, Datotype.DATO_EKSPEDERT))));
-		assertThat(journalpost.getRelevanteDatoer(), hasItem(new RelevantDato(MOTTAT_DATO, Datotype.DATO_MOTTATT)));
+		assertThat(journalpost.getRelevanteDatoer(), hasItem(new RelevantDato(MOTTAT_DATO, Datotype.DATO_REGISTRERT)));
 		assertThat(journalpost.getRelevanteDatoer(), hasItem(new RelevantDato(JOURNAL_DATO, Datotype.DATO_JOURNALFOERT)));
 
 	}
@@ -115,7 +118,7 @@ class JournalpostDtoMapperTest {
 		JournalpostDto journalpostDto = buildJournalpostDtoInternNotatType();
 		RequestCache requestCache = createTilgangBrukerRequestCache();
 
-		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, requestCache);
+		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, requestCache, null);
 
 		assertEquals(Kanal.INGEN_DISTRIBUSJON.getKanalnavn(), journalpost.getKanalnavn());
 	}
@@ -125,7 +128,7 @@ class JournalpostDtoMapperTest {
 		JournalpostDto journalpostDto = buildJournalpostDtoUtgaaendeType(JournalStatusCode.FS);
 		RequestCache requestCache = createTilgangBrukerRequestCache();
 
-		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, requestCache);
+		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, requestCache, null);
 
 		assertEquals(Kanal.SENTRAL_UTSKRIFT.getKanalnavn(), journalpost.getKanalnavn());
 	}
@@ -135,7 +138,7 @@ class JournalpostDtoMapperTest {
 		JournalpostDto journalpostDto = buildJournalpostDtoUtgaaendeType(JournalStatusCode.FL);
 		RequestCache requestCache = createTilgangBrukerRequestCache();
 
-		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, requestCache);
+		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, requestCache, null);
 
 		assertEquals(Kanal.LOKAL_UTSKRIFT.getKanalnavn(), journalpost.getKanalnavn());
 	}
@@ -146,7 +149,7 @@ class JournalpostDtoMapperTest {
 		JournalpostDto journalpostDto = buildJournalpostDtoPenSaksrelasjonDto();
 		RequestCache requestCache = createTilgangBrukerRequestCachePSAK();
 
-		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, requestCache);
+		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, requestCache, null);
 
 		assertEquals(ARKIVSAK_NR, journalpost.getSak().getArkivsaksnummer());
 		assertEquals(Arkivsakssystem.PSAK.name(), journalpost.getSak().getArkivsaksystem().name());
@@ -157,9 +160,27 @@ class JournalpostDtoMapperTest {
 		JournalpostDto journalpostDto = buildJournalpostDtoUtgaaendeType(JournalStatusCode.E);
 		RequestCache requestCache = createTilgangBrukerCacheWithOrganisasjonSak();
 
-		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, requestCache);
+		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, requestCache, null);
 
 		assertEquals(ORG_NR, journalpost.getBruker().getId());
+	}
+
+	@Test
+	void shouldMapSaksbehandlerHarTilgang() {
+		SafRequestContext safRequestContext = new SafRequestContext(OIDC_TOKEN_PERSON);
+		JournalpostDto journalpostDto = buildJournalpostDtoPenSaksrelasjonDto();
+
+		String tilgangKey = "tilgang:" + safRequestContext.getSecurityContext()
+				.getSaksbehandlerId() + ":tema=" + journalpostDto.getFagomrade();
+
+		safRequestContext.getRequestCache().putObject(tilgangKey, Boolean.TRUE);
+
+
+		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, safRequestContext.getRequestCache(), safRequestContext
+				.getSecurityContext());
+
+		assertEquals(Boolean.TRUE, journalpost.getDokumenter().get(0).getDokumentvarianter().get(0)
+				.isSaksbehandlerHarTilgang());
 	}
 
 	private void assertCommonMetadata(Journalpost journalpost) {
@@ -168,10 +189,16 @@ class JournalpostDtoMapperTest {
 		assertEquals(FagomradeCode.toSafJournalstatus(FAGOMRADE), journalpost.getTema());
 		assertEquals(JOURNALFOERT_AV, journalpost.getJournalfortAvNavn());
 
-		assertEquals(LocalDateTime.from(DATO_OPPRETTET.toInstant().atZone(ZoneId.systemDefault())), LocalDateTime.from(journalpost.getDatoOpprettet()));
+		assertEquals(LocalDateTime.from(DATO_OPPRETTET.toInstant()
+				.atZone(ZoneId.systemDefault())), LocalDateTime.from(journalpost.getDatoOpprettet()));
 		assertEquals(1, journalpost.getDokumenter().size());
-		assertEquals(DOKUMENT_INFO_ID, journalpost.getDokumenter().get(0).getDokumentId());
-		assertEquals(VARIANT_FORMAT_CODE.toString(), journalpost.getDokumenter().get(0).getDokumentvarianter().get(0).getVariantformat().toString());
+		assertEquals(DOKUMENT_INFO_ID, journalpost.getDokumenter().get(0).getDokumentInfoId());
+		assertEquals(VARIANT_FORMAT_CODE.toString(), journalpost.getDokumenter()
+				.get(0)
+				.getDokumentvarianter()
+				.get(0)
+				.getVariantformat()
+				.toString());
 		assertEquals(BREVKODE, journalpost.getDokumenter().get(0).getBrevkode());
 		assertEquals(BREVKODE, journalpost.getDokumenter().get(0).getBrevkode());
 		assertEquals(AKTOER_ID, journalpost.getBruker().getId());

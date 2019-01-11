@@ -11,6 +11,7 @@ import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.Saksrel
 import no.nav.saf.domain.Arkivsak;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.tilgangskontroll.RequestCache;
+import no.nav.saf.tilgangskontroll.SafSecurityContext;
 import no.nav.saf.tjeneste.visningsmodell.Bruker;
 import no.nav.saf.tjeneste.visningsmodell.BrukerIdType;
 import no.nav.saf.tjeneste.visningsmodell.DokumentInfo;
@@ -39,7 +40,7 @@ import java.util.stream.Collectors;
 @Component
 public class JournalpostDtoMapper {
 
-	public Journalpost mapJournalpostDto(final JournalpostDto journalpostDto, final RequestCache requestCache) {
+	public Journalpost mapJournalpostDto(final JournalpostDto journalpostDto, final RequestCache requestCache, final SafSecurityContext safSecurityContext) {
 		if (journalpostDto == null) {
 			return null;
 		}
@@ -58,16 +59,19 @@ public class JournalpostDtoMapper {
 				.journalfortAvNavn(journalpostDto.getJournalfortAvNavn())
 				.kanal(kanal)
 				.kanalnavn(kanal == null ? null : kanal.getKanalnavn())
-				.datoOpprettet(journalpostDto.getDatoOpprettet() == null ? INVALID_DATE : LocalDateTime.from(journalpostDto.getDatoOpprettet().toInstant().atZone(ZoneId.systemDefault())))
+				.datoOpprettet(journalpostDto.getDatoOpprettet() == null ? INVALID_DATE : LocalDateTime.from(journalpostDto.getDatoOpprettet()
+						.toInstant()
+						.atZone(ZoneId.systemDefault())))
 				.relevanteDatoer(mapRelevanteDatoer(journalpostDto))
 				.build();
 		List<DokumentInfo> dokumenter = journalpostDto.getDokumenter().stream()
 				.map(dokumentInfoDto -> DokumentInfo.builder()
 						.parent(journalpost)
-						.dokumentId(dokumentInfoDto.getDokumentInfoId())
+						.dokumentInfoId(dokumentInfoDto.getDokumentInfoId())
 						.tittel(dokumentInfoDto.getTittel())
 						.brevkode(dokumentInfoDto.getBrevkode())
 						.dokumentvarianter(Collections.singletonList(Dokumentvariant.builder()
+								.saksbehandlerHarTilgang(findSaksbehandlerHarTilgang(journalpost, requestCache, safSecurityContext))
 								.variantformat(Variantformat.valueOf(dokumentInfoDto.getVariantFormat().name()))
 								.build()))
 						.logiskeVedlegg(dokumentInfoDto.getLogiske().stream()
@@ -127,7 +131,7 @@ public class JournalpostDtoMapper {
 		switch (journalpostDto.getJournalposttype()) {
 			case I:
 				if (journalpostDto.getMottattDato() != null) {
-					relevanteDatoer.add(new RelevantDato(journalpostDto.getMottattDato(), Datotype.DATO_MOTTATT));
+					relevanteDatoer.add(new RelevantDato(journalpostDto.getMottattDato(), Datotype.DATO_REGISTRERT));
 				}
 				if (journalpostDto.getJournalDato() != null) {
 					relevanteDatoer.add(new RelevantDato(journalpostDto.getJournalDato(), Datotype.DATO_JOURNALFOERT));
@@ -221,6 +225,16 @@ public class JournalpostDtoMapper {
 			return new Bruker(tilgangBruker.getAktoerId(), BrukerIdType.AKTOERID);
 		} else {
 			return new Bruker(tilgangBruker.getOrgnummer(), BrukerIdType.ORGNR);
+		}
+	}
+
+	private boolean findSaksbehandlerHarTilgang(Journalpost journalpost, RequestCache requestCache, SafSecurityContext safSecurityContext) {
+		try {
+			String tilgangKey = "tilgang:" + safSecurityContext
+					.getSaksbehandlerId() + ":tema=" + journalpost.getTema();
+			return requestCache.getObject(tilgangKey);
+		} catch (NullPointerException e) {
+			return false;
 		}
 	}
 }

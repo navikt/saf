@@ -28,7 +28,6 @@ public enum Tema {
 	HJE("Hjelpemidler"),
 	IAR("Inkluderende arbeidsliv"),
 	IND("Tiltakspenger"),
-	KNA("Kontakt NAV"),
 	KON("Kontantstøtte"),
 	KTR("Kontroll"),
 	MED("Medlemskap"),

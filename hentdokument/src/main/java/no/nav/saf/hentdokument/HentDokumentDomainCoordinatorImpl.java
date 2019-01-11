@@ -48,8 +48,8 @@ public class HentDokumentDomainCoordinatorImpl implements HentDokumentDomainCoor
 	}
 
 	@Override
-	public HentDokument hentDokument(final String journalpostId, final String dokumentId, final String variantFormat, final SafRequestContext safRequestContext) {
-		final Arkivsak arkivsak = tilgangsmodellHentdokumentRepository.findArkivsakAndCacheJournalpostDto(journalpostId, dokumentId, variantFormat, safRequestContext);
+	public HentDokument hentDokument(final String journalpostId, final String dokumentInfoId, final String variantFormat, final SafRequestContext safRequestContext) {
+		final Arkivsak arkivsak = tilgangsmodellHentdokumentRepository.findArkivsakAndCacheJournalpostDto(journalpostId, dokumentInfoId, variantFormat, safRequestContext);
 		final TilgangBruker tilgangBruker = tilgangsmodellHentdokumentRepository.findTilgangBruker(arkivsak, safRequestContext);
 
 		boolean pep1Access = pep1.hasAccess(tilgangBruker, safRequestContext);
@@ -82,7 +82,7 @@ public class HentDokumentDomainCoordinatorImpl implements HentDokumentDomainCoor
 			throw new TilgangskontrollException();
 		}
 
-		return dokumentRepository.findDokument(dokumentId, variantFormat);
+		return dokumentRepository.findDokument(dokumentInfoId, variantFormat);
 	}
 
 }

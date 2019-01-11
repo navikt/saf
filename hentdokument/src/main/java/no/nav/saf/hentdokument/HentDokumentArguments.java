@@ -11,7 +11,7 @@ import lombok.Value;
 public class HentDokumentArguments {
 
 	private final String journalpostId;
-	private final String dokumentId;
+	private final String dokumentInfoId;
 	private final String variantFormat;
 
 }
