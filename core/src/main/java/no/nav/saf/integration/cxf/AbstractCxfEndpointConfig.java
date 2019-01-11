@@ -9,7 +9,6 @@ import org.apache.cxf.interceptor.LoggingOutInterceptor;
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
 import org.apache.cxf.message.Message;
 
-import javax.inject.Inject;
 import javax.xml.namespace.QName;
 import java.net.URL;
 import java.util.HashMap;
@@ -25,18 +24,14 @@ public abstract class AbstractCxfEndpointConfig {
 
 	private int receiveTimeout = DEFAULT_TIMEOUT;
 	private int connectTimeout = DEFAULT_TIMEOUT;
+	private final STSConfig stsConfig;
+	private final JaxWsProxyFactoryBean factoryBean;
 
-	@Inject
-	private Bus bus;
-	@Inject
-	private STSConfig stsConfig;
-
-	private final JaxWsProxyFactoryBean factoryBean = new JaxWsProxyFactoryBean();
-
-
-	AbstractCxfEndpointConfig() {
+	AbstractCxfEndpointConfig(Bus bus, STSConfig stsConfig) {
+		factoryBean = new JaxWsProxyFactoryBean();
 		factoryBean.setProperties(new HashMap<>());
 		factoryBean.setBus(bus);
+		this.stsConfig = stsConfig;
 	}
 
 	void setAdress(String aktoerUrl) {
