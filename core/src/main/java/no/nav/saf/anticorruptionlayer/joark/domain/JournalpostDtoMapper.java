@@ -69,7 +69,7 @@ public class JournalpostDtoMapper {
 						.parent(journalpost)
 						.dokumentInfoId(dokumentInfoDto.getDokumentInfoId())
 						.tittel(dokumentInfoDto.getTittel())
-						.navSkjemaId(dokumentInfoDto.getBrevkode())
+						.brevkode(dokumentInfoDto.getBrevkode())
 						.dokumentvarianter(Collections.singletonList(Dokumentvariant.builder()
 								.saksbehandlerHarTilgang(findSaksbehandlerHarTilgang(journalpost, requestCache, safSecurityContext))
 								.variantformat(Variantformat.valueOf(dokumentInfoDto.getVariantFormat().name()))

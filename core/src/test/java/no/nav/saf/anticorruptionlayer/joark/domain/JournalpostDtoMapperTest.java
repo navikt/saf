@@ -173,7 +173,7 @@ class JournalpostDtoMapperTest {
 		String tilgangKey = "tilgang:" + safRequestContext.getSecurityContext()
 				.getSaksbehandlerId() + ":tema=" + journalpostDto.getFagomrade();
 
-		safRequestContext.getRequestCache().putObject(tilgangKey, true);
+		safRequestContext.getRequestCache().putObject(tilgangKey, Boolean.TRUE);
 
 
 		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, safRequestContext.getRequestCache(), safRequestContext
@@ -199,8 +199,8 @@ class JournalpostDtoMapperTest {
 				.get(0)
 				.getVariantformat()
 				.toString());
-		assertEquals(BREVKODE, journalpost.getDokumenter().get(0).getNavSkjemaId());
-		assertEquals(BREVKODE, journalpost.getDokumenter().get(0).getNavSkjemaId());
+		assertEquals(BREVKODE, journalpost.getDokumenter().get(0).getBrevkode());
+		assertEquals(BREVKODE, journalpost.getDokumenter().get(0).getBrevkode());
 		assertEquals(AKTOER_ID, journalpost.getBruker().getId());
 	}
 
@@ -233,16 +233,6 @@ class JournalpostDtoMapperTest {
 						.aktoerId(AKTOER_ID)
 						.arkivsaksystem(Arkivsakssystem.PSAK)
 						.arkivsaksnummer(ARKIVSAK_NR)
-						.build()
-		);
-		return requestCache;
-	}
-
-	private RequestCache createS() {
-		RequestCache requestCache = new RequestCache();
-		requestCache.putObject(SAKS_ID + Arkivsakssystem.GSAK.name(),
-				Arkivsak.builder()
-						.aktoerId(AKTOER_ID)
 						.build()
 		);
 		return requestCache;

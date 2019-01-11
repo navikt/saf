@@ -19,7 +19,7 @@ public class DokumentInfo {
 
 	private final String dokumentInfoId;
 	private final String tittel;
-	private final String navSkjemaId;
+	private final String brevkode;
 	@Builder.Default
 	private final List<LogiskVedlegg> logiskeVedlegg = new ArrayList<>();
 	@Builder.Default
