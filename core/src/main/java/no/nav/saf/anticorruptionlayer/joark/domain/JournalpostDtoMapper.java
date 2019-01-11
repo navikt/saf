@@ -127,7 +127,7 @@ public class JournalpostDtoMapper {
 		switch (journalpostDto.getJournalposttype()) {
 			case I:
 				if (journalpostDto.getMottattDato() != null) {
-					relevanteDatoer.add(new RelevantDato(journalpostDto.getMottattDato(), Datotype.DATO_MOTTATT));
+					relevanteDatoer.add(new RelevantDato(journalpostDto.getMottattDato(), Datotype.DATO_REGISTRERT));
 				}
 				if (journalpostDto.getJournalDato() != null) {
 					relevanteDatoer.add(new RelevantDato(journalpostDto.getJournalDato(), Datotype.DATO_JOURNALFOERT));

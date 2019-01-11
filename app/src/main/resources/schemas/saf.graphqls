@@ -179,7 +179,7 @@ type Journalpost {
 }
 
 # Dato som kan være relevant for en journalpost. De ulike journalposttypene (inngående, utgående og notat) får returnert ulike relevante datoer.
-# * For eksempel er **DATO_EKSPEDERT** kun relevant for utgående dokumenter, og **DATO_MOTTATT** kun for inngående.
+# * For eksempel er **DATO_EKSPEDERT** kun relevant for utgående dokumenter, og **DATO_REGISTRERT** kun for inngående.
 type RelevantDato {
     # ISO-8601 representasjon for en kalenderdato med tid, trunkert til nærmeste sekund. *YYYY-MM-DD'T'hh:mm:ss*.
     # Eksempel: *2018-01-01T12:00:00*.
@@ -288,7 +288,7 @@ enum Datotype {
 
 	# * Tidspunkt for arkivering
     # * Returneres for inngående journalposter
-	DATO_MOTTATT
+    DATO_REGISTRERT
 
 	# * Dato for sist gang brevet har blitt sendt på nytt.
     # * Returneres for utgående journalposter
@@ -403,10 +403,6 @@ enum Kanal {
 	# * *inngående og utgående*
 	NAV_NO
 
-	# Selvbetjening Pesys. Forsendelsen er sendt inn digitalt via selvbetjeningsløsningen til Nav Pensjon på nav.no.
-	# * *Kun inngående*
-	PSELV
-
 	# Sentral utskrift. Brevet er overført til sentral distribusjon og sendt i posten.
 	# * *Kun utgående*
 	SENTRAL_UTSKRIFT
@@ -495,9 +491,6 @@ enum Tema {
 
     # Tiltakspenger
     IND
-
-    # Kontakt NAV
-    KNA
 
     # Kontantstøtte
     KON
