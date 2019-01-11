@@ -496,9 +496,6 @@ enum Tema {
     # Tiltakspenger
     IND
 
-    # Kontakt NAV
-    KNA
-
     # Kontantstøtte
     KON
 
