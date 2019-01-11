@@ -1,15 +1,12 @@
 package no.nav.saf.tilgangskontroll.pep;
 
-import static no.nav.abac.common.xacml.CommonAttributter.ENVIRONMENT_FELLES_OIDC_TOKEN_BODY;
-import static no.nav.abac.common.xacml.CommonAttributter.ENVIRONMENT_FELLES_PEP_ID;
-import static no.nav.abac.common.xacml.CommonAttributter.RESOURCE_FELLES_DOMENE;
 import static no.nav.abac.common.xacml.CommonAttributter.RESOURCE_FELLES_PERSON_AKTOERID_RESOURCE;
 import static no.nav.abac.common.xacml.CommonAttributter.RESOURCE_FELLES_PERSON_FNR;
 import static no.nav.abac.common.xacml.CommonAttributter.RESOURCE_FELLES_RESOURCE_TYPE;
 import static no.nav.abac.saf.xacml.SafAttributter.RESOURCE_SAF_PERSON;
 import static no.nav.abac.saf.xacml.SafAttributter.RESOURCE_SAF_TEMA;
 import static no.nav.saf.cache.RedisCacheConfig.TILGANG_CACHE;
-import static no.nav.saf.domain.DomainConstants.SAF;
+import static no.nav.saf.tilgangskontroll.pep.PepUtils.populateFellesAttributes;
 
 import io.lettuce.core.RedisException;
 import lombok.extern.slf4j.Slf4j;
@@ -82,7 +79,7 @@ public class Pep2dImpl implements Pep<TilgangSak> {
 
 	private Decision callPep2d(TilgangSak ressurs, SafRequestContext safRequestContext) {
 		Decision decisionTematilgangMedGeografi = callPep2dTematilgangMedGeografi(ressurs, safRequestContext);
-		if (!decisionTematilgangMedGeografi.equals(Decision.PERMIT)) {
+		if (decisionTematilgangMedGeografi.equals(Decision.DENY)) {
 			//Ingen grunn til å kall pep GeografiskTilgang dersom pep TematilgangMedGeograf gir Deny
 			return Decision.DENY;
 		}
@@ -92,9 +89,7 @@ public class Pep2dImpl implements Pep<TilgangSak> {
 
 	private Decision callPep2dTematilgangMedGeografi(TilgangSak ressurs, SafRequestContext safRequestContext) {
 		XacmlRequest request = new XacmlRequest();
-		request.environment(ENVIRONMENT_FELLES_OIDC_TOKEN_BODY, safRequestContext.getSecurityContext().getOidcTokenBody());
-		request.environment(ENVIRONMENT_FELLES_PEP_ID, SAF);
-		request.resource(RESOURCE_FELLES_DOMENE, SAF);
+		populateFellesAttributes(request, safRequestContext.getSecurityContext().getOidcTokenBody());
 		request.resource(RESOURCE_FELLES_RESOURCE_TYPE, RESOURCE_SAF_TEMA);
 		request.resource(RESOURCE_SAF_TEMA, ressurs.getTema());
 
@@ -108,15 +103,12 @@ public class Pep2dImpl implements Pep<TilgangSak> {
 
 	private Decision callPep2GeografiskTilgang(TilgangSak ressurs, SafRequestContext safRequestContext) {
 		XacmlRequest request = new XacmlRequest();
-		request.environment(ENVIRONMENT_FELLES_OIDC_TOKEN_BODY, safRequestContext.getSecurityContext().getOidcTokenBody());
-		request.environment(ENVIRONMENT_FELLES_PEP_ID, SAF);
-		request.resource(RESOURCE_FELLES_DOMENE, SAF);
+		populateFellesAttributes(request, safRequestContext.getSecurityContext().getOidcTokenBody());
+		request.resource(RESOURCE_FELLES_RESOURCE_TYPE, RESOURCE_SAF_PERSON);
 		if (ressurs.getAktoerId() != null) {
 			request.resource(RESOURCE_FELLES_PERSON_AKTOERID_RESOURCE, ressurs.getAktoerId());
-			request.resource(RESOURCE_FELLES_RESOURCE_TYPE, RESOURCE_SAF_PERSON);
 		} else if (ressurs.getFoedselsnummer() != null) {
 			request.resource(RESOURCE_FELLES_PERSON_FNR, ressurs.getFoedselsnummer());
-			request.resource(RESOURCE_FELLES_RESOURCE_TYPE, RESOURCE_SAF_PERSON);
 		} else {
 			//Gjør ikke sjekk for geografisk tilgang for organisasjon
 			return Decision.PERMIT;
