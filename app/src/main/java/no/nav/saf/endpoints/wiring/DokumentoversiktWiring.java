@@ -11,7 +11,6 @@ import no.nav.saf.query.dokumentoversikt.bruker.DokumentoversiktBrukerCoordinato
 import no.nav.saf.query.dokumentoversikt.fagsak.DokumentoversiktFagsakArguments;
 import no.nav.saf.query.dokumentoversikt.fagsak.DokumentoversiktFagsakCoordinator;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
-import no.nav.saf.tjeneste.visningsmodell.DokumentInfo;
 import no.nav.saf.tjeneste.visningsmodell.Dokumentoversikt;
 import no.nav.saf.tjeneste.visningsmodell.Journalpost;
 import no.nav.saf.tjeneste.visningsmodell.kode.Journalposttype;
@@ -54,7 +53,8 @@ public class DokumentoversiktWiring {
 						SafRequestContext safRequestContext = environment.getContext();
 						log.info("dokumentoversiktBruker hentes for bruker med {}", arguments.getBrukerIdInput());
 						Dokumentoversikt dokumentoversikt = dokumentoversiktBrukerCoordinator.hentDokumentoversikt(arguments, safRequestContext);
-						log.info("dokumentoversiktBruker returnerer {} journalposter for bruker med {}", dokumentoversikt.getJournalposter().size(), arguments.getBrukerIdInput());
+						log.info("dokumentoversiktBruker returnerer {} journalposter for bruker med {}", dokumentoversikt.getJournalposter()
+								.size(), arguments.getBrukerIdInput());
 						return dokumentoversikt;
 					} catch (SafFunctionalException e) {
 						return new DataFetcherResult<Dokumentoversikt>(Dokumentoversikt.empty(), Collections.singletonList(e));
@@ -78,11 +78,7 @@ public class DokumentoversiktWiring {
 					final SafRequestContext safRequestContext = environment.getContext();
 					return dokumentoversiktCoordinator.findDokumenter(journalpost, safRequestContext);
 				}))
-				.type("DokumentInfo", typeWiring -> typeWiring.dataFetcher("saksbehandlerHarTilgang", environment -> {
-					Journalpost journalpost = ((DokumentInfo) environment.getSource()).getParent();
-					final SafRequestContext safRequestContext = environment.getContext();
-					return dokumentoversiktCoordinator.findSaksbehandlerHarTilgang(journalpost, safRequestContext);
-				}))
 				.build();
 	}
+
 }

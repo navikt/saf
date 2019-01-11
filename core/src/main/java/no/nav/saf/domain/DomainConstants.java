@@ -10,6 +10,8 @@ public final class DomainConstants {
 	public static final String AKTOER_ID_LIST = "aktoerIdList";
 	public static final String ORGNR_LIST = "orgnrList";
 	public static final String TILGANG_JOURNALPOST_DTO = "TilgangJournalpostDto";
+	public static final String PERSON = "PERSON";
+	public static final String ORGANISASJON = "ORGANISASJON";
 
 	private DomainConstants() {
 	}

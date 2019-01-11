@@ -1,12 +1,9 @@
 package no.nav.saf.tilgangskontroll.pep;
 
-import static no.nav.abac.common.xacml.CommonAttributter.ENVIRONMENT_FELLES_OIDC_TOKEN_BODY;
-import static no.nav.abac.common.xacml.CommonAttributter.ENVIRONMENT_FELLES_PEP_ID;
-import static no.nav.abac.common.xacml.CommonAttributter.RESOURCE_FELLES_DOMENE;
 import static no.nav.abac.common.xacml.CommonAttributter.RESOURCE_FELLES_RESOURCE_TYPE;
 import static no.nav.abac.saf.xacml.SafAttributter.RESOURCE_SAF_JOURNALPOST;
 import static no.nav.abac.saf.xacml.SafAttributter.RESOURCE_SAF_TEMA;
-import static no.nav.saf.domain.DomainConstants.SAF;
+import static no.nav.saf.tilgangskontroll.pep.PepUtils.populateFellesAttributes;
 
 import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
@@ -43,19 +40,18 @@ public class Pep2Impl implements Pep<TilgangSak> {
 
 		if (Tema.FAR.name().equals(ressurs.getTema())) {
 			if (log.isTraceEnabled()) {
-				log.trace("Pep2 evaluerer arkivsak={}, arkivsaksystem={}, tema={}", ressurs.getArkivsaksnummer(), ressurs.getArkivsaksystem(), ressurs.getTema());
+				log.trace("Pep2 evaluerer arkivsak={}, arkivsaksystem={}, tema={}", ressurs.getArkivsaksnummer(), ressurs.getArkivsaksystem(), ressurs
+						.getTema());
 			}
 			XacmlRequest request = new XacmlRequest();
-
-			request.environment(ENVIRONMENT_FELLES_OIDC_TOKEN_BODY, safRequestContext.getSecurityContext().getOidcTokenBody());
-			request.environment(ENVIRONMENT_FELLES_PEP_ID, SAF);
-			request.resource(RESOURCE_FELLES_DOMENE, SAF);
+			populateFellesAttributes(request, safRequestContext.getSecurityContext().getOidcTokenBody());
 			request.resource(RESOURCE_FELLES_RESOURCE_TYPE, RESOURCE_SAF_JOURNALPOST);
 			request.resource(RESOURCE_SAF_TEMA, Tema.FAR.name());
 			XacmlResponse response = abacService.evaluate(request);
 			// TODO distributed cache
 			if (log.isTraceEnabled()) {
-				log.trace("Pep2 ferdig evaluert arkivsak={}, arkivsaksystem={}, tema={}", ressurs.getArkivsaksnummer(), ressurs.getArkivsaksystem(), ressurs.getTema());
+				log.trace("Pep2 ferdig evaluert arkivsak={}, arkivsaksystem={}, tema={}", ressurs.getArkivsaksnummer(), ressurs.getArkivsaksystem(), ressurs
+						.getTema());
 			}
 			return Decision.PERMIT.equals(response.getDecision());
 		} else {

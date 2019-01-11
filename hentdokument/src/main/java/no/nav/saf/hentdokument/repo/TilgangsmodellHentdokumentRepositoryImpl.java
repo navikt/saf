@@ -1,7 +1,6 @@
 package no.nav.saf.hentdokument.repo;
 
 import lombok.extern.slf4j.Slf4j;
-import no.nav.saf.anticorruptionlayer.aktoer.AktoerAntiCorruptionLayer;
 import no.nav.saf.anticorruptionlayer.gsak.GsakAntiCorruptionLayer;
 import no.nav.saf.anticorruptionlayer.joark.JoarkAntiCorruptionLayer;
 import no.nav.saf.anticorruptionlayer.pensjonsak.PensjonSakAntiCorruptionLayer;
@@ -22,17 +21,14 @@ import javax.inject.Inject;
 @Repository
 public class TilgangsmodellHentdokumentRepositoryImpl implements TilgangsmodellHentdokumentRepository {
 
-	private final AktoerAntiCorruptionLayer aktoerAntiCorruptionLayer;
 	private final GsakAntiCorruptionLayer gsakAntiCorruptionLayer;
 	private final PensjonSakAntiCorruptionLayer pensjonSakAntiCorruptionLayer;
 	private final JoarkAntiCorruptionLayer joarkAntiCorruptionLayer;
 
 	@Inject
-	public TilgangsmodellHentdokumentRepositoryImpl(AktoerAntiCorruptionLayer aktoerAntiCorruptionLayer,
-													GsakAntiCorruptionLayer gsakAntiCorruptionLayer,
+	public TilgangsmodellHentdokumentRepositoryImpl(GsakAntiCorruptionLayer gsakAntiCorruptionLayer,
 													PensjonSakAntiCorruptionLayer pensjonSakAntiCorruptionLayer,
 													JoarkAntiCorruptionLayer joarkAntiCorruptionLayer) {
-		this.aktoerAntiCorruptionLayer = aktoerAntiCorruptionLayer;
 		this.gsakAntiCorruptionLayer = gsakAntiCorruptionLayer;
 		this.pensjonSakAntiCorruptionLayer = pensjonSakAntiCorruptionLayer;
 		this.joarkAntiCorruptionLayer = joarkAntiCorruptionLayer;
@@ -51,7 +47,7 @@ public class TilgangsmodellHentdokumentRepositoryImpl implements TilgangsmodellH
 			//Midlertidig journalpost - ingen arkivsaksnummer
 			return findTilgangBrukerBrukerFromSafRequestContext(safRequestContext);
 		} else {
-			//Henter Bruker fra gsak eller psak
+			//Bruker hentes fra gsak eller psak
 			return findTilgangBrukerBySakId(arkivsak.getArkivsaksnummer(), arkivsak.getArkivsaksystem());
 		}
 	}
@@ -85,8 +81,8 @@ public class TilgangsmodellHentdokumentRepositoryImpl implements TilgangsmodellH
 	}
 
 	@Override
-	public Arkivsak findArkivsakAndCacheJournalpostDto(String journalpostId, String dokumentId, String variantFormat, SafRequestContext safRequestContext) {
-		return joarkAntiCorruptionLayer.hentArkivsakAndCacheJournalpostDto(journalpostId, dokumentId, variantFormat, safRequestContext);
+	public Arkivsak findArkivsakAndCacheJournalpostDto(String journalpostId, String dokumentInfoId, String variantFormat, SafRequestContext safRequestContext) {
+		return joarkAntiCorruptionLayer.hentArkivsakAndCacheJournalpostDto(journalpostId, dokumentInfoId, variantFormat, safRequestContext);
 	}
 
 	@Override
