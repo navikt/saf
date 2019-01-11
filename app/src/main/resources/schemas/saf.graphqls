@@ -403,10 +403,6 @@ enum Kanal {
 	# * *inngående og utgående*
 	NAV_NO
 
-	# Selvbetjening Pesys. Forsendelsen er sendt inn digitalt via selvbetjeningsløsningen til Nav Pensjon på nav.no.
-	# * *Kun inngående*
-	PSELV
-
 	# Sentral utskrift. Brevet er overført til sentral distribusjon og sendt i posten.
 	# * *Kun utgående*
 	SENTRAL_UTSKRIFT

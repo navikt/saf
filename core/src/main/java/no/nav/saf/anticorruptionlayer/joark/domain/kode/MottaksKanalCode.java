@@ -21,10 +21,6 @@ public enum MottaksKanalCode {
 	 */
 	ALTINN(Kanal.ALTINN),
 	/**
-	 * PSELV
-	 */
-	PSELV(Kanal.PSELV),
-	/**
 	 * Skanning Pensjon
 	 */
 	SKAN_PEN(Kanal.SKAN_PEN),
