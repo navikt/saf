@@ -35,8 +35,8 @@ public class TilgangsmodellHentdokumentRepositoryImpl implements TilgangsmodellH
 	}
 
 	@Override
-	public TilgangJournalpost findTilgangJournalpostFromSafRequestContext(SafRequestContext safRequestContext) {
-		return joarkAntiCorruptionLayer.hentTilgangJournalpostFromSafRequestContext(safRequestContext);
+	public TilgangJournalpost findTilgangJournalpostFromSafRequestContext(SafRequestContext safRequestContext, TilgangSak tilgangSak) {
+		return joarkAntiCorruptionLayer.hentTilgangJournalpostFromSafRequestContext(safRequestContext, tilgangSak);
 	}
 
 	@Override
@@ -93,7 +93,7 @@ public class TilgangsmodellHentdokumentRepositoryImpl implements TilgangsmodellH
 			} else if (Arkivsakssystem.PSAK.name().equals(arkivsaksystem)
 					|| arkivsaksystem == null || arkivsaksystem.isEmpty()) {
 				//Psak eller midlertidig journalført
-				return joarkAntiCorruptionLayer.hentTilgangSakFromSafRequestContext(safRequestContext);
+				return joarkAntiCorruptionLayer.hentTilgangSakFromSafRequestContext(safRequestContext, tilgangBruker);
 			} else {
 				return null;
 			}

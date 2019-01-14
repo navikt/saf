@@ -27,9 +27,9 @@ public interface JoarkAntiCorruptionLayer {
 										   List<Journalstatus> inkluderJournalstatuses,
 										   Integer foerste, String etterPeker, Integer siste, String foerPeker);
 
-	TilgangJournalpost hentTilgangJournalpostFromSafRequestContext(SafRequestContext safRequestContext);
+	TilgangJournalpost hentTilgangJournalpostFromSafRequestContext(SafRequestContext safRequestContext, TilgangSak tilgangSak);
 
-	TilgangSak hentTilgangSakFromSafRequestContext(SafRequestContext safRequestContext);
+	TilgangSak hentTilgangSakFromSafRequestContext(SafRequestContext safRequestContext, TilgangBruker tilgangBruker);
 
 	TilgangBruker hentTilgangBruker(SafRequestContext safRequestContext);
 

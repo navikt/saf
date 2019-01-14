@@ -75,7 +75,7 @@ public class HentDokumentDomainCoordinatorImpl implements HentDokumentDomainCoor
 			throw new TilgangskontrollException();
 		}
 
-		final TilgangJournalpost tilgangJournalpost = tilgangsmodellHentdokumentRepository.findTilgangJournalpostFromSafRequestContext(safRequestContext);
+		final TilgangJournalpost tilgangJournalpost = tilgangsmodellHentdokumentRepository.findTilgangJournalpostFromSafRequestContext(safRequestContext, tilgangSak);
 		boolean pep4Access = pep4.hasAccess(tilgangJournalpost, safRequestContext);
 
 		if (!pep4Access) {

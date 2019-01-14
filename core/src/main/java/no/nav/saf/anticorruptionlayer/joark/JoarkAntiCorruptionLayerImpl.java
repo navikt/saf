@@ -93,17 +93,17 @@ class JoarkAntiCorruptionLayerImpl implements JoarkAntiCorruptionLayer {
 	}
 
 	@Override
-	public TilgangJournalpost hentTilgangJournalpostFromSafRequestContext(SafRequestContext safRequestContext) {
+	public TilgangJournalpost hentTilgangJournalpostFromSafRequestContext(SafRequestContext safRequestContext, TilgangSak tilgangSak) {
 		TilgangJournalpostDto tilgangJournalpostDto = safRequestContext.getRequestCache().getObject(TILGANG_JOURNALPOST_DTO);
 		if (tilgangJournalpostDto == null) {
 			return null;
 		} else {
-			return mapTilgangJournalpost(tilgangJournalpostDto);
+			return mapTilgangJournalpost(tilgangJournalpostDto, tilgangSak);
 		}
 	}
 
 	@Override
-	public TilgangSak hentTilgangSakFromSafRequestContext(SafRequestContext safRequestContext) {
+	public TilgangSak hentTilgangSakFromSafRequestContext(SafRequestContext safRequestContext, TilgangBruker tilgangBruker) {
 		final TilgangJournalpostDto tilgangJournalpostDto = safRequestContext.getRequestCache()
 				.getObject(TILGANG_JOURNALPOST_DTO);
 		if (tilgangJournalpostDto == null || tilgangJournalpostDto.getSak() == null || tilgangJournalpostDto.getBruker() == null
@@ -111,7 +111,7 @@ class JoarkAntiCorruptionLayerImpl implements JoarkAntiCorruptionLayer {
 			return null;
 		} else {
 			return TilgangSak.builder()
-					.foedselsnummer(tilgangJournalpostDto.getBruker().getBrukerId())
+					.foedselsnummer(tilgangBruker.getFoedselsnr())
 					.arkivsaksnummer(tilgangJournalpostDto.getSak().getSakId())
 					.arkivsaksystem(mapJoarkFagsystem(tilgangJournalpostDto.getSak()
 							.getFagsystem(), tilgangJournalpostDto.getJournalpostId()))
@@ -176,13 +176,13 @@ class JoarkAntiCorruptionLayerImpl implements JoarkAntiCorruptionLayer {
 				.build();
 	}
 
-	private TilgangJournalpost mapTilgangJournalpost(TilgangJournalpostDto dto) {
+	private TilgangJournalpost mapTilgangJournalpost(TilgangJournalpostDto dto, TilgangSak tilgangSak) {
 		final TilgangDokumentInfoDto tilgangDokumentInfoDto = dto.getDokument();
 		return TilgangJournalpost.builder()
 				.journalpostId(dto.getJournalpostId())
 				.journalStatus(dto.getJournalStatus())
 				.journalpostType(dto.getJournalpostType())
-				.tema(dto.getTema())
+				.tema(tilgangSak.getTema())
 				.arkivsaksystem(mapJoarkFagsystem(dto.getSak() == null ? null : dto.getSak()
 						.getFagsystem(), dto.getJournalpostId()))
 				.arkivsaksnummer(dto.getSak() == null ? null : dto.getSak().getSakId())
