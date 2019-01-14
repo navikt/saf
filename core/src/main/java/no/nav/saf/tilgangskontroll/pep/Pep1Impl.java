@@ -3,8 +3,7 @@ package no.nav.saf.tilgangskontroll.pep;
 import static no.nav.abac.common.xacml.CommonAttributter.RESOURCE_FELLES_PERSON_AKTOERID_RESOURCE;
 import static no.nav.abac.common.xacml.CommonAttributter.RESOURCE_FELLES_PERSON_FNR;
 import static no.nav.abac.common.xacml.CommonAttributter.RESOURCE_FELLES_RESOURCE_TYPE;
-import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_SAF_JOURNALPOST;
-import static no.nav.saf.tilgangskontroll.pep.PepUtils.populateFellesAttributes;
+import static no.nav.abac.saf.xacml.SafAttributter.RESOURCE_SAF_PERSON;
 
 import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
@@ -47,9 +46,8 @@ public class Pep1Impl implements Pep<TilgangBruker> {
 			return true;
 		}
 
-		XacmlRequest request = new XacmlRequest();
-		populateFellesAttributes(request, safRequestContext.getSecurityContext().getOidcTokenBody());
-		request.resource(RESOURCE_FELLES_RESOURCE_TYPE, RESOURCE_SAF_JOURNALPOST);
+		XacmlRequest request = SafXacmlRequestFactory.create(safRequestContext.getSecurityContext().getOidcTokenBody());
+		request.resource(RESOURCE_FELLES_RESOURCE_TYPE, RESOURCE_SAF_PERSON);
 
 		if (ressurs.getAktoerId() != null) {
 			request.resource(RESOURCE_FELLES_PERSON_AKTOERID_RESOURCE, ressurs.getAktoerId());
@@ -60,7 +58,6 @@ public class Pep1Impl implements Pep<TilgangBruker> {
 		}
 
 		XacmlResponse response = abacService.evaluate(request);
-		// TODO distributed cache
 		return Decision.PERMIT.equals(response.getDecision());
 	}
 
