@@ -22,8 +22,8 @@ public class DokumentRepositoryImpl implements DokumentRepository {
 	}
 
 	@Override
-	public HentDokument findDokument(String dokumentId, String variantFormat) {
-		return joarkAntiCorruptionLayer.hentDokument(dokumentId, variantFormat);
+	public HentDokument findDokument(String dokumentInfoId, String variantFormat) {
+		return joarkAntiCorruptionLayer.hentDokument(dokumentInfoId, variantFormat);
 
 	}
 }

@@ -10,7 +10,6 @@ import java.util.List;
  * @author Joakim Bjørnstad, Jbit AS
  */
 public interface DokumentoversiktCoordinator {
-	List<DokumentInfo> findDokumenter(Journalpost journalpost, SafRequestContext safRequestContext);
 
-	boolean findSaksbehandlerHarTilgang(Journalpost journalpost, SafRequestContext safRequestContext);
+	List<DokumentInfo> findDokumenter(Journalpost journalpost, SafRequestContext safRequestContext);
 }

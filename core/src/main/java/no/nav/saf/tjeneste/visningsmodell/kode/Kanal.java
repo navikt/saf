@@ -10,7 +10,6 @@ public enum Kanal {
 	EKST_OPPS("Eksternt oppslag"),
 	LOKAL_UTSKRIFT("Lokal utskrift"),
 	NAV_NO("Ditt NAV"),
-	PSELV("Selvbetjening Pesys"),
 	SENTRAL_UTSKRIFT("Sentral utskrift"),
 	SDP("Digital postkasse til innbyggere"),
 	SKAN_NETS("Skanning Nets"),

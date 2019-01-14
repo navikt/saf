@@ -179,7 +179,7 @@ type Journalpost {
 }
 
 # Dato som kan være relevant for en journalpost. De ulike journalposttypene (inngående, utgående og notat) får returnert ulike relevante datoer.
-# * For eksempel er **DATO_EKSPEDERT** kun relevant for utgående dokumenter, og **DATO_MOTTATT** kun for inngående.
+# * For eksempel er **DATO_EKSPEDERT** kun relevant for utgående dokumenter, og **DATO_REGISTRERT** kun for inngående.
 type RelevantDato {
     # ISO-8601 representasjon for en kalenderdato med tid, trunkert til nærmeste sekund. *YYYY-MM-DD'T'hh:mm:ss*.
     # Eksempel: *2018-01-01T12:00:00*.
@@ -226,15 +226,15 @@ type Bruker {
 # * Dokumentinfo viser ikke til den fysiske filen, men til metadata som omhandler alle eventuelle varianter av dokumentet.
 type DokumentInfo {
     # Unik identifikator per dokumentinfo
-    dokumentId: String!
+    dokumentInfoId: String!
 
     # Dokumentets tittel, f.eks. *"Søknad om foreldrepenger ved fødsel"* eller *"Legeerklæring"*.
     tittel: String
 
-    # Kode som sier noe om dokumentets innhold og oppbygning. Todo: Dersom vi går for begrep Brevkode istedetfor NavSkjemaID:
+    # Kode som sier noe om dokumentets innhold og oppbygning.
     # * For inngående skjema er brevkoden normalt en NAV-skjemaID f.eks. *"NAV 14-05.09"*. Enkelte vedlegg har en vedleggskode som sier noe om innholdet.
     # * For utgående dokumenter sier brevkoden hvilken brevmal som har vært benyttet ved produksjon av brevet.
-    navSkjemaId: String
+    brevkode: String
 
     # Liste over andre dokumenter som også befinner seg inne i den fysiske filen som dokumentinfo-objektet peker på.
     logiskeVedlegg: [LogiskVedlegg]!
@@ -288,7 +288,7 @@ enum Datotype {
 
 	# * Tidspunkt for arkivering
     # * Returneres for inngående journalposter
-	DATO_MOTTATT
+    DATO_REGISTRERT
 
 	# * Dato for sist gang brevet har blitt sendt på nytt.
     # * Returneres for utgående journalposter
@@ -403,10 +403,6 @@ enum Kanal {
 	# * *inngående og utgående*
 	NAV_NO
 
-	# Selvbetjening Pesys. Forsendelsen er sendt inn digitalt via selvbetjeningsløsningen til Nav Pensjon på nav.no.
-	# * *Kun inngående*
-	PSELV
-
 	# Sentral utskrift. Brevet er overført til sentral distribusjon og sendt i posten.
 	# * *Kun utgående*
 	SENTRAL_UTSKRIFT
@@ -495,9 +491,6 @@ enum Tema {
 
     # Tiltakspenger
     IND
-
-    # Kontakt NAV
-    KNA
 
     # Kontantstøtte
     KON

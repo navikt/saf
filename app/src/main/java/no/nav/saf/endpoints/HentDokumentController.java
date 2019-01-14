@@ -44,19 +44,19 @@ public class HentDokumentController {
 
 	@ApiOperation(value = "Henter fysiske dokumenter fra NAV sitt arkiv og gjør nødvendig tilgangskontroll.", authorizations = {@Authorization(value = "apiKey")})
 	@SwaggerRestHentDokument
-	@GetMapping(value = "hentdokument/{journalpostId}/{dokumentId}/{variantFormat}")
+	@GetMapping(value = "hentdokument/{journalpostId}/{dokumentInfoId}/{variantFormat}")
 	@Monitor(value = "dok_request", extraTags = {"process", "hentDokument"}, histogram = true)
 	public ResponseEntity<byte[]> hentDokument(@ApiParam(name = "journalpostId", value = "Id for aktuell journalpost", required = true) @PathVariable String journalpostId,
-											   @ApiParam(name = "dokumentId", value = "Id for aktuelt dokument", required = true) @PathVariable String dokumentId,
+											   @ApiParam(name = "dokumentInfoId", value = "Id for aktuelt dokument", required = true) @PathVariable String dokumentInfoId,
 											   @ApiParam(name = "variantFormat", value = "Format på dokumentet som skal hentes eg. ARKIV, SLADDET m.fl.", required = true) @PathVariable String variantFormat,
 											   @ApiParam(hidden = true) @RequestHeader(value = HttpHeaders.AUTHORIZATION, required = false) String authorizationHeader) {
 
-		log.info("hentDokument har mottatt kall. journalpostId={}, dokumentId={}, variantFormat={}", journalpostId, dokumentId, variantFormat);
-		HentDokument response = hentDokumentDomainCoordinator.hentDokument(journalpostId, dokumentId, variantFormat, new SafRequestContext(authorizationHeader, oidcValidatorTool));
+		log.info("hentDokument har mottatt kall. journalpostId={}, dokumentInfoId={}, variantFormat={}", journalpostId, dokumentInfoId, variantFormat);
+		HentDokument response = hentDokumentDomainCoordinator.hentDokument(journalpostId, dokumentInfoId, variantFormat, new SafRequestContext(authorizationHeader, oidcValidatorTool));
 
 		return ResponseEntity.ok()
 				.contentType(response.getMediaType())
-				.header("content-disposition", "inline; filename=" + dokumentId + "_" + variantFormat)
+				.header("content-disposition", "inline; filename=" + dokumentInfoId + "_" + variantFormat)
 				.body(response.getDokument());
 	}
 

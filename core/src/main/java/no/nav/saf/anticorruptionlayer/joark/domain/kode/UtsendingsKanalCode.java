@@ -4,10 +4,6 @@ import no.nav.saf.tjeneste.visningsmodell.kode.Kanal;
 
 public enum UtsendingsKanalCode {
 	/**
-	 * PSELV
-	 */
-	PSELV(Kanal.PSELV),
-	/**
 	 * EESSI
 	 */
 	EESSI(Kanal.EESSI),

@@ -10,5 +10,7 @@ import no.nav.saf.tjeneste.visningsmodell.kode.Variantformat;
 @Value
 @Builder
 public class Dokumentvariant {
+
 	private final Variantformat variantformat;
+	private final boolean saksbehandlerHarTilgang;
 }

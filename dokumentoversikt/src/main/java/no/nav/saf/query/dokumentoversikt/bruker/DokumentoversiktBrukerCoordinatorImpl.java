@@ -80,7 +80,7 @@ class DokumentoversiktBrukerCoordinatorImpl implements DokumentoversiktBrukerCoo
 				.parallel(10)
 				.runOn(Schedulers.io())
 				.filter(ts -> pep2.hasAccess(ts, safRequestContext))
-				.filter(ts -> pep2d.hasAccess(ts, safRequestContext))
+				.doOnNext(ts -> pep2d.hasAccess(ts, safRequestContext))
 				.filter(ts -> pep3.hasAccess(ts, safRequestContext))
 				.sequential()
 				.toList().blockingGet();
