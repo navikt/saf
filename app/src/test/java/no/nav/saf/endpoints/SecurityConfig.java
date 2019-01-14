@@ -1,13 +1,11 @@
-package no.nav.saf.tilgangskontroll;
+package no.nav.saf.endpoints;
 
 import static java.lang.String.format;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import no.nav.freg.security.oidc.auth.idp.IdpConsumer;
-import no.nav.freg.security.oidc.idp.Idp;
-import no.nav.freg.security.oidc.idp.registry.IdpRegistry;
-import no.nav.freg.security.test.oidc.tools.RsaKey;
+import no.nav.saf.tilgangskontroll.validation.registry.Idp;
+import no.nav.saf.tilgangskontroll.validation.registry.IdpRegistry;
 import org.jose4j.http.SimpleGet;
 import org.jose4j.http.SimpleResponse;
 import org.jose4j.jwk.RsaJsonWebKey;
@@ -21,7 +19,7 @@ import org.springframework.context.annotation.Profile;
 import java.util.Collections;
 
 @Configuration
-@Profile("oidc")
+@Profile("itest")
 public class SecurityConfig {
 	// Note: These has to match the issuer url in application.properties (idp config).
 	public static final String OPEN_AM_ISSUER_URL = "http://openAmIssuerUrl";
@@ -86,8 +84,4 @@ public class SecurityConfig {
 		return new RsaKey(GOOGLE_ISSUER_URL, webKey);
 	}
 
-	@Bean
-	IdpConsumer idpConsumerMock() {
-		return mock(IdpConsumer.class);
-	}
 }

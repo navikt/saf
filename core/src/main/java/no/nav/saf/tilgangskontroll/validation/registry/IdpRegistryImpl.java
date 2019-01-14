@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public class IdpRegistryImpl implements IdpRegistry {
 	private final Map<String, Idp> idpByIssuerMap = new HashMap<>();
@@ -29,5 +30,10 @@ public class IdpRegistryImpl implements IdpRegistry {
 	@Override
 	public List<Idp> getAll() {
 		return new ArrayList<>(idpByIssuerMap.values());
+	}
+
+	@Override
+	public Optional<Idp> findByIssuer(String iss) {
+		return Optional.ofNullable(idpByIssuerMap.get(iss));
 	}
 }
