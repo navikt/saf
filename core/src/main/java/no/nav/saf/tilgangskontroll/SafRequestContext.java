@@ -15,8 +15,8 @@ public class SafRequestContext {
 	private final OidcValidatorTool oidcValidatorTool;
 
 	public SafRequestContext(String authorizationHeader, OidcValidatorTool oidcValidatorTool) {
-		this.securityContext = new SafSecurityContext(authorizationHeader, oidcValidatorTool);
 		this.requestCache = new RequestCache();
 		this.oidcValidatorTool = oidcValidatorTool;
+		this.securityContext = new SafSecurityContext(authorizationHeader, oidcValidatorTool);
 	}
 }

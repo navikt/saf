@@ -47,9 +47,8 @@ import java.time.LocalDateTime;
 @AutoConfigureWireMock(port = 0)
 public abstract class AbstractItest {
 
-	protected static String OIDC_TOKEN_PERSON_USER_TEST;
-	//	private static final String PERSON_USER_ID = "Z990739";
 	public static final String NAV_STS_ISSUER_URL = "http://navStsIssuerUrl";
+	protected static String OIDC_TOKEN_PERSON_USER_TEST;
 
 	@Inject
 	protected TestRestTemplate restTemplate;
