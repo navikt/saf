@@ -6,7 +6,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
 import static org.hamcrest.core.IsNot.not;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.when;
 
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.FagomradeCode;
@@ -111,7 +110,7 @@ class JournalpostDtoMapperTest {
 
 		assertEquals(JournalpostTypeCode.I.toString(), journalpost.getJournalposttype().toString());
 		assertEquals(Journalstatus.FEILREGISTRERT, journalpost.getJournalstatus());
-		assertNull(journalpost.getKanalnavn()); // TODO, replace with Kanal.UKJENT kode when done.
+		assertEquals(journalpost.getKanalnavn(), Kanal.UKJENT.getKanalnavn());
 
 		assertThat(journalpost.getRelevanteDatoer(), not(hasItem(new RelevantDato(DOKUMENT_DATO, Datotype.DATO_DOKUMENT))));
 		assertThat(journalpost.getRelevanteDatoer(), not(hasItem(new RelevantDato(AVS_RETUR_DATO, Datotype.DATO_AVS_RETUR))));

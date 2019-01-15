@@ -1,8 +1,10 @@
 package no.nav.saf.tilgangskontroll.pep;
 
+import static no.nav.abac.common.xacml.CommonAttributter.RESOURCE_FELLES_RESOURCE_TYPE;
 import static no.nav.abac.saf.xacml.SafAttributter.RESOURCE_SAF_SAK_JP_METADATA;
-import static no.nav.saf.domain.DomainConstants.SAF;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static no.nav.abac.saf.xacml.SafAttributter.RESOURCE_SAF_TEMA;
+import static org.hamcrest.CoreMatchers.hasItem;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -11,6 +13,7 @@ import static org.mockito.Mockito.when;
 
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
+import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlAttribute;
 import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlRequest;
 import no.nav.saf.tilgangskontroll.abac.dto.response.Decision;
 import no.nav.saf.tilgangskontroll.abac.dto.response.XacmlResponse;
@@ -43,12 +46,8 @@ public class Pep2ImplTest extends AbstractPepTest {
 
 		assertTrue(hasAccess);
 
-		assertEquals(new SafRequestContext(OIDC_TOKEN_PERSON_USER_TEST, oidcValidatorTool).getSecurityContext().getOidcTokenBody(), capturedRequest.getEnvironments().get(0).getValue().toString());
-		assertEquals(SAF, capturedRequest.getEnvironments().get(1).getValue().toString());
-
-		assertEquals(SAF, capturedRequest.getResources().get(0).getValue().toString());
-		assertEquals(RESOURCE_SAF_SAK_JP_METADATA, capturedRequest.getResources().get(1).getValue().toString());
-		assertEquals(Tema.FAR.name(), capturedRequest.getResources().get(2).getValue().toString());
+		assertThat(capturedRequest.getResources(), hasItem(new XacmlAttribute(RESOURCE_FELLES_RESOURCE_TYPE, RESOURCE_SAF_SAK_JP_METADATA)));
+		assertThat(capturedRequest.getResources(), hasItem(new XacmlAttribute(RESOURCE_SAF_TEMA, Tema.FAR.name())));
 	}
 
 	@Test

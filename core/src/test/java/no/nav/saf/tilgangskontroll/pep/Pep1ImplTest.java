@@ -1,7 +1,10 @@
 package no.nav.saf.tilgangskontroll.pep;
 
+import static no.nav.abac.common.xacml.CommonAttributter.RESOURCE_FELLES_PERSON_AKTOERID_RESOURCE;
+import static no.nav.abac.common.xacml.CommonAttributter.RESOURCE_FELLES_RESOURCE_TYPE;
 import static no.nav.abac.saf.xacml.SafAttributter.RESOURCE_SAF_PERSON;
-import static no.nav.saf.domain.DomainConstants.SAF;
+import static org.hamcrest.CoreMatchers.hasItem;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -12,6 +15,7 @@ import static org.mockito.Mockito.when;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.domain.tilgangsmodell.TilgangIdent;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
+import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlAttribute;
 import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlRequest;
 import no.nav.saf.tilgangskontroll.abac.dto.response.Decision;
 import no.nav.saf.tilgangskontroll.abac.dto.response.XacmlResponse;
@@ -52,8 +56,8 @@ public class Pep1ImplTest extends AbstractPepTest {
 
 		assertTrue(hasAccess);
 
-		assertCommonXacmlRequestResources(capturedRequest);
-		assertEquals(AKTOER_ID, capturedRequest.getResources().get(2).getValue().toString());
+		assertResourceType(capturedRequest);
+		assertThat(capturedRequest.getResources(), hasItem(new XacmlAttribute(RESOURCE_FELLES_PERSON_AKTOERID_RESOURCE, AKTOER_ID)));
 	}
 
 	@Test
@@ -69,17 +73,13 @@ public class Pep1ImplTest extends AbstractPepTest {
 
 		verify(abacService).evaluate(request.capture());
 		XacmlRequest capturedRequest = request.getValue();
-		assertCommonXacmlRequestResources(capturedRequest);
+		assertResourceType(capturedRequest);
 		assertEquals(FNR, capturedRequest.getResources().get(2).getValue().toString());
 		assertTrue(hasAccess);
 	}
 
-	private void assertCommonXacmlRequestResources(XacmlRequest capturedRequest) {
-		assertEquals(new SafRequestContext(OIDC_TOKEN_PERSON_USER_TEST, oidcValidatorTool).getSecurityContext().getOidcTokenBody(), capturedRequest.getEnvironments().get(0).getValue().toString());
-		assertEquals(SAF, capturedRequest.getEnvironments().get(1).getValue().toString());
-
-		assertEquals(SAF, capturedRequest.getResources().get(0).getValue().toString());
-		assertEquals(RESOURCE_SAF_PERSON, capturedRequest.getResources().get(1).getValue().toString());
+	private void assertResourceType(XacmlRequest capturedRequest) {
+		assertThat(capturedRequest.getResources(), hasItem(new XacmlAttribute(RESOURCE_FELLES_RESOURCE_TYPE, RESOURCE_SAF_PERSON)));
 	}
 
 	@Test
