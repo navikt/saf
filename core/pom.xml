@@ -142,6 +142,10 @@
 			<artifactId>freg-security-test-oidc-tools</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.bitbucket.b_c</groupId>
+			<artifactId>jose4j</artifactId>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>

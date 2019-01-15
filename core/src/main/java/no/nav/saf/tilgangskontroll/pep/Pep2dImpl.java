@@ -3,10 +3,9 @@ package no.nav.saf.tilgangskontroll.pep;
 import static no.nav.abac.common.xacml.CommonAttributter.RESOURCE_FELLES_PERSON_AKTOERID_RESOURCE;
 import static no.nav.abac.common.xacml.CommonAttributter.RESOURCE_FELLES_PERSON_FNR;
 import static no.nav.abac.common.xacml.CommonAttributter.RESOURCE_FELLES_RESOURCE_TYPE;
-import static no.nav.abac.saf.xacml.SafAttributter.RESOURCE_SAF_PERSON;
+import static no.nav.abac.saf.xacml.SafAttributter.RESOURCE_SAF_SAK_DOKUMENT;
 import static no.nav.abac.saf.xacml.SafAttributter.RESOURCE_SAF_TEMA;
 import static no.nav.saf.cache.RedisCacheConfig.TILGANG_CACHE;
-import static no.nav.saf.tilgangskontroll.pep.PepUtils.populateFellesAttributes;
 
 import io.lettuce.core.RedisException;
 import lombok.extern.slf4j.Slf4j;
@@ -57,16 +56,18 @@ public class Pep2dImpl implements Pep<TilgangSak> {
 			String tilgangKey = "tilgang:" + safRequestContext.getSecurityContext()
 					.getSaksbehandlerId() + ":tema=" + ressurs.getTema();
 			try {
-				boolean decide = decide(
-						tilgangCache.get(tilgangKey,
-								() -> callPep2d(ressurs, safRequestContext))
-				);
+				boolean decide = decide(hasDokumentAccess(ressurs, safRequestContext));
 				safRequestContext.getRequestCache().putObject(tilgangKey, decide);
 				return decide;
 			} catch (RedisException | PoolException | Cache.ValueRetrievalException e) {
-				boolean decide = decide(callPep2d(ressurs, safRequestContext));
+				boolean decide = decide(hasDokumentAccess(ressurs, safRequestContext));
 				safRequestContext.getRequestCache().putObject(tilgangKey, decide);
 				return decide;
+			} finally {
+				if (log.isTraceEnabled()) {
+					log.trace("Pep2d ferdig evaluert arkivsak={}, arkivsaksystem={}, tema={}", ressurs.getArkivsaksnummer(), ressurs
+							.getArkivsaksystem(), ressurs.getTema());
+				}
 			}
 		} else {
 			return true;
@@ -77,48 +78,21 @@ public class Pep2dImpl implements Pep<TilgangSak> {
 		return Decision.PERMIT.equals(decision);
 	}
 
-	private Decision callPep2d(TilgangSak ressurs, SafRequestContext safRequestContext) {
-		Decision decisionTematilgangMedGeografi = callPep2dTematilgangMedGeografi(ressurs, safRequestContext);
-		if (decisionTematilgangMedGeografi.equals(Decision.DENY)) {
-			//Ingen grunn til å kall pep GeografiskTilgang dersom pep TematilgangMedGeograf gir Deny
-			return Decision.DENY;
-		}
-
-		return callPep2GeografiskTilgang(ressurs, safRequestContext);
-	}
-
-	private Decision callPep2dTematilgangMedGeografi(TilgangSak ressurs, SafRequestContext safRequestContext) {
-		XacmlRequest request = new XacmlRequest();
-		populateFellesAttributes(request, safRequestContext.getSecurityContext().getOidcTokenBody());
-		request.resource(RESOURCE_FELLES_RESOURCE_TYPE, RESOURCE_SAF_TEMA);
+	private Decision hasDokumentAccess(TilgangSak ressurs, SafRequestContext safRequestContext) {
+		XacmlRequest request = SafXacmlRequestFactory.create(safRequestContext.getSecurityContext().getOidcTokenBody());
+		request.resource(RESOURCE_FELLES_RESOURCE_TYPE, RESOURCE_SAF_SAK_DOKUMENT);
 		request.resource(RESOURCE_SAF_TEMA, ressurs.getTema());
-
-		XacmlResponse response = abacService.evaluate(request);
-		if (log.isTraceEnabled()) {
-			log.trace("Pep2dTematilgangMedGeografi ferdig evaluert arkivsak={}, arkivsaksystem={}, tema={}", ressurs.getArkivsaksnummer(), ressurs
-					.getArkivsaksystem(), ressurs.getTema());
-		}
-		return response.getDecision();
-	}
-
-	private Decision callPep2GeografiskTilgang(TilgangSak ressurs, SafRequestContext safRequestContext) {
-		XacmlRequest request = new XacmlRequest();
-		populateFellesAttributes(request, safRequestContext.getSecurityContext().getOidcTokenBody());
-		request.resource(RESOURCE_FELLES_RESOURCE_TYPE, RESOURCE_SAF_PERSON);
 		if (ressurs.getAktoerId() != null) {
 			request.resource(RESOURCE_FELLES_PERSON_AKTOERID_RESOURCE, ressurs.getAktoerId());
 		} else if (ressurs.getFoedselsnummer() != null) {
 			request.resource(RESOURCE_FELLES_PERSON_FNR, ressurs.getFoedselsnummer());
-		} else {
-			//Gjør ikke sjekk for geografisk tilgang for organisasjon
+		} else if(ressurs.getAktoerId() == null && ressurs.getFoedselsnummer() == null && ressurs.getOrgnummer() != null) {
+			// Ikke utfør sjekk for Organisasjon
 			return Decision.PERMIT;
+		} else {
+			return Decision.DENY;
 		}
-
 		XacmlResponse response = abacService.evaluate(request);
-		if (log.isTraceEnabled()) {
-			log.trace("Pep2GeografiskTilgang ferdig evaluert arkivsak={}, arkivsaksystem={}, tema={}", ressurs.getArkivsaksnummer(), ressurs
-					.getArkivsaksystem(), ressurs.getTema());
-		}
 		return response.getDecision();
 	}
 }

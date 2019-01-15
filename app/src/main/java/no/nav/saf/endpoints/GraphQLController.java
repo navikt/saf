@@ -17,6 +17,7 @@ import no.nav.saf.endpoints.wiring.DokumentoversiktWiring;
 import no.nav.saf.exceptionhandler.GraphQLExceptionHandler;
 import no.nav.saf.metrics.Monitor;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
+import no.nav.saf.tilgangskontroll.validation.OidcValidatorTool;
 import org.springframework.cache.CacheManager;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -41,13 +42,15 @@ import java.util.Objects;
 public class GraphQLController {
 	private final GraphQLSchema graphQLSchema;
 	private final Cache<String, PreparsedDocumentEntry> graphQLQueryCache;
+	private final OidcValidatorTool oidcValidatorTool;
 	private GraphQLExceptionHandler graphQLExceptionHandler;
 
 	@SuppressWarnings("unchecked")
 	@Inject
 	public GraphQLController(DokumentoversiktWiring dokumentoversiktWiring,
 							 GraphQLExceptionHandler graphQLExceptionHandler,
-							 CacheManager cacheManager) {
+							 CacheManager cacheManager,
+							 OidcValidatorTool oidcValidatorTool) {
 		this.graphQLExceptionHandler = graphQLExceptionHandler;
 		SchemaParser schemaParser = new SchemaParser();
 		InputStreamReader schema = new InputStreamReader(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream("schemas/saf.graphqls")));
@@ -56,6 +59,7 @@ public class GraphQLController {
 		SchemaGenerator schemaGenerator = new SchemaGenerator();
 		this.graphQLSchema = schemaGenerator.makeExecutableSchema(typeRegistry, dokumentoversiktWiring.createRuntimeWiring());
 		this.graphQLQueryCache = (Cache<String, PreparsedDocumentEntry>) Objects.requireNonNull(cacheManager.getCache(LokalCacheConfig.GRAPHQL_QUERY_CACHE)).getNativeCache();
+		this.oidcValidatorTool = oidcValidatorTool;
 	}
 
 	@PostMapping(value = "/graphql", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -72,7 +76,7 @@ public class GraphQLController {
 				.query(request.getQuery())
 				.operationName(request.getOperationName())
 				.variables(request.getVariables())
-				.context(new SafRequestContext(authorizationHeader))
+				.context(new SafRequestContext(authorizationHeader, oidcValidatorTool))
 				.build());
 		return executionResult.toSpecification();
 	}

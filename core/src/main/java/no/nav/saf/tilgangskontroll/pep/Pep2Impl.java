@@ -1,9 +1,9 @@
 package no.nav.saf.tilgangskontroll.pep;
 
 import static no.nav.abac.common.xacml.CommonAttributter.RESOURCE_FELLES_RESOURCE_TYPE;
-import static no.nav.abac.saf.xacml.SafAttributter.RESOURCE_SAF_JOURNALPOST;
-import static no.nav.abac.saf.xacml.SafAttributter.RESOURCE_SAF_TEMA;
-import static no.nav.saf.tilgangskontroll.pep.PepUtils.populateFellesAttributes;
+import static no.nav.abac.common.xacml.CommonAttributter.RESOURCE_FELLES_TEMA;
+import static no.nav.abac.saf.xacml.SafAttributter.RESOURCE_SAF_PARAGRAF19;
+import static no.nav.abac.saf.xacml.SafAttributter.RESOURCE_SAF_SAK_JP_METADATA;
 
 import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
@@ -38,17 +38,20 @@ public class Pep2Impl implements Pep<TilgangSak> {
 			return false;
 		}
 
-		if (Tema.FAR.name().equals(ressurs.getTema())) {
+		if (hasMetadataAccess(ressurs)) {
 			if (log.isTraceEnabled()) {
 				log.trace("Pep2 evaluerer arkivsak={}, arkivsaksystem={}, tema={}", ressurs.getArkivsaksnummer(), ressurs.getArkivsaksystem(), ressurs
 						.getTema());
 			}
-			XacmlRequest request = new XacmlRequest();
-			populateFellesAttributes(request, safRequestContext.getSecurityContext().getOidcTokenBody());
-			request.resource(RESOURCE_FELLES_RESOURCE_TYPE, RESOURCE_SAF_JOURNALPOST);
-			request.resource(RESOURCE_SAF_TEMA, Tema.FAR.name());
+			XacmlRequest request = SafXacmlRequestFactory.create(safRequestContext.getSecurityContext().getOidcTokenBody());
+			request.resource(RESOURCE_FELLES_RESOURCE_TYPE, RESOURCE_SAF_SAK_JP_METADATA);
+			if(isFarskapSak(ressurs)) {
+				request.resource(RESOURCE_FELLES_TEMA, Tema.FAR.name());
+			}
+			if(isForvaltningslovensParagraf19(ressurs)) {
+				request.resource(RESOURCE_SAF_PARAGRAF19, true);
+			}
 			XacmlResponse response = abacService.evaluate(request);
-			// TODO distributed cache
 			if (log.isTraceEnabled()) {
 				log.trace("Pep2 ferdig evaluert arkivsak={}, arkivsaksystem={}, tema={}", ressurs.getArkivsaksnummer(), ressurs.getArkivsaksystem(), ressurs
 						.getTema());
@@ -57,5 +60,17 @@ public class Pep2Impl implements Pep<TilgangSak> {
 		} else {
 			return true;
 		}
+	}
+
+	private boolean hasMetadataAccess(TilgangSak ressurs) {
+		return isFarskapSak(ressurs) || isForvaltningslovensParagraf19(ressurs);
+	}
+
+	private boolean isFarskapSak(TilgangSak ressurs) {
+		return Tema.FAR.name().equals(ressurs.getTema());
+	}
+
+	private boolean isForvaltningslovensParagraf19(TilgangSak ressurs) {
+		return ressurs.isParagraf19();
 	}
 }
