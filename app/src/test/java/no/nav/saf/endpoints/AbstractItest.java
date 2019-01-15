@@ -14,7 +14,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.cache.CacheManager;
 import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -42,9 +41,6 @@ public abstract class AbstractItest {
 
 	@Inject
 	protected TestRestTemplate restTemplate;
-
-	@Inject
-	CacheManager cacheManager;
 
 	@BeforeEach
 	public void setUp() {
