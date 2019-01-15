@@ -74,8 +74,7 @@ public class TilgangsmodellHentdokumentRepositoryImpl implements TilgangsmodellH
 				return null;
 			}
 		} catch (Exception e) {
-			log.warn("findTilgangBrukerBySakId feilet ved oppslag på sakId={} og arkivsaksystem={}. Feilmelding={}", sakId, arkivsaksystem, e
-					.getMessage());
+			log.warn("findTilgangBrukerBySakId feilet ved oppslag på sakId={} og arkivsaksystem={}. Feilmelding={}", sakId, arkivsaksystem, e);
 			return null;
 		}
 	}

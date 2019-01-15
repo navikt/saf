@@ -58,7 +58,7 @@ public class HentDokumentDomainCoordinatorImpl implements HentDokumentDomainCoor
 		}
 
 		final TilgangSak tilgangSak = tilgangsmodellHentdokumentRepository.findTilgangSak(arkivsak.getArkivsaksnummer(), arkivsak
-				.getArkivsaksystem().name(), tilgangBruker, safRequestContext);
+				.getArkivsaksystem() == null ? null : arkivsak.getArkivsaksystem().name(), tilgangBruker, safRequestContext);
 
 		boolean pep2Access = pep2.hasAccess(tilgangSak, safRequestContext);
 		if (!pep2Access) {
