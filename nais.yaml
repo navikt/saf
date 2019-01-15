@@ -50,3 +50,16 @@ fasitResources:
     resourceType: webservicegateway
   - alias: safproperties
     resourceType: applicationproperties
+  - alias: freg-security-oidc
+    resourceType: OpenIdConnect
+    propertyMap:
+      issuerUrl: security.oidc.idp.openAm.issuerUrl
+      jwksUrl: security.oidc.idp.sts.jwksUrl
+  - alias: security-token-service-issuer
+    resourceType: BaseUrl
+    propertyMap:
+      url: security.oidc.idp.sts.issuerUrl
+  - alias: security-token-service-jwks
+    resourceType: RestService
+    propertyMap:
+      url: security.oidc.idp.sts.jwksUrl
