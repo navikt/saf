@@ -13,5 +13,4 @@ public abstract class AbstractPepTest {
 
 	@Mock
 	protected AbacService abacService;
-
 }
