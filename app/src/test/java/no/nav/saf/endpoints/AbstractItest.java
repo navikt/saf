@@ -31,6 +31,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import javax.inject.Inject;
 import java.io.IOException;
+import java.time.LocalDateTime;
 
 
 /**
@@ -54,7 +55,7 @@ public abstract class AbstractItest {
 	private RsaKey issuerNavSts;
 
 	@BeforeAll
-	public static void setUpBeforeAll() throws Exception {
+	public static void setUpBeforeAll() {
 		TestCertificates.setupKeyAndTrustStore();
 	}
 
