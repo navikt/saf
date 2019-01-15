@@ -15,7 +15,7 @@ import javax.inject.Inject;
 public class OidcValidatorTool {
 	private static final String OIDC_TOKEN_PREFIX = "Bearer ";
 	private static final String VALIDATION_FAILED = "Valdiering av OIDC tokenet gitt av konsumer feilet.";
-	private static final String OIDC_NULL = "Valdiering av OIDC tokenet gitt av konsumer feilet.";
+	private static final String OIDC_NULL = "Validering av OIDC tokenet gitt av konsumer feilet.";
 	private final Jose4jConsumerFactory consumerFactory;
 
 

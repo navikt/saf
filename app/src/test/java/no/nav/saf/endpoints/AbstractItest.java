@@ -60,7 +60,7 @@ public abstract class AbstractItest {
 	private RsaKey issuerNavSts;
 
 	@BeforeAll
-	public static void setUpOidcToken() throws Exception {
+	public static void setUpBeforeAll() throws Exception {
 		TestCertificates.setupKeyAndTrustStore();
 	}
 
@@ -118,8 +118,8 @@ public abstract class AbstractItest {
 			jws.setKeyIdHeaderValue(rsaJsonWebKey.getKeyId());
 			jws.setAlgorithmHeaderValue("RS256");
 			return jws.getCompactSerialization();
-		} catch (JoseException var5) {
-			throw new OidcAuthorizationException("Failed to convert JwtClaims to Oidc token", var5);
+		} catch (JoseException e) {
+			throw new OidcAuthorizationException("Failed to convert JwtClaims to Oidc token", e);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
