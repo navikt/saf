@@ -7,7 +7,6 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 
 import com.github.tomakehurst.wiremock.client.WireMock;
 import no.nav.saf.ApplicationConfig;
-import no.nav.saf.cache.LokalCacheConfig;
 import no.nav.saf.endpoints.testconfig.STSTestConfig;
 import org.apache.cxf.helpers.IOUtils;
 import org.junit.jupiter.api.BeforeEach;
@@ -49,10 +48,6 @@ public abstract class AbstractItest {
 
 	@BeforeEach
 	public void setUp() {
-		cacheManager.getCache(LokalCacheConfig.SAK_BY_SAKID_CACHE).clear();
-		cacheManager.getCache(LokalCacheConfig.TILGANGSMODELL_REPO_BRUKER_CACHE).clear();
-		cacheManager.getCache(LokalCacheConfig.PENSJON_SAK_SAMMENDRAG_LISTE_CACHE).clear();
-
 		WireMock.reset();
 		WireMock.resetAllRequests();
 		WireMock.removeAllMappings();

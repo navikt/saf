@@ -15,7 +15,6 @@ import com.github.tomakehurst.wiremock.client.BasicCredentials;
 import com.github.tomakehurst.wiremock.stubbing.Scenario;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.VariantFormatCode;
 import no.nav.saf.endpoints.AbstractItest;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -315,9 +314,7 @@ public class HentDokumentIT extends AbstractItest {
 	}
 
 	@Test
-	@Disabled
 	public void hentDokumentHentSakBySakIdTechnicalFailOnTilgangSak() {
-		System.setProperty("net.sf.ehcache.disabled", Boolean.TRUE.toString());
 		abacPermit();
 		stubFor(get("/hentjournalsakinfo/hentdokument/" + DOKUMENT_ID + "/" + VARIANTFORMAT).willReturn(aResponse().withStatus(HttpStatus.OK
 				.value())
