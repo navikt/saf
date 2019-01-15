@@ -48,7 +48,7 @@ public class Pep1ImplTest extends AbstractPepTest {
 				.aktoerId(AKTOER_ID)
 				.foedselsnr(IDENTIFIKATOR)
 				.historiskeIdenter(Collections.singletonList(TilgangIdent.builder().identifikator(IDENTIFIKATOR).build()))
-				.build(), new SafRequestContext(OIDC_TOKEN_PERSON_USER_TEST));
+				.build(), new SafRequestContext(OIDC_TOKEN_PERSON_USER_TEST, oidcValidatorTool));
 
 		verify(abacService).evaluate(request.capture());
 		XacmlRequest capturedRequest = request.getValue();
@@ -62,12 +62,13 @@ public class Pep1ImplTest extends AbstractPepTest {
 	@Test
 	public void shouldPermitWhenFnrIsEvaluated() {
 		when(abacService.evaluate(any(XacmlRequest.class))).thenReturn(new XacmlResponse(Decision.PERMIT, null, null, null));
+		when(oidcValidatorTool.validate(OIDC_TOKEN_PERSON_USER_TEST)).thenReturn(true);
 		ArgumentCaptor<XacmlRequest> request = ArgumentCaptor.forClass(XacmlRequest.class);
 
 		boolean hasAccess = pep1.hasAccess(TilgangBruker.builder()
 				.foedselsnr(IDENTIFIKATOR)
 				.historiskeIdenter(Collections.singletonList(TilgangIdent.builder().identifikator(IDENTIFIKATOR).build()))
-				.build(), new SafRequestContext(OIDC_TOKEN_PERSON_USER_TEST));
+				.build(), new SafRequestContext(OIDC_TOKEN_PERSON_USER_TEST, oidcValidatorTool));
 
 		verify(abacService).evaluate(request.capture());
 		XacmlRequest capturedRequest = request.getValue();
@@ -77,7 +78,7 @@ public class Pep1ImplTest extends AbstractPepTest {
 	}
 
 	private void assertCommonXacmlRequestResources(XacmlRequest capturedRequest) {
-		assertEquals(new SafRequestContext(OIDC_TOKEN_PERSON_USER_TEST).getSecurityContext().getOidcTokenBody(), capturedRequest.getEnvironments().get(0).getValue().toString());
+		assertEquals(new SafRequestContext(OIDC_TOKEN_PERSON_USER_TEST, oidcValidatorTool).getSecurityContext().getOidcTokenBody(), capturedRequest.getEnvironments().get(0).getValue().toString());
 		assertEquals(SAF, capturedRequest.getEnvironments().get(1).getValue().toString());
 
 		assertEquals(SAF, capturedRequest.getResources().get(0).getValue().toString());
@@ -92,7 +93,7 @@ public class Pep1ImplTest extends AbstractPepTest {
 				.aktoerId(AKTOER_ID)
 				.foedselsnr(IDENTIFIKATOR)
 				.historiskeIdenter(Collections.singletonList(TilgangIdent.builder().identifikator(IDENTIFIKATOR).build()))
-				.build(), new SafRequestContext(OIDC_TOKEN_PERSON_USER_TEST));
+				.build(), new SafRequestContext(OIDC_TOKEN_PERSON_USER_TEST, oidcValidatorTool));
 
 		assertFalse(hasAccess);
 	}

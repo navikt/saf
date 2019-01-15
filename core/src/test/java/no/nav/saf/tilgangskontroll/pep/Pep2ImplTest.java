@@ -63,7 +63,7 @@ public class Pep2ImplTest extends AbstractPepTest {
 
 		boolean hasAccess = pep2.hasAccess(TilgangSak.builder()
 				.tema(Tema.FAR.name())
-				.build(), new SafRequestContext(OIDC_TOKEN_PERSON_USER_TEST));
+				.build(), new SafRequestContext(OIDC_TOKEN_PERSON_USER_TEST, oidcValidatorTool));
 
 		assertFalse(hasAccess);
 	}
