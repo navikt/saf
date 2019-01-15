@@ -9,4 +9,8 @@ public class OidcAuthorizationException extends SafFunctionalException {
 	public OidcAuthorizationException(String message) {
 		super(message);
 	}
+
+	public OidcAuthorizationException(String message, Throwable cause) {
+		super(message, cause);
+	}
 }

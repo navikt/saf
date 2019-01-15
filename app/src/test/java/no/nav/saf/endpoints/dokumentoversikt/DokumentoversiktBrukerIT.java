@@ -50,7 +50,6 @@ public class DokumentoversiktBrukerIT extends AbstractItest {
 	@Autowired
 	private ApplicationContext applicationContext;
 
-
 	@Test
 	public void shouldHentDokumentoversiktBrukerWithAktoerID() throws IOException, URISyntaxException {
 		abacPermit();
