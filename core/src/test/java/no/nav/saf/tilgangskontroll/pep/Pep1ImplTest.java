@@ -1,8 +1,10 @@
 package no.nav.saf.tilgangskontroll.pep;
 
+import static no.nav.abac.saf.xacml.SafAttributter.RESOURCE_SAF_PERSON;
 import static no.nav.saf.domain.DomainConstants.SAF;
-import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_SAF_JOURNALPOST;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -19,14 +21,12 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 
-import java.util.Arrays;
+import java.util.Collections;
 
 /**
  * @author Sigurd Midttun, Visma Consulting.
  */
-public class Pep1EvaluatorTest extends AbstractPepTest {
-
-
+public class Pep1ImplTest extends AbstractPepTest {
 	@InjectMocks
 	private Pep1Impl pep1;
 
@@ -38,8 +38,7 @@ public class Pep1EvaluatorTest extends AbstractPepTest {
 	private OidcValidatorTool oidcValidatorTool;
 
 	@Test
-	public void pep1HappyPath() {
-
+	public void shouldPermitWhenAktoerIdIsEvaluated() {
 		when(abacService.evaluate(any(XacmlRequest.class))).thenReturn(new XacmlResponse(Decision.PERMIT, null, null, null));
 		when(oidcValidatorTool.validate(OIDC_TOKEN_PERSON_USER_TEST)).thenReturn(true);
 
@@ -48,35 +47,54 @@ public class Pep1EvaluatorTest extends AbstractPepTest {
 		boolean hasAccess = pep1.hasAccess(TilgangBruker.builder()
 				.aktoerId(AKTOER_ID)
 				.foedselsnr(IDENTIFIKATOR)
-				.historiskeIdenter(Arrays.asList(TilgangIdent.builder().identifikator(IDENTIFIKATOR).build()))
-				.build(), new SafRequestContext(OIDC_TOKEN_PERSON_USER_TEST, oidcValidatorTool));
+				.historiskeIdenter(Collections.singletonList(TilgangIdent.builder().identifikator(IDENTIFIKATOR).build()))
+				.build(), new SafRequestContext(OIDC_TOKEN_PERSON_USER_TEST));
 
 		verify(abacService).evaluate(request.capture());
 		XacmlRequest capturedRequest = request.getValue();
 
-		assertEquals(Boolean.TRUE, hasAccess);
+		assertTrue(hasAccess);
 
-		assertEquals(new SafRequestContext(OIDC_TOKEN_PERSON_USER_TEST, oidcValidatorTool).getSecurityContext().getOidcTokenBody(), capturedRequest.getEnvironments().get(0).getValue().toString());
-		assertEquals(SAF, capturedRequest.getEnvironments().get(1).getValue().toString());
-
-		assertEquals(SAF, capturedRequest.getResources().get(0).getValue().toString());
-		assertEquals(RESOURCE_SAF_JOURNALPOST, capturedRequest.getResources().get(1).getValue().toString());
+		assertCommonXacmlRequestResources(capturedRequest);
 		assertEquals(AKTOER_ID, capturedRequest.getResources().get(2).getValue().toString());
-
 	}
 
 	@Test
-	public void pep1Deny() {
+	public void shouldPermitWhenFnrIsEvaluated() {
+		when(abacService.evaluate(any(XacmlRequest.class))).thenReturn(new XacmlResponse(Decision.PERMIT, null, null, null));
+		ArgumentCaptor<XacmlRequest> request = ArgumentCaptor.forClass(XacmlRequest.class);
 
+		boolean hasAccess = pep1.hasAccess(TilgangBruker.builder()
+				.foedselsnr(IDENTIFIKATOR)
+				.historiskeIdenter(Collections.singletonList(TilgangIdent.builder().identifikator(IDENTIFIKATOR).build()))
+				.build(), new SafRequestContext(OIDC_TOKEN_PERSON_USER_TEST));
+
+		verify(abacService).evaluate(request.capture());
+		XacmlRequest capturedRequest = request.getValue();
+		assertCommonXacmlRequestResources(capturedRequest);
+		assertEquals(IDENTIFIKATOR, capturedRequest.getResources().get(2).getValue().toString());
+		assertTrue(hasAccess);
+	}
+
+	private void assertCommonXacmlRequestResources(XacmlRequest capturedRequest) {
+		assertEquals(new SafRequestContext(OIDC_TOKEN_PERSON_USER_TEST).getSecurityContext().getOidcTokenBody(), capturedRequest.getEnvironments().get(0).getValue().toString());
+		assertEquals(SAF, capturedRequest.getEnvironments().get(1).getValue().toString());
+
+		assertEquals(SAF, capturedRequest.getResources().get(0).getValue().toString());
+		assertEquals(RESOURCE_SAF_PERSON, capturedRequest.getResources().get(1).getValue().toString());
+	}
+
+	@Test
+	public void shouldDeny() {
 		when(abacService.evaluate(any(XacmlRequest.class))).thenReturn(new XacmlResponse(Decision.DENY, null, null, null));
 
 		boolean hasAccess = pep1.hasAccess(TilgangBruker.builder()
 				.aktoerId(AKTOER_ID)
 				.foedselsnr(IDENTIFIKATOR)
-				.historiskeIdenter(Arrays.asList(TilgangIdent.builder().identifikator(IDENTIFIKATOR).build()))
-				.build(), new SafRequestContext(OIDC_TOKEN_PERSON_USER_TEST, oidcValidatorTool));
+				.historiskeIdenter(Collections.singletonList(TilgangIdent.builder().identifikator(IDENTIFIKATOR).build()))
+				.build(), new SafRequestContext(OIDC_TOKEN_PERSON_USER_TEST));
 
-		assertEquals(Boolean.FALSE, hasAccess);
+		assertFalse(hasAccess);
 	}
 
 }
