@@ -6,10 +6,17 @@ import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 
 import com.github.tomakehurst.wiremock.client.WireMock;
+import no.nav.modig.testcertificates.TestCertificates;
 import no.nav.saf.ApplicationConfig;
 import no.nav.saf.cache.LokalCacheConfig;
 import no.nav.saf.endpoints.testconfig.STSTestConfig;
+import no.nav.saf.exceptions.OidcAuthorizationException;
 import org.apache.cxf.helpers.IOUtils;
+import org.jose4j.jwk.RsaJsonWebKey;
+import org.jose4j.jws.JsonWebSignature;
+import org.jose4j.jwt.JwtClaims;
+import org.jose4j.lang.JoseException;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
@@ -26,6 +33,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import javax.inject.Inject;
 import java.io.IOException;
+import java.time.LocalDateTime;
 
 
 /**
@@ -39,13 +47,22 @@ import java.io.IOException;
 @AutoConfigureWireMock(port = 0)
 public abstract class AbstractItest {
 
-	private static final String OIDC_TOKEN_PERSON_USER_TEST = "Bearer " + "eyAidHlwIjogIkpXVCIsICJraWQiOiAiU0gxSWVSU2sxT1VGSDNzd1orRXVVcTE5VHZRPSIsICJhbGciOiAiUlMyNTYiIH0.eyAiYXRfaGFzaCI6ICJvNFUwMVhKNmlnRmw0VGYwdFRkYjR3IiwgInN1YiI6ICJaOTkwNDI0IiwgImF1ZGl0VHJhY2tpbmdJZCI6ICJlYTdmNWUxMi1jYjZjLTQ1ZjUtYmViMi0wYjVkYmI5ZDQ3YTItMTMzNzkzNCIsICJpc3MiOiAiaHR0cHM6Ly9pc3NvLXQuYWRlby5ubzo0NDMvaXNzby9vYXV0aDIiLCAidG9rZW5OYW1lIjogImlkX3Rva2VuIiwgImF1ZCI6ICJpZGEtdCIsICJjX2hhc2giOiAiRnJwNzhwdlJZU0VPMExjUktPUFdWdyIsICJvcmcuZm9yZ2Vyb2NrLm9wZW5pZGNvbm5lY3Qub3BzIjogIjJjYjQ2OGU4LThmMjItNGY1NS1hYTQ4LWM1NWExYjA4YmQ1ZiIsICJhenAiOiAiaWRhLXQiLCAiYXV0aF90aW1lIjogMTU0MzU3Nzk3MiwgInJlYWxtIjogIi8iLCAiZXhwIjogMTU0MzU4MTU3MiwgInRva2VuVHlwZSI6ICJKV1RUb2tlbiIsICJpYXQiOiAxNTQzNTc3OTcyIH0.NRgKaZhZ7qbBbJMUj_l9kzGOv7yOJVRVZDqmK0-G9lxzZs4jW1AtvFWqJRO9dd_djlIOGXz93UnuMNpWYWuoUd_S9gVc53yUjquzrys1IK8Zjd89smEl_9QP3ya8z7ISv48DciJORxdB2XT8rr2qpltYjKrCE2QmmK2ctAhy9QuFwEoZnctrR8IDKhUJCGd8LXPXddNRNEDL4-A47KwkF0UcfoDzPXznyZ2cbV4IkT3zvGqqwO3hovdrpadBdf204hClcmETYN3frRh1qHuTUqrBL7ualfqs-eDa4FKd77Mwu02LqPQGVpt8Ebebtv3OlS28YDchx8ng_P05okSjZg";
+	public static final String NAV_STS_ISSUER_URL = "http://navStsIssuerUrl";
+	protected static String OIDC_TOKEN_PERSON_USER_TEST;
 
 	@Inject
 	protected TestRestTemplate restTemplate;
 
 	@Inject
 	CacheManager cacheManager;
+
+	@Inject
+	private RsaKey issuerNavSts;
+
+	@BeforeAll
+	public static void setUpBeforeAll() throws Exception {
+		TestCertificates.setupKeyAndTrustStore();
+	}
 
 	@BeforeEach
 	public void setUp() {
@@ -56,6 +73,8 @@ public abstract class AbstractItest {
 		WireMock.reset();
 		WireMock.resetAllRequests();
 		WireMock.removeAllMappings();
+
+		OIDC_TOKEN_PERSON_USER_TEST = "Bearer " + createOidc(defaultClaimsBuilder().issuer(NAV_STS_ISSUER_URL).build());
 	}
 
 	protected HttpEntity createHttpEntity() {
@@ -90,4 +109,29 @@ public abstract class AbstractItest {
 		return IOUtils.toString(this.getClass().getClassLoader().getResourceAsStream(resourcename));
 	}
 
+	public String createOidc(JwtClaims claims) {
+		try {
+			RsaJsonWebKey rsaJsonWebKey = issuerNavSts.getWebKey();
+			JsonWebSignature jws = new JsonWebSignature();
+			jws.setPayload(claims.toJson());
+			jws.setKey(rsaJsonWebKey.getPrivateKey());
+			jws.setKeyIdHeaderValue(rsaJsonWebKey.getKeyId());
+			jws.setAlgorithmHeaderValue("RS256");
+			return jws.getCompactSerialization();
+		} catch (JoseException e) {
+			throw new OidcAuthorizationException("Failed to convert JwtClaims to Oidc token", e);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	private static JwtClaimsBuilder defaultClaimsBuilder() {
+		return new JwtClaimsBuilder()
+				.subject("sub")
+				.audience("aud")
+				.expiry(LocalDateTime.now().plusMinutes(10))
+				.validFrom(LocalDateTime.now().minusMinutes(5))
+				.azp("azp");
+	}
 }

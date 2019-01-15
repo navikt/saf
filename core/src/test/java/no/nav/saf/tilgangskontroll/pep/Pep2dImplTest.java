@@ -16,8 +16,10 @@ import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlRequest;
 import no.nav.saf.tilgangskontroll.abac.dto.response.Decision;
 import no.nav.saf.tilgangskontroll.abac.dto.response.XacmlResponse;
 import no.nav.saf.tilgangskontroll.abac.service.AbacService;
+import no.nav.saf.tilgangskontroll.validation.OidcValidatorTool;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.cache.support.NoOpCache;
 import org.springframework.cache.support.SimpleCacheManager;
@@ -37,6 +39,9 @@ public class Pep2dImplTest extends AbstractPepTest {
 	private Pep2dImpl pep2d;
 	private AbacService abacService = Mockito.mock(AbacService.class);
 
+	@Mock
+	private OidcValidatorTool oidcValidatorTool;
+
 	public Pep2dImplTest() {
 		SimpleCacheManager cacheManager = new SimpleCacheManager();
 		cacheManager.setCaches(Collections.singletonList(new NoOpCache(RedisCacheConfig.TILGANG_CACHE)));
@@ -47,12 +52,13 @@ public class Pep2dImplTest extends AbstractPepTest {
 	@Test
 	public void shouldPermitWhenTemaIsAllowedAndAktoerIdSupplied() {
 		when(abacService.evaluate(any(XacmlRequest.class))).thenReturn(new XacmlResponse(Decision.PERMIT, null, null, null));
+		when(oidcValidatorTool.validate(OIDC_TOKEN_PERSON_USER_TEST)).thenReturn(true);
 		ArgumentCaptor<XacmlRequest> request = ArgumentCaptor.forClass(XacmlRequest.class);
 
 		boolean hasAccess = pep2d.hasAccess(TilgangSak.builder()
 				.aktoerId(AKTOER_ID)
 				.tema(TEST_TEMA)
-				.build(), new SafRequestContext(OIDC_TOKEN_PERSON_USER_TEST));
+				.build(), new SafRequestContext(OIDC_TOKEN_PERSON_USER_TEST, oidcValidatorTool));
 
 		verify(abacService).evaluate(request.capture());
 		XacmlRequest capturedRequest = request.getValue();
@@ -66,12 +72,13 @@ public class Pep2dImplTest extends AbstractPepTest {
 	@Test
 	public void shouldPermitWhenTemaIsAllowedAndFmrIdSupplied() {
 		when(abacService.evaluate(any(XacmlRequest.class))).thenReturn(new XacmlResponse(Decision.PERMIT, null, null, null));
+		when(oidcValidatorTool.validate(OIDC_TOKEN_PERSON_USER_TEST)).thenReturn(true);
 		ArgumentCaptor<XacmlRequest> request = ArgumentCaptor.forClass(XacmlRequest.class);
 
 		boolean hasAccess = pep2d.hasAccess(TilgangSak.builder()
 				.foedselsnummer(FNR)
 				.tema(TEST_TEMA)
-				.build(), new SafRequestContext(OIDC_TOKEN_PERSON_USER_TEST));
+				.build(), new SafRequestContext(OIDC_TOKEN_PERSON_USER_TEST, oidcValidatorTool));
 
 		verify(abacService).evaluate(request.capture());
 		XacmlRequest capturedRequest = request.getValue();
@@ -87,13 +94,13 @@ public class Pep2dImplTest extends AbstractPepTest {
 		boolean hasAccess = pep2d.hasAccess(TilgangSak.builder()
 				.orgnummer(ORGNR)
 				.tema(TEST_TEMA)
-				.build(), new SafRequestContext(OIDC_TOKEN_PERSON_USER_TEST));
+				.build(), new SafRequestContext(OIDC_TOKEN_PERSON_USER_TEST, oidcValidatorTool));
 
 		assertTrue(hasAccess);
 	}
 
 	private void assertCommonXacmlRequestResources(XacmlRequest capturedRequest) {
-		assertEquals(new SafRequestContext(OIDC_TOKEN_PERSON_USER_TEST).getSecurityContext().getOidcTokenBody(), capturedRequest.getEnvironments().get(0).getValue().toString());
+		assertEquals(new SafRequestContext(OIDC_TOKEN_PERSON_USER_TEST, oidcValidatorTool).getSecurityContext().getOidcTokenBody(), capturedRequest.getEnvironments().get(0).getValue().toString());
 		assertEquals(SAF, capturedRequest.getEnvironments().get(1).getValue().toString());
 
 		assertEquals(SAF, capturedRequest.getResources().get(0).getValue().toString());
@@ -104,10 +111,10 @@ public class Pep2dImplTest extends AbstractPepTest {
 	@Test
 	public void shouldDenyWhenAbacDenies() {
 		when(abacService.evaluate(any(XacmlRequest.class))).thenReturn(new XacmlResponse(Decision.DENY, null, null, null));
-
+		when(oidcValidatorTool.validate(OIDC_TOKEN_PERSON_USER_TEST)).thenReturn(true);
 		boolean hasAccess = pep2d.hasAccess(TilgangSak.builder()
 				.tema("FAR")
-				.build(), new SafRequestContext(OIDC_TOKEN_PERSON_USER_TEST));
+				.build(), new SafRequestContext(OIDC_TOKEN_PERSON_USER_TEST, oidcValidatorTool));
 
 		assertFalse(hasAccess);
 	}
