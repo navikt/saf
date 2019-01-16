@@ -23,7 +23,7 @@ enum BrukerIdType {
     # NAV aktørid for en person.
     AKTOERID
 
-    # Folkeregisterets fødselsnummer for en person.
+    # Folkeregisterets fødselsnummer eller d-nummer for en person.
     FNR
 
     # Foretaksregisterets organisasjonsnummer for en juridisk person.
@@ -258,39 +258,36 @@ type Dokumentvariant {
     # Typen variant som returneres. Normalt vil dette være **ARKIV**.
     # * Andre visningsvarianter er **SLADDET** og **SKJERMET**. **SKJERMET** krever spesielle tilganger for å åpne.
     # * Et dokument kan ha både en **SLADDET** og en **SKJERMET** variant, men aldri flere varianter av samme type.
-    variantformat: Variantformat
+    variantformat: Variantformat!
 
     # Sier hvorvidt saksbehandler som gjør oppslaget vil få tilgang til å åpne denne dokumentvarianten.
     # * Dersom verdien er false, vil tilgang bli avslått dersom saksbehandler forsøker å åpne dokumentet.
-    saksbehandlerHarTilgang: Boolean
-
-    # Sier hvorvidt brukeren (innbyggeren) vil få innsyn i denne dokumentvarianten ved pålogging på nav.no eller ikke.
-    brukerHarTilgang: Boolean!
+    saksbehandlerHarTilgang: Boolean!
 }
 
 # Beskriver en type dato som kan være relevant for en journalpost, for eksempel **DATO_OPPRETTET**. Ulike datotyper returneres for ulike journalstatuser.
 enum Datotype {
-    # * Tidspunktet journalposten er opprettet i joark.
+    # * Tidspunktet journalposten er opprettet i joark. Tidspunktet settes automatisk og kan ikke overskrives. Selv om hver journalpost har mange datoer (se relevanteDatoer) er datoOpprettet å anse som "fasit" på journalpostens alder.
     # * Returneres for alle journalposter
     DATO_OPPRETTET
 
-	# * Tidspunktet journalposten ble sendt til print
+	# * Tidspunktet dokumentene på journalposten ble sendt til print.
     # * Returneres for utgående journalposter
 	DATO_SENDT_PRINT
 
-	# * Tidspunktet journalposten ble ekspedert
+	# * Tidspunktet dokumentene på journalposten ble sendt til bruker.
     # * Returneres for utgående journalposter
 	DATO_EKSPEDERT
 
-	# * Tidspunkt for journalføring
-    # * Returneres for inngående journalposter
+	# * Tidspunktet journalposten ble journalført (inngående) eller ferdigstilt (utgående).
+    # * Returneres for alle journalposttyper
 	DATO_JOURNALFOERT
 
-	# * Tidspunkt for arkivering
+	# * Tidspunkt dokumentene i journalposten ble registrert i NAV sine systemer.
     # * Returneres for inngående journalposter
     DATO_REGISTRERT
 
-	# * Dato for sist gang brevet har blitt sendt på nytt.
+	# * Tidspunkt som dokumentene i journalposten ble sendt på nytt, grunnet retur av opprinnelig forsendelse.
     # * Returneres for utgående journalposter
 	DATO_AVS_RETUR
 
@@ -303,26 +300,26 @@ enum Datotype {
 # Indikerer hvor man kan finne saksparten som dokumentene er journalført mot, samt en peker til selve fagsaken, dersom det finnes en.
 # * For pensjons- og uføresaker vil arkivsaksystemet være PSAK. For alle andre sakstyper er arkivsaksystem GSAK.
 enum Arkivsaksystem {
-    # Arkivsaksystem for alle NAV saker unntatt pensjon
+    # Arkivsaksystem for alle NAV saker unntatt pensjon og uføre.
     GSAK
 
-    # Arkivsaksystem for pensjon
+    # Arkivsaksystem for pensjon og uføre.
     PSAK
 }
 
 # Sier hvorvidt journalposten er et inngående dokument, et utgående dokument eller et notat.
 enum Journalposttype {
-    # **Inngående dokument** - Dokumentasjon som er generert og sendt inn av en ekstern part. De fleste inngående dokumenter er søknader, ettersendelser av dokumentasjon til sak, eller innsendinger fra arbeidsgivere. Chatmeldinger fra brukere arkiveres også som inngående dokumenter.
+    # **Inngående dokument** - Dokumentasjon som NAV har mottatt fra en ekstern part. De fleste inngående dokumenter er søknader, ettersendelser av dokumentasjon til sak, eller innsendinger fra arbeidsgivere. Meldinger brukere har sendt til "Skriv til NAV" arkiveres også som inngående dokumenter..
 	I
 
-	# **Unngående dokument** - Dokumentasjon som NAV har produsert og sendt ut til en ekstern part. De fleste utgående dokumenter er informasjons- eller vedtaksbrev til privatpersoner eller organisasjoner. SMS-varsler og chatmeldinger som sendes fra saksbehandler til brukere arkiveres også som utgående dokumenter.
+	# **Unngående dokument** - Dokumentasjon som NAV har produsert og sendt ut til en ekstern part. De fleste utgående dokumenter er informasjons- eller vedtaksbrev til privatpersoner eller organisasjoner. "Skriv til NAV"-meldinger som saksbehandlere har sendt til brukere arkiveres også som utgående dokumenter.
 	U
 
-	# **Notat** - Dokumentasjon som NAV har produsert selv, uten at formålet er å distribuere dette ut av NAV. Eksempler på notater er samtalereferater med veileder på kontaktsenter, og interne forvaltningsnotater.
+	# **Notat** - Dokumentasjon som NAV har produsert selv, uten at formålet er å distribuere dette ut av NAV. Eksempler på notater er samtalereferater med veileder på kontaktsenter og interne forvaltningsnotater.
 	N
 }
 
-# * Status på journalposten i joark, f.eks. **MOTTATT** eller **JOURNALFOERT**. Journalstatusen gir et indikasjon på hvor i journalførings- eller dokumentproduksjonsprosessen journalposten befinner seg.
+# * Status på journalposten i arkivet, f.eks. **MOTTATT** eller **JOURNALFOERT**. Journalstatusen gir et indikasjon på hvor i journalførings- eller dokumentproduksjonsprosessen journalposten befinner seg.
 # * Journalposter som er resultat av en feilsituasjon og ikke skal hensyntas for saksbehandlinghar egne koder, som **UTGAAR** eller **AVBRUTT**.
 enum Journalstatus {
     # Journalposten er mottatt, men ikke journalført. *"Mottatt"* er et annet ord for *"arkivert"* eller *"midlertidig journalført"*
@@ -383,39 +380,39 @@ enum Kanal {
     # * *Kun inngående*
     ALTINN
 
-    # Utveksling av trygdeinformasjon mellom EU- og EØS-land. Forsendelsen er mottatt eller distribuert inn via RINA.
+    # Forsendelsen er mottatt eller distribuert via applikasjoner som EU har levert og som benyttes for utveksling av informasjon med andre EU-land.
     # * *Inngående og utgående*
 	EESSI
 
-	# Elektronisk innsending. Forsendelsen er arkivert av applikasjonen EIA.
-	# * *Kun inngående*
+	# Forsendelsen er arkivert av applikasjonen EIA.
+	# * *Kun inngående og utgående*
 	EIA
 
-	# Eksternt oppslag, dokumentene i journalposten er hentet fra en ekstern kilde, som UDI.
+	# Dokumentene i journalposten er hentet fra en ekstern kilde, for eksempel informasjon om oppholdstillatelse fra Utlendingsdirektoratet.
 	# * *Kun inngående*
 	EKST_OPPS
 
-	# Lokal utskrift. Brevet er skrevet ut lokalt og kan være sendt i posten.
+	# Brevet er skrevet ut lokalt og kan være sendt i posten på papir.
 	# * *Kun utgående og notater*
 	LOKAL_UTSKRIFT
 
-	# Ditt NAV. Forsendelsen er sendt inn digitalt via selvbetjeningsløsninger på nav.no.
-	# * *inngående og utgående*
+	# Forsendelsen er sendt inn digitalt via selvbetjeningsløsninger på nav.no, eller distribuert digitalt til brukers meldingsboks på nav.no
+	# * *Kun inngående og utgående*
 	NAV_NO
 
-	# Sentral utskrift. Brevet er overført til sentral distribusjon og sendt i posten.
+	# Brevet er overført til sentral distribusjon og sendt i posten på papir.
 	# * *Kun utgående*
 	SENTRAL_UTSKRIFT
 
-	# Sikker Digital Post. Brevet er sendt via digital post til innbyggere.
+	# Brevet er sendt via digital post til innbyggere.
 	# * *Kun utgående*
 	SDP
 
-	# Skanning Nets. Forsendelsen er sendt inn på papir og skannet hos NETS.
-	# * *Kun inngående*
+	# Forsendelsen er sendt inn på papir og skannet hos NETS.
+	# * *Inngående, utgående og notater*
 	SKAN_NETS
 
-	# Skanning Pensjon. Forsendelsen er sendt inn på papir og skannet på NAVs skanningssenter for pensjon og bidrag.
+	# Forsendelsen er sendt inn på papir og skannet på NAVs skanningsenter for pensjon og bidrag.
     # * *Kun inngående*
 	SKAN_PEN
 
@@ -427,7 +424,7 @@ enum Kanal {
 }
 
 # Temaet/Fagområdet som en journalpost og tilhørende sak tilhører, f.eks. **FOR** (foreldrepenger).
-# * Tematilgang er sentralt i tilgangstyringen til informasjonen i NAVs systemer, og ABAC policiene er formet rundt disse.
+# * I NAV brukes Tema for å klassifisere journalposter i arkivet med tanke på gjenfinning, tilgangsstyring og bevaringstid.
 enum Tema {
     # Arbeidsavklaringspenger
     AAP
