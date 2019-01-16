@@ -65,7 +65,7 @@ public class Pep3Impl implements Pep<TilgangSak> {
 	}
 
 	private boolean hasNotRelevanteTredjeparter(TilgangSak ressurs) {
-		return ressurs == null || ressurs.getRelevanteTredjeparter().size() < 1;
+		return ressurs.getRelevanteTredjeparter() == null || ressurs.getRelevanteTredjeparter().size() < 1;
 	}
 
 	private boolean hasMetadataAccess(TilgangSak ressurs) {

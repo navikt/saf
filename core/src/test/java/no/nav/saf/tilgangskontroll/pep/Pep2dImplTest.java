@@ -50,7 +50,7 @@ public class Pep2dImplTest extends AbstractPepTest {
 
 		boolean hasAccess = pep2d.hasAccess(TilgangSak.builder()
 				.aktoerId(AKTOER_ID)
-				.tema(TEST_TEMA)
+				.tema(TEMA_BID)
 				.build(), new SafRequestContext(OIDC_TOKEN_PERSON_USER_TEST, oidcValidatorTool));
 
 		verify(abacService).evaluate(request.capture());
@@ -70,7 +70,7 @@ public class Pep2dImplTest extends AbstractPepTest {
 
 		boolean hasAccess = pep2d.hasAccess(TilgangSak.builder()
 				.foedselsnummer(FNR)
-				.tema(TEST_TEMA)
+				.tema(TEMA_BID)
 				.build(), new SafRequestContext(OIDC_TOKEN_PERSON_USER_TEST, oidcValidatorTool));
 
 		verify(abacService).evaluate(request.capture());
@@ -86,7 +86,7 @@ public class Pep2dImplTest extends AbstractPepTest {
 	public void shouldPermitWhenOnlyOrgnummerSupplied() {
 		boolean hasAccess = pep2d.hasAccess(TilgangSak.builder()
 				.orgnummer(ORGNR)
-				.tema(TEST_TEMA)
+				.tema(TEMA_BID)
 				.build(), new SafRequestContext(OIDC_TOKEN_PERSON_USER_TEST, oidcValidatorTool));
 
 		assertTrue(hasAccess);
@@ -94,7 +94,7 @@ public class Pep2dImplTest extends AbstractPepTest {
 
 	private void assertCommonXacmlRequestResources(XacmlRequest capturedRequest) {
 		assertThat(capturedRequest.getResources(), hasItem(new XacmlAttribute(RESOURCE_FELLES_RESOURCE_TYPE, RESOURCE_SAF_SAK_DOKUMENT)));
-		assertThat(capturedRequest.getResources(), hasItem(new XacmlAttribute(RESOURCE_SAF_TEMA, TEST_TEMA)));
+		assertThat(capturedRequest.getResources(), hasItem(new XacmlAttribute(RESOURCE_SAF_TEMA, TEMA_BID)));
 	}
 
 	@Test

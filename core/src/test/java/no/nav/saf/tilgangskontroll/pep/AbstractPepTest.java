@@ -16,7 +16,8 @@ public abstract class AbstractPepTest {
 	protected static final String ORGNR = "999999999";
 	protected static String AKTOER_ID = "1234";
 	protected static String FNR = "***gammelt_fnr***";
-	protected static String TEST_TEMA = "BID";
+	protected static String FNR2 = "***gammelt_fnr***";
+	protected static String TEMA_BID = "BID";
 
 	protected AbacService abacService;
 	protected OidcValidatorTool oidcValidatorTool;
