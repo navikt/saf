@@ -52,6 +52,10 @@ public class DokumentoversiktFagsakIT extends AbstractItest {
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType())
 						.withBodyFile("joark/finnjournalposter-happy.json")));
+		stubFor(post("/aktoerv2")
+				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
+						.withBodyFile("aktoerV2/hentIdentForAktoerIdListe-happy.xml")));
+
 
 		GraphQLRequest request = new GraphQLRequest(stringFromClasspath("dokumentoversiktFagsak/query-fagsakid.json"), null, null);
 		RequestEntity<GraphQLRequest> requestEntity = new RequestEntity<>(request, createHeaders(), HttpMethod.POST, new URI("/graphql"));
