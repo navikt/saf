@@ -12,7 +12,7 @@ import no.nav.saf.tjeneste.visningsmodell.kode.Arkivsakssystem;
  */
 public interface TilgangsmodellHentdokumentRepository {
 
-	TilgangJournalpost findTilgangJournalpostFromSafRequestContext(SafRequestContext safRequestContext);
+	TilgangJournalpost findTilgangJournalpostFromSafRequestContext(SafRequestContext safRequestContext, TilgangSak tilgangSak);
 
 	TilgangBruker findTilgangBruker(Arkivsak arkivsak, SafRequestContext safRequestContext);
 

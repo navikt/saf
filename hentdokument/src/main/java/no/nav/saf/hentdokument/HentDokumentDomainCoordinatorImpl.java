@@ -58,7 +58,7 @@ public class HentDokumentDomainCoordinatorImpl implements HentDokumentDomainCoor
 		}
 
 		final TilgangSak tilgangSak = tilgangsmodellHentdokumentRepository.findTilgangSak(arkivsak.getArkivsaksnummer(), arkivsak
-				.getArkivsaksystem().name(), tilgangBruker, safRequestContext);
+				.getArkivsaksystem() == null ? null : arkivsak.getArkivsaksystem().name(), tilgangBruker, safRequestContext);
 
 		boolean pep2Access = pep2.hasAccess(tilgangSak, safRequestContext);
 		if (!pep2Access) {
@@ -75,7 +75,7 @@ public class HentDokumentDomainCoordinatorImpl implements HentDokumentDomainCoor
 			throw new TilgangskontrollException();
 		}
 
-		final TilgangJournalpost tilgangJournalpost = tilgangsmodellHentdokumentRepository.findTilgangJournalpostFromSafRequestContext(safRequestContext);
+		final TilgangJournalpost tilgangJournalpost = tilgangsmodellHentdokumentRepository.findTilgangJournalpostFromSafRequestContext(safRequestContext, tilgangSak);
 		boolean pep4Access = pep4.hasAccess(tilgangJournalpost, safRequestContext);
 
 		if (!pep4Access) {

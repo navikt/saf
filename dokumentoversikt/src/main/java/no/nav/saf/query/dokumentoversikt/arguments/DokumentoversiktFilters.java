@@ -7,6 +7,7 @@ import no.nav.saf.tjeneste.visningsmodell.kode.Journalstatus;
 import no.nav.saf.tjeneste.visningsmodell.kode.Tema;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -30,17 +31,17 @@ public class DokumentoversiktFilters {
 		if (tema.isEmpty()) {
 			this.tema = Tema.ALL;
 		} else {
-			this.tema = tema;
+			this.tema = new ArrayList<>(tema);
 		}
 		if (journalposttyper.isEmpty()) {
 			this.journalposttyper = Journalposttype.ALL;
 		} else {
-			this.journalposttyper = journalposttyper;
+			this.journalposttyper = new ArrayList<>(journalposttyper);
 		}
 		if (journalstatuser.isEmpty()) {
 			this.journalstatuser = Journalstatus.ALL;
 		} else {
-			this.journalstatuser = journalstatuser;
+			this.journalstatuser =  new ArrayList<>(journalstatuser);
 		}
 		this.visFeilregistrerte = this.journalstatuser.contains(Journalstatus.FEILREGISTRERT);
 	}

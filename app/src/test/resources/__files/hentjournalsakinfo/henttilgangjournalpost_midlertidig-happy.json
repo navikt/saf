@@ -8,11 +8,12 @@
     "mottakskanal": null,
     "avsenderMottakerId": null,
     "bruker": {
-      "brukerId": "***gammelt_fnr***59"
+      "brukerId": "***gammelt_fnr***59",
+      "brukerType": "PERSON"
     },
     "sak": {
-      "sakId": "10672720",
-      "fagsystem": "FS22"
+      "sakId": null,
+      "fagsystem": null
     },
     "dokument": {
       "dokumentinfoId": "123",
