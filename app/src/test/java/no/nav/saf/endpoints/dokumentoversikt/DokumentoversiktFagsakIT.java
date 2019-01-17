@@ -51,6 +51,7 @@ public class DokumentoversiktFagsakIT extends AbstractItest {
 		stubFor(post("/hentjournalsakinfo/finnjournalposter")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType())
+
 						.withBodyFile("joark/finnjournalposter-happy.json")));
 		stubFor(post("/aktoerv2")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
@@ -143,4 +144,105 @@ public class DokumentoversiktFagsakIT extends AbstractItest {
 		assertEquals(0, dokumentoversikt.getJournalposter().size());
 	}
 
+
+	@Test
+	public void shouldHentDokumentoversiktFagsakAktoerTechnicalFail() throws IOException, URISyntaxException {
+		abacPermit();
+
+		stubFor(get("/pensjonsakrs")
+				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
+						.withHeader(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType())
+						.withBodyFile("psak/psak-hentBrukerForSak-happy.json")));
+
+		stubFor(get("/gsak?fagsakNr=" + FAGSAK_ID + "&applikasjon=" + FAGSAK_SYSTEM)
+				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
+						.withHeader(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType())
+						.withBodyFile("gsak/gsak-sakerByFagsakIdAndFagsaksystem-happy.json")));
+
+		stubFor(post("/hentjournalsakinfo/finnjournalposter")
+				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
+						.withHeader(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType())
+						.withBodyFile("joark/finnjournalposter-empty.json")));
+
+		stubFor(post("/aktoerv2")
+				.willReturn(aResponse().withStatus(HttpStatus.INTERNAL_SERVER_ERROR.value())
+						.withBodyFile("aktoerV2/hentIdentForAktoerIdListe-technical.xml")));
+
+
+		GraphQLRequest request = new GraphQLRequest(stringFromClasspath("dokumentoversiktFagsak/query-fagsakid-gsak.json"), null, null);
+		RequestEntity<GraphQLRequest> requestEntity = new RequestEntity<>(request, createHeaders(), HttpMethod.POST, new URI("/graphql"));
+
+		ResponseEntity<LinkedHashMap> responseEntity = restTemplate.exchange(requestEntity, LinkedHashMap.class);
+		Map<String, Object> responseEntityData = (Map<String, Object>) responseEntity.getBody().get("data");
+		Dokumentoversikt dokumentoversikt = objectMapper.convertValue(responseEntityData.get("dokumentoversiktFagsak"), Dokumentoversikt.class);
+
+		assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+		assertEquals(0, dokumentoversikt.getJournalposter().size());
+	}
+
+	@Test
+	public void shouldHentDokumentoversikHentSakSammendragListeTechnicalFail() throws IOException, URISyntaxException {
+		abacPermit();
+
+		stubFor(get("/pensjonsakrs")
+				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
+						.withHeader(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType())
+						.withBodyFile("psak/psak-hentBrukerForSak-happy.json")));
+
+		stubFor(post("/hentjournalsakinfo/finnjournalposter")
+				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
+						.withHeader(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType())
+						.withBodyFile("joark/finnjournalposter-empty.json")));
+
+		stubFor(post("/aktoerv2")
+				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
+						.withBodyFile("aktoerV2/hentAktoerIdForIdent-happy.xml")));
+
+		stubFor(post("/servicegw")
+				.willReturn(aResponse().withStatus(HttpStatus.INTERNAL_SERVER_ERROR.value())
+						.withBodyFile("psak-hentSakSammendragListe-technical.xml")));
+
+		GraphQLRequest request = new GraphQLRequest(stringFromClasspath("dokumentoversiktFagsak/query-fagsakid-psak.json"), null, null);
+		RequestEntity<GraphQLRequest> requestEntity = new RequestEntity<>(request, createHeaders(), HttpMethod.POST, new URI("/graphql"));
+
+		ResponseEntity<LinkedHashMap> responseEntity = restTemplate.exchange(requestEntity, LinkedHashMap.class);
+		Map<String, Object> responseEntityData = (Map<String, Object>) responseEntity.getBody().get("data");
+		Dokumentoversikt dokumentoversikt = objectMapper.convertValue(responseEntityData.get("dokumentoversiktFagsak"), Dokumentoversikt.class);
+
+		assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+		assertEquals(0, dokumentoversikt.getJournalposter().size());
+	}
+
+	@Test
+	public void shouldHentDokumentoversikHentSakSammendragListeFunctionalFail() throws IOException, URISyntaxException {
+		abacPermit();
+
+		stubFor(get("/pensjonsakrs")
+				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
+						.withHeader(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType())
+						.withBodyFile("psak/psak-hentBrukerForSak-happy.json")));
+
+		stubFor(post("/hentjournalsakinfo/finnjournalposter")
+				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
+						.withHeader(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType())
+						.withBodyFile("joark/finnjournalposter-empty.json")));
+
+		stubFor(post("/aktoerv2")
+				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
+						.withBodyFile("aktoerV2/hentAktoerIdForIdent-happy.xml")));
+
+		stubFor(post("/servicegw")
+				.willReturn(aResponse().withStatus(HttpStatus.BAD_REQUEST.value())
+						.withBodyFile("psak-hentSakSammendragListe-technical.xml")));
+
+		GraphQLRequest request = new GraphQLRequest(stringFromClasspath("dokumentoversiktFagsak/query-fagsakid-psak.json"), null, null);
+		RequestEntity<GraphQLRequest> requestEntity = new RequestEntity<>(request, createHeaders(), HttpMethod.POST, new URI("/graphql"));
+
+		ResponseEntity<LinkedHashMap> responseEntity = restTemplate.exchange(requestEntity, LinkedHashMap.class);
+		Map<String, Object> responseEntityData = (Map<String, Object>) responseEntity.getBody().get("data");
+		Dokumentoversikt dokumentoversikt = objectMapper.convertValue(responseEntityData.get("dokumentoversiktFagsak"), Dokumentoversikt.class);
+
+		assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+		assertEquals(0, dokumentoversikt.getJournalposter().size());
+	}
 }
