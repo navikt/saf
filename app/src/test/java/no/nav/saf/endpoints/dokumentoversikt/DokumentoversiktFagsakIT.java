@@ -40,7 +40,7 @@ public class DokumentoversiktFagsakIT extends AbstractItest {
 	private ObjectMapper objectMapper = new ObjectMapper();
 
 	@Test
-	public void shouldHentDokumentoversiktFagsakWithFagsakID() throws IOException, URISyntaxException {
+	public void shouldHentDokumentoversiktFagsakWithFagsakIdGSAK() throws IOException, URISyntaxException {
 		abacPermit();
 
 		stubFor(get("/gsak?fagsakNr=" + FAGSAK_ID + "&applikasjon=" + FAGSAK_SYSTEM)
@@ -57,7 +57,7 @@ public class DokumentoversiktFagsakIT extends AbstractItest {
 						.withBodyFile("aktoerV2/hentIdentForAktoerIdListe-happy.xml")));
 
 
-		GraphQLRequest request = new GraphQLRequest(stringFromClasspath("dokumentoversiktFagsak/query-fagsakid.json"), null, null);
+		GraphQLRequest request = new GraphQLRequest(stringFromClasspath("dokumentoversiktFagsak/query-fagsakid-gsak.json"), null, null);
 		RequestEntity<GraphQLRequest> requestEntity = new RequestEntity<>(request, createHeaders(), HttpMethod.POST, new URI("/graphql"));
 
 		ResponseEntity<LinkedHashMap> responseEntity = restTemplate.exchange(requestEntity, LinkedHashMap.class);
@@ -73,12 +73,49 @@ public class DokumentoversiktFagsakIT extends AbstractItest {
 	}
 
 	@Test
+	public void shouldHentDokumentoversiktFagsakWithFagsakIdPSAK() throws IOException, URISyntaxException {
+		abacPermit();
+
+		stubFor(get("/pensjonsakrs")
+				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
+						.withHeader(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType())
+						.withBodyFile("psak/psak-hentBrukerForSak-happy.json")));
+
+		stubFor(post("/hentjournalsakinfo/finnjournalposter")
+				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
+						.withHeader(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType())
+						.withBodyFile("joark/finnjournalposter-happy.json")));
+
+		stubFor(post("/aktoerv2")
+				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
+						.withBodyFile("aktoerV2/hentAktoerIdForIdent-happy.xml")));
+
+		stubFor(post("/servicegw")
+				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
+						.withBodyFile("psak/psak-hentSakSammendragListe-happy.xml")));
+
+		GraphQLRequest request = new GraphQLRequest(stringFromClasspath("dokumentoversiktFagsak/query-fagsakid-psak.json"), null, null);
+		RequestEntity<GraphQLRequest> requestEntity = new RequestEntity<>(request, createHeaders(), HttpMethod.POST, new URI("/graphql"));
+
+		ResponseEntity<LinkedHashMap> responseEntity = restTemplate.exchange(requestEntity, LinkedHashMap.class);
+		Map<String, Object> responseEntityData = (Map<String, Object>) responseEntity.getBody().get("data");
+		Dokumentoversikt dokumentoversikt = objectMapper.convertValue(responseEntityData.get("dokumentoversiktFagsak"), Dokumentoversikt.class);
+
+		assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+		assertEquals("429837417", dokumentoversikt.getJournalposter().get(0).getJournalpostId());
+		assertEquals("429837329", dokumentoversikt.getJournalposter().get(1).getJournalpostId());
+		assertEquals("429812815", dokumentoversikt.getJournalposter().get(2).getJournalpostId());
+
+		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter")).withRequestBody(matchingJsonPath("$.psakSakIds", containing("21998969"))));
+	}
+
+	@Test
 	public void hentSakerTechnicalFail() throws IOException, URISyntaxException {
 		abacDeny();
 		stubFor(get("/gsak?fagsakNr=***gammelt_fnr***59&applikasjon=AO01")
 				.willReturn(aResponse().withStatus(HttpStatus.INTERNAL_SERVER_ERROR.value())));
 
-		GraphQLRequest request = new GraphQLRequest(stringFromClasspath("dokumentoversiktFagsak/query-fagsakid.json"), null, null);
+		GraphQLRequest request = new GraphQLRequest(stringFromClasspath("dokumentoversiktFagsak/query-fagsakid-gsak.json"), null, null);
 		RequestEntity<GraphQLRequest> requestEntity = new RequestEntity<>(request, createHeaders(), HttpMethod.POST, new URI("/graphql"));
 
 		ResponseEntity<LinkedHashMap> responseEntity = restTemplate.exchange(requestEntity, LinkedHashMap.class);
@@ -95,7 +132,7 @@ public class DokumentoversiktFagsakIT extends AbstractItest {
 		stubFor(get("/gsak?fagsakNr=***gammelt_fnr***59&applikasjon=AO01")
 				.willReturn(aResponse().withStatus(HttpStatus.BAD_REQUEST.value())));
 
-		GraphQLRequest request = new GraphQLRequest(stringFromClasspath("dokumentoversiktFagsak/query-fagsakid.json"), null, null);
+		GraphQLRequest request = new GraphQLRequest(stringFromClasspath("dokumentoversiktFagsak/query-fagsakid-gsak.json"), null, null);
 		RequestEntity<GraphQLRequest> requestEntity = new RequestEntity<>(request, createHeaders(), HttpMethod.POST, new URI("/graphql"));
 
 		ResponseEntity<LinkedHashMap> responseEntity = restTemplate.exchange(requestEntity, LinkedHashMap.class);
