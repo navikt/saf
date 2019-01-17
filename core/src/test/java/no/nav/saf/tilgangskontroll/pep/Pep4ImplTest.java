@@ -39,6 +39,8 @@ class Pep4ImplTest extends AbstractPepTest {
 
 	@Test
 	void shouldPermitWhenJournalstatusNotUtgaar() {
+		when(oidcValidatorTool.validate(OIDC_TOKEN_PERSON_USER_TEST)).thenReturn(true);
+
 		boolean hasAccess = pep4.hasAccess(TilgangJournalpost.builder()
 				.journalStatus(FERDIGSTILT.name())
 				.build(), new SafRequestContext(OIDC_TOKEN_PERSON_USER_TEST, oidcValidatorTool));
@@ -49,6 +51,8 @@ class Pep4ImplTest extends AbstractPepTest {
 	@Test
 	void shouldPermitWhenJournalstatusUtgaarAndSaksbehandlerHasAccess() {
 		when(abacService.evaluate(any(XacmlRequest.class))).thenReturn(new XacmlResponse(Decision.PERMIT, null, null, null));
+		when(oidcValidatorTool.validate(OIDC_TOKEN_PERSON_USER_TEST)).thenReturn(true);
+
 		ArgumentCaptor<XacmlRequest> request = ArgumentCaptor.forClass(XacmlRequest.class);
 
 		boolean hasAccess = pep4.hasAccess(TilgangJournalpost.builder()

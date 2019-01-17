@@ -85,6 +85,7 @@ public class Pep1ImplTest extends AbstractPepTest {
 	@Test
 	public void shouldDeny() {
 		when(abacService.evaluate(any(XacmlRequest.class))).thenReturn(new XacmlResponse(Decision.DENY, null, null, null));
+		when(oidcValidatorTool.validate(OIDC_TOKEN_PERSON_USER_TEST)).thenReturn(true);
 
 		boolean hasAccess = pep1.hasAccess(TilgangBruker.builder()
 				.aktoerId(AKTOER_ID)

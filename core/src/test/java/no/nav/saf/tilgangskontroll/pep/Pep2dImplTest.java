@@ -84,6 +84,7 @@ public class Pep2dImplTest extends AbstractPepTest {
 
 	@Test
 	public void shouldPermitWhenOnlyOrgnummerSupplied() {
+		when(oidcValidatorTool.validate(OIDC_TOKEN_PERSON_USER_TEST)).thenReturn(true);
 		boolean hasAccess = pep2d.hasAccess(TilgangSak.builder()
 				.orgnummer(ORGNR)
 				.tema(TEMA_BID)
