@@ -49,7 +49,12 @@ public class SafSecurityContext {
 	}
 
 	public String getOidcTokenBody() {
-		return oidcTokenBody;
+		if (oidcTokenBody == null) {
+			throw new OidcAuthorizationException("Autentiseringsmekanisme er ikke støttet. " +
+					"Kun OIDC-token (JWT via OAuth 2.0) med header \"Authorization\" : \"Bearer {token}\" er tillatt.");
+		} else {
+			return oidcTokenBody;
+		}
 	}
 
 	public String getSaksbehandlerId() {
