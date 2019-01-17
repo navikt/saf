@@ -40,8 +40,13 @@ public class PensjonSakRestConsumer {
 		try {
 			HttpHeaders headers = new HttpHeaders();
 			headers.add("sakId", sakId);
-			return restTemplate.exchange(pensjonsakApiUrl, HttpMethod.GET, new HttpEntity<>(headers), HentBrukerForSakResponseTo.class, sakId)
+			HentBrukerForSakResponseTo hentBrukerForSakResponseTo = restTemplate.exchange(pensjonsakApiUrl, HttpMethod.GET, new HttpEntity<>(headers), HentBrukerForSakResponseTo.class, sakId)
 					.getBody();
+			if (hentBrukerForSakResponseTo.getFnr() == null || hentBrukerForSakResponseTo.getFnr().isEmpty()) {
+				throw new SafFunctionalException(String.format("hentBrukerForSak returnerte tomt fødselsnummer for sakId=%s", sakId));
+			} else {
+				return hentBrukerForSakResponseTo;
+			}
 		} catch (HttpServerErrorException e) {
 			throw new SafTechnicalException(String.format("hentBrukerForSak feilet teknisk med statusKode=%s. Feilmelding=%s", e
 					.getStatusCode(), e.getMessage()), e, e.getStatusCode());

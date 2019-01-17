@@ -158,7 +158,7 @@ public class JournalpostDtoMapper {
 		switch (journalpostDto.getJournalposttype()) {
 			case I:
 				if (journalpostDto.getMottakskanal() == null) {
-					return mapManglendeMottakskanal(journalpostDto);
+					return Kanal.UKJENT;
 				}
 				return journalpostDto.getMottakskanal().getSafKanal();
 			case U:
@@ -171,11 +171,6 @@ public class JournalpostDtoMapper {
 			default:
 				return null;
 		}
-	}
-
-	// TODO skal lages en Kanal.UKJENT istedet, fikses etter test er fikset.
-	private Kanal mapManglendeMottakskanal(JournalpostDto journalpostDto) {
-		return null;
 	}
 
 	private Kanal mapManglendeUtsendingskanal(JournalpostDto journalpostDto) {

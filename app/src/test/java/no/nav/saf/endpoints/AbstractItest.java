@@ -8,7 +8,6 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import no.nav.modig.testcertificates.TestCertificates;
 import no.nav.saf.ApplicationConfig;
-import no.nav.saf.cache.LokalCacheConfig;
 import no.nav.saf.endpoints.testconfig.STSTestConfig;
 import no.nav.saf.exceptions.OidcAuthorizationException;
 import org.apache.cxf.helpers.IOUtils;
@@ -22,7 +21,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.cache.CacheManager;
 import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -54,22 +52,15 @@ public abstract class AbstractItest {
 	protected TestRestTemplate restTemplate;
 
 	@Inject
-	CacheManager cacheManager;
-
-	@Inject
 	private RsaKey issuerNavSts;
 
 	@BeforeAll
-	public static void setUpBeforeAll() throws Exception {
+	public static void setUpBeforeAll() {
 		TestCertificates.setupKeyAndTrustStore();
 	}
 
 	@BeforeEach
 	public void setUp() {
-		cacheManager.getCache(LokalCacheConfig.SAK_BY_SAKID_CACHE).clear();
-		cacheManager.getCache(LokalCacheConfig.TILGANGSMODELL_REPO_BRUKER_CACHE).clear();
-		cacheManager.getCache(LokalCacheConfig.PENSJON_SAK_SAMMENDRAG_LISTE_CACHE).clear();
-
 		WireMock.reset();
 		WireMock.resetAllRequests();
 		WireMock.removeAllMappings();
