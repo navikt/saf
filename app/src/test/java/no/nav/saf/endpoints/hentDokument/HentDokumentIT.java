@@ -324,16 +324,17 @@ public class HentDokumentIT extends AbstractItest {
 		stubFor(get("/hentjournalsakinfo/henttilgangjournalpost/" + JOURNALPOST_ID + "/" + DOKUMENT_ID + "/" + VARIANTFORMAT).willReturn(aResponse()
 				.withStatus(HttpStatus.OK.value())
 				.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
-				.withBodyFile("hentjournalsakinfo/henttilgangjournalpost_gsak-happy.json")));
+				.withBodyFile("hentjournalsakinfo/henttilgangjournalpostTemaBid_gsak-happy.json")));
 
-		stubFor(get("/gsak/10672720")
+		stubFor(get("/gsak/55555555")
 				.inScenario(SCENARIO_HENTSAK)
 				.whenScenarioStateIs(Scenario.STARTED)
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("hentsak/hentsakbysaksid-happy.json"))
+						.withBodyFile("hentsak/hentsakbysaksidTemaBid-happy.json"))
 				.willSetStateTo(STATE_TILGANG_SAK));
-		stubFor(get("/gsak/10672720")
+
+		stubFor(get("/gsak/55555555")
 				.inScenario(SCENARIO_HENTSAK)
 				.whenScenarioStateIs(STATE_TILGANG_SAK)
 				.willReturn(aResponse().withStatus(HttpStatus.INTERNAL_SERVER_ERROR.value())));
