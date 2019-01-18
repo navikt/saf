@@ -1,0 +1,7 @@
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
+<soapenv:Body>
+	<a:hentSakSammendragListeResponse xmlns:a="http://nav.no/tjeneste/virksomhet/pensjonSak/v1">
+		<hentSakSammendragListeResponse/>
+	</a:hentSakSammendragListeResponse>
+</soapenv:Body>
+</soapenv:Envelope>

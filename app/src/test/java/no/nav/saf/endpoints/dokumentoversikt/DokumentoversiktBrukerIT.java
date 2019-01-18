@@ -329,15 +329,4 @@ public class DokumentoversiktBrukerIT extends AbstractItest {
 
 		verify(postRequestedFor(urlEqualTo("/servicegw")).withRequestBody(matchingXPath("//personident/text()", equalTo("***gammelt_fnr***"))));
 	}
-
-// todo implement
-//	@Test
-//	@Disabled
-//	public void serviewgwFail() {
-//	}
-
-	// todo test for om dokumentoversikt filtrerer mhp abac?
-
-	// todo vurder arametrized test for gsak, for å teste mhp aktoerid
-
 }
