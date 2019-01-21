@@ -59,7 +59,7 @@ class DokumentoversiktFagsakCoordinatorImpl implements DokumentoversiktFagsakCoo
 	}
 
 	@Override
-	@Monitor(value = "dok_request", extraTags = {"process", "dokumentOversikt", "BrukerEllerFagsak", "Fagsak"}, histogram = true)
+	@Monitor(value = "dok_request", extraTags = {"process", "dokumentOversiktBruker"}, histogram = true)
 	public Dokumentoversikt hentDokumentoversikt(DokumentoversiktFagsakArguments dokumentoversiktFagsakArguments, SafRequestContext safRequestContext) {
 		final FagsakIdInput fagsakIdInput = dokumentoversiktFagsakArguments.getFagsakIdInput();
 		final List<TilgangBruker> tilgangBrukerList = tilgangsmodellRepository.findTilgangBrukerList(fagsakIdInput);

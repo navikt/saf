@@ -60,7 +60,7 @@ class DokumentoversiktBrukerCoordinatorImpl implements DokumentoversiktBrukerCoo
 	}
 
 	@Override
-	@Monitor(value = "dok_request", extraTags = {"process", "dokumentOversikt", "BrukerEllerFagsak", "Bruker"}, histogram = true)
+	@Monitor(value = "dok_request", extraTags = {"process", "dokumentOversiktBruker"}, histogram = true)
 	public Dokumentoversikt hentDokumentoversikt(DokumentoversiktBrukerArguments dokumentoversiktBrukerArguments, SafRequestContext safRequestContext) {
 		TilgangBruker tilgangBruker = tilgangsmodellRepository.findTilgangBruker(dokumentoversiktBrukerArguments.getBrukerIdInput());
 		if (tilgangBruker != null) {
