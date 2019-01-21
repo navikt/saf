@@ -190,7 +190,7 @@ public class HentDokumentIT extends AbstractItest {
 
 		stubFor(get("/pensjonsakrs").willReturn(aResponse().withStatus(HttpStatus.UNAUTHORIZED.value())
 				.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
-				.withBodyFile("psak/psak-psak-hentBrukerForSak-happy.json")));
+				.withBodyFile("psak/psak-hentBrukerForSak-happy.json")));
 
 		String uri = "/rest/hentdokument/" + JOURNALPOST_ID + "/" + DOKUMENT_ID + "/" + VARIANTFORMAT.name();
 		ResponseEntity<String> responseEntity = this.restTemplate.exchange(uri, HttpMethod.GET, createHttpEntity(), String.class);
