@@ -1,11 +1,11 @@
 package no.nav.saf.hentdokument.repo;
 
 import no.nav.saf.domain.Arkivsak;
+import no.nav.saf.domain.kode.Arkivsakssystem;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.domain.tilgangsmodell.TilgangJournalpost;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
-import no.nav.saf.tjeneste.visningsmodell.kode.Arkivsakssystem;
 
 /**
  * @author Sigurd Midttun, Visma Consulting.

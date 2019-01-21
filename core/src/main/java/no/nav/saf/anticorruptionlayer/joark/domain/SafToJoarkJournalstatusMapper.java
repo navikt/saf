@@ -1,7 +1,7 @@
 package no.nav.saf.anticorruptionlayer.joark.domain;
 
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.JournalStatusCode;
-import no.nav.saf.tjeneste.visningsmodell.kode.Journalstatus;
+import no.nav.saf.domain.kode.Journalstatus;
 
 import java.util.ArrayList;
 import java.util.List;

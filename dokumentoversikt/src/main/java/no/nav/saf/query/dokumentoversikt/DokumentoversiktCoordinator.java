@@ -1,8 +1,8 @@
 package no.nav.saf.query.dokumentoversikt;
 
+import no.nav.saf.domain.visningsmodell.DokumentInfo;
+import no.nav.saf.domain.visningsmodell.Journalpost;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
-import no.nav.saf.tjeneste.visningsmodell.DokumentInfo;
-import no.nav.saf.tjeneste.visningsmodell.Journalpost;
 
 import java.util.List;
 

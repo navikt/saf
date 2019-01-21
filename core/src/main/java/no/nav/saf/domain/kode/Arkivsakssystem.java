@@ -1,4 +1,4 @@
-package no.nav.saf.tjeneste.visningsmodell.kode;
+package no.nav.saf.domain.kode;
 
 /**
  * @author Joakim Bjørnstad, Jbit AS

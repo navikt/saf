@@ -1,11 +1,11 @@
-package no.nav.saf.tjeneste.visningsmodell;
+package no.nav.saf.domain.visningsmodell;
 
 import lombok.Builder;
 import lombok.Value;
-import no.nav.saf.tjeneste.visningsmodell.kode.Journalposttype;
-import no.nav.saf.tjeneste.visningsmodell.kode.Journalstatus;
-import no.nav.saf.tjeneste.visningsmodell.kode.Kanal;
-import no.nav.saf.tjeneste.visningsmodell.kode.Tema;
+import no.nav.saf.domain.kode.Journalposttype;
+import no.nav.saf.domain.kode.Journalstatus;
+import no.nav.saf.domain.kode.Kanal;
+import no.nav.saf.domain.kode.Tema;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;

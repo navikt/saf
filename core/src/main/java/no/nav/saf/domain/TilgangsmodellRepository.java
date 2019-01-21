@@ -1,15 +1,15 @@
 package no.nav.saf.domain;
 
 import io.reactivex.Flowable;
+import no.nav.saf.domain.kode.Journalposttype;
+import no.nav.saf.domain.kode.Journalstatus;
+import no.nav.saf.domain.kode.Tema;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.domain.tilgangsmodell.TilgangJournalpost;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tjeneste.argumenter.BrukerIdInput;
 import no.nav.saf.tjeneste.argumenter.FagsakIdInput;
-import no.nav.saf.tjeneste.visningsmodell.kode.Journalposttype;
-import no.nav.saf.tjeneste.visningsmodell.kode.Journalstatus;
-import no.nav.saf.tjeneste.visningsmodell.kode.Tema;
 
 import java.time.LocalDate;
 import java.util.List;

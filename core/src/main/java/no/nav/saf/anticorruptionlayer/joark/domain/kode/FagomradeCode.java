@@ -1,6 +1,6 @@
 package no.nav.saf.anticorruptionlayer.joark.domain.kode;
 
-import no.nav.saf.tjeneste.visningsmodell.kode.Tema;
+import no.nav.saf.domain.kode.Tema;
 
 public enum FagomradeCode {
 

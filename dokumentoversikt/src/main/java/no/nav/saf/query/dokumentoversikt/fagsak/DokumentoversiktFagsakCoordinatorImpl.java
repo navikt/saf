@@ -7,6 +7,8 @@ import no.nav.saf.domain.TilgangsmodellRepository;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.domain.tilgangsmodell.TilgangJournalpost;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
+import no.nav.saf.domain.visningsmodell.Dokumentoversikt;
+import no.nav.saf.domain.visningsmodell.Journalpost;
 import no.nav.saf.metrics.Monitor;
 import no.nav.saf.query.dokumentoversikt.DokumentoversiktVisningsmodellRepository;
 import no.nav.saf.query.dokumentoversikt.SideInfoMapper;
@@ -14,8 +16,6 @@ import no.nav.saf.query.dokumentoversikt.arguments.DokumentoversiktPagination;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.pep.Pep;
 import no.nav.saf.tjeneste.argumenter.FagsakIdInput;
-import no.nav.saf.tjeneste.visningsmodell.Dokumentoversikt;
-import no.nav.saf.tjeneste.visningsmodell.Journalpost;
 import org.reactivestreams.Publisher;
 import org.springframework.stereotype.Component;
 

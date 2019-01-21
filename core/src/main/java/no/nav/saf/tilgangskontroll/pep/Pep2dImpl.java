@@ -25,6 +25,10 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 /**
+ * Dekker følgende policies i saf:
+ * <p>
+ * https://confluence.adeo.no/pages/viewpage.action?pageId=305352853
+ *
  * @author Joakim Bjørnstad, Jbit AS
  */
 @Slf4j
@@ -86,7 +90,7 @@ public class Pep2dImpl implements Pep<TilgangSak> {
 			request.resource(RESOURCE_FELLES_PERSON_AKTOERID_RESOURCE, ressurs.getAktoerId());
 		} else if (ressurs.getFoedselsnummer() != null) {
 			request.resource(RESOURCE_FELLES_PERSON_FNR, ressurs.getFoedselsnummer());
-		} else if(ressurs.getAktoerId() == null && ressurs.getFoedselsnummer() == null && ressurs.getOrgnummer() != null) {
+		} else if (ressurs.getAktoerId() == null && ressurs.getFoedselsnummer() == null && ressurs.getOrgnummer() != null) {
 			// Ikke utfør sjekk for Organisasjon
 			return Decision.PERMIT;
 		} else {

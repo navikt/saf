@@ -3,6 +3,8 @@ package no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark901;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import no.nav.saf.anticorruptionlayer.joark.domain.kode.JournalStatusCode;
+import no.nav.saf.anticorruptionlayer.joark.domain.kode.JournalpostTypeCode;
 
 import java.time.LocalDateTime;
 
@@ -14,13 +16,12 @@ import java.time.LocalDateTime;
 public class TilgangJournalpostDto {
 
 	private String journalpostId;
-	private String journalStatus;
-	private String journalpostType;
+	private JournalStatusCode journalStatus;
+	private JournalpostTypeCode journalpostType;
 	private String tema;
 	private LocalDateTime datoOpprettet;
 	private String mottakskanal;
 	private String avsenderMottakerId;
-	//	private  Boolean kvalitetssikretForInnsyn; TODO Finne ut av denne
 	private TilgangBrukerDto bruker;
 	private TilgangSakDto sak;
 	private TilgangDokumentInfoDto dokument;

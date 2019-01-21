@@ -1,7 +1,7 @@
 package no.nav.saf.tjeneste.argumenter;
 
 import lombok.Value;
-import no.nav.saf.tjeneste.visningsmodell.BrukerIdType;
+import no.nav.saf.domain.visningsmodell.BrukerIdType;
 
 /**
  * @author Sigurd Midttun, Visma Consulting.

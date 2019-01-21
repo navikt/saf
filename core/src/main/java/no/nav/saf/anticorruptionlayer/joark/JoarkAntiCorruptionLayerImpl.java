@@ -21,6 +21,10 @@ import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark901.Tilgang
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark920.HentDokumentResponseTo;
 import no.nav.saf.domain.Arkivsak;
 import no.nav.saf.domain.HentDokument;
+import no.nav.saf.domain.kode.Arkivsakssystem;
+import no.nav.saf.domain.kode.Journalposttype;
+import no.nav.saf.domain.kode.Journalstatus;
+import no.nav.saf.domain.kode.Tema;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.domain.tilgangsmodell.TilgangDokumentInfo;
 import no.nav.saf.domain.tilgangsmodell.TilgangJournalpost;
@@ -28,10 +32,6 @@ import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 import no.nav.saf.exceptions.SafTechnicalException;
 import no.nav.saf.exceptions.UgyldigArkivsaksystemException;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
-import no.nav.saf.tjeneste.visningsmodell.kode.Arkivsakssystem;
-import no.nav.saf.tjeneste.visningsmodell.kode.Journalposttype;
-import no.nav.saf.tjeneste.visningsmodell.kode.Journalstatus;
-import no.nav.saf.tjeneste.visningsmodell.kode.Tema;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
@@ -78,10 +78,10 @@ class JoarkAntiCorruptionLayerImpl implements JoarkAntiCorruptionLayer {
 				.visFeilregistrerte(inkluderJournalstatuses.contains(Journalstatus.FEILREGISTRERT))
 				.fraDato(fraDato.toString())
 				.gsakSakIds(tilgangSakList.stream()
-						.filter(tilgangSak -> Arkivsakssystem.GSAK.name().equals(tilgangSak.getArkivsaksystem()))
+						.filter(tilgangSak -> Arkivsakssystem.GSAK.equals(tilgangSak.getArkivsaksystem()))
 						.map(TilgangSak::getArkivsaksnummer).collect(Collectors.toList()))
 				.psakSakIds(tilgangSakList.stream()
-						.filter(tilgangSak -> Arkivsakssystem.PSAK.name().equals(tilgangSak.getArkivsaksystem()))
+						.filter(tilgangSak -> Arkivsakssystem.PSAK.equals(tilgangSak.getArkivsaksystem()))
 						.map(TilgangSak::getArkivsaksnummer).collect(Collectors.toList()))
 				.foerste(foerste)
 				.etterPeker(etterPeker)
@@ -113,7 +113,7 @@ class JoarkAntiCorruptionLayerImpl implements JoarkAntiCorruptionLayer {
 			return TilgangSak.builder()
 					.foedselsnummer(tilgangBruker.getFoedselsnr())
 					.arkivsaksnummer(tilgangJournalpostDto.getSak().getSakId())
-					.arkivsaksystem(mapJoarkFagsystemToArkivsakssystemString(tilgangJournalpostDto.getSak()
+					.arkivsaksystem(mapJoarkFagsystemToArkivsakssystemCode(tilgangJournalpostDto.getSak()
 							.getFagsystem(), tilgangJournalpostDto.getJournalpostId()))
 					.tema(tilgangJournalpostDto.getTema())
 					.build();
@@ -186,15 +186,12 @@ class JoarkAntiCorruptionLayerImpl implements JoarkAntiCorruptionLayer {
 		final TilgangDokumentInfoDto tilgangDokumentInfoDto = dto.getDokument();
 		return TilgangJournalpost.builder()
 				.journalpostId(dto.getJournalpostId())
-				.journalStatus(dto.getJournalStatus())
-				.journalpostType(dto.getJournalpostType())
+				.journalstatus(dto.getJournalStatus().toSafJournalstatus())
+				.journalposttype(dto.getJournalpostType().toSafJournalposttype())
 				.tema(tilgangSak.getTema())
-				.arkivsaksystem(mapJoarkFagsystemToArkivsakssystemString(dto.getSak() == null ? null : dto.getSak()
+				.arkivsaksystem(mapJoarkFagsystemToArkivsakssystemCode(dto.getSak() == null ? null : dto.getSak()
 						.getFagsystem(), dto.getJournalpostId()))
 				.arkivsaksnummer(dto.getSak() == null ? null : dto.getSak().getSakId())
-				.datoOpprettet(dto.getDatoOpprettet().toLocalDate())
-				.mottakskanal(dto.getMottakskanal())
-				.avsenderMottakerId(dto.getAvsenderMottakerId())
 				.dokumenter(Arrays.asList(TilgangDokumentInfo.builder()
 						.dokumentInfoId(tilgangDokumentInfoDto.getDokumentinfoId())
 						.dokumentstatus(tilgangDokumentInfoDto.getDokumentstatus())
@@ -203,18 +200,6 @@ class JoarkAntiCorruptionLayerImpl implements JoarkAntiCorruptionLayer {
 						.build()))
 				.build();
 
-	}
-
-	private String mapJoarkFagsystemToArkivsakssystemString(String joarkFagsystem, String journalpostId) {
-		if (FS22.name().equals(joarkFagsystem)) {
-			return Arkivsakssystem.GSAK.name();
-		} else if (PEN.name().equals(joarkFagsystem)) {
-			return Arkivsakssystem.PSAK.name();
-		} else if (joarkFagsystem == null || joarkFagsystem.isEmpty()) {
-			return null;
-		} else {
-			throw new UgyldigArkivsaksystemException(String.format("Arkivsaksystem må være GSAK (FS22), PSAK (PEN) eller NULL (midlertidig journalpost). Journalpost med journalpostId=%s har Arkivsakssystem=%s", journalpostId, joarkFagsystem));
-		}
 	}
 
 	private Arkivsakssystem mapJoarkFagsystemToArkivsakssystemCode(String joarkFagsystem, String journalpostId) {

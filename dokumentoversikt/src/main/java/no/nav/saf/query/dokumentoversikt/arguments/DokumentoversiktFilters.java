@@ -2,9 +2,9 @@ package no.nav.saf.query.dokumentoversikt.arguments;
 
 import graphql.schema.DataFetchingEnvironment;
 import lombok.Value;
-import no.nav.saf.tjeneste.visningsmodell.kode.Journalposttype;
-import no.nav.saf.tjeneste.visningsmodell.kode.Journalstatus;
-import no.nav.saf.tjeneste.visningsmodell.kode.Tema;
+import no.nav.saf.domain.kode.Journalposttype;
+import no.nav.saf.domain.kode.Journalstatus;
+import no.nav.saf.domain.kode.Tema;
 
 import java.time.LocalDate;
 import java.util.ArrayList;

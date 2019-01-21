@@ -10,6 +10,10 @@ import org.springframework.stereotype.Component;
 import javax.inject.Inject;
 
 /**
+ * Dekker følgende policies i saf:
+ *
+ *
+ *
  * @author Joakim Bjørnstad, Jbit AS
  */
 @Slf4j

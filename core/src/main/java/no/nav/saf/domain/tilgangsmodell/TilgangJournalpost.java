@@ -2,8 +2,10 @@ package no.nav.saf.domain.tilgangsmodell;
 
 import lombok.Builder;
 import lombok.Value;
+import no.nav.saf.domain.kode.Arkivsakssystem;
+import no.nav.saf.domain.kode.Journalposttype;
+import no.nav.saf.domain.kode.Journalstatus;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,14 +16,11 @@ import java.util.List;
 @Builder
 public class TilgangJournalpost {
 	private final String arkivsaksnummer;
-	private final String arkivsaksystem;
+	private final Arkivsakssystem arkivsaksystem;
 	private final String journalpostId;
-	private final String journalStatus;
-	private final String journalpostType;
+	private final Journalstatus journalstatus;
+	private final Journalposttype journalposttype;
 	private final String tema;
-	private final LocalDate datoOpprettet;
-	private final String mottakskanal;
-	private final String avsenderMottakerId;
 	@Builder.Default
 	private final List<TilgangDokumentInfo> dokumenter = new ArrayList<>();
 }
