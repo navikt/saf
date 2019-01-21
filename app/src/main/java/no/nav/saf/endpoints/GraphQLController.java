@@ -64,7 +64,6 @@ public class GraphQLController {
 
 	@PostMapping(value = "/graphql", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
-	@Monitor(value = "dok_request", extraTags = {"process", "dokumentOversikt"}, histogram = true)
 	public Map<String, Object> graphQLRequest(@RequestHeader(value = HttpHeaders.AUTHORIZATION, required = false) String authorizationHeader,
 											  @RequestBody GraphQLRequest request) {
 		ExecutionResult executionResult =

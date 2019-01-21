@@ -9,6 +9,7 @@ import no.nav.saf.domain.TilgangsmodellRepository;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.domain.tilgangsmodell.TilgangJournalpost;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
+import no.nav.saf.metrics.Monitor;
 import no.nav.saf.query.dokumentoversikt.DokumentoversiktVisningsmodellRepository;
 import no.nav.saf.query.dokumentoversikt.SideInfoMapper;
 import no.nav.saf.query.dokumentoversikt.arguments.DokumentoversiktPagination;
@@ -59,6 +60,7 @@ class DokumentoversiktBrukerCoordinatorImpl implements DokumentoversiktBrukerCoo
 	}
 
 	@Override
+	@Monitor(value = "dok_request", extraTags = {"process", "dokumentOversikt", "BrukerEllerFagsak", "Bruker"}, histogram = true)
 	public Dokumentoversikt hentDokumentoversikt(DokumentoversiktBrukerArguments dokumentoversiktBrukerArguments, SafRequestContext safRequestContext) {
 		TilgangBruker tilgangBruker = tilgangsmodellRepository.findTilgangBruker(dokumentoversiktBrukerArguments.getBrukerIdInput());
 		if (tilgangBruker != null) {
