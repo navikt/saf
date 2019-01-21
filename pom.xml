@@ -44,6 +44,7 @@
 		<junit5.mockito.version>2.23.0</junit5.mockito.version>
 		<freg.security.test.version>3.1.0</freg.security.test.version>
 		<jose4j.version>0.6.4</jose4j.version>
+		<sonar.exclusions>no.nav.saf.graphiql/**/*</sonar.exclusions>
 	</properties>
 
 	<dependencyManagement>
