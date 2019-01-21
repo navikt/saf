@@ -2,11 +2,11 @@ package no.nav.saf.anticorruptionlayer.gsak.hentgsaksaker;
 
 import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.cache.LokalCacheConfig;
+import no.nav.saf.domain.kode.Tema;
 import no.nav.saf.exceptions.SafFunctionalException;
 import no.nav.saf.exceptions.SafTechnicalException;
 import no.nav.saf.integration.fasit.ServiceuserAlias;
 import no.nav.saf.metrics.Monitor;
-import no.nav.saf.tjeneste.visningsmodell.kode.Tema;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.cache.annotation.Cacheable;

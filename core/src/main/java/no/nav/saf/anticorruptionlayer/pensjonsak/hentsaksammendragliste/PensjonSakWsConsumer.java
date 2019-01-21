@@ -8,10 +8,10 @@ import static no.nav.saf.anticorruptionlayer.RetryConstants.MULTIPLIER_SHORT_PEN
 import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.anticorruptionlayer.pensjonsak.domain.PsakSakerTo;
 import no.nav.saf.cache.LokalCacheConfig;
+import no.nav.saf.domain.kode.Arkivsakssystem;
 import no.nav.saf.exceptions.SafFunctionalException;
 import no.nav.saf.exceptions.SafTechnicalException;
 import no.nav.saf.metrics.Monitor;
-import no.nav.saf.tjeneste.visningsmodell.kode.Arkivsakssystem;
 import no.nav.tjeneste.virksomhet.pensjonsak.v1.HentSakSammendragListePersonIkkeFunnet;
 import no.nav.tjeneste.virksomhet.pensjonsak.v1.HentSakSammendragListeSakManglerEierenhet;
 import no.nav.tjeneste.virksomhet.pensjonsak.v1.PensjonSakV1;

@@ -14,6 +14,9 @@ import no.nav.saf.anticorruptionlayer.joark.JoarkAntiCorruptionLayer;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.JournalpostDto;
 import no.nav.saf.anticorruptionlayer.pensjonsak.PensjonSakAntiCorruptionLayer;
 import no.nav.saf.cache.LokalCacheConfig;
+import no.nav.saf.domain.kode.Journalposttype;
+import no.nav.saf.domain.kode.Journalstatus;
+import no.nav.saf.domain.kode.Tema;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.domain.tilgangsmodell.TilgangDokumentInfo;
 import no.nav.saf.domain.tilgangsmodell.TilgangJournalpost;
@@ -21,15 +24,11 @@ import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tjeneste.argumenter.BrukerIdInput;
 import no.nav.saf.tjeneste.argumenter.FagsakIdInput;
-import no.nav.saf.tjeneste.visningsmodell.kode.Journalposttype;
-import no.nav.saf.tjeneste.visningsmodell.kode.Journalstatus;
-import no.nav.saf.tjeneste.visningsmodell.kode.Tema;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Repository;
 
 import javax.inject.Inject;
 import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -164,7 +163,7 @@ public class TilgangsmodellRepositoryImpl implements TilgangsmodellRepository {
 								.aktoerId(arkivsak.getAktoerId())
 								.orgnummer(arkivsak.getOrgnummer())
 								.arkivsaksnummer(arkivsak.getArkivsaksnummer())
-								.arkivsaksystem(arkivsak.getArkivsaksystem().name())
+								.arkivsaksystem(arkivsak.getArkivsaksystem())
 								.tema(arkivsak.getTema().name())
 								.build();
 					}).collect(Collectors.toList());
@@ -190,7 +189,7 @@ public class TilgangsmodellRepositoryImpl implements TilgangsmodellRepository {
 								.fagsaksnummer(arkivsak.getFagsaksnummer())
 								.fagsaksystem(arkivsak.getFagsaksystem())
 								.arkivsaksnummer(arkivsak.getArkivsaksnummer())
-								.arkivsaksystem(arkivsak.getArkivsaksystem().name())
+								.arkivsaksystem(arkivsak.getArkivsaksystem())
 								.tema(arkivsak.getTema().name())
 								.build();
 					}).collect(Collectors.toList());
@@ -227,7 +226,7 @@ public class TilgangsmodellRepositoryImpl implements TilgangsmodellRepository {
 								.fagsaksnummer(arkivsak.getFagsaksnummer())
 								.fagsaksystem(arkivsak.getFagsaksystem())
 								.arkivsaksnummer(arkivsak.getArkivsaksnummer())
-								.arkivsaksystem(arkivsak.getArkivsaksystem().name())
+								.arkivsaksystem(arkivsak.getArkivsaksystem())
 								.tema(arkivsak.getTema().name())
 								.build();
 					});
@@ -276,12 +275,9 @@ public class TilgangsmodellRepositoryImpl implements TilgangsmodellRepository {
 	private TilgangJournalpost mapTilgangJournalpost(JournalpostDto dto) {
 		return TilgangJournalpost.builder()
 				.journalpostId(dto.getJournalpostId().toString())
-				.journalStatus(dto.getJournalstatus().toString())
-				.journalpostType(dto.getJournalposttype().toString())
+				.journalstatus(dto.getJournalstatus().toSafJournalstatus())
+				.journalposttype(dto.getJournalposttype().toSafJournalposttype())
 				.tema(dto.getFagomrade() == null ? null : dto.getFagomrade().toString())
-				.datoOpprettet(dto.getDatoOpprettet().toInstant().atZone(ZoneId.systemDefault()).toLocalDate())
-				.mottakskanal(dto.getMottakskanal() == null ? null : dto.getMottakskanal().toString())
-				.avsenderMottakerId(dto.getAvsenderMottakerNavn())
 				.dokumenter(dto.getDokumenter().stream().map(dokdto -> TilgangDokumentInfo.builder()
 						.dokumentInfoId(dokdto.getDokumentInfoId())
 						.dokumentstatus(dokdto.getDokumentstatus() == null ? null : dokdto.getDokumentstatus().toString())

@@ -17,12 +17,11 @@ import org.springframework.stereotype.Component;
 import javax.inject.Inject;
 
 /**
- * Implementerer PEP1:
+ * Dekker følgende policies i saf:
  * <p>
- * FP1 Behandling av Kode 6 Brukere
- * FP2 Behandling av Kode 7 Brukere
- * FP3 Egen ansatt
- * Saksbehandlers tilgang til enhet
+ * https://confluence.adeo.no/display/ABAC/FP1%3A+Behandling+Kode+6+Brukere
+ * https://confluence.adeo.no/display/ABAC/FP2%3A+Behandling+Kode+7+Brukere
+ * https://confluence.adeo.no/display/ABAC/FP3%3A+Egen+ansatt
  *
  * @author Joakim Bjørnstad, Jbit AS
  */

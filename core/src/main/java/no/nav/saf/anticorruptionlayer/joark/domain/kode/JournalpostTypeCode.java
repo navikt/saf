@@ -1,32 +1,35 @@
 package no.nav.saf.anticorruptionlayer.joark.domain.kode;
 
-import no.nav.saf.tjeneste.visningsmodell.kode.Journalposttype;
+import no.nav.saf.domain.kode.Journalposttype;
 
 public enum JournalpostTypeCode {
 	/**
 	 * Inngående dokument
 	 */
-	I,
+	I(Journalposttype.I),
 	/**
 	 * Utgående dokument
 	 */
-	U,
+	U(Journalposttype.U),
 	/**
 	 * Internt notat
 	 */
-	N;
+	N(Journalposttype.N);
+
+	private final Journalposttype safJournalposttype;
+
+	JournalpostTypeCode(Journalposttype safJournalposttype) {
+		this.safJournalposttype = safJournalposttype;
+	}
+
+	public Journalposttype toSafJournalposttype() {
+		return safJournalposttype;
+	}
 
 	public static Journalposttype mapToJournalpostType(JournalpostTypeCode journalpostTypeCode) {
-		if(journalpostTypeCode == null) {
+		if (journalpostTypeCode == null) {
 			return null;
 		}
 		return Journalposttype.valueOf(journalpostTypeCode.name());
-	}
-
-	public static JournalpostTypeCode fromJournalpostType(Journalposttype journalposttype) {
-		if(journalposttype == null) {
-			return null;
-		}
-		return JournalpostTypeCode.valueOf(journalposttype.name());
 	}
 }

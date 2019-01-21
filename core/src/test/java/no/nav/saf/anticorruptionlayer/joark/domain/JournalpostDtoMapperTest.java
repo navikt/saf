@@ -1,7 +1,7 @@
 package no.nav.saf.anticorruptionlayer.joark.domain;
 
 import static no.nav.saf.domain.DomainConstants.TILGANG_BRUKER;
-import static no.nav.saf.tjeneste.visningsmodell.kode.Kanal.SENTRAL_UTSKRIFT;
+import static no.nav.saf.domain.kode.Kanal.SENTRAL_UTSKRIFT;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
 import static org.hamcrest.core.IsNot.not;
@@ -18,16 +18,16 @@ import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.Journal
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.LogiskVedleggDto;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.SaksrelasjonDto;
 import no.nav.saf.domain.Arkivsak;
+import no.nav.saf.domain.kode.Arkivsakssystem;
+import no.nav.saf.domain.kode.Datotype;
+import no.nav.saf.domain.kode.Journalstatus;
+import no.nav.saf.domain.kode.Kanal;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
+import no.nav.saf.domain.visningsmodell.Journalpost;
+import no.nav.saf.domain.visningsmodell.RelevantDato;
 import no.nav.saf.tilgangskontroll.RequestCache;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.validation.OidcValidatorTool;
-import no.nav.saf.tjeneste.visningsmodell.Journalpost;
-import no.nav.saf.tjeneste.visningsmodell.RelevantDato;
-import no.nav.saf.tjeneste.visningsmodell.kode.Arkivsakssystem;
-import no.nav.saf.tjeneste.visningsmodell.kode.Datotype;
-import no.nav.saf.tjeneste.visningsmodell.kode.Journalstatus;
-import no.nav.saf.tjeneste.visningsmodell.kode.Kanal;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -87,7 +87,7 @@ class JournalpostDtoMapperTest {
 		assertCommonMetadata(journalpost);
 
 		assertEquals(JournalpostTypeCode.U.toString(), journalpost.getJournalposttype().toString());
-		assertEquals(JournalStatusCode.E.toSafJournalStatus(), journalpost.getJournalstatus());
+		assertEquals(JournalStatusCode.E.toSafJournalstatus(), journalpost.getJournalstatus());
 		assertEquals(SENTRAL_UTSKRIFT.getKanalnavn(), journalpost.getKanalnavn());
 
 		assertThat(journalpost.getRelevanteDatoer(), hasItem(new RelevantDato(DOKUMENT_DATO, Datotype.DATO_DOKUMENT)));

@@ -4,6 +4,11 @@ import graphql.execution.DataFetcherResult;
 import graphql.schema.idl.NaturalEnumValuesProvider;
 import graphql.schema.idl.RuntimeWiring;
 import lombok.extern.slf4j.Slf4j;
+import no.nav.saf.domain.kode.Journalposttype;
+import no.nav.saf.domain.kode.Journalstatus;
+import no.nav.saf.domain.kode.Tema;
+import no.nav.saf.domain.visningsmodell.Dokumentoversikt;
+import no.nav.saf.domain.visningsmodell.Journalpost;
 import no.nav.saf.exceptions.SafFunctionalException;
 import no.nav.saf.query.dokumentoversikt.DokumentoversiktCoordinator;
 import no.nav.saf.query.dokumentoversikt.bruker.DokumentoversiktBrukerArguments;
@@ -11,11 +16,6 @@ import no.nav.saf.query.dokumentoversikt.bruker.DokumentoversiktBrukerCoordinato
 import no.nav.saf.query.dokumentoversikt.fagsak.DokumentoversiktFagsakArguments;
 import no.nav.saf.query.dokumentoversikt.fagsak.DokumentoversiktFagsakCoordinator;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
-import no.nav.saf.tjeneste.visningsmodell.Dokumentoversikt;
-import no.nav.saf.tjeneste.visningsmodell.Journalpost;
-import no.nav.saf.tjeneste.visningsmodell.kode.Journalposttype;
-import no.nav.saf.tjeneste.visningsmodell.kode.Journalstatus;
-import no.nav.saf.tjeneste.visningsmodell.kode.Tema;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;

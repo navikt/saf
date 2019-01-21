@@ -1,4 +1,4 @@
-package no.nav.saf.tjeneste.visningsmodell.kode;
+package no.nav.saf.domain.kode;
 
 import java.util.Arrays;
 import java.util.List;

@@ -2,7 +2,7 @@ package no.nav.saf.anticorruptionlayer.pensjonsak.domain;
 
 import lombok.Builder;
 import lombok.Data;
-import no.nav.saf.tjeneste.visningsmodell.kode.Arkivsakssystem;
+import no.nav.saf.domain.kode.Arkivsakssystem;
 
 import java.time.LocalDateTime;
 
