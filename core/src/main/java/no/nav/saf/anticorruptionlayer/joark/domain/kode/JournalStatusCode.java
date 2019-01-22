@@ -1,6 +1,6 @@
 package no.nav.saf.anticorruptionlayer.joark.domain.kode;
 
-import no.nav.saf.tjeneste.visningsmodell.kode.Journalstatus;
+import no.nav.saf.domain.kode.Journalstatus;
 
 import java.util.Arrays;
 import java.util.List;
@@ -61,7 +61,7 @@ public enum JournalStatusCode {
 		this.safJournalstatus = safJournalstatus;
 	}
 
-	public Journalstatus toSafJournalStatus() {
+	public Journalstatus toSafJournalstatus() {
 		return safJournalstatus;
 	}
 

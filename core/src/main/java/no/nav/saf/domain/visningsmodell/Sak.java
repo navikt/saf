@@ -1,9 +1,9 @@
-package no.nav.saf.tjeneste.visningsmodell;
+package no.nav.saf.domain.visningsmodell;
 
 import lombok.Builder;
 import lombok.Value;
-import no.nav.saf.tjeneste.visningsmodell.kode.Arkivsakssystem;
-import no.nav.saf.tjeneste.visningsmodell.kode.Tema;
+import no.nav.saf.domain.kode.Arkivsakssystem;
+import no.nav.saf.domain.kode.Tema;
 
 import java.time.LocalDateTime;
 

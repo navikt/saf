@@ -7,10 +7,10 @@ import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.anticorruptionlayer.gsak.hentgsaksaker.GsakConsumer;
 import no.nav.saf.anticorruptionlayer.gsak.hentgsaksaker.GsakSakerTo;
 import no.nav.saf.domain.Arkivsak;
+import no.nav.saf.domain.kode.Arkivsakssystem;
+import no.nav.saf.domain.kode.Tema;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
-import no.nav.saf.tjeneste.visningsmodell.kode.Arkivsakssystem;
-import no.nav.saf.tjeneste.visningsmodell.kode.Tema;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
@@ -95,7 +95,7 @@ class GsakAntiCorruptionLayerImpl implements GsakAntiCorruptionLayer {
 		return gsakSakerTo == null ? null : TilgangSak.builder()
 				.aktoerId(gsakSakerTo.getAktoerId())
 				.arkivsaksnummer(gsakSakerTo.getId().toString())
-				.arkivsaksystem(Arkivsakssystem.GSAK.name())
+				.arkivsaksystem(Arkivsakssystem.GSAK)
 				.fagsaksystem(gsakSakerTo.getApplikasjon())
 				.fagsaksnummer(gsakSakerTo.getFagsakNr())
 				.tema(gsakSakerTo.getTema())

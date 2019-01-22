@@ -3,13 +3,13 @@ package no.nav.saf.anticorruptionlayer.joark;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.JournalpostDto;
 import no.nav.saf.domain.Arkivsak;
 import no.nav.saf.domain.HentDokument;
+import no.nav.saf.domain.kode.Journalposttype;
+import no.nav.saf.domain.kode.Journalstatus;
+import no.nav.saf.domain.kode.Tema;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.domain.tilgangsmodell.TilgangJournalpost;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
-import no.nav.saf.tjeneste.visningsmodell.kode.Journalposttype;
-import no.nav.saf.tjeneste.visningsmodell.kode.Journalstatus;
-import no.nav.saf.tjeneste.visningsmodell.kode.Tema;
 
 import java.time.LocalDate;
 import java.util.List;

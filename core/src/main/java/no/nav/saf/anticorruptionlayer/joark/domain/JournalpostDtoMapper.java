@@ -1,7 +1,7 @@
 package no.nav.saf.anticorruptionlayer.joark.domain;
 
 import static no.nav.saf.domain.DomainConstants.TILGANG_BRUKER;
-import static no.nav.saf.tjeneste.visningsmodell.RelevantDato.INVALID_DATE;
+import static no.nav.saf.domain.visningsmodell.RelevantDato.INVALID_DATE;
 
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.FagomradeCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.FagsystemCode;
@@ -9,22 +9,22 @@ import no.nav.saf.anticorruptionlayer.joark.domain.kode.JournalpostTypeCode;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.JournalpostDto;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.SaksrelasjonDto;
 import no.nav.saf.domain.Arkivsak;
+import no.nav.saf.domain.kode.Arkivsakssystem;
+import no.nav.saf.domain.kode.Datotype;
+import no.nav.saf.domain.kode.Journalstatus;
+import no.nav.saf.domain.kode.Kanal;
+import no.nav.saf.domain.kode.Variantformat;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
+import no.nav.saf.domain.visningsmodell.Bruker;
+import no.nav.saf.domain.visningsmodell.BrukerIdType;
+import no.nav.saf.domain.visningsmodell.DokumentInfo;
+import no.nav.saf.domain.visningsmodell.Dokumentvariant;
+import no.nav.saf.domain.visningsmodell.Journalpost;
+import no.nav.saf.domain.visningsmodell.LogiskVedlegg;
+import no.nav.saf.domain.visningsmodell.RelevantDato;
+import no.nav.saf.domain.visningsmodell.Sak;
 import no.nav.saf.tilgangskontroll.RequestCache;
 import no.nav.saf.tilgangskontroll.SafSecurityContext;
-import no.nav.saf.tjeneste.visningsmodell.Bruker;
-import no.nav.saf.tjeneste.visningsmodell.BrukerIdType;
-import no.nav.saf.tjeneste.visningsmodell.DokumentInfo;
-import no.nav.saf.tjeneste.visningsmodell.Dokumentvariant;
-import no.nav.saf.tjeneste.visningsmodell.Journalpost;
-import no.nav.saf.tjeneste.visningsmodell.LogiskVedlegg;
-import no.nav.saf.tjeneste.visningsmodell.RelevantDato;
-import no.nav.saf.tjeneste.visningsmodell.Sak;
-import no.nav.saf.tjeneste.visningsmodell.kode.Arkivsakssystem;
-import no.nav.saf.tjeneste.visningsmodell.kode.Datotype;
-import no.nav.saf.tjeneste.visningsmodell.kode.Journalstatus;
-import no.nav.saf.tjeneste.visningsmodell.kode.Kanal;
-import no.nav.saf.tjeneste.visningsmodell.kode.Variantformat;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -119,7 +119,7 @@ public class JournalpostDtoMapper {
 		if (saksrelasjon != null && saksrelasjon.getFeilregistrert() != null && saksrelasjon.getFeilregistrert()) {
 			return Journalstatus.FEILREGISTRERT;
 		} else {
-			return journalpostDto.getJournalstatus().toSafJournalStatus();
+			return journalpostDto.getJournalstatus().toSafJournalstatus();
 		}
 	}
 

@@ -2,8 +2,8 @@ package no.nav.saf.query.dokumentoversikt;
 
 import no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoMapper;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.JournalpostDto;
+import no.nav.saf.domain.visningsmodell.Journalpost;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
-import no.nav.saf.tjeneste.visningsmodell.Journalpost;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;

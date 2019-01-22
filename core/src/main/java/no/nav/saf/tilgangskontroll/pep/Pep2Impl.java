@@ -6,18 +6,22 @@ import static no.nav.abac.saf.xacml.SafAttributter.RESOURCE_SAF_SAK_JP_METADATA;
 import static no.nav.abac.saf.xacml.SafAttributter.RESOURCE_SAF_TEMA;
 
 import lombok.extern.slf4j.Slf4j;
+import no.nav.saf.domain.kode.Tema;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlRequest;
 import no.nav.saf.tilgangskontroll.abac.dto.response.Decision;
 import no.nav.saf.tilgangskontroll.abac.dto.response.XacmlResponse;
 import no.nav.saf.tilgangskontroll.abac.service.AbacService;
-import no.nav.saf.tjeneste.visningsmodell.kode.Tema;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
 
 /**
+ * Dekker følgende policies i saf:
+ * <p>
+ * https://confluence.adeo.no/display/ABAC/Tilgang+til+farskapssaker
+ *
  * @author Joakim Bjørnstad, Jbit AS
  */
 @Slf4j
@@ -45,10 +49,10 @@ public class Pep2Impl implements Pep<TilgangSak> {
 			}
 			XacmlRequest request = SafXacmlRequestFactory.create(safRequestContext.getSecurityContext().getOidcTokenBody());
 			request.resource(RESOURCE_FELLES_RESOURCE_TYPE, RESOURCE_SAF_SAK_JP_METADATA);
-			if(isFarskapSak(ressurs)) {
+			if (isFarskapSak(ressurs)) {
 				request.resource(RESOURCE_SAF_TEMA, Tema.FAR.name());
 			}
-			if(isForvaltningslovensParagraf19(ressurs)) {
+			if (isForvaltningslovensParagraf19(ressurs)) {
 				request.resource(RESOURCE_SAF_PARAGRAF19, true);
 			}
 			XacmlResponse response = abacService.evaluate(request);

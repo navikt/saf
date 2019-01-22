@@ -1,6 +1,6 @@
 package no.nav.saf.anticorruptionlayer.joark.domain.kode;
 
-import no.nav.saf.tjeneste.visningsmodell.kode.Kanal;
+import no.nav.saf.domain.kode.Kanal;
 
 public enum UtsendingsKanalCode {
 	/**

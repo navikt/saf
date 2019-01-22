@@ -16,9 +16,9 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import no.nav.saf.domain.visningsmodell.Dokumentoversikt;
 import no.nav.saf.endpoints.AbstractItest;
 import no.nav.saf.endpoints.GraphQLRequest;
-import no.nav.saf.tjeneste.visningsmodell.Dokumentoversikt;
 import org.apache.http.HttpHeaders;
 import org.apache.http.entity.ContentType;
 import org.junit.jupiter.api.Test;
@@ -329,15 +329,4 @@ public class DokumentoversiktBrukerIT extends AbstractItest {
 
 		verify(postRequestedFor(urlEqualTo("/servicegw")).withRequestBody(matchingXPath("//personident/text()", equalTo("***gammelt_fnr***"))));
 	}
-
-// todo implement
-//	@Test
-//	@Disabled
-//	public void serviewgwFail() {
-//	}
-
-	// todo test for om dokumentoversikt filtrerer mhp abac?
-
-	// todo vurder arametrized test for gsak, for å teste mhp aktoerid
-
 }

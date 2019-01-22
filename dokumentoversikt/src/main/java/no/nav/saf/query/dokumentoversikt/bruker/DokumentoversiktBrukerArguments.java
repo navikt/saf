@@ -3,11 +3,11 @@ package no.nav.saf.query.dokumentoversikt.bruker;
 import graphql.schema.DataFetchingEnvironment;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
+import no.nav.saf.domain.visningsmodell.BrukerIdType;
 import no.nav.saf.query.dokumentoversikt.arguments.AbstractDokumentoversiktArguments;
 import no.nav.saf.query.dokumentoversikt.arguments.DokumentoversiktFilters;
 import no.nav.saf.query.dokumentoversikt.arguments.DokumentoversiktPagination;
 import no.nav.saf.tjeneste.argumenter.BrukerIdInput;
-import no.nav.saf.tjeneste.visningsmodell.BrukerIdType;
 
 import java.util.Map;
 

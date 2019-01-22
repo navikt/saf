@@ -2,6 +2,7 @@ package no.nav.saf.domain.tilgangsmodell;
 
 import lombok.Builder;
 import lombok.Value;
+import no.nav.saf.domain.kode.Arkivsakssystem;
 
 import java.util.List;
 
@@ -15,7 +16,7 @@ public class TilgangSak {
 	private final String foedselsnummer;
 	private final String orgnummer;
 	private final String arkivsaksnummer;
-	private final String arkivsaksystem;
+	private final Arkivsakssystem arkivsaksystem;
 	private final String fagsaksnummer;
 	private final String fagsaksystem;
 	private final String tema;

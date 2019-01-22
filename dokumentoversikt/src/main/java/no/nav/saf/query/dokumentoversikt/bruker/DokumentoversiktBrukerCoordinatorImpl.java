@@ -9,13 +9,14 @@ import no.nav.saf.domain.TilgangsmodellRepository;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.domain.tilgangsmodell.TilgangJournalpost;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
+import no.nav.saf.domain.visningsmodell.Dokumentoversikt;
+import no.nav.saf.domain.visningsmodell.Journalpost;
+import no.nav.saf.metrics.Monitor;
 import no.nav.saf.query.dokumentoversikt.DokumentoversiktVisningsmodellRepository;
 import no.nav.saf.query.dokumentoversikt.SideInfoMapper;
 import no.nav.saf.query.dokumentoversikt.arguments.DokumentoversiktPagination;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.pep.Pep;
-import no.nav.saf.tjeneste.visningsmodell.Dokumentoversikt;
-import no.nav.saf.tjeneste.visningsmodell.Journalpost;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
@@ -59,6 +60,7 @@ class DokumentoversiktBrukerCoordinatorImpl implements DokumentoversiktBrukerCoo
 	}
 
 	@Override
+	@Monitor(value = "dok_request", extraTags = {"process", "dokumentOversikt", "requestType", "bruker"}, histogram = true)
 	public Dokumentoversikt hentDokumentoversikt(DokumentoversiktBrukerArguments dokumentoversiktBrukerArguments, SafRequestContext safRequestContext) {
 		TilgangBruker tilgangBruker = tilgangsmodellRepository.findTilgangBruker(dokumentoversiktBrukerArguments.getBrukerIdInput());
 		if (tilgangBruker != null) {
@@ -85,7 +87,7 @@ class DokumentoversiktBrukerCoordinatorImpl implements DokumentoversiktBrukerCoo
 				.sequential()
 				.toList().blockingGet();
 
-		final List<TilgangJournalpost> tilgangJournalpostList = tilgangsmodellRepository.findTilgangJournalposter(
+		List<TilgangJournalpost> tilgangJournalposter = tilgangsmodellRepository.findTilgangJournalposter(
 				Collections.singletonList(tilgangBruker),
 				filteredTilgangSakList,
 				dokumentoversiktBrukerArguments.getFilters().getFraDato(),
@@ -99,7 +101,7 @@ class DokumentoversiktBrukerCoordinatorImpl implements DokumentoversiktBrukerCoo
 				safRequestContext
 		);
 
-		final List<TilgangJournalpost> filteredTilgangJournalpostList = Flowable.fromIterable(tilgangJournalpostList)
+		final List<TilgangJournalpost> filteredTilgangJournalpostList = Flowable.fromIterable(tilgangJournalposter)
 				.parallel(10)
 				.runOn(Schedulers.io())
 				.filter(tj -> pep4.hasAccess(tj, safRequestContext))

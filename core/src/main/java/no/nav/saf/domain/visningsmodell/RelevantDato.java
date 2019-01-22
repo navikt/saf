@@ -1,7 +1,7 @@
-package no.nav.saf.tjeneste.visningsmodell;
+package no.nav.saf.domain.visningsmodell;
 
 import lombok.Data;
-import no.nav.saf.tjeneste.visningsmodell.kode.Datotype;
+import no.nav.saf.domain.kode.Datotype;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
