@@ -1,19 +1,55 @@
 package no.nav.saf.anticorruptionlayer.bisys;
 
+import lombok.extern.slf4j.Slf4j;
+import no.nav.saf.anticorruptionlayer.bisys.hentRelevanteTredjeparterOgParagraf19.BidragSakConsumer;
+import no.nav.saf.anticorruptionlayer.bisys.hentRelevanteTredjeparterOgParagraf19.BidragSakTo;
+import no.nav.saf.domain.BidragSak;
+import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
+import no.nav.saf.domain.tilgangsmodell.TilgangIdent;
 import no.nav.saf.domain.tilgangsmodell.TilgangRelevantTredjepart;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
+import javax.inject.Inject;
+import java.util.stream.Collectors;
 
 /**
  * @author Joakim Bjørnstad, Jbit AS
  */
+@Slf4j
 @Component
 class BisysAntiCorruptionLayerImpl implements BisysAntiCorruptionLayer {
+
+	private final BidragSakConsumer bidragSakConsumer;
+
+	@Inject
+	public BisysAntiCorruptionLayerImpl(BidragSakConsumer bidragSakConsumer) {
+		this.bidragSakConsumer = bidragSakConsumer;
+	}
+
 	@Override
-	public List<TilgangRelevantTredjepart> hentRelevanteTredjeparter(String sakId) {
-		// TODO MMA-1058
-		return new ArrayList<>();
+	public BidragSak hentBidragSak(String sakId, TilgangBruker tilgangBruker) {
+		try {
+			final BidragSakTo bidragSakTo = bidragSakConsumer.hentBidragSak(sakId);
+			return BidragSak.builder()
+					.paragraf19(bidragSakTo.isErParagraf19())
+					.relevanteTredjeparter(
+							bidragSakTo.getRoller().stream()
+									.filter(fnrRolle -> isRolleBruker(fnrRolle, tilgangBruker))
+									.map(fnrRolle -> new TilgangRelevantTredjepart(TilgangIdent.builder()
+											.identifikator(fnrRolle)
+											.build()))
+									.collect(Collectors.toList()))
+					.build();
+		} catch (Exception e) {
+			log.warn("Kunne ikke hente relevante tredjeparter og paragraf19 fra bidrag for sakId={}", sakId, e);
+			return null;
+		}
+	}
+
+	/**
+	 * * Bidrag returnerer fnr til alle som har en rolle i saken, inkl. brukeren. Bruker må derfor filtreres bort
+	 */
+	private boolean isRolleBruker(String fnrRolle, TilgangBruker tilgangBruker) {
+		return fnrRolle.equals(tilgangBruker.getFoedselsnr());
 	}
 }

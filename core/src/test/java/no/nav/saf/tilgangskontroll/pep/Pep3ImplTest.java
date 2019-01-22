@@ -21,7 +21,6 @@ import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlRequest;
 import no.nav.saf.tilgangskontroll.abac.dto.response.Decision;
 import no.nav.saf.tilgangskontroll.abac.dto.response.XacmlResponse;
 import no.nav.saf.tjeneste.visningsmodell.kode.Tema;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
@@ -32,7 +31,6 @@ import java.util.Arrays;
 /**
  * @author Sigurd Midttun, Visma Consulting.
  */
-@Disabled
 public class Pep3ImplTest extends AbstractPepTest {
 
 	@InjectMocks
