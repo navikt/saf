@@ -25,21 +25,21 @@ import javax.inject.Inject;
  *
  * @author Joakim Bjørnstad, Jbit AS
  */
-@Component("pep1")
+@Component("pep1g")
 @Slf4j
-public class Pep1Impl implements Pep<TilgangBruker> {
+public class Pep1gImpl implements Pep<TilgangBruker> {
 
 	private final AbacService abacService;
 
 	@Inject
-	public Pep1Impl(AbacService abacService) {
+	public Pep1gImpl(AbacService abacService) {
 		this.abacService = abacService;
 	}
 
 	@Override
 	public boolean hasAccess(TilgangBruker ressurs, SafRequestContext safRequestContext) {
 		if (ressurs == null) {
-			log.warn("Pep1 mangler tilstrekkelig datagrunnlag for å kunne gjennomføre tilgangskontroll");
+			log.warn("Pep1g mangler tilstrekkelig datagrunnlag for å kunne gjennomføre tilgangskontroll");
 			return false;
 		} else if (ressurs.getOrgnummer() != null) {
 			return true;

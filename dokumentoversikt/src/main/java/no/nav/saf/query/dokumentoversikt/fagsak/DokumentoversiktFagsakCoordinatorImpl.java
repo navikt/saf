@@ -35,7 +35,7 @@ class DokumentoversiktFagsakCoordinatorImpl implements DokumentoversiktFagsakCoo
 	private final SideInfoMapper sideInfoMapper = new SideInfoMapper();
 	private final TilgangsmodellRepository tilgangsmodellRepository;
 	private final DokumentoversiktVisningsmodellRepository visningsmodellRepository;
-	private final Pep<TilgangBruker> pep1;
+	private final Pep<TilgangBruker> pep1g;
 	private final Pep<TilgangSak> pep2;
 	private final Pep<TilgangSak> pep2d;
 	private final Pep<TilgangSak> pep3;
@@ -44,14 +44,14 @@ class DokumentoversiktFagsakCoordinatorImpl implements DokumentoversiktFagsakCoo
 	@Inject
 	public DokumentoversiktFagsakCoordinatorImpl(TilgangsmodellRepository tilgangsmodellRepository,
 												 DokumentoversiktVisningsmodellRepository visningsmodellRepository,
-												 @Named("pep1") Pep<TilgangBruker> pep1,
+												 @Named("pep1g") Pep<TilgangBruker> pep1g,
 												 @Named("pep2") Pep<TilgangSak> pep2,
 												 @Named("pep2d") Pep<TilgangSak> pep2d,
 												 @Named("pep3") Pep<TilgangSak> pep3,
 												 @Named("pep4") Pep<TilgangJournalpost> pep4) {
 		this.tilgangsmodellRepository = tilgangsmodellRepository;
 		this.visningsmodellRepository = visningsmodellRepository;
-		this.pep1 = pep1;
+		this.pep1g = pep1g;
 		this.pep2 = pep2;
 		this.pep2d = pep2d;
 		this.pep3 = pep3;
@@ -68,7 +68,7 @@ class DokumentoversiktFagsakCoordinatorImpl implements DokumentoversiktFagsakCoo
 				.onErrorResumeNext((Function<Throwable, Publisher<? extends TilgangBruker>>) Flowable::error)
 				.parallel(10)
 				.runOn(Schedulers.io())
-				.filter(ts -> pep1.hasAccess(ts, safRequestContext))
+				.filter(ts -> pep1g.hasAccess(ts, safRequestContext))
 				.sequential()
 				.toList()
 				.blockingGet();
