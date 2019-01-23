@@ -37,7 +37,7 @@ class DokumentoversiktBrukerCoordinatorImpl implements DokumentoversiktBrukerCoo
 	private final SideInfoMapper sideInfoMapper = new SideInfoMapper();
 	private final TilgangsmodellRepository tilgangsmodellRepository;
 	private final DokumentoversiktVisningsmodellRepository visningsmodellRepository;
-	private final Pep<TilgangBruker> pep1;
+	private final Pep<TilgangBruker> pep1g;
 	private final Pep<TilgangSak> pep2;
 	private final Pep<TilgangSak> pep2d;
 	private final Pep<TilgangSak> pep3;
@@ -46,14 +46,14 @@ class DokumentoversiktBrukerCoordinatorImpl implements DokumentoversiktBrukerCoo
 	@Inject
 	public DokumentoversiktBrukerCoordinatorImpl(TilgangsmodellRepository tilgangsmodellRepository,
 												 DokumentoversiktVisningsmodellRepository visningsmodellRepository,
-												 @Named("pep1") Pep<TilgangBruker> pep1,
+												 @Named("pep1g") Pep<TilgangBruker> pep1g,
 												 @Named("pep2") Pep<TilgangSak> pep2,
 												 @Named("pep2d") Pep<TilgangSak> pep2d,
 												 @Named("pep3") Pep<TilgangSak> pep3,
 												 @Named("pep4") Pep<TilgangJournalpost> pep4) {
 		this.tilgangsmodellRepository = tilgangsmodellRepository;
 		this.visningsmodellRepository = visningsmodellRepository;
-		this.pep1 = pep1;
+		this.pep1g = pep1g;
 		this.pep2 = pep2;
 		this.pep2d = pep2d;
 		this.pep3 = pep3;
@@ -68,9 +68,9 @@ class DokumentoversiktBrukerCoordinatorImpl implements DokumentoversiktBrukerCoo
 			safRequestContext.getRequestCache().putObject(TILGANG_BRUKER, tilgangBruker);
 		}
 
-		boolean pep1Access = this.pep1.hasAccess(tilgangBruker, safRequestContext);
+		boolean pep1gAccess = this.pep1g.hasAccess(tilgangBruker, safRequestContext);
 
-		if (!pep1Access) {
+		if (!pep1gAccess) {
 			return Dokumentoversikt.empty();
 		}
 

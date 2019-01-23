@@ -30,10 +30,10 @@ import java.util.Collections;
 /**
  * @author Sigurd Midttun, Visma Consulting.
  */
-public class Pep1ImplTest extends AbstractPepTest {
+public class Pep1gImplTest extends AbstractPepTest {
 
 	@InjectMocks
-	private Pep1Impl pep1;
+	private Pep1gImpl pep1g;
 
 	@Mock
 	private OidcValidatorTool oidcValidatorTool;
@@ -45,7 +45,7 @@ public class Pep1ImplTest extends AbstractPepTest {
 
 		ArgumentCaptor<XacmlRequest> request = ArgumentCaptor.forClass(XacmlRequest.class);
 
-		boolean hasAccess = pep1.hasAccess(TilgangBruker.builder()
+		boolean hasAccess = pep1g.hasAccess(TilgangBruker.builder()
 				.aktoerId(AKTOER_ID)
 				.foedselsnr(FNR)
 				.historiskeIdenter(Collections.singletonList(TilgangIdent.builder().identifikator(FNR).build()))
@@ -66,7 +66,7 @@ public class Pep1ImplTest extends AbstractPepTest {
 		when(oidcValidatorTool.validate(OIDC_TOKEN_PERSON_USER_TEST)).thenReturn(true);
 		ArgumentCaptor<XacmlRequest> request = ArgumentCaptor.forClass(XacmlRequest.class);
 
-		boolean hasAccess = pep1.hasAccess(TilgangBruker.builder()
+		boolean hasAccess = pep1g.hasAccess(TilgangBruker.builder()
 				.foedselsnr(FNR)
 				.historiskeIdenter(Collections.singletonList(TilgangIdent.builder().identifikator(FNR).build()))
 				.build(), new SafRequestContext(OIDC_TOKEN_PERSON_USER_TEST, oidcValidatorTool));
@@ -87,7 +87,7 @@ public class Pep1ImplTest extends AbstractPepTest {
 		when(abacService.evaluate(any(XacmlRequest.class))).thenReturn(new XacmlResponse(Decision.DENY, null, null, null));
 		when(oidcValidatorTool.validate(OIDC_TOKEN_PERSON_USER_TEST)).thenReturn(true);
 
-		boolean hasAccess = pep1.hasAccess(TilgangBruker.builder()
+		boolean hasAccess = pep1g.hasAccess(TilgangBruker.builder()
 				.aktoerId(AKTOER_ID)
 				.foedselsnr(FNR)
 				.historiskeIdenter(Collections.singletonList(TilgangIdent.builder().identifikator(FNR).build()))

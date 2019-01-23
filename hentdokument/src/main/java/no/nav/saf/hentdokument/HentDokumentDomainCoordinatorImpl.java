@@ -33,7 +33,7 @@ public class HentDokumentDomainCoordinatorImpl implements HentDokumentDomainCoor
 	@Inject
 	public HentDokumentDomainCoordinatorImpl(DokumentRepository dokumentRepository,
 											 TilgangsmodellHentdokumentRepository tilgangsmodellHentdokumentRepository,
-											 @Named("pep1") Pep<TilgangBruker> pep1,
+											 @Named("pep1g") Pep<TilgangBruker> pep1,
 											 @Named("pep2") Pep<TilgangSak> pep2,
 											 @Named("pep2d") Pep<TilgangSak> pep2d,
 											 @Named("pep3") Pep<TilgangSak> pep3,
