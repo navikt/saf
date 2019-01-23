@@ -106,7 +106,7 @@ public class JournalpostDtoMapper {
 			return Sak.builder()
 					.arkivsaksnummer(arkivsak.getArkivsaksnummer())
 					.arkivsaksystem(arkivsak.getArkivsaksystem())
-					.fagsaksnummer(arkivsak.getFagsaksnummer())
+					.fagsakId(arkivsak.getFagsakId())
 					.fagsaksystem(arkivsak.getFagsaksystem())
 					.tema(arkivsak.getTema())
 					.datoOpprettet(arkivsak.getDatoOpprettet())
