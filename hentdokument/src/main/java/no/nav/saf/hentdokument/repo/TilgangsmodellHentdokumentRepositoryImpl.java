@@ -1,11 +1,14 @@
 package no.nav.saf.hentdokument.repo;
 
 import lombok.extern.slf4j.Slf4j;
+import no.nav.saf.anticorruptionlayer.bisys.BisysAntiCorruptionLayer;
 import no.nav.saf.anticorruptionlayer.gsak.GsakAntiCorruptionLayer;
 import no.nav.saf.anticorruptionlayer.joark.JoarkAntiCorruptionLayer;
 import no.nav.saf.anticorruptionlayer.pensjonsak.PensjonSakAntiCorruptionLayer;
 import no.nav.saf.domain.Arkivsak;
+import no.nav.saf.domain.BidragSak;
 import no.nav.saf.domain.kode.Arkivsakssystem;
+import no.nav.saf.domain.kode.Tema;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.domain.tilgangsmodell.TilgangJournalpost;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
@@ -13,6 +16,7 @@ import no.nav.saf.tilgangskontroll.SafRequestContext;
 import org.springframework.stereotype.Repository;
 
 import javax.inject.Inject;
+import java.util.ArrayList;
 
 /**
  * @author Sigurd Midttun, Visma Consulting.
@@ -24,14 +28,16 @@ public class TilgangsmodellHentdokumentRepositoryImpl implements TilgangsmodellH
 	private final GsakAntiCorruptionLayer gsakAntiCorruptionLayer;
 	private final PensjonSakAntiCorruptionLayer pensjonSakAntiCorruptionLayer;
 	private final JoarkAntiCorruptionLayer joarkAntiCorruptionLayer;
+	private final BisysAntiCorruptionLayer bisysAntiCorruptionLayer;
 
 	@Inject
 	public TilgangsmodellHentdokumentRepositoryImpl(GsakAntiCorruptionLayer gsakAntiCorruptionLayer,
 													PensjonSakAntiCorruptionLayer pensjonSakAntiCorruptionLayer,
-													JoarkAntiCorruptionLayer joarkAntiCorruptionLayer) {
+													JoarkAntiCorruptionLayer joarkAntiCorruptionLayer, BisysAntiCorruptionLayer bisysAntiCorruptionLayer) {
 		this.gsakAntiCorruptionLayer = gsakAntiCorruptionLayer;
 		this.pensjonSakAntiCorruptionLayer = pensjonSakAntiCorruptionLayer;
 		this.joarkAntiCorruptionLayer = joarkAntiCorruptionLayer;
+		this.bisysAntiCorruptionLayer = bisysAntiCorruptionLayer;
 	}
 
 	@Override
@@ -88,7 +94,19 @@ public class TilgangsmodellHentdokumentRepositoryImpl implements TilgangsmodellH
 	public TilgangSak findTilgangSak(String sakId, String arkivsaksystem, TilgangBruker tilgangBruker, SafRequestContext safRequestContext) {
 		try {
 			if (Arkivsakssystem.GSAK.name().equals(arkivsaksystem)) {
-				return gsakAntiCorruptionLayer.findTilgangSakBySakId(sakId);
+				Arkivsak arkivsak = gsakAntiCorruptionLayer.findArkivsakBySakId(sakId);
+				BidragSak bidragSak = getBidragSakIfTemaIsBidOrFar(arkivsak);
+				return TilgangSak.builder()
+						.aktoerId(arkivsak.getAktoerId())
+						.arkivsaksnummer(arkivsak.getArkivsaksnummer())
+						.arkivsaksystem(Arkivsakssystem.GSAK)
+						.fagsaksystem(arkivsak.getFagsaksystem())
+						.fagsaksnummer(arkivsak.getFagsaksnummer())
+						.tema(arkivsak.getTema() == null ? null : arkivsak.getTema().name())
+						.orgnummer(arkivsak.getOrgnummer())
+						.relevanteTredjeparter(new ArrayList<>(bidragSak.getRelevanteTredjeparter()))
+						.paragraf19(bidragSak.isParagraf19())
+						.build();
 			} else if (Arkivsakssystem.PSAK.name().equals(arkivsaksystem)
 					|| arkivsaksystem == null || arkivsaksystem.isEmpty()) {
 				//Psak eller midlertidig journalført
@@ -96,10 +114,19 @@ public class TilgangsmodellHentdokumentRepositoryImpl implements TilgangsmodellH
 			} else {
 				return null;
 			}
-		} catch (Exception e) {
+		} catch (
+				Exception e) {
 			log.warn("findTilgangBrukerBySakId feilet ved oppslag på sakId={} og arkivsaksystem={}. Feilmelding={}", sakId, arkivsaksystem, e
 					.getMessage());
 			return null;
+		}
+	}
+
+	private BidragSak getBidragSakIfTemaIsBidOrFar(Arkivsak arkivsak) {
+		if (Tema.BID.equals(arkivsak.getTema()) || Tema.FAR.equals(arkivsak.getTema())) {
+			return bisysAntiCorruptionLayer.hentBidragSak(arkivsak.getArkivsaksnummer(), null);
+		} else {
+			return new BidragSak();
 		}
 	}
 

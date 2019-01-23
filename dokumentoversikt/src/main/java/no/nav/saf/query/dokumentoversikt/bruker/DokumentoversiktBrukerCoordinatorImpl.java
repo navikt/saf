@@ -6,6 +6,7 @@ import io.reactivex.Flowable;
 import io.reactivex.schedulers.Schedulers;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.domain.TilgangsmodellRepository;
+import no.nav.saf.domain.kode.Journalstatus;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.domain.tilgangsmodell.TilgangJournalpost;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
@@ -73,7 +74,8 @@ class DokumentoversiktBrukerCoordinatorImpl implements DokumentoversiktBrukerCoo
 			return Dokumentoversikt.empty();
 		}
 
-		final Flowable<TilgangSak> tilgangSakFlow = tilgangsmodellRepository.findTilgangSaker(tilgangBruker, dokumentoversiktBrukerArguments.getFilters()
+		final Flowable<TilgangSak> tilgangSakFlow = tilgangsmodellRepository.findTilgangSaker(tilgangBruker, dokumentoversiktBrukerArguments
+				.getFilters()
 				.getTema(), safRequestContext);
 		List<TilgangSak> filteredTilgangSakList = tilgangSakFlow
 				.onErrorResumeNext(throwable -> {
@@ -105,6 +107,8 @@ class DokumentoversiktBrukerCoordinatorImpl implements DokumentoversiktBrukerCoo
 				.parallel(10)
 				.runOn(Schedulers.io())
 				.filter(tj -> pep4.hasAccess(tj, safRequestContext))
+				.filter(tj -> checkPepIfMidlertidigJournalpost(pep2, tj, tilgangBruker, safRequestContext))
+				.filter(tj -> checkPepIfMidlertidigJournalpost(pep2d, tj, tilgangBruker, safRequestContext))
 				.sequential()
 				.toList()
 				.blockingGet();
@@ -118,5 +122,24 @@ class DokumentoversiktBrukerCoordinatorImpl implements DokumentoversiktBrukerCoo
 				.journalposter(visningJournalposter)
 				.sideInfo(sideInfoMapper.mapSideInfo(visningJournalposter, safRequestContext))
 				.build();
+	}
+
+	private TilgangSak mapFromTilgangjournalpostToTilgangSak(TilgangJournalpost tilgangJournalpost, TilgangBruker tilgangBruker) {
+		return TilgangSak.builder()
+				.foedselsnummer(tilgangBruker.getFoedselsnr())
+				.aktoerId(tilgangBruker.getAktoerId())
+				.orgnummer(tilgangBruker.getOrgnummer())
+				.arkivsaksnummer(tilgangJournalpost.getArkivsaksnummer())
+				.arkivsaksystem(tilgangJournalpost.getArkivsaksystem())
+				.tema(tilgangJournalpost.getTema())
+				.build();
+	}
+
+	private boolean checkPepIfMidlertidigJournalpost(Pep pep, TilgangJournalpost tj, TilgangBruker tb, SafRequestContext safRequestContext) {
+		if (tj.getJournalstatus().equals(Journalstatus.MOTTATT)) {
+			return pep.hasAccess(mapFromTilgangjournalpostToTilgangSak(tj, tb), safRequestContext);
+		} else {
+			return Boolean.TRUE;
+		}
 	}
 }
