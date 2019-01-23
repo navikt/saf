@@ -1,8 +1,8 @@
 package no.nav.saf.anticorruptionlayer.bisys;
 
 import lombok.extern.slf4j.Slf4j;
-import no.nav.saf.anticorruptionlayer.bisys.hentRelevanteTredjeparterOgParagraf19.BidragSakConsumer;
-import no.nav.saf.anticorruptionlayer.bisys.hentRelevanteTredjeparterOgParagraf19.BidragSakTo;
+import no.nav.saf.anticorruptionlayer.bisys.hentbidragsak.BidragSakConsumer;
+import no.nav.saf.anticorruptionlayer.bisys.hentbidragsak.BidragSakTo;
 import no.nav.saf.domain.BidragSak;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.domain.tilgangsmodell.TilgangIdent;
@@ -50,6 +50,10 @@ class BisysAntiCorruptionLayerImpl implements BisysAntiCorruptionLayer {
 	 * * Bidrag returnerer fnr til alle som har en rolle i saken, inkl. brukeren. Bruker må derfor filtreres bort
 	 */
 	private boolean isRolleBruker(String fnrRolle, TilgangBruker tilgangBruker) {
-		return fnrRolle.equals(tilgangBruker.getFoedselsnr());
+		if (fnrRolle == null || tilgangBruker == null) {
+			return false;
+		} else {
+			return fnrRolle.equals(tilgangBruker.getFoedselsnr());
+		}
 	}
 }

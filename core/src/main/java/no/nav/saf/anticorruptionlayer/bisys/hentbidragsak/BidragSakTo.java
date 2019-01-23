@@ -1,4 +1,4 @@
-package no.nav.saf.anticorruptionlayer.bisys.hentRelevanteTredjeparterOgParagraf19;
+package no.nav.saf.anticorruptionlayer.bisys.hentbidragsak;
 
 import lombok.Builder;
 import lombok.Value;

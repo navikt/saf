@@ -43,7 +43,7 @@ public class Pep3Impl implements Pep<TilgangSak> {
 
 		if (hasMetadataAccess(ressurs)) {
 			if (hasNotRelevanteTredjeparter(ressurs)) {
-				return false;
+				return true;
 			}
 			XacmlRequest request = SafXacmlRequestFactory.create(safRequestContext.getSecurityContext().getOidcTokenBody());
 			request.resource(RESOURCE_FELLES_RESOURCE_TYPE, RESOURCE_SAF_TREDJEPART);

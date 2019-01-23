@@ -139,7 +139,7 @@ class DokumentoversiktBrukerCoordinatorImpl implements DokumentoversiktBrukerCoo
 		if (tj.getJournalstatus().equals(Journalstatus.MOTTATT)) {
 			return pep.hasAccess(mapFromTilgangjournalpostToTilgangSak(tj, tb), safRequestContext);
 		} else {
-			return Boolean.TRUE;
+			return true;
 		}
 	}
 }

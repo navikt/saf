@@ -1,4 +1,4 @@
-package no.nav.saf.anticorruptionlayer.bisys.hentRelevanteTredjeparterOgParagraf19;
+package no.nav.saf.anticorruptionlayer.bisys.hentbidragsak;
 
 import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.cache.LokalCacheConfig;

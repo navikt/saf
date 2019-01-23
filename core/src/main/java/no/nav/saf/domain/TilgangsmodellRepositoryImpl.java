@@ -154,10 +154,8 @@ public class TilgangsmodellRepositoryImpl implements TilgangsmodellRepository {
 			List<String> orgnrList = extractOrgnrListFromFilteredTilgangBrukerList(filteredTilgangBrukerList);
 
 			return arkivsaker.stream()
-					.filter(arkivsak -> {
-//						Vi er kun interesserte i saker tilhørende brukere som ikke ble filtrert bort i pep1
-						return aktoerIdList.contains(arkivsak.getAktoerId()) || orgnrList.contains(arkivsak.getOrgnummer());
-					})
+//					Vi er kun interesserte i saker tilhørende brukere som ikke ble filtrert bort i pep1
+					.filter(arkivsak -> aktoerIdList.contains(arkivsak.getAktoerId()) || orgnrList.contains(arkivsak.getOrgnummer()))
 					.map(arkivsak -> {
 						safRequestContext.getRequestCache().putObject(arkivsak.getKey(), arkivsak);
 						final BidragSak bidragSak = getBidragSakIfTemaIsBidOrFar(arkivsak, getTilgangBrukerForSakOnAktoerId(arkivsak, filteredTilgangBrukerList));
