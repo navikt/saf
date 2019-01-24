@@ -89,7 +89,7 @@ public class Pep3ImplTest extends AbstractPepTest {
 	}
 
 	@Test
-	public void shouldDenyWhenTemaIsBidOrFarButRelevanteTredjeparterIsNotSupplied() {
+	public void shouldPermitWhenTemaIsBidOrFarButRelevanteTredjeparterIsNotSupplied() {
 		when(oidcValidatorTool.validate(OIDC_TOKEN_PERSON_USER_TEST)).thenReturn(true);
 
 		boolean hasAccess = pep3.hasAccess(createTilgangSakBuilderWithTemaBidAndRelevanteTredjeparter().relevanteTredjeparter(new ArrayList<>())
@@ -97,7 +97,7 @@ public class Pep3ImplTest extends AbstractPepTest {
 				new SafRequestContext(OIDC_TOKEN_PERSON_USER_TEST, oidcValidatorTool));
 
 		verify(abacService, never()).evaluate(any());
-		assertFalse(hasAccess);
+		assertTrue(hasAccess);
 	}
 
 	@Test

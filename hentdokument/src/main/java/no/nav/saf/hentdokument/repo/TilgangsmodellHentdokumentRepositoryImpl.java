@@ -101,7 +101,7 @@ public class TilgangsmodellHentdokumentRepositoryImpl implements TilgangsmodellH
 						.arkivsaksnummer(arkivsak.getArkivsaksnummer())
 						.arkivsaksystem(Arkivsakssystem.GSAK)
 						.fagsaksystem(arkivsak.getFagsaksystem())
-						.fagsaksnummer(arkivsak.getFagsaksnummer())
+						.fagsakId(arkivsak.getFagsakId())
 						.tema(arkivsak.getTema() == null ? null : arkivsak.getTema().name())
 						.orgnummer(arkivsak.getOrgnummer())
 						.relevanteTredjeparter(new ArrayList<>(bidragSak.getRelevanteTredjeparter()))
