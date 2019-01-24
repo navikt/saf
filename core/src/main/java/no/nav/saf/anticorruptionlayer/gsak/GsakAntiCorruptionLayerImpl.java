@@ -96,7 +96,7 @@ class GsakAntiCorruptionLayerImpl implements GsakAntiCorruptionLayer {
 				.arkivsaksnummer(gsakSakerTo.getId().toString())
 				.arkivsaksystem(Arkivsakssystem.GSAK)
 				.fagsaksystem(gsakSakerTo.getApplikasjon())
-				.fagsaksnummer(gsakSakerTo.getFagsakNr())
+				.fagsakId(gsakSakerTo.getFagsakNr())
 				.tema(gsakSakerTo.getTema() == null ? null : Tema.valueOf(gsakSakerTo.getTema()))
 				.orgnummer(gsakSakerTo.getOrgnr())
 				.build();
@@ -129,7 +129,7 @@ class GsakAntiCorruptionLayerImpl implements GsakAntiCorruptionLayer {
 						.orgnummer(gsak.getOrgnr())
 						.arkivsaksnummer(gsak.getId().toString())
 						.arkivsaksystem(Arkivsakssystem.GSAK)
-						.fagsaksnummer(gsak.getFagsakNr())
+						.fagsakId(gsak.getFagsakNr())
 						.fagsaksystem(gsak.getApplikasjon())
 						.tema(Tema.valueOf(gsak.getTema()))
 						.datoOpprettet(gsak.getOpprettetTidspunkt().toLocalDateTime())

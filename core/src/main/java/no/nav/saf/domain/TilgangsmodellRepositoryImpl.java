@@ -214,7 +214,7 @@ public class TilgangsmodellRepositoryImpl implements TilgangsmodellRepository {
 						safRequestContext.getRequestCache().putObject(arkivsak.getKey(), arkivsak);
 						return TilgangSak.builder()
 								.aktoerId(arkivsak.getAktoerId())
-								.fagsaksnummer(arkivsak.getFagsaksnummer())
+								.fagsakId(arkivsak.getFagsakId())
 								.fagsaksystem(arkivsak.getFagsaksystem())
 								.arkivsaksnummer(arkivsak.getArkivsaksnummer())
 								.arkivsaksystem(arkivsak.getArkivsaksystem())
@@ -252,7 +252,7 @@ public class TilgangsmodellRepositoryImpl implements TilgangsmodellRepository {
 						return TilgangSak.builder()
 								.aktoerId(arkivsak.getAktoerId())
 								.orgnummer(arkivsak.getOrgnummer())
-								.fagsaksnummer(arkivsak.getFagsaksnummer())
+								.fagsakId(arkivsak.getFagsakId())
 								.fagsaksystem(arkivsak.getFagsaksystem())
 								.arkivsaksnummer(arkivsak.getArkivsaksnummer())
 								.arkivsaksystem(arkivsak.getArkivsaksystem())
