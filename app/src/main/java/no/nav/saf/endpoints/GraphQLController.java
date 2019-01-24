@@ -15,7 +15,6 @@ import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.cache.LokalCacheConfig;
 import no.nav.saf.endpoints.wiring.DokumentoversiktWiring;
 import no.nav.saf.exceptionhandler.GraphQLExceptionHandler;
-import no.nav.saf.metrics.Monitor;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.validation.OidcValidatorTool;
 import org.springframework.cache.CacheManager;

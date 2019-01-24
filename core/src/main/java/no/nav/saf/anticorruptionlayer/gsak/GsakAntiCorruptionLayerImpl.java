@@ -10,7 +10,6 @@ import no.nav.saf.domain.Arkivsak;
 import no.nav.saf.domain.kode.Arkivsakssystem;
 import no.nav.saf.domain.kode.Tema;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
-import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
@@ -90,15 +89,15 @@ class GsakAntiCorruptionLayerImpl implements GsakAntiCorruptionLayer {
 	}
 
 	@Override
-	public TilgangSak findTilgangSakBySakId(final String sakId) {
+	public Arkivsak findArkivsakBySakId(final String sakId) {
 		GsakSakerTo gsakSakerTo = gsakConsumer.hentSakBySakId(sakId);
-		return gsakSakerTo == null ? null : TilgangSak.builder()
+		return gsakSakerTo == null ? null : Arkivsak.builder()
 				.aktoerId(gsakSakerTo.getAktoerId())
 				.arkivsaksnummer(gsakSakerTo.getId().toString())
 				.arkivsaksystem(Arkivsakssystem.GSAK)
 				.fagsaksystem(gsakSakerTo.getApplikasjon())
 				.fagsakId(gsakSakerTo.getFagsakNr())
-				.tema(gsakSakerTo.getTema())
+				.tema(gsakSakerTo.getTema() == null ? null : Tema.valueOf(gsakSakerTo.getTema()))
 				.orgnummer(gsakSakerTo.getOrgnr())
 				.build();
 	}

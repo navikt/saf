@@ -3,7 +3,6 @@ package no.nav.saf.anticorruptionlayer.gsak;
 import no.nav.saf.domain.Arkivsak;
 import no.nav.saf.domain.kode.Tema;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
-import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 
 import java.util.List;
 import java.util.Map;
@@ -17,7 +16,7 @@ public interface GsakAntiCorruptionLayer {
 
 	List<Arkivsak> findArkivsakerByOrgnr(String orgnr, List<Tema> tema);
 
-	TilgangSak findTilgangSakBySakId(String sakId);
+	Arkivsak findArkivsakBySakId(String sakId);
 
 	List<Arkivsak> findTilgangSakListByFagsakIdAndFagsaksystem(String fagsakId, String fagsaksystem, List<Tema> tema);
 

@@ -21,7 +21,6 @@ import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlAttribute;
 import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlRequest;
 import no.nav.saf.tilgangskontroll.abac.dto.response.Decision;
 import no.nav.saf.tilgangskontroll.abac.dto.response.XacmlResponse;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
@@ -32,7 +31,6 @@ import java.util.Arrays;
 /**
  * @author Sigurd Midttun, Visma Consulting.
  */
-@Disabled
 public class Pep3ImplTest extends AbstractPepTest {
 
 	@InjectMocks
@@ -44,7 +42,8 @@ public class Pep3ImplTest extends AbstractPepTest {
 		when(oidcValidatorTool.validate(OIDC_TOKEN_PERSON_USER_TEST)).thenReturn(true);
 		ArgumentCaptor<XacmlRequest> request = ArgumentCaptor.forClass(XacmlRequest.class);
 
-		boolean hasAccess = pep3.hasAccess(createTilgangSakBuilderWithTemaBidAndRelevanteTredjeparter().tema(Tema.FAR.name()).build(),
+		boolean hasAccess = pep3.hasAccess(createTilgangSakBuilderWithTemaBidAndRelevanteTredjeparter().tema(Tema.FAR.name())
+						.build(),
 				new SafRequestContext(OIDC_TOKEN_PERSON_USER_TEST, oidcValidatorTool));
 
 		verify(abacService).evaluate(request.capture());
@@ -81,7 +80,8 @@ public class Pep3ImplTest extends AbstractPepTest {
 	public void shouldPermitWhenTemaIsNotFarOrBidAndRelevanteTredjeparterSupplied() {
 		when(oidcValidatorTool.validate(OIDC_TOKEN_PERSON_USER_TEST)).thenReturn(true);
 
-		boolean hasAccess = pep3.hasAccess(createTilgangSakBuilderWithTemaBidAndRelevanteTredjeparter().tema(Tema.PEN.name()).build(),
+		boolean hasAccess = pep3.hasAccess(createTilgangSakBuilderWithTemaBidAndRelevanteTredjeparter().tema(Tema.PEN.name())
+						.build(),
 				new SafRequestContext(OIDC_TOKEN_PERSON_USER_TEST, oidcValidatorTool));
 
 		verify(abacService, never()).evaluate(any());
@@ -89,14 +89,15 @@ public class Pep3ImplTest extends AbstractPepTest {
 	}
 
 	@Test
-	public void shouldDenyWhenTemaIsBidOrFarButRelevanteTredjeparterIsNotSupplied() {
+	public void shouldPermitWhenTemaIsBidOrFarButRelevanteTredjeparterIsNotSupplied() {
 		when(oidcValidatorTool.validate(OIDC_TOKEN_PERSON_USER_TEST)).thenReturn(true);
 
-		boolean hasAccess = pep3.hasAccess(createTilgangSakBuilderWithTemaBidAndRelevanteTredjeparter().relevanteTredjeparter(new ArrayList<>()).build(),
+		boolean hasAccess = pep3.hasAccess(createTilgangSakBuilderWithTemaBidAndRelevanteTredjeparter().relevanteTredjeparter(new ArrayList<>())
+						.build(),
 				new SafRequestContext(OIDC_TOKEN_PERSON_USER_TEST, oidcValidatorTool));
 
 		verify(abacService, never()).evaluate(any());
-		assertFalse(hasAccess);
+		assertTrue(hasAccess);
 	}
 
 	@Test

@@ -40,31 +40,31 @@ public class LokalCacheTestConfig {
 						.maximumSize(0)
 						.build()),
 				new CaffeineCache(SAKER_BY_AKTOER_ID_CACHE, Caffeine.newBuilder()
-						.expireAfterWrite(10, TimeUnit.MINUTES)
+						.expireAfterWrite(0, TimeUnit.MINUTES)
 						.maximumSize(0)
 						.build()),
 				new CaffeineCache(SAKER_BY_ORG_NR_CACHE, Caffeine.newBuilder()
-						.expireAfterWrite(10, TimeUnit.MINUTES)
+						.expireAfterWrite(0, TimeUnit.MINUTES)
 						.maximumSize(0)
 						.build()),
 				new CaffeineCache(HENT_JOURNALPOSTBULK_CACHE, Caffeine.newBuilder()
-						.expireAfterWrite(10, TimeUnit.MINUTES)
+						.expireAfterWrite(0, TimeUnit.MINUTES)
 						.maximumSize(0)
 						.build()),
 				new CaffeineCache(TILGANGSMODELL_REPO_BRUKER_CACHE, Caffeine.newBuilder()
-						.expireAfterWrite(10, TimeUnit.MINUTES)
+						.expireAfterWrite(0, TimeUnit.MINUTES)
 						.maximumSize(0)
 						.build()),
 				new CaffeineCache(PENSJON_SAK_SAMMENDRAG_LISTE_CACHE, Caffeine.newBuilder()
-						.expireAfterWrite(10, TimeUnit.MINUTES)
+						.expireAfterWrite(0, TimeUnit.MINUTES)
 						.maximumSize(0)
 						.build()),
 				new CaffeineCache(SAK_BY_SAKID_CACHE, Caffeine.newBuilder()
-						.expireAfterWrite(10, TimeUnit.MINUTES)
+						.expireAfterWrite(0, TimeUnit.MINUTES)
 						.maximumSize(0)
 						.build()),
 				new CaffeineCache(SAKER_BY_FAGSAK_ID_CACHE, Caffeine.newBuilder()
-						.expireAfterWrite(10, TimeUnit.MINUTES)
+						.expireAfterWrite(0, TimeUnit.MINUTES)
 						.maximumSize(0)
 						.build())
 		));

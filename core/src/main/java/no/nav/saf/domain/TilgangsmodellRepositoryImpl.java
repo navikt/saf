@@ -9,6 +9,7 @@ import io.reactivex.Flowable;
 import io.reactivex.schedulers.Schedulers;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.anticorruptionlayer.aktoer.AktoerAntiCorruptionLayer;
+import no.nav.saf.anticorruptionlayer.bisys.BisysAntiCorruptionLayer;
 import no.nav.saf.anticorruptionlayer.gsak.GsakAntiCorruptionLayer;
 import no.nav.saf.anticorruptionlayer.joark.JoarkAntiCorruptionLayer;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.JournalpostDto;
@@ -21,6 +22,7 @@ import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.domain.tilgangsmodell.TilgangDokumentInfo;
 import no.nav.saf.domain.tilgangsmodell.TilgangJournalpost;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
+import no.nav.saf.exceptions.SafFunctionalException;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tjeneste.argumenter.BrukerIdInput;
 import no.nav.saf.tjeneste.argumenter.FagsakIdInput;
@@ -49,16 +51,19 @@ public class TilgangsmodellRepositoryImpl implements TilgangsmodellRepository {
 	private final GsakAntiCorruptionLayer gsakAntiCorruptionLayer;
 	private final PensjonSakAntiCorruptionLayer pensjonSakAntiCorruptionLayer;
 	private final JoarkAntiCorruptionLayer joarkAntiCorruptionLayer;
+	private final BisysAntiCorruptionLayer bisysAntiCorruptionLayer;
 
 	@Inject
 	public TilgangsmodellRepositoryImpl(AktoerAntiCorruptionLayer aktoerAntiCorruptionLayer,
 										GsakAntiCorruptionLayer gsakAntiCorruptionLayer,
 										PensjonSakAntiCorruptionLayer pensjonSakAntiCorruptionLayer,
-										JoarkAntiCorruptionLayer joarkAntiCorruptionLayer) {
+										JoarkAntiCorruptionLayer joarkAntiCorruptionLayer,
+										BisysAntiCorruptionLayer bisysAntiCorruptionLayer) {
 		this.aktoerAntiCorruptionLayer = aktoerAntiCorruptionLayer;
 		this.gsakAntiCorruptionLayer = gsakAntiCorruptionLayer;
 		this.pensjonSakAntiCorruptionLayer = pensjonSakAntiCorruptionLayer;
 		this.joarkAntiCorruptionLayer = joarkAntiCorruptionLayer;
+		this.bisysAntiCorruptionLayer = bisysAntiCorruptionLayer;
 	}
 
 	@Override
@@ -139,38 +144,61 @@ public class TilgangsmodellRepositoryImpl implements TilgangsmodellRepository {
 		}
 	}
 
-	private List<TilgangSak> findTilgangSakForGsaker(List<TilgangBruker> tilgangBrukerList, FagsakIdInput fagsakIdInput, List<Tema> tema, SafRequestContext safRequestContext) {
+	private List<TilgangSak> findTilgangSakForGsaker(List<TilgangBruker> filteredTilgangBrukerList, FagsakIdInput fagsakIdInput, List<Tema> tema, SafRequestContext safRequestContext) {
 		try {
+//			For å unngå å gjøre ett kall for hver bruker hentes alle saker assosiert med det aktuelle fagsaknummeret og fagsaksystemet fra Gsak i én spørring
 			List<Arkivsak> arkivsaker = gsakAntiCorruptionLayer.findTilgangSakListByFagsakIdAndFagsaksystem(fagsakIdInput.getFagsaksnummer(), fagsakIdInput
 					.getFagsaksystem(), tema);
+
+			List<String> aktoerIdList = extractAktoerIdListFromFilteredTilgangBrukerList(filteredTilgangBrukerList);
+			List<String> orgnrList = extractOrgnrListFromFilteredTilgangBrukerList(filteredTilgangBrukerList);
+
 			return arkivsaker.stream()
-					.filter(arkivsak -> {
-						List<String> aktoerIdList = tilgangBrukerList.stream()
-								.filter(TilgangBruker::isBrukerPerson)
-								.map(TilgangBruker::getAktoerId)
-								.collect(Collectors.toList());
-
-						List<String> orgnrList = tilgangBrukerList.stream()
-								.filter(tilgangBruker -> !tilgangBruker.isBrukerPerson())
-								.map(TilgangBruker::getOrgnummer)
-								.collect(Collectors.toList());
-
-						return aktoerIdList.contains(arkivsak.getAktoerId()) || orgnrList.contains(arkivsak.getOrgnummer());
-					})
+//					Vi er kun interesserte i saker tilhørende brukere som ikke ble filtrert bort i pep1
+					.filter(arkivsak -> aktoerIdList.contains(arkivsak.getAktoerId()) || orgnrList.contains(arkivsak.getOrgnummer()))
 					.map(arkivsak -> {
 						safRequestContext.getRequestCache().putObject(arkivsak.getKey(), arkivsak);
+						final BidragSak bidragSak = getBidragSakIfTemaIsBidOrFar(arkivsak, getTilgangBrukerForSakOnAktoerId(arkivsak, filteredTilgangBrukerList));
 						return TilgangSak.builder()
 								.aktoerId(arkivsak.getAktoerId())
 								.orgnummer(arkivsak.getOrgnummer())
 								.arkivsaksnummer(arkivsak.getArkivsaksnummer())
 								.arkivsaksystem(arkivsak.getArkivsaksystem())
 								.tema(arkivsak.getTema().name())
+								.paragraf19(bidragSak.isParagraf19())
+								.relevanteTredjeparter(new ArrayList<>(bidragSak.getRelevanteTredjeparter()))
 								.build();
 					}).collect(Collectors.toList());
 		} catch (Exception e) {
 			log.warn("findTilgangSakForGsaker feilet ved for fagsakIdInput={}.", fagsakIdInput);
 		}
 		return new ArrayList<>();
+	}
+
+	private List<String> extractAktoerIdListFromFilteredTilgangBrukerList(List<TilgangBruker> filteredTilgangBrukerList) {
+		return filteredTilgangBrukerList.stream()
+				.filter(TilgangBruker::isBrukerPerson)
+				.map(TilgangBruker::getAktoerId)
+				.collect(Collectors.toList());
+	}
+
+	private List<String> extractOrgnrListFromFilteredTilgangBrukerList(List<TilgangBruker> filteredTilgangBrukerList) {
+		return filteredTilgangBrukerList.stream()
+				.filter(tilgangBruker -> !tilgangBruker.isBrukerPerson())
+				.map(TilgangBruker::getOrgnummer)
+				.collect(Collectors.toList());
+	}
+
+	private TilgangBruker getTilgangBrukerForSakOnAktoerId(Arkivsak arkivsak, List<TilgangBruker> tilgangBrukerList) {
+		//Bruker er organisasjon
+		if (arkivsak.getAktoerId() == null) {
+			return null;
+		}
+		return tilgangBrukerList.stream()
+				.filter(tilgangBruker -> arkivsak.getAktoerId().equals(tilgangBruker.getAktoerId()))
+				.findAny()
+				.orElseThrow(() -> new SafFunctionalException(String.format("Kunne ikke koble ArkivSak til en tilgangBruker på aktoerId. %s", arkivsak
+						.toString())));
 	}
 
 	private List<TilgangSak> findTilgangSakForPsaker(List<TilgangBruker> tilgangBrukerList, FagsakIdInput fagsakIdInput, List<Tema> tema, SafRequestContext safRequestContext) {
@@ -219,6 +247,7 @@ public class TilgangsmodellRepositoryImpl implements TilgangsmodellRepository {
 			return Flowable.merge(Arrays.asList(gsakerFromOrgnr, gsakerFromAktoerId, psaker), 3)
 					.flatMapIterable(items -> items)
 					.map(arkivsak -> {
+						final BidragSak bidragSak = getBidragSakIfTemaIsBidOrFar(arkivsak, tilgangBruker);
 						safRequestContext.getRequestCache().putObject(arkivsak.getKey(), arkivsak);
 						return TilgangSak.builder()
 								.aktoerId(arkivsak.getAktoerId())
@@ -228,10 +257,30 @@ public class TilgangsmodellRepositoryImpl implements TilgangsmodellRepository {
 								.arkivsaksnummer(arkivsak.getArkivsaksnummer())
 								.arkivsaksystem(arkivsak.getArkivsaksystem())
 								.tema(arkivsak.getTema().name())
+								.paragraf19(bidragSak.isParagraf19())
+								.relevanteTredjeparter(new ArrayList<>(bidragSak.getRelevanteTredjeparter()))
 								.build();
 					});
 		} catch (Exception e) {
 			return Flowable.empty();
+		}
+	}
+
+	private BidragSak getBidragSakIfTemaIsBidOrFar(Arkivsak arkivsak, TilgangBruker tilgangBruker) {
+		//Bruker er organisasjon
+		if (tilgangBruker == null) {
+			return new BidragSak();
+		}
+
+		if (Tema.BID.equals(arkivsak.getTema()) || Tema.FAR.equals(arkivsak.getTema())) {
+			if (tilgangBruker.getFoedselsnr() == null) {
+				log.warn("Sak med tema={} må være tilknyttet en bruker med utledet fødselsnummer. Bruker med aktoerId={} har ikke tilknyttet fødselsnummer",
+						arkivsak.getTema(), tilgangBruker.getAktoerId());
+				return new BidragSak();
+			}
+			return bisysAntiCorruptionLayer.hentBidragSak(arkivsak.getArkivsaksnummer(), tilgangBruker);
+		} else {
+			return new BidragSak();
 		}
 	}
 
@@ -269,7 +318,6 @@ public class TilgangsmodellRepositoryImpl implements TilgangsmodellRepository {
 			return new ArrayList<>();
 		}
 	}
-
 
 
 	private TilgangJournalpost mapTilgangJournalpost(JournalpostDto dto) {
