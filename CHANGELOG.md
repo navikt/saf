@@ -7,6 +7,10 @@ Alle nevneverdige endringer blir dokumentert her.
 
 Denne malen er basert på [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.0.4] - 2019-01-24
+### Lagt til
+* pep3 er nå en del av tilgangskontrollen. Implementert kall mot bisys for å hente relevante parter og flagg for paragraf19
+
 ## [1.0.3] - 2019-01-23
 ### Rettet
 * `GraphQL: ` Typen `Sak` returnerte kun null på `fagsakId`. Rettet mapping. 
