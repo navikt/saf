@@ -1,7 +1,5 @@
 package no.nav.saf.tilgangskontroll.pep;
 
-import static no.nav.abac.common.xacml.CommonAttributter.RESOURCE_FELLES_PERSON_AKTOERID_RESOURCE;
-import static no.nav.abac.common.xacml.CommonAttributter.RESOURCE_FELLES_PERSON_FNR;
 import static no.nav.abac.common.xacml.CommonAttributter.RESOURCE_FELLES_RESOURCE_TYPE;
 import static no.nav.abac.saf.xacml.SafAttributter.RESOURCE_SAF_SAK_DOKUMENT;
 import static no.nav.abac.saf.xacml.SafAttributter.RESOURCE_SAF_TEMA;
@@ -60,7 +58,8 @@ public class Pep2dImpl implements Pep<TilgangSak> {
 			String tilgangKey = "tilgang:" + safRequestContext.getSecurityContext()
 					.getSaksbehandlerId() + ":tema=" + ressurs.getTema();
 			try {
-				boolean decide = decide(hasDokumentAccess(ressurs, safRequestContext));
+				boolean decide = decide(tilgangCache.get(tilgangKey,
+						() -> hasDokumentAccess(ressurs, safRequestContext)));
 				safRequestContext.getRequestCache().putObject(tilgangKey, decide);
 				return decide;
 			} catch (RedisException | PoolException | Cache.ValueRetrievalException e) {
@@ -86,16 +85,6 @@ public class Pep2dImpl implements Pep<TilgangSak> {
 		XacmlRequest request = SafXacmlRequestFactory.create(safRequestContext.getSecurityContext().getOidcTokenBody());
 		request.resource(RESOURCE_FELLES_RESOURCE_TYPE, RESOURCE_SAF_SAK_DOKUMENT);
 		request.resource(RESOURCE_SAF_TEMA, ressurs.getTema());
-		if (ressurs.getAktoerId() != null) {
-			request.resource(RESOURCE_FELLES_PERSON_AKTOERID_RESOURCE, ressurs.getAktoerId());
-		} else if (ressurs.getFoedselsnummer() != null) {
-			request.resource(RESOURCE_FELLES_PERSON_FNR, ressurs.getFoedselsnummer());
-		} else if (ressurs.getAktoerId() == null && ressurs.getFoedselsnummer() == null && ressurs.getOrgnummer() != null) {
-			// Ikke utfør sjekk for Organisasjon
-			return Decision.PERMIT;
-		} else {
-			return Decision.DENY;
-		}
 		XacmlResponse response = abacService.evaluate(request);
 		return response.getDecision();
 	}
