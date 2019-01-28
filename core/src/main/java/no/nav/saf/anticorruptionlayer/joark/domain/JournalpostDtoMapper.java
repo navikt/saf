@@ -8,12 +8,12 @@ import no.nav.saf.anticorruptionlayer.joark.domain.kode.FagsystemCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.JournalpostTypeCode;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.JournalpostDto;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.SaksrelasjonDto;
+import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.VariantDto;
 import no.nav.saf.domain.Arkivsak;
 import no.nav.saf.domain.kode.Arkivsakssystem;
 import no.nav.saf.domain.kode.Datotype;
 import no.nav.saf.domain.kode.Journalstatus;
 import no.nav.saf.domain.kode.Kanal;
-import no.nav.saf.domain.kode.Variantformat;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.domain.visningsmodell.Bruker;
 import no.nav.saf.domain.visningsmodell.BrukerIdType;
@@ -30,7 +30,6 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -51,8 +50,8 @@ public class JournalpostDtoMapper {
 				.tittel(journalpostDto.getInnhold())
 				.journalposttype(JournalpostTypeCode.mapToJournalpostType(journalpostDto.getJournalposttype()))
 				.journalstatus(mapJournalstatus(journalpostDto))
-				.tema(FagomradeCode.toSafJournalstatus(journalpostDto.getFagomrade()))
-				.temanavn(FagomradeCode.toSafJournalstatus(journalpostDto.getFagomrade()).getTemanavn())
+				.tema(FagomradeCode.toSafTema(journalpostDto.getFagomrade()))
+				.temanavn(FagomradeCode.toSafTema(journalpostDto.getFagomrade()).getTemanavn())
 				.sak(mapSak(journalpostDto.getSaksrelasjon(), requestCache))
 				.bruker(mapBruker(journalpostDto.getSaksrelasjon(), requestCache))
 				.avsenderMottakerNavn(journalpostDto.getAvsenderMottakerNavn())
@@ -70,10 +69,12 @@ public class JournalpostDtoMapper {
 						.dokumentInfoId(dokumentInfoDto.getDokumentInfoId())
 						.tittel(dokumentInfoDto.getTittel())
 						.brevkode(dokumentInfoDto.getBrevkode())
-						.dokumentvarianter(Collections.singletonList(Dokumentvariant.builder()
-								.saksbehandlerHarTilgang(findSaksbehandlerHarTilgang(journalpost, requestCache, safSecurityContext))
-								.variantformat(Variantformat.valueOf(dokumentInfoDto.getVariantFormat().name()))
-								.build()))
+						.dokumentvarianter(dokumentInfoDto.getVarianter().stream()
+								.map(variantDto -> Dokumentvariant.builder()
+										.saksbehandlerHarTilgang(findSaksbehandlerHarTilgang(journalpost, variantDto, requestCache, safSecurityContext))
+										.variantformat(variantDto.getVariantFormat().getSafVariantformat())
+										.build())
+								.collect(Collectors.toList()))
 						.logiskeVedlegg(dokumentInfoDto.getLogiske().stream()
 								.map(logiskVedleggDto -> new LogiskVedlegg(logiskVedleggDto.getTittel()))
 								.collect(Collectors.toList()))
@@ -223,10 +224,24 @@ public class JournalpostDtoMapper {
 		}
 	}
 
-	private boolean findSaksbehandlerHarTilgang(Journalpost journalpost, RequestCache requestCache, SafSecurityContext safSecurityContext) {
+	private boolean findSaksbehandlerHarTilgang(Journalpost journalpost, VariantDto variantDto, RequestCache requestCache, SafSecurityContext safSecurityContext) {
+		return getDecisionFromPep2d(journalpost, requestCache, safSecurityContext) && getDecisionFromPep6d(variantDto, requestCache, safSecurityContext);
+	}
+
+	private boolean getDecisionFromPep2d(Journalpost journalpost, RequestCache requestCache, SafSecurityContext safSecurityContext) {
 		try {
-			String tilgangKey = "tilgang:" + safSecurityContext
-					.getSaksbehandlerId() + ":tema=" + journalpost.getTema();
+			String tilgangKey = "tilgang:" + safSecurityContext.getSaksbehandlerId() + ":tema=" + journalpost.getTema();
+			return requestCache.getObject(tilgangKey);
+		} catch (NullPointerException e) {
+			return false;
+		}
+	}
+
+	private boolean getDecisionFromPep6d(VariantDto variantDto, RequestCache requestCache, SafSecurityContext safSecurityContext) {
+		try {
+			String tilgangKey = "tilgang:" + safSecurityContext.getSaksbehandlerId() + ":ressurstype:dokument_fil" + ":variantformat:" + variantDto
+					.getVariantFormat()
+					+ ":skjerming=" + variantDto.getSkjerming();
 			return requestCache.getObject(tilgangKey);
 		} catch (NullPointerException e) {
 			return false;

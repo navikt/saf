@@ -38,7 +38,7 @@ public class Pep2ImplTest extends AbstractPepTest {
 		ArgumentCaptor<XacmlRequest> request = ArgumentCaptor.forClass(XacmlRequest.class);
 
 		boolean hasAccess = pep2.hasAccess(TilgangSak.builder()
-				.tema(Tema.FAR.name())
+				.tema(Tema.FAR)
 				.build(), new SafRequestContext(OIDC_TOKEN_PERSON_USER_TEST, oidcValidatorTool));
 
 		verify(abacService).evaluate(request.capture());
@@ -56,7 +56,7 @@ public class Pep2ImplTest extends AbstractPepTest {
 		when(oidcValidatorTool.validate(OIDC_TOKEN_PERSON_USER_TEST)).thenReturn(true);
 
 		boolean hasAccess = pep2.hasAccess(TilgangSak.builder()
-				.tema(Tema.FAR.name())
+				.tema(Tema.FAR)
 				.build(), new SafRequestContext(OIDC_TOKEN_PERSON_USER_TEST, oidcValidatorTool));
 
 		assertFalse(hasAccess);

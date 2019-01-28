@@ -55,8 +55,9 @@ public class Pep1gImpl implements Pep<TilgangBruker> {
 		} else {
 			return false;
 		}
-
+		Pep.traceLogPepStarted("pep1g", ressurs);
 		XacmlResponse response = abacService.evaluate(request);
+		Pep.traceLogPepFinished("pep1g", ressurs);
 		return Decision.PERMIT.equals(response.getDecision());
 	}
 

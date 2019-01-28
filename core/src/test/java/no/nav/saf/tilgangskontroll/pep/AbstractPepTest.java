@@ -1,5 +1,6 @@
 package no.nav.saf.tilgangskontroll.pep;
 
+import no.nav.saf.domain.kode.Tema;
 import no.nav.saf.tilgangskontroll.abac.service.AbacService;
 import no.nav.saf.tilgangskontroll.validation.OidcValidatorTool;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -17,7 +18,7 @@ public abstract class AbstractPepTest {
 	protected static String AKTOER_ID = "1234";
 	protected static String FNR = "***gammelt_fnr***";
 	protected static String FNR2 = "***gammelt_fnr***";
-	protected static String TEMA_BID = "BID";
+	protected static Tema TEMA_BID = Tema.BID;
 
 	protected AbacService abacService;
 	protected OidcValidatorTool oidcValidatorTool;
@@ -26,8 +27,6 @@ public abstract class AbstractPepTest {
 		abacService = Mockito.mock(AbacService.class);
 		oidcValidatorTool = Mockito.mock(OidcValidatorTool.class);
 	}
-
-
 
 
 }

@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.DokumentStatusCode;
-import no.nav.saf.anticorruptionlayer.joark.domain.kode.VariantFormatCode;
+import no.nav.saf.anticorruptionlayer.joark.domain.kode.SkjermingTypeCode;
 
 import java.util.List;
 
@@ -20,7 +20,8 @@ public class DokumentInfoDto {
 	private String dokumentInfoId;
 	private DokumentStatusCode dokumentstatus;
 	private String brevkode;
-	private VariantFormatCode variantFormat;
 	private String tittel;
+	private SkjermingTypeCode skjerming;
+	private List<VariantDto> varianter;
 	private List<LogiskVedleggDto> logiske;
 }

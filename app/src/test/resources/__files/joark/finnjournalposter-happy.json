@@ -24,12 +24,19 @@
       "journalDato": "2018-12-12T20:31:17.284+0000",
       "sendtPrintDato": null,
       "ekspedertDato": null,
+      "skjermet": null,
       "dokumenter": [
         {
           "dokumentInfoId": 441828510,
           "dokumentstatus": null,
           "brevkode": null,
-          "variantFormat": "ARKIV",
+          "skjermet": null,
+          "varianter": [
+            {
+              "variantFormat": "ARKIV",
+              "skjermet": null
+            }
+          ],
           "tittel": "Bekreftelse fra arbeidsgiver",
           "logiske": []
         }
@@ -59,14 +66,21 @@
       "journalDato": "2018-12-12T08:21:59.585+0000",
       "sendtPrintDato": null,
       "ekspedertDato": null,
+      "skjermet": null,
       "dokumenter": [
         {
           "dokumentInfoId": 441828384,
           "dokumentstatus": null,
           "brevkode": null,
-          "variantFormat": "ARKIV",
+          "varianter": [
+            {
+              "variantFormat": "ARKIV",
+              "skjermet": null
+            }
+          ],
           "tittel": "Dokumentasjon av etterlønn/sluttvederlag",
-          "logiske": []
+          "logiske": [],
+          "skjermet": null
         }
       ]
     },
@@ -75,6 +89,7 @@
       "prevJournalpostId": 429837329,
       "nextJournalpostId": 429812712,
       "totaltAntall": 18,
+      "skjermet": null,
       "journalForendeEnhetId": "9999",
       "innhold": "SØKNAD_FORELDREPENGER_FØDSEL",
       "fagomrade": "FOR",
@@ -96,10 +111,16 @@
       "ekspedertDato": null,
       "dokumenter": [
         {
+          "skjermet": null,
           "dokumentInfoId": 441803683,
           "dokumentstatus": null,
           "brevkode": null,
-          "variantFormat": "ARKIV",
+          "varianter": [
+            {
+              "variantFormat": "ARKIV",
+              "skjermet": null
+            }
+          ],
           "tittel": "Søknad om foreldrepenger ved fødsel",
           "logiske": []
         }

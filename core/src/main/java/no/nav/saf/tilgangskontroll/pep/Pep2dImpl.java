@@ -52,10 +52,7 @@ public class Pep2dImpl implements Pep<TilgangSak> {
 		}
 
 		if (ressurs.getTema() != null) {
-			if (log.isTraceEnabled()) {
-				log.trace("Pep2d evaluerer arkivsak={}, arkivsaksystem={}, tema={}", ressurs.getArkivsaksnummer(), ressurs.getArkivsaksystem(), ressurs
-						.getTema());
-			}
+			Pep.traceLogPepStarted("pep2d", ressurs);
 
 			String tilgangKey = "tilgang:" + safRequestContext.getSecurityContext()
 					.getSaksbehandlerId() + ":tema=" + ressurs.getTema();
@@ -68,10 +65,7 @@ public class Pep2dImpl implements Pep<TilgangSak> {
 				safRequestContext.getRequestCache().putObject(tilgangKey, decide);
 				return decide;
 			} finally {
-				if (log.isTraceEnabled()) {
-					log.trace("Pep2d ferdig evaluert arkivsak={}, arkivsaksystem={}, tema={}", ressurs.getArkivsaksnummer(), ressurs
-							.getArkivsaksystem(), ressurs.getTema());
-				}
+				Pep.traceLogPepFinished("pep2d", ressurs);
 			}
 		} else {
 			return true;
@@ -85,7 +79,7 @@ public class Pep2dImpl implements Pep<TilgangSak> {
 	private Decision hasDokumentAccess(TilgangSak ressurs, SafRequestContext safRequestContext) {
 		XacmlRequest request = SafXacmlRequestFactory.create(safRequestContext.getSecurityContext().getOidcTokenBody());
 		request.resource(RESOURCE_FELLES_RESOURCE_TYPE, RESOURCE_SAF_SAK_DOKUMENT);
-		request.resource(RESOURCE_SAF_TEMA, ressurs.getTema());
+		request.resource(RESOURCE_SAF_TEMA, ressurs.getTema().name());
 		if (ressurs.getAktoerId() != null) {
 			request.resource(RESOURCE_FELLES_PERSON_AKTOERID_RESOURCE, ressurs.getAktoerId());
 		} else if (ressurs.getFoedselsnummer() != null) {

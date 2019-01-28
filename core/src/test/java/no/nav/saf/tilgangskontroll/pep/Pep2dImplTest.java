@@ -14,6 +14,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import no.nav.saf.cache.RedisCacheConfig;
+import no.nav.saf.domain.kode.Tema;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlAttribute;
@@ -95,7 +96,7 @@ public class Pep2dImplTest extends AbstractPepTest {
 
 	private void assertCommonXacmlRequestResources(XacmlRequest capturedRequest) {
 		assertThat(capturedRequest.getResources(), hasItem(new XacmlAttribute(RESOURCE_FELLES_RESOURCE_TYPE, RESOURCE_SAF_SAK_DOKUMENT)));
-		assertThat(capturedRequest.getResources(), hasItem(new XacmlAttribute(RESOURCE_SAF_TEMA, TEMA_BID)));
+		assertThat(capturedRequest.getResources(), hasItem(new XacmlAttribute(RESOURCE_SAF_TEMA, TEMA_BID.name())));
 	}
 
 	@Test
@@ -103,7 +104,7 @@ public class Pep2dImplTest extends AbstractPepTest {
 		when(abacService.evaluate(any(XacmlRequest.class))).thenReturn(new XacmlResponse(Decision.DENY, null, null, null));
 		when(oidcValidatorTool.validate(OIDC_TOKEN_PERSON_USER_TEST)).thenReturn(true);
 		boolean hasAccess = pep2d.hasAccess(TilgangSak.builder()
-				.tema("FAR")
+				.tema(Tema.FAR)
 				.build(), new SafRequestContext(OIDC_TOKEN_PERSON_USER_TEST, oidcValidatorTool));
 
 		assertFalse(hasAccess);

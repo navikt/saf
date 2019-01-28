@@ -43,10 +43,6 @@ public class Pep2Impl implements Pep<TilgangSak> {
 		}
 
 		if (hasMetadataAccess(ressurs)) {
-			if (log.isTraceEnabled()) {
-				log.trace("Pep2 evaluerer arkivsak={}, arkivsaksystem={}, tema={}", ressurs.getArkivsaksnummer(), ressurs.getArkivsaksystem(), ressurs
-						.getTema());
-			}
 			XacmlRequest request = SafXacmlRequestFactory.create(safRequestContext.getSecurityContext().getOidcTokenBody());
 			request.resource(RESOURCE_FELLES_RESOURCE_TYPE, RESOURCE_SAF_SAK_JP_METADATA);
 			if (isFarskapSak(ressurs)) {
@@ -55,11 +51,11 @@ public class Pep2Impl implements Pep<TilgangSak> {
 			if (isForvaltningslovensParagraf19(ressurs)) {
 				request.resource(RESOURCE_SAF_PARAGRAF19, true);
 			}
+
+			Pep.traceLogPepStarted("pep2", ressurs);
 			XacmlResponse response = abacService.evaluate(request);
-			if (log.isTraceEnabled()) {
-				log.trace("Pep2 ferdig evaluert arkivsak={}, arkivsaksystem={}, tema={}", ressurs.getArkivsaksnummer(), ressurs.getArkivsaksystem(), ressurs
-						.getTema());
-			}
+			Pep.traceLogPepFinished("pep2", ressurs);
+
 			return Decision.PERMIT.equals(response.getDecision());
 		} else {
 			return true;
@@ -71,7 +67,7 @@ public class Pep2Impl implements Pep<TilgangSak> {
 	}
 
 	private boolean isFarskapSak(TilgangSak ressurs) {
-		return Tema.FAR.name().equals(ressurs.getTema());
+		return Tema.FAR.equals(ressurs.getTema());
 	}
 
 	private boolean isForvaltningslovensParagraf19(TilgangSak ressurs) {

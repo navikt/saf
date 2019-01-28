@@ -10,6 +10,8 @@ import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.anticorruptionlayer.joark.domain.SafToJoarkJournalstatusMapper;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.FagomradeCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.JournalpostTypeCode;
+import no.nav.saf.anticorruptionlayer.joark.domain.kode.SkjermingTypeCode;
+import no.nav.saf.anticorruptionlayer.joark.domain.kode.VariantFormatCode;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.HentJournalsakinfo;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.FinnJournalposterRequestTo;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.FinnJournalposterResponseTo;
@@ -27,6 +29,7 @@ import no.nav.saf.domain.kode.Journalstatus;
 import no.nav.saf.domain.kode.Tema;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.domain.tilgangsmodell.TilgangDokumentInfo;
+import no.nav.saf.domain.tilgangsmodell.TilgangDokumentvariant;
 import no.nav.saf.domain.tilgangsmodell.TilgangJournalpost;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 import no.nav.saf.exceptions.SafTechnicalException;
@@ -115,7 +118,7 @@ class JoarkAntiCorruptionLayerImpl implements JoarkAntiCorruptionLayer {
 					.arkivsaksnummer(tilgangJournalpostDto.getSak().getSakId())
 					.arkivsaksystem(mapJoarkFagsystemToArkivsakssystemCode(tilgangJournalpostDto.getSak()
 							.getFagsystem(), tilgangJournalpostDto.getJournalpostId()))
-					.tema(tilgangJournalpostDto.getTema())
+					.tema(FagomradeCode.toSafTema(tilgangJournalpostDto.getTema()))
 					.build();
 		}
 	}
@@ -187,16 +190,16 @@ class JoarkAntiCorruptionLayerImpl implements JoarkAntiCorruptionLayer {
 		return TilgangJournalpost.builder()
 				.journalpostId(dto.getJournalpostId())
 				.journalstatus(dto.getJournalStatus().toSafJournalstatus())
-				.journalposttype(dto.getJournalpostType().toSafJournalposttype())
-				.tema(tilgangSak.getTema())
-				.arkivsaksystem(mapJoarkFagsystemToArkivsakssystemCode(dto.getSak() == null ? null : dto.getSak()
-						.getFagsystem(), dto.getJournalpostId()))
-				.arkivsaksnummer(dto.getSak() == null ? null : dto.getSak().getSakId())
+				.skjerming(SkjermingTypeCode.toSafSkjerming(dto.getSkjerming()))
 				.dokumenter(Arrays.asList(TilgangDokumentInfo.builder()
-						.dokumentInfoId(tilgangDokumentInfoDto.getDokumentinfoId())
-						.dokumentstatus(tilgangDokumentInfoDto.getDokumentstatus())
-						.brevkode(tilgangDokumentInfoDto.getBrevkode())
-						.variantFormat(tilgangDokumentInfoDto.getVariantFormat())
+						.skjerming(SkjermingTypeCode.toSafSkjerming(tilgangDokumentInfoDto.getSkjerming()))
+						.tilgangDokumentvarianter(tilgangDokumentInfoDto.getVarianter().stream()
+								.map(variantDto -> TilgangDokumentvariant.builder()
+										.skjerming(SkjermingTypeCode.toSafSkjerming(variantDto.getSkjerming()))
+										.variantformat(VariantFormatCode.toSafVariantformat(variantDto.getVariantFormat()))
+										.build())
+								.collect(Collectors.toList())
+						)
 						.build()))
 				.build();
 

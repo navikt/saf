@@ -43,16 +43,20 @@ public class Pep4Impl implements Pep<TilgangJournalpost> {
 		}
 
 		if (isJournalpoststatusUtgaar(ressurs)) {
-			return hasJournalpostAccess(safRequestContext);
+			return hasJournalpostAccess(safRequestContext, ressurs);
 		}
 		return true;
 	}
 
-	private boolean hasJournalpostAccess(SafRequestContext safRequestContext) {
+	private boolean hasJournalpostAccess(SafRequestContext safRequestContext, TilgangJournalpost ressurs) {
 		XacmlRequest request = SafXacmlRequestFactory.create(safRequestContext.getSecurityContext().getOidcTokenBody());
 		request.resource(RESOURCE_FELLES_RESOURCE_TYPE, RESOURCE_SAF_JOURNAL_METADATA);
 		request.resource(RESOURCE_SAF_JOURNALSTATUS, ABAC_JOURNALSTATUS_UTGAAR);
+
+		Pep.traceLogPepStarted("pep4", ressurs);
 		XacmlResponse response = abacService.evaluate(request);
+		Pep.traceLogPepFinished("pep4", ressurs);
+
 		return Decision.PERMIT.equals(response.getDecision());
 	}
 

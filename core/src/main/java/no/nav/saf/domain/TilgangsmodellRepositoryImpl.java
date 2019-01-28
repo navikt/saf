@@ -12,6 +12,8 @@ import no.nav.saf.anticorruptionlayer.aktoer.AktoerAntiCorruptionLayer;
 import no.nav.saf.anticorruptionlayer.bisys.BisysAntiCorruptionLayer;
 import no.nav.saf.anticorruptionlayer.gsak.GsakAntiCorruptionLayer;
 import no.nav.saf.anticorruptionlayer.joark.JoarkAntiCorruptionLayer;
+import no.nav.saf.anticorruptionlayer.joark.domain.kode.SkjermingTypeCode;
+import no.nav.saf.anticorruptionlayer.joark.domain.kode.VariantFormatCode;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.JournalpostDto;
 import no.nav.saf.anticorruptionlayer.pensjonsak.PensjonSakAntiCorruptionLayer;
 import no.nav.saf.cache.LokalCacheConfig;
@@ -20,6 +22,7 @@ import no.nav.saf.domain.kode.Journalstatus;
 import no.nav.saf.domain.kode.Tema;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.domain.tilgangsmodell.TilgangDokumentInfo;
+import no.nav.saf.domain.tilgangsmodell.TilgangDokumentvariant;
 import no.nav.saf.domain.tilgangsmodell.TilgangJournalpost;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 import no.nav.saf.exceptions.SafFunctionalException;
@@ -164,7 +167,7 @@ public class TilgangsmodellRepositoryImpl implements TilgangsmodellRepository {
 								.orgnummer(arkivsak.getOrgnummer())
 								.arkivsaksnummer(arkivsak.getArkivsaksnummer())
 								.arkivsaksystem(arkivsak.getArkivsaksystem())
-								.tema(arkivsak.getTema().name())
+								.tema(arkivsak.getTema())
 								.paragraf19(bidragSak.isParagraf19())
 								.relevanteTredjeparter(new ArrayList<>(bidragSak.getRelevanteTredjeparter()))
 								.build();
@@ -214,11 +217,9 @@ public class TilgangsmodellRepositoryImpl implements TilgangsmodellRepository {
 						safRequestContext.getRequestCache().putObject(arkivsak.getKey(), arkivsak);
 						return TilgangSak.builder()
 								.aktoerId(arkivsak.getAktoerId())
-								.fagsakId(arkivsak.getFagsakId())
-								.fagsaksystem(arkivsak.getFagsaksystem())
 								.arkivsaksnummer(arkivsak.getArkivsaksnummer())
 								.arkivsaksystem(arkivsak.getArkivsaksystem())
-								.tema(arkivsak.getTema().name())
+								.tema(arkivsak.getTema())
 								.build();
 					}).collect(Collectors.toList());
 
@@ -252,11 +253,9 @@ public class TilgangsmodellRepositoryImpl implements TilgangsmodellRepository {
 						return TilgangSak.builder()
 								.aktoerId(arkivsak.getAktoerId())
 								.orgnummer(arkivsak.getOrgnummer())
-								.fagsakId(arkivsak.getFagsakId())
-								.fagsaksystem(arkivsak.getFagsaksystem())
+								.tema(arkivsak.getTema())
 								.arkivsaksnummer(arkivsak.getArkivsaksnummer())
 								.arkivsaksystem(arkivsak.getArkivsaksystem())
-								.tema(arkivsak.getTema().name())
 								.paragraf19(bidragSak.isParagraf19())
 								.relevanteTredjeparter(new ArrayList<>(bidragSak.getRelevanteTredjeparter()))
 								.build();
@@ -324,14 +323,18 @@ public class TilgangsmodellRepositoryImpl implements TilgangsmodellRepository {
 		return TilgangJournalpost.builder()
 				.journalpostId(dto.getJournalpostId().toString())
 				.journalstatus(dto.getJournalstatus().toSafJournalstatus())
-				.journalposttype(dto.getJournalposttype().toSafJournalposttype())
-				.tema(dto.getFagomrade() == null ? null : dto.getFagomrade().toString())
+				.skjerming(SkjermingTypeCode.toSafSkjerming(dto.getSkjerming()))
 				.dokumenter(dto.getDokumenter().stream().map(dokdto -> TilgangDokumentInfo.builder()
-						.dokumentInfoId(dokdto.getDokumentInfoId())
-						.dokumentstatus(dokdto.getDokumentstatus() == null ? null : dokdto.getDokumentstatus().toString())
-						.brevkode(dokdto.getBrevkode())
-						.variantFormat(dokdto.getVariantFormat() == null ? null : dokdto.getVariantFormat().toString())
+						.skjerming(SkjermingTypeCode.toSafSkjerming(dokdto.getSkjerming()))
+						.tilgangDokumentvarianter(dokdto.getVarianter().stream()
+								.map(variantDto -> TilgangDokumentvariant.builder()
+										.skjerming(SkjermingTypeCode.toSafSkjerming(variantDto.getSkjerming()))
+										.variantformat(VariantFormatCode.toSafVariantformat(variantDto.getVariantFormat()))
+										.build())
+								.collect(Collectors.toList())
+						)
 						.build()).collect(Collectors.toList()))
 				.build();
 	}
+
 }

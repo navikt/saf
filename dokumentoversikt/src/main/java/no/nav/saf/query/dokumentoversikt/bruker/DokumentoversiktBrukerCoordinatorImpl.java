@@ -5,6 +5,9 @@ import static no.nav.saf.domain.DomainConstants.TILGANG_BRUKER;
 import io.reactivex.Flowable;
 import io.reactivex.schedulers.Schedulers;
 import lombok.extern.slf4j.Slf4j;
+import no.nav.saf.anticorruptionlayer.joark.domain.kode.FagomradeCode;
+import no.nav.saf.anticorruptionlayer.joark.domain.kode.FagsystemCode;
+import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.JournalpostDto;
 import no.nav.saf.domain.TilgangsmodellRepository;
 import no.nav.saf.domain.kode.Journalstatus;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
@@ -124,20 +127,22 @@ class DokumentoversiktBrukerCoordinatorImpl implements DokumentoversiktBrukerCoo
 				.build();
 	}
 
-	private TilgangSak mapFromTilgangjournalpostToTilgangSak(TilgangJournalpost tilgangJournalpost, TilgangBruker tilgangBruker) {
+	private TilgangSak mapToTilgangSak(String journalpostId, TilgangBruker tilgangBruker, SafRequestContext safRequestContext) {
+		JournalpostDto journalpostDto = safRequestContext.getRequestCache().getObject(journalpostId);
+
 		return TilgangSak.builder()
 				.foedselsnummer(tilgangBruker.getFoedselsnr())
 				.aktoerId(tilgangBruker.getAktoerId())
 				.orgnummer(tilgangBruker.getOrgnummer())
-				.arkivsaksnummer(tilgangJournalpost.getArkivsaksnummer())
-				.arkivsaksystem(tilgangJournalpost.getArkivsaksystem())
-				.tema(tilgangJournalpost.getTema())
+				.arkivsaksnummer(journalpostDto.getSaksrelasjon().getSakId())
+				.arkivsaksystem(FagsystemCode.toSafArkivsaksystem(journalpostDto.getSaksrelasjon().getFagsystem()))
+				.tema(FagomradeCode.toSafTema(journalpostDto.getFagomrade()))
 				.build();
 	}
 
 	private boolean checkPepIfMidlertidigJournalpost(Pep pep, TilgangJournalpost tj, TilgangBruker tb, SafRequestContext safRequestContext) {
 		if (tj.getJournalstatus().equals(Journalstatus.MOTTATT)) {
-			return pep.hasAccess(mapFromTilgangjournalpostToTilgangSak(tj, tb), safRequestContext);
+			return pep.hasAccess(mapToTilgangSak(tj.getJournalpostId(), tb, safRequestContext), safRequestContext);
 		} else {
 			return true;
 		}

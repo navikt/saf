@@ -8,6 +8,7 @@ import no.nav.saf.anticorruptionlayer.joark.domain.kode.FagomradeCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.JournalStatusCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.JournalpostTypeCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.MottaksKanalCode;
+import no.nav.saf.anticorruptionlayer.joark.domain.kode.SkjermingTypeCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.UtsendingsKanalCode;
 
 import java.util.Date;
@@ -35,6 +36,7 @@ public class JournalpostDto {
 	private UtsendingsKanalCode utsendingskanal;
 	private JournalpostTypeCode journalposttype;
 	private SaksrelasjonDto saksrelasjon;
+	private SkjermingTypeCode skjerming;
 	private Date datoOpprettet;
 	private Date mottattDato;
 	private Date journalDato;

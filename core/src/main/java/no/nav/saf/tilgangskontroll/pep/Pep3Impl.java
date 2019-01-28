@@ -51,17 +51,10 @@ public class Pep3Impl implements Pep<TilgangSak> {
 					.forEach(tilgangRelevantTredjepart -> request.resource(RESOURCE_FELLES_PERSON_FNR, tilgangRelevantTredjepart
 							.getIdent().getIdentifikator()));
 
-			if (log.isTraceEnabled()) {
-				log.trace("Pep3 evaluerer arkivsak={}, arkivsaksystem={}, tema={}", ressurs.getArkivsaksnummer(), ressurs.getArkivsaksystem(), ressurs
-						.getTema());
-			}
-
+			Pep.traceLogPepStarted("pep3", ressurs);
 			XacmlResponse response = abacService.evaluate(request);
+			Pep.traceLogPepFinished("pep3", ressurs);
 
-			if (log.isTraceEnabled()) {
-				log.trace("Pep3 ferdig evaluert arkivsak={}, arkivsaksystem={}, tema={}", ressurs.getArkivsaksnummer(), ressurs.getArkivsaksystem(), ressurs
-						.getTema());
-			}
 			return Decision.PERMIT.equals(response.getDecision());
 		} else {
 			return true;
@@ -77,10 +70,10 @@ public class Pep3Impl implements Pep<TilgangSak> {
 	}
 
 	private boolean isFarskapSak(TilgangSak ressurs) {
-		return Tema.FAR.name().equals(ressurs.getTema());
+		return Tema.FAR.equals(ressurs.getTema());
 	}
 
 	private boolean isBidragSak(TilgangSak ressurs) {
-		return Tema.BID.name().equals(ressurs.getTema());
+		return Tema.BID.equals(ressurs.getTema());
 	}
 }
