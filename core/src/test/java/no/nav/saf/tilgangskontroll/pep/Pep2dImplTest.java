@@ -1,7 +1,5 @@
 package no.nav.saf.tilgangskontroll.pep;
 
-import static no.nav.abac.common.xacml.CommonAttributter.RESOURCE_FELLES_PERSON_AKTOERID_RESOURCE;
-import static no.nav.abac.common.xacml.CommonAttributter.RESOURCE_FELLES_PERSON_FNR;
 import static no.nav.abac.common.xacml.CommonAttributter.RESOURCE_FELLES_RESOURCE_TYPE;
 import static no.nav.abac.saf.xacml.SafAttributter.RESOURCE_SAF_SAK_DOKUMENT;
 import static no.nav.abac.saf.xacml.SafAttributter.RESOURCE_SAF_TEMA;
@@ -31,11 +29,11 @@ import java.util.Collections;
 /**
  * @author Sigurd Midttun, Visma Consulting.
  */
-public class Pep2dImplTest extends AbstractPepTest {
+class Pep2dImplTest extends AbstractPepTest {
 
 	private Pep2dImpl pep2d;
 
-	public Pep2dImplTest() {
+	Pep2dImplTest() {
 		super();
 		SimpleCacheManager cacheManager = new SimpleCacheManager();
 		cacheManager.setCaches(Collections.singletonList(new NoOpCache(RedisCacheConfig.TILGANG_CACHE)));
@@ -44,7 +42,7 @@ public class Pep2dImplTest extends AbstractPepTest {
 	}
 
 	@Test
-	public void shouldPermitWhenTemaIsAllowedAndAktoerIdSupplied() {
+	void shouldPermitWhenTemaIsAllowed() {
 		when(abacService.evaluate(any(XacmlRequest.class))).thenReturn(new XacmlResponse(Decision.PERMIT, null, null, null));
 		when(oidcValidatorTool.validate(OIDC_TOKEN_PERSON_USER_TEST)).thenReturn(true);
 		ArgumentCaptor<XacmlRequest> request = ArgumentCaptor.forClass(XacmlRequest.class);
@@ -60,38 +58,6 @@ public class Pep2dImplTest extends AbstractPepTest {
 		assertTrue(hasAccess);
 
 		assertCommonXacmlRequestResources(capturedRequest);
-		assertThat(capturedRequest.getResources(), hasItem(new XacmlAttribute(RESOURCE_FELLES_PERSON_AKTOERID_RESOURCE, AKTOER_ID)));
-	}
-
-	@Test
-	public void shouldPermitWhenTemaIsAllowedAndFmrIdSupplied() {
-		when(abacService.evaluate(any(XacmlRequest.class))).thenReturn(new XacmlResponse(Decision.PERMIT, null, null, null));
-		when(oidcValidatorTool.validate(OIDC_TOKEN_PERSON_USER_TEST)).thenReturn(true);
-		ArgumentCaptor<XacmlRequest> request = ArgumentCaptor.forClass(XacmlRequest.class);
-
-		boolean hasAccess = pep2d.hasAccess(TilgangSak.builder()
-				.foedselsnummer(FNR)
-				.tema(TEMA_BID)
-				.build(), new SafRequestContext(OIDC_TOKEN_PERSON_USER_TEST, oidcValidatorTool));
-
-		verify(abacService).evaluate(request.capture());
-		XacmlRequest capturedRequest = request.getValue();
-
-		assertTrue(hasAccess);
-
-		assertCommonXacmlRequestResources(capturedRequest);
-		assertThat(capturedRequest.getResources(), hasItem(new XacmlAttribute(RESOURCE_FELLES_PERSON_FNR, FNR)));
-	}
-
-	@Test
-	public void shouldPermitWhenOnlyOrgnummerSupplied() {
-		when(oidcValidatorTool.validate(OIDC_TOKEN_PERSON_USER_TEST)).thenReturn(true);
-		boolean hasAccess = pep2d.hasAccess(TilgangSak.builder()
-				.orgnummer(ORGNR)
-				.tema(TEMA_BID)
-				.build(), new SafRequestContext(OIDC_TOKEN_PERSON_USER_TEST, oidcValidatorTool));
-
-		assertTrue(hasAccess);
 	}
 
 	private void assertCommonXacmlRequestResources(XacmlRequest capturedRequest) {
@@ -100,7 +66,7 @@ public class Pep2dImplTest extends AbstractPepTest {
 	}
 
 	@Test
-	public void shouldDenyWhenAbacDenies() {
+	void shouldDenyWhenAbacDenies() {
 		when(abacService.evaluate(any(XacmlRequest.class))).thenReturn(new XacmlResponse(Decision.DENY, null, null, null));
 		when(oidcValidatorTool.validate(OIDC_TOKEN_PERSON_USER_TEST)).thenReturn(true);
 		boolean hasAccess = pep2d.hasAccess(TilgangSak.builder()
