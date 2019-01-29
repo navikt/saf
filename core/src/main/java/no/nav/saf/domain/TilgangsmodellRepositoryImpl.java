@@ -170,7 +170,7 @@ public class TilgangsmodellRepositoryImpl implements TilgangsmodellRepository {
 								.build();
 					}).collect(Collectors.toList());
 		} catch (Exception e) {
-			log.warn("findTilgangSakForGsaker feilet ved for fagsakIdInput={}.", fagsakIdInput);
+			log.warn("findTilgangSakForGsaker feilet ved for fagsakIdInput={}.", fagsakIdInput, e);
 		}
 		return new ArrayList<>();
 	}
@@ -223,7 +223,7 @@ public class TilgangsmodellRepositoryImpl implements TilgangsmodellRepository {
 					}).collect(Collectors.toList());
 
 		} catch (Exception e) {
-			log.warn("findTilgangSakForPsaker feilet ved for fagsakIdInput={}.", fagsakIdInput);
+			log.warn("findTilgangSakForPsaker feilet ved for fagsakIdInput={}.", fagsakIdInput, e);
 		}
 		return new ArrayList<>();
 	}
@@ -310,8 +310,7 @@ public class TilgangsmodellRepositoryImpl implements TilgangsmodellRepository {
 				List<String> arkivsaksId = tilgangSakList.stream()
 						.map(TilgangSak::getArkivsaksnummer)
 						.collect(Collectors.toList());
-				log.warn("finnJournalposter feilet ved henting av journalposter på arkivsaker={}.",
-						arkivsaksId, e);
+				log.warn("finnJournalposter feilet ved henting av journalposter på arkivsaker={}.", arkivsaksId, e);
 			} else {
 				log.warn("finnJournalposter feilet ved henting av journalposter på arkivsaker. Det var flere enn 1000 arkivsaker. Disse logges ikke da så lange logglinjer ikke støttes i logstash.", e);
 			}

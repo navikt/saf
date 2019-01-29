@@ -36,8 +36,8 @@ import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
 import java.time.LocalDate;
-import java.util.Arrays;
 import java.util.Base64;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -192,7 +192,7 @@ class JoarkAntiCorruptionLayerImpl implements JoarkAntiCorruptionLayer {
 				.arkivsaksystem(mapJoarkFagsystemToArkivsakssystemCode(dto.getSak() == null ? null : dto.getSak()
 						.getFagsystem(), dto.getJournalpostId()))
 				.arkivsaksnummer(dto.getSak() == null ? null : dto.getSak().getSakId())
-				.dokumenter(Arrays.asList(TilgangDokumentInfo.builder()
+				.dokumenter(Collections.singletonList(TilgangDokumentInfo.builder()
 						.dokumentInfoId(tilgangDokumentInfoDto.getDokumentinfoId())
 						.dokumentstatus(tilgangDokumentInfoDto.getDokumentstatus())
 						.brevkode(tilgangDokumentInfoDto.getBrevkode())

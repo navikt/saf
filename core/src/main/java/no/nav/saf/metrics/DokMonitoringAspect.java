@@ -41,7 +41,6 @@ import java.util.function.Function;
  * @author Jon Schneider
  */
 @Aspect
-//@NonNullApi
 @Incubating(since = "1.0.0")
 @Slf4j
 @SuppressWarnings("Duplicates")
@@ -74,8 +73,6 @@ public class DokMonitoringAspect {
 		try {
 			return pjp.proceed();
 		} catch (Exception e) {
-			logException(e);
-
 			Counter.builder(monitor.value() + "_exception")
 					.tags("error_type", isFunctionalException(e) ? "functional" : "technical")
 					.tags("exception_name", e.getClass().getSimpleName())
@@ -99,11 +96,4 @@ public class DokMonitoringAspect {
 		return e instanceof SafFunctionalException;
 	}
 
-	private void logException(Exception e) {
-		if (isFunctionalException(e)) {
-			log.warn(e.getMessage(), e);
-		} else {
-			log.error(e.getMessage(), e);
-		}
-	}
 }
