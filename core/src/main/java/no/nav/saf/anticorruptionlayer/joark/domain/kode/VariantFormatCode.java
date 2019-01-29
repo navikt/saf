@@ -45,10 +45,11 @@ public enum VariantFormatCode {
 	public Variantformat getSafVariantformat() {
 		return safVariantformat;
 	}
+
 	public static Variantformat toSafVariantformat(VariantFormatCode joarkVariantFormatCode) {
 		try {
 			return joarkVariantFormatCode.getSafVariantformat();
-		} catch (Exception e) {
+		} catch (NullPointerException e) {
 			return null;
 		}
 	}

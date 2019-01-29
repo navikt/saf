@@ -4,6 +4,7 @@ import static no.nav.abac.common.xacml.CommonAttributter.RESOURCE_FELLES_RESOURC
 import static no.nav.abac.saf.xacml.SafAttributter.RESOURCE_SAF_JOURNALSTATUS;
 import static no.nav.abac.saf.xacml.SafAttributter.RESOURCE_SAF_JOURNAL_METADATA;
 import static no.nav.saf.domain.DomainConstants.ABAC_JOURNALSTATUS_UTGAAR;
+import static no.nav.saf.domain.DomainConstants.PEP4;
 
 import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.domain.kode.Journalstatus;
@@ -25,7 +26,7 @@ import javax.inject.Inject;
  * @author Joakim Bjørnstad, Jbit AS
  */
 @Slf4j
-@Component("pep4")
+@Component(PEP4)
 public class Pep4Impl implements Pep<TilgangJournalpost> {
 
 	private final AbacService abacService;
@@ -53,9 +54,9 @@ public class Pep4Impl implements Pep<TilgangJournalpost> {
 		request.resource(RESOURCE_FELLES_RESOURCE_TYPE, RESOURCE_SAF_JOURNAL_METADATA);
 		request.resource(RESOURCE_SAF_JOURNALSTATUS, ABAC_JOURNALSTATUS_UTGAAR);
 
-		Pep.traceLogPepStarted("pep4", ressurs);
+		Pep.traceLogPepStarted(PEP4, ressurs);
 		XacmlResponse response = abacService.evaluate(request);
-		Pep.traceLogPepFinished("pep4", ressurs);
+		Pep.traceLogPepFinished(PEP4, ressurs);
 
 		return Decision.PERMIT.equals(response.getDecision());
 	}

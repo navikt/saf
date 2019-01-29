@@ -1,5 +1,11 @@
 package no.nav.saf.hentdokument;
 
+import static no.nav.saf.domain.DomainConstants.PEP1G;
+import static no.nav.saf.domain.DomainConstants.PEP2;
+import static no.nav.saf.domain.DomainConstants.PEP2D;
+import static no.nav.saf.domain.DomainConstants.PEP3;
+import static no.nav.saf.domain.DomainConstants.PEP4;
+
 import no.nav.saf.domain.Arkivsak;
 import no.nav.saf.domain.HentDokument;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
@@ -33,11 +39,11 @@ public class HentDokumentDomainCoordinatorImpl implements HentDokumentDomainCoor
 	@Inject
 	public HentDokumentDomainCoordinatorImpl(DokumentRepository dokumentRepository,
 											 TilgangsmodellHentdokumentRepository tilgangsmodellHentdokumentRepository,
-											 @Named("pep1g") Pep<TilgangBruker> pep1,
-											 @Named("pep2") Pep<TilgangSak> pep2,
-											 @Named("pep2d") Pep<TilgangSak> pep2d,
-											 @Named("pep3") Pep<TilgangSak> pep3,
-											 @Named("pep4") Pep<TilgangJournalpost> pep4) {
+											 @Named(PEP1G) Pep<TilgangBruker> pep1,
+											 @Named(PEP2) Pep<TilgangSak> pep2,
+											 @Named(PEP2D) Pep<TilgangSak> pep2d,
+											 @Named(PEP3) Pep<TilgangSak> pep3,
+											 @Named(PEP4) Pep<TilgangJournalpost> pep4) {
 		this.dokumentRepository = dokumentRepository;
 		this.tilgangsmodellHentdokumentRepository = tilgangsmodellHentdokumentRepository;
 		this.pep1 = pep1;

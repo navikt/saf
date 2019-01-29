@@ -290,11 +290,11 @@ class JournalpostDtoMapperTest {
 						.logiske(Collections.singletonList(new LogiskVedleggDto()))
 						.varianter(Arrays.asList(VariantDto.builder()
 										.skjerming(SKJERMING_TYPE_CODE_POL)
-										.variantFormat(VARIANT_FORMAT_CODE_ARKIV)
+										.variantf(VARIANT_FORMAT_CODE_ARKIV)
 										.build(),
 								VariantDto.builder()
 										.skjerming(null)
-										.variantFormat(VARIANT_FORMAT_CODE_SLADDET)
+										.variantf(VARIANT_FORMAT_CODE_SLADDET)
 										.build()))
 						.build());
 	}

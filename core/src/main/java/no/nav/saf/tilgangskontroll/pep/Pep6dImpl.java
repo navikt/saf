@@ -1,6 +1,7 @@
 package no.nav.saf.tilgangskontroll.pep;
 
 import static no.nav.saf.cache.RedisCacheConfig.TILGANG_CACHE;
+import static no.nav.saf.domain.DomainConstants.PEP6D;
 
 import io.lettuce.core.RedisException;
 import lombok.extern.slf4j.Slf4j;
@@ -24,7 +25,7 @@ import javax.inject.Named;
  * @author Joakim Bjørnstad, Jbit AS
  */
 @Slf4j
-@Component("pep6d")
+@Component(PEP6D)
 public class Pep6dImpl implements Pep<TilgangDokumentvariant> {
 
 	private final Cache tilgangCache;
@@ -44,21 +45,22 @@ public class Pep6dImpl implements Pep<TilgangDokumentvariant> {
 		}
 
 		if (ressurs.getSkjerming() != null) {
-			Pep.traceLogPepStarted("pep6", ressurs);
+			Pep.traceLogPepStarted(PEP6D, ressurs);
 
 			String tilgangKey = "tilgang:" + safRequestContext.getSecurityContext()
 					.getSaksbehandlerId() + ":ressurstype:dokument_fil" + ":variantformat:" + ressurs.getVariantformat()
 					+ ":skjerming=" + ressurs.getSkjerming();
 			try {
-				boolean decide = decide(hasDokumentFilAccess(ressurs, safRequestContext));
+				boolean decide = decide(tilgangCache.get(tilgangKey,
+						() -> hasDokumentFilAccess(ressurs, safRequestContext)));
 				safRequestContext.getRequestCache().putObject(tilgangKey, decide);
 				return decide;
 			} catch (RedisException | PoolException | Cache.ValueRetrievalException e) {
 				boolean decide = decide(hasDokumentFilAccess(ressurs, safRequestContext));
 				safRequestContext.getRequestCache().putObject(tilgangKey, decide);
 				return decide;
-			} finally {
-				Pep.traceLogPepFinished("pep6", ressurs);
+			}  finally {
+				Pep.traceLogPepFinished(PEP6D, ressurs);
 			}
 		} else {
 			return true;

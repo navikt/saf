@@ -4,6 +4,7 @@ import static no.nav.abac.common.xacml.CommonAttributter.RESOURCE_FELLES_RESOURC
 import static no.nav.abac.saf.xacml.SafAttributter.RESOURCE_SAF_PARAGRAF19;
 import static no.nav.abac.saf.xacml.SafAttributter.RESOURCE_SAF_SAK_JP_METADATA;
 import static no.nav.abac.saf.xacml.SafAttributter.RESOURCE_SAF_TEMA;
+import static no.nav.saf.domain.DomainConstants.PEP2;
 
 import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.domain.kode.Tema;
@@ -25,7 +26,7 @@ import javax.inject.Inject;
  * @author Joakim Bjørnstad, Jbit AS
  */
 @Slf4j
-@Component("pep2")
+@Component(PEP2)
 public class Pep2Impl implements Pep<TilgangSak> {
 
 	private final AbacService abacService;
@@ -52,9 +53,9 @@ public class Pep2Impl implements Pep<TilgangSak> {
 				request.resource(RESOURCE_SAF_PARAGRAF19, true);
 			}
 
-			Pep.traceLogPepStarted("pep2", ressurs);
+			Pep.traceLogPepStarted(PEP2, ressurs);
 			XacmlResponse response = abacService.evaluate(request);
-			Pep.traceLogPepFinished("pep2", ressurs);
+			Pep.traceLogPepFinished(PEP2, ressurs);
 
 			return Decision.PERMIT.equals(response.getDecision());
 		} else {

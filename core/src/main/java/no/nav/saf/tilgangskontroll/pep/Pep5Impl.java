@@ -1,5 +1,7 @@
 package no.nav.saf.tilgangskontroll.pep;
 
+import static no.nav.saf.domain.DomainConstants.PEP5;
+
 import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.domain.tilgangsmodell.TilgangDokumentInfo;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
@@ -17,7 +19,7 @@ import javax.inject.Inject;
  * @author Joakim Bjørnstad, Jbit AS
  */
 @Slf4j
-@Component("pep5")
+@Component(PEP5)
 public class Pep5Impl implements Pep<TilgangDokumentInfo> {
 
 	private final AbacService abacService;

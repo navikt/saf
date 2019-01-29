@@ -39,8 +39,8 @@ import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
 import java.time.LocalDate;
-import java.util.Arrays;
 import java.util.Base64;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -101,7 +101,7 @@ class JoarkAntiCorruptionLayerImpl implements JoarkAntiCorruptionLayer {
 		if (tilgangJournalpostDto == null) {
 			return null;
 		} else {
-			return mapTilgangJournalpost(tilgangJournalpostDto, tilgangSak);
+			return mapTilgangJournalpost(tilgangJournalpostDto);
 		}
 	}
 
@@ -185,21 +185,19 @@ class JoarkAntiCorruptionLayerImpl implements JoarkAntiCorruptionLayer {
 				.build();
 	}
 
-	private TilgangJournalpost mapTilgangJournalpost(TilgangJournalpostDto dto, TilgangSak tilgangSak) {
+	private TilgangJournalpost mapTilgangJournalpost(TilgangJournalpostDto dto) {
 		final TilgangDokumentInfoDto tilgangDokumentInfoDto = dto.getDokument();
 		return TilgangJournalpost.builder()
 				.journalpostId(dto.getJournalpostId())
 				.journalstatus(dto.getJournalStatus().toSafJournalstatus())
 				.skjerming(SkjermingTypeCode.toSafSkjerming(dto.getSkjerming()))
-				.dokumenter(Arrays.asList(TilgangDokumentInfo.builder()
+				.dokumenter(Collections.singletonList(TilgangDokumentInfo.builder()
 						.skjerming(SkjermingTypeCode.toSafSkjerming(tilgangDokumentInfoDto.getSkjerming()))
-						.tilgangDokumentvarianter(tilgangDokumentInfoDto.getVarianter().stream()
-								.map(variantDto -> TilgangDokumentvariant.builder()
-										.skjerming(SkjermingTypeCode.toSafSkjerming(variantDto.getSkjerming()))
-										.variantformat(VariantFormatCode.toSafVariantformat(variantDto.getVariantFormat()))
-										.build())
-								.collect(Collectors.toList())
-						)
+						.tilgangDokumentvarianter(Collections.singletonList(TilgangDokumentvariant.builder()
+								.skjerming(SkjermingTypeCode.toSafSkjerming(tilgangDokumentInfoDto.getVariant().getSkjerming()))
+								.variantformat(VariantFormatCode.toSafVariantformat(tilgangDokumentInfoDto.getVariant()
+										.getVariantFormat()))
+								.build()))
 						.build()))
 				.build();
 

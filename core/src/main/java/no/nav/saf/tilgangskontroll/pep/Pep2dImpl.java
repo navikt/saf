@@ -4,6 +4,7 @@ import static no.nav.abac.common.xacml.CommonAttributter.RESOURCE_FELLES_RESOURC
 import static no.nav.abac.saf.xacml.SafAttributter.RESOURCE_SAF_SAK_DOKUMENT;
 import static no.nav.abac.saf.xacml.SafAttributter.RESOURCE_SAF_TEMA;
 import static no.nav.saf.cache.RedisCacheConfig.TILGANG_CACHE;
+import static no.nav.saf.domain.DomainConstants.PEP2D;
 
 import io.lettuce.core.RedisException;
 import lombok.extern.slf4j.Slf4j;
@@ -30,7 +31,7 @@ import javax.inject.Named;
  * @author Joakim Bjørnstad, Jbit AS
  */
 @Slf4j
-@Component("pep2d")
+@Component(PEP2D)
 public class Pep2dImpl implements Pep<TilgangSak> {
 
 	private final Cache tilgangCache;
@@ -50,7 +51,7 @@ public class Pep2dImpl implements Pep<TilgangSak> {
 		}
 
 		if (ressurs.getTema() != null) {
-			Pep.traceLogPepStarted("pep2d", ressurs);
+			Pep.traceLogPepStarted(PEP2D, ressurs);
 
 			String tilgangKey = "tilgang:" + safRequestContext.getSecurityContext()
 					.getSaksbehandlerId() + ":tema=" + ressurs.getTema();
@@ -64,7 +65,7 @@ public class Pep2dImpl implements Pep<TilgangSak> {
 				safRequestContext.getRequestCache().putObject(tilgangKey, decide);
 				return decide;
 			} finally {
-				Pep.traceLogPepFinished("pep2d", ressurs);
+				Pep.traceLogPepFinished(PEP2D, ressurs);
 			}
 		} else {
 			return true;

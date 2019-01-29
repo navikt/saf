@@ -1,5 +1,11 @@
 package no.nav.saf.query.dokumentoversikt.fagsak;
 
+import static no.nav.saf.domain.DomainConstants.PEP1G;
+import static no.nav.saf.domain.DomainConstants.PEP2;
+import static no.nav.saf.domain.DomainConstants.PEP2D;
+import static no.nav.saf.domain.DomainConstants.PEP3;
+import static no.nav.saf.domain.DomainConstants.PEP4;
+
 import io.reactivex.Flowable;
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
@@ -44,11 +50,11 @@ class DokumentoversiktFagsakCoordinatorImpl implements DokumentoversiktFagsakCoo
 	@Inject
 	public DokumentoversiktFagsakCoordinatorImpl(TilgangsmodellRepository tilgangsmodellRepository,
 												 DokumentoversiktVisningsmodellRepository visningsmodellRepository,
-												 @Named("pep1g") Pep<TilgangBruker> pep1g,
-												 @Named("pep2") Pep<TilgangSak> pep2,
-												 @Named("pep2d") Pep<TilgangSak> pep2d,
-												 @Named("pep3") Pep<TilgangSak> pep3,
-												 @Named("pep4") Pep<TilgangJournalpost> pep4) {
+												 @Named(PEP1G) Pep<TilgangBruker> pep1g,
+												 @Named(PEP2) Pep<TilgangSak> pep2,
+												 @Named(PEP2D) Pep<TilgangSak> pep2d,
+												 @Named(PEP3) Pep<TilgangSak> pep3,
+												 @Named(PEP4) Pep<TilgangJournalpost> pep4) {
 		this.tilgangsmodellRepository = tilgangsmodellRepository;
 		this.visningsmodellRepository = visningsmodellRepository;
 		this.pep1g = pep1g;

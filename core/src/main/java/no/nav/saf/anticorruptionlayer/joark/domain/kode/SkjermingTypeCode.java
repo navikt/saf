@@ -26,7 +26,7 @@ public enum SkjermingTypeCode {
 	public static Skjerming toSafSkjerming(SkjermingTypeCode joarkSkjermingTypeCode) {
 		try {
 			return joarkSkjermingTypeCode.getSafSkjerming();
-		} catch (Exception e) {
+		} catch (NullPointerException e) {
 			return null;
 		}
 	}

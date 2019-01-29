@@ -16,6 +16,15 @@ public final class DomainConstants {
 	public static final String PERSON = "PERSON";
 	public static final String ORGANISASJON = "ORGANISASJON";
 
+	// pep-navn
+	public static final String PEP1G = "pep1g";
+	public static final String PEP2 = "pep2";
+	public static final String PEP2D = "pep2d";
+	public static final String PEP3 = "pep3";
+	public static final String PEP4 = "pep4";
+	public static final String PEP5 = "pep5";
+	public static final String PEP6D = "pep6d";
+
 	private DomainConstants() {
 	}
 

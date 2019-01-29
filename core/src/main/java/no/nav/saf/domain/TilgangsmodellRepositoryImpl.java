@@ -329,7 +329,7 @@ public class TilgangsmodellRepositoryImpl implements TilgangsmodellRepository {
 						.tilgangDokumentvarianter(dokdto.getVarianter().stream()
 								.map(variantDto -> TilgangDokumentvariant.builder()
 										.skjerming(SkjermingTypeCode.toSafSkjerming(variantDto.getSkjerming()))
-										.variantformat(VariantFormatCode.toSafVariantformat(variantDto.getVariantFormat()))
+										.variantformat(VariantFormatCode.toSafVariantformat(variantDto.getVariantf()))
 										.build())
 								.collect(Collectors.toList())
 						)

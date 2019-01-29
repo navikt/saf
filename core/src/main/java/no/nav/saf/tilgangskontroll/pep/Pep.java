@@ -12,19 +12,19 @@ import org.slf4j.LoggerFactory;
  * @author Joakim Bjørnstad, Jbit AS
  */
 public interface Pep<T> {
-	Logger log = LoggerFactory.getLogger(Pep.class);
+	Logger LOGGER = LoggerFactory.getLogger(Pep.class);
 
 	boolean hasAccess(T ressurs, SafRequestContext safRequestContext);
 
 	static void traceLogPepStarted(String pepName, Object ressurs) {
-		if (log.isTraceEnabled()) {
-			log.trace("{} evaluerer TilgangJournalpost={}", pepName, ressurs.toString());
+		if (LOGGER.isTraceEnabled()) {
+			LOGGER.trace("{} evaluerer ressurs={}", pepName, ressurs.toString());
 		}
 	}
 
 	static void traceLogPepFinished(String pepName, Object ressurs) {
-		if (log.isTraceEnabled()) {
-			log.trace("{} ferdig evaluert TilgangJournalpost={}", pepName, ressurs.toString());
+		if (LOGGER.isTraceEnabled()) {
+			LOGGER.trace("{} ferdig evaluert ressurs={}", pepName, ressurs.toString());
 		}
 	}
 

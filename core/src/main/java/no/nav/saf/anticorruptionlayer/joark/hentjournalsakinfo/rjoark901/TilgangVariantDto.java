@@ -1,4 +1,4 @@
-package no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900;
+package no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark901;
 
 import lombok.Builder;
 import lombok.Value;
@@ -10,7 +10,7 @@ import no.nav.saf.anticorruptionlayer.joark.domain.kode.VariantFormatCode;
  */
 @Value
 @Builder
-public class VariantDto {
-	private VariantFormatCode variantf;
+public class TilgangVariantDto {
+	private VariantFormatCode variantFormat;
 	private SkjermingTypeCode skjerming;
 }

@@ -72,7 +72,7 @@ public class JournalpostDtoMapper {
 						.dokumentvarianter(dokumentInfoDto.getVarianter().stream()
 								.map(variantDto -> Dokumentvariant.builder()
 										.saksbehandlerHarTilgang(findSaksbehandlerHarTilgang(journalpost, variantDto, requestCache, safSecurityContext))
-										.variantformat(variantDto.getVariantFormat().getSafVariantformat())
+										.variantformat(variantDto.getVariantf().getSafVariantformat())
 										.build())
 								.collect(Collectors.toList()))
 						.logiskeVedlegg(dokumentInfoDto.getLogiske().stream()
@@ -240,7 +240,7 @@ public class JournalpostDtoMapper {
 	private boolean getDecisionFromPep6d(VariantDto variantDto, RequestCache requestCache, SafSecurityContext safSecurityContext) {
 		try {
 			String tilgangKey = "tilgang:" + safSecurityContext.getSaksbehandlerId() + ":ressurstype:dokument_fil" + ":variantformat:" + variantDto
-					.getVariantFormat()
+					.getVariantf()
 					+ ":skjerming=" + variantDto.getSkjerming();
 			return requestCache.getObject(tilgangKey);
 		} catch (NullPointerException e) {

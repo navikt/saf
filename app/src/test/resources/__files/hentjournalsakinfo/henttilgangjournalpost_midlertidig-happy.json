@@ -21,12 +21,10 @@
       "dokumentstatus": "FERDIGSTILT",
       "brevkode": null,
       "skjermet": null,
-      "varianter": [
-        {
-          "variantFormat": "ARKIV",
-          "skjermet": null
-        }
-      ]
+      "variant": {
+        "variantFormat": "ARKIV",
+        "skjermet": null
+      }
     }
   }
 }
