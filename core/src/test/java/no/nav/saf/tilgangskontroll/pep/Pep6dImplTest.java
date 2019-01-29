@@ -1,7 +1,7 @@
 package no.nav.saf.tilgangskontroll.pep;
 
 import static no.nav.abac.common.xacml.CommonAttributter.RESOURCE_FELLES_RESOURCE_TYPE;
-import static no.nav.abac.saf.xacml.SafAttributter.RESOURCE_SAF_DOKUMENT_METADATA;
+import static no.nav.abac.saf.xacml.SafAttributter.RESOURCE_SAF_DOKUMENT_FIL;
 import static no.nav.abac.saf.xacml.SafAttributter.RESOURCE_SAF_SKJERMING;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -11,7 +11,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import no.nav.saf.domain.tilgangsmodell.TilgangDokumentInfo;
+import no.nav.saf.cache.RedisCacheConfig;
+import no.nav.saf.domain.tilgangsmodell.TilgangDokumentvariant;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlAttribute;
 import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlRequest;
@@ -19,21 +20,31 @@ import no.nav.saf.tilgangskontroll.abac.dto.response.Decision;
 import no.nav.saf.tilgangskontroll.abac.dto.response.XacmlResponse;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
+import org.springframework.cache.support.NoOpCache;
+import org.springframework.cache.support.SimpleCacheManager;
+
+import java.util.Collections;
 
 /**
  * @author Sigurd Midttun, Visma Consulting.
  */
-public class Pep5ImplTest extends AbstractPepTest {
+public class Pep6dImplTest extends AbstractPepTest {
 
-	@InjectMocks
-	private Pep5Impl pep5;
+	private Pep6dImpl pep6d;
+
+	Pep6dImplTest() {
+		super();
+		SimpleCacheManager cacheManager = new SimpleCacheManager();
+		cacheManager.setCaches(Collections.singletonList(new NoOpCache(RedisCacheConfig.TILGANG_CACHE)));
+		cacheManager.afterPropertiesSet();
+		this.pep6d = new Pep6dImpl(cacheManager, abacService);
+	}
 
 	@Test
 	void shouldPermitWhenSkjermingIsNotPresent() {
 		when(oidcValidatorTool.validate(OIDC_TOKEN_PERSON_USER_TEST)).thenReturn(true);
 
-		boolean hasAccess = pep5.hasAccess(TilgangDokumentInfo.builder()
+		boolean hasAccess = pep6d.hasAccess(TilgangDokumentvariant.builder()
 				.skjerming(null)
 				.build(), new SafRequestContext(OIDC_TOKEN_PERSON_USER_TEST, oidcValidatorTool));
 
@@ -47,7 +58,7 @@ public class Pep5ImplTest extends AbstractPepTest {
 
 		ArgumentCaptor<XacmlRequest> request = ArgumentCaptor.forClass(XacmlRequest.class);
 
-		boolean hasAccess = pep5.hasAccess(TilgangDokumentInfo.builder()
+		boolean hasAccess = pep6d.hasAccess(TilgangDokumentvariant.builder()
 				.skjerming(SKJERMING_POL)
 				.build(), new SafRequestContext(OIDC_TOKEN_PERSON_USER_TEST, oidcValidatorTool));
 
@@ -55,7 +66,7 @@ public class Pep5ImplTest extends AbstractPepTest {
 		XacmlRequest capturedRequest = request.getValue();
 
 		assertTrue(hasAccess);
-		assertThat(capturedRequest.getResources(), hasItem(new XacmlAttribute(RESOURCE_FELLES_RESOURCE_TYPE, RESOURCE_SAF_DOKUMENT_METADATA)));
+		assertThat(capturedRequest.getResources(), hasItem(new XacmlAttribute(RESOURCE_FELLES_RESOURCE_TYPE, RESOURCE_SAF_DOKUMENT_FIL)));
 		assertThat(capturedRequest.getResources(), hasItem(new XacmlAttribute(RESOURCE_SAF_SKJERMING, SKJERMING_POL.name())));
 	}
 
@@ -66,7 +77,7 @@ public class Pep5ImplTest extends AbstractPepTest {
 
 		ArgumentCaptor<XacmlRequest> request = ArgumentCaptor.forClass(XacmlRequest.class);
 
-		boolean hasAccess = pep5.hasAccess(TilgangDokumentInfo.builder()
+		boolean hasAccess = pep6d.hasAccess(TilgangDokumentvariant.builder()
 				.skjerming(SKJERMING_POL)
 				.build(), new SafRequestContext(OIDC_TOKEN_PERSON_USER_TEST, oidcValidatorTool));
 
@@ -74,8 +85,7 @@ public class Pep5ImplTest extends AbstractPepTest {
 		XacmlRequest capturedRequest = request.getValue();
 
 		assertFalse(hasAccess);
-		assertThat(capturedRequest.getResources(), hasItem(new XacmlAttribute(RESOURCE_FELLES_RESOURCE_TYPE, RESOURCE_SAF_DOKUMENT_METADATA)));
+		assertThat(capturedRequest.getResources(), hasItem(new XacmlAttribute(RESOURCE_FELLES_RESOURCE_TYPE, RESOURCE_SAF_DOKUMENT_FIL)));
 		assertThat(capturedRequest.getResources(), hasItem(new XacmlAttribute(RESOURCE_SAF_SKJERMING, SKJERMING_POL.name())));
 	}
-
 }

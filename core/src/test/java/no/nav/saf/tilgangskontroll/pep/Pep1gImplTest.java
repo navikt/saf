@@ -19,11 +19,9 @@ import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlAttribute;
 import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlRequest;
 import no.nav.saf.tilgangskontroll.abac.dto.response.Decision;
 import no.nav.saf.tilgangskontroll.abac.dto.response.XacmlResponse;
-import no.nav.saf.tilgangskontroll.validation.OidcValidatorTool;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
 
 import java.util.Collections;
 
@@ -34,9 +32,6 @@ public class Pep1gImplTest extends AbstractPepTest {
 
 	@InjectMocks
 	private Pep1gImpl pep1g;
-
-	@Mock
-	private OidcValidatorTool oidcValidatorTool;
 
 	@Test
 	public void shouldPermitWhenAktoerIdIsEvaluated() {

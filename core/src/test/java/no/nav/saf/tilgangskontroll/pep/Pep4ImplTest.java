@@ -21,11 +21,9 @@ import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlAttribute;
 import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlRequest;
 import no.nav.saf.tilgangskontroll.abac.dto.response.Decision;
 import no.nav.saf.tilgangskontroll.abac.dto.response.XacmlResponse;
-import no.nav.saf.tilgangskontroll.validation.OidcValidatorTool;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
 
 /**
  * @author Joakim Bjørnstad, Jbit AS
@@ -34,9 +32,6 @@ class Pep4ImplTest extends AbstractPepTest {
 
 	@InjectMocks
 	private Pep4Impl pep4;
-
-	@Mock
-	private OidcValidatorTool oidcValidatorTool;
 
 	@Test
 	void shouldPermitWhenJournalstatusNotUtgaarAndSkjermingIsNotPresent() {
