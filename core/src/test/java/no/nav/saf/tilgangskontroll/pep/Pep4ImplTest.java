@@ -3,10 +3,12 @@ package no.nav.saf.tilgangskontroll.pep;
 import static no.nav.abac.common.xacml.CommonAttributter.RESOURCE_FELLES_RESOURCE_TYPE;
 import static no.nav.abac.saf.xacml.SafAttributter.RESOURCE_SAF_JOURNALSTATUS;
 import static no.nav.abac.saf.xacml.SafAttributter.RESOURCE_SAF_JOURNAL_METADATA;
+import static no.nav.abac.saf.xacml.SafAttributter.RESOURCE_SAF_SKJERMING;
 import static no.nav.saf.domain.DomainConstants.ABAC_JOURNALSTATUS_UTGAAR;
 import static no.nav.saf.domain.kode.Journalstatus.FERDIGSTILT;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
@@ -39,11 +41,12 @@ class Pep4ImplTest extends AbstractPepTest {
 	private OidcValidatorTool oidcValidatorTool;
 
 	@Test
-	void shouldPermitWhenJournalstatusNotUtgaar() {
+	void shouldPermitWhenJournalstatusNotUtgaarAndSkjermingIsNotPresent() {
 		when(oidcValidatorTool.validate(OIDC_TOKEN_PERSON_USER_TEST)).thenReturn(true);
 
 		boolean hasAccess = pep4.hasAccess(TilgangJournalpost.builder()
 				.journalstatus(FERDIGSTILT)
+				.skjerming(null)
 				.build(), new SafRequestContext(OIDC_TOKEN_PERSON_USER_TEST, oidcValidatorTool));
 
 		assertTrue(hasAccess);
@@ -66,5 +69,67 @@ class Pep4ImplTest extends AbstractPepTest {
 		assertTrue(hasAccess);
 		assertThat(capturedRequest.getResources(), hasItem(new XacmlAttribute(RESOURCE_FELLES_RESOURCE_TYPE, RESOURCE_SAF_JOURNAL_METADATA)));
 		assertThat(capturedRequest.getResources(), hasItem(new XacmlAttribute(RESOURCE_SAF_JOURNALSTATUS, ABAC_JOURNALSTATUS_UTGAAR)));
+	}
+
+	@Test
+	void shouldPermitWhenSkjermingIsPresentAndSaksbehandlerHasAccess() {
+		when(abacService.evaluate(any(XacmlRequest.class))).thenReturn(new XacmlResponse(Decision.PERMIT, null, null, null));
+		when(oidcValidatorTool.validate(OIDC_TOKEN_PERSON_USER_TEST)).thenReturn(true);
+
+		ArgumentCaptor<XacmlRequest> request = ArgumentCaptor.forClass(XacmlRequest.class);
+
+		boolean hasAccess = pep4.hasAccess(TilgangJournalpost.builder()
+				.journalstatus(Journalstatus.FERDIGSTILT)
+				.skjerming(SKJERMING_POL)
+				.build(), new SafRequestContext(OIDC_TOKEN_PERSON_USER_TEST, oidcValidatorTool));
+
+		verify(abacService).evaluate(request.capture());
+		XacmlRequest capturedRequest = request.getValue();
+
+		assertTrue(hasAccess);
+		assertThat(capturedRequest.getResources(), hasItem(new XacmlAttribute(RESOURCE_FELLES_RESOURCE_TYPE, RESOURCE_SAF_JOURNAL_METADATA)));
+		assertThat(capturedRequest.getResources(), hasItem(new XacmlAttribute(RESOURCE_SAF_SKJERMING, SKJERMING_POL.name())));
+	}
+
+	@Test
+	void shouldPermitWhenJournalstatusUtgaarAndSkjermingIsPresentAndSaksbehandlerHasAccess() {
+		when(abacService.evaluate(any(XacmlRequest.class))).thenReturn(new XacmlResponse(Decision.PERMIT, null, null, null));
+		when(oidcValidatorTool.validate(OIDC_TOKEN_PERSON_USER_TEST)).thenReturn(true);
+
+		ArgumentCaptor<XacmlRequest> request = ArgumentCaptor.forClass(XacmlRequest.class);
+
+		boolean hasAccess = pep4.hasAccess(TilgangJournalpost.builder()
+				.journalstatus(Journalstatus.UTGAAR)
+				.skjerming(SKJERMING_POL)
+				.build(), new SafRequestContext(OIDC_TOKEN_PERSON_USER_TEST, oidcValidatorTool));
+
+		verify(abacService).evaluate(request.capture());
+		XacmlRequest capturedRequest = request.getValue();
+
+		assertTrue(hasAccess);
+		assertThat(capturedRequest.getResources(), hasItem(new XacmlAttribute(RESOURCE_FELLES_RESOURCE_TYPE, RESOURCE_SAF_JOURNAL_METADATA)));
+		assertThat(capturedRequest.getResources(), hasItem(new XacmlAttribute(RESOURCE_SAF_JOURNALSTATUS, ABAC_JOURNALSTATUS_UTGAAR)));
+		assertThat(capturedRequest.getResources(), hasItem(new XacmlAttribute(RESOURCE_SAF_SKJERMING, SKJERMING_POL.name())));
+	}
+
+	@Test
+	void shouldDenyWhenJournalstatusUtgaarAndSkjermingIsPresentAndSaksbehandlerHasNotAccess() {
+		when(abacService.evaluate(any(XacmlRequest.class))).thenReturn(new XacmlResponse(Decision.DENY, null, null, null));
+		when(oidcValidatorTool.validate(OIDC_TOKEN_PERSON_USER_TEST)).thenReturn(true);
+
+		ArgumentCaptor<XacmlRequest> request = ArgumentCaptor.forClass(XacmlRequest.class);
+
+		boolean hasAccess = pep4.hasAccess(TilgangJournalpost.builder()
+				.journalstatus(Journalstatus.UTGAAR)
+				.skjerming(SKJERMING_POL)
+				.build(), new SafRequestContext(OIDC_TOKEN_PERSON_USER_TEST, oidcValidatorTool));
+
+		verify(abacService).evaluate(request.capture());
+		XacmlRequest capturedRequest = request.getValue();
+
+		assertFalse(hasAccess);
+		assertThat(capturedRequest.getResources(), hasItem(new XacmlAttribute(RESOURCE_FELLES_RESOURCE_TYPE, RESOURCE_SAF_JOURNAL_METADATA)));
+		assertThat(capturedRequest.getResources(), hasItem(new XacmlAttribute(RESOURCE_SAF_JOURNALSTATUS, ABAC_JOURNALSTATUS_UTGAAR)));
+		assertThat(capturedRequest.getResources(), hasItem(new XacmlAttribute(RESOURCE_SAF_SKJERMING, SKJERMING_POL.name())));
 	}
 }

@@ -1,5 +1,6 @@
 package no.nav.saf.tilgangskontroll.pep;
 
+import no.nav.saf.domain.kode.Skjerming;
 import no.nav.saf.domain.kode.Tema;
 import no.nav.saf.tilgangskontroll.abac.service.AbacService;
 import no.nav.saf.tilgangskontroll.validation.OidcValidatorTool;
@@ -19,6 +20,7 @@ public abstract class AbstractPepTest {
 	protected static String FNR = "***gammelt_fnr***";
 	protected static String FNR2 = "***gammelt_fnr***";
 	protected static Tema TEMA_BID = Tema.BID;
+	protected static Skjerming SKJERMING_POL = Skjerming.POL;
 
 	protected AbacService abacService;
 	protected OidcValidatorTool oidcValidatorTool;

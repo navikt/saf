@@ -3,6 +3,7 @@ package no.nav.saf.tilgangskontroll.pep;
 import static no.nav.abac.common.xacml.CommonAttributter.RESOURCE_FELLES_RESOURCE_TYPE;
 import static no.nav.abac.saf.xacml.SafAttributter.RESOURCE_SAF_JOURNALSTATUS;
 import static no.nav.abac.saf.xacml.SafAttributter.RESOURCE_SAF_JOURNAL_METADATA;
+import static no.nav.abac.saf.xacml.SafAttributter.RESOURCE_SAF_SKJERMING;
 import static no.nav.saf.domain.DomainConstants.ABAC_JOURNALSTATUS_UTGAAR;
 import static no.nav.saf.domain.DomainConstants.PEP4;
 
@@ -43,16 +44,23 @@ public class Pep4Impl implements Pep<TilgangJournalpost> {
 			return false;
 		}
 
-		if (isJournalpoststatusUtgaar(ressurs)) {
+		if (isJournalpoststatusUtgaar(ressurs) || isSkjermingPresent(ressurs)) {
 			return hasJournalpostAccess(safRequestContext, ressurs);
+		} else {
+			return true;
 		}
-		return true;
 	}
 
 	private boolean hasJournalpostAccess(SafRequestContext safRequestContext, TilgangJournalpost ressurs) {
 		XacmlRequest request = SafXacmlRequestFactory.create(safRequestContext.getSecurityContext().getOidcTokenBody());
 		request.resource(RESOURCE_FELLES_RESOURCE_TYPE, RESOURCE_SAF_JOURNAL_METADATA);
-		request.resource(RESOURCE_SAF_JOURNALSTATUS, ABAC_JOURNALSTATUS_UTGAAR);
+
+		if (isJournalpoststatusUtgaar(ressurs)) {
+			request.resource(RESOURCE_SAF_JOURNALSTATUS, ABAC_JOURNALSTATUS_UTGAAR);
+		}
+		if (isSkjermingPresent(ressurs)) {
+			request.resource(RESOURCE_SAF_SKJERMING, ressurs.getSkjerming().name());
+		}
 
 		Pep.traceLogPepStarted(PEP4, ressurs);
 		XacmlResponse response = abacService.evaluate(request);
@@ -64,4 +72,9 @@ public class Pep4Impl implements Pep<TilgangJournalpost> {
 	private boolean isJournalpoststatusUtgaar(TilgangJournalpost ressurs) {
 		return Journalstatus.UTGAAR.equals(ressurs.getJournalstatus());
 	}
+
+	private boolean isSkjermingPresent(TilgangJournalpost ressurs) {
+		return ressurs.getSkjerming() != null;
+	}
+
 }
