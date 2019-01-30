@@ -64,10 +64,10 @@ public class DokumentoversiktWiring {
 					try {
 						DokumentoversiktFagsakArguments arguments = DokumentoversiktFagsakArguments.create(environment);
 						SafRequestContext safRequestContext = environment.getContext();
-						log.info("dokumentoversiktFagsak hentes for fagsakIdInput={}", arguments.getFagsakIdInput());
+						log.info("dokumentoversiktFagsak hentes for fagsakIdInput={}", arguments.getFagsakInput());
 						Dokumentoversikt dokumentoversikt = dokumentoversiktFagsakCoordinator.hentDokumentoversikt(arguments, safRequestContext);
 						log.info("dokumentoversiktFagsak returnerer {} journalposter for fagsakId={}",
-								dokumentoversikt.getJournalposter().size(), arguments.getFagsakIdInput());
+								dokumentoversikt.getJournalposter().size(), arguments.getFagsakInput());
 						return dokumentoversikt;
 					} catch (SafFunctionalException e) {
 						return new DataFetcherResult<Dokumentoversikt>(Dokumentoversikt.empty(), Collections.singletonList(e));

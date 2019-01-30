@@ -28,7 +28,7 @@ import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 import no.nav.saf.exceptions.SafFunctionalException;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tjeneste.argumenter.BrukerIdInput;
-import no.nav.saf.tjeneste.argumenter.FagsakIdInput;
+import no.nav.saf.tjeneste.argumenter.FagsakInput;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Repository;
 
@@ -93,23 +93,23 @@ public class TilgangsmodellRepositoryImpl implements TilgangsmodellRepository {
 
 	@Override
 	@Cacheable(cacheNames = LokalCacheConfig.TILGANGSMODELL_REPO_BRUKER_CACHE)
-	public List<TilgangBruker> findTilgangBrukerList(FagsakIdInput fagsakIdInput) {
+	public List<TilgangBruker> findTilgangBrukerList(FagsakInput fagsakInput) {
 		try {
-			if (fagsakIdInput.getFagsaksystem().equals(PSAK_FAGSYSTEM)) {
-				return findTilgangBrukerListForPensjonsakerByFagsakId(fagsakIdInput);
+			if (fagsakInput.getFagsaksystem().equals(PSAK_FAGSYSTEM)) {
+				return findTilgangBrukerListForPensjonsakerByFagsakId(fagsakInput);
 			} else {
-				return findTilgangBrukerListForGsaksakerByFagsakIdAndFagsaksystem(fagsakIdInput);
+				return findTilgangBrukerListForGsaksakerByFagsakIdAndFagsaksystem(fagsakInput);
 			}
 		} catch (Exception e) {
-			log.warn("findTilgangBrukerList feilet ved oppslag. fagsakIdInput={}", fagsakIdInput, e);
+			log.warn("findTilgangBrukerList feilet ved oppslag. fagsakInput={}", fagsakInput, e);
 		}
 		return new ArrayList<>();
 	}
 
 
-	private List<TilgangBruker> findTilgangBrukerListForGsaksakerByFagsakIdAndFagsaksystem(FagsakIdInput fagsakIdInput) {
+	private List<TilgangBruker> findTilgangBrukerListForGsaksakerByFagsakIdAndFagsaksystem(FagsakInput fagsakInput) {
 		try {
-			Map<String, List<String>> idLists = gsakAntiCorruptionLayer.findIdListsByFagsakIdAndFagsaksystem(fagsakIdInput.getFagsaksnummer(), fagsakIdInput
+			Map<String, List<String>> idLists = gsakAntiCorruptionLayer.findIdListsByFagsakIdAndFagsaksystem(fagsakInput.getFagsakId(), fagsakInput
 					.getFagsaksystem());
 			if (idLists.isEmpty()) {
 				return new ArrayList<>();
@@ -122,35 +122,35 @@ public class TilgangsmodellRepositoryImpl implements TilgangsmodellRepository {
 
 			return Stream.concat(tilgangBrukerPerson.stream(), tilgangbrukerOrganisasjon.stream()).collect(Collectors.toList());
 		} catch (Exception e) {
-			log.warn("findTilgangBrukerListForGsaksakerByFagsakIdAndFagsaksystem feilet ved oppslag. fagsakIdInput={}", fagsakIdInput, e);
+			log.warn("findTilgangBrukerListForGsaksakerByFagsakIdAndFagsaksystem feilet ved oppslag. fagsakInput={}", fagsakInput, e);
 			return new ArrayList<>();
 		}
 	}
 
-	private List<TilgangBruker> findTilgangBrukerListForPensjonsakerByFagsakId(FagsakIdInput fagsakIdInput) {
+	private List<TilgangBruker> findTilgangBrukerListForPensjonsakerByFagsakId(FagsakInput fagsakInput) {
 		try {
-			String fnr = pensjonSakAntiCorruptionLayer.findFoedselsnummerBySakId(fagsakIdInput.getFagsaksnummer());
+			String fnr = pensjonSakAntiCorruptionLayer.findFoedselsnummerBySakId(fagsakInput.getFagsakId());
 			return Arrays.asList(aktoerAntiCorruptionLayer.hentTilgangBrukerByFoedselsnummer(fnr));
 		} catch (Exception e) {
-			log.warn("findTilgangBrukerListForPensjonsakerByFagsakId feilet ved oppslag. fagsakIdInput={}", fagsakIdInput, e);
+			log.warn("findTilgangBrukerListForPensjonsakerByFagsakId feilet ved oppslag. fagsakInput={}", fagsakInput, e);
 			return new ArrayList<>();
 		}
 	}
 
 	@Override
-	public List<TilgangSak> findTilgangSaker(final List<TilgangBruker> tilgangBrukerList, final FagsakIdInput fagsakIdInput, final List<Tema> tema, final SafRequestContext safRequestContext) {
-		if (fagsakIdInput.getFagsaksystem().equals(PSAK_FAGSYSTEM)) {
-			return findTilgangSakForPsaker(tilgangBrukerList, fagsakIdInput, tema, safRequestContext);
+	public List<TilgangSak> findTilgangSaker(final List<TilgangBruker> tilgangBrukerList, final FagsakInput fagsakInput, final List<Tema> tema, final SafRequestContext safRequestContext) {
+		if (fagsakInput.getFagsaksystem().equals(PSAK_FAGSYSTEM)) {
+			return findTilgangSakForPsaker(tilgangBrukerList, fagsakInput, tema, safRequestContext);
 		} else {
-			return findTilgangSakForGsaker(tilgangBrukerList, fagsakIdInput, tema, safRequestContext);
+			return findTilgangSakForGsaker(tilgangBrukerList, fagsakInput, tema, safRequestContext);
 
 		}
 	}
 
-	private List<TilgangSak> findTilgangSakForGsaker(List<TilgangBruker> filteredTilgangBrukerList, FagsakIdInput fagsakIdInput, List<Tema> tema, SafRequestContext safRequestContext) {
+	private List<TilgangSak> findTilgangSakForGsaker(List<TilgangBruker> filteredTilgangBrukerList, FagsakInput fagsakInput, List<Tema> tema, SafRequestContext safRequestContext) {
 		try {
 //			For å unngå å gjøre ett kall for hver bruker hentes alle saker assosiert med det aktuelle fagsaknummeret og fagsaksystemet fra Gsak i én spørring
-			List<Arkivsak> arkivsaker = gsakAntiCorruptionLayer.findTilgangSakListByFagsakIdAndFagsaksystem(fagsakIdInput.getFagsaksnummer(), fagsakIdInput
+			List<Arkivsak> arkivsaker = gsakAntiCorruptionLayer.findTilgangSakListByFagsakIdAndFagsaksystem(fagsakInput.getFagsakId(), fagsakInput
 					.getFagsaksystem(), tema);
 
 			List<String> aktoerIdList = extractAktoerIdListFromFilteredTilgangBrukerList(filteredTilgangBrukerList);
@@ -173,7 +173,7 @@ public class TilgangsmodellRepositoryImpl implements TilgangsmodellRepository {
 								.build();
 					}).collect(Collectors.toList());
 		} catch (Exception e) {
-			log.warn("findTilgangSakForGsaker feilet ved for fagsakIdInput={}.", fagsakIdInput);
+			log.warn("findTilgangSakForGsaker feilet ved for fagsakInput={}.", fagsakInput, e);
 		}
 		return new ArrayList<>();
 	}
@@ -204,7 +204,7 @@ public class TilgangsmodellRepositoryImpl implements TilgangsmodellRepository {
 						.toString())));
 	}
 
-	private List<TilgangSak> findTilgangSakForPsaker(List<TilgangBruker> tilgangBrukerList, FagsakIdInput fagsakIdInput, List<Tema> tema, SafRequestContext safRequestContext) {
+	private List<TilgangSak> findTilgangSakForPsaker(List<TilgangBruker> tilgangBrukerList, FagsakInput fagsakInput, List<Tema> tema, SafRequestContext safRequestContext) {
 		try {
 			if (tilgangBrukerList.size() != 1) {
 				log.warn("findTilgangSakForPsaker ble kalt med null eller mer enn én bruker. Pensjonssaker kan kun ha én bruker.");
@@ -224,7 +224,7 @@ public class TilgangsmodellRepositoryImpl implements TilgangsmodellRepository {
 					}).collect(Collectors.toList());
 
 		} catch (Exception e) {
-			log.warn("findTilgangSakForPsaker feilet ved for fagsakIdInput={}.", fagsakIdInput);
+			log.warn("findTilgangSakForPsaker feilet ved for fagsakInput={}.", fagsakInput, e);
 		}
 		return new ArrayList<>();
 	}
@@ -309,8 +309,7 @@ public class TilgangsmodellRepositoryImpl implements TilgangsmodellRepository {
 				List<String> arkivsaksId = tilgangSakList.stream()
 						.map(TilgangSak::getArkivsaksnummer)
 						.collect(Collectors.toList());
-				log.warn("finnJournalposter feilet ved henting av journalposter på arkivsaker={}.",
-						arkivsaksId, e);
+				log.warn("finnJournalposter feilet ved henting av journalposter på arkivsaker={}.", arkivsaksId, e);
 			} else {
 				log.warn("finnJournalposter feilet ved henting av journalposter på arkivsaker. Det var flere enn 1000 arkivsaker. Disse logges ikke da så lange logglinjer ikke støttes i logstash.", e);
 			}

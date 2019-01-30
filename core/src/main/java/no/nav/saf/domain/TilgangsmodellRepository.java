@@ -9,7 +9,7 @@ import no.nav.saf.domain.tilgangsmodell.TilgangJournalpost;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tjeneste.argumenter.BrukerIdInput;
-import no.nav.saf.tjeneste.argumenter.FagsakIdInput;
+import no.nav.saf.tjeneste.argumenter.FagsakInput;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -20,9 +20,9 @@ import java.util.List;
 public interface TilgangsmodellRepository {
 	TilgangBruker findTilgangBruker(BrukerIdInput brukerIdInput);
 
-	List<TilgangBruker> findTilgangBrukerList(FagsakIdInput fagsakIdInput);
+	List<TilgangBruker> findTilgangBrukerList(FagsakInput fagsakInput);
 
-	List<TilgangSak> findTilgangSaker(List<TilgangBruker> tilgangBrukerList, FagsakIdInput fagsakIdInput, List<Tema> tema, SafRequestContext safRequestContext);
+	List<TilgangSak> findTilgangSaker(List<TilgangBruker> tilgangBrukerList, FagsakInput fagsakInput, List<Tema> tema, SafRequestContext safRequestContext);
 
 	Flowable<TilgangSak> findTilgangSaker(TilgangBruker tilgangBruker, List<Tema> tema, SafRequestContext safRequestContext);
 

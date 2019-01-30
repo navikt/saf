@@ -42,7 +42,12 @@ public class TilgangsmodellHentdokumentRepositoryImpl implements TilgangsmodellH
 
 	@Override
 	public TilgangJournalpost findTilgangJournalpostFromSafRequestContext(SafRequestContext safRequestContext, TilgangSak tilgangSak) {
-		return joarkAntiCorruptionLayer.hentTilgangJournalpostFromSafRequestContext(safRequestContext, tilgangSak);
+		try {
+			return joarkAntiCorruptionLayer.hentTilgangJournalpostFromSafRequestContext(safRequestContext, tilgangSak);
+		} catch (Exception e) {
+			log.warn("findTilgangJournalpostFromSafRequestContext feilet", e);
+			return null;
+		}
 	}
 
 	@Override
@@ -59,11 +64,16 @@ public class TilgangsmodellHentdokumentRepositoryImpl implements TilgangsmodellH
 	}
 
 	private TilgangBruker findTilgangBrukerBrukerFromSafRequestContext(SafRequestContext safRequestContext) {
-		TilgangBruker tilgangBruker = joarkAntiCorruptionLayer.hentTilgangBruker(safRequestContext);
-		if (tilgangBruker == null || tilgangBruker.getFoedselsnr() == null) {
+		try {
+			TilgangBruker tilgangBruker = joarkAntiCorruptionLayer.hentTilgangBruker(safRequestContext);
+			if (tilgangBruker == null || tilgangBruker.getFoedselsnr() == null) {
+				return null;
+			} else {
+				return tilgangBruker;
+			}
+		} catch (Exception e) {
+			log.warn("findTilgangBrukerBrukerFromSafRequestContext feilet", e);
 			return null;
-		} else {
-			return tilgangBruker;
 		}
 	}
 
@@ -112,10 +122,8 @@ public class TilgangsmodellHentdokumentRepositoryImpl implements TilgangsmodellH
 			} else {
 				return null;
 			}
-		} catch (
-				Exception e) {
-			log.warn("findTilgangBrukerBySakId feilet ved oppslag på sakId={} og arkivsaksystem={}. Feilmelding={}", sakId, arkivsaksystem, e
-					.getMessage());
+		} catch (Exception e) {
+			log.warn("findTilgangBrukerBySakId feilet ved oppslag på sakId={} og arkivsaksystem={}. Feilmelding={}", sakId, arkivsaksystem, e);
 			return null;
 		}
 	}

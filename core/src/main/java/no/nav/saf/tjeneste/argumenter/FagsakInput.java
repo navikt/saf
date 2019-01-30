@@ -6,7 +6,7 @@ import lombok.Value;
  * @author Joakim Bjørnstad, Jbit AS
  */
 @Value
-public class FagsakIdInput {
-	private final String fagsaksnummer;
+public class FagsakInput {
+	private final String fagsakId;
 	private final String fagsaksystem;
 }

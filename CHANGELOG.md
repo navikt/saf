@@ -4,12 +4,26 @@ saf endringslogg
 Alle nevneverdige endringer blir dokumentert her. 
 
 * Endringer som påvirker saf GraphQL API skal være prefiksert med `GraphQL: `.
+* Endringer som mot formodning ikke er bakoverkompatible markeres i en egen seksjon med (ikke bakoverkompatibelt)
 
 Denne malen er basert på [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [2.0.0] - 2019-01-30
+### Endret (ikke bakoverkompatibelt)
+* `GraphQL: ` Input Object `FagsakIdInput` endret navn til `FagsakInput`.
+* `GraphQL: ` Input Object `FagsakInput` felt `fagsaksnummer` endret til `fagsakId`.
+* `GraphQL: ` Query `dokumentoversiktFagsak` endret input argument fra `fagsakId` til `fagsak`.
+
+### Endret 
+* Mer robust feilhåndtering av feil fra ABAC PDP.
+
+## [1.0.5] - 2019-01-29
+### Endret
+* Pep2d er endret til å ikke sjekke geografisk tilgang. Dette er nå implisitt håndtert av Pep1g
+
 ## [1.0.4] - 2019-01-24
 ### Lagt til
-* pep3 er nå en del av tilgangskontrollen. Implementert kall mot bisys for å hente relevante parter og flagg for paragraf19
+* Pep3 er nå en del av tilgangskontrollen. Implementert kall mot bisys for å hente relevante parter og flagg for paragraf19
 
 ## [1.0.3] - 2019-01-23
 ### Rettet
