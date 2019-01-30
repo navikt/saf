@@ -7,7 +7,7 @@
     "datoOpprettet": "2008-12-06T00:00:00",
     "mottakskanal": null,
     "avsenderMottakerId": null,
-    "skjermet": null,
+    "skjerming": null,
     "bruker": {
       "brukerId": "***gammelt_fnr***59",
       "brukerType": "PERSON"
@@ -17,14 +17,14 @@
       "fagsystem": "FS22"
     },
     "dokument": {
-      "skjermet": null,
+      "skjerming": null,
       "dokumentinfoId": "123",
       "dokumentstatus": "FERDIGSTILT",
       "brevkode": null,
-      "skjermet": null,
+      "skjerming": null,
       "variant": {
         "variantFormat": "ARKIV",
-        "skjermet": null
+        "skjerming": null
       }
     }
   }
