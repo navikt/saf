@@ -2,11 +2,11 @@ package no.nav.saf.tilgangskontroll.abac.consumer;
 
 import static java.util.Collections.singletonList;
 
+import no.nav.saf.exceptions.AbacException;
 import no.nav.saf.integration.fasit.ServiceuserAlias;
 import no.nav.saf.metrics.Monitor;
 import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlRequest;
 import no.nav.saf.tilgangskontroll.abac.dto.response.XacmlResponse;
-import no.nav.saf.tilgangskontroll.abac.exception.UnexpectedHttpCodeException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpEntity;
@@ -14,6 +14,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.Duration;
@@ -43,16 +44,14 @@ public class AbacConsumer {
 
 	@Monitor(value = "dok_consumer", extraTags = {"process", "abacEvaluate"}, histogram = true)
 	public XacmlResponse evaluate(XacmlRequest requestBody) {
-		HttpEntity<String> httpRequest = prepareHttpRequest(requestBody);
-
-		ResponseEntity<String> abacResult = restTemplate.postForEntity(url, httpRequest, String.class);
-
-		if (!abacResult.getStatusCode().is2xxSuccessful()) {
-			throw new UnexpectedHttpCodeException(abacResult.getStatusCodeValue(), 200, abacResult.getStatusCode()
-					.getReasonPhrase());
+		try {
+			HttpEntity<String> httpRequest = prepareHttpRequest(requestBody);
+			ResponseEntity<String> abacResult = restTemplate.postForEntity(url, httpRequest, String.class);
+			return abacResponseMapper.map(abacResult.getBody());
+		} catch (HttpStatusCodeException e) {
+			throw new AbacException(String.format("Kunne ikke evaluere tilgang for saksbehandler. Kall mot abac feilet teknisk med statusKode=%s. Feilmelding=%s",
+					e.getStatusCode(), e.getMessage()), e);
 		}
-
-		return abacResponseMapper.map(abacResult.getBody());
 	}
 
 	private HttpEntity<String> prepareHttpRequest(XacmlRequest request) {
