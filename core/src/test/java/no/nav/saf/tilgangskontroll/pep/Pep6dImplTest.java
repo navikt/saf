@@ -12,6 +12,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import no.nav.saf.cache.RedisCacheConfig;
+import no.nav.saf.domain.kode.Variantformat;
 import no.nav.saf.domain.tilgangsmodell.TilgangDokumentvariant;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlAttribute;
@@ -60,6 +61,7 @@ public class Pep6dImplTest extends AbstractPepTest {
 
 		boolean hasAccess = pep6d.hasAccess(TilgangDokumentvariant.builder()
 				.skjerming(SKJERMING_POL)
+				.variantformat(Variantformat.ARKIV)
 				.build(), new SafRequestContext(OIDC_TOKEN_PERSON_USER_TEST, oidcValidatorTool));
 
 		verify(abacService).evaluate(request.capture());
@@ -79,6 +81,7 @@ public class Pep6dImplTest extends AbstractPepTest {
 
 		boolean hasAccess = pep6d.hasAccess(TilgangDokumentvariant.builder()
 				.skjerming(SKJERMING_POL)
+				.variantformat(Variantformat.ARKIV)
 				.build(), new SafRequestContext(OIDC_TOKEN_PERSON_USER_TEST, oidcValidatorTool));
 
 		verify(abacService).evaluate(request.capture());
