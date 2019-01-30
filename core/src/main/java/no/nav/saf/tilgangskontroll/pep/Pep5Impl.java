@@ -3,6 +3,7 @@ package no.nav.saf.tilgangskontroll.pep;
 import static no.nav.abac.common.xacml.CommonAttributter.RESOURCE_FELLES_RESOURCE_TYPE;
 import static no.nav.abac.saf.xacml.SafAttributter.RESOURCE_SAF_DOKUMENT_METADATA;
 import static no.nav.abac.saf.xacml.SafAttributter.RESOURCE_SAF_SKJERMING;
+import static no.nav.saf.cache.KeyGeneratorLocalCaching.getKeyForPep5LocalCaching;
 import static no.nav.saf.domain.DomainConstants.PEP5;
 
 import lombok.extern.slf4j.Slf4j;
@@ -18,6 +19,8 @@ import javax.inject.Inject;
 
 /**
  * Dekker følgende policies i saf:
+ * <p>
+ * Lokal caching er kun relevant for dokumentoversiktene og brukes i journalpostMapperDto.java
  *
  * @author Joakim Bjørnstad, Jbit AS
  */
@@ -40,13 +43,20 @@ public class Pep5Impl implements Pep<TilgangDokumentInfo> {
 		}
 
 		if (isSkjermingPresent(ressurs)) {
-			return hasDokumentAccess(safRequestContext, ressurs);
+			String tilgangKeyLocalCaching = getKeyForPep5LocalCaching(ressurs.getJournalpostId(), ressurs.getDokumentInfoId());
+			boolean decide = decide(hasDokumentAccess(ressurs, safRequestContext));
+			safRequestContext.getRequestCache().putObject(tilgangKeyLocalCaching, decide);
+			return decide;
 		} else {
 			return true;
 		}
 	}
 
-	private boolean hasDokumentAccess(SafRequestContext safRequestContext, TilgangDokumentInfo ressurs) {
+	private boolean decide(Decision decision) {
+		return Decision.PERMIT.equals(decision);
+	}
+
+	private Decision hasDokumentAccess(TilgangDokumentInfo ressurs, SafRequestContext safRequestContext) {
 		XacmlRequest request = SafXacmlRequestFactory.create(safRequestContext.getSecurityContext().getOidcTokenBody());
 		request.resource(RESOURCE_FELLES_RESOURCE_TYPE, RESOURCE_SAF_DOKUMENT_METADATA);
 		request.resource(RESOURCE_SAF_SKJERMING, ressurs.getSkjerming().name());
@@ -55,7 +65,7 @@ public class Pep5Impl implements Pep<TilgangDokumentInfo> {
 		XacmlResponse response = abacService.evaluate(request);
 		Pep.traceLogPepFinished(PEP5, ressurs);
 
-		return Decision.PERMIT.equals(response.getDecision());
+		return response.getDecision();
 	}
 
 	private boolean isSkjermingPresent(TilgangDokumentInfo ressurs) {

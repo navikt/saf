@@ -1,0 +1,23 @@
+package no.nav.saf.cache;
+
+/**
+ * @author Sigurd Midttun, Visma Consulting.
+ * <p>
+ * Nøklene genereres med følgende format: key = "ressurstype:*ressurstype*" + "unik_id_for_distribuert_caching"
+ */
+public final class KeyGeneratorDistributedCaching extends AbstractKeyGeneratorCaching {
+
+	private KeyGeneratorDistributedCaching() {
+	}
+
+	public static String getKeyForPep2dDistributedCaching(String saksbehandlerId, String tema) {
+		return createIdentifierPair(RESSURSTYPE, RESSURSTYPE_SAK_DOKUMENT) + createUniqueIdentifier(createIdentifierPair(SAKSBEHANDLER_ID, saksbehandlerId), createIdentifierPair(TEMA, tema));
+	}
+
+	public static String getKeyForPep6dDistributedCaching(String saksbehandlerId, String journalpostId, String dokumentInfoId, String variantFormat, String skjerming) {
+		return createIdentifierPair(RESSURSTYPE, RESSURSTYPE_DOKUMENT_FIL) + createUniqueIdentifier(createIdentifierPair(SAKSBEHANDLER_ID, saksbehandlerId),
+				createIdentifierPair(JOURNALPOST_ID, journalpostId), createIdentifierPair(DOKUMENTINFO_ID, dokumentInfoId), createIdentifierPair(VARIANTFORMAT, variantFormat),
+				createIdentifierPair(SKJERMING, skjerming));
+	}
+
+}

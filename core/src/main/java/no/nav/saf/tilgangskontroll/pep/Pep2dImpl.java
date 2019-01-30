@@ -3,6 +3,8 @@ package no.nav.saf.tilgangskontroll.pep;
 import static no.nav.abac.common.xacml.CommonAttributter.RESOURCE_FELLES_RESOURCE_TYPE;
 import static no.nav.abac.saf.xacml.SafAttributter.RESOURCE_SAF_SAK_DOKUMENT;
 import static no.nav.abac.saf.xacml.SafAttributter.RESOURCE_SAF_TEMA;
+import static no.nav.saf.cache.KeyGeneratorDistributedCaching.getKeyForPep2dDistributedCaching;
+import static no.nav.saf.cache.KeyGeneratorLocalCaching.getKeyForPep2dLocalCaching;
 import static no.nav.saf.cache.RedisCacheConfig.TILGANG_CACHE;
 import static no.nav.saf.domain.DomainConstants.PEP2D;
 
@@ -27,6 +29,8 @@ import javax.inject.Named;
  * Dekker følgende policies i saf:
  * <p>
  * https://confluence.adeo.no/pages/viewpage.action?pageId=305352853
+ * <p>
+ * Lokal caching er kun relevant for dokumentoversiktene og brukes i journalpostMapperDto.java
  *
  * @author Joakim Bjørnstad, Jbit AS
  */
@@ -53,16 +57,17 @@ public class Pep2dImpl implements Pep<TilgangSak> {
 		if (ressurs.getTema() != null) {
 			Pep.traceLogPepStarted(PEP2D, ressurs);
 
-			String tilgangKey = "tilgang:" + safRequestContext.getSecurityContext()
-					.getSaksbehandlerId() + ":tema=" + ressurs.getTema();
+			String tilgangKeyDistributedCaching = getKeyForPep2dDistributedCaching(safRequestContext.getSecurityContext()
+					.getSaksbehandlerId(), ressurs.getTema().name());
+			String tilgangKeyLocalCaching = getKeyForPep2dLocalCaching(ressurs.getTema().name());
 			try {
-				boolean decide = decide(tilgangCache.get(tilgangKey,
+				boolean decide = decide(tilgangCache.get(tilgangKeyDistributedCaching,
 						() -> hasDokumentAccess(ressurs, safRequestContext)));
-				safRequestContext.getRequestCache().putObject(tilgangKey, decide);
+				safRequestContext.getRequestCache().putObject(tilgangKeyLocalCaching, decide);
 				return decide;
 			} catch (RedisException | PoolException | Cache.ValueRetrievalException e) {
 				boolean decide = decide(hasDokumentAccess(ressurs, safRequestContext));
-				safRequestContext.getRequestCache().putObject(tilgangKey, decide);
+				safRequestContext.getRequestCache().putObject(tilgangKeyLocalCaching, decide);
 				return decide;
 			} finally {
 				Pep.traceLogPepFinished(PEP2D, ressurs);

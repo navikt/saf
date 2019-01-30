@@ -28,7 +28,7 @@ class DokumentoversiktVisningsmodellRepositoryImpl implements DokumentoversiktVi
 											   final SafRequestContext safRequestContext) {
 		return journalpostIds.stream().map(journalpostId -> {
 			JournalpostDto journalpostDto = safRequestContext.getRequestCache().getObject(journalpostId);
-			return journalpostDtoMapper.mapJournalpostDto(journalpostDto, safRequestContext.getRequestCache(), safRequestContext.getSecurityContext());
+			return journalpostDtoMapper.mapJournalpostDto(journalpostDto, safRequestContext.getRequestCache());
 		}).filter(Objects::nonNull)
 				.collect(Collectors.toList());
 	}

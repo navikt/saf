@@ -318,18 +318,21 @@ public class TilgangsmodellRepositoryImpl implements TilgangsmodellRepository {
 		}
 	}
 
-
 	private TilgangJournalpost mapTilgangJournalpost(JournalpostDto dto) {
 		return TilgangJournalpost.builder()
 				.journalpostId(dto.getJournalpostId().toString())
 				.journalstatus(dto.getJournalstatus().toSafJournalstatus())
 				.skjerming(SkjermingTypeCode.toSafSkjerming(dto.getSkjerming()))
 				.dokumenter(dto.getDokumenter().stream().map(dokdto -> TilgangDokumentInfo.builder()
+						.journalpostId(dto.getJournalpostId().toString())
+						.dokumentInfoId(dokdto.getDokumentInfoId())
 						.skjerming(SkjermingTypeCode.toSafSkjerming(dokdto.getSkjerming()))
 						.tilgangDokumentvarianter(dokdto.getVarianter().stream()
 								.map(variantDto -> TilgangDokumentvariant.builder()
 										.skjerming(SkjermingTypeCode.toSafSkjerming(variantDto.getSkjerming()))
 										.variantformat(VariantFormatCode.toSafVariantformat(variantDto.getVariantf()))
+										.journalpostId(dto.getJournalpostId().toString())
+										.dokumentInfoId(dokdto.getDokumentInfoId())
 										.build())
 								.collect(Collectors.toList())
 						)

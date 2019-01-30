@@ -14,13 +14,18 @@ import java.util.List;
 @Value
 @Builder
 public class TilgangJournalpost {
-	//Kjerneattrubutter brukt for tilgangskontroll
+
+	/**
+	 * Attributter brukt for tilgangskontroll
+	 **/
 	private final Journalstatus journalstatus;
 	private final Skjerming skjerming;
 	@Builder.Default
 	private final List<TilgangDokumentInfo> dokumenter = new ArrayList<>();
 
-	//Ekstra attributter for å forenkle kodeflyt
+	/**
+	 * Attributt brukt for å forenkle kodeflyt
+	 **/
 	private final String journalpostId;
 
 }
