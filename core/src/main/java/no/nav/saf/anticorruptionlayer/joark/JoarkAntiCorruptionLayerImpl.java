@@ -197,6 +197,8 @@ class JoarkAntiCorruptionLayerImpl implements JoarkAntiCorruptionLayer {
 								.skjerming(SkjermingTypeCode.toSafSkjerming(tilgangDokumentInfoDto.getVariant().getSkjerming()))
 								.variantformat(VariantFormatCode.toSafVariantformat(tilgangDokumentInfoDto.getVariant()
 										.getVariantFormat()))
+								.journalpostId(dto.getJournalpostId())
+								.dokumentInfoId(dto.getDokument().getDokumentinfoId())
 								.build()))
 						.build()))
 				.build();

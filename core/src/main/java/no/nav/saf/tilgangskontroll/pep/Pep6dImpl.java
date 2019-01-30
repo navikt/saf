@@ -1,15 +1,21 @@
 package no.nav.saf.tilgangskontroll.pep;
 
+import static no.nav.abac.common.xacml.CommonAttributter.RESOURCE_FELLES_RESOURCE_TYPE;
+import static no.nav.abac.saf.xacml.SafAttributter.RESOURCE_SAF_DOKUMENT_FIL;
+import static no.nav.abac.saf.xacml.SafAttributter.RESOURCE_SAF_SKJERMING;
 import static no.nav.saf.cache.RedisCacheConfig.TILGANG_CACHE;
 import static no.nav.saf.domain.DomainConstants.PEP6D;
 
 import io.lettuce.core.RedisException;
 import lombok.extern.slf4j.Slf4j;
+import no.nav.saf.cache.KeyGeneratorDistributedCaching;
+import no.nav.saf.cache.KeyGeneratorLocalCaching;
 import no.nav.saf.cache.RedisCacheConfig;
 import no.nav.saf.domain.tilgangsmodell.TilgangDokumentvariant;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlRequest;
 import no.nav.saf.tilgangskontroll.abac.dto.response.Decision;
+import no.nav.saf.tilgangskontroll.abac.dto.response.XacmlResponse;
 import no.nav.saf.tilgangskontroll.abac.service.AbacService;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
@@ -21,6 +27,8 @@ import javax.inject.Named;
 
 /**
  * Dekker følgende policies i saf:
+ * <p>
+ * Lokal caching er kun relevant for dokumentoversiktene og brukes i journalpostMapperDto.java
  *
  * @author Joakim Bjørnstad, Jbit AS
  */
@@ -44,22 +52,38 @@ public class Pep6dImpl implements Pep<TilgangDokumentvariant> {
 			return false;
 		}
 
-		if (ressurs.getSkjerming() != null) {
+		if (isSkjermingPresent(ressurs)) {
+			if (isVariantformatNull(ressurs)) {
+				log.warn("Pep6d mangler tilstrekkelig datagrunnlag for å kunne gjennomføre tilgangskontroll. Variantformat=null. journalpostId={} og dokumentinfoId={}",
+						ressurs.getJournalpostId(), ressurs.getDokumentInfoId());
+				return false;
+			}
+
 			Pep.traceLogPepStarted(PEP6D, ressurs);
 
-			String tilgangKey = "tilgang:" + safRequestContext.getSecurityContext()
-					.getSaksbehandlerId() + ":ressurstype:dokument_fil" + ":variantformat:" + ressurs.getVariantformat()
-					+ ":skjerming=" + ressurs.getSkjerming();
+			String tilgangKeyDistributedCaching = KeyGeneratorDistributedCaching.getKeyForPep6d(
+					safRequestContext.getSecurityContext().getSaksbehandlerId(),
+					ressurs.getJournalpostId(),
+					ressurs.getDokumentInfoId(),
+					ressurs.getVariantformat().name(),
+					ressurs.getSkjerming().name());
+
+			String tilgangKeyLocalCaching = KeyGeneratorLocalCaching.getKeyForPep6d(
+					ressurs.getJournalpostId(),
+					ressurs.getDokumentInfoId(),
+					ressurs.getVariantformat().name(),
+					ressurs.getSkjerming().name());
+
 			try {
-				boolean decide = decide(tilgangCache.get(tilgangKey,
+				boolean decide = decide(tilgangCache.get(tilgangKeyDistributedCaching,
 						() -> hasDokumentFilAccess(ressurs, safRequestContext)));
-				safRequestContext.getRequestCache().putObject(tilgangKey, decide);
+				safRequestContext.getRequestCache().putObject(tilgangKeyLocalCaching, decide);
 				return decide;
 			} catch (RedisException | PoolException | Cache.ValueRetrievalException e) {
 				boolean decide = decide(hasDokumentFilAccess(ressurs, safRequestContext));
-				safRequestContext.getRequestCache().putObject(tilgangKey, decide);
+				safRequestContext.getRequestCache().putObject(tilgangKeyLocalCaching, decide);
 				return decide;
-			}  finally {
+			} finally {
 				Pep.traceLogPepFinished(PEP6D, ressurs);
 			}
 		} else {
@@ -72,8 +96,22 @@ public class Pep6dImpl implements Pep<TilgangDokumentvariant> {
 	}
 
 	private Decision hasDokumentFilAccess(TilgangDokumentvariant ressurs, SafRequestContext safRequestContext) {
-		XacmlRequest request = new XacmlRequest();
-		//TODO Populate request and perform call to pdp
-		return Decision.PERMIT;
+		XacmlRequest request = SafXacmlRequestFactory.create(safRequestContext.getSecurityContext().getOidcTokenBody());
+		request.resource(RESOURCE_FELLES_RESOURCE_TYPE, RESOURCE_SAF_DOKUMENT_FIL);
+		request.resource(RESOURCE_SAF_SKJERMING, ressurs.getSkjerming().name());
+
+		Pep.traceLogPepStarted(PEP6D, ressurs);
+		XacmlResponse response = abacService.evaluate(request);
+		Pep.traceLogPepFinished(PEP6D, ressurs);
+
+		return response.getDecision();
+	}
+
+	private boolean isSkjermingPresent(TilgangDokumentvariant ressurs) {
+		return ressurs.getSkjerming() != null;
+	}
+
+	private boolean isVariantformatNull(TilgangDokumentvariant ressurs) {
+		return ressurs.getVariantformat() == null;
 	}
 }

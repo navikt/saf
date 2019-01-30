@@ -8,6 +8,8 @@ import static no.nav.saf.domain.DomainConstants.PEP2D;
 
 import io.lettuce.core.RedisException;
 import lombok.extern.slf4j.Slf4j;
+import no.nav.saf.cache.KeyGeneratorDistributedCaching;
+import no.nav.saf.cache.KeyGeneratorLocalCaching;
 import no.nav.saf.cache.RedisCacheConfig;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
@@ -27,6 +29,8 @@ import javax.inject.Named;
  * Dekker følgende policies i saf:
  * <p>
  * https://confluence.adeo.no/pages/viewpage.action?pageId=305352853
+ * <p>
+ * Lokal caching er kun relevant for dokumentoversiktene og brukes i journalpostMapperDto.java
  *
  * @author Joakim Bjørnstad, Jbit AS
  */
@@ -53,16 +57,17 @@ public class Pep2dImpl implements Pep<TilgangSak> {
 		if (ressurs.getTema() != null) {
 			Pep.traceLogPepStarted(PEP2D, ressurs);
 
-			String tilgangKey = "tilgang:" + safRequestContext.getSecurityContext()
-					.getSaksbehandlerId() + ":tema=" + ressurs.getTema();
+			String tilgangKeyDistributedCaching = KeyGeneratorDistributedCaching.getKeyForPep2d(safRequestContext.getSecurityContext()
+					.getSaksbehandlerId(), ressurs.getTema().name());
+			String tilgangKeyLocalCaching = KeyGeneratorLocalCaching.getKeyForPep2d(ressurs.getTema().name());
 			try {
-				boolean decide = decide(tilgangCache.get(tilgangKey,
+				boolean decide = decide(tilgangCache.get(tilgangKeyDistributedCaching,
 						() -> hasDokumentAccess(ressurs, safRequestContext)));
-				safRequestContext.getRequestCache().putObject(tilgangKey, decide);
+				safRequestContext.getRequestCache().putObject(tilgangKeyLocalCaching, decide);
 				return decide;
 			} catch (RedisException | PoolException | Cache.ValueRetrievalException e) {
 				boolean decide = decide(hasDokumentAccess(ressurs, safRequestContext));
-				safRequestContext.getRequestCache().putObject(tilgangKey, decide);
+				safRequestContext.getRequestCache().putObject(tilgangKeyLocalCaching, decide);
 				return decide;
 			} finally {
 				Pep.traceLogPepFinished(PEP2D, ressurs);

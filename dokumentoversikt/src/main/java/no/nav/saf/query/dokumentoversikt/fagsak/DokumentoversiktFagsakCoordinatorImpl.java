@@ -5,12 +5,16 @@ import static no.nav.saf.domain.DomainConstants.PEP2;
 import static no.nav.saf.domain.DomainConstants.PEP2D;
 import static no.nav.saf.domain.DomainConstants.PEP3;
 import static no.nav.saf.domain.DomainConstants.PEP4;
+import static no.nav.saf.domain.DomainConstants.PEP5;
+import static no.nav.saf.domain.DomainConstants.PEP6D;
 
 import io.reactivex.Flowable;
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 import no.nav.saf.domain.TilgangsmodellRepository;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
+import no.nav.saf.domain.tilgangsmodell.TilgangDokumentInfo;
+import no.nav.saf.domain.tilgangsmodell.TilgangDokumentvariant;
 import no.nav.saf.domain.tilgangsmodell.TilgangJournalpost;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 import no.nav.saf.domain.visningsmodell.Dokumentoversikt;
@@ -46,6 +50,8 @@ class DokumentoversiktFagsakCoordinatorImpl implements DokumentoversiktFagsakCoo
 	private final Pep<TilgangSak> pep2d;
 	private final Pep<TilgangSak> pep3;
 	private final Pep<TilgangJournalpost> pep4;
+	private final Pep<TilgangDokumentInfo> pep5;
+	private final Pep<TilgangDokumentvariant> pep6d;
 
 	@Inject
 	public DokumentoversiktFagsakCoordinatorImpl(TilgangsmodellRepository tilgangsmodellRepository,
@@ -54,7 +60,9 @@ class DokumentoversiktFagsakCoordinatorImpl implements DokumentoversiktFagsakCoo
 												 @Named(PEP2) Pep<TilgangSak> pep2,
 												 @Named(PEP2D) Pep<TilgangSak> pep2d,
 												 @Named(PEP3) Pep<TilgangSak> pep3,
-												 @Named(PEP4) Pep<TilgangJournalpost> pep4) {
+												 @Named(PEP4) Pep<TilgangJournalpost> pep4,
+												 @Named(PEP5) Pep<TilgangDokumentInfo> pep5,
+												 @Named(PEP6D) Pep<TilgangDokumentvariant> pep6d) {
 		this.tilgangsmodellRepository = tilgangsmodellRepository;
 		this.visningsmodellRepository = visningsmodellRepository;
 		this.pep1g = pep1g;
@@ -62,6 +70,8 @@ class DokumentoversiktFagsakCoordinatorImpl implements DokumentoversiktFagsakCoo
 		this.pep2d = pep2d;
 		this.pep3 = pep3;
 		this.pep4 = pep4;
+		this.pep5 = pep5;
+		this.pep6d = pep6d;
 	}
 
 	@Override
@@ -112,6 +122,21 @@ class DokumentoversiktFagsakCoordinatorImpl implements DokumentoversiktFagsakCoo
 				.sequential()
 				.toList()
 				.blockingGet();
+
+
+		/**
+		 * Resultat fra pep5 caches lokalt og brukes i JournalpostDtoMapper.java for å filtrere på dokumentinfo-metadata som skal gis til saksbehandler.
+		 * Resultat fra pep6d caches også lokalt og brukes i JournalpostDtoMapper.java. Med bakgrunn i resultat fra pep2d og pep6d settes feltet saksbehandlerHarTilgang=true/false.
+		 **/
+		Flowable.fromIterable(filteredTilgangJournalpostList)
+				.parallel(10)
+				.runOn(Schedulers.io())
+				.doOnNext(tj -> tj.getDokumenter()
+						.forEach(tilgangDokumentInfo -> pep5.hasAccess(tilgangDokumentInfo, safRequestContext)))
+				.doOnNext(tj -> tj.getDokumenter()
+						.forEach(tilgangDokumentInfo -> tilgangDokumentInfo.getTilgangDokumentvarianter()
+								.forEach(tilgangDokumentvariant -> pep6d.hasAccess(tilgangDokumentvariant, safRequestContext))));
+
 
 		List<Journalpost> journalposter = visningsmodellRepository.findJournalposter(filteredTilgangJournalpostList.stream()
 				.map(TilgangJournalpost::getJournalpostId)
