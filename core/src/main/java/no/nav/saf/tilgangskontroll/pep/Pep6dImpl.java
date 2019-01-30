@@ -53,20 +53,26 @@ public class Pep6dImpl implements Pep<TilgangDokumentvariant> {
 		}
 
 		if (isSkjermingPresent(ressurs)) {
+			if (isVariantformatNull(ressurs)) {
+				log.warn("Pep6d mangler tilstrekkelig datagrunnlag for å kunne gjennomføre tilgangskontroll. Variantformat=null. journalpostId={} og dokumentinfoId={}",
+						ressurs.getJournalpostId(), ressurs.getDokumentInfoId());
+				return false;
+			}
+
 			Pep.traceLogPepStarted(PEP6D, ressurs);
 
 			String tilgangKeyDistributedCaching = getKeyForPep6dDistributedCaching(
 					safRequestContext.getSecurityContext().getSaksbehandlerId(),
 					ressurs.getJournalpostId(),
 					ressurs.getDokumentInfoId(),
-					ressurs.getVariantformat() == null ? null : ressurs.getVariantformat().name(),
-					ressurs.getVariantformat() == null ? null : ressurs.getVariantformat().name());
+					ressurs.getVariantformat().name(),
+					ressurs.getSkjerming().name());
 
 			String tilgangKeyLocalCaching = getKeyForPep6dLocalCaching(
 					ressurs.getJournalpostId(),
 					ressurs.getDokumentInfoId(),
-					ressurs.getVariantformat() == null ? null : ressurs.getVariantformat().name(),
-					ressurs.getVariantformat() == null ? null : ressurs.getVariantformat().name());
+					ressurs.getVariantformat().name(),
+					ressurs.getSkjerming().name());
 
 			try {
 				boolean decide = decide(tilgangCache.get(tilgangKeyDistributedCaching,
@@ -103,5 +109,9 @@ public class Pep6dImpl implements Pep<TilgangDokumentvariant> {
 
 	private boolean isSkjermingPresent(TilgangDokumentvariant ressurs) {
 		return ressurs.getSkjerming() != null;
+	}
+
+	private boolean isVariantformatNull(TilgangDokumentvariant ressurs) {
+		return ressurs.getVariantformat() == null;
 	}
 }
