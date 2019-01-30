@@ -15,7 +15,7 @@ import no.nav.saf.query.dokumentoversikt.SideInfoMapper;
 import no.nav.saf.query.dokumentoversikt.arguments.DokumentoversiktPagination;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.pep.Pep;
-import no.nav.saf.tjeneste.argumenter.FagsakIdInput;
+import no.nav.saf.tjeneste.argumenter.FagsakInput;
 import org.reactivestreams.Publisher;
 import org.springframework.stereotype.Component;
 
@@ -61,8 +61,8 @@ class DokumentoversiktFagsakCoordinatorImpl implements DokumentoversiktFagsakCoo
 	@Override
 	@Monitor(value = "dok_request", extraTags = {"process", "dokumentOversikt", "requestType", "fagsak"}, histogram = true)
 	public Dokumentoversikt hentDokumentoversikt(DokumentoversiktFagsakArguments dokumentoversiktFagsakArguments, SafRequestContext safRequestContext) {
-		final FagsakIdInput fagsakIdInput = dokumentoversiktFagsakArguments.getFagsakIdInput();
-		final List<TilgangBruker> tilgangBrukerList = tilgangsmodellRepository.findTilgangBrukerList(fagsakIdInput);
+		final FagsakInput fagsakInput = dokumentoversiktFagsakArguments.getFagsakInput();
+		final List<TilgangBruker> tilgangBrukerList = tilgangsmodellRepository.findTilgangBrukerList(fagsakInput);
 
 		List<TilgangBruker> filteredTilgangBrukerList = Flowable.fromIterable(tilgangBrukerList)
 				.onErrorResumeNext((Function<Throwable, Publisher<? extends TilgangBruker>>) Flowable::error)
@@ -73,7 +73,7 @@ class DokumentoversiktFagsakCoordinatorImpl implements DokumentoversiktFagsakCoo
 				.toList()
 				.blockingGet();
 
-		final List<TilgangSak> tilgangSakList = tilgangsmodellRepository.findTilgangSaker(filteredTilgangBrukerList, fagsakIdInput, dokumentoversiktFagsakArguments
+		final List<TilgangSak> tilgangSakList = tilgangsmodellRepository.findTilgangSaker(filteredTilgangBrukerList, fagsakInput, dokumentoversiktFagsakArguments
 				.getFilters().getTema(), safRequestContext);
 
 		final List<TilgangSak> filteredTilgangSakList = Flowable.fromIterable(tilgangSakList)

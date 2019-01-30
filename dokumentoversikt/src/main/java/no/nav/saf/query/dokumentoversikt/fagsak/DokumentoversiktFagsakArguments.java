@@ -6,7 +6,7 @@ import lombok.Value;
 import no.nav.saf.query.dokumentoversikt.arguments.AbstractDokumentoversiktArguments;
 import no.nav.saf.query.dokumentoversikt.arguments.DokumentoversiktFilters;
 import no.nav.saf.query.dokumentoversikt.arguments.DokumentoversiktPagination;
-import no.nav.saf.tjeneste.argumenter.FagsakIdInput;
+import no.nav.saf.tjeneste.argumenter.FagsakInput;
 
 import java.util.Map;
 
@@ -16,18 +16,18 @@ import java.util.Map;
 @Value
 @EqualsAndHashCode(callSuper = true)
 public class DokumentoversiktFagsakArguments extends AbstractDokumentoversiktArguments {
-	private final FagsakIdInput fagsakIdInput;
+	private final FagsakInput fagsakInput;
 
-	public DokumentoversiktFagsakArguments(FagsakIdInput fagsakIdInput,
+	public DokumentoversiktFagsakArguments(FagsakInput fagsakInput,
 										   DokumentoversiktFilters filters,
 										   DokumentoversiktPagination.Pagination pagination) {
 		super(filters, pagination);
-		this.fagsakIdInput = fagsakIdInput;
+		this.fagsakInput = fagsakInput;
 	}
 
 	public static DokumentoversiktFagsakArguments create(DataFetchingEnvironment environment) {
-		Map<String, Object> fagsakId = environment.getArgument("fagsakId");
-		FagsakIdInput fagsakIdInput = new FagsakIdInput((String) fagsakId.get("fagsaksnummer"), (String) fagsakId.get("fagsaksystem"));
-		return new DokumentoversiktFagsakArguments(fagsakIdInput, DokumentoversiktFilters.create(environment), DokumentoversiktPagination.create(environment));
+		Map<String, Object> fagsakId = environment.getArgument("fagsak");
+		FagsakInput fagsakInput = new FagsakInput((String) fagsakId.get("fagsakId"), (String) fagsakId.get("fagsaksystem"));
+		return new DokumentoversiktFagsakArguments(fagsakInput, DokumentoversiktFilters.create(environment), DokumentoversiktPagination.create(environment));
 	}
 }

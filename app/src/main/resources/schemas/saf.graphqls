@@ -30,12 +30,12 @@ enum BrukerIdType {
     ORGNR
 }
 
-# FagsakIdInput er et argument som identifiserer en fagsak.
-input FagsakIdInput {
+# FagsakInput er et argument som identifiserer en fagsak.
+input FagsakInput {
     # Unik identifikator for en gitt fagsak.
-    fagsaksnummer: String!
+    fagsakId: String!
 
-    # Markør for hvilket fagsystem fagsaksnummeret tilhører, for eksempel **PP01** for pensjonssaker.
+    # Verdi for hvilket fagsystem denne fagsaken tilhører, for eksempel **PP01** for pensjonssaker.
     fagsaksystem: String!
 }
 
@@ -77,7 +77,7 @@ type Query {
     dokumentoversiktFagsak(
         # Fagsaken man ønsker å få ut dokumentoversikt for.
         #  Hvis argumentet ikke er angitt så returneres en feil.
-        fagsakId: FagsakIdInput!
+        fagsak: FagsakInput!
 
         # Dato for eldste journalpost.
         # Hvis angitt returneres alle journalposter fra denne datoen.
