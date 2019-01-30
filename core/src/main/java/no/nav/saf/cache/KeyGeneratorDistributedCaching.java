@@ -10,11 +10,11 @@ public final class KeyGeneratorDistributedCaching extends AbstractKeyGeneratorCa
 	private KeyGeneratorDistributedCaching() {
 	}
 
-	public static String getKeyForPep2dDistributedCaching(String saksbehandlerId, String tema) {
+	public static String getKeyForPep2d(String saksbehandlerId, String tema) {
 		return createIdentifierPair(RESSURSTYPE, RESSURSTYPE_SAK_DOKUMENT) + createUniqueIdentifier(createIdentifierPair(SAKSBEHANDLER_ID, saksbehandlerId), createIdentifierPair(TEMA, tema));
 	}
 
-	public static String getKeyForPep6dDistributedCaching(String saksbehandlerId, String journalpostId, String dokumentInfoId, String variantFormat, String skjerming) {
+	public static String getKeyForPep6d(String saksbehandlerId, String journalpostId, String dokumentInfoId, String variantFormat, String skjerming) {
 		return createIdentifierPair(RESSURSTYPE, RESSURSTYPE_DOKUMENT_FIL) + createUniqueIdentifier(createIdentifierPair(SAKSBEHANDLER_ID, saksbehandlerId),
 				createIdentifierPair(JOURNALPOST_ID, journalpostId), createIdentifierPair(DOKUMENTINFO_ID, dokumentInfoId), createIdentifierPair(VARIANTFORMAT, variantFormat),
 				createIdentifierPair(SKJERMING, skjerming));

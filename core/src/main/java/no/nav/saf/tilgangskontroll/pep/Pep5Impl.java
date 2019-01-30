@@ -3,10 +3,10 @@ package no.nav.saf.tilgangskontroll.pep;
 import static no.nav.abac.common.xacml.CommonAttributter.RESOURCE_FELLES_RESOURCE_TYPE;
 import static no.nav.abac.saf.xacml.SafAttributter.RESOURCE_SAF_DOKUMENT_METADATA;
 import static no.nav.abac.saf.xacml.SafAttributter.RESOURCE_SAF_SKJERMING;
-import static no.nav.saf.cache.KeyGeneratorLocalCaching.getKeyForPep5LocalCaching;
 import static no.nav.saf.domain.DomainConstants.PEP5;
 
 import lombok.extern.slf4j.Slf4j;
+import no.nav.saf.cache.KeyGeneratorLocalCaching;
 import no.nav.saf.domain.tilgangsmodell.TilgangDokumentInfo;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlRequest;
@@ -43,7 +43,7 @@ public class Pep5Impl implements Pep<TilgangDokumentInfo> {
 		}
 
 		if (isSkjermingPresent(ressurs)) {
-			String tilgangKeyLocalCaching = getKeyForPep5LocalCaching(ressurs.getJournalpostId(), ressurs.getDokumentInfoId());
+			String tilgangKeyLocalCaching = KeyGeneratorLocalCaching.getKeyForPep5(ressurs.getJournalpostId(), ressurs.getDokumentInfoId());
 			boolean decide = decide(hasDokumentAccess(ressurs, safRequestContext));
 			safRequestContext.getRequestCache().putObject(tilgangKeyLocalCaching, decide);
 			return decide;

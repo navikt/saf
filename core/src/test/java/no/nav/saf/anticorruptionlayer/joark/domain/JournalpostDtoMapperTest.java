@@ -1,8 +1,5 @@
 package no.nav.saf.anticorruptionlayer.joark.domain;
 
-import static no.nav.saf.cache.KeyGeneratorLocalCaching.getKeyForPep2dLocalCaching;
-import static no.nav.saf.cache.KeyGeneratorLocalCaching.getKeyForPep5LocalCaching;
-import static no.nav.saf.cache.KeyGeneratorLocalCaching.getKeyForPep6dLocalCaching;
 import static no.nav.saf.domain.DomainConstants.TILGANG_BRUKER;
 import static no.nav.saf.domain.kode.Kanal.SENTRAL_UTSKRIFT;
 import static org.assertj.core.groups.Tuple.tuple;
@@ -25,6 +22,7 @@ import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.Journal
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.LogiskVedleggDto;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.SaksrelasjonDto;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.VariantDto;
+import no.nav.saf.cache.KeyGeneratorLocalCaching;
 import no.nav.saf.domain.Arkivsak;
 import no.nav.saf.domain.kode.Arkivsakssystem;
 import no.nav.saf.domain.kode.Datotype;
@@ -89,7 +87,7 @@ class JournalpostDtoMapperTest {
 	void shouldMapJournalpostDtoWithUtgaaendeJournalpost() {
 		JournalpostDto journalpostDto = buildJournalpostDtoUtgaaendeType(JournalStatusCode.E);
 		RequestCache requestCache = createArkivsakCacheRequestCache();
-		String tilgangKeyPep5LocalCaching = getKeyForPep5LocalCaching(String.valueOf(JOURNALPOST_ID), DOKUMENT_INFO_ID);
+		String tilgangKeyPep5LocalCaching = KeyGeneratorLocalCaching.getKeyForPep5(String.valueOf(JOURNALPOST_ID), DOKUMENT_INFO_ID);
 		requestCache.putObject(tilgangKeyPep5LocalCaching, true);
 
 		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, requestCache);
@@ -112,7 +110,7 @@ class JournalpostDtoMapperTest {
 	void shouldMapJournalpostDtoWithInngaaendeJournalpost() {
 		JournalpostDto journalpostDto = buildJournalpostDtoInngaaendeType();
 		RequestCache requestCache = createTilgangBrukerRequestCache();
-		String tilgangKeyPep5LocalCaching = getKeyForPep5LocalCaching(String.valueOf(JOURNALPOST_ID), DOKUMENT_INFO_ID);
+		String tilgangKeyPep5LocalCaching = KeyGeneratorLocalCaching.getKeyForPep5(String.valueOf(JOURNALPOST_ID), DOKUMENT_INFO_ID);
 		requestCache.putObject(tilgangKeyPep5LocalCaching, true);
 
 		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, requestCache);
@@ -135,7 +133,7 @@ class JournalpostDtoMapperTest {
 	void shouldNotMapDokumentinfoIngenTilgangPep5() {
 		JournalpostDto journalpostDto = buildJournalpostDtoInngaaendeType();
 		RequestCache requestCache = createTilgangBrukerRequestCache();
-		String tilgangKeyPep5LocalCaching = getKeyForPep5LocalCaching(String.valueOf(JOURNALPOST_ID), DOKUMENT_INFO_ID);
+		String tilgangKeyPep5LocalCaching = KeyGeneratorLocalCaching.getKeyForPep5(String.valueOf(JOURNALPOST_ID), DOKUMENT_INFO_ID);
 		requestCache.putObject(tilgangKeyPep5LocalCaching, false);
 
 		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, requestCache);
@@ -201,15 +199,15 @@ class JournalpostDtoMapperTest {
 	void shouldMapSaksbehandlerHarTilgang() {
 		JournalpostDto journalpostDto = buildJournalpostDtoPenSaksrelasjonDto();
 
-		String tilgangKeyPep2dLocalCaching = getKeyForPep2dLocalCaching(journalpostDto.getFagomrade().name());
+		String tilgangKeyPep2dLocalCaching = KeyGeneratorLocalCaching.getKeyForPep2d(journalpostDto.getFagomrade().name());
 
-		String tilgangKeyPep5LocalCaching = getKeyForPep5LocalCaching(String.valueOf(JOURNALPOST_ID), DOKUMENT_INFO_ID);
+		String tilgangKeyPep5LocalCaching = KeyGeneratorLocalCaching.getKeyForPep5(String.valueOf(JOURNALPOST_ID), DOKUMENT_INFO_ID);
 
-		String tilgangKeyPep6dLocalCachingVariantArkiv = getKeyForPep6dLocalCaching(
+		String tilgangKeyPep6dLocalCachingVariantArkiv = KeyGeneratorLocalCaching.getKeyForPep6d(
 				String.valueOf(JOURNALPOST_ID), DOKUMENT_INFO_ID, VARIANT_FORMAT_CODE_ARKIV.getSafVariantformat()
 						.name(), SKJERMING_TYPE_CODE_POL.getSafSkjerming().name());
 
-		String tilgangKeyPep6dLocalCachingVariantSladdet = getKeyForPep6dLocalCaching(
+		String tilgangKeyPep6dLocalCachingVariantSladdet = KeyGeneratorLocalCaching.getKeyForPep6d(
 				String.valueOf(JOURNALPOST_ID), DOKUMENT_INFO_ID, VARIANT_FORMAT_CODE_SLADDET.getSafVariantformat()
 						.name(), SKJERMING_TYPE_CODE_POL.getSafSkjerming().name());
 

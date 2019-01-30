@@ -3,13 +3,13 @@ package no.nav.saf.tilgangskontroll.pep;
 import static no.nav.abac.common.xacml.CommonAttributter.RESOURCE_FELLES_RESOURCE_TYPE;
 import static no.nav.abac.saf.xacml.SafAttributter.RESOURCE_SAF_SAK_DOKUMENT;
 import static no.nav.abac.saf.xacml.SafAttributter.RESOURCE_SAF_TEMA;
-import static no.nav.saf.cache.KeyGeneratorDistributedCaching.getKeyForPep2dDistributedCaching;
-import static no.nav.saf.cache.KeyGeneratorLocalCaching.getKeyForPep2dLocalCaching;
 import static no.nav.saf.cache.RedisCacheConfig.TILGANG_CACHE;
 import static no.nav.saf.domain.DomainConstants.PEP2D;
 
 import io.lettuce.core.RedisException;
 import lombok.extern.slf4j.Slf4j;
+import no.nav.saf.cache.KeyGeneratorDistributedCaching;
+import no.nav.saf.cache.KeyGeneratorLocalCaching;
 import no.nav.saf.cache.RedisCacheConfig;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
@@ -57,9 +57,9 @@ public class Pep2dImpl implements Pep<TilgangSak> {
 		if (ressurs.getTema() != null) {
 			Pep.traceLogPepStarted(PEP2D, ressurs);
 
-			String tilgangKeyDistributedCaching = getKeyForPep2dDistributedCaching(safRequestContext.getSecurityContext()
+			String tilgangKeyDistributedCaching = KeyGeneratorDistributedCaching.getKeyForPep2d(safRequestContext.getSecurityContext()
 					.getSaksbehandlerId(), ressurs.getTema().name());
-			String tilgangKeyLocalCaching = getKeyForPep2dLocalCaching(ressurs.getTema().name());
+			String tilgangKeyLocalCaching = KeyGeneratorLocalCaching.getKeyForPep2d(ressurs.getTema().name());
 			try {
 				boolean decide = decide(tilgangCache.get(tilgangKeyDistributedCaching,
 						() -> hasDokumentAccess(ressurs, safRequestContext)));

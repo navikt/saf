@@ -3,13 +3,13 @@ package no.nav.saf.tilgangskontroll.pep;
 import static no.nav.abac.common.xacml.CommonAttributter.RESOURCE_FELLES_RESOURCE_TYPE;
 import static no.nav.abac.saf.xacml.SafAttributter.RESOURCE_SAF_DOKUMENT_FIL;
 import static no.nav.abac.saf.xacml.SafAttributter.RESOURCE_SAF_SKJERMING;
-import static no.nav.saf.cache.KeyGeneratorDistributedCaching.getKeyForPep6dDistributedCaching;
-import static no.nav.saf.cache.KeyGeneratorLocalCaching.getKeyForPep6dLocalCaching;
 import static no.nav.saf.cache.RedisCacheConfig.TILGANG_CACHE;
 import static no.nav.saf.domain.DomainConstants.PEP6D;
 
 import io.lettuce.core.RedisException;
 import lombok.extern.slf4j.Slf4j;
+import no.nav.saf.cache.KeyGeneratorDistributedCaching;
+import no.nav.saf.cache.KeyGeneratorLocalCaching;
 import no.nav.saf.cache.RedisCacheConfig;
 import no.nav.saf.domain.tilgangsmodell.TilgangDokumentvariant;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
@@ -61,14 +61,14 @@ public class Pep6dImpl implements Pep<TilgangDokumentvariant> {
 
 			Pep.traceLogPepStarted(PEP6D, ressurs);
 
-			String tilgangKeyDistributedCaching = getKeyForPep6dDistributedCaching(
+			String tilgangKeyDistributedCaching = KeyGeneratorDistributedCaching.getKeyForPep6d(
 					safRequestContext.getSecurityContext().getSaksbehandlerId(),
 					ressurs.getJournalpostId(),
 					ressurs.getDokumentInfoId(),
 					ressurs.getVariantformat().name(),
 					ressurs.getSkjerming().name());
 
-			String tilgangKeyLocalCaching = getKeyForPep6dLocalCaching(
+			String tilgangKeyLocalCaching = KeyGeneratorLocalCaching.getKeyForPep6d(
 					ressurs.getJournalpostId(),
 					ressurs.getDokumentInfoId(),
 					ressurs.getVariantformat().name(),
