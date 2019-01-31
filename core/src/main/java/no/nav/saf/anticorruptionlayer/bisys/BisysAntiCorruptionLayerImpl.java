@@ -34,7 +34,7 @@ class BisysAntiCorruptionLayerImpl implements BisysAntiCorruptionLayer {
 					.paragraf19(bidragSakTo.isErParagraf19())
 					.relevanteTredjeparter(
 							bidragSakTo.getRoller().stream()
-									.filter(fnrRolle -> isRolleBruker(fnrRolle, tilgangBruker))
+									.filter(fnrRolle -> !isRolleBruker(fnrRolle, tilgangBruker))
 									.map(fnrRolle -> new TilgangRelevantTredjepart(TilgangIdent.builder()
 											.identifikator(fnrRolle)
 											.build()))
