@@ -108,7 +108,7 @@ class DokumentoversiktBrukerCoordinatorImpl implements DokumentoversiktBrukerCoo
 				.runOn(Schedulers.io())
 				.filter(tj -> pep4.hasAccess(tj, safRequestContext))
 				.filter(tj -> checkPepIfMidlertidigJournalpost(pep2, tj, tilgangBruker, safRequestContext))
-				.filter(tj -> checkPepIfMidlertidigJournalpost(pep2d, tj, tilgangBruker, safRequestContext))
+				.doOnNext(tj -> checkPepIfMidlertidigJournalpost(pep2d, tj, tilgangBruker, safRequestContext))
 				.sequential()
 				.toList()
 				.blockingGet();
