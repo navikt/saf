@@ -1,7 +1,16 @@
 {
-  dokumentoversiktBruker(brukerId: {id: "***gammelt_fnr***59", type: AKTOERID}, foerste: 3) {
-    journalposter {
-      journalpostId
-    }
-  }
+  dokumentoversiktBruker(brukerId: {
+    id: "***gammelt_fnr***59",
+    type: AKTOERID
+  },
+  foerste: 3) {
+  journalposter {
+  journalpostId
+  dokumenter{
+  dokumentvarianter{
+  saksbehandlerHarTilgang
+}
+}
+}
+}
 }

@@ -112,7 +112,7 @@ public class DokumentoversiktFagsakIT extends AbstractItest {
 
 	@Test
 	public void hentSakerTechnicalFail() throws IOException, URISyntaxException {
-		abacDeny();
+		abacDenyPep1g();
 		stubFor(get("/gsak?fagsakNr=***gammelt_fnr***59&applikasjon=AO01")
 				.willReturn(aResponse().withStatus(HttpStatus.INTERNAL_SERVER_ERROR.value())));
 
@@ -129,7 +129,7 @@ public class DokumentoversiktFagsakIT extends AbstractItest {
 
 	@Test
 	public void hentSakerFunctionalFail() throws IOException, URISyntaxException {
-		abacDeny();
+		abacDenyPep1g();
 		stubFor(get("/gsak?fagsakNr=***gammelt_fnr***59&applikasjon=AO01")
 				.willReturn(aResponse().withStatus(HttpStatus.BAD_REQUEST.value())));
 
