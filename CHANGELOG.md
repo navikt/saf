@@ -8,6 +8,10 @@ Alle nevneverdige endringer blir dokumentert her.
 
 Denne malen er basert på [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [2.0.1] - 2019-02-01
+### Rettet
+* Fikset en bug som førte til at journalpostmetadata ble filtrert bort på pep2d for midlertidige journalposter.
+
 ## [2.0.0] - 2019-01-30
 ### Endret (ikke bakoverkompatibelt)
 * `GraphQL: ` Input Object `FagsakIdInput` endret navn til `FagsakInput`.
