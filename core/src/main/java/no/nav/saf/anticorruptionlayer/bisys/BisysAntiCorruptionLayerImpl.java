@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.anticorruptionlayer.bisys.hentbidragsak.BidragSakConsumer;
 import no.nav.saf.anticorruptionlayer.bisys.hentbidragsak.BidragSakTo;
 import no.nav.saf.domain.BidragSak;
-import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.domain.tilgangsmodell.TilgangIdent;
 import no.nav.saf.domain.tilgangsmodell.TilgangRelevantTredjepart;
 import org.springframework.stereotype.Component;
@@ -27,14 +26,13 @@ class BisysAntiCorruptionLayerImpl implements BisysAntiCorruptionLayer {
 	}
 
 	@Override
-	public BidragSak hentBidragSak(String sakId, TilgangBruker tilgangBruker) {
+	public BidragSak hentBidragSak(String sakId) {
 		try {
 			final BidragSakTo bidragSakTo = bidragSakConsumer.hentBidragSak(sakId);
 			return BidragSak.builder()
 					.paragraf19(bidragSakTo.isErParagraf19())
 					.relevanteTredjeparter(
 							bidragSakTo.getRoller().stream()
-									.filter(fnrRolle -> !isRolleBruker(fnrRolle, tilgangBruker))
 									.map(fnrRolle -> new TilgangRelevantTredjepart(TilgangIdent.builder()
 											.identifikator(fnrRolle)
 											.build()))
@@ -46,14 +44,4 @@ class BisysAntiCorruptionLayerImpl implements BisysAntiCorruptionLayer {
 		}
 	}
 
-	/**
-	 * * Bidrag returnerer fnr til alle som har en rolle i saken, inkl. brukeren. Bruker må derfor filtreres bort
-	 */
-	private boolean isRolleBruker(String fnrRolle, TilgangBruker tilgangBruker) {
-		if (fnrRolle == null || tilgangBruker == null) {
-			return false;
-		} else {
-			return fnrRolle.equals(tilgangBruker.getFoedselsnr());
-		}
-	}
 }

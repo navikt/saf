@@ -96,8 +96,7 @@ class DokumentoversiktBrukerCoordinatorImpl implements DokumentoversiktBrukerCoo
 		 * Resultat fra pep2d cahces lokalt og brukes i JournalpostDtoMapper.java. Med bakgrunn i resultat fra pep2d og pep6d settes feltet saksbehandlerHarTilgang=true/false.
 		 **/
 		final Flowable<TilgangSak> tilgangSakFlow = tilgangsmodellRepository.findTilgangSaker(tilgangBruker, dokumentoversiktBrukerArguments
-				.getFilters()
-				.getTema(), safRequestContext);
+				.getFilters().getTema(), safRequestContext);
 		List<TilgangSak> filteredTilgangSakList = tilgangSakFlow
 				.onErrorResumeNext(throwable -> {
 					return Flowable.empty();
@@ -124,12 +123,15 @@ class DokumentoversiktBrukerCoordinatorImpl implements DokumentoversiktBrukerCoo
 				safRequestContext
 		);
 
+		/**
+		 * Pep2 og pep2d må utføres på midlertidige journalposter, da disse først dukker opp på bruker-søk i joark i forrige steg.
+		 **/
 		final List<TilgangJournalpost> filteredTilgangJournalpostList = Flowable.fromIterable(tilgangJournalposter)
 				.parallel(10)
 				.runOn(Schedulers.io())
 				.filter(tj -> pep4.hasAccess(tj, safRequestContext))
 				.filter(tj -> checkPepIfMidlertidigJournalpost(pep2, tj, tilgangBruker, safRequestContext))
-				.filter(tj -> checkPepIfMidlertidigJournalpost(pep2d, tj, tilgangBruker, safRequestContext))
+				.doOnNext(tj -> checkPepIfMidlertidigJournalpost(pep2d, tj, tilgangBruker, safRequestContext))
 				.sequential()
 				.toList()
 				.blockingGet();

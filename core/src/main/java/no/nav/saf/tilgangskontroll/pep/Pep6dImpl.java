@@ -87,6 +87,12 @@ public class Pep6dImpl implements Pep<TilgangDokumentvariant> {
 				Pep.traceLogPepFinished(PEP6D, ressurs);
 			}
 		} else {
+			String tilgangKeyLocalCaching = KeyGeneratorLocalCaching.getKeyForPep6d(
+					ressurs.getJournalpostId(),
+					ressurs.getDokumentInfoId(),
+					isVariantformatNull(ressurs) ? null : ressurs.getVariantformat().name(),
+					null);
+			safRequestContext.getRequestCache().putObject(tilgangKeyLocalCaching, true);
 			return true;
 		}
 	}

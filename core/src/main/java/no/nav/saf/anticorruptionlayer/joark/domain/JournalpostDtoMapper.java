@@ -234,31 +234,25 @@ public class JournalpostDtoMapper {
 	}
 
 	private boolean getDecisionFromPep2d(Tema tema, RequestCache requestCache) {
-		try {
-			String tilgangKeyPep2dLocalCaching = getKeyForPep2d(tema.name());
-			return requestCache.getObject(tilgangKeyPep2dLocalCaching);
-		} catch (NullPointerException e) {
-			return false;
-		}
+		String tilgangKeyPep2dLocalCaching = getKeyForPep2d(tema.name());
+		return getCachedDecision(requestCache, tilgangKeyPep2dLocalCaching);
 	}
 
 	private boolean getDecisionFromPep6d(String journalpostId, String dokumentInfoId, VariantDto variantDto, RequestCache requestCache) {
-		try {
-			String tilgangKeyPep6dLocalCaching = getKeyForPep6d(
-					journalpostId, dokumentInfoId, variantDto.getVariantf()
-							.getSafVariantformat().name(), variantDto.getSkjerming().getSafSkjerming().name());
-			return requestCache.getObject(tilgangKeyPep6dLocalCaching);
-		} catch (NullPointerException e) {
-			return false;
-		}
+		String tilgangKeyPep6dLocalCaching = getKeyForPep6d(
+				journalpostId, dokumentInfoId, variantDto.getVariantf() == null ? null : variantDto.getVariantf()
+						.getSafVariantformat().name(), variantDto.getSkjerming() == null ? null : variantDto.getSkjerming()
+						.getSafSkjerming().name());
+		return getCachedDecision(requestCache, tilgangKeyPep6dLocalCaching);
 	}
 
 	private boolean shouldMapDokumentInfo(String journalpostId, String dokumentInfoId, RequestCache requestCache) {
-		try {
-			String tilgangKeyPep5LocalCaching = getKeyForPep5(journalpostId, dokumentInfoId);
-			return requestCache.getObject(tilgangKeyPep5LocalCaching);
-		} catch (NullPointerException e) {
-			return false;
-		}
+		String tilgangKeyPep5LocalCaching = getKeyForPep5(journalpostId, dokumentInfoId);
+		return getCachedDecision(requestCache, tilgangKeyPep5LocalCaching);
+
+	}
+
+	private boolean getCachedDecision(RequestCache requestCache, String tilgangKey) {
+		return requestCache.getObject(tilgangKey) == null ? false : requestCache.getObject(tilgangKey);
 	}
 }

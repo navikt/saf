@@ -14,7 +14,6 @@ import java.util.List;
 @Data
 @Builder
 public class FinnJournalposterRequestTo {
-	private final String aktoerId;
 	private final List<String> gsakSakIds;
 	private final List<String> psakSakIds;
 	private final String fraDato;

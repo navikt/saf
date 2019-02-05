@@ -54,7 +54,7 @@ import java.time.LocalDateTime;
 public abstract class AbstractItest {
 
 	private static String SCENARIO_ABAC = "state_abac";
-	private static String STATE_PEP1G = "state_pep1g";
+	private static String STATE_PERMIT = "state_permit";
 	private static String STATE_PEP2 = "state_pep2";
 	private static String STATE_PEP2D = "state_pep2g";
 	private static String STATE_PEP3 = "state_pep3";
@@ -198,7 +198,14 @@ public abstract class AbstractItest {
 				.whenScenarioStateIs(STATE_PEP5)
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(org.apache.http.HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-						.withBodyFile("abac/abac-deny.json")));
+						.withBodyFile("abac/abac-deny.json"))
+				.willSetStateTo(STATE_PERMIT));
+		stubFor(post(urlEqualTo("/abac"))
+				.inScenario(SCENARIO_ABAC)
+				.whenScenarioStateIs(STATE_PERMIT)
+				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
+						.withHeader(org.apache.http.HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+						.withBodyFile("abac/abac-permit.json")));
 	}
 
 	protected void abacDenyPep4() {
@@ -235,7 +242,14 @@ public abstract class AbstractItest {
 				.whenScenarioStateIs(STATE_PEP4)
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(org.apache.http.HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-						.withBodyFile("abac/abac-deny.json")));
+						.withBodyFile("abac/abac-deny.json"))
+				.willSetStateTo(STATE_PERMIT));
+		stubFor(post(urlEqualTo("/abac"))
+				.inScenario(SCENARIO_ABAC)
+				.whenScenarioStateIs(STATE_PERMIT)
+				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
+						.withHeader(org.apache.http.HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+						.withBodyFile("abac/abac-permit.json")));
 
 	}
 
@@ -266,7 +280,14 @@ public abstract class AbstractItest {
 				.whenScenarioStateIs(STATE_PEP3)
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(org.apache.http.HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-						.withBodyFile("abac/abac-deny.json")));
+						.withBodyFile("abac/abac-deny.json"))
+				.willSetStateTo(STATE_PERMIT));
+		stubFor(post(urlEqualTo("/abac"))
+				.inScenario(SCENARIO_ABAC)
+				.whenScenarioStateIs(STATE_PERMIT)
+				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
+						.withHeader(org.apache.http.HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+						.withBodyFile("abac/abac-permit.json")));
 	}
 
 	protected void abacDenyPep2d() {
@@ -289,7 +310,14 @@ public abstract class AbstractItest {
 				.whenScenarioStateIs(STATE_PEP2D)
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(org.apache.http.HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-						.withBodyFile("abac/abac-deny.json")));
+						.withBodyFile("abac/abac-deny.json"))
+				.willSetStateTo(STATE_PERMIT));
+		stubFor(post(urlEqualTo("/abac"))
+				.inScenario(SCENARIO_ABAC)
+				.whenScenarioStateIs(STATE_PERMIT)
+				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
+						.withHeader(org.apache.http.HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+						.withBodyFile("abac/abac-permit.json")));
 	}
 
 	protected void abacDenyPep2() {
@@ -305,167 +333,30 @@ public abstract class AbstractItest {
 				.whenScenarioStateIs(STATE_PEP2)
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(org.apache.http.HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-						.withBodyFile("abac/abac-deny.json")));
+						.withBodyFile("abac/abac-deny.json"))
+				.willSetStateTo(STATE_PERMIT));
+		stubFor(post(urlEqualTo("/abac"))
+				.inScenario(SCENARIO_ABAC)
+				.whenScenarioStateIs(STATE_PERMIT)
+				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
+						.withHeader(org.apache.http.HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+						.withBodyFile("abac/abac-permit.json")));
 	}
 
 	protected void abacDenyPep1g() {
 		stubFor(post(urlEqualTo("/abac"))
-				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
-						.withHeader(org.apache.http.HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-						.withBodyFile("abac/abac-deny.json")));
-	}
-
-	protected void abacDenyPep2dDokumentOversikt() {
-		stubFor(post(urlEqualTo("/abac"))
 				.inScenario(SCENARIO_ABAC)
 				.whenScenarioStateIs(Scenario.STARTED)
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(org.apache.http.HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-						.withBodyFile("abac/abac-permit.json"))
-				.willSetStateTo(STATE_PEP2));
-		stubFor(post(urlEqualTo("/abac"))
-				.inScenario(SCENARIO_ABAC)
-				.whenScenarioStateIs(STATE_PEP2)
-				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
-						.withHeader(org.apache.http.HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-						.withBodyFile("abac/abac-permit.json"))
-				.willSetStateTo(STATE_PEP2D));
-		stubFor(post(urlEqualTo("/abac"))
-				.inScenario(SCENARIO_ABAC)
-				.whenScenarioStateIs(STATE_PEP2D)
-				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
-						.withHeader(org.apache.http.HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
 						.withBodyFile("abac/abac-deny.json"))
-				.willSetStateTo(STATE_PEP3));
+				.willSetStateTo(STATE_PERMIT));
 		stubFor(post(urlEqualTo("/abac"))
 				.inScenario(SCENARIO_ABAC)
-				.whenScenarioStateIs(STATE_PEP3)
-				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
-						.withHeader(org.apache.http.HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-						.withBodyFile("abac/abac-permit.json"))
-				.willSetStateTo(STATE_PEP4));
-		stubFor(post(urlEqualTo("/abac"))
-				.inScenario(SCENARIO_ABAC)
-				.whenScenarioStateIs(STATE_PEP4)
-				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
-						.withHeader(org.apache.http.HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-						.withBodyFile("abac/abac-permit.json"))
-				.willSetStateTo(STATE_PEP5));
-		stubFor(post(urlEqualTo("/abac"))
-				.inScenario(SCENARIO_ABAC)
-				.whenScenarioStateIs(STATE_PEP5)
-				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
-						.withHeader(org.apache.http.HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-						.withBodyFile("abac/abac-permit.json"))
-				.willSetStateTo(STATE_PEP6D));
-		stubFor(post(urlEqualTo("/abac"))
-				.inScenario(SCENARIO_ABAC)
-				.whenScenarioStateIs(STATE_PEP6D)
+				.whenScenarioStateIs(STATE_PERMIT)
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(org.apache.http.HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
 						.withBodyFile("abac/abac-permit.json")));
-	}
-
-	protected void abacDenyPep5DokumentOversikt() {
-		stubFor(post(urlEqualTo("/abac"))
-				.inScenario(SCENARIO_ABAC)
-				.whenScenarioStateIs(Scenario.STARTED)
-				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
-						.withHeader(org.apache.http.HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-						.withBodyFile("abac/abac-permit.json"))
-				.willSetStateTo(STATE_PEP2));
-		stubFor(post(urlEqualTo("/abac"))
-				.inScenario(SCENARIO_ABAC)
-				.whenScenarioStateIs(STATE_PEP2)
-				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
-						.withHeader(org.apache.http.HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-						.withBodyFile("abac/abac-permit.json"))
-				.willSetStateTo(STATE_PEP2D));
-		stubFor(post(urlEqualTo("/abac"))
-				.inScenario(SCENARIO_ABAC)
-				.whenScenarioStateIs(STATE_PEP2D)
-				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
-						.withHeader(org.apache.http.HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-						.withBodyFile("abac/abac-permit.json"))
-				.willSetStateTo(STATE_PEP3));
-		stubFor(post(urlEqualTo("/abac"))
-				.inScenario(SCENARIO_ABAC)
-				.whenScenarioStateIs(STATE_PEP3)
-				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
-						.withHeader(org.apache.http.HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-						.withBodyFile("abac/abac-permit.json"))
-				.willSetStateTo(STATE_PEP4));
-		stubFor(post(urlEqualTo("/abac"))
-				.inScenario(SCENARIO_ABAC)
-				.whenScenarioStateIs(STATE_PEP4)
-				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
-						.withHeader(org.apache.http.HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-						.withBodyFile("abac/abac-permit.json"))
-				.willSetStateTo(STATE_PEP5));
-		stubFor(post(urlEqualTo("/abac"))
-				.inScenario(SCENARIO_ABAC)
-				.whenScenarioStateIs(STATE_PEP5)
-				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
-						.withHeader(org.apache.http.HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-						.withBodyFile("abac/abac-deny.json"))
-				.willSetStateTo(STATE_PEP6D));
-		stubFor(post(urlEqualTo("/abac"))
-				.inScenario(SCENARIO_ABAC)
-				.whenScenarioStateIs(STATE_PEP6D)
-				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
-						.withHeader(org.apache.http.HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-						.withBodyFile("abac/abac-permit.json")));
-	}
-
-	protected void abacDenyPep2dAndPep6dDokumentOversikt() {
-		stubFor(post(urlEqualTo("/abac"))
-				.inScenario(SCENARIO_ABAC)
-				.whenScenarioStateIs(Scenario.STARTED)
-				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
-						.withHeader(org.apache.http.HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-						.withBodyFile("abac/abac-permit.json"))
-				.willSetStateTo(STATE_PEP2));
-		stubFor(post(urlEqualTo("/abac"))
-				.inScenario(SCENARIO_ABAC)
-				.whenScenarioStateIs(STATE_PEP2)
-				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
-						.withHeader(org.apache.http.HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-						.withBodyFile("abac/abac-permit.json"))
-				.willSetStateTo(STATE_PEP2D));
-		stubFor(post(urlEqualTo("/abac"))
-				.inScenario(SCENARIO_ABAC)
-				.whenScenarioStateIs(STATE_PEP2D)
-				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
-						.withHeader(org.apache.http.HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-						.withBodyFile("abac/abac-deny.json"))
-				.willSetStateTo(STATE_PEP3));
-		stubFor(post(urlEqualTo("/abac"))
-				.inScenario(SCENARIO_ABAC)
-				.whenScenarioStateIs(STATE_PEP3)
-				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
-						.withHeader(org.apache.http.HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-						.withBodyFile("abac/abac-permit.json"))
-				.willSetStateTo(STATE_PEP4));
-		stubFor(post(urlEqualTo("/abac"))
-				.inScenario(SCENARIO_ABAC)
-				.whenScenarioStateIs(STATE_PEP4)
-				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
-						.withHeader(org.apache.http.HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-						.withBodyFile("abac/abac-permit.json"))
-				.willSetStateTo(STATE_PEP5));
-		stubFor(post(urlEqualTo("/abac"))
-				.inScenario(SCENARIO_ABAC)
-				.whenScenarioStateIs(STATE_PEP5)
-				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
-						.withHeader(org.apache.http.HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-						.withBodyFile("abac/abac-deny.json"))
-				.willSetStateTo(STATE_PEP6D));
-		stubFor(post(urlEqualTo("/abac"))
-				.inScenario(SCENARIO_ABAC)
-				.whenScenarioStateIs(STATE_PEP6D)
-				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
-						.withHeader(org.apache.http.HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-						.withBodyFile("abac/abac-deny.json")));
 	}
 
 	protected void verifyabacDenyPep1gAndHttpStatusCode(HttpStatus expectedHttpStatus, HttpStatus actualHttpStatus) {
@@ -516,7 +407,7 @@ public abstract class AbstractItest {
 		assertNull(dokumentoversikt.getSideInfo());
 	}
 
-	protected void assertSaksbehanlerHarTilgang(Dokumentoversikt dokumentoversikt) {
+	protected void assertSaksbehandlerHarTilgang(Dokumentoversikt dokumentoversikt) {
 		dokumentoversikt.getJournalposter().forEach(
 				journalpost -> journalpost.getDokumenter().forEach(
 						dokumentInfo -> dokumentInfo.getDokumentvarianter().forEach(
@@ -524,7 +415,7 @@ public abstract class AbstractItest {
 		);
 	}
 
-	protected void assertSaksbehanlerHarIkkeTilgang(Dokumentoversikt dokumentoversikt) {
+	protected void assertSaksbehandlerHarIkkeTilgang(Dokumentoversikt dokumentoversikt) {
 		dokumentoversikt.getJournalposter().forEach(
 				journalpost -> journalpost.getDokumenter().forEach(
 						dokumentInfo -> dokumentInfo.getDokumentvarianter().forEach(

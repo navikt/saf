@@ -94,7 +94,6 @@ public class HentDokumentIT extends AbstractItest {
 				.value())
 				.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_PDF_VALUE)
 				.withBody(Base64.getEncoder().encode(TEST_FILE_BYTES))));
-
 		stubFor(get("/hentjournalsakinfo/henttilgangjournalpost/" + JOURNALPOST_ID + "/" + DOKUMENT_ID + "/" + VARIANTFORMAT).willReturn(aResponse()
 				.withStatus(HttpStatus.OK.value())
 				.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
