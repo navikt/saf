@@ -3,7 +3,7 @@
     "journalpostId": "123",
     "journalStatus": "FL",
     "journalpostType": "N",
-    "tema": "BID",
+    "fagomrade": "BID",
     "datoOpprettet": "2008-12-06T00:00:00",
     "mottakskanal": null,
     "avsenderMottakerId": null,
