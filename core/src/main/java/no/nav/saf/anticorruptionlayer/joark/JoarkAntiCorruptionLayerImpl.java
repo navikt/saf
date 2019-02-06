@@ -121,7 +121,7 @@ class JoarkAntiCorruptionLayerImpl implements JoarkAntiCorruptionLayer {
 					.arkivsaksnummer(tilgangJournalpostDto.getSak().getSakId())
 					.arkivsaksystem(mapJoarkFagsystemToArkivsakssystemCode(tilgangJournalpostDto.getSak()
 							.getFagsystem(), tilgangJournalpostDto.getJournalpostId()))
-					.tema(FagomradeCode.toSafTema(tilgangJournalpostDto.getTema()))
+					.tema(FagomradeCode.toSafTema(tilgangJournalpostDto.getFagomrade()))
 					.paragraf19(false)
 					.relevanteTredjeparter(new ArrayList<>())
 					.build();
