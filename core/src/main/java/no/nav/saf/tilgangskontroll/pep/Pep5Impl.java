@@ -42,12 +42,13 @@ public class Pep5Impl implements Pep<TilgangDokumentInfo> {
 			return false;
 		}
 
+		String tilgangKeyLocalCaching = KeyGeneratorLocalCaching.getKeyForPep5(ressurs.getJournalpostId(), ressurs.getDokumentInfoId());
 		if (isSkjermingPresent(ressurs)) {
-			String tilgangKeyLocalCaching = KeyGeneratorLocalCaching.getKeyForPep5(ressurs.getJournalpostId(), ressurs.getDokumentInfoId());
 			boolean decide = decide(hasDokumentAccess(ressurs, safRequestContext));
 			safRequestContext.getRequestCache().putObject(tilgangKeyLocalCaching, decide);
 			return decide;
 		} else {
+			safRequestContext.getRequestCache().putObject(tilgangKeyLocalCaching, true);
 			return true;
 		}
 	}

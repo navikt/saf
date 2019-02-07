@@ -3,6 +3,7 @@ package no.nav.saf.integration.cxf;
 import no.nav.saf.integration.sts.STSConfig;
 import no.nav.tjeneste.virksomhet.pensjonsak.v1.PensjonSakV1;
 import org.apache.cxf.Bus;
+import org.apache.cxf.interceptor.LoggingOutInterceptor;
 import org.apache.cxf.ws.addressing.WSAddressingFeature;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -38,6 +39,7 @@ public class PensjonConfig extends AbstractCxfEndpointConfig {
 		setReceiveTimeout(readtimeoutms);
 		setConnectTimeout(connectiontimeoutms);
 		addFeature(new WSAddressingFeature());
+		addOutInterceptor(new LoggingOutInterceptor());
 		PensjonSakV1 pensjonSakV1 = createPort(PensjonSakV1.class);
 		configureSTSSamlToken(pensjonSakV1);
 		return pensjonSakV1;

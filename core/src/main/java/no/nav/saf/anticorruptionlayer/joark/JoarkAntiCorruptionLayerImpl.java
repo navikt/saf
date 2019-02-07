@@ -39,6 +39,7 @@ import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Collections;
 import java.util.List;
@@ -111,6 +112,8 @@ class JoarkAntiCorruptionLayerImpl implements JoarkAntiCorruptionLayer {
 				.getObject(TILGANG_JOURNALPOST_DTO);
 		if (tilgangJournalpostDto == null || tilgangJournalpostDto.getSak() == null || tilgangJournalpostDto.getBruker() == null
 				|| tilgangJournalpostDto.getBruker().getBrukerId() == null) {
+			log.warn("hentTilgangSakFromSafRequestContext feilet, da påkrevde felter for TilgangSak mangler på det cachede TilgangJournalpostDto-objektet. JournalpostId={}",
+					tilgangJournalpostDto == null ? null : tilgangJournalpostDto.getJournalpostId());
 			return null;
 		} else {
 			return TilgangSak.builder()
@@ -118,7 +121,9 @@ class JoarkAntiCorruptionLayerImpl implements JoarkAntiCorruptionLayer {
 					.arkivsaksnummer(tilgangJournalpostDto.getSak().getSakId())
 					.arkivsaksystem(mapJoarkFagsystemToArkivsakssystemCode(tilgangJournalpostDto.getSak()
 							.getFagsystem(), tilgangJournalpostDto.getJournalpostId()))
-					.tema(FagomradeCode.toSafTema(tilgangJournalpostDto.getTema()))
+					.tema(FagomradeCode.toSafTema(tilgangJournalpostDto.getFagomrade()))
+					.paragraf19(false)
+					.relevanteTredjeparter(new ArrayList<>())
 					.build();
 		}
 	}

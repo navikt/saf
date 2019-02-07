@@ -21,7 +21,7 @@ public class TilgangSak {
 	/**
 	 * Forvaltningslovens § 19 "innskrenkret adgang til visse slags opplysninger"
 	 */
-	private final boolean paragraf19;
+	private final Boolean paragraf19;
 	private final List<TilgangRelevantTredjepart> relevanteTredjeparter;
 
 	//Ekstra attributter for å forenkle kodeflyt

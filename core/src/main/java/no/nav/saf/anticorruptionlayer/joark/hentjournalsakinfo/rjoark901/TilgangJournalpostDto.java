@@ -20,7 +20,7 @@ public class TilgangJournalpostDto {
 	private String journalpostId;
 	private JournalStatusCode journalStatus;
 	private JournalpostTypeCode journalpostType;
-	private FagomradeCode tema; //Todo: endre dette feltet til fagomrade
+	private FagomradeCode fagomrade;
 	private LocalDateTime datoOpprettet;
 	private String mottakskanal;
 	private String avsenderMottakerId;

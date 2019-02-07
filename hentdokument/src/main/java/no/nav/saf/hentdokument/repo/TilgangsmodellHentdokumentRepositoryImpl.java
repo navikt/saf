@@ -112,8 +112,8 @@ public class TilgangsmodellHentdokumentRepositoryImpl implements TilgangsmodellH
 						.arkivsaksystem(Arkivsakssystem.GSAK)
 						.tema(arkivsak.getTema())
 						.orgnummer(arkivsak.getOrgnummer())
-						.relevanteTredjeparter(new ArrayList<>(bidragSak.getRelevanteTredjeparter()))
-						.paragraf19(bidragSak.isParagraf19())
+						.relevanteTredjeparter(bidragSak == null ? null : new ArrayList<>(bidragSak.getRelevanteTredjeparter()))
+						.paragraf19(bidragSak == null ? null : bidragSak.isParagraf19())
 						.build();
 			} else if (Arkivsakssystem.PSAK.name().equals(arkivsaksystem)
 					|| arkivsaksystem == null || arkivsaksystem.isEmpty()) {
@@ -130,7 +130,7 @@ public class TilgangsmodellHentdokumentRepositoryImpl implements TilgangsmodellH
 
 	private BidragSak getBidragSakIfTemaIsBidOrFar(Arkivsak arkivsak) {
 		if (Tema.BID.equals(arkivsak.getTema()) || Tema.FAR.equals(arkivsak.getTema())) {
-			return bisysAntiCorruptionLayer.hentBidragSak(arkivsak.getArkivsaksnummer(), null);
+			return bisysAntiCorruptionLayer.hentBidragSak(arkivsak.getArkivsaksnummer());
 		} else {
 			return new BidragSak();
 		}

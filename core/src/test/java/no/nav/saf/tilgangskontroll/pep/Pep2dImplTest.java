@@ -8,6 +8,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -58,6 +59,19 @@ class Pep2dImplTest extends AbstractPepTest {
 		assertTrue(hasAccess);
 
 		assertCommonXacmlRequestResources(capturedRequest);
+	}
+
+	@Test
+	void shouldDenyIfTemaIsNull() {
+		when(oidcValidatorTool.validate(OIDC_TOKEN_PERSON_USER_TEST)).thenReturn(true);
+
+		boolean hasAccess = pep2d.hasAccess(TilgangSak.builder()
+				.aktoerId(AKTOER_ID)
+				.tema(null)
+				.build(), new SafRequestContext(OIDC_TOKEN_PERSON_USER_TEST, oidcValidatorTool));
+
+		verify(abacService, never()).evaluate(any());
+		assertFalse(hasAccess);
 	}
 
 	private void assertCommonXacmlRequestResources(XacmlRequest capturedRequest) {

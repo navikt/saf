@@ -1,6 +1,7 @@
 package no.nav.saf.tilgangskontroll.pep;
 
 import static no.nav.abac.common.xacml.CommonAttributter.RESOURCE_FELLES_RESOURCE_TYPE;
+import static no.nav.abac.saf.xacml.SafAttributter.RESOURCE_SAF_PARAGRAF19;
 import static no.nav.abac.saf.xacml.SafAttributter.RESOURCE_SAF_SAK_JP_METADATA;
 import static no.nav.abac.saf.xacml.SafAttributter.RESOURCE_SAF_TEMA;
 import static org.hamcrest.CoreMatchers.hasItem;
@@ -8,6 +9,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -31,7 +33,7 @@ public class Pep2ImplTest extends AbstractPepTest {
 	private Pep2Impl pep2;
 
 	@Test
-	public void shouldPermitWhenTemaFarAccessIsPermitted() {
+	public void shouldPermitWhenTemaFarAndParagraf19AccessIsPermitted() {
 		when(abacService.evaluate(any(XacmlRequest.class))).thenReturn(new XacmlResponse(Decision.PERMIT, null, null, null));
 		when(oidcValidatorTool.validate(OIDC_TOKEN_PERSON_USER_TEST)).thenReturn(true);
 
@@ -39,6 +41,7 @@ public class Pep2ImplTest extends AbstractPepTest {
 
 		boolean hasAccess = pep2.hasAccess(TilgangSak.builder()
 				.tema(Tema.FAR)
+				.paragraf19(true)
 				.build(), new SafRequestContext(OIDC_TOKEN_PERSON_USER_TEST, oidcValidatorTool));
 
 		verify(abacService).evaluate(request.capture());
@@ -48,6 +51,21 @@ public class Pep2ImplTest extends AbstractPepTest {
 
 		assertThat(capturedRequest.getResources(), hasItem(new XacmlAttribute(RESOURCE_FELLES_RESOURCE_TYPE, RESOURCE_SAF_SAK_JP_METADATA)));
 		assertThat(capturedRequest.getResources(), hasItem(new XacmlAttribute(RESOURCE_SAF_TEMA, Tema.FAR.name())));
+		assertThat(capturedRequest.getResources(), hasItem(new XacmlAttribute(RESOURCE_SAF_PARAGRAF19, true)));
+	}
+
+
+	@Test
+	public void shouldDenyWhenParagraf19IsNull() {
+		when(oidcValidatorTool.validate(OIDC_TOKEN_PERSON_USER_TEST)).thenReturn(true);
+
+		boolean hasAccess = pep2.hasAccess(TilgangSak.builder()
+				.tema(Tema.FAR)
+				.paragraf19(null)
+				.build(), new SafRequestContext(OIDC_TOKEN_PERSON_USER_TEST, oidcValidatorTool));
+
+		verify(abacService, never()).evaluate(any());
+		assertFalse(hasAccess);
 	}
 
 	@Test
@@ -57,6 +75,7 @@ public class Pep2ImplTest extends AbstractPepTest {
 
 		boolean hasAccess = pep2.hasAccess(TilgangSak.builder()
 				.tema(Tema.FAR)
+				.paragraf19(false)
 				.build(), new SafRequestContext(OIDC_TOKEN_PERSON_USER_TEST, oidcValidatorTool));
 
 		assertFalse(hasAccess);
