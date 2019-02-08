@@ -8,6 +8,7 @@ package no.nav.saf.cache;
 public final class KeyGeneratorLocalCaching extends AbstractKeyGeneratorCaching {
 
 	private KeyGeneratorLocalCaching() {
+		super();
 	}
 
 	public static String getKeyForPep2d(String tema) {

@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 
 abstract class AbstractKeyGeneratorCaching {
 
-	private AbstractKeyGeneratorCaching() {
+	AbstractKeyGeneratorCaching() {
 	}
 
 	static final String RESSURSTYPE = "ressurstype";
