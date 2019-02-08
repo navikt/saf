@@ -8,6 +8,11 @@ Alle nevneverdige endringer blir dokumentert her.
 
 Denne malen er basert på [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [3.0.0] - 2019-02-08
+### Rettet
+* Utvidet dokumentoversikt til å håndtere skjermet journalpost, dokumentinfo og dokumentvariant
+* Implementert itester for alle pep'er  
+
 ## [2.0.1] - 2019-02-01
 ### Rettet
 * Fikset en bug som førte til at journalpostmetadata ble filtrert bort på pep2d for midlertidige journalposter.
