@@ -60,7 +60,6 @@ public enum FagsystemCode {
 			//ingen tilhørende saf-kodeverdi
 			return null;
 		} else {
-//			return Arkivsakssystem.valueOf(joarkFagsystemCode.name());
 			return joarkFagsystemCode.safArkivsaksystem;
 		}
 	}
