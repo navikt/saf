@@ -170,8 +170,7 @@ class DokumentoversiktBrukerCoordinatorImpl implements DokumentoversiktBrukerCoo
 				.foedselsnummer(tilgangBruker.getFoedselsnr())
 				.aktoerId(tilgangBruker.getAktoerId())
 				.orgnummer(tilgangBruker.getOrgnummer())
-				.arkivsaksnummer(journalpostDto.getSaksrelasjon().getSakId())
-				.arkivsaksystem(FagsystemCode.toSafArkivsaksystem(journalpostDto.getSaksrelasjon().getFagsystem()))
+//				.arkivsaksystem(FagsystemCode.toSafArkivsaksystem(journalpostDto.getSaksrelasjon().getFagsystem()))
 				.tema(FagomradeCode.toSafTema(journalpostDto.getFagomrade()))
 				.build();
 	}

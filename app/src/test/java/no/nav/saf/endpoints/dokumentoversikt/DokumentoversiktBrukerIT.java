@@ -253,7 +253,7 @@ public class DokumentoversiktBrukerIT extends AbstractItest {
 		stubFor(post("/hentjournalsakinfo/finnjournalposter")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType())
-						.withBodyFile("joark/finnjournalposter_empty.json")));
+						.withBodyFile("joark/finnjournalposter-empty.json")));
 		stubFor(post("/servicegw")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withBodyFile("psak/psak-hentSakSammendragListe-happy-empty.xml")));
@@ -355,7 +355,7 @@ public class DokumentoversiktBrukerIT extends AbstractItest {
 		stubFor(post("/hentjournalsakinfo/finnjournalposter")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType())
-						.withBodyFile("joark/finnjournalposter_empty.json")));
+						.withBodyFile("joark/finnjournalposter-empty.json")));
 		stubFor(post("/servicegw")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withBodyFile("psak/psak-hentSakSammendragListe-happy-empty.xml")));
@@ -423,7 +423,7 @@ public class DokumentoversiktBrukerIT extends AbstractItest {
 		stubFor(post("/hentjournalsakinfo/finnjournalposter")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType())
-						.withBodyFile("joark/finnjournalposter_empty.json")));
+						.withBodyFile("joark/finnjournalposter-empty.json")));
 		stubFor(post("/servicegw")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withBodyFile("psak/psak-hentSakSammendragListe-happy-empty.xml")));

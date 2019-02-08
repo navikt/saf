@@ -59,7 +59,7 @@
       "saksrelasjon": {
         "sakId": "135738496",
         "feilregistrert": null,
-        "fagsystem": "FS22"
+        "fagsystem": "PEN"
       },
       "datoOpprettet": "2018-12-12T08:21:59.592+0000",
       "mottattDato": "2018-12-12T09:21:55.000+0000",
@@ -100,9 +100,9 @@
       "utsendingskanal": null,
       "journalposttype": "I",
       "saksrelasjon": {
-        "sakId": "135737721",
+        "sakId": null,
         "feilregistrert": null,
-        "fagsystem": "FS22"
+        "fagsystem": null
       },
       "datoOpprettet": "2018-12-03T09:31:32.022+0000",
       "mottattDato": "2018-11-22T16:35:08.000+0000",

@@ -193,13 +193,16 @@ public class JournalpostDtoMapper {
 	}
 
 	private String mapJoarkFagsystem(FagsystemCode joarkFagsystem) {
+		if (joarkFagsystem == null) {
+			return null;
+		}
 		switch (joarkFagsystem) {
 			case PEN:
 				return Arkivsakssystem.PSAK.name();
 			case FS22:
 				return Arkivsakssystem.GSAK.name();
 			default:
-				return "";
+				return null;
 		}
 	}
 
