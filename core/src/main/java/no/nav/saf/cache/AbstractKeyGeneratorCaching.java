@@ -6,7 +6,11 @@ import java.util.stream.Collectors;
 /**
  * @author Sigurd Midttun, Visma Consulting.
  */
+
 abstract class AbstractKeyGeneratorCaching {
+
+	private AbstractKeyGeneratorCaching() {
+	}
 
 	static final String RESSURSTYPE = "ressurstype";
 	static final String RESSURSTYPE_SAK_DOKUMENT = "sak_dokument";

@@ -24,10 +24,6 @@ public enum SkjermingTypeCode {
 	}
 
 	public static Skjerming toSafSkjerming(SkjermingTypeCode joarkSkjermingTypeCode) {
-		try {
-			return joarkSkjermingTypeCode.getSafSkjerming();
-		} catch (NullPointerException e) {
-			return null;
-		}
+		return joarkSkjermingTypeCode == null ? null : joarkSkjermingTypeCode.getSafSkjerming();
 	}
 }

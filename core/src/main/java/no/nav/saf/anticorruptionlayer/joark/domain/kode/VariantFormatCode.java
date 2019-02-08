@@ -47,11 +47,7 @@ public enum VariantFormatCode {
 	}
 
 	public static Variantformat toSafVariantformat(VariantFormatCode joarkVariantFormatCode) {
-		try {
-			return joarkVariantFormatCode.getSafVariantformat();
-		} catch (NullPointerException e) {
-			return null;
-		}
+		return joarkVariantFormatCode == null ? null : joarkVariantFormatCode.getSafVariantformat();
 	}
 
 }
