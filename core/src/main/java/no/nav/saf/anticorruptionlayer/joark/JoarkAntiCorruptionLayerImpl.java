@@ -10,6 +10,8 @@ import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.anticorruptionlayer.joark.domain.SafToJoarkJournalstatusMapper;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.FagomradeCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.JournalpostTypeCode;
+import no.nav.saf.anticorruptionlayer.joark.domain.kode.SkjermingTypeCode;
+import no.nav.saf.anticorruptionlayer.joark.domain.kode.VariantFormatCode;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.HentJournalsakinfo;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.FinnJournalposterRequestTo;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.FinnJournalposterResponseTo;
@@ -27,6 +29,7 @@ import no.nav.saf.domain.kode.Journalstatus;
 import no.nav.saf.domain.kode.Tema;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.domain.tilgangsmodell.TilgangDokumentInfo;
+import no.nav.saf.domain.tilgangsmodell.TilgangDokumentvariant;
 import no.nav.saf.domain.tilgangsmodell.TilgangJournalpost;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 import no.nav.saf.exceptions.SafTechnicalException;
@@ -36,6 +39,7 @@ import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Collections;
 import java.util.List;
@@ -98,7 +102,7 @@ class JoarkAntiCorruptionLayerImpl implements JoarkAntiCorruptionLayer {
 		if (tilgangJournalpostDto == null) {
 			return null;
 		} else {
-			return mapTilgangJournalpost(tilgangJournalpostDto, tilgangSak);
+			return mapTilgangJournalpost(tilgangJournalpostDto);
 		}
 	}
 
@@ -108,6 +112,8 @@ class JoarkAntiCorruptionLayerImpl implements JoarkAntiCorruptionLayer {
 				.getObject(TILGANG_JOURNALPOST_DTO);
 		if (tilgangJournalpostDto == null || tilgangJournalpostDto.getSak() == null || tilgangJournalpostDto.getBruker() == null
 				|| tilgangJournalpostDto.getBruker().getBrukerId() == null) {
+			log.warn("hentTilgangSakFromSafRequestContext feilet, da påkrevde felter for TilgangSak mangler på det cachede TilgangJournalpostDto-objektet. JournalpostId={}",
+					tilgangJournalpostDto == null ? null : tilgangJournalpostDto.getJournalpostId());
 			return null;
 		} else {
 			return TilgangSak.builder()
@@ -115,7 +121,9 @@ class JoarkAntiCorruptionLayerImpl implements JoarkAntiCorruptionLayer {
 					.arkivsaksnummer(tilgangJournalpostDto.getSak().getSakId())
 					.arkivsaksystem(mapJoarkFagsystemToArkivsakssystemCode(tilgangJournalpostDto.getSak()
 							.getFagsystem(), tilgangJournalpostDto.getJournalpostId()))
-					.tema(tilgangJournalpostDto.getTema())
+					.tema(FagomradeCode.toSafTema(tilgangJournalpostDto.getFagomrade()))
+					.paragraf19(false)
+					.relevanteTredjeparter(new ArrayList<>())
 					.build();
 		}
 	}
@@ -182,21 +190,21 @@ class JoarkAntiCorruptionLayerImpl implements JoarkAntiCorruptionLayer {
 				.build();
 	}
 
-	private TilgangJournalpost mapTilgangJournalpost(TilgangJournalpostDto dto, TilgangSak tilgangSak) {
+	private TilgangJournalpost mapTilgangJournalpost(TilgangJournalpostDto dto) {
 		final TilgangDokumentInfoDto tilgangDokumentInfoDto = dto.getDokument();
 		return TilgangJournalpost.builder()
 				.journalpostId(dto.getJournalpostId())
 				.journalstatus(dto.getJournalStatus().toSafJournalstatus())
-				.journalposttype(dto.getJournalpostType().toSafJournalposttype())
-				.tema(tilgangSak.getTema())
-				.arkivsaksystem(mapJoarkFagsystemToArkivsakssystemCode(dto.getSak() == null ? null : dto.getSak()
-						.getFagsystem(), dto.getJournalpostId()))
-				.arkivsaksnummer(dto.getSak() == null ? null : dto.getSak().getSakId())
+				.skjerming(SkjermingTypeCode.toSafSkjerming(dto.getSkjerming()))
 				.dokumenter(Collections.singletonList(TilgangDokumentInfo.builder()
-						.dokumentInfoId(tilgangDokumentInfoDto.getDokumentinfoId())
-						.dokumentstatus(tilgangDokumentInfoDto.getDokumentstatus())
-						.brevkode(tilgangDokumentInfoDto.getBrevkode())
-						.variantFormat(tilgangDokumentInfoDto.getVariantFormat())
+						.skjerming(SkjermingTypeCode.toSafSkjerming(tilgangDokumentInfoDto.getSkjerming()))
+						.tilgangDokumentvarianter(Collections.singletonList(TilgangDokumentvariant.builder()
+								.skjerming(SkjermingTypeCode.toSafSkjerming(tilgangDokumentInfoDto.getVariant().getSkjerming()))
+								.variantformat(VariantFormatCode.toSafVariantformat(tilgangDokumentInfoDto.getVariant()
+										.getVariantFormat()))
+								.journalpostId(dto.getJournalpostId())
+								.dokumentInfoId(dto.getDokument().getDokumentinfoId())
+								.build()))
 						.build()))
 				.build();
 

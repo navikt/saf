@@ -4,6 +4,7 @@ import static no.nav.abac.common.xacml.CommonAttributter.RESOURCE_FELLES_PERSON_
 import static no.nav.abac.common.xacml.CommonAttributter.RESOURCE_FELLES_PERSON_FNR;
 import static no.nav.abac.common.xacml.CommonAttributter.RESOURCE_FELLES_RESOURCE_TYPE;
 import static no.nav.abac.saf.xacml.SafAttributter.RESOURCE_SAF_PERSON;
+import static no.nav.saf.domain.DomainConstants.PEP1G;
 
 import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
@@ -25,7 +26,7 @@ import javax.inject.Inject;
  *
  * @author Joakim Bjørnstad, Jbit AS
  */
-@Component("pep1g")
+@Component(PEP1G)
 @Slf4j
 public class Pep1gImpl implements Pep<TilgangBruker> {
 
@@ -55,8 +56,9 @@ public class Pep1gImpl implements Pep<TilgangBruker> {
 		} else {
 			return false;
 		}
-
+		Pep.traceLogPepStarted(PEP1G, ressurs);
 		XacmlResponse response = abacService.evaluate(request);
+		Pep.traceLogPepFinished(PEP1G, ressurs);
 		return Decision.PERMIT.equals(response.getDecision());
 	}
 

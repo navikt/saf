@@ -1,7 +1,16 @@
 {
-  dokumentoversiktBruker(brukerId: {id: "201545004", type: ORGNR}, foerste: 3) {
-    journalposter {
-      journalpostId
-    }
-  }
+  dokumentoversiktBruker(brukerId: {
+    id: "201545004",
+    type: ORGNR
+  },
+  foerste: 3) {
+  journalposter {
+  journalpostId
+  dokumenter{
+  dokumentvarianter{
+  saksbehandlerHarTilgang
+}
+}
+}
+}
 }

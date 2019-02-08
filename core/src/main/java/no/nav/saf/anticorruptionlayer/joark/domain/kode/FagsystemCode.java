@@ -1,49 +1,66 @@
 package no.nav.saf.anticorruptionlayer.joark.domain.kode;
 
-public enum FagsystemCode{
-	
+import no.nav.saf.domain.kode.Arkivsakssystem;
+
+public enum FagsystemCode {
+
 	/**
 	 * Arena
 	 */
-	AO01,
+	AO01(null),
 	/**
 	 * Infotrygd
 	 */
-	IT01,
+	IT01(null),
 	/**
 	 * Bidrag
 	 */
-	BID,	
+	BID(null),
 	/**
 	 * Pensjon
 	 */
-	PEN,
+	PEN(Arkivsakssystem.PSAK),
 	/**
-	 * Øvrig 
+	 * Øvrig
 	 */
-	OVR,
+	OVR(null),
 	/**
-	 * Skanning 
+	 * Skanning
 	 */
-	MOT,
+	MOT(null),
 	/**
-	 * Okonomi 
+	 * Okonomi
 	 */
-	OKO,	
+	OKO(null),
 	/**
-	 * Bidrag innkreving 
+	 * Bidrag innkreving
 	 */
-	BII,
+	BII(null),
 	/**
 	 * GOSYS
 	 */
-	FS22,
+	FS22(Arkivsakssystem.GSAK),
 	/**
 	 * GSAK
 	 */
-	FS19,
+	FS19(null),
 	/**
 	 * Utbetalingsmeldinger (UR)
 	 */
-	OB36;
+	OB36(null);
+
+	FagsystemCode(Arkivsakssystem safArkivsaksystem) {
+		this.safArkivsaksystem = safArkivsaksystem;
+	}
+
+	private final Arkivsakssystem safArkivsaksystem;
+
+	public static Arkivsakssystem toSafArkivsaksystem(FagsystemCode joarkFagsystemCode) {
+		if (joarkFagsystemCode == null) {
+			//ingen tilhørende saf-kodeverdi
+			return null;
+		} else {
+			return Arkivsakssystem.valueOf(joarkFagsystemCode.name());
+		}
+	}
 }

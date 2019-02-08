@@ -8,9 +8,8 @@ import no.nav.saf.integration.fasit.ServiceuserAlias;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.Duration;
@@ -32,17 +31,23 @@ public class BidragSakConsumer {
 				.basicAuthentication(serviceuserAlias.getUsername(), serviceuserAlias.getPassword()).build();
 	}
 
-
 	@Cacheable(cacheNames = LokalCacheConfig.BIDRAG_SAK_BY_SAKID_CACHE, key = "#sakId")
 	public BidragSakTo hentBidragSak(final String sakId) {
-		try {
-			return restTemplate.getForObject(bidragSakApiUrl + "/{sakId}", BidragSakTo.class, sakId);
-		} catch (HttpServerErrorException e) {
-			throw new SafTechnicalException(String.format("hentBidragSakBySakId feilet teknisk med statusKode=%s. Feilmelding=%s", e
-					.getStatusCode(), e.getMessage()), e, e.getStatusCode());
-		} catch (HttpClientErrorException e) {
-			throw new SafFunctionalException(String.format("hentBidragSakBySakId feilet funksjonelt med statusKode=%s. Feilmelding=%s", e
-					.getStatusCode(), e.getMessage()), e, e.getStatusCode());
+		ResponseEntity<BidragSakTo> response = restTemplate.getForEntity(bidragSakApiUrl + "/{sakId}", BidragSakTo.class, sakId);
+		switch (response.getStatusCode()) {
+			case OK:
+				return response.getBody();
+			case NO_CONTENT:
+				throw new SafFunctionalException(String.format("hentBidragSak fikk tilbake tom respons. Ingen innslag funnet på sakId=%s", sakId));
+			case NOT_FOUND:
+				throw new SafTechnicalException(String.format("hentBidragSak kunne ikke kontakte bidrag-pip. sakId=%s", sakId), response
+						.getStatusCode());
+			case BAD_REQUEST:
+				throw new SafTechnicalException(String.format("hentBidragSak feilet. SakId=%s er ikke 7 tegn", sakId), response
+						.getStatusCode());
+			default:
+				throw new SafTechnicalException(String.format("hentBidragSak feilet teknisk med statusKode=%s. Responsebody=%s", response
+						.getStatusCode(), response.getBody()), response.getStatusCode());
 		}
 	}
 }

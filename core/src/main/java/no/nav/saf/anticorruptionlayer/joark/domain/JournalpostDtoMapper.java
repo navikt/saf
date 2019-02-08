@@ -1,5 +1,8 @@
 package no.nav.saf.anticorruptionlayer.joark.domain;
 
+import static no.nav.saf.cache.KeyGeneratorLocalCaching.getKeyForPep2d;
+import static no.nav.saf.cache.KeyGeneratorLocalCaching.getKeyForPep5;
+import static no.nav.saf.cache.KeyGeneratorLocalCaching.getKeyForPep6d;
 import static no.nav.saf.domain.DomainConstants.TILGANG_BRUKER;
 import static no.nav.saf.domain.visningsmodell.RelevantDato.INVALID_DATE;
 
@@ -8,12 +11,13 @@ import no.nav.saf.anticorruptionlayer.joark.domain.kode.FagsystemCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.JournalpostTypeCode;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.JournalpostDto;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.SaksrelasjonDto;
+import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.VariantDto;
 import no.nav.saf.domain.Arkivsak;
 import no.nav.saf.domain.kode.Arkivsakssystem;
 import no.nav.saf.domain.kode.Datotype;
 import no.nav.saf.domain.kode.Journalstatus;
 import no.nav.saf.domain.kode.Kanal;
-import no.nav.saf.domain.kode.Variantformat;
+import no.nav.saf.domain.kode.Tema;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.domain.visningsmodell.Bruker;
 import no.nav.saf.domain.visningsmodell.BrukerIdType;
@@ -24,13 +28,11 @@ import no.nav.saf.domain.visningsmodell.LogiskVedlegg;
 import no.nav.saf.domain.visningsmodell.RelevantDato;
 import no.nav.saf.domain.visningsmodell.Sak;
 import no.nav.saf.tilgangskontroll.RequestCache;
-import no.nav.saf.tilgangskontroll.SafSecurityContext;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -40,7 +42,7 @@ import java.util.stream.Collectors;
 @Component
 public class JournalpostDtoMapper {
 
-	public Journalpost mapJournalpostDto(final JournalpostDto journalpostDto, final RequestCache requestCache, final SafSecurityContext safSecurityContext) {
+	public Journalpost mapJournalpostDto(final JournalpostDto journalpostDto, final RequestCache requestCache) {
 		if (journalpostDto == null) {
 			return null;
 		}
@@ -51,8 +53,8 @@ public class JournalpostDtoMapper {
 				.tittel(journalpostDto.getInnhold())
 				.journalposttype(JournalpostTypeCode.mapToJournalpostType(journalpostDto.getJournalposttype()))
 				.journalstatus(mapJournalstatus(journalpostDto))
-				.tema(FagomradeCode.toSafJournalstatus(journalpostDto.getFagomrade()))
-				.temanavn(FagomradeCode.toSafJournalstatus(journalpostDto.getFagomrade()).getTemanavn())
+				.tema(FagomradeCode.toSafTema(journalpostDto.getFagomrade()))
+				.temanavn(FagomradeCode.toSafTema(journalpostDto.getFagomrade()).getTemanavn())
 				.sak(mapSak(journalpostDto.getSaksrelasjon(), requestCache))
 				.bruker(mapBruker(journalpostDto.getSaksrelasjon(), requestCache))
 				.avsenderMottakerNavn(journalpostDto.getAvsenderMottakerNavn())
@@ -65,15 +67,19 @@ public class JournalpostDtoMapper {
 				.relevanteDatoer(mapRelevanteDatoer(journalpostDto))
 				.build();
 		List<DokumentInfo> dokumenter = journalpostDto.getDokumenter().stream()
+				.filter(dokumentInfoDto -> shouldMapDokumentInfo(journalpostId, dokumentInfoDto.getDokumentInfoId(), requestCache))
 				.map(dokumentInfoDto -> DokumentInfo.builder()
 						.parent(journalpost)
 						.dokumentInfoId(dokumentInfoDto.getDokumentInfoId())
 						.tittel(dokumentInfoDto.getTittel())
 						.brevkode(dokumentInfoDto.getBrevkode())
-						.dokumentvarianter(Collections.singletonList(Dokumentvariant.builder()
-								.saksbehandlerHarTilgang(findSaksbehandlerHarTilgang(journalpost, requestCache, safSecurityContext))
-								.variantformat(Variantformat.valueOf(dokumentInfoDto.getVariantFormat().name()))
-								.build()))
+						.dokumentvarianter(dokumentInfoDto.getVarianter().stream()
+								.map(variantDto -> Dokumentvariant.builder()
+										.saksbehandlerHarTilgang(findSaksbehandlerHarTilgang(journalpost.getJournalpostId(), dokumentInfoDto
+												.getDokumentInfoId(), variantDto, journalpost.getTema(), requestCache))
+										.variantformat(variantDto.getVariantf().getSafVariantformat())
+										.build())
+								.collect(Collectors.toList()))
 						.logiskeVedlegg(dokumentInfoDto.getLogiske().stream()
 								.map(logiskVedleggDto -> new LogiskVedlegg(logiskVedleggDto.getTittel()))
 								.collect(Collectors.toList()))
@@ -223,13 +229,30 @@ public class JournalpostDtoMapper {
 		}
 	}
 
-	private boolean findSaksbehandlerHarTilgang(Journalpost journalpost, RequestCache requestCache, SafSecurityContext safSecurityContext) {
-		try {
-			String tilgangKey = "tilgang:" + safSecurityContext
-					.getSaksbehandlerId() + ":tema=" + journalpost.getTema();
-			return requestCache.getObject(tilgangKey);
-		} catch (NullPointerException e) {
-			return false;
-		}
+	private boolean findSaksbehandlerHarTilgang(String journalpostId, String dokumentInfoId, VariantDto variantDto, Tema tema, RequestCache requestCache) {
+		return getDecisionFromPep2d(tema, requestCache) && getDecisionFromPep6d(journalpostId, dokumentInfoId, variantDto, requestCache);
+	}
+
+	private boolean getDecisionFromPep2d(Tema tema, RequestCache requestCache) {
+		String tilgangKeyPep2dLocalCaching = getKeyForPep2d(tema.name());
+		return getCachedDecision(requestCache, tilgangKeyPep2dLocalCaching);
+	}
+
+	private boolean getDecisionFromPep6d(String journalpostId, String dokumentInfoId, VariantDto variantDto, RequestCache requestCache) {
+		String tilgangKeyPep6dLocalCaching = getKeyForPep6d(
+				journalpostId, dokumentInfoId, variantDto.getVariantf() == null ? null : variantDto.getVariantf()
+						.getSafVariantformat().name(), variantDto.getSkjerming() == null ? null : variantDto.getSkjerming()
+						.getSafSkjerming().name());
+		return getCachedDecision(requestCache, tilgangKeyPep6dLocalCaching);
+	}
+
+	private boolean shouldMapDokumentInfo(String journalpostId, String dokumentInfoId, RequestCache requestCache) {
+		String tilgangKeyPep5LocalCaching = getKeyForPep5(journalpostId, dokumentInfoId);
+		return getCachedDecision(requestCache, tilgangKeyPep5LocalCaching);
+
+	}
+
+	private boolean getCachedDecision(RequestCache requestCache, String tilgangKey) {
+		return requestCache.getObject(tilgangKey) == null ? false : requestCache.getObject(tilgangKey);
 	}
 }

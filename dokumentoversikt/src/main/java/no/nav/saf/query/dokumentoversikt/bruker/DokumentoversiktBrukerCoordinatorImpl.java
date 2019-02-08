@@ -1,13 +1,25 @@
 package no.nav.saf.query.dokumentoversikt.bruker;
 
+import static no.nav.saf.domain.DomainConstants.PEP1G;
+import static no.nav.saf.domain.DomainConstants.PEP2;
+import static no.nav.saf.domain.DomainConstants.PEP2D;
+import static no.nav.saf.domain.DomainConstants.PEP3;
+import static no.nav.saf.domain.DomainConstants.PEP4;
+import static no.nav.saf.domain.DomainConstants.PEP5;
+import static no.nav.saf.domain.DomainConstants.PEP6D;
 import static no.nav.saf.domain.DomainConstants.TILGANG_BRUKER;
 
 import io.reactivex.Flowable;
 import io.reactivex.schedulers.Schedulers;
 import lombok.extern.slf4j.Slf4j;
+import no.nav.saf.anticorruptionlayer.joark.domain.kode.FagomradeCode;
+import no.nav.saf.anticorruptionlayer.joark.domain.kode.FagsystemCode;
+import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.JournalpostDto;
 import no.nav.saf.domain.TilgangsmodellRepository;
 import no.nav.saf.domain.kode.Journalstatus;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
+import no.nav.saf.domain.tilgangsmodell.TilgangDokumentInfo;
+import no.nav.saf.domain.tilgangsmodell.TilgangDokumentvariant;
 import no.nav.saf.domain.tilgangsmodell.TilgangJournalpost;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 import no.nav.saf.domain.visningsmodell.Dokumentoversikt;
@@ -42,15 +54,19 @@ class DokumentoversiktBrukerCoordinatorImpl implements DokumentoversiktBrukerCoo
 	private final Pep<TilgangSak> pep2d;
 	private final Pep<TilgangSak> pep3;
 	private final Pep<TilgangJournalpost> pep4;
+	private final Pep<TilgangDokumentInfo> pep5;
+	private final Pep<TilgangDokumentvariant> pep6d;
 
 	@Inject
 	public DokumentoversiktBrukerCoordinatorImpl(TilgangsmodellRepository tilgangsmodellRepository,
 												 DokumentoversiktVisningsmodellRepository visningsmodellRepository,
-												 @Named("pep1g") Pep<TilgangBruker> pep1g,
-												 @Named("pep2") Pep<TilgangSak> pep2,
-												 @Named("pep2d") Pep<TilgangSak> pep2d,
-												 @Named("pep3") Pep<TilgangSak> pep3,
-												 @Named("pep4") Pep<TilgangJournalpost> pep4) {
+												 @Named(PEP1G) Pep<TilgangBruker> pep1g,
+												 @Named(PEP2) Pep<TilgangSak> pep2,
+												 @Named(PEP2D) Pep<TilgangSak> pep2d,
+												 @Named(PEP3) Pep<TilgangSak> pep3,
+												 @Named(PEP4) Pep<TilgangJournalpost> pep4,
+												 @Named(PEP5) Pep<TilgangDokumentInfo> pep5,
+												 @Named(PEP6D) Pep<TilgangDokumentvariant> pep6d) {
 		this.tilgangsmodellRepository = tilgangsmodellRepository;
 		this.visningsmodellRepository = visningsmodellRepository;
 		this.pep1g = pep1g;
@@ -58,6 +74,8 @@ class DokumentoversiktBrukerCoordinatorImpl implements DokumentoversiktBrukerCoo
 		this.pep2d = pep2d;
 		this.pep3 = pep3;
 		this.pep4 = pep4;
+		this.pep5 = pep5;
+		this.pep6d = pep6d;
 	}
 
 	@Override
@@ -74,9 +92,11 @@ class DokumentoversiktBrukerCoordinatorImpl implements DokumentoversiktBrukerCoo
 			return Dokumentoversikt.empty();
 		}
 
+		/**
+		 * Resultat fra pep2d cahces lokalt og brukes i JournalpostDtoMapper.java. Med bakgrunn i resultat fra pep2d og pep6d settes feltet saksbehandlerHarTilgang=true/false.
+		 **/
 		final Flowable<TilgangSak> tilgangSakFlow = tilgangsmodellRepository.findTilgangSaker(tilgangBruker, dokumentoversiktBrukerArguments
-				.getFilters()
-				.getTema(), safRequestContext);
+				.getFilters().getTema(), safRequestContext);
 		List<TilgangSak> filteredTilgangSakList = tilgangSakFlow
 				.onErrorResumeNext(throwable -> {
 					return Flowable.empty();
@@ -103,12 +123,31 @@ class DokumentoversiktBrukerCoordinatorImpl implements DokumentoversiktBrukerCoo
 				safRequestContext
 		);
 
+		/**
+		 * Pep2 og pep2d må utføres på midlertidige journalposter, da disse først dukker opp på bruker-søk i joark i forrige steg.
+		 **/
 		final List<TilgangJournalpost> filteredTilgangJournalpostList = Flowable.fromIterable(tilgangJournalposter)
 				.parallel(10)
 				.runOn(Schedulers.io())
 				.filter(tj -> pep4.hasAccess(tj, safRequestContext))
 				.filter(tj -> checkPepIfMidlertidigJournalpost(pep2, tj, tilgangBruker, safRequestContext))
 				.doOnNext(tj -> checkPepIfMidlertidigJournalpost(pep2d, tj, tilgangBruker, safRequestContext))
+				.sequential()
+				.toList()
+				.blockingGet();
+
+		/**
+		 * Resultat fra pep5 caches lokalt og brukes i JournalpostDtoMapper.java for å filtrere på dokumentinfo-metadata som skal gis til saksbehandler.
+		 * Resultat fra pep6d caches også lokalt og brukes i JournalpostDtoMapper.java. Med bakgrunn i resultat fra pep2d og pep6d settes feltet saksbehandlerHarTilgang=true/false.
+		 **/
+		Flowable.fromIterable(filteredTilgangJournalpostList)
+				.parallel(10)
+				.runOn(Schedulers.io())
+				.doOnNext(tj -> tj.getDokumenter()
+						.forEach(tilgangDokumentInfo -> pep5.hasAccess(tilgangDokumentInfo, safRequestContext)))
+				.doOnNext(tj -> tj.getDokumenter()
+						.forEach(tilgangDokumentInfo -> tilgangDokumentInfo.getTilgangDokumentvarianter()
+								.forEach(tilgangDokumentvariant -> pep6d.hasAccess(tilgangDokumentvariant, safRequestContext))))
 				.sequential()
 				.toList()
 				.blockingGet();
@@ -124,20 +163,22 @@ class DokumentoversiktBrukerCoordinatorImpl implements DokumentoversiktBrukerCoo
 				.build();
 	}
 
-	private TilgangSak mapFromTilgangjournalpostToTilgangSak(TilgangJournalpost tilgangJournalpost, TilgangBruker tilgangBruker) {
+	private TilgangSak mapToTilgangSak(String journalpostId, TilgangBruker tilgangBruker, SafRequestContext safRequestContext) {
+		JournalpostDto journalpostDto = safRequestContext.getRequestCache().getObject(journalpostId);
+
 		return TilgangSak.builder()
 				.foedselsnummer(tilgangBruker.getFoedselsnr())
 				.aktoerId(tilgangBruker.getAktoerId())
 				.orgnummer(tilgangBruker.getOrgnummer())
-				.arkivsaksnummer(tilgangJournalpost.getArkivsaksnummer())
-				.arkivsaksystem(tilgangJournalpost.getArkivsaksystem())
-				.tema(tilgangJournalpost.getTema())
+				.arkivsaksnummer(journalpostDto.getSaksrelasjon().getSakId())
+				.arkivsaksystem(FagsystemCode.toSafArkivsaksystem(journalpostDto.getSaksrelasjon().getFagsystem()))
+				.tema(FagomradeCode.toSafTema(journalpostDto.getFagomrade()))
 				.build();
 	}
 
 	private boolean checkPepIfMidlertidigJournalpost(Pep pep, TilgangJournalpost tj, TilgangBruker tb, SafRequestContext safRequestContext) {
 		if (tj.getJournalstatus().equals(Journalstatus.MOTTATT)) {
-			return pep.hasAccess(mapFromTilgangjournalpostToTilgangSak(tj, tb), safRequestContext);
+			return pep.hasAccess(mapToTilgangSak(tj.getJournalpostId(), tb, safRequestContext), safRequestContext);
 		} else {
 			return true;
 		}

@@ -4,6 +4,7 @@ import static no.nav.abac.common.xacml.CommonAttributter.RESOURCE_FELLES_RESOURC
 import static no.nav.abac.saf.xacml.SafAttributter.RESOURCE_SAF_PARAGRAF19;
 import static no.nav.abac.saf.xacml.SafAttributter.RESOURCE_SAF_SAK_JP_METADATA;
 import static no.nav.abac.saf.xacml.SafAttributter.RESOURCE_SAF_TEMA;
+import static no.nav.saf.domain.DomainConstants.PEP2;
 
 import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.domain.kode.Tema;
@@ -25,7 +26,7 @@ import javax.inject.Inject;
  * @author Joakim Bjørnstad, Jbit AS
  */
 @Slf4j
-@Component("pep2")
+@Component(PEP2)
 public class Pep2Impl implements Pep<TilgangSak> {
 
 	private final AbacService abacService;
@@ -37,16 +38,12 @@ public class Pep2Impl implements Pep<TilgangSak> {
 
 	@Override
 	public boolean hasAccess(TilgangSak ressurs, SafRequestContext safRequestContext) {
-		if (ressurs == null) {
+		if (ressurs == null || ressurs.getParagraf19() == null) {
 			log.warn("Pep2 mangler tilstrekkelig datagrunnlag for å kunne gjennomføre tilgangskontroll");
 			return false;
 		}
 
 		if (hasMetadataAccess(ressurs)) {
-			if (log.isTraceEnabled()) {
-				log.trace("Pep2 evaluerer arkivsak={}, arkivsaksystem={}, tema={}", ressurs.getArkivsaksnummer(), ressurs.getArkivsaksystem(), ressurs
-						.getTema());
-			}
 			XacmlRequest request = SafXacmlRequestFactory.create(safRequestContext.getSecurityContext().getOidcTokenBody());
 			request.resource(RESOURCE_FELLES_RESOURCE_TYPE, RESOURCE_SAF_SAK_JP_METADATA);
 			if (isFarskapSak(ressurs)) {
@@ -55,11 +52,11 @@ public class Pep2Impl implements Pep<TilgangSak> {
 			if (isForvaltningslovensParagraf19(ressurs)) {
 				request.resource(RESOURCE_SAF_PARAGRAF19, true);
 			}
+
+			Pep.traceLogPepStarted(PEP2, ressurs);
 			XacmlResponse response = abacService.evaluate(request);
-			if (log.isTraceEnabled()) {
-				log.trace("Pep2 ferdig evaluert arkivsak={}, arkivsaksystem={}, tema={}", ressurs.getArkivsaksnummer(), ressurs.getArkivsaksystem(), ressurs
-						.getTema());
-			}
+			Pep.traceLogPepFinished(PEP2, ressurs);
+
 			return Decision.PERMIT.equals(response.getDecision());
 		} else {
 			return true;
@@ -71,10 +68,10 @@ public class Pep2Impl implements Pep<TilgangSak> {
 	}
 
 	private boolean isFarskapSak(TilgangSak ressurs) {
-		return Tema.FAR.name().equals(ressurs.getTema());
+		return Tema.FAR.equals(ressurs.getTema());
 	}
 
 	private boolean isForvaltningslovensParagraf19(TilgangSak ressurs) {
-		return ressurs.isParagraf19();
+		return ressurs.getParagraf19();
 	}
 }

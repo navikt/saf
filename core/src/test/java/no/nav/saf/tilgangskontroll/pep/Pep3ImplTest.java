@@ -42,7 +42,7 @@ public class Pep3ImplTest extends AbstractPepTest {
 		when(oidcValidatorTool.validate(OIDC_TOKEN_PERSON_USER_TEST)).thenReturn(true);
 		ArgumentCaptor<XacmlRequest> request = ArgumentCaptor.forClass(XacmlRequest.class);
 
-		boolean hasAccess = pep3.hasAccess(createTilgangSakBuilderWithTemaBidAndRelevanteTredjeparter().tema(Tema.FAR.name())
+		boolean hasAccess = pep3.hasAccess(createTilgangSakBuilderWithTemaBidAndRelevanteTredjeparter().tema(Tema.FAR)
 						.build(),
 				new SafRequestContext(OIDC_TOKEN_PERSON_USER_TEST, oidcValidatorTool));
 
@@ -80,12 +80,26 @@ public class Pep3ImplTest extends AbstractPepTest {
 	public void shouldPermitWhenTemaIsNotFarOrBidAndRelevanteTredjeparterSupplied() {
 		when(oidcValidatorTool.validate(OIDC_TOKEN_PERSON_USER_TEST)).thenReturn(true);
 
-		boolean hasAccess = pep3.hasAccess(createTilgangSakBuilderWithTemaBidAndRelevanteTredjeparter().tema(Tema.PEN.name())
+		boolean hasAccess = pep3.hasAccess(createTilgangSakBuilderWithTemaBidAndRelevanteTredjeparter().tema(Tema.PEN)
 						.build(),
 				new SafRequestContext(OIDC_TOKEN_PERSON_USER_TEST, oidcValidatorTool));
 
 		verify(abacService, never()).evaluate(any());
 		assertTrue(hasAccess);
+	}
+
+	@Test
+	public void shouldDenyWhenTemaIsNotFarOrBidAndRelevanteTredjeparterIsNull() {
+		when(oidcValidatorTool.validate(OIDC_TOKEN_PERSON_USER_TEST)).thenReturn(true);
+
+		boolean hasAccess = pep3.hasAccess(TilgangSak.builder()
+						.tema(Tema.PEN)
+						.relevanteTredjeparter(null)
+						.build(),
+				new SafRequestContext(OIDC_TOKEN_PERSON_USER_TEST, oidcValidatorTool));
+
+		verify(abacService, never()).evaluate(any());
+		assertFalse(hasAccess);
 	}
 
 	@Test

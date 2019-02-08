@@ -2,9 +2,8 @@ package no.nav.saf.domain.tilgangsmodell;
 
 import lombok.Builder;
 import lombok.Value;
-import no.nav.saf.domain.kode.Arkivsakssystem;
-import no.nav.saf.domain.kode.Journalposttype;
 import no.nav.saf.domain.kode.Journalstatus;
+import no.nav.saf.domain.kode.Skjerming;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,12 +14,18 @@ import java.util.List;
 @Value
 @Builder
 public class TilgangJournalpost {
-	private final String arkivsaksnummer;
-	private final Arkivsakssystem arkivsaksystem;
-	private final String journalpostId;
+
+	/**
+	 * Attributter brukt for tilgangskontroll
+	 **/
 	private final Journalstatus journalstatus;
-	private final Journalposttype journalposttype;
-	private final String tema;
+	private final Skjerming skjerming;
 	@Builder.Default
 	private final List<TilgangDokumentInfo> dokumenter = new ArrayList<>();
+
+	/**
+	 * Attributt brukt for å forenkle kodeflyt
+	 **/
+	private final String journalpostId;
+
 }

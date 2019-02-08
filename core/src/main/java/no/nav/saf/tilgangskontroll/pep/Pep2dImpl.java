@@ -4,9 +4,12 @@ import static no.nav.abac.common.xacml.CommonAttributter.RESOURCE_FELLES_RESOURC
 import static no.nav.abac.saf.xacml.SafAttributter.RESOURCE_SAF_SAK_DOKUMENT;
 import static no.nav.abac.saf.xacml.SafAttributter.RESOURCE_SAF_TEMA;
 import static no.nav.saf.cache.RedisCacheConfig.TILGANG_CACHE;
+import static no.nav.saf.domain.DomainConstants.PEP2D;
 
 import io.lettuce.core.RedisException;
 import lombok.extern.slf4j.Slf4j;
+import no.nav.saf.cache.KeyGeneratorDistributedCaching;
+import no.nav.saf.cache.KeyGeneratorLocalCaching;
 import no.nav.saf.cache.RedisCacheConfig;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
@@ -26,11 +29,13 @@ import javax.inject.Named;
  * Dekker følgende policies i saf:
  * <p>
  * https://confluence.adeo.no/pages/viewpage.action?pageId=305352853
+ * <p>
+ * Lokal caching er kun relevant for dokumentoversiktene og brukes i journalpostMapperDto.java
  *
  * @author Joakim Bjørnstad, Jbit AS
  */
 @Slf4j
-@Component("pep2d")
+@Component(PEP2D)
 public class Pep2dImpl implements Pep<TilgangSak> {
 
 	private final Cache tilgangCache;
@@ -44,36 +49,27 @@ public class Pep2dImpl implements Pep<TilgangSak> {
 
 	@Override
 	public boolean hasAccess(TilgangSak ressurs, SafRequestContext safRequestContext) {
-		if (ressurs == null) {
+		if (ressurs == null || ressurs.getTema() == null) {
 			log.warn("Pep2d mangler tilstrekkelig datagrunnlag for å kunne gjennomføre tilgangskontroll");
 			return false;
 		}
 
-		if (ressurs.getTema() != null) {
-			if (log.isTraceEnabled()) {
-				log.trace("Pep2d evaluerer arkivsak={}, arkivsaksystem={}, tema={}", ressurs.getArkivsaksnummer(), ressurs.getArkivsaksystem(), ressurs
-						.getTema());
-			}
-
-			String tilgangKey = "tilgang:" + safRequestContext.getSecurityContext()
-					.getSaksbehandlerId() + ":tema=" + ressurs.getTema();
-			try {
-				boolean decide = decide(tilgangCache.get(tilgangKey,
-						() -> hasDokumentAccess(ressurs, safRequestContext)));
-				safRequestContext.getRequestCache().putObject(tilgangKey, decide);
-				return decide;
-			} catch (RedisException | PoolException | Cache.ValueRetrievalException e) {
-				boolean decide = decide(hasDokumentAccess(ressurs, safRequestContext));
-				safRequestContext.getRequestCache().putObject(tilgangKey, decide);
-				return decide;
-			} finally {
-				if (log.isTraceEnabled()) {
-					log.trace("Pep2d ferdig evaluert arkivsak={}, arkivsaksystem={}, tema={}", ressurs.getArkivsaksnummer(), ressurs
-							.getArkivsaksystem(), ressurs.getTema());
-				}
-			}
-		} else {
-			return true;
+		Pep.traceLogPepStarted(PEP2D, ressurs);
+		String tilgangKeyDistributedCaching = KeyGeneratorDistributedCaching.getKeyForPep2d(safRequestContext.getSecurityContext()
+				.getSaksbehandlerId(), ressurs.getTema().name());
+		String tilgangKeyLocalCaching = KeyGeneratorLocalCaching.getKeyForPep2d(ressurs.getTema().name());
+		// Ty-catch er fordi redis ikke fungerer lokalt
+		try {
+			boolean decide = decide(tilgangCache.get(tilgangKeyDistributedCaching,
+					() -> hasDokumentAccess(ressurs, safRequestContext)));
+			safRequestContext.getRequestCache().putObject(tilgangKeyLocalCaching, decide);
+			return decide;
+		} catch (RedisException | PoolException | Cache.ValueRetrievalException e) {
+			boolean decide = decide(hasDokumentAccess(ressurs, safRequestContext));
+			safRequestContext.getRequestCache().putObject(tilgangKeyLocalCaching, decide);
+			return decide;
+		} finally {
+			Pep.traceLogPepFinished(PEP2D, ressurs);
 		}
 	}
 
@@ -84,7 +80,7 @@ public class Pep2dImpl implements Pep<TilgangSak> {
 	private Decision hasDokumentAccess(TilgangSak ressurs, SafRequestContext safRequestContext) {
 		XacmlRequest request = SafXacmlRequestFactory.create(safRequestContext.getSecurityContext().getOidcTokenBody());
 		request.resource(RESOURCE_FELLES_RESOURCE_TYPE, RESOURCE_SAF_SAK_DOKUMENT);
-		request.resource(RESOURCE_SAF_TEMA, ressurs.getTema());
+		request.resource(RESOURCE_SAF_TEMA, ressurs.getTema().name());
 		XacmlResponse response = abacService.evaluate(request);
 		return response.getDecision();
 	}

@@ -1,5 +1,6 @@
 package no.nav.saf.endpoints.testconfig;
 
+import static no.nav.saf.cache.LokalCacheConfig.BIDRAG_SAK_BY_SAKID_CACHE;
 import static no.nav.saf.cache.LokalCacheConfig.GRAPHQL_QUERY_CACHE;
 import static no.nav.saf.cache.LokalCacheConfig.HENT_JOURNALPOSTBULK_CACHE;
 import static no.nav.saf.cache.LokalCacheConfig.PENSJON_SAK_SAMMENDRAG_LISTE_CACHE;
@@ -64,6 +65,10 @@ public class LokalCacheTestConfig {
 						.maximumSize(0)
 						.build()),
 				new CaffeineCache(SAKER_BY_FAGSAK_ID_CACHE, Caffeine.newBuilder()
+						.expireAfterWrite(0, TimeUnit.MINUTES)
+						.maximumSize(0)
+						.build()),
+				new CaffeineCache(BIDRAG_SAK_BY_SAKID_CACHE, Caffeine.newBuilder()
 						.expireAfterWrite(0, TimeUnit.MINUTES)
 						.maximumSize(0)
 						.build())
