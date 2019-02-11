@@ -8,6 +8,14 @@ Alle nevneverdige endringer blir dokumentert her.
 
 Denne malen er basert på [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [3.0.2] - 2019-02-11
+### Rettet
+* Fikset en bug som gjorde at TilgangSak ble gitt feil attrbutter for midlertidige journalposter.
+
+## [3.0.1] - 2019-02-08
+### Rettet
+* Fikset en bug som gjorde at metoden toSafArkivsaksystem forårsaket nullpointerexceptions for dokumentoversiktBruker.
+
 ## [3.0.0] - 2019-02-08
 ### Endret
 * Utvidet dokumentoversikt til å håndtere skjermet journalpost, dokumentinfo og dokumentvariant
