@@ -13,7 +13,6 @@ import io.reactivex.Flowable;
 import io.reactivex.schedulers.Schedulers;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.FagomradeCode;
-import no.nav.saf.anticorruptionlayer.joark.domain.kode.FagsystemCode;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.JournalpostDto;
 import no.nav.saf.domain.TilgangsmodellRepository;
 import no.nav.saf.domain.kode.Journalstatus;
@@ -34,6 +33,7 @@ import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -167,12 +167,9 @@ class DokumentoversiktBrukerCoordinatorImpl implements DokumentoversiktBrukerCoo
 		JournalpostDto journalpostDto = safRequestContext.getRequestCache().getObject(journalpostId);
 
 		return TilgangSak.builder()
-				.foedselsnummer(tilgangBruker.getFoedselsnr())
-				.aktoerId(tilgangBruker.getAktoerId())
-				.orgnummer(tilgangBruker.getOrgnummer())
-				.arkivsaksnummer(journalpostDto.getSaksrelasjon().getSakId())
-				.arkivsaksystem(FagsystemCode.toSafArkivsaksystem(journalpostDto.getSaksrelasjon().getFagsystem()))
 				.tema(FagomradeCode.toSafTema(journalpostDto.getFagomrade()))
+				.paragraf19(false)
+				.relevanteTredjeparter(new ArrayList<>())
 				.build();
 	}
 
