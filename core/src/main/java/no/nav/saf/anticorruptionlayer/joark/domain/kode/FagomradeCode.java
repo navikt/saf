@@ -246,7 +246,7 @@ public enum FagomradeCode {
 	FAR;
 
 	public static Tema toSafTema(FagomradeCode joarkFagomradeCode) {
-		return Tema.valueOf(joarkFagomradeCode.name());
+		return joarkFagomradeCode == null ? null : Tema.valueOf(joarkFagomradeCode.name());
 	}
 
 	public static FagomradeCode fromTema(Tema tema) {
