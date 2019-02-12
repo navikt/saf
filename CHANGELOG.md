@@ -8,6 +8,10 @@ Alle nevneverdige endringer blir dokumentert her.
 
 Denne malen er basert på [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [3.1.0] - 2019-02-12
+### Endret
+* La til støtte for variantformat PRODUKSJON_DLF, og oppdaterte tilhørende dokumentasjon.
+
 ## [3.0.3] - 2019-02-12
 ### Rettet
 * Fikset en feil der alle saker på bruker i gsak ble cachet lokalt av appen. Noe som gjorde at saksbehandlere risikerte å vente 10min på journalposter på ny sak.
