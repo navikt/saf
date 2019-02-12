@@ -1,7 +1,6 @@
 package no.nav.saf.anticorruptionlayer.gsak.hentgsaksaker;
 
 import lombok.extern.slf4j.Slf4j;
-import no.nav.saf.cache.LokalCacheConfig;
 import no.nav.saf.domain.kode.Tema;
 import no.nav.saf.exceptions.SafFunctionalException;
 import no.nav.saf.exceptions.SafTechnicalException;
@@ -9,7 +8,6 @@ import no.nav.saf.integration.fasit.ServiceuserAlias;
 import no.nav.saf.metrics.Monitor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -42,7 +40,6 @@ public class GsakConsumer {
 				.basicAuthentication(serviceuserAlias.getUsername(), serviceuserAlias.getPassword()).build();
 	}
 
-	@Cacheable(cacheNames = LokalCacheConfig.SAKER_BY_AKTOER_ID_CACHE, key = "#aktoerId")
 	@Monitor(value = "dok_consumer", extraTags = {"process", "hentSakerByAktoerId"}, histogram = true)
 	public List<GsakSakerTo> hentSakerByAktoerId(final String aktoerId) {
 		UriComponentsBuilder uri = UriComponentsBuilder.fromHttpUrl(gsakApiUrl)
@@ -50,7 +47,6 @@ public class GsakConsumer {
 		return hentSaker(uri.toUriString());
 	}
 
-	@Cacheable(cacheNames = LokalCacheConfig.SAKER_BY_AKTOER_ID_CACHE, key = "#aktoerId + '_' + #tema")
 	@Monitor(value = "dok_consumer", extraTags = {"process", "hentSakerByAktoerId"}, histogram = true)
 	public List<GsakSakerTo> hentSakerByAktoerId(final String aktoerId, final Tema tema) {
 		UriComponentsBuilder uri = UriComponentsBuilder.fromHttpUrl(gsakApiUrl)
@@ -59,7 +55,6 @@ public class GsakConsumer {
 		return hentSaker(uri.toUriString());
 	}
 
-	@Cacheable(cacheNames = LokalCacheConfig.SAKER_BY_ORG_NR_CACHE, key = "#orgNr")
 	@Monitor(value = "dok_consumer", extraTags = {"process", "hentSakerByOrgNr"}, histogram = true)
 	public List<GsakSakerTo> hentSakerByOrgNr(final String orgNr) {
 		UriComponentsBuilder uri = UriComponentsBuilder.fromHttpUrl(gsakApiUrl)
@@ -67,7 +62,6 @@ public class GsakConsumer {
 		return hentSaker(uri.toUriString());
 	}
 
-	@Cacheable(cacheNames = LokalCacheConfig.SAKER_BY_ORG_NR_CACHE, key = "#orgNr + '_' + #tema")
 	@Monitor(value = "dok_consumer", extraTags = {"process", "hentSakerByOrgNr"}, histogram = true)
 	public List<GsakSakerTo> hentSakerByOrgNr(final String orgNr, final Tema tema) {
 		UriComponentsBuilder uri = UriComponentsBuilder.fromHttpUrl(gsakApiUrl)
@@ -76,7 +70,6 @@ public class GsakConsumer {
 		return hentSaker(uri.toUriString());
 	}
 
-	@Cacheable(cacheNames = LokalCacheConfig.SAKER_BY_FAGSAK_ID_CACHE, key = "#fagsakId + '_' + #fagsaksystem")
 	@Monitor(value = "dok_consumer", extraTags = {"process", "hentSakerByFagsakIdAndFagsaksystem"}, histogram = true)
 	public List<GsakSakerTo> hentSakerByFagsakIdAndFagsaksystem(final String fagsakId, final String fagsaksystem) {
 		UriComponentsBuilder uri = UriComponentsBuilder.fromHttpUrl(gsakApiUrl)
@@ -107,7 +100,6 @@ public class GsakConsumer {
 		}
 	}
 
-	@Cacheable(cacheNames = LokalCacheConfig.SAK_BY_SAKID_CACHE, key = "#sakId")
 	public GsakSakerTo hentSakBySakId(final String sakId) {
 		try {
 			HttpHeaders headers = new HttpHeaders();

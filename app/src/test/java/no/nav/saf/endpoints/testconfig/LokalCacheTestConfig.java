@@ -4,10 +4,6 @@ import static no.nav.saf.cache.LokalCacheConfig.BIDRAG_SAK_BY_SAKID_CACHE;
 import static no.nav.saf.cache.LokalCacheConfig.GRAPHQL_QUERY_CACHE;
 import static no.nav.saf.cache.LokalCacheConfig.HENT_JOURNALPOSTBULK_CACHE;
 import static no.nav.saf.cache.LokalCacheConfig.PENSJON_SAK_SAMMENDRAG_LISTE_CACHE;
-import static no.nav.saf.cache.LokalCacheConfig.SAKER_BY_AKTOER_ID_CACHE;
-import static no.nav.saf.cache.LokalCacheConfig.SAKER_BY_FAGSAK_ID_CACHE;
-import static no.nav.saf.cache.LokalCacheConfig.SAKER_BY_ORG_NR_CACHE;
-import static no.nav.saf.cache.LokalCacheConfig.SAK_BY_SAKID_CACHE;
 import static no.nav.saf.cache.LokalCacheConfig.TILGANGSMODELL_REPO_BRUKER_CACHE;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
@@ -40,14 +36,6 @@ public class LokalCacheTestConfig {
 						.initialCapacity(0)
 						.maximumSize(0)
 						.build()),
-				new CaffeineCache(SAKER_BY_AKTOER_ID_CACHE, Caffeine.newBuilder()
-						.expireAfterWrite(0, TimeUnit.MINUTES)
-						.maximumSize(0)
-						.build()),
-				new CaffeineCache(SAKER_BY_ORG_NR_CACHE, Caffeine.newBuilder()
-						.expireAfterWrite(0, TimeUnit.MINUTES)
-						.maximumSize(0)
-						.build()),
 				new CaffeineCache(HENT_JOURNALPOSTBULK_CACHE, Caffeine.newBuilder()
 						.expireAfterWrite(0, TimeUnit.MINUTES)
 						.maximumSize(0)
@@ -57,14 +45,6 @@ public class LokalCacheTestConfig {
 						.maximumSize(0)
 						.build()),
 				new CaffeineCache(PENSJON_SAK_SAMMENDRAG_LISTE_CACHE, Caffeine.newBuilder()
-						.expireAfterWrite(0, TimeUnit.MINUTES)
-						.maximumSize(0)
-						.build()),
-				new CaffeineCache(SAK_BY_SAKID_CACHE, Caffeine.newBuilder()
-						.expireAfterWrite(0, TimeUnit.MINUTES)
-						.maximumSize(0)
-						.build()),
-				new CaffeineCache(SAKER_BY_FAGSAK_ID_CACHE, Caffeine.newBuilder()
 						.expireAfterWrite(0, TimeUnit.MINUTES)
 						.maximumSize(0)
 						.build()),

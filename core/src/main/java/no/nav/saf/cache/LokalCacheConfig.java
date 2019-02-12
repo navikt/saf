@@ -21,10 +21,6 @@ import java.util.concurrent.TimeUnit;
 public class LokalCacheConfig {
 
 	public static final String GRAPHQL_QUERY_CACHE = "graphQLQuery";
-	public static final String SAKER_BY_AKTOER_ID_CACHE = "sakerByAktoerId";
-	public static final String SAKER_BY_FAGSAK_ID_CACHE = "sakerByFagsakId";
-	public static final String SAKER_BY_ORG_NR_CACHE = "sakerByOrgNr";
-	public static final String SAK_BY_SAKID_CACHE = "sakerBySakId";
 	public static final String BIDRAG_SAK_BY_SAKID_CACHE = "bidrakSakerBySakId";
 	public static final String HENT_JOURNALPOSTBULK_CACHE = "hentTilgangJournalposterBulk";
 	public static final String TILGANGSMODELL_REPO_BRUKER_CACHE = "tilgangsmodellRepoBruker";
@@ -42,31 +38,12 @@ public class LokalCacheConfig {
 						.initialCapacity(50)
 						.maximumSize(5_000)
 						.build()),
-				new CaffeineCache(SAKER_BY_AKTOER_ID_CACHE, Caffeine.newBuilder()
-						.expireAfterWrite(10, TimeUnit.MINUTES)
-						.maximumSize(500)
-						.build()),
-				new CaffeineCache(SAKER_BY_ORG_NR_CACHE, Caffeine.newBuilder()
-						.expireAfterWrite(10, TimeUnit.MINUTES)
-						.maximumSize(500)
-						.build()),
-				new CaffeineCache(HENT_JOURNALPOSTBULK_CACHE, Caffeine.newBuilder()
-						.expireAfterWrite(10, TimeUnit.MINUTES)
-						.maximumSize(500)
-						.build()),
+				// Lokale caches
 				new CaffeineCache(TILGANGSMODELL_REPO_BRUKER_CACHE, Caffeine.newBuilder()
 						.expireAfterWrite(10, TimeUnit.MINUTES)
 						.maximumSize(500)
 						.build()),
 				new CaffeineCache(PENSJON_SAK_SAMMENDRAG_LISTE_CACHE, Caffeine.newBuilder()
-						.expireAfterWrite(10, TimeUnit.MINUTES)
-						.maximumSize(500)
-						.build()),
-				new CaffeineCache(SAK_BY_SAKID_CACHE, Caffeine.newBuilder()
-						.expireAfterWrite(10, TimeUnit.MINUTES)
-						.maximumSize(500)
-						.build()),
-				new CaffeineCache(SAKER_BY_FAGSAK_ID_CACHE, Caffeine.newBuilder()
 						.expireAfterWrite(10, TimeUnit.MINUTES)
 						.maximumSize(500)
 						.build()),
