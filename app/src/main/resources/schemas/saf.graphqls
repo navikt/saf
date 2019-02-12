@@ -255,9 +255,8 @@ type LogiskVedlegg {
 # * SAF returnerer kun varianter i *"menneskelesbart"* filformat, som f.eks. PDF eller PNG, og de fleste dokumenter vil kun returneres i variantformat **ARKIV**.
 # * Dersom det eksisterer andre varianter av dokumentet, vil disse også returneres, gitt at saksbehandler har rettigheter som tilsier at han/hun skal vite at det finnes andre varianter.
 type Dokumentvariant {
-    # Typen variant som returneres. Normalt vil dette være **ARKIV**.
-    # * Andre visningsvarianter er **SLADDET** og **SKJERMET**. **SKJERMET** krever spesielle tilganger for å åpne.
-    # * Et dokument kan ha både en **SLADDET** og en **SKJERMET** variant, men aldri flere varianter av samme type.
+    # Typen variant som returneres. Normalt vil dette være **ARKIV**, men kan også være SLADDET.
+    # * Feltet kan også ha visningsvariant **SLADDET**.
     variantformat: Variantformat!
 
     # Sier hvorvidt saksbehandler som gjør oppslaget vil få tilgang til å åpne denne dokumentvarianten.
@@ -592,18 +591,14 @@ enum Tema {
     YRK
 }
 
-# Typen variant som returneres. Dette er normalt **ARKIV**. Andre visningsvarianter er **SLADDET** og **SKJERMET**.
+# Typen variant som returneres. Dette er normalt **ARKIV**, men kan også være **SLADDET**.
 enum Variantformat {
     # Den *"offisielle"* versjonen av et dokument, som er beregnet på visning og langtidsbevaring. I de fleste tilfeller er arkivvarianten lik dokumentet brukeren sendte inn eller mottok (digitalt eller på papir).
     # * Arkivvarianten er alltid i menneskelesbart format, som PDF, PDF/A eller PNG.
     # * Alle dokumenter har en arkivvariant, med mindre bruker har fått innvilget vedtak om sletting eller skjerming av opplysninger i arkivet.
     ARKIV
 
-    # * Dette uttrykker at dokumentet er tatt ut av ordinær saksbehandling.
-    # * Dokumentet kan være manuelt utilgjengeliggjort i påvente av en klagesak, det kan være logisk slettet, eller det kan være permanent begrenset tilgang på grunn av sensitive eller feilaktige opplysninger.
-    SKJERMET
-
-    # Dette er en sladdet variant av originaldokumentet. Normalt vil det også finnes en **SKJERMET** variant når det finnes en **SLADDET** variant for et dokument.
+    # Dette er en sladdet variant av originaldokumentet.
     # * **SLADDET** variant har ikke spesiell tilgangskontroll.
     SLADDET
 }
