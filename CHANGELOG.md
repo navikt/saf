@@ -8,9 +8,13 @@ Alle nevneverdige endringer blir dokumentert her.
 
 Denne malen er basert på [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [3.2.0] - 2019-02-13
+### Endret
+* `GraphQL: ` Type `DokumentInfo` har støtte for et nytt felt `dokumentstatus` med en ny enum `Dokumentstatus`.
+
 ## [3.1.0] - 2019-02-12
 ### Endret
-* La til støtte for variantformat PRODUKSJON_DLF, og oppdaterte tilhørende dokumentasjon.
+* `GraphQL: ` Enum `Variantformat` har støtte for en ny enum `PRODUKSJON_DLF`.
 
 ## [3.0.3] - 2019-02-12
 ### Rettet

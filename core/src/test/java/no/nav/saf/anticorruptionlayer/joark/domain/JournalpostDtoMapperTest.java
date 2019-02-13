@@ -11,6 +11,7 @@ import static org.hamcrest.core.IsNot.not;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import no.nav.saf.anticorruptionlayer.joark.domain.kode.DokumentStatusCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.FagomradeCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.FagsystemCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.JournalStatusCode;
@@ -26,9 +27,11 @@ import no.nav.saf.cache.KeyGeneratorLocalCaching;
 import no.nav.saf.domain.Arkivsak;
 import no.nav.saf.domain.kode.Arkivsakssystem;
 import no.nav.saf.domain.kode.Datotype;
+import no.nav.saf.domain.kode.Dokumentstatus;
 import no.nav.saf.domain.kode.Journalstatus;
 import no.nav.saf.domain.kode.Kanal;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
+import no.nav.saf.domain.visningsmodell.DokumentInfo;
 import no.nav.saf.domain.visningsmodell.Dokumentvariant;
 import no.nav.saf.domain.visningsmodell.Journalpost;
 import no.nav.saf.domain.visningsmodell.RelevantDato;
@@ -237,16 +240,17 @@ class JournalpostDtoMapperTest {
 		assertEquals(LocalDateTime.from(DATO_OPPRETTET.toInstant()
 				.atZone(ZoneId.systemDefault())), LocalDateTime.from(journalpost.getDatoOpprettet()));
 		assertEquals(1, journalpost.getDokumenter().size());
-		assertEquals(DOKUMENT_INFO_ID, journalpost.getDokumenter().get(0).getDokumentInfoId());
+		DokumentInfo dokumentInfo1 = journalpost.getDokumenter().get(0);
+		assertEquals(DOKUMENT_INFO_ID, dokumentInfo1.getDokumentInfoId());
 
-		Assertions.assertThat(journalpost.getDokumenter().get(0).getDokumentvarianter())
+		Assertions.assertThat(dokumentInfo1.getDokumentvarianter())
 				.extracting(Dokumentvariant::getVariantformat, Dokumentvariant::isSaksbehandlerHarTilgang)
 				.hasSize(2)
 				.containsExactlyInAnyOrder(tuple(VARIANT_FORMAT_CODE_SLADDET.getSafVariantformat(), false),
 						tuple(VARIANT_FORMAT_CODE_ARKIV.getSafVariantformat(), false));
 
-		assertEquals(BREVKODE, journalpost.getDokumenter().get(0).getBrevkode());
-		assertEquals(BREVKODE, journalpost.getDokumenter().get(0).getBrevkode());
+		assertEquals(BREVKODE, dokumentInfo1.getBrevkode());
+		assertEquals(Dokumentstatus.FERDIGSTILT, dokumentInfo1.getDokumentstatus());
 		assertEquals(AKTOER_ID, journalpost.getBruker().getId());
 	}
 
@@ -300,6 +304,7 @@ class JournalpostDtoMapperTest {
 						.dokumentInfoId(DOKUMENT_INFO_ID)
 						.tittel("veldigViktigTittel")
 						.brevkode(BREVKODE)
+						.dokumentstatus(DokumentStatusCode.FERDIGSTILT)
 						.logiske(Collections.singletonList(new LogiskVedleggDto()))
 						.varianter(Arrays.asList(VariantDto.builder()
 										.skjerming(SKJERMING_TYPE_CODE_POL)
