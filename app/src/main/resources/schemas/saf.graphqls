@@ -236,6 +236,9 @@ type DokumentInfo {
     # * For utgående dokumenter sier brevkoden hvilken brevmal som har vært benyttet ved produksjon av brevet.
     brevkode: String
 
+    # Dokumentstatus gir et indikasjon på hvorvidt dokumentet er ferdigstilt eller under arbeid, eventuelt avbrutt. Dersom dokumentet ikke har noen dokumentstatus, er dokumentet komplett / ferdigstilt.
+    dokumentstatus: Dokumentstatus
+
     # Liste over andre dokumenter som også befinner seg inne i den fysiske filen som dokumentinfo-objektet peker på.
     logiskeVedlegg: [LogiskVedlegg]!
 
@@ -605,4 +608,16 @@ enum Variantformat {
     # Produksjonsvariant i eget proprietært format.
     # * Varianten finnes kun for dokumenter som er produsert i Exstream Live Editor.
     PRODUKSJON_DLF
+}
+
+# Dokumentstatus gir et indikasjon på hvorvidt dokumentet er ferdigstilt eller under arbeid, eventuelt avbrutt. Dersom dokumentet ikke har noen dokumentstatus, er dokumentet komplett / ferdigstilt.
+enum Dokumentstatus {
+    # Dokumentet er under redigering.
+    UNDER_REDIGERING
+
+    # Dokumentet er ferdigstilt.
+    FERDIGSTILT
+
+    # Dokumentet er avbrutt.
+    AVBRUTT
 }
