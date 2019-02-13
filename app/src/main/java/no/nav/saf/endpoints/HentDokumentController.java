@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.inject.Inject;
+import java.util.UUID;
 
 /**
  * Endepunktet til hentDokument, som returnerer et dokument fra joark basert på journalpostId, dokumentInfoId og variantFormat".
@@ -49,15 +50,24 @@ public class HentDokumentController {
 	public ResponseEntity<byte[]> hentDokument(@ApiParam(name = "journalpostId", value = "Id for aktuell journalpost", required = true) @PathVariable String journalpostId,
 											   @ApiParam(name = "dokumentInfoId", value = "Id for aktuelt dokument", required = true) @PathVariable String dokumentInfoId,
 											   @ApiParam(name = "variantFormat", value = "Format på dokumentet som skal hentes eg. ARKIV, SLADDET m.fl.", required = true) @PathVariable String variantFormat,
+											   @ApiParam(name = "xCorrelationId", value = "(Optional) ID til logging.") @RequestHeader(value = "xCorrelationId", required = false) String xCorrelationId,
 											   @ApiParam(hidden = true) @RequestHeader(value = HttpHeaders.AUTHORIZATION, required = false) String authorizationHeader) {
 
 		log.info("hentDokument har mottatt kall. journalpostId={}, dokumentInfoId={}, variantFormat={}", journalpostId, dokumentInfoId, variantFormat);
-		HentDokument response = hentDokumentDomainCoordinator.hentDokument(journalpostId, dokumentInfoId, variantFormat, new SafRequestContext(authorizationHeader, oidcValidatorTool));
+		HentDokument response = hentDokumentDomainCoordinator.hentDokument(journalpostId, dokumentInfoId, variantFormat, new SafRequestContext(authorizationHeader, generateXCorellationIdIfNull(xCorrelationId), oidcValidatorTool));
 
 		return ResponseEntity.ok()
 				.contentType(response.getMediaType())
 				.header("content-disposition", "inline; filename=" + dokumentInfoId + "_" + variantFormat)
 				.body(response.getDokument());
+	}
+
+	private String generateXCorellationIdIfNull(String xCorrelationId) {
+		if (xCorrelationId == null) {
+			return UUID.randomUUID().toString();
+		} else {
+			return xCorrelationId;
+		}
 	}
 
 }

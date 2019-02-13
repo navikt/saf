@@ -7,6 +7,7 @@ import static no.nav.saf.domain.DomainConstants.PEP3;
 import static no.nav.saf.domain.DomainConstants.PEP4;
 import static no.nav.saf.domain.DomainConstants.PEP5;
 import static no.nav.saf.domain.DomainConstants.PEP6D;
+import static no.nav.saf.util.MDCUtility.addMdcData;
 
 import io.reactivex.Flowable;
 import io.reactivex.functions.Function;
@@ -84,6 +85,7 @@ class DokumentoversiktFagsakCoordinatorImpl implements DokumentoversiktFagsakCoo
 				.onErrorResumeNext((Function<Throwable, Publisher<? extends TilgangBruker>>) Flowable::error)
 				.parallel(10)
 				.runOn(Schedulers.io())
+				.doOnNext(ts -> addMdcData(safRequestContext))
 				.filter(ts -> pep1g.hasAccess(ts, safRequestContext))
 				.sequential()
 				.toList()
@@ -95,6 +97,7 @@ class DokumentoversiktFagsakCoordinatorImpl implements DokumentoversiktFagsakCoo
 		final List<TilgangSak> filteredTilgangSakList = Flowable.fromIterable(tilgangSakList)
 				.parallel(10)
 				.runOn(Schedulers.io())
+				.doOnNext(ts -> addMdcData(safRequestContext))
 				.filter(ts -> pep2.hasAccess(ts, safRequestContext))
 				.doOnNext(ts -> pep2d.hasAccess(ts, safRequestContext))
 				.filter(ts -> pep3.hasAccess(ts, safRequestContext))

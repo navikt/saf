@@ -1,11 +1,14 @@
 package no.nav.saf.anticorruptionlayer.gsak.hentgsaksaker;
 
+import static no.nav.saf.util.MDCConstants.CORRELATION_ID;
+
 import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.domain.kode.Tema;
 import no.nav.saf.exceptions.SafFunctionalException;
 import no.nav.saf.exceptions.SafTechnicalException;
 import no.nav.saf.integration.fasit.ServiceuserAlias;
 import no.nav.saf.metrics.Monitor;
+import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.ParameterizedTypeReference;
@@ -103,7 +106,7 @@ public class GsakConsumer {
 	public GsakSakerTo hentSakBySakId(final String sakId) {
 		try {
 			HttpHeaders headers = new HttpHeaders();
-			headers.set("X-Correlation-ID", UUID.randomUUID().toString());
+			headers.set("X-Correlation-ID", MDC.get(CORRELATION_ID));
 			return restTemplate.exchange(gsakApiUrl + "/{sakId}", HttpMethod.GET, new HttpEntity<>(headers), GsakSakerTo.class, sakId)
 					.getBody();
 		} catch (HttpServerErrorException e) {

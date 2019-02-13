@@ -39,6 +39,7 @@ import java.util.Objects;
 @RestController
 @Slf4j
 public class GraphQLController {
+	private final String X_CORRELATION_ID = "X-Correlation-ID";
 	private final GraphQLSchema graphQLSchema;
 	private final Cache<String, PreparsedDocumentEntry> graphQLQueryCache;
 	private final OidcValidatorTool oidcValidatorTool;
@@ -64,18 +65,21 @@ public class GraphQLController {
 	@PostMapping(value = "/graphql", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
 	public Map<String, Object> graphQLRequest(@RequestHeader(value = HttpHeaders.AUTHORIZATION, required = false) String authorizationHeader,
+											  @RequestHeader(value = X_CORRELATION_ID, required = false) String xCorrelationIDHeader,
 											  @RequestBody GraphQLRequest request) {
+
 		ExecutionResult executionResult =
 				GraphQL.newGraphQL(graphQLSchema)
 						.preparsedDocumentProvider(graphQLQueryCache::get)
 						.mutationExecutionStrategy(new AsyncSerialExecutionStrategy(graphQLExceptionHandler))
 						.queryExecutionStrategy(new AsyncExecutionStrategy(graphQLExceptionHandler))
 						.build().execute(ExecutionInput.newExecutionInput()
-				.query(request.getQuery())
-				.operationName(request.getOperationName())
-				.variables(request.getVariables())
-				.context(new SafRequestContext(authorizationHeader, oidcValidatorTool))
-				.build());
+						.query(request.getQuery())
+						.operationName(request.getOperationName())
+						.variables(request.getVariables())
+						.context(new SafRequestContext(authorizationHeader, xCorrelationIDHeader, oidcValidatorTool))
+						.build());
+
 		return executionResult.toSpecification();
 	}
 }

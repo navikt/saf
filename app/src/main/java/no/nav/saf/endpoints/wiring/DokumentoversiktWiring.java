@@ -51,6 +51,7 @@ public class DokumentoversiktWiring {
 					try {
 						DokumentoversiktBrukerArguments arguments = DokumentoversiktBrukerArguments.create(environment);
 						SafRequestContext safRequestContext = environment.getContext();
+						safRequestContext.setCorrelationId(environment.getExecutionId());
 						log.info("dokumentoversiktBruker hentes for bruker med {}", arguments.getBrukerIdInput());
 						Dokumentoversikt dokumentoversikt = dokumentoversiktBrukerCoordinator.hentDokumentoversikt(arguments, safRequestContext);
 						log.info("dokumentoversiktBruker returnerer {} journalposter for bruker med {}", dokumentoversikt.getJournalposter()
