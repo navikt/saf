@@ -39,7 +39,7 @@ import java.util.Objects;
 @RestController
 @Slf4j
 public class GraphQLController {
-	private final String X_CORRELATION_ID = "X-Correlation-ID";
+	private static final String X_CORRELATION_ID = "X-Correlation-ID";
 	private final GraphQLSchema graphQLSchema;
 	private final Cache<String, PreparsedDocumentEntry> graphQLQueryCache;
 	private final OidcValidatorTool oidcValidatorTool;
