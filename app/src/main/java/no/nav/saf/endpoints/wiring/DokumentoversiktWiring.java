@@ -65,6 +65,7 @@ public class DokumentoversiktWiring {
 					try {
 						DokumentoversiktFagsakArguments arguments = DokumentoversiktFagsakArguments.create(environment);
 						SafRequestContext safRequestContext = environment.getContext();
+						safRequestContext.setCorrelationId(environment.getExecutionId());
 						log.info("dokumentoversiktFagsak hentes for fagsakIdInput={}", arguments.getFagsakInput());
 						Dokumentoversikt dokumentoversikt = dokumentoversiktFagsakCoordinator.hentDokumentoversikt(arguments, safRequestContext);
 						log.info("dokumentoversiktFagsak returnerer {} journalposter for fagsakId={}",

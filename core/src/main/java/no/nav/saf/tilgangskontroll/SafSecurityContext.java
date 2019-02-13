@@ -61,6 +61,7 @@ public class SafSecurityContext {
 	public void useExecutionIDIfXCorrelationIDNull(ExecutionId executionId) {
 		if (xCorrelationID == null) {
 			this.xCorrelationID = executionId.toString();
+			addMdcData(this.saksbehandlerId, this.xCorrelationID);
 		}
 	}
 
