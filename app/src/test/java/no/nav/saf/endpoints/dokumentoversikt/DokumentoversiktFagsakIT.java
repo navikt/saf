@@ -309,7 +309,7 @@ public class DokumentoversiktFagsakIT extends AbstractItest {
 		stubFor(post("/hentjournalsakinfo/finnjournalposter")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("joark/finnjournalposter_empty.json")));
+						.withBodyFile("joark/finnjournalposter-empty.json")));
 		stubFor(post("/aktoerv2")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withBodyFile("aktoerV2/hentIdentForAktoerIdListe-happy.xml")));
@@ -364,7 +364,7 @@ public class DokumentoversiktFagsakIT extends AbstractItest {
 		stubFor(post("/hentjournalsakinfo/finnjournalposter")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("joark/finnjournalposter_empty.json")));
+						.withBodyFile("joark/finnjournalposter-empty.json")));
 		stubFor(post("/aktoerv2")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withBodyFile("aktoerV2/hentIdentForAktoerIdListe-happy.xml")));

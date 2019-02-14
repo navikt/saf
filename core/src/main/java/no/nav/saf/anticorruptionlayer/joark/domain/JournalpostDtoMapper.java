@@ -6,6 +6,7 @@ import static no.nav.saf.cache.KeyGeneratorLocalCaching.getKeyForPep6d;
 import static no.nav.saf.domain.DomainConstants.TILGANG_BRUKER;
 import static no.nav.saf.domain.visningsmodell.RelevantDato.INVALID_DATE;
 
+import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.DokumentStatusCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.FagomradeCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.FagsystemCode;
@@ -41,6 +42,7 @@ import java.util.stream.Collectors;
 /**
  * @author Joakim Bjørnstad, Jbit AS
  */
+@Slf4j
 @Component
 public class JournalpostDtoMapper {
 
@@ -204,13 +206,17 @@ public class JournalpostDtoMapper {
 	}
 
 	private String mapJoarkFagsystem(FagsystemCode joarkFagsystem) {
+		if (joarkFagsystem == null) {
+			return null;
+		}
 		switch (joarkFagsystem) {
 			case PEN:
 				return Arkivsakssystem.PSAK.name();
 			case FS22:
 				return Arkivsakssystem.GSAK.name();
 			default:
-				return "";
+				log.warn("Forventet joarkFagsystem er (FS22) GSAK eller (PEN) PSAK, ");
+				return null;
 		}
 	}
 
