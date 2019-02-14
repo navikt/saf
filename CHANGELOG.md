@@ -8,6 +8,14 @@ Alle nevneverdige endringer blir dokumentert her.
 
 Denne malen er basert på [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [3.2.2] - 2019-02-14
+### Endret
+* Tilgangskontroll for fysisk dokument relatert til tema (Pep2d) er endret til å ikke gjøres på midlertidige journalposter.
+
+## [3.2.1] - 2019-02-14
+### Endret
+* TODO
+
 ## [3.2.0] - 2019-02-13
 ### Endret
 * `GraphQL: ` Type `DokumentInfo` har støtte for et nytt felt `dokumentstatus` med en ny enum `Dokumentstatus`.
