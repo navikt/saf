@@ -14,7 +14,7 @@ Denne malen er basert på [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ## [3.2.1] - 2019-02-14
 ### Endret
-* TODO
+* Forbedret logging slik at correlationId og saksbehandler inkluderes i loginnslag, og lagt på itester for midlertidige journalposter.
 
 ## [3.2.0] - 2019-02-13
 ### Endret
