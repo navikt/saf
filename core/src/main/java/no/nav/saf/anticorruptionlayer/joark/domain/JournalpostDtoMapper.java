@@ -6,6 +6,7 @@ import static no.nav.saf.cache.KeyGeneratorLocalCaching.getKeyForPep6d;
 import static no.nav.saf.domain.DomainConstants.TILGANG_BRUKER;
 import static no.nav.saf.domain.visningsmodell.RelevantDato.INVALID_DATE;
 
+import no.nav.saf.anticorruptionlayer.joark.domain.kode.DokumentStatusCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.FagomradeCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.FagsystemCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.JournalpostTypeCode;
@@ -15,6 +16,7 @@ import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.Variant
 import no.nav.saf.domain.Arkivsak;
 import no.nav.saf.domain.kode.Arkivsakssystem;
 import no.nav.saf.domain.kode.Datotype;
+import no.nav.saf.domain.kode.Dokumentstatus;
 import no.nav.saf.domain.kode.Journalstatus;
 import no.nav.saf.domain.kode.Kanal;
 import no.nav.saf.domain.kode.Tema;
@@ -73,6 +75,7 @@ public class JournalpostDtoMapper {
 						.dokumentInfoId(dokumentInfoDto.getDokumentInfoId())
 						.tittel(dokumentInfoDto.getTittel())
 						.brevkode(dokumentInfoDto.getBrevkode())
+						.dokumentstatus(mapDokumentstatus(dokumentInfoDto.getDokumentstatus()))
 						.dokumentvarianter(dokumentInfoDto.getVarianter().stream()
 								.map(variantDto -> Dokumentvariant.builder()
 										.saksbehandlerHarTilgang(findSaksbehandlerHarTilgang(journalpost.getJournalpostId(), dokumentInfoDto
@@ -126,6 +129,14 @@ public class JournalpostDtoMapper {
 			return Journalstatus.FEILREGISTRERT;
 		} else {
 			return journalpostDto.getJournalstatus().toSafJournalstatus();
+		}
+	}
+
+	private Dokumentstatus mapDokumentstatus(DokumentStatusCode dokumentstatus) {
+		if(dokumentstatus == null) {
+			return null;
+		} else {
+			return dokumentstatus.toSafDokumentstatus();
 		}
 	}
 

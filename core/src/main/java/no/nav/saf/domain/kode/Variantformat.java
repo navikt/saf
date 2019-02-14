@@ -5,6 +5,6 @@ package no.nav.saf.domain.kode;
  */
 public enum Variantformat {
 	ARKIV,
-	SKJERMET,
-	SLADDET
+	SLADDET,
+	PRODUKSJON_DLF
 }

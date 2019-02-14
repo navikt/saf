@@ -30,7 +30,7 @@ public enum VariantFormatCode {
 	/**
 	 * Produksjonsformat DLF
 	 */
-	PRODUKSJON_DLF(null),
+	PRODUKSJON_DLF(Variantformat.PRODUKSJON_DLF),
 	/**
 	 * versjon med infotekster
 	 */

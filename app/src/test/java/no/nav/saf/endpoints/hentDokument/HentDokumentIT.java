@@ -31,6 +31,7 @@ public class HentDokumentIT extends AbstractItest {
 	private static String DOKUMENT_ID = "123";
 	private static String JOURNALPOST_ID = "123";
 	private static VariantFormatCode VARIANTFORMAT = VariantFormatCode.ARKIV;
+	private static VariantFormatCode SLADDET_VARIANTFORMAT = VariantFormatCode.SLADDET;
 	private static String SCENARIO_HENTSAK = "scenario_hent_sak";
 	private static String STATE_TILGANG_SAK = "state_tilgangSAK";
 	private static byte[] TEST_FILE_BYTES = "TestThis".getBytes();
@@ -131,6 +132,32 @@ public class HentDokumentIT extends AbstractItest {
 		assertEquals(new String(TEST_FILE_BYTES), responseEntity.getBody());
 		verify(getRequestedFor(urlEqualTo("/hentjournalsakinfo/hentdokument/" + DOKUMENT_ID + "/" + VARIANTFORMAT))
 				.withBasicAuth(new BasicCredentials("srvsaf", "srvsafpw")));
+	}
+
+	@Test
+	public void hentGsakDokumentSladdet() {
+		abacPermit();
+		stubFor(get("/hentjournalsakinfo/hentdokument/" + DOKUMENT_ID + "/" + SLADDET_VARIANTFORMAT).willReturn(aResponse().withStatus(HttpStatus.OK
+				.value())
+				.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_PDF_VALUE)
+				.withBody(Base64.getEncoder().encode(TEST_FILE_BYTES))));
+
+		stubFor(get("/hentjournalsakinfo/henttilgangjournalpost/" + JOURNALPOST_ID + "/" + DOKUMENT_ID + "/" + SLADDET_VARIANTFORMAT).willReturn(aResponse()
+				.withStatus(HttpStatus.OK.value())
+				.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
+				.withBodyFile("hentjournalsakinfo/henttilgangjournalpost_gsak-happy.json")));
+
+		stubFor(get("/gsak/10672720").willReturn(aResponse().withStatus(HttpStatus.OK.value())
+				.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
+				.withBodyFile("hentsak/hentsakbysaksid-happy.json")));
+
+		ResponseEntity<String> responseEntity = callHentDokumentSladdetVariant();
+
+		assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+		assertEquals(new String(TEST_FILE_BYTES), responseEntity.getBody());
+
+		verify(getRequestedFor(urlEqualTo("/hentjournalsakinfo/hentdokument/" + DOKUMENT_ID + "/" + SLADDET_VARIANTFORMAT)).withBasicAuth(new BasicCredentials("srvsaf", "srvsafpw")));
+		verify(getRequestedFor(urlEqualTo("/gsak/10672720")).withBasicAuth(new BasicCredentials("srvsaf", "srvsafpw")));
 	}
 
 	@Test
@@ -572,4 +599,9 @@ public class HentDokumentIT extends AbstractItest {
 		return this.restTemplate.exchange(uri, HttpMethod.GET, createHttpEntity(), String.class);
 	}
 
+
+	private ResponseEntity<String> callHentDokumentSladdetVariant() {
+		String uri = "/rest/hentdokument/" + JOURNALPOST_ID + "/" + DOKUMENT_ID + "/" + SLADDET_VARIANTFORMAT.toString();
+		return this.restTemplate.exchange(uri, HttpMethod.GET, createHttpEntity(), String.class);
+	}
 }

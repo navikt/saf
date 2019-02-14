@@ -22,6 +22,7 @@ import no.nav.saf.domain.visningsmodell.Dokumentoversikt;
 import no.nav.saf.endpoints.AbstractItest;
 import no.nav.saf.endpoints.GraphQLRequest;
 import org.apache.http.HttpHeaders;
+import org.apache.http.entity.ContentType;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -56,8 +57,8 @@ public class DokumentoversiktFagsakIT extends AbstractItest {
 		stubFor(post("/hentjournalsakinfo/finnjournalposter")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
-
 						.withBodyFile("joark/finnjournalposter-happy.json")));
+
 		stubFor(post("/aktoerv2")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withBodyFile("aktoerV2/hentIdentForAktoerIdListe-happy.xml")));
@@ -104,6 +105,31 @@ public class DokumentoversiktFagsakIT extends AbstractItest {
 		assertEquals("429812815", dokumentoversikt.getJournalposter().get(2).getJournalpostId());
 
 		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter")).withRequestBody(matchingJsonPath("$.psakSakIds", containing("21998969"))));
+	}
+
+	@Test
+	public void shouldHentDokumentoversiktFagsakWithFagsakIDSladdet() throws IOException, URISyntaxException {
+		abacPermit();
+
+		stubFor(get("/gsak?fagsakNr=" + FAGSAK_ID + "&applikasjon=" + FAGSAK_SYSTEM)
+				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
+						.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("gsak/gsak-sakerByFagsakIdAndFagsaksystem-happy.json")));
+
+		stubFor(post("/hentjournalsakinfo/finnjournalposter")
+				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
+						.withHeader(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType())
+						.withBodyFile("joark/finnjournalposter_single_sladdet-happy.json")));
+
+		stubFor(post("/aktoerv2")
+				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
+						.withBodyFile("aktoerV2/hentIdentForAktoerIdListe-happy.xml")));
+
+		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikFagsakGsak();
+		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
+
+		assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+		assertEquals("429837417", dokumentoversikt.getJournalposter().get(0).getJournalpostId());
 	}
 
 	@Test
