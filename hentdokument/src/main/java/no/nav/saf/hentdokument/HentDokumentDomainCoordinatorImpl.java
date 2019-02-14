@@ -10,6 +10,7 @@ import static no.nav.saf.domain.DomainConstants.PEP6D;
 
 import no.nav.saf.domain.Arkivsak;
 import no.nav.saf.domain.HentDokument;
+import no.nav.saf.domain.kode.Journalstatus;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.domain.tilgangsmodell.TilgangDokumentInfo;
 import no.nav.saf.domain.tilgangsmodell.TilgangDokumentvariant;
@@ -81,25 +82,25 @@ public class HentDokumentDomainCoordinatorImpl implements HentDokumentDomainCoor
 			throw new TilgangskontrollException();
 		}
 
-		boolean pep2dAccess = pep2d.hasAccess(tilgangSak, safRequestContext);
-		if (!pep2dAccess) {
-			throw new TilgangskontrollException();
-		}
-
 		boolean pep3Access = pep3.hasAccess(tilgangSak, safRequestContext);
 		if (!pep3Access) {
 			throw new TilgangskontrollException();
 		}
 
 		final TilgangJournalpost tilgangJournalpost = tilgangsmodellHentdokumentRepository.findTilgangJournalpostFromSafRequestContext(safRequestContext, tilgangSak);
-		boolean pep4Access = pep4.hasAccess(tilgangJournalpost, safRequestContext);
+		if(tilgangJournalpost.getJournalstatus() != Journalstatus.MOTTATT) {
+			boolean pep2dAccess = pep2d.hasAccess(tilgangSak, safRequestContext);
+			if (!pep2dAccess) {
+				throw new TilgangskontrollException();
+			}
+		}
 
+		boolean pep4Access = pep4.hasAccess(tilgangJournalpost, safRequestContext);
 		if (!pep4Access) {
 			throw new TilgangskontrollException();
 		}
 
 		boolean pep5Access = pep5.hasAccess(tilgangJournalpost.getDokumenter().get(0), safRequestContext);
-
 		if (!pep5Access) {
 			throw new TilgangskontrollException();
 		}

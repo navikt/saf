@@ -171,7 +171,7 @@ public class DokumentoversiktBrukerIT extends AbstractItest {
 		assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
 		assertEquals("429812815", dokumentoversikt.getJournalposter().get(0).getJournalpostId());
 		assertSaksbehandlerHarTilgang(dokumentoversikt);
-		verify(3, postRequestedFor(urlEqualTo("/abac")));
+		verify(2, postRequestedFor(urlEqualTo("/abac")));
 		verify(postRequestedFor(urlEqualTo("/aktoerv2")).withRequestBody(matchingXPath("//aktoerId/text()", equalTo(AKTOER_ID))));
 		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter"))
 				.withRequestBody(containing("{\"gsakSakIds\":[],\"psakSakIds\":[],\"fraDato\":\"0001-01-01\",\"inkluderTema\":[\"AAP\",\"AAR\",\"AGR\",\"BAR\",\"BID\",\"BIL\",\"DAG\",\"ENF\",\"ERS\",\"FAR\",\"FEI\",\"FOR\",\"FOS\",\"FUL\",\"GEN\",\"GRA\",\"GRU\",\"HEL\",\"HJE\",\"IAR\",\"IND\",\"KON\",\"KTR\",\"MED\",\"MOB\",\"OKO\",\"OMS\",\"OPA\",\"OPP\",\"PEN\",\"PER\",\"REH\",\"REK\",\"RPO\",\"RVE\",\"SAA\",\"SAK\",\"SAP\",\"SER\",\"SIK\",\"STO\",\"SUP\",\"SYK\",\"SYM\",\"TIL\",\"TRK\",\"TRY\",\"TSO\",\"TSR\",\"UFM\",\"UFO\",\"UKJ\",\"VEN\",\"YRA\",\"YRK\"],\"inkluderJournalStatus\":[\"FL\",\"FS\",\"J\",\"E\"],\"inkluderJournalpostType\":[\"I\",\"U\",\"N\"],\"visFeilregistrerte\":false,\"alleIdenter\":[\"***gammelt_fnr***\"],\"foerste\":3,\"etterPeker\":null,\"siste\":null,\"foerPeker\":null}")));

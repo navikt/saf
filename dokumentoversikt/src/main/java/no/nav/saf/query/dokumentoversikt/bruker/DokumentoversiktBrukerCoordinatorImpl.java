@@ -133,8 +133,7 @@ class DokumentoversiktBrukerCoordinatorImpl implements DokumentoversiktBrukerCoo
 				.runOn(Schedulers.io())
 				.doOnNext(ts -> addMdcData(safRequestContext))
 				.filter(tj -> pep4.hasAccess(tj, safRequestContext))
-				.filter(tj -> checkPepIfMidlertidigJournalpost(pep2, tj, safRequestContext))
-				.doOnNext(tj -> checkPepIfMidlertidigJournalpost(pep2d, tj, safRequestContext))
+				.filter(tj -> pep2CheckMidlertidigAccess(tj, safRequestContext))
 				.sequential()
 				.toList()
 				.blockingGet();
@@ -167,6 +166,15 @@ class DokumentoversiktBrukerCoordinatorImpl implements DokumentoversiktBrukerCoo
 				.build();
 	}
 
+	private boolean pep2CheckMidlertidigAccess(TilgangJournalpost tj, SafRequestContext safRequestContext) {
+		if (tj.getJournalstatus().equals(Journalstatus.MOTTATT)) {
+			TilgangSak midlertidigTilgangSak = mapToTilgangSak(tj.getJournalpostId(), safRequestContext);
+			return pep2.hasAccess(midlertidigTilgangSak, safRequestContext);
+		} else {
+			return true;
+		}
+	}
+
 	private TilgangSak mapToTilgangSak(String journalpostId, SafRequestContext safRequestContext) {
 		JournalpostDto journalpostDto = safRequestContext.getRequestCache().getObject(journalpostId);
 
@@ -175,13 +183,5 @@ class DokumentoversiktBrukerCoordinatorImpl implements DokumentoversiktBrukerCoo
 				.paragraf19(false)
 				.relevanteTredjeparter(new ArrayList<>())
 				.build();
-	}
-
-	private boolean checkPepIfMidlertidigJournalpost(Pep pep, TilgangJournalpost tj, SafRequestContext safRequestContext) {
-		if (tj.getJournalstatus().equals(Journalstatus.MOTTATT)) {
-			return pep.hasAccess(mapToTilgangSak(tj.getJournalpostId(), safRequestContext), safRequestContext);
-		} else {
-			return true;
-		}
 	}
 }
