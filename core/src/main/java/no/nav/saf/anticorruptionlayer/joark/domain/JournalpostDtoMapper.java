@@ -11,6 +11,7 @@ import no.nav.saf.anticorruptionlayer.joark.domain.kode.DokumentStatusCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.FagomradeCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.FagsystemCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.JournalpostTypeCode;
+import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.DokumentInfoDto;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.JournalpostDto;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.SaksrelasjonDto;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.VariantDto;
@@ -80,8 +81,7 @@ public class JournalpostDtoMapper {
 						.dokumentstatus(mapDokumentstatus(dokumentInfoDto.getDokumentstatus()))
 						.dokumentvarianter(dokumentInfoDto.getVarianter().stream()
 								.map(variantDto -> Dokumentvariant.builder()
-										.saksbehandlerHarTilgang(findSaksbehandlerHarTilgang(journalpost.getJournalpostId(), dokumentInfoDto
-												.getDokumentInfoId(), variantDto, journalpost.getTema(), requestCache))
+										.saksbehandlerHarTilgang(determineSaksbehandlerTilgang(journalpost, dokumentInfoDto, variantDto, requestCache))
 										.variantformat(variantDto.getVariantf().getSafVariantformat())
 										.build())
 								.collect(Collectors.toList()))
@@ -135,7 +135,7 @@ public class JournalpostDtoMapper {
 	}
 
 	private Dokumentstatus mapDokumentstatus(DokumentStatusCode dokumentstatus) {
-		if(dokumentstatus == null) {
+		if (dokumentstatus == null) {
 			return null;
 		} else {
 			return dokumentstatus.toSafDokumentstatus();
@@ -220,7 +220,7 @@ public class JournalpostDtoMapper {
 		}
 	}
 
-	//journalposten er endelig journalført
+	// journalposten er endelig journalført
 	private Bruker getBrukerFromArkivsakCache(SaksrelasjonDto saksrelasjon, RequestCache requestCache) {
 		Arkivsak arkivsak = requestCache.getObject(saksrelasjon.getSakId() + mapJoarkFagsystem(saksrelasjon.getFagsystem()));
 		if (arkivsak == null || arkivsak.isBrukerInfoMissing()) {
@@ -233,7 +233,7 @@ public class JournalpostDtoMapper {
 		}
 	}
 
-	//journalposten er midlertidig journalført
+	// journalposten er midlertidig journalført
 	private Bruker getBrukerFromTilgangBrukerCache(RequestCache requestCache) {
 		TilgangBruker tilgangBruker = requestCache.getObject(TILGANG_BRUKER);
 		if (tilgangBruker == null) {
@@ -246,8 +246,15 @@ public class JournalpostDtoMapper {
 		}
 	}
 
-	private boolean findSaksbehandlerHarTilgang(String journalpostId, String dokumentInfoId, VariantDto variantDto, Tema tema, RequestCache requestCache) {
-		return getDecisionFromPep2d(tema, requestCache) && getDecisionFromPep6d(journalpostId, dokumentInfoId, variantDto, requestCache);
+	private boolean determineSaksbehandlerTilgang(Journalpost journalpost, DokumentInfoDto dokumentInfoDto, VariantDto variantDto, RequestCache requestCache) {
+		if (journalpost.getJournalstatus() == Journalstatus.MOTTATT) {
+			// Midlertidige journalposter skal ikke ha tilgangskontroll på tema. Her skal saksbehandler ha tilgang uansett.
+			// https://jira.adeo.no/browse/MMA-2494
+			return getDecisionFromPep6d(journalpost.getJournalpostId(), dokumentInfoDto.getDokumentInfoId(), variantDto, requestCache);
+		} else {
+			return getDecisionFromPep2d(journalpost.getTema(), requestCache) &&
+					getDecisionFromPep6d(journalpost.getJournalpostId(), dokumentInfoDto.getDokumentInfoId(), variantDto, requestCache);
+		}
 	}
 
 	private boolean getDecisionFromPep2d(Tema tema, RequestCache requestCache) {
@@ -266,7 +273,6 @@ public class JournalpostDtoMapper {
 	private boolean shouldMapDokumentInfo(String journalpostId, String dokumentInfoId, RequestCache requestCache) {
 		String tilgangKeyPep5LocalCaching = getKeyForPep5(journalpostId, dokumentInfoId);
 		return getCachedDecision(requestCache, tilgangKeyPep5LocalCaching);
-
 	}
 
 	private boolean getCachedDecision(RequestCache requestCache, String tilgangKey) {

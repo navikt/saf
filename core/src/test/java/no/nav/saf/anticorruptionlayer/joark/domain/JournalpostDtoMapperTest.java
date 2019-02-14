@@ -6,6 +6,7 @@ import static org.assertj.core.groups.Tuple.tuple;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
 import static org.hamcrest.core.IsNot.not;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -28,6 +29,7 @@ import no.nav.saf.domain.Arkivsak;
 import no.nav.saf.domain.kode.Arkivsakssystem;
 import no.nav.saf.domain.kode.Datotype;
 import no.nav.saf.domain.kode.Dokumentstatus;
+import no.nav.saf.domain.kode.Journalposttype;
 import no.nav.saf.domain.kode.Journalstatus;
 import no.nav.saf.domain.kode.Kanal;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
@@ -120,8 +122,8 @@ class JournalpostDtoMapperTest {
 
 		assertCommonMetadata(journalpost);
 
-		assertEquals(JournalpostTypeCode.I.toString(), journalpost.getJournalposttype().toString());
-		assertEquals(Journalstatus.FEILREGISTRERT, journalpost.getJournalstatus());
+		assertEquals(Journalposttype.I, journalpost.getJournalposttype());
+		assertEquals(Journalstatus.JOURNALFOERT, journalpost.getJournalstatus());
 		assertEquals(journalpost.getKanalnavn(), Kanal.UKJENT.getKanalnavn());
 
 		assertThat(journalpost.getRelevanteDatoer(), not(hasItem(new RelevantDato(DOKUMENT_DATO, Datotype.DATO_DOKUMENT))));
@@ -228,7 +230,33 @@ class JournalpostDtoMapperTest {
 				.hasSize(2)
 				.containsExactlyInAnyOrder(tuple(VARIANT_FORMAT_CODE_SLADDET.getSafVariantformat(), false),
 						tuple(VARIANT_FORMAT_CODE_ARKIV.getSafVariantformat(), true));
+	}
 
+	@Test
+	void shouldHaveSaksbehandlerHaveTilgangTrueWhenJournalstatusMottatt() {
+		JournalpostDto journalpostDto = buildJournalpostDtoInngaaendeType();
+		journalpostDto.setJournalstatus(JournalStatusCode.M);
+
+		String tilgangKeyPep5LocalCaching = KeyGeneratorLocalCaching.getKeyForPep5(String.valueOf(JOURNALPOST_ID), DOKUMENT_INFO_ID);
+		String tilgangKeyPep6dLocalCachingVariantArkiv = KeyGeneratorLocalCaching.getKeyForPep6d(
+				String.valueOf(JOURNALPOST_ID), DOKUMENT_INFO_ID, VARIANT_FORMAT_CODE_ARKIV.getSafVariantformat()
+						.name(), SKJERMING_TYPE_CODE_POL.getSafSkjerming().name());
+		String tilgangKeyPep6dLocalCachingVariantSladdet = KeyGeneratorLocalCaching.getKeyForPep6d(
+				String.valueOf(JOURNALPOST_ID), DOKUMENT_INFO_ID, VARIANT_FORMAT_CODE_SLADDET.getSafVariantformat()
+						.name(), null);
+
+		RequestCache requestCache = new RequestCache();
+		requestCache.putObject(tilgangKeyPep5LocalCaching, Boolean.TRUE);
+		requestCache.putObject(tilgangKeyPep6dLocalCachingVariantArkiv, Boolean.TRUE);
+		requestCache.putObject(tilgangKeyPep6dLocalCachingVariantSladdet, Boolean.TRUE);
+
+		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, requestCache);
+
+		assertThat(journalpost.getDokumenter(), hasSize(1));
+		journalpost.getDokumenter().forEach(dokumentInfo ->
+				dokumentInfo.getDokumentvarianter().forEach(dokumentvariant -> {
+			assertTrue(dokumentvariant.isSaksbehandlerHarTilgang());
+		}));
 	}
 
 	private void assertCommonMetadata(Journalpost journalpost) {
@@ -332,7 +360,7 @@ class JournalpostDtoMapperTest {
 	private JournalpostDto buildJournalpostDtoInngaaendeType() {
 		return baseJournalpostDto()
 				.journalposttype(JournalpostTypeCode.I)
-				.saksrelasjon(new SaksrelasjonDto(SAKS_ID, true, FAKSYSTEM_CODE))
+				.saksrelasjon(new SaksrelasjonDto(SAKS_ID, false, FAKSYSTEM_CODE))
 				.mottattDato(MOTTAT_DATO)
 				.journalDato(JOURNAL_DATO)
 				.build();
@@ -341,14 +369,14 @@ class JournalpostDtoMapperTest {
 	private JournalpostDto buildJournalpostDtoInternNotatType() {
 		return baseJournalpostDto()
 				.journalposttype(JournalpostTypeCode.N)
-				.saksrelasjon(new SaksrelasjonDto(SAKS_ID, true, FAKSYSTEM_CODE))
+				.saksrelasjon(new SaksrelasjonDto(SAKS_ID, false, FAKSYSTEM_CODE))
 				.build();
 	}
 
 	private JournalpostDto buildJournalpostDtoPenSaksrelasjonDto() {
 		return baseJournalpostDto()
 				.journalposttype(JournalpostTypeCode.N)
-				.saksrelasjon(new SaksrelasjonDto(SAKS_ID, true, FagsystemCode.PEN))
+				.saksrelasjon(new SaksrelasjonDto(SAKS_ID, false, FagsystemCode.PEN))
 				.build();
 	}
 
@@ -360,6 +388,7 @@ class JournalpostDtoMapperTest {
 				.fagomrade(FAGOMRADE)
 				.journalfortAvNavn(JOURNALFOERT_AV)
 				.datoOpprettet(DATO_OPPRETTET)
+				.journalstatus(JournalStatusCode.J)
 				.dokumenter(buildDokumenter());
 	}
 
