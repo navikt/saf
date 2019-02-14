@@ -99,7 +99,9 @@ public class HentJournalsakinfo {
 
 	private HttpHeaders createCorrelationIdHeader() {
 		HttpHeaders headers = new HttpHeaders();
-		headers.set("X-Correlation-ID", MDC.get(CORRELATION_ID));
+		if (MDC.get(CORRELATION_ID) != null) {
+			headers.set("X-Correlation-ID", MDC.get(CORRELATION_ID));
+		}
 		return headers;
 	}
 
