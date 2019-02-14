@@ -42,7 +42,7 @@ public class Pep2ImplTest extends AbstractPepTest {
 		boolean hasAccess = pep2.hasAccess(TilgangSak.builder()
 				.tema(Tema.FAR)
 				.paragraf19(true)
-				.build(), new SafRequestContext(OIDC_TOKEN_PERSON_USER_TEST, oidcValidatorTool));
+				.build(), new SafRequestContext(OIDC_TOKEN_PERSON_USER_TEST, xCorrelationID, oidcValidatorTool));
 
 		verify(abacService).evaluate(request.capture());
 		XacmlRequest capturedRequest = request.getValue();
@@ -62,7 +62,7 @@ public class Pep2ImplTest extends AbstractPepTest {
 		boolean hasAccess = pep2.hasAccess(TilgangSak.builder()
 				.tema(Tema.FAR)
 				.paragraf19(null)
-				.build(), new SafRequestContext(OIDC_TOKEN_PERSON_USER_TEST, oidcValidatorTool));
+				.build(), new SafRequestContext(OIDC_TOKEN_PERSON_USER_TEST, xCorrelationID, oidcValidatorTool));
 
 		verify(abacService, never()).evaluate(any());
 		assertFalse(hasAccess);
@@ -76,7 +76,7 @@ public class Pep2ImplTest extends AbstractPepTest {
 		boolean hasAccess = pep2.hasAccess(TilgangSak.builder()
 				.tema(Tema.FAR)
 				.paragraf19(false)
-				.build(), new SafRequestContext(OIDC_TOKEN_PERSON_USER_TEST, oidcValidatorTool));
+				.build(), new SafRequestContext(OIDC_TOKEN_PERSON_USER_TEST, xCorrelationID, oidcValidatorTool));
 
 		assertFalse(hasAccess);
 	}

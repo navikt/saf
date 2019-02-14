@@ -40,7 +40,7 @@ class Pep4ImplTest extends AbstractPepTest {
 		boolean hasAccess = pep4.hasAccess(TilgangJournalpost.builder()
 				.journalstatus(FERDIGSTILT)
 				.skjerming(null)
-				.build(), new SafRequestContext(OIDC_TOKEN_PERSON_USER_TEST, oidcValidatorTool));
+				.build(), new SafRequestContext(OIDC_TOKEN_PERSON_USER_TEST, xCorrelationID, oidcValidatorTool));
 
 		assertTrue(hasAccess);
 	}
@@ -54,7 +54,7 @@ class Pep4ImplTest extends AbstractPepTest {
 
 		boolean hasAccess = pep4.hasAccess(TilgangJournalpost.builder()
 				.journalstatus(Journalstatus.UTGAAR)
-				.build(), new SafRequestContext(OIDC_TOKEN_PERSON_USER_TEST, oidcValidatorTool));
+				.build(), new SafRequestContext(OIDC_TOKEN_PERSON_USER_TEST, xCorrelationID, oidcValidatorTool));
 
 		verify(abacService).evaluate(request.capture());
 		XacmlRequest capturedRequest = request.getValue();
@@ -74,7 +74,7 @@ class Pep4ImplTest extends AbstractPepTest {
 		boolean hasAccess = pep4.hasAccess(TilgangJournalpost.builder()
 				.journalstatus(Journalstatus.FERDIGSTILT)
 				.skjerming(SKJERMING_POL)
-				.build(), new SafRequestContext(OIDC_TOKEN_PERSON_USER_TEST, oidcValidatorTool));
+				.build(), new SafRequestContext(OIDC_TOKEN_PERSON_USER_TEST, xCorrelationID, oidcValidatorTool));
 
 		verify(abacService).evaluate(request.capture());
 		XacmlRequest capturedRequest = request.getValue();
@@ -94,7 +94,7 @@ class Pep4ImplTest extends AbstractPepTest {
 		boolean hasAccess = pep4.hasAccess(TilgangJournalpost.builder()
 				.journalstatus(Journalstatus.UTGAAR)
 				.skjerming(SKJERMING_POL)
-				.build(), new SafRequestContext(OIDC_TOKEN_PERSON_USER_TEST, oidcValidatorTool));
+				.build(), new SafRequestContext(OIDC_TOKEN_PERSON_USER_TEST, xCorrelationID, oidcValidatorTool));
 
 		verify(abacService).evaluate(request.capture());
 		XacmlRequest capturedRequest = request.getValue();
@@ -115,7 +115,7 @@ class Pep4ImplTest extends AbstractPepTest {
 		boolean hasAccess = pep4.hasAccess(TilgangJournalpost.builder()
 				.journalstatus(Journalstatus.UTGAAR)
 				.skjerming(SKJERMING_POL)
-				.build(), new SafRequestContext(OIDC_TOKEN_PERSON_USER_TEST, oidcValidatorTool));
+				.build(), new SafRequestContext(OIDC_TOKEN_PERSON_USER_TEST, xCorrelationID, oidcValidatorTool));
 
 		verify(abacService).evaluate(request.capture());
 		XacmlRequest capturedRequest = request.getValue();

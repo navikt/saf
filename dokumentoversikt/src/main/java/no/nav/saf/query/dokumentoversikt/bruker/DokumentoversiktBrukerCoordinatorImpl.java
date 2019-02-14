@@ -8,6 +8,7 @@ import static no.nav.saf.domain.DomainConstants.PEP4;
 import static no.nav.saf.domain.DomainConstants.PEP5;
 import static no.nav.saf.domain.DomainConstants.PEP6D;
 import static no.nav.saf.domain.DomainConstants.TILGANG_BRUKER;
+import static no.nav.saf.util.MDCUtility.addMdcData;
 
 import io.reactivex.Flowable;
 import io.reactivex.schedulers.Schedulers;
@@ -93,7 +94,7 @@ class DokumentoversiktBrukerCoordinatorImpl implements DokumentoversiktBrukerCoo
 		}
 
 		/**
-		 * Resultat fra pep2d cahces lokalt og brukes i JournalpostDtoMapper.java. Med bakgrunn i resultat fra pep2d og pep6d settes feltet saksbehandlerHarTilgang=true/false.
+		 * Resultat fra pep2d caches lokalt og brukes i JournalpostDtoMapper.java. Med bakgrunn i resultat fra pep2d og pep6d settes feltet saksbehandlerHarTilgang=true/false.
 		 **/
 		final Flowable<TilgangSak> tilgangSakFlow = tilgangsmodellRepository.findTilgangSaker(tilgangBruker, dokumentoversiktBrukerArguments
 				.getFilters().getTema(), safRequestContext);
@@ -103,6 +104,7 @@ class DokumentoversiktBrukerCoordinatorImpl implements DokumentoversiktBrukerCoo
 				})
 				.parallel(10)
 				.runOn(Schedulers.io())
+				.doOnNext(ts -> addMdcData(safRequestContext))
 				.filter(ts -> pep2.hasAccess(ts, safRequestContext))
 				.doOnNext(ts -> pep2d.hasAccess(ts, safRequestContext))
 				.filter(ts -> pep3.hasAccess(ts, safRequestContext))
@@ -129,6 +131,7 @@ class DokumentoversiktBrukerCoordinatorImpl implements DokumentoversiktBrukerCoo
 		final List<TilgangJournalpost> filteredTilgangJournalpostList = Flowable.fromIterable(tilgangJournalposter)
 				.parallel(10)
 				.runOn(Schedulers.io())
+				.doOnNext(ts -> addMdcData(safRequestContext))
 				.filter(tj -> pep4.hasAccess(tj, safRequestContext))
 				.filter(tj -> checkPepIfMidlertidigJournalpost(pep2, tj, safRequestContext))
 				.doOnNext(tj -> checkPepIfMidlertidigJournalpost(pep2d, tj, safRequestContext))
@@ -143,6 +146,7 @@ class DokumentoversiktBrukerCoordinatorImpl implements DokumentoversiktBrukerCoo
 		Flowable.fromIterable(filteredTilgangJournalpostList)
 				.parallel(10)
 				.runOn(Schedulers.io())
+				.doOnNext(ts -> addMdcData(safRequestContext))
 				.doOnNext(tj -> tj.getDokumenter()
 						.forEach(tilgangDokumentInfo -> pep5.hasAccess(tilgangDokumentInfo, safRequestContext)))
 				.doOnNext(tj -> tj.getDokumenter()

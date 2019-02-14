@@ -35,7 +35,7 @@ public class Pep5ImplTest extends AbstractPepTest {
 
 		boolean hasAccess = pep5.hasAccess(TilgangDokumentInfo.builder()
 				.skjerming(null)
-				.build(), new SafRequestContext(OIDC_TOKEN_PERSON_USER_TEST, oidcValidatorTool));
+				.build(), new SafRequestContext(OIDC_TOKEN_PERSON_USER_TEST, xCorrelationID, oidcValidatorTool));
 
 		assertTrue(hasAccess);
 	}
@@ -49,7 +49,7 @@ public class Pep5ImplTest extends AbstractPepTest {
 
 		boolean hasAccess = pep5.hasAccess(TilgangDokumentInfo.builder()
 				.skjerming(SKJERMING_POL)
-				.build(), new SafRequestContext(OIDC_TOKEN_PERSON_USER_TEST, oidcValidatorTool));
+				.build(), new SafRequestContext(OIDC_TOKEN_PERSON_USER_TEST, xCorrelationID, oidcValidatorTool));
 
 		verify(abacService).evaluate(request.capture());
 		XacmlRequest capturedRequest = request.getValue();
@@ -68,7 +68,7 @@ public class Pep5ImplTest extends AbstractPepTest {
 
 		boolean hasAccess = pep5.hasAccess(TilgangDokumentInfo.builder()
 				.skjerming(SKJERMING_POL)
-				.build(), new SafRequestContext(OIDC_TOKEN_PERSON_USER_TEST, oidcValidatorTool));
+				.build(), new SafRequestContext(OIDC_TOKEN_PERSON_USER_TEST, xCorrelationID, oidcValidatorTool));
 
 		verify(abacService).evaluate(request.capture());
 		XacmlRequest capturedRequest = request.getValue();

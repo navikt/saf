@@ -44,7 +44,7 @@ public class Pep1gImplTest extends AbstractPepTest {
 				.aktoerId(AKTOER_ID)
 				.foedselsnr(FNR)
 				.historiskeIdenter(Collections.singletonList(TilgangIdent.builder().identifikator(FNR).build()))
-				.build(), new SafRequestContext(OIDC_TOKEN_PERSON_USER_TEST, oidcValidatorTool));
+				.build(), new SafRequestContext(OIDC_TOKEN_PERSON_USER_TEST, xCorrelationID, oidcValidatorTool));
 
 		verify(abacService).evaluate(request.capture());
 		XacmlRequest capturedRequest = request.getValue();
@@ -64,7 +64,7 @@ public class Pep1gImplTest extends AbstractPepTest {
 		boolean hasAccess = pep1g.hasAccess(TilgangBruker.builder()
 				.foedselsnr(FNR)
 				.historiskeIdenter(Collections.singletonList(TilgangIdent.builder().identifikator(FNR).build()))
-				.build(), new SafRequestContext(OIDC_TOKEN_PERSON_USER_TEST, oidcValidatorTool));
+				.build(), new SafRequestContext(OIDC_TOKEN_PERSON_USER_TEST, xCorrelationID, oidcValidatorTool));
 
 		verify(abacService).evaluate(request.capture());
 		XacmlRequest capturedRequest = request.getValue();
@@ -86,7 +86,7 @@ public class Pep1gImplTest extends AbstractPepTest {
 				.aktoerId(AKTOER_ID)
 				.foedselsnr(FNR)
 				.historiskeIdenter(Collections.singletonList(TilgangIdent.builder().identifikator(FNR).build()))
-				.build(), new SafRequestContext(OIDC_TOKEN_PERSON_USER_TEST, oidcValidatorTool));
+				.build(), new SafRequestContext(OIDC_TOKEN_PERSON_USER_TEST, xCorrelationID, oidcValidatorTool));
 
 		assertFalse(hasAccess);
 	}

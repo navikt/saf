@@ -1,7 +1,10 @@
 package no.nav.saf.tilgangskontroll;
 
+import static no.nav.saf.util.MDCUtility.addMdcData;
+
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.exceptions.JWTDecodeException;
+import graphql.execution.ExecutionId;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.exceptions.OidcAuthorizationException;
 import no.nav.saf.tilgangskontroll.validation.OidcValidatorTool;
@@ -14,13 +17,20 @@ public class SafSecurityContext {
 	private static final String OIDC_TOKEN_PREFIX = "Bearer ";
 	private final String oidcTokenBody;
 	private final String saksbehandlerId;
+	private String xCorrelationID;
 	private final OidcValidatorTool oidcValidatorTool;
 
 	SafSecurityContext(String authorizationHeader,
+					   String xCorrelationIDHeader,
 					   OidcValidatorTool oidcValidatorTool) {
+
 		this.saksbehandlerId = getSubjectFromToken(authorizationHeader);
 		this.oidcValidatorTool = oidcValidatorTool;
 		this.oidcTokenBody = getOidcTokenBody(authorizationHeader);
+		// if zero, then executionId from graphQl is used.
+		this.xCorrelationID = xCorrelationIDHeader;
+
+		addMdcData(this.saksbehandlerId, this.xCorrelationID);
 	}
 
 	private String getOidcTokenBody(String authorizationHeader) {
@@ -46,6 +56,17 @@ public class SafSecurityContext {
 			log.error("Kunne ikke utlede subject fra OIDC-Token i header.", e);
 			return null;
 		}
+	}
+
+	public void useExecutionIDIfXCorrelationIDNull(ExecutionId executionId) {
+		if (xCorrelationID == null) {
+			this.xCorrelationID = executionId.toString();
+			addMdcData(this.saksbehandlerId, this.xCorrelationID);
+		}
+	}
+
+	public String getXCorrelationID() {
+		return xCorrelationID;
 	}
 
 	public String getOidcTokenBody() {
