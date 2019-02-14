@@ -87,7 +87,7 @@ public class GsakConsumer {
 		}
 		try {
 			HttpHeaders headers = new HttpHeaders();
-			headers.set("X-Correlation-ID", UUID.randomUUID().toString());
+			headers.set("X-Correlation-ID", getOrGenerateCorrelationId());
 			ResponseEntity<List<GsakSakerTo>> response = restTemplate.exchange(uri, HttpMethod.GET, new HttpEntity<>(headers), new ParameterizedTypeReference<List<GsakSakerTo>>() {
 			});
 			if (log.isDebugEnabled()) {
@@ -106,7 +106,7 @@ public class GsakConsumer {
 	public GsakSakerTo hentSakBySakId(final String sakId) {
 		try {
 			HttpHeaders headers = new HttpHeaders();
-			headers.set("X-Correlation-ID", MDC.get(CORRELATION_ID));
+			headers.set("X-Correlation-ID", getOrGenerateCorrelationId());
 			return restTemplate.exchange(gsakApiUrl + "/{sakId}", HttpMethod.GET, new HttpEntity<>(headers), GsakSakerTo.class, sakId)
 					.getBody();
 		} catch (HttpServerErrorException e) {
@@ -116,5 +116,13 @@ public class GsakConsumer {
 			throw new SafFunctionalException(String.format("getGsaksaker feilet funksjonelt med statusKode=%s. Feilmelding=%s", e
 					.getStatusCode(), e.getMessage()), e, e.getStatusCode());
 		}
+	}
+
+	private String getOrGenerateCorrelationId() {
+		String correlationId = MDC.get(CORRELATION_ID);
+		if (correlationId == null) {
+			correlationId = UUID.randomUUID().toString();
+		}
+		return correlationId;
 	}
 }
