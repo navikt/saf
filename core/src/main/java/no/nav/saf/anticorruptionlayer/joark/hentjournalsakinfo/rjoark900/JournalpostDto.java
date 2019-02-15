@@ -26,17 +26,20 @@ public class JournalpostDto {
 	private Long prevJournalpostId;
 	private Long nextJournalpostId;
 	private Long totaltAntall;
-	private String journalForendeEnhetId;
 	private String innhold;
 	private FagomradeCode fagomrade;
+	private String behandlingstema;
+	private String behandlingstemanavn;
 	private JournalStatusCode journalstatus;
 	private String avsenderMottakerNavn;
+	private String avsenderMottakerLand;
+	private String journalforendeEnhet;
 	private String journalfortAvNavn;
+	private String opprettetAvNavn;
 	private MottaksKanalCode mottakskanal;
 	private UtsendingsKanalCode utsendingskanal;
 	private JournalpostTypeCode journalposttype;
 	private SaksrelasjonDto saksrelasjon;
-	private SkjermingTypeCode skjerming;
 	private Date datoOpprettet;
 	private Date mottattDato;
 	private Date journalDato;
@@ -44,5 +47,7 @@ public class JournalpostDto {
 	private Date avsReturDato;
 	private Date sendtPrintDato;
 	private Date ekspedertDato;
+	private SkjermingTypeCode skjerming;
+	private List<TilleggsopplysningDto> tilleggsopplysninger;
 	private List<DokumentInfoDto> dokumenter;
 }

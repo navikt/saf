@@ -31,6 +31,7 @@ import no.nav.saf.domain.visningsmodell.Journalpost;
 import no.nav.saf.domain.visningsmodell.LogiskVedlegg;
 import no.nav.saf.domain.visningsmodell.RelevantDato;
 import no.nav.saf.domain.visningsmodell.Sak;
+import no.nav.saf.domain.visningsmodell.Tilleggsopplysning;
 import no.nav.saf.tilgangskontroll.RequestCache;
 import org.springframework.stereotype.Component;
 
@@ -60,16 +61,22 @@ public class JournalpostDtoMapper {
 				.journalstatus(mapJournalstatus(journalpostDto))
 				.tema(FagomradeCode.toSafTema(journalpostDto.getFagomrade()))
 				.temanavn(FagomradeCode.toSafTema(journalpostDto.getFagomrade()).getTemanavn())
+				.behandlingstema(journalpostDto.getBehandlingstema())
+				.behandlingstemanavn(journalpostDto.getBehandlingstemanavn())
 				.sak(mapSak(journalpostDto.getSaksrelasjon(), requestCache))
 				.bruker(mapBruker(journalpostDto.getSaksrelasjon(), requestCache))
 				.avsenderMottakerNavn(journalpostDto.getAvsenderMottakerNavn())
+				.avsenderMottakerLand(journalpostDto.getAvsenderMottakerLand())
+				.journalforendeEnhet(journalpostDto.getJournalforendeEnhet())
 				.journalfortAvNavn(journalpostDto.getJournalfortAvNavn())
+				.opprettetAvNavn(journalpostDto.getOpprettetAvNavn())
 				.kanal(kanal)
 				.kanalnavn(kanal == null ? null : kanal.getKanalnavn())
 				.datoOpprettet(journalpostDto.getDatoOpprettet() == null ? INVALID_DATE : LocalDateTime.from(journalpostDto.getDatoOpprettet()
 						.toInstant()
 						.atZone(ZoneId.systemDefault())))
 				.relevanteDatoer(mapRelevanteDatoer(journalpostDto))
+				.tilleggsopplysninger(mapTilleggsopplysninger(journalpostDto))
 				.build();
 		List<DokumentInfo> dokumenter = journalpostDto.getDokumenter().stream()
 				.filter(dokumentInfoDto -> shouldMapDokumentInfo(journalpostId, dokumentInfoDto.getDokumentInfoId(), requestCache))
@@ -79,6 +86,7 @@ public class JournalpostDtoMapper {
 						.tittel(dokumentInfoDto.getTittel())
 						.brevkode(dokumentInfoDto.getBrevkode())
 						.dokumentstatus(mapDokumentstatus(dokumentInfoDto.getDokumentstatus()))
+						.originalJournalpostId(dokumentInfoDto.getOrigJournalpostId() == null ? null : dokumentInfoDto.getOrigJournalpostId().toString())
 						.dokumentvarianter(dokumentInfoDto.getVarianter().stream()
 								.map(variantDto -> Dokumentvariant.builder()
 										.saksbehandlerHarTilgang(determineSaksbehandlerTilgang(journalpost, dokumentInfoDto, variantDto, requestCache))
@@ -140,6 +148,15 @@ public class JournalpostDtoMapper {
 		} else {
 			return dokumentstatus.toSafDokumentstatus();
 		}
+	}
+
+	private List<Tilleggsopplysning> mapTilleggsopplysninger(JournalpostDto journalpostDto) {
+		if(journalpostDto.getTilleggsopplysninger() == null || journalpostDto.getTilleggsopplysninger().isEmpty()) {
+			return new ArrayList<>();
+		}
+		return journalpostDto.getTilleggsopplysninger().stream()
+				.map(dto -> new Tilleggsopplysning(dto.getNokkel(), dto.getVerdi()))
+				.collect(Collectors.toList());
 	}
 
 	private List<RelevantDato> mapRelevanteDatoer(JournalpostDto journalpostDto) {
