@@ -20,6 +20,10 @@ Denne malen er basert på [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 * `GraphQL: ` Ny Type `Tilleggsopplysning`.
 * `GraphQL: ` Type `DokumentInfo`. Nytt felt `originalJournalpostId`.
 
+## [3.2.3] - 2019-02-15
+### Endret
+* La til støtte for variantformat FULLVERSJON, og oppdaterte tilhørende dokumentasjon.
+
 ## [3.2.2] - 2019-02-14
 ### Endret
 * Tilgangskontroll for fysisk dokument relatert til tema (Pep2d) er endret til å ikke gjøres på midlertidige journalposter.
