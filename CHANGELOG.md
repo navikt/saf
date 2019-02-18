@@ -8,6 +8,18 @@ Alle nevneverdige endringer blir dokumentert her.
 
 Denne malen er basert på [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [3.3.0] - 2019-02-15
+### Endret
+* `GraphQL: ` Type `Journalpost` og `DokumentInfo` har fått flere nye felt, nevnt under. Se dokumentasjon i [GraphiQL](https://saf-q1.nais.preprod.local/graphiql) eller [Confluence](https://confluence.adeo.no/display/BOA/saf+-+GraphQL+API+v1) for mer informasjon.
+* `GraphQL: ` Type `Journalpost`. Nytt felt `behandlingstema`.
+* `GraphQL: ` Type `Journalpost`. Nytt felt `behandlingstemanavn`.
+* `GraphQL: ` Type `Journalpost`. Nytt felt `avsenderMottakerLand`.
+* `GraphQL: ` Type `Journalpost`. Nytt felt `journalforendeEnhet`.
+* `GraphQL: ` Type `Journalpost`. Nytt felt `opprettetAvNavn`.
+* `GraphQL: ` Type `Journalpost`. Nytt felt `tilleggsopplysninger`.
+* `GraphQL: ` Ny Type `Tilleggsopplysning`.
+* `GraphQL: ` Type `DokumentInfo`. Nytt felt `originalJournalpostId`.
+
 ## [3.2.2] - 2019-02-14
 ### Endret
 * Tilgangskontroll for fysisk dokument relatert til tema (Pep2d) er endret til å ikke gjøres på midlertidige journalposter.

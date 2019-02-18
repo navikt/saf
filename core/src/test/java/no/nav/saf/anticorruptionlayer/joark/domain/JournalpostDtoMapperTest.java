@@ -23,6 +23,7 @@ import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.Dokumen
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.JournalpostDto;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.LogiskVedleggDto;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.SaksrelasjonDto;
+import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.TilleggsopplysningDto;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.VariantDto;
 import no.nav.saf.cache.KeyGeneratorLocalCaching;
 import no.nav.saf.domain.Arkivsak;
@@ -82,6 +83,14 @@ class JournalpostDtoMapperTest {
 
 	private static final FagomradeCode FAGOMRADE = FagomradeCode.STO;
 	private static final String JOURNALFOERT_AV = "Automatisk jobb";
+	private static final String BEHANDLINGSTEMA = "ab0072";
+	private static final String BEHANDLINGSTEMANAVN = "Foreldrepenger ved adopsjon";
+	private static final String AVSENDER_MOTTAKER_NAVN = "Bjarne Betjent";
+	private static final String AVSENDER_MOTTAKER_LAND = "NO";
+	private static final String JOURNALFOERENDE_ENHET = "2990";
+	private static final String OPPRETTET_AV_NAVN = "Max Mekker";
+	private static final String TILLEGGSOPPLYSNING_NOKKEL = "bucid";
+	private static final String TILLEGGSOPPLYSNING_VERDI = "21521";
 
 	private final JournalpostDtoMapper mapper = new JournalpostDtoMapper();
 
@@ -264,12 +273,23 @@ class JournalpostDtoMapperTest {
 		assertEquals(INNHOLD, journalpost.getTittel());
 		assertEquals(FagomradeCode.toSafTema(FAGOMRADE), journalpost.getTema());
 		assertEquals(JOURNALFOERT_AV, journalpost.getJournalfortAvNavn());
+		assertEquals(BEHANDLINGSTEMA, journalpost.getBehandlingstema());
+		assertEquals(BEHANDLINGSTEMANAVN, journalpost.getBehandlingstemanavn());
+		assertEquals(AVSENDER_MOTTAKER_NAVN, journalpost.getAvsenderMottakerNavn());
+		assertEquals(AVSENDER_MOTTAKER_LAND, journalpost.getAvsenderMottakerLand());
+		assertEquals(JOURNALFOERENDE_ENHET, journalpost.getJournalforendeEnhet());
+		assertEquals(OPPRETTET_AV_NAVN, journalpost.getOpprettetAvNavn());
 
 		assertEquals(LocalDateTime.from(DATO_OPPRETTET.toInstant()
 				.atZone(ZoneId.systemDefault())), LocalDateTime.from(journalpost.getDatoOpprettet()));
 		assertEquals(1, journalpost.getDokumenter().size());
+		assertThat(journalpost.getTilleggsopplysninger(), hasSize(1));
+		assertThat(journalpost.getTilleggsopplysninger().get(0).getNokkel(), is(TILLEGGSOPPLYSNING_NOKKEL));
+		assertThat(journalpost.getTilleggsopplysninger().get(0).getVerdi(), is(TILLEGGSOPPLYSNING_VERDI));
+
 		DokumentInfo dokumentInfo1 = journalpost.getDokumenter().get(0);
 		assertEquals(DOKUMENT_INFO_ID, dokumentInfo1.getDokumentInfoId());
+		assertEquals(Long.toString(JOURNALPOST_ID), dokumentInfo1.getOriginalJournalpostId());
 
 		Assertions.assertThat(dokumentInfo1.getDokumentvarianter())
 				.extracting(Dokumentvariant::getVariantformat, Dokumentvariant::isSaksbehandlerHarTilgang)
@@ -333,6 +353,7 @@ class JournalpostDtoMapperTest {
 						.tittel("veldigViktigTittel")
 						.brevkode(BREVKODE)
 						.dokumentstatus(DokumentStatusCode.FERDIGSTILT)
+						.origJournalpostId(JOURNALPOST_ID)
 						.logiske(Collections.singletonList(new LogiskVedleggDto()))
 						.varianter(Arrays.asList(VariantDto.builder()
 										.skjerming(SKJERMING_TYPE_CODE_POL)
@@ -386,10 +407,19 @@ class JournalpostDtoMapperTest {
 				.nextJournalpostId(405252858L)
 				.innhold(INNHOLD)
 				.fagomrade(FAGOMRADE)
+				.behandlingstema(BEHANDLINGSTEMA)
+				.behandlingstemanavn(BEHANDLINGSTEMANAVN)
+				.avsenderMottakerNavn(AVSENDER_MOTTAKER_NAVN)
+				.avsenderMottakerLand(AVSENDER_MOTTAKER_LAND)
+				.journalforendeEnhet(JOURNALFOERENDE_ENHET)
 				.journalfortAvNavn(JOURNALFOERT_AV)
+				.opprettetAvNavn(OPPRETTET_AV_NAVN)
 				.datoOpprettet(DATO_OPPRETTET)
 				.journalstatus(JournalStatusCode.J)
+				.tilleggsopplysninger(Collections.singletonList(TilleggsopplysningDto.builder()
+						.nokkel(TILLEGGSOPPLYSNING_NOKKEL)
+						.verdi(TILLEGGSOPPLYSNING_VERDI)
+						.build()))
 				.dokumenter(buildDokumenter());
 	}
-
 }

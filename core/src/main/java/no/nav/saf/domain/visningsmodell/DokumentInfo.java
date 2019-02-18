@@ -22,6 +22,7 @@ public class DokumentInfo {
 	private final String tittel;
 	private final String brevkode;
 	private final Dokumentstatus dokumentstatus;
+	private final String originalJournalpostId;
 	@Builder.Default
 	private final List<LogiskVedlegg> logiskeVedlegg = new ArrayList<>();
 	@Builder.Default
