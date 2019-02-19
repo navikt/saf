@@ -1,0 +1,53 @@
+{
+    journalpost(journalpostId: "400000000") {
+        journalpostId
+        tittel
+        journalposttype
+        journalstatus
+        tema
+        temanavn
+        behandlingstema
+        behandlingstemanavn
+        avsenderMottakerNavn
+        avsenderMottakerLand
+        journalforendeEnhet
+        journalfortAvNavn
+        opprettetAvNavn
+        kanal
+        kanalnavn
+        datoOpprettet
+        relevanteDatoer {
+            dato
+            datotype
+        }
+        tilleggsopplysninger {
+            nokkel
+            verdi
+        }
+        sak {
+            arkivsaksnummer
+            arkivsaksystem
+            datoOpprettet
+            fagsakId
+            fagsaksystem
+        }
+        bruker {
+            id
+            type
+        }
+        dokumenter {
+            dokumentInfoId
+            tittel
+            brevkode
+            dokumentstatus
+            originalJournalpostId
+            logiskeVedlegg {
+                tittel
+            }
+            dokumentvarianter {
+                variantformat
+                saksbehandlerHarTilgang
+            }
+        }
+    }
+}

@@ -100,7 +100,7 @@
 			<groupId>no.nav.modig</groupId>
 			<artifactId>modig-testcertificates</artifactId>
 			<scope>test</scope>
-			<version>1.2.0</version>
+			<version>1.2.5</version>
 		</dependency>
 	</dependencies>
 

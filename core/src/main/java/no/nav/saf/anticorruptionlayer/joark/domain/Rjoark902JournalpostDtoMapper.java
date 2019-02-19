@@ -127,7 +127,6 @@ public class Rjoark902JournalpostDtoMapper {
 					.arkivsaksystem(arkivsak.getArkivsaksystem())
 					.fagsakId(arkivsak.getFagsakId())
 					.fagsaksystem(arkivsak.getFagsaksystem())
-					.tema(arkivsak.getTema())
 					.datoOpprettet(arkivsak.getDatoOpprettet())
 					.build();
 		}
