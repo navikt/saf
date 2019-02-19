@@ -1,0 +1,23 @@
+package no.nav.saf.query.journalpost;
+
+import no.nav.saf.domain.Arkivsak;
+import no.nav.saf.domain.kode.Arkivsakssystem;
+import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
+import no.nav.saf.domain.tilgangsmodell.TilgangJournalpost;
+import no.nav.saf.domain.tilgangsmodell.TilgangSak;
+import no.nav.saf.tilgangskontroll.SafRequestContext;
+
+/**
+ * @author Joakim Bjørnstad, Jbit AS
+ */
+interface JournalpostTilgangRepository {
+	TilgangJournalpost findTilgangJournalpostFromSafRequestContext(SafRequestContext safRequestContext, TilgangSak tilgangSak);
+
+	TilgangBruker findTilgangBruker(Arkivsak arkivsak, SafRequestContext safRequestContext);
+
+	TilgangBruker findTilgangBrukerBySakId(String sakId, Arkivsakssystem arkivsaksystem);
+
+	Arkivsak findArkivsakAndCacheJournalpostDto(String journalpostId, SafRequestContext safRequestContext);
+
+	TilgangSak findTilgangSak(String sakId, String arkivsaksystem, TilgangBruker tilgangBruker, SafRequestContext safRequestContext);
+}

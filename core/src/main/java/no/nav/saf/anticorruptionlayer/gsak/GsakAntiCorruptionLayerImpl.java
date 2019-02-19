@@ -99,6 +99,7 @@ class GsakAntiCorruptionLayerImpl implements GsakAntiCorruptionLayer {
 				.fagsakId(gsakSakerTo.getFagsakNr())
 				.tema(gsakSakerTo.getTema() == null ? null : Tema.valueOf(gsakSakerTo.getTema()))
 				.orgnummer(gsakSakerTo.getOrgnr())
+				.datoOpprettet(gsakSakerTo.getOpprettetTidspunkt().toLocalDateTime())
 				.build();
 	}
 

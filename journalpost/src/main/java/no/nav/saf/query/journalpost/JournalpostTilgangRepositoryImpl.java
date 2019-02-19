@@ -1,6 +1,9 @@
-package no.nav.saf.hentdokument.repo;
+package no.nav.saf.query.journalpost;
+
+import static no.nav.saf.anticorruptionlayer.pensjonsak.PensjonSakAntiCorruptionLayerImpl.PSAK_FAGSYSTEM;
 
 import lombok.extern.slf4j.Slf4j;
+import no.nav.saf.anticorruptionlayer.aktoer.AktoerAntiCorruptionLayer;
 import no.nav.saf.anticorruptionlayer.bisys.BisysAntiCorruptionLayer;
 import no.nav.saf.anticorruptionlayer.gsak.GsakAntiCorruptionLayer;
 import no.nav.saf.anticorruptionlayer.pensjonsak.PensjonSakAntiCorruptionLayer;
@@ -11,40 +14,42 @@ import no.nav.saf.domain.kode.Tema;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.domain.tilgangsmodell.TilgangJournalpost;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
-import no.nav.saf.hentdokument.HentDokumentAntiCorruptionLayer;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
 
 /**
- * @author Sigurd Midttun, Visma Consulting.
+ * @author Joakim Bjørnstad, Jbit AS
  */
 @Slf4j
-@Repository
-public class TilgangsmodellHentdokumentRepositoryImpl implements TilgangsmodellHentdokumentRepository {
+@Component
+public class JournalpostTilgangRepositoryImpl implements JournalpostTilgangRepository {
 
 	private final GsakAntiCorruptionLayer gsakAntiCorruptionLayer;
 	private final PensjonSakAntiCorruptionLayer pensjonSakAntiCorruptionLayer;
-	private final HentDokumentAntiCorruptionLayer hentDokumentAntiCorruptionLayer;
+	private final JournalpostAntiCorruptionLayer journalpostAntiCorruptionLayer;
 	private final BisysAntiCorruptionLayer bisysAntiCorruptionLayer;
+	private final AktoerAntiCorruptionLayer aktoerAntiCorruptionLayer;
 
 	@Inject
-	public TilgangsmodellHentdokumentRepositoryImpl(GsakAntiCorruptionLayer gsakAntiCorruptionLayer,
-													PensjonSakAntiCorruptionLayer pensjonSakAntiCorruptionLayer,
-													HentDokumentAntiCorruptionLayer hentDokumentAntiCorruptionLayer,
-													BisysAntiCorruptionLayer bisysAntiCorruptionLayer) {
+	public JournalpostTilgangRepositoryImpl(GsakAntiCorruptionLayer gsakAntiCorruptionLayer,
+											PensjonSakAntiCorruptionLayer pensjonSakAntiCorruptionLayer,
+											JournalpostAntiCorruptionLayer journalpostAntiCorruptionLayer,
+											BisysAntiCorruptionLayer bisysAntiCorruptionLayer,
+											AktoerAntiCorruptionLayer aktoerAntiCorruptionLayer) {
 		this.gsakAntiCorruptionLayer = gsakAntiCorruptionLayer;
 		this.pensjonSakAntiCorruptionLayer = pensjonSakAntiCorruptionLayer;
-		this.hentDokumentAntiCorruptionLayer = hentDokumentAntiCorruptionLayer;
+		this.journalpostAntiCorruptionLayer = journalpostAntiCorruptionLayer;
 		this.bisysAntiCorruptionLayer = bisysAntiCorruptionLayer;
+		this.aktoerAntiCorruptionLayer = aktoerAntiCorruptionLayer;
 	}
 
 	@Override
 	public TilgangJournalpost findTilgangJournalpostFromSafRequestContext(SafRequestContext safRequestContext, TilgangSak tilgangSak) {
 		try {
-			return hentDokumentAntiCorruptionLayer.hentTilgangJournalpostFromSafRequestContext(safRequestContext, tilgangSak);
+			return journalpostAntiCorruptionLayer.hentTilgangJournalpostFromSafRequestContext(safRequestContext, tilgangSak);
 		} catch (Exception e) {
 			log.warn("findTilgangJournalpostFromSafRequestContext feilet", e);
 			return null;
@@ -66,7 +71,7 @@ public class TilgangsmodellHentdokumentRepositoryImpl implements TilgangsmodellH
 
 	private TilgangBruker findTilgangBrukerBrukerFromSafRequestContext(SafRequestContext safRequestContext) {
 		try {
-			TilgangBruker tilgangBruker = hentDokumentAntiCorruptionLayer.hentTilgangBruker(safRequestContext);
+			TilgangBruker tilgangBruker = journalpostAntiCorruptionLayer.hentTilgangBruker(safRequestContext);
 			if (tilgangBruker == null || tilgangBruker.getFoedselsnr() == null) {
 				return null;
 			} else {
@@ -83,10 +88,9 @@ public class TilgangsmodellHentdokumentRepositoryImpl implements TilgangsmodellH
 			if (Arkivsakssystem.GSAK.equals(arkivsaksystem)) {
 				return gsakAntiCorruptionLayer.findTilgangBrukerBySakId(sakId);
 			} else if (Arkivsakssystem.PSAK.equals(arkivsaksystem)) {
+				// Slår opp i PSAK for å finne fnr på bruker. Deretter opp i aktoerregister for fnr -> aktørId
 				String fnr = pensjonSakAntiCorruptionLayer.findFoedselsnummerBySakId(sakId);
-				return TilgangBruker.builder()
-						.foedselsnr(fnr)
-						.build();
+				return aktoerAntiCorruptionLayer.hentTilgangBrukerByFoedselsnummer(fnr);
 			} else {
 				return null;
 			}
@@ -97,8 +101,8 @@ public class TilgangsmodellHentdokumentRepositoryImpl implements TilgangsmodellH
 	}
 
 	@Override
-	public Arkivsak findArkivsakAndCacheJournalpostDto(String journalpostId, String dokumentInfoId, String variantFormat, SafRequestContext safRequestContext) {
-		return hentDokumentAntiCorruptionLayer.hentArkivsakAndCacheJournalpostDto(journalpostId, dokumentInfoId, variantFormat, safRequestContext);
+	public Arkivsak findArkivsakAndCacheJournalpostDto(String journalpostId, SafRequestContext safRequestContext) {
+		return journalpostAntiCorruptionLayer.hentArkivsakAndCacheJournalpostDto(journalpostId, safRequestContext);
 	}
 
 	@Override
@@ -106,6 +110,7 @@ public class TilgangsmodellHentdokumentRepositoryImpl implements TilgangsmodellH
 		try {
 			if (Arkivsakssystem.GSAK.name().equals(arkivsaksystem)) {
 				Arkivsak arkivsak = gsakAntiCorruptionLayer.findArkivsakBySakId(sakId);
+				safRequestContext.getRequestCache().putObject(arkivsak.getKey(), arkivsak);
 				BidragSak bidragSak = getBidragSakIfTemaIsBidOrFar(arkivsak);
 				return TilgangSak.builder()
 						.aktoerId(arkivsak.getAktoerId())
@@ -118,8 +123,17 @@ public class TilgangsmodellHentdokumentRepositoryImpl implements TilgangsmodellH
 						.build();
 			} else if (Arkivsakssystem.PSAK.name().equals(arkivsaksystem)
 					|| arkivsaksystem == null || arkivsaksystem.isEmpty()) {
+				// Spesialhåndtering for PSAK der arkivsakId = fagsakId
+				Arkivsak psakArkivsak = Arkivsak.builder()
+						.aktoerId(tilgangBruker.getAktoerId())
+						.arkivsaksnummer(sakId)
+						.arkivsaksystem(Arkivsakssystem.PSAK)
+						.fagsakId(sakId)
+						.fagsaksystem(PSAK_FAGSYSTEM)
+						.build();
+				safRequestContext.getRequestCache().putObject(psakArkivsak.getKey(), psakArkivsak);
 				//Psak eller midlertidig journalført
-				return hentDokumentAntiCorruptionLayer.hentTilgangSakFromSafRequestContext(safRequestContext, tilgangBruker);
+				return journalpostAntiCorruptionLayer.hentTilgangSakFromSafRequestContext(safRequestContext, tilgangBruker);
 			} else {
 				return null;
 			}

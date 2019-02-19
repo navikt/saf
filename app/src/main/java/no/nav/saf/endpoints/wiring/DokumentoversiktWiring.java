@@ -85,7 +85,7 @@ public class DokumentoversiktWiring {
 						SafRequestContext safRequestContext = environment.getContext();
 						safRequestContext.setCorrelationId(environment.getExecutionId());
 						log.info("query journalpost for journalpostId={}", journalpostId);
-						Journalpost journalpost = journalpostCoordinator.hentJournalpost(journalpostId);
+						Journalpost journalpost = journalpostCoordinator.hentJournalpost(journalpostId, safRequestContext);
 						log.info("journalpost hentet for journalpostId={}", journalpostId);
 						return journalpost;
 					} catch (SafFunctionalException e) {
