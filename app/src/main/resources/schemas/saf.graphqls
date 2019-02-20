@@ -124,6 +124,16 @@ type SideInfo {
     finnesNesteSide: Boolean!
 }
 
+# * Fagsystemene som arkiverer kan legge til egne fagspesifikke attributter per journalpost.
+# * Disse er representert som et skjemaløst nøkkel-verdi-sett og valideres ikke av Joark. Et eksempel på et slikt sett kan være (bucid, 21521).
+type Tilleggsopplysning {
+    # Nøkkelen til det fagspesifikke attributtet.
+	nokkel: String
+
+	# Verdien til det fagspesifikke attributtet.
+	verdi: String
+}
+
 # * Et sett dokumenter som er sendt/mottatt samlet, og har felles arkivmetadata som *tema*, *avsender*, *arkivsak* og *sakspart*.
 # * En journalpost kan bestå av ett eller flere dokumenter.
 type Journalpost {
@@ -146,6 +156,12 @@ type Journalpost {
     # Dekode av Tema, f.eks. *"Foreldrepenger"*.
     temanavn: String
 
+    # Detaljering av tema på journalpost og tilhørende sak, f.eks. *"ab0072"*.
+    behandlingstema: String
+
+    # Dekode av behandlingstema, f.eks *"Foreldrepenger ved adopsjon"*
+    behandlingstemanavn: String
+
     # Sier hvilken sak journalposten er knyttet til. En journalpost kan maksimalt være knyttet til én sak, men et dokument kan være knyttet til flere journalposter og dermed flere saker.
     sak: Sak
 
@@ -156,9 +172,19 @@ type Journalpost {
     # Navnet på personen eller organisasjonen som er avsender eller mottaker av dokumentene på journalposten.
     avsenderMottakerNavn: String
 
+    # Landet forsendelsen er mottatt fra eller sendt til. Feltet skal i utgangspunktet kun være populert dersom avsender eller mottaker er en institusjon med adresse i utlandet.
+    avsenderMottakerLand: String
+
+    # NAV-enheten som har journalført forsendelsen. I noen tilfeller brukes journalfEnhet til å rute journalføringsoppgaven til korrekt enhet i NAV. I slike tilfeller vil journalfEnhet være satt også for ikke-journalførte dokumenter.
+    journalforendeEnhet: String
+
     # * Personen i NAV som har journalført forsendelsen.
     # * Bruken av feltet varierer, og kan inneholde den ansattesnavn eller NAV-ident. Dersom forsendelsen er automatisk journalført, kan innholdet være f.eks. et servicebruker eller et batchnavn.
     journalfortAvNavn: String
+
+    # * Personen eller systembrukeren i NAV som har opprettet journalposten.
+    # * Bruken av feltet varierer, og kan inneholde den ansattes navn eller NAV-ident. For inngående dokumenter kan innholdet være f.eks. en servicebruker eller et batchnavn.
+    opprettetAvNavn: String
 
     # * Kanalen dokumentene ble sendt inn eller ut, f.eks. **SENTRAL_UTSKRIFT**.
     # * Dersom kanal ikke er satt i Joark, returneres verdien **UKJENT**.
@@ -173,6 +199,9 @@ type Journalpost {
     # * Liste over andre datoer som kan være relevante for journalposten, f.eks. **DATO_EKSPEDERT**.
     # * Hvilke typer relevante datoer som returneres er avhengig av journalposttype.
     relevanteDatoer: [RelevantDato]
+
+    # Liste over fagspesifikke metadata som er tilknyttet journalpost.
+    tilleggsopplysninger: [Tilleggsopplysning]
 
     # Liste av dokumenter forbundet til journalposten.
     dokumenter: [DokumentInfo]
@@ -610,14 +639,14 @@ enum Variantformat {
     PRODUKSJON_DLF
 }
 
-# Dokumentstatus gir et indikasjon på hvorvidt dokumentet er ferdigstilt eller under arbeid, eventuelt avbrutt. Dersom dokumentet ikke har noen dokumentstatus, er dokumentet komplett / ferdigstilt.
+# Dokumentstatus gir en indikasjon på hvorvidt dokumentet er ferdigstilt eller under arbeid, eventuelt avbrutt. Dersom dokumentet ikke har noen dokumentstatus, er dokumentet komplett / ferdigstilt.
 enum Dokumentstatus {
-    # Dokumentet er under redigering.
+    # Dokumentet er under arbeid. Benyttes for redigerbare brev.
     UNDER_REDIGERING
 
-    # Dokumentet er ferdigstilt.
+    # Dokumentet er ferdigstilt. Benyttes for redigerbare brev.
     FERDIGSTILT
 
-    # Dokumentet er avbrutt.
+    # Dokumentet ble opprettet, men ble avbrutt under redigering. Benyttes for redigerbare brev.
     AVBRUTT
 }

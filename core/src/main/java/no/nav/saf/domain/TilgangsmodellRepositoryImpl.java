@@ -255,7 +255,7 @@ public class TilgangsmodellRepositoryImpl implements TilgangsmodellRepository {
 
 	private BidragSak getBidragSakIfTemaIsBidOrFar(Arkivsak arkivsak) {
 		if (Tema.BID.equals(arkivsak.getTema()) || Tema.FAR.equals(arkivsak.getTema())) {
-			return bisysAntiCorruptionLayer.hentBidragSak(arkivsak.getArkivsaksnummer());
+			return bisysAntiCorruptionLayer.hentBidragSak(arkivsak.getFagsakId());
 		} else {
 			return new BidragSak();
 		}
