@@ -34,7 +34,7 @@ public enum VariantFormatCode {
 	/**
 	 * versjon med infotekster
 	 */
-	FULLVERSJON(null);
+	FULLVERSJON(Variantformat.FULLVERSJON);
 
 	private final Variantformat safVariantformat;
 

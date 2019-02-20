@@ -63,3 +63,10 @@ fasitResources:
     resourceType: RestService
     propertyMap:
       url: security.oidc.idp.sts.jwksUrl
+  exposed:
+    - alias: "saf.graphql"
+      resourceType: restservice
+      path: /graphql
+    - alias: "saf.hentdokument"
+      resourceType: restservice
+      path: /rest/hentdokument

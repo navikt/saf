@@ -54,7 +54,7 @@ public class HentDokumentController {
 											   @ApiParam(hidden = true) @RequestHeader(value = HttpHeaders.AUTHORIZATION, required = false) String authorizationHeader) {
 
 		log.info("hentDokument har mottatt kall. journalpostId={}, dokumentInfoId={}, variantFormat={}", journalpostId, dokumentInfoId, variantFormat);
-		HentDokument response = hentDokumentDomainCoordinator.hentDokument(journalpostId, dokumentInfoId, variantFormat, new SafRequestContext(authorizationHeader, generateCorellationIdIfNull(xCorrelationId), oidcValidatorTool));
+		HentDokument response = hentDokumentDomainCoordinator.hentDokument(journalpostId, dokumentInfoId, variantFormat, new SafRequestContext(authorizationHeader, generateCorrelationIdIfNull(xCorrelationId), oidcValidatorTool));
 
 		return ResponseEntity.ok()
 				.contentType(response.getMediaType())
@@ -62,7 +62,7 @@ public class HentDokumentController {
 				.body(response.getDokument());
 	}
 
-	private String generateCorellationIdIfNull(String xCorrelationId) {
+	private String generateCorrelationIdIfNull(String xCorrelationId) {
 		if (xCorrelationId == null || xCorrelationId.trim().isEmpty()) {
 			return UUID.randomUUID().toString();
 		} else {

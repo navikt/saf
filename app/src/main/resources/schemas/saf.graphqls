@@ -287,13 +287,21 @@ type LogiskVedlegg {
 # * SAF returnerer kun varianter i *"menneskelesbart"* filformat, som f.eks. PDF eller PNG, og de fleste dokumenter vil kun returneres i variantformat **ARKIV**.
 # * Dersom det eksisterer andre varianter av dokumentet, vil disse også returneres, gitt at saksbehandler har rettigheter som tilsier at han/hun skal vite at det finnes andre varianter.
 type Dokumentvariant {
-    # Typen variant som returneres. Normalt vil dette være **ARKIV**, men kan også være **SLADDET** eller **PRODUKSJON_DLF**.
-    # * Feltet kan også ha visningsvariant **SLADDET**.
+    # Typen variant som returneres. Normalt vil dette være **ARKIV**, men kan også være **SLADDET**, **PRODUKSJON_DLF** eller **FULLVERSJON**
     variantformat: Variantformat!
 
     # Sier hvorvidt saksbehandler som gjør oppslaget vil få tilgang til å åpne denne dokumentvarianten.
     # * Dersom verdien er false, vil tilgang bli avslått dersom saksbehandler forsøker å åpne dokumentet.
     saksbehandlerHarTilgang: Boolean!
+}
+
+# Fagsystemene som arkiverer kan legge til egne fagspesifikke attributter per journalpost. Disse er representert som et skjemaløst nøkkel-verdi-sett og valideres ikke av Joark. Et eksempel på et slikt sett kan være (bucid, 21521).
+type Tilleggsopplysning {
+    # Nøkkelen til det fagspesifikke attributtet.
+    nokkel: String!
+
+    # Verdien til det fagspesifikke attributtet.
+    verdi: String!
 }
 
 # Beskriver en type dato som kan være relevant for en journalpost, for eksempel **DATO_OPPRETTET**. Ulike datotyper returneres for ulike journalstatuser.
@@ -623,7 +631,7 @@ enum Tema {
     YRK
 }
 
-# Typen variant som returneres. Dette er normalt **ARKIV**, men kan også være **SLADDET** eller **PRODUKSJON_DLF**.
+# Typen variant som returneres. Dette er normalt **ARKIV**, men kan også være **SLADDET**, **PRODUKSJON_DLF** eller **FULLVERSJON**.
 enum Variantformat {
     # Den *"offisielle"* versjonen av et dokument, som er beregnet på visning og langtidsbevaring. I de fleste tilfeller er arkivvarianten lik dokumentet brukeren sendte inn eller mottok (digitalt eller på papir).
     # * Arkivvarianten er alltid i menneskelesbart format, som PDF, PDF/A eller PNG.
@@ -637,6 +645,10 @@ enum Variantformat {
     # Produksjonsvariant i eget proprietært format.
     # * Varianten finnes kun for dokumenter som er produsert i Exstream Live Editor.
     PRODUKSJON_DLF
+
+    # Variant av dokument som inneholder spørsmålstekster, hjelpetekster og ubesvarte spørsmål fra søknadsdialogen.
+    # * Fullversjon genereres for enkelte søknadsskjema fra nav.no, og brukes ved klagebehandling.
+    FULLVERSJON
 }
 
 # Dokumentstatus gir en indikasjon på hvorvidt dokumentet er ferdigstilt eller under arbeid, eventuelt avbrutt. Dersom dokumentet ikke har noen dokumentstatus, er dokumentet komplett / ferdigstilt.

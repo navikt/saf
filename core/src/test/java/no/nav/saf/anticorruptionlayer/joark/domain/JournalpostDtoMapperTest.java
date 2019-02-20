@@ -6,6 +6,7 @@ import static org.assertj.core.groups.Tuple.tuple;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
 import static org.hamcrest.core.IsNot.not;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -22,12 +23,14 @@ import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.Dokumen
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.JournalpostDto;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.LogiskVedleggDto;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.SaksrelasjonDto;
+import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.TilleggsopplysningDto;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.VariantDto;
 import no.nav.saf.cache.KeyGeneratorLocalCaching;
 import no.nav.saf.domain.Arkivsak;
 import no.nav.saf.domain.kode.Arkivsakssystem;
 import no.nav.saf.domain.kode.Datotype;
 import no.nav.saf.domain.kode.Dokumentstatus;
+import no.nav.saf.domain.kode.Journalposttype;
 import no.nav.saf.domain.kode.Journalstatus;
 import no.nav.saf.domain.kode.Kanal;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
@@ -80,6 +83,14 @@ class JournalpostDtoMapperTest {
 
 	private static final FagomradeCode FAGOMRADE = FagomradeCode.STO;
 	private static final String JOURNALFOERT_AV = "Automatisk jobb";
+	private static final String BEHANDLINGSTEMA = "ab0072";
+	private static final String BEHANDLINGSTEMANAVN = "Foreldrepenger ved adopsjon";
+	private static final String AVSENDER_MOTTAKER_NAVN = "Bjarne Betjent";
+	private static final String AVSENDER_MOTTAKER_LAND = "NO";
+	private static final String JOURNALFOERENDE_ENHET = "2990";
+	private static final String OPPRETTET_AV_NAVN = "Max Mekker";
+	private static final String TILLEGGSOPPLYSNING_NOKKEL = "bucid";
+	private static final String TILLEGGSOPPLYSNING_VERDI = "21521";
 
 	private final JournalpostDtoMapper mapper = new JournalpostDtoMapper();
 
@@ -120,8 +131,8 @@ class JournalpostDtoMapperTest {
 
 		assertCommonMetadata(journalpost);
 
-		assertEquals(JournalpostTypeCode.I.toString(), journalpost.getJournalposttype().toString());
-		assertEquals(Journalstatus.FEILREGISTRERT, journalpost.getJournalstatus());
+		assertEquals(Journalposttype.I, journalpost.getJournalposttype());
+		assertEquals(Journalstatus.JOURNALFOERT, journalpost.getJournalstatus());
 		assertEquals(journalpost.getKanalnavn(), Kanal.UKJENT.getKanalnavn());
 
 		assertThat(journalpost.getRelevanteDatoer(), not(hasItem(new RelevantDato(DOKUMENT_DATO, Datotype.DATO_DOKUMENT))));
@@ -228,7 +239,33 @@ class JournalpostDtoMapperTest {
 				.hasSize(2)
 				.containsExactlyInAnyOrder(tuple(VARIANT_FORMAT_CODE_SLADDET.getSafVariantformat(), false),
 						tuple(VARIANT_FORMAT_CODE_ARKIV.getSafVariantformat(), true));
+	}
 
+	@Test
+	void shouldHaveSaksbehandlerHaveTilgangTrueWhenJournalstatusMottatt() {
+		JournalpostDto journalpostDto = buildJournalpostDtoInngaaendeType();
+		journalpostDto.setJournalstatus(JournalStatusCode.M);
+
+		String tilgangKeyPep5LocalCaching = KeyGeneratorLocalCaching.getKeyForPep5(String.valueOf(JOURNALPOST_ID), DOKUMENT_INFO_ID);
+		String tilgangKeyPep6dLocalCachingVariantArkiv = KeyGeneratorLocalCaching.getKeyForPep6d(
+				String.valueOf(JOURNALPOST_ID), DOKUMENT_INFO_ID, VARIANT_FORMAT_CODE_ARKIV.getSafVariantformat()
+						.name(), SKJERMING_TYPE_CODE_POL.getSafSkjerming().name());
+		String tilgangKeyPep6dLocalCachingVariantSladdet = KeyGeneratorLocalCaching.getKeyForPep6d(
+				String.valueOf(JOURNALPOST_ID), DOKUMENT_INFO_ID, VARIANT_FORMAT_CODE_SLADDET.getSafVariantformat()
+						.name(), null);
+
+		RequestCache requestCache = new RequestCache();
+		requestCache.putObject(tilgangKeyPep5LocalCaching, Boolean.TRUE);
+		requestCache.putObject(tilgangKeyPep6dLocalCachingVariantArkiv, Boolean.TRUE);
+		requestCache.putObject(tilgangKeyPep6dLocalCachingVariantSladdet, Boolean.TRUE);
+
+		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, requestCache);
+
+		assertThat(journalpost.getDokumenter(), hasSize(1));
+		journalpost.getDokumenter().forEach(dokumentInfo ->
+				dokumentInfo.getDokumentvarianter().forEach(dokumentvariant -> {
+			assertTrue(dokumentvariant.isSaksbehandlerHarTilgang());
+		}));
 	}
 
 	private void assertCommonMetadata(Journalpost journalpost) {
@@ -236,12 +273,23 @@ class JournalpostDtoMapperTest {
 		assertEquals(INNHOLD, journalpost.getTittel());
 		assertEquals(FagomradeCode.toSafTema(FAGOMRADE), journalpost.getTema());
 		assertEquals(JOURNALFOERT_AV, journalpost.getJournalfortAvNavn());
+		assertEquals(BEHANDLINGSTEMA, journalpost.getBehandlingstema());
+		assertEquals(BEHANDLINGSTEMANAVN, journalpost.getBehandlingstemanavn());
+		assertEquals(AVSENDER_MOTTAKER_NAVN, journalpost.getAvsenderMottakerNavn());
+		assertEquals(AVSENDER_MOTTAKER_LAND, journalpost.getAvsenderMottakerLand());
+		assertEquals(JOURNALFOERENDE_ENHET, journalpost.getJournalforendeEnhet());
+		assertEquals(OPPRETTET_AV_NAVN, journalpost.getOpprettetAvNavn());
 
 		assertEquals(LocalDateTime.from(DATO_OPPRETTET.toInstant()
 				.atZone(ZoneId.systemDefault())), LocalDateTime.from(journalpost.getDatoOpprettet()));
 		assertEquals(1, journalpost.getDokumenter().size());
+		assertThat(journalpost.getTilleggsopplysninger(), hasSize(1));
+		assertThat(journalpost.getTilleggsopplysninger().get(0).getNokkel(), is(TILLEGGSOPPLYSNING_NOKKEL));
+		assertThat(journalpost.getTilleggsopplysninger().get(0).getVerdi(), is(TILLEGGSOPPLYSNING_VERDI));
+
 		DokumentInfo dokumentInfo1 = journalpost.getDokumenter().get(0);
 		assertEquals(DOKUMENT_INFO_ID, dokumentInfo1.getDokumentInfoId());
+		assertEquals(Long.toString(JOURNALPOST_ID), dokumentInfo1.getOriginalJournalpostId());
 
 		Assertions.assertThat(dokumentInfo1.getDokumentvarianter())
 				.extracting(Dokumentvariant::getVariantformat, Dokumentvariant::isSaksbehandlerHarTilgang)
@@ -305,6 +353,7 @@ class JournalpostDtoMapperTest {
 						.tittel("veldigViktigTittel")
 						.brevkode(BREVKODE)
 						.dokumentstatus(DokumentStatusCode.FERDIGSTILT)
+						.origJournalpostId(JOURNALPOST_ID)
 						.logiske(Collections.singletonList(new LogiskVedleggDto()))
 						.varianter(Arrays.asList(VariantDto.builder()
 										.skjerming(SKJERMING_TYPE_CODE_POL)
@@ -332,7 +381,7 @@ class JournalpostDtoMapperTest {
 	private JournalpostDto buildJournalpostDtoInngaaendeType() {
 		return baseJournalpostDto()
 				.journalposttype(JournalpostTypeCode.I)
-				.saksrelasjon(new SaksrelasjonDto(SAKS_ID, true, FAKSYSTEM_CODE))
+				.saksrelasjon(new SaksrelasjonDto(SAKS_ID, false, FAKSYSTEM_CODE))
 				.mottattDato(MOTTAT_DATO)
 				.journalDato(JOURNAL_DATO)
 				.build();
@@ -341,14 +390,14 @@ class JournalpostDtoMapperTest {
 	private JournalpostDto buildJournalpostDtoInternNotatType() {
 		return baseJournalpostDto()
 				.journalposttype(JournalpostTypeCode.N)
-				.saksrelasjon(new SaksrelasjonDto(SAKS_ID, true, FAKSYSTEM_CODE))
+				.saksrelasjon(new SaksrelasjonDto(SAKS_ID, false, FAKSYSTEM_CODE))
 				.build();
 	}
 
 	private JournalpostDto buildJournalpostDtoPenSaksrelasjonDto() {
 		return baseJournalpostDto()
 				.journalposttype(JournalpostTypeCode.N)
-				.saksrelasjon(new SaksrelasjonDto(SAKS_ID, true, FagsystemCode.PEN))
+				.saksrelasjon(new SaksrelasjonDto(SAKS_ID, false, FagsystemCode.PEN))
 				.build();
 	}
 
@@ -358,9 +407,19 @@ class JournalpostDtoMapperTest {
 				.nextJournalpostId(405252858L)
 				.innhold(INNHOLD)
 				.fagomrade(FAGOMRADE)
+				.behandlingstema(BEHANDLINGSTEMA)
+				.behandlingstemanavn(BEHANDLINGSTEMANAVN)
+				.avsenderMottakerNavn(AVSENDER_MOTTAKER_NAVN)
+				.avsenderMottakerLand(AVSENDER_MOTTAKER_LAND)
+				.journalforendeEnhet(JOURNALFOERENDE_ENHET)
 				.journalfortAvNavn(JOURNALFOERT_AV)
+				.opprettetAvNavn(OPPRETTET_AV_NAVN)
 				.datoOpprettet(DATO_OPPRETTET)
+				.journalstatus(JournalStatusCode.J)
+				.tilleggsopplysninger(Collections.singletonList(TilleggsopplysningDto.builder()
+						.nokkel(TILLEGGSOPPLYSNING_NOKKEL)
+						.verdi(TILLEGGSOPPLYSNING_VERDI)
+						.build()))
 				.dokumenter(buildDokumenter());
 	}
-
 }
