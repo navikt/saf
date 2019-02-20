@@ -439,7 +439,7 @@ public class HentDokumentIT extends AbstractItest {
 				.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_PDF_VALUE)
 				.withBody(Base64.getEncoder().encode(TEST_FILE_BYTES))));
 
-		stubFor(get("/bidrag/55555555").willReturn(aResponse()
+		stubFor(get("/bidrag/765432").willReturn(aResponse()
 				.withStatus(HttpStatus.OK.value())
 				.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
 				.withBodyFile("bidrag/bidragsak-happy.json")));
@@ -466,7 +466,7 @@ public class HentDokumentIT extends AbstractItest {
 				.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_PDF_VALUE)
 				.withBody(Base64.getEncoder().encode(TEST_FILE_BYTES))));
 
-		stubFor(get("/bidrag/55555555").willReturn(aResponse()
+		stubFor(get("/bidrag/765432").willReturn(aResponse()
 				.withStatus(HttpStatus.OK.value())
 				.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
 				.withBodyFile("bidrag/bidragsak-happy.json")));
@@ -493,7 +493,7 @@ public class HentDokumentIT extends AbstractItest {
 				.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_PDF_VALUE)
 				.withBody(Base64.getEncoder().encode(TEST_FILE_BYTES))));
 
-		stubFor(get("/bidrag/55555555").willReturn(aResponse()
+		stubFor(get("/bidrag/765432").willReturn(aResponse()
 				.withStatus(HttpStatus.OK.value())
 				.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
 				.withBodyFile("bidrag/bidragsak-happy.json")));
@@ -520,7 +520,7 @@ public class HentDokumentIT extends AbstractItest {
 				.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_PDF_VALUE)
 				.withBody(Base64.getEncoder().encode(TEST_FILE_BYTES))));
 
-		stubFor(get("/bidrag/55555555").willReturn(aResponse()
+		stubFor(get("/bidrag/765432").willReturn(aResponse()
 				.withStatus(HttpStatus.OK.value())
 				.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
 				.withBodyFile("bidrag/bidragsak-happy.json")));
@@ -548,7 +548,7 @@ public class HentDokumentIT extends AbstractItest {
 				.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_PDF_VALUE)
 				.withBody(Base64.getEncoder().encode(TEST_FILE_BYTES))));
 
-		stubFor(get("/bidrag/55555555").willReturn(aResponse()
+		stubFor(get("/bidrag/765432").willReturn(aResponse()
 				.withStatus(HttpStatus.OK.value())
 				.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
 				.withBodyFile("bidrag/bidragsak-happy.json")));
@@ -575,7 +575,7 @@ public class HentDokumentIT extends AbstractItest {
 				.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_PDF_VALUE)
 				.withBody(Base64.getEncoder().encode(TEST_FILE_BYTES))));
 
-		stubFor(get("/bidrag/55555555").willReturn(aResponse()
+		stubFor(get("/bidrag/765432").willReturn(aResponse()
 				.withStatus(HttpStatus.OK.value())
 				.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
 				.withBodyFile("bidrag/bidragsak-happy.json")));
