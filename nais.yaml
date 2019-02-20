@@ -67,3 +67,6 @@ fasitResources:
     - alias: "saf.graphql"
       resourceType: restservice
       path: /graphql
+    - alias: "saf.hentdokument"
+      resourceType: restservice
+      path: /rest/hentdokument
