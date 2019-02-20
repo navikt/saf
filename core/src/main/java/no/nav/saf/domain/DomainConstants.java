@@ -17,7 +17,7 @@ public final class DomainConstants {
 	public static final String PERSON = "PERSON";
 	public static final String ORGANISASJON = "ORGANISASJON";
 
-	// pep-navn
+	// PEP funksjonelt navn. Se https://confluence.adeo.no/display/BOA/SAF+-+Modell+for+tilgangskontroll
 	public static final String PEP1G = "pep1g";
 	public static final String PEP2 = "pep2";
 	public static final String PEP2D = "pep2d";

@@ -3,9 +3,16 @@ package no.nav.saf.endpoints.journalpost;
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
+import static no.nav.saf.query.journalpost.JournalpostCoordinatorImpl.PEP1G_ERRORMESSAGE;
+import static no.nav.saf.query.journalpost.JournalpostCoordinatorImpl.PEP2_ERRORMESSAGE;
+import static no.nav.saf.query.journalpost.JournalpostCoordinatorImpl.PEP3_ERRORMESSAGE;
+import static no.nav.saf.query.journalpost.JournalpostCoordinatorImpl.PEP4_ERRORMESSAGE;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.hasSize;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
@@ -34,15 +41,17 @@ import org.springframework.http.ResponseEntity;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
  * @author Joakim Bjørnstad, Jbit AS
  */
-public class JournalpostIT extends AbstractItest {
+class JournalpostIT extends AbstractItest {
 	private final String JOURNALPOST_ID = "400000000";
 	private final String GSAK_ID = "100000000";
+	private final String BIDRAG_SAK_ID = "100000000";
 
 	private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
@@ -103,14 +112,137 @@ public class JournalpostIT extends AbstractItest {
 		assertTrue(dokumentInfo1.getDokumentvarianter().get(0).isSaksbehandlerHarTilgang());
 	}
 
-	// TODO pep1g deny
-	// TODO pep2 deny
-	// TODO pep2 FAR permit
-	// TODO pep2d deny
-	// TODO pep3 deny
-	// TODO pep4 deny (1 POL skjerming journalpost)
-	// TODO pep5 deny (1 POL skjerming dokument metadata)
-	// TODO pep6d deny (1 POL skjerming dokumentfil)
+	@Test
+	void shouldReturnNullJournalpostWhenDenyOnPep1g() throws Exception {
+		abacDenyPep1g();
+		stubFor(get("/hentjournalsakinfo/hentjournalpost/" + JOURNALPOST_ID)
+				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
+						.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("hentjournalsakinfo/hentjournalpost_not_bid-happy.json")));
+		stubFor(get("/gsak/" + GSAK_ID)
+				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
+						.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("gsak/gsak-sakBySaksId_not_bid-happy.json")));
+
+		ResponseEntity<LinkedHashMap> responseEntity = journalpostQuery();
+		assertErrorWithMessage(responseEntity, PEP1G_ERRORMESSAGE);
+	}
+
+	@Test
+	void shouldReturnNullJournalpostWhenDenyOnPep2() throws Exception {
+		abacDenyPep2();
+		stubFor(get("/hentjournalsakinfo/hentjournalpost/" + JOURNALPOST_ID)
+				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
+						.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("hentjournalsakinfo/hentjournalpost_far-happy.json")));
+		stubFor(get("/gsak/" + GSAK_ID)
+				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
+						.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("gsak/gsak-sakBySaksId_far-happy.json")));
+		stubFor(get("/bidrag/" + BIDRAG_SAK_ID)
+				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
+						.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("bidrag/bidragsak-happy.json")));
+
+		ResponseEntity<LinkedHashMap> responseEntity = journalpostQuery();
+		assertErrorWithMessage(responseEntity, PEP2_ERRORMESSAGE);
+	}
+
+	@Test
+	void shouldReturnSaksbehandlerTilgangFalseWhenDenyOnPep2d() throws Exception {
+		abacDenyPep2dSkipPep2();
+		stubFor(get("/hentjournalsakinfo/hentjournalpost/" + JOURNALPOST_ID)
+				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
+						.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("hentjournalsakinfo/hentjournalpost_not_bid-happy.json")));
+		stubFor(get("/gsak/" + GSAK_ID)
+				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
+						.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("gsak/gsak-sakBySaksId_not_bid-happy.json")));
+
+		Journalpost journalpost = parseJournalpost(journalpostQuery());
+		DokumentInfo dokumentInfo1 = journalpost.getDokumenter().get(0);
+		assertFalse(dokumentInfo1.getDokumentvarianter().get(0).isSaksbehandlerHarTilgang());
+	}
+
+	@Test
+	void shouldReturnNullJournalpostWhenDenyOnPep3() throws Exception {
+		abacDenyPep3();
+		stubFor(get("/hentjournalsakinfo/hentjournalpost/" + JOURNALPOST_ID)
+				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
+						.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("hentjournalsakinfo/hentjournalpost_far-happy.json")));
+		stubFor(get("/gsak/" + GSAK_ID)
+				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
+						.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("gsak/gsak-sakBySaksId_far-happy.json")));
+		stubFor(get("/bidrag/" + BIDRAG_SAK_ID)
+				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
+						.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("bidrag/bidragsak-happy.json")));
+
+		ResponseEntity<LinkedHashMap> responseEntity = journalpostQuery();
+		assertErrorWithMessage(responseEntity, PEP3_ERRORMESSAGE);
+	}
+
+	@Test
+	void shouldReturnNullJournalpostWhenDenyOnPep4() throws Exception {
+		abacDenyPep4SkipPep2Pep3();
+		stubFor(get("/hentjournalsakinfo/hentjournalpost/" + JOURNALPOST_ID)
+				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
+						.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("hentjournalsakinfo/hentjournalpost_jp_pol_skjerming-happy.json")));
+		stubFor(get("/gsak/" + GSAK_ID)
+				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
+						.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("gsak/gsak-sakBySaksId_not_bid-happy.json")));
+
+		ResponseEntity<LinkedHashMap> responseEntity = journalpostQuery();
+			assertErrorWithMessage(responseEntity, PEP4_ERRORMESSAGE);
+	}
+
+	@Test
+	void shouldReturnJournalpostWithOneFilteredDokumentInfoWhenDenyOnPep5() throws Exception {
+		abacDenyPep5SkipPep2Pep3Pep4();
+		stubFor(get("/hentjournalsakinfo/hentjournalpost/" + JOURNALPOST_ID)
+				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
+						.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("hentjournalsakinfo/hentjournalpost_dokumentinfo_pol_skjerming-happy.json")));
+		stubFor(get("/gsak/" + GSAK_ID)
+				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
+						.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("gsak/gsak-sakBySaksId_not_bid-happy.json")));
+
+		Journalpost journalpost = parseJournalpost(journalpostQuery());
+		assertThat(journalpost.getDokumenter(), hasSize(1));
+	}
+
+	@Test
+	void shouldReturnSaksbehandlerTilgangFalseOnVariantWithDenyOnPep6d() throws Exception {
+		abacDenyPep6dSkipPep2Pep3Pep4Pep5();
+		stubFor(get("/hentjournalsakinfo/hentjournalpost/" + JOURNALPOST_ID)
+				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
+						.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("hentjournalsakinfo/hentjournalpost_variant_pol_skjerming-happy.json")));
+		stubFor(get("/gsak/" + GSAK_ID)
+				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
+						.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("gsak/gsak-sakBySaksId_not_bid-happy.json")));
+
+		Journalpost journalpost = parseJournalpost(journalpostQuery());
+		DokumentInfo dokumentInfo1 = journalpost.getDokumenter().get(0);
+		assertFalse(dokumentInfo1.getDokumentvarianter().get(0).isSaksbehandlerHarTilgang());
+	}
+
+	private void assertErrorWithMessage(ResponseEntity<LinkedHashMap> responseEntity, String expectedErrorMessage) throws Exception {
+		Map<String, Object> data = (Map<String, Object>) responseEntity.getBody().get("data");
+		assertThat(data.get("journalpost"), nullValue());
+		assertErrorMessage(responseEntity, expectedErrorMessage);
+	}
+
+	private void assertErrorMessage(ResponseEntity<LinkedHashMap> responseEntity, String expectedErrorMessage) {
+		assertThat(((LinkedHashMap)((ArrayList) responseEntity.getBody().get("errors")).get(0)).get("message"), is(expectedErrorMessage));
+	}
 
 	private ResponseEntity<LinkedHashMap> journalpostQuery() throws IOException, URISyntaxException {
 		GraphQLRequest request = new GraphQLRequest(stringFromClasspath("journalpost/journalpost.query"), null, null);

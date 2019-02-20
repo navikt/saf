@@ -34,6 +34,13 @@ import javax.inject.Named;
 @Component
 public class JournalpostCoordinatorImpl implements JournalpostCoordinator {
 
+	// PEP errormessage
+	public static final String PEP1G_ERRORMESSAGE = "Tilgang til journalposten er avvist.";
+	public static final String PEP2_ERRORMESSAGE = "Tilgang til journalposten er avvist. " +
+			"Ingen tilgang til saker tilknyttet tema " + Tema.FAR.getTemanavn() + " eller forvaltningslovens §19.";
+	public static final String PEP3_ERRORMESSAGE = "Tilgang til journalposten er avvist. Ingen tilgang til relevante tredjeparter på sak tilknyttet journalpost.";
+	public static final String PEP4_ERRORMESSAGE = "Tilgang til journalpost er avvist. Journalposten er skjermet ihht personopplysningsloven.";
+
 	private final JournalpostTilgangRepository journalpostTilgangRepository;
 	private final Rjoark902JournalpostDtoMapper rjoark902JournalpostDtoMapper;
 	private final Pep<TilgangBruker> pep1;
@@ -76,7 +83,7 @@ public class JournalpostCoordinatorImpl implements JournalpostCoordinator {
 		boolean pep1Access = pep1.hasAccess(tilgangBruker, safRequestContext);
 		if (!pep1Access) {
 			// Vi informerer ikke om hvorfor pga kode6/7/egen ansatt
-			throw new TilgangskontrollException("Tilgang til journalposten er avvist.");
+			throw new TilgangskontrollException(PEP1G_ERRORMESSAGE);
 		}
 
 		final TilgangSak tilgangSak = journalpostTilgangRepository.findTilgangSak(arkivsak.getArkivsaksnummer(), arkivsak
@@ -84,13 +91,7 @@ public class JournalpostCoordinatorImpl implements JournalpostCoordinator {
 
 		boolean pep2Access = pep2.hasAccess(tilgangSak, safRequestContext);
 		if (!pep2Access) {
-			throw new TilgangskontrollException("Tilgang til journalposten er avvist. " +
-					"Ingen tilgang til saker tilknyttet " + Tema.FAR.getTemanavn() + " eller Forvaltningslovens §19.");
-		}
-
-		boolean pep3Access = pep3.hasAccess(tilgangSak, safRequestContext);
-		if (!pep3Access) {
-			throw new TilgangskontrollException("Tilgang til journalposten er avvist. Ingen tilgang til relevante tredjeparter på sak tilknyttet journalpost.");
+			throw new TilgangskontrollException(PEP2_ERRORMESSAGE);
 		}
 
 		final TilgangJournalpost tilgangJournalpost = journalpostTilgangRepository.findTilgangJournalpostFromSafRequestContext(safRequestContext, tilgangSak);
@@ -98,9 +99,14 @@ public class JournalpostCoordinatorImpl implements JournalpostCoordinator {
 			pep2d.hasAccess(tilgangSak, safRequestContext);
 		}
 
+		boolean pep3Access = pep3.hasAccess(tilgangSak, safRequestContext);
+		if (!pep3Access) {
+			throw new TilgangskontrollException(PEP3_ERRORMESSAGE);
+		}
+
 		boolean pep4Access = pep4.hasAccess(tilgangJournalpost, safRequestContext);
 		if (!pep4Access) {
-			throw new TilgangskontrollException("Tilgang til journalpost er avvist. Journalposten er skjermet ihht personopplysningsloven.");
+			throw new TilgangskontrollException(PEP4_ERRORMESSAGE);
 		}
 
 		tilgangJournalpost.getDokumenter().forEach(tilgangDokumentInfo -> {
