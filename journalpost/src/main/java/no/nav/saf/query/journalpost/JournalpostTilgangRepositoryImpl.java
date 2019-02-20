@@ -49,7 +49,7 @@ public class JournalpostTilgangRepositoryImpl implements JournalpostTilgangRepos
 	@Override
 	public TilgangJournalpost findTilgangJournalpostFromSafRequestContext(SafRequestContext safRequestContext, TilgangSak tilgangSak) {
 		try {
-			return journalpostAntiCorruptionLayer.hentTilgangJournalpostFromSafRequestContext(safRequestContext, tilgangSak);
+			return journalpostAntiCorruptionLayer.hentTilgangJournalpostFromSafRequestContext(safRequestContext);
 		} catch (Exception e) {
 			log.warn("findTilgangJournalpostFromSafRequestContext feilet", e);
 			return null;

@@ -198,7 +198,7 @@ class JournalpostIT extends AbstractItest {
 						.withBodyFile("gsak/gsak-sakBySaksId_not_bid-happy.json")));
 
 		ResponseEntity<LinkedHashMap> responseEntity = journalpostQuery();
-			assertErrorWithMessage(responseEntity, PEP4_ERRORMESSAGE);
+		assertErrorWithMessage(responseEntity, PEP4_ERRORMESSAGE);
 	}
 
 	@Test
@@ -241,7 +241,7 @@ class JournalpostIT extends AbstractItest {
 	}
 
 	private void assertErrorMessage(ResponseEntity<LinkedHashMap> responseEntity, String expectedErrorMessage) {
-		assertThat(((LinkedHashMap)((ArrayList) responseEntity.getBody().get("errors")).get(0)).get("message"), is(expectedErrorMessage));
+		assertThat(((LinkedHashMap) ((ArrayList) responseEntity.getBody().get("errors")).get(0)).get("message"), is(expectedErrorMessage));
 	}
 
 	private ResponseEntity<LinkedHashMap> journalpostQuery() throws IOException, URISyntaxException {

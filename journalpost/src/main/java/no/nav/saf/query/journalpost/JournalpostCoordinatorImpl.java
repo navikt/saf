@@ -111,9 +111,8 @@ public class JournalpostCoordinatorImpl implements JournalpostCoordinator {
 
 		tilgangJournalpost.getDokumenter().forEach(tilgangDokumentInfo -> {
 			pep5.hasAccess(tilgangDokumentInfo, safRequestContext);
-			tilgangDokumentInfo.getTilgangDokumentvarianter().forEach(tilgangDokumentvariant -> {
-				pep6d.hasAccess(tilgangDokumentvariant, safRequestContext);
-			});
+			tilgangDokumentInfo.getTilgangDokumentvarianter().forEach(tilgangDokumentvariant ->
+					pep6d.hasAccess(tilgangDokumentvariant, safRequestContext));
 		});
 
 		return hentVisningsmodell(safRequestContext);
