@@ -295,15 +295,6 @@ type Dokumentvariant {
     saksbehandlerHarTilgang: Boolean!
 }
 
-# Fagsystemene som arkiverer kan legge til egne fagspesifikke attributter per journalpost. Disse er representert som et skjemaløst nøkkel-verdi-sett og valideres ikke av Joark. Et eksempel på et slikt sett kan være (bucid, 21521).
-type Tilleggsopplysning {
-    # Nøkkelen til det fagspesifikke attributtet.
-    nokkel: String!
-
-    # Verdien til det fagspesifikke attributtet.
-    verdi: String!
-}
-
 # Beskriver en type dato som kan være relevant for en journalpost, for eksempel **DATO_OPPRETTET**. Ulike datotyper returneres for ulike journalstatuser.
 enum Datotype {
     # * Tidspunktet journalposten er opprettet i joark. Tidspunktet settes automatisk og kan ikke overskrives. Selv om hver journalpost har mange datoer (se relevanteDatoer) er datoOpprettet å anse som "fasit" på journalpostens alder.
