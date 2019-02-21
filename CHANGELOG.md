@@ -8,6 +8,10 @@ Alle nevneverdige endringer blir dokumentert her.
 
 Denne malen er basert på [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [4.0.1] - 2019-02-21 
+### Rettet
+* Rettet feil i `journalpost` query der man fikk NullPointerException ved å spørre på midlertidige journalposter uten saksrelasjon.
+
 ## [4.0.0] - 2019-02-21
 ### Endret
 * `GraphQL: ` Ny query `journalpost` med full tilgangskontroll. Se [dokumentasjon](https://confluence.adeo.no/display/BOA/Query%3A+journalpost) for mer informasjon. 
