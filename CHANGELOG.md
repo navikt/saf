@@ -8,6 +8,12 @@ Alle nevneverdige endringer blir dokumentert her.
 
 Denne malen er basert på [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [4.0.0] - 2019-02-21
+### Endret
+* `GraphQL: ` Ny query `journalpost` med full tilgangskontroll. Se [dokumentasjon](https://confluence.adeo.no/display/BOA/Query%3A+journalpost) for mer informasjon. 
+### Rettet
+* `GraphQL: ` Type `DokumentInfo`. Nytt felt `originalJournalpostId`. Feltet ble ikke faktisk lagt til i API i `saf:3.3.0`.
+
 ## [3.3.0] - 2019-02-15
 ### Endret
 * `GraphQL: ` Type `Journalpost` og `DokumentInfo` har fått flere nye felt, nevnt under. Se dokumentasjon i [GraphiQL](https://saf-q1.nais.preprod.local/graphiql) eller [Confluence](https://confluence.adeo.no/display/BOA/saf+-+GraphQL+API+v1) for mer informasjon.
