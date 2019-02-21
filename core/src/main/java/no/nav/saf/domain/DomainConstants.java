@@ -12,11 +12,12 @@ public final class DomainConstants {
 	public static final String TILGANG_BRUKER = "tilgangBruker";
 	public static final String AKTOER_ID_LIST = "aktoerIdList";
 	public static final String ORGNR_LIST = "orgnrList";
-	public static final String TILGANG_JOURNALPOST_DTO = "TilgangJournalpostDto";
+	public static final String RJOARK901_TILGANG_JOURNALPOST_DTO = "TilgangJournalpostDto";
+	public static final String RJOARK902_JOURNALPOST_DTO = "journalpostDto";
 	public static final String PERSON = "PERSON";
 	public static final String ORGANISASJON = "ORGANISASJON";
 
-	// pep-navn
+	// PEP funksjonelt navn. Se https://confluence.adeo.no/display/BOA/SAF+-+Modell+for+tilgangskontroll
 	public static final String PEP1G = "pep1g";
 	public static final String PEP2 = "pep2";
 	public static final String PEP2D = "pep2d";

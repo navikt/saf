@@ -9,4 +9,8 @@ public class TilgangskontrollException extends SafFunctionalException {
 	public TilgangskontrollException() {
 		super();
 	}
+
+	public TilgangskontrollException(String message) {
+		super(message);
+	}
 }

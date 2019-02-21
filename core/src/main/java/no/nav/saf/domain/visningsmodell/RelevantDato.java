@@ -1,5 +1,7 @@
 package no.nav.saf.domain.visningsmodell;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import no.nav.saf.domain.kode.Datotype;
 
@@ -20,7 +22,8 @@ public class RelevantDato {
 	private final LocalDateTime dato;
 	private final Datotype datotype;
 
-	public RelevantDato(Date dato, Datotype datotype) {
+	@JsonCreator
+	public RelevantDato(@JsonProperty("dato") Date dato, @JsonProperty("datotype") Datotype datotype) {
 		this.dato = toLocalDateTime(dato);
 		this.datotype = datotype;
 	}

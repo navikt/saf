@@ -1,0 +1,62 @@
+{
+  "hentJournalpostDto": {
+    "journalpostId": 400000000,
+    "innhold": "En søknad om noe",
+    "fagomrade": "FOR",
+    "behandlingstema": "sok1",
+    "behandlingstemanavn": "En viktig søknad",
+    "journalstatus": "FS",
+    "avsenderMottakerNavn": "Bjarne Betjent",
+    "avsenderMottakerLand": "NO",
+    "journalforendeEnhet": "2990",
+    "journalfortAvNavn": "Max Mekker",
+    "opprettetAvNavn": "Max Mekker",
+    "mottakskanal": null,
+    "utsendingskanal": "SDP",
+    "journalposttype": "U",
+    "saksrelasjon": {
+      "sakId": "100000000",
+      "feilregistrert": null,
+      "fagsystem": "FS22"
+    },
+    "bruker": {
+      "brukerId": "***gammelt_fnr***",
+      "brukerIdType": "PERSON"
+    },
+    "datoOpprettet": "2018-06-27T02:02:13.174+0000",
+    "mottattDato": null,
+    "journalDato": null,
+    "dokumentDato": null,
+    "avsReturDato": null,
+    "sendtPrintDato": null,
+    "ekspedertDato": "2018-06-26T23:24:41.000+0000",
+    "skjerming": null,
+    "tilleggsopplysninger": [
+      {
+        "nokkel": "min_nokkel",
+        "verdi": "min_verdi"
+      }
+    ],
+    "dokumenter": [
+      {
+        "dokumentInfoId": 500000000,
+        "dokumentstatus": "FERDIGSTILT",
+        "brevkode": "for123",
+        "varianter": [
+          {
+            "variantf": "ARKIV",
+            "skjerming": "POL"
+          }
+        ],
+        "tittel": "Dokument1",
+        "skjerming": null,
+        "origJournalpostId": 400000000,
+        "logiske": [
+          {
+            "tittel": "Hei"
+          }
+        ]
+      }
+    ]
+  }
+}

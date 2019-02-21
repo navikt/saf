@@ -104,6 +104,12 @@ type Query {
         # Peker til resultat etter foerste, brukes til å paginere forover.
         etter: String
      ): Dokumentoversikt!
+
+    # * Query returnerer metadata for en journalpost.
+    # * Fysiske dokumentet tilknyttet journalposten kan hentes i saf - REST hentdokument
+    journalpost(
+       journalpostId: String!
+    ): Journalpost
 }
 
 # Dokumentoversikt er en liste av journalposter som tilfredstiller query kriteriene.
@@ -267,6 +273,9 @@ type DokumentInfo {
 
     # Dokumentstatus gir et indikasjon på hvorvidt dokumentet er ferdigstilt eller under arbeid, eventuelt avbrutt. Dersom dokumentet ikke har noen dokumentstatus, er dokumentet komplett / ferdigstilt.
     dokumentstatus: Dokumentstatus
+
+    # Et dokumentInfo-objekt kan være gjenbrukt på flere journalposter. OriginalJournalpostId peker på den journalposten som dokumentene var knyttet til på arkiveringstidspunktet.
+    originalJournalpostId: String
 
     # Liste over andre dokumenter som også befinner seg inne i den fysiske filen som dokumentinfo-objektet peker på.
     logiskeVedlegg: [LogiskVedlegg]!

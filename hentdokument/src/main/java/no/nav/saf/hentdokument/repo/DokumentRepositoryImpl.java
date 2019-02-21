@@ -1,8 +1,8 @@
 package no.nav.saf.hentdokument.repo;
 
 import lombok.extern.slf4j.Slf4j;
-import no.nav.saf.anticorruptionlayer.joark.JoarkAntiCorruptionLayer;
 import no.nav.saf.domain.HentDokument;
+import no.nav.saf.hentdokument.HentDokumentAntiCorruptionLayer;
 import org.springframework.stereotype.Repository;
 
 import javax.inject.Inject;
@@ -14,16 +14,16 @@ import javax.inject.Inject;
 @Repository
 public class DokumentRepositoryImpl implements DokumentRepository {
 
-	private final JoarkAntiCorruptionLayer joarkAntiCorruptionLayer;
+	private final HentDokumentAntiCorruptionLayer hentDokumentAntiCorruptionLayer;
 
 	@Inject
-	public DokumentRepositoryImpl(JoarkAntiCorruptionLayer joarkAntiCorruptionLayer) {
-		this.joarkAntiCorruptionLayer = joarkAntiCorruptionLayer;
+	public DokumentRepositoryImpl(HentDokumentAntiCorruptionLayer hentDokumentAntiCorruptionLayer) {
+		this.hentDokumentAntiCorruptionLayer = hentDokumentAntiCorruptionLayer;
 	}
 
 	@Override
 	public HentDokument findDokument(String dokumentInfoId, String variantFormat) {
-		return joarkAntiCorruptionLayer.hentDokument(dokumentInfoId, variantFormat);
+		return hentDokumentAntiCorruptionLayer.hentDokument(dokumentInfoId, variantFormat);
 
 	}
 }

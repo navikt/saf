@@ -15,6 +15,7 @@ import no.nav.saf.query.dokumentoversikt.bruker.DokumentoversiktBrukerArguments;
 import no.nav.saf.query.dokumentoversikt.bruker.DokumentoversiktBrukerCoordinator;
 import no.nav.saf.query.dokumentoversikt.fagsak.DokumentoversiktFagsakArguments;
 import no.nav.saf.query.dokumentoversikt.fagsak.DokumentoversiktFagsakCoordinator;
+import no.nav.saf.query.journalpost.JournalpostCoordinator;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import org.springframework.stereotype.Component;
 
@@ -30,14 +31,17 @@ public class DokumentoversiktWiring {
 	private final DokumentoversiktCoordinator dokumentoversiktCoordinator;
 	private final DokumentoversiktBrukerCoordinator dokumentoversiktBrukerCoordinator;
 	private final DokumentoversiktFagsakCoordinator dokumentoversiktFagsakCoordinator;
+	private final JournalpostCoordinator journalpostCoordinator;
 
 	@Inject
 	public DokumentoversiktWiring(DokumentoversiktCoordinator dokumentoversiktCoordinator,
 								  DokumentoversiktBrukerCoordinator dokumentoversiktBrukerCoordinator,
-								  DokumentoversiktFagsakCoordinator dokumentoversiktFagsakCoordinator) {
+								  DokumentoversiktFagsakCoordinator dokumentoversiktFagsakCoordinator,
+								  JournalpostCoordinator journalpostCoordinator) {
 		this.dokumentoversiktCoordinator = dokumentoversiktCoordinator;
 		this.dokumentoversiktBrukerCoordinator = dokumentoversiktBrukerCoordinator;
 		this.dokumentoversiktFagsakCoordinator = dokumentoversiktFagsakCoordinator;
+		this.journalpostCoordinator = journalpostCoordinator;
 	}
 
 	public RuntimeWiring createRuntimeWiring() {
@@ -73,6 +77,19 @@ public class DokumentoversiktWiring {
 						return dokumentoversikt;
 					} catch (SafFunctionalException e) {
 						return new DataFetcherResult<Dokumentoversikt>(Dokumentoversikt.empty(), Collections.singletonList(e));
+					}
+				}))
+				.type("Query", typeWiring -> typeWiring.dataFetcher("journalpost", environment -> {
+					try {
+						final String journalpostId = environment.getArgument("journalpostId");
+						SafRequestContext safRequestContext = environment.getContext();
+						safRequestContext.setCorrelationId(environment.getExecutionId());
+						log.info("query journalpost for journalpostId={}", journalpostId);
+						Journalpost journalpost = journalpostCoordinator.hentJournalpost(journalpostId, safRequestContext);
+						log.info("journalpost hentet for journalpostId={}", journalpostId);
+						return journalpost;
+					} catch (SafFunctionalException e) {
+						return new DataFetcherResult<Journalpost>(null, Collections.singletonList(e));
 					}
 				}))
 				.type("Journalpost", typeWiring -> typeWiring.dataFetcher("dokumenter", environment -> {

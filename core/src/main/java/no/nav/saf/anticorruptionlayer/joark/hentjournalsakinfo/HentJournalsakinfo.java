@@ -5,8 +5,10 @@ import static no.nav.saf.util.MDCConstants.CORRELATION_ID;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.FinnJournalposterRequestTo;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.FinnJournalposterResponseTo;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark901.HentTilgangJournalpostResponseTo;
+import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark902.HentJournalpostResponseTo;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark920.HentDokumentResponseTo;
 import no.nav.saf.exceptions.DokumentIkkeFunnetException;
+import no.nav.saf.exceptions.JournalpostIkkeFunnetException;
 import no.nav.saf.exceptions.SafFunctionalException;
 import no.nav.saf.exceptions.SafTechnicalException;
 import no.nav.saf.exceptions.UgyldigInputException;
@@ -18,6 +20,7 @@ import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
@@ -94,6 +97,22 @@ public class HentJournalsakinfo {
 		} catch (HttpClientErrorException e) {
 			throw new DokumentIkkeFunnetException(String.format("Dokument med dokumentInfoId=%s og variantFormat=%s ikke funnet. Feilmelding=%s",
 					dokumentInfoId, variantFormat, e.getMessage()));
+		}
+	}
+
+	@Monitor(value = "dok_consumer", extraTags = {"process", "hentJournalpost"}, histogram = true)
+	public HentJournalpostResponseTo hentJournalpost(final String journalpostId) {
+		try {
+			String uri = hentjournalsakinfoUrl + "/hentjournalpost/{journalpostId}";
+			return restTemplate.exchange(uri, HttpMethod.GET, new HttpEntity<>(createCorrelationIdHeader()), HentJournalpostResponseTo.class, journalpostId).getBody();
+		} catch (HttpServerErrorException e) {
+			throw new SafTechnicalException(String.format("hentDokument feilet teknisk med statusKode=%s. Feilmelding=%s", e
+					.getStatusCode(), e.getMessage()), e, e.getStatusCode());
+		} catch (HttpClientErrorException e) {
+			if (e.getStatusCode() == HttpStatus.NOT_FOUND) {
+				throw new JournalpostIkkeFunnetException("Journalpost med journalpostId=" + journalpostId + " ikke funnet.");
+			}
+			throw new SafFunctionalException(String.format("hentTilgangJournalpost feilet funksjonelt. journalpostId=%s, feilmelding=%s", journalpostId, e.getMessage()));
 		}
 	}
 
