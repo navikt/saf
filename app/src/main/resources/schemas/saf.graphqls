@@ -124,6 +124,16 @@ type SideInfo {
     finnesNesteSide: Boolean!
 }
 
+# * Fagsystemene som arkiverer kan legge til egne fagspesifikke attributter per journalpost.
+# * Disse er representert som et skjemaløst nøkkel-verdi-sett og valideres ikke av Joark. Et eksempel på et slikt sett kan være (bucid, 21521).
+type Tilleggsopplysning {
+    # Nøkkelen til det fagspesifikke attributtet.
+	nokkel: String
+
+	# Verdien til det fagspesifikke attributtet.
+	verdi: String
+}
+
 # * Et sett dokumenter som er sendt/mottatt samlet, og har felles arkivmetadata som *tema*, *avsender*, *arkivsak* og *sakspart*.
 # * En journalpost kan bestå av ett eller flere dokumenter.
 type Journalpost {
@@ -146,10 +156,10 @@ type Journalpost {
     # Dekode av Tema, f.eks. *"Foreldrepenger"*.
     temanavn: String
 
-    # Detaljering av tema på journalpost og tilhørende sak, f.eks. "ab0072".
+    # Detaljering av tema på journalpost og tilhørende sak, f.eks. *"ab0072"*.
     behandlingstema: String
 
-    # Dekode av behandlingstema, f.eks "Foreldrepenger ved adopsjon"
+    # Dekode av behandlingstema, f.eks *"Foreldrepenger ved adopsjon"*
     behandlingstemanavn: String
 
     # Sier hvilken sak journalposten er knyttet til. En journalpost kan maksimalt være knyttet til én sak, men et dokument kan være knyttet til flere journalposter og dermed flere saker.
@@ -163,7 +173,7 @@ type Journalpost {
     avsenderMottakerNavn: String
 
     # Landet forsendelsen er mottatt fra eller sendt til. Feltet skal i utgangspunktet kun være populert dersom avsender eller mottaker er en institusjon med adresse i utlandet.
-    avsenderMottakerLand : String
+    avsenderMottakerLand: String
 
     # NAV-enheten som har journalført forsendelsen. I noen tilfeller brukes journalfEnhet til å rute journalføringsoppgaven til korrekt enhet i NAV. I slike tilfeller vil journalfEnhet være satt også for ikke-journalførte dokumenter.
     journalforendeEnhet: String
@@ -283,15 +293,6 @@ type Dokumentvariant {
     # Sier hvorvidt saksbehandler som gjør oppslaget vil få tilgang til å åpne denne dokumentvarianten.
     # * Dersom verdien er false, vil tilgang bli avslått dersom saksbehandler forsøker å åpne dokumentet.
     saksbehandlerHarTilgang: Boolean!
-}
-
-# Fagsystemene som arkiverer kan legge til egne fagspesifikke attributter per journalpost. Disse er representert som et skjemaløst nøkkel-verdi-sett og valideres ikke av Joark. Et eksempel på et slikt sett kan være (bucid, 21521).
-type Tilleggsopplysning {
-    # Nøkkelen til det fagspesifikke attributtet.
-    nokkel: String!
-
-    # Verdien til det fagspesifikke attributtet.
-    verdi: String!
 }
 
 # Beskriver en type dato som kan være relevant for en journalpost, for eksempel **DATO_OPPRETTET**. Ulike datotyper returneres for ulike journalstatuser.
@@ -641,14 +642,14 @@ enum Variantformat {
     FULLVERSJON
 }
 
-# Dokumentstatus gir et indikasjon på hvorvidt dokumentet er ferdigstilt eller under arbeid, eventuelt avbrutt. Dersom dokumentet ikke har noen dokumentstatus, er dokumentet komplett / ferdigstilt.
+# Dokumentstatus gir en indikasjon på hvorvidt dokumentet er ferdigstilt eller under arbeid, eventuelt avbrutt. Dersom dokumentet ikke har noen dokumentstatus, er dokumentet komplett / ferdigstilt.
 enum Dokumentstatus {
-    # Dokumentet er under redigering.
+    # Dokumentet er under arbeid. Benyttes for redigerbare brev.
     UNDER_REDIGERING
 
-    # Dokumentet er ferdigstilt.
+    # Dokumentet er ferdigstilt. Benyttes for redigerbare brev.
     FERDIGSTILT
 
-    # Dokumentet er avbrutt.
+    # Dokumentet ble opprettet, men ble avbrutt under redigering. Benyttes for redigerbare brev.
     AVBRUTT
 }

@@ -313,7 +313,7 @@ public class DokumentoversiktFagsakIT extends AbstractItest {
 		stubFor(post("/aktoerv2")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withBodyFile("aktoerV2/hentIdentForAktoerIdListe-happy.xml")));
-		stubFor(get("/bidrag/112233445").willReturn(aResponse()
+		stubFor(get("/bidrag/201545004").willReturn(aResponse()
 				.withStatus(HttpStatus.OK.value())
 				.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
 				.withBodyFile("bidrag/bidragsak-happy.json")));
@@ -341,7 +341,7 @@ public class DokumentoversiktFagsakIT extends AbstractItest {
 		stubFor(post("/aktoerv2")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withBodyFile("aktoerV2/hentIdentForAktoerIdListe-happy.xml")));
-		stubFor(get("/bidrag/112233445").willReturn(aResponse()
+		stubFor(get("/bidrag/201545004").willReturn(aResponse()
 				.withStatus(HttpStatus.OK.value())
 				.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
 				.withBodyFile("bidrag/bidragsak-happy.json")));
@@ -368,7 +368,7 @@ public class DokumentoversiktFagsakIT extends AbstractItest {
 		stubFor(post("/aktoerv2")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withBodyFile("aktoerV2/hentIdentForAktoerIdListe-happy.xml")));
-		stubFor(get("/bidrag/112233445").willReturn(aResponse()
+		stubFor(get("/bidrag/201545004").willReturn(aResponse()
 				.withStatus(HttpStatus.OK.value())
 				.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
 				.withBodyFile("bidrag/bidragsak-happy.json")));
@@ -396,7 +396,7 @@ public class DokumentoversiktFagsakIT extends AbstractItest {
 		stubFor(post("/aktoerv2")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withBodyFile("aktoerV2/hentIdentForAktoerIdListe-happy.xml")));
-		stubFor(get("/bidrag/112233445").willReturn(aResponse()
+		stubFor(get("/bidrag/201545004").willReturn(aResponse()
 				.withStatus(HttpStatus.OK.value())
 				.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
 				.withBodyFile("bidrag/bidragsak-happy.json")));
@@ -424,7 +424,7 @@ public class DokumentoversiktFagsakIT extends AbstractItest {
 		stubFor(post("/aktoerv2")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withBodyFile("aktoerV2/hentIdentForAktoerIdListe-happy.xml")));
-		stubFor(get("/bidrag/112233445").willReturn(aResponse()
+		stubFor(get("/bidrag/201545004").willReturn(aResponse()
 				.withStatus(HttpStatus.OK.value())
 				.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
 				.withBodyFile("bidrag/bidragsak-happy.json")));
@@ -455,7 +455,7 @@ public class DokumentoversiktFagsakIT extends AbstractItest {
 		stubFor(post("/aktoerv2")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withBodyFile("aktoerV2/hentIdentForAktoerIdListe-happy.xml")));
-		stubFor(get("/bidrag/112233445").willReturn(aResponse()
+		stubFor(get("/bidrag/201545004").willReturn(aResponse()
 				.withStatus(HttpStatus.OK.value())
 				.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
 				.withBodyFile("bidrag/bidragsak-happy.json")));

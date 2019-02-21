@@ -324,7 +324,7 @@ public class DokumentoversiktBrukerIT extends AbstractItest {
 		stubFor(post("/servicegw")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withBodyFile("psak/psak-hentSakSammendragListe-happy-empty.xml")));
-		stubFor(get("/bidrag/135695442").willReturn(aResponse()
+		stubFor(get("/bidrag/654321").willReturn(aResponse()
 				.withStatus(HttpStatus.INTERNAL_SERVER_ERROR.value())
 				.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)));
 
@@ -337,7 +337,7 @@ public class DokumentoversiktBrukerIT extends AbstractItest {
 		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter")).withRequestBody(matchingJsonPath("$.gsakSakIds", containing(""))));
 		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter")).withRequestBody(matchingJsonPath("$.psakSakIds", containing(""))));
 		verify(postRequestedFor(urlEqualTo("/servicegw")).withRequestBody(matchingXPath("//personident/text()", equalTo("***gammelt_fnr***"))));
-		verify(getRequestedFor(urlEqualTo("/bidrag/135695442")));
+		verify(getRequestedFor(urlEqualTo("/bidrag/654321")));
 	}
 
 	@Test
@@ -360,7 +360,7 @@ public class DokumentoversiktBrukerIT extends AbstractItest {
 		stubFor(post("/servicegw")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withBodyFile("psak/psak-hentSakSammendragListe-happy.xml")));
-		stubFor(get("/bidrag/135695442").willReturn(aResponse().withStatus(HttpStatus.OK.value())
+		stubFor(get("/bidrag/654321").willReturn(aResponse().withStatus(HttpStatus.OK.value())
 				.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
 				.withBodyFile("bidrag/bidragsak-happy.json")));
 
@@ -395,7 +395,7 @@ public class DokumentoversiktBrukerIT extends AbstractItest {
 		stubFor(post("/servicegw")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withBodyFile("psak/psak-hentSakSammendragListe-happy.xml")));
-		stubFor(get("/bidrag/135695442").willReturn(aResponse().withStatus(HttpStatus.OK.value())
+		stubFor(get("/bidrag/654321").willReturn(aResponse().withStatus(HttpStatus.OK.value())
 				.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
 				.withBodyFile("bidrag/bidragsak-happy.json")));
 
@@ -426,7 +426,7 @@ public class DokumentoversiktBrukerIT extends AbstractItest {
 		stubFor(post("/servicegw")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withBodyFile("psak/psak-hentSakSammendragListe-happy-empty.xml")));
-		stubFor(get("/bidrag/135695442").willReturn(aResponse().withStatus(HttpStatus.OK.value())
+		stubFor(get("/bidrag/654321").willReturn(aResponse().withStatus(HttpStatus.OK.value())
 				.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
 				.withBodyFile("bidrag/bidragsak-happy.json")));
 
@@ -459,7 +459,7 @@ public class DokumentoversiktBrukerIT extends AbstractItest {
 		stubFor(post("/servicegw")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withBodyFile("psak/psak-hentSakSammendragListe-happy-empty.xml")));
-		stubFor(get("/bidrag/135695442").willReturn(aResponse().withStatus(HttpStatus.OK.value())
+		stubFor(get("/bidrag/654321").willReturn(aResponse().withStatus(HttpStatus.OK.value())
 				.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
 				.withBodyFile("bidrag/bidragsak-happy.json")));
 
@@ -494,7 +494,7 @@ public class DokumentoversiktBrukerIT extends AbstractItest {
 		stubFor(post("/servicegw")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withBodyFile("psak/psak-hentSakSammendragListe-happy-empty.xml")));
-		stubFor(get("/bidrag/135695442").willReturn(aResponse().withStatus(HttpStatus.OK.value())
+		stubFor(get("/bidrag/654321").willReturn(aResponse().withStatus(HttpStatus.OK.value())
 				.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
 				.withBodyFile("bidrag/bidragsak-happy.json")));
 
@@ -527,7 +527,7 @@ public class DokumentoversiktBrukerIT extends AbstractItest {
 		stubFor(post("/servicegw")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withBodyFile("psak/psak-hentSakSammendragListe-happy-empty.xml")));
-		stubFor(get("/bidrag/135695442").willReturn(aResponse().withStatus(HttpStatus.OK.value())
+		stubFor(get("/bidrag/654321").willReturn(aResponse().withStatus(HttpStatus.OK.value())
 				.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
 				.withBodyFile("bidrag/bidragsak-happy.json")));
 
@@ -561,7 +561,7 @@ public class DokumentoversiktBrukerIT extends AbstractItest {
 		stubFor(post("/servicegw")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withBodyFile("psak/psak-hentSakSammendragListe-happy-empty.xml")));
-		stubFor(get("/bidrag/135695442").willReturn(aResponse().withStatus(HttpStatus.OK.value())
+		stubFor(get("/bidrag/654321").willReturn(aResponse().withStatus(HttpStatus.OK.value())
 				.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
 				.withBodyFile("bidrag/bidragsak-happy.json")));
 
@@ -596,7 +596,7 @@ public class DokumentoversiktBrukerIT extends AbstractItest {
 		stubFor(post("/servicegw")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withBodyFile("psak/psak-hentSakSammendragListe-happy-empty.xml")));
-		stubFor(get("/bidrag/135695442").willReturn(aResponse().withStatus(HttpStatus.OK.value())
+		stubFor(get("/bidrag/654321").willReturn(aResponse().withStatus(HttpStatus.OK.value())
 				.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
 				.withBodyFile("bidrag/bidragsak-happy.json")));
 
