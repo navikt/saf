@@ -16,6 +16,7 @@ import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark902.BrukerD
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark902.DokumentInfoDto;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark902.HentJournalpostResponseTo;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark902.JournalpostDto;
+import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark902.SaksrelasjonDto;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark902.VariantDto;
 import no.nav.saf.domain.Arkivsak;
 import no.nav.saf.domain.kode.Arkivsakssystem;
@@ -80,11 +81,11 @@ class JournalpostAntiCorruptionLayer {
 				.getObject(RJOARK902_JOURNALPOST_DTO);
 
 		if (tilgangJournalpostDto == null || tilgangJournalpostDto.getBruker() == null
-				|| tilgangJournalpostDto.getBruker().getBrukerType() == null) {
+				|| tilgangJournalpostDto.getBruker().getBrukerIdType() == null) {
 			return null;
 		}
 		final BrukerDto tilgangBruker = tilgangJournalpostDto.getBruker();
-		switch (tilgangBruker.getBrukerType()) {
+		switch (tilgangBruker.getBrukerIdType()) {
 			case PERSON:
 				return TilgangBruker.builder()
 						.foedselsnr(tilgangBruker.getBrukerId())
@@ -110,10 +111,15 @@ class JournalpostAntiCorruptionLayer {
 		}
 		JournalpostDto hentJournalpostDto = hentJournalpostResponseTo.getHentJournalpostDto();
 		safRequestContex.getRequestCache().putObject(RJOARK902_JOURNALPOST_DTO, hentJournalpostDto);
+		SaksrelasjonDto saksrelasjon = hentJournalpostDto.getSaksrelasjon();
+		// Journalpost sannsynligvis midlertidig uten saksrelasjon
+		if(saksrelasjon == null) {
+			return Arkivsak.builder()
+					.build();
+		}
 		return Arkivsak.builder()
-				.arkivsaksnummer(hentJournalpostDto.getSaksrelasjon().getSakId())
-				.arkivsaksystem(mapJoarkFagsystemToArkivsakssystemCode(hentJournalpostDto
-						.getSaksrelasjon().getFagsystem(), hentJournalpostDto
+				.arkivsaksnummer(saksrelasjon.getSakId())
+				.arkivsaksystem(mapJoarkFagsystemToArkivsakssystemCode(saksrelasjon.getFagsystem(), hentJournalpostDto
 						.getJournalpostId()))
 				.build();
 	}
