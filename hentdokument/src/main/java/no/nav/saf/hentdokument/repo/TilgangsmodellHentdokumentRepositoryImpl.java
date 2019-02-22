@@ -17,6 +17,8 @@ import org.springframework.stereotype.Repository;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * @author Sigurd Midttun, Visma Consulting.
@@ -114,14 +116,26 @@ public class TilgangsmodellHentdokumentRepositoryImpl implements TilgangsmodellH
 						.tema(arkivsak.getTema())
 						.orgnummer(arkivsak.getOrgnummer())
 						.relevanteTredjeparter(bidragSak == null ? null : new ArrayList<>(bidragSak.getRelevanteTredjeparter()))
-						.paragraf19(bidragSak == null ? null : bidragSak.isParagraf19())
+						.paragraf19(bidragSak != null && bidragSak.isParagraf19())
 						.build();
-			} else if (Arkivsakssystem.PSAK.name().equals(arkivsaksystem)
-					|| arkivsaksystem == null || arkivsaksystem.isEmpty()) {
-				//Psak eller midlertidig journalført
-				return hentDokumentAntiCorruptionLayer.hentTilgangSakFromSafRequestContext(safRequestContext, tilgangBruker);
-			} else {
+			} else if (Arkivsakssystem.PSAK.name().equals(arkivsaksystem)) {
+				List<Arkivsak> arkivsaker = pensjonSakAntiCorruptionLayer.findArkivsaker(tilgangBruker, Arrays.asList(Tema.PEN, Tema.UFO));
+				for (Arkivsak arkivsak : arkivsaker) {
+					if (arkivsak.getArkivsaksnummer().equals(sakId)) {
+						return TilgangSak.builder()
+								.aktoerId(arkivsak.getAktoerId())
+								.arkivsaksnummer(arkivsak.getArkivsaksnummer())
+								.arkivsaksystem(Arkivsakssystem.PSAK)
+								.tema(arkivsak.getTema())
+								.orgnummer(arkivsak.getOrgnummer())
+								.relevanteTredjeparter(new ArrayList<>())
+								.paragraf19(false)
+								.build();
+					}
+				}
 				return null;
+			} else {
+				return hentDokumentAntiCorruptionLayer.hentTilgangSakFromSafRequestContext(safRequestContext, tilgangBruker);
 			}
 		} catch (Exception e) {
 			log.warn("findTilgangBrukerBySakId feilet ved oppslag på sakId={} og arkivsaksystem={}. Feilmelding={}", sakId, arkivsaksystem, e);

@@ -51,7 +51,7 @@ import java.util.Map;
 class JournalpostIT extends AbstractItest {
 	private final String JOURNALPOST_ID = "400000000";
 	private final String GSAK_ID = "100000000";
-	private final String BIDRAG_SAK_ID = "100000000";
+	private final String BIDRAG_SAK_ID = "abc123";
 
 	private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 

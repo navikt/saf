@@ -4,6 +4,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
@@ -99,10 +100,12 @@ public class HentDokumentIT extends AbstractItest {
 				.withStatus(HttpStatus.OK.value())
 				.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
 				.withBodyFile("hentjournalsakinfo/henttilgangjournalpost_psak-happy.json")));
-
 		stubFor(get("/pensjonsakrs").willReturn(aResponse().withStatus(HttpStatus.OK.value())
 				.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
 				.withBodyFile("psak/psak-hentBrukerForSak-happy.json")));
+		stubFor(post("/servicegw")
+				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
+						.withBodyFile("psak/psak-hentSakSammendragListe-hentdokument-happy.xml")));
 
 		ResponseEntity<String> responseEntity = callHentDokument();
 

@@ -115,7 +115,6 @@ class DokumentoversiktBrukerCoordinatorImpl implements DokumentoversiktBrukerCoo
 				Collections.singletonList(tilgangBruker),
 				filteredTilgangSakList,
 				dokumentoversiktBrukerArguments.getFilters().getFraDato(),
-				dokumentoversiktBrukerArguments.getFilters().getTema(),
 				dokumentoversiktBrukerArguments.getFilters().getJournalposttyper(),
 				dokumentoversiktBrukerArguments.getFilters().getJournalstatuser(),
 				((DokumentoversiktPagination.SeekPagination) dokumentoversiktBrukerArguments.getPagination()).getFoerste(),
@@ -158,7 +157,8 @@ class DokumentoversiktBrukerCoordinatorImpl implements DokumentoversiktBrukerCoo
 		List<Journalpost> visningJournalposter = visningsmodellRepository.findJournalposter(filteredTilgangJournalpostList.stream()
 				.map(TilgangJournalpost::getJournalpostId)
 				.sorted(Comparator.reverseOrder())
-				.collect(Collectors.toList()), safRequestContext);
+				.collect(Collectors.toList()), safRequestContext)
+				.stream().filter(j -> dokumentoversiktBrukerArguments.getFilters().getTema().contains(j.getTema())).collect(Collectors.toList());
 
 		return Dokumentoversikt.builder()
 				.journalposter(visningJournalposter)

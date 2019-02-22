@@ -48,4 +48,8 @@ public class JournalpostDto {
 	private SkjermingTypeCode skjerming;
 	private List<TilleggsopplysningDto> tilleggsopplysninger;
 	private List<DokumentInfoDto> dokumenter;
+
+	public boolean isTilknyttetSak() {
+		return saksrelasjon != null && saksrelasjon.getSakId() != null;
+	}
 }

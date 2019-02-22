@@ -271,7 +271,7 @@ public class DokumentoversiktFagsakIT extends AbstractItest {
 		verifyEmptyJournalpostListeAndNullSideInfo(dokumentoversikt);
 		verify(postRequestedFor(urlEqualTo("/aktoerv2")).withRequestBody(matchingXPath("//aktoerIdListe/text()", equalTo(FAGSAK_ID))));
 		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter"))
-				.withRequestBody(containing("{\"gsakSakIds\":[\"119185782\"],\"psakSakIds\":[],\"fraDato\":\"0001-01-01\",\"inkluderTema\":[\"AAP\",\"AAR\",\"AGR\",\"BAR\",\"BID\",\"BIL\",\"DAG\",\"ENF\",\"ERS\",\"FAR\",\"FEI\",\"FOR\",\"FOS\",\"FUL\",\"GEN\",\"GRA\",\"GRU\",\"HEL\",\"HJE\",\"IAR\",\"IND\",\"KON\",\"KTR\",\"MED\",\"MOB\",\"OKO\",\"OMS\",\"OPA\",\"OPP\",\"PEN\",\"PER\",\"REH\",\"REK\",\"RPO\",\"RVE\",\"SAA\",\"SAK\",\"SAP\",\"SER\",\"SIK\",\"STO\",\"SUP\",\"SYK\",\"SYM\",\"TIL\",\"TRK\",\"TRY\",\"TSO\",\"TSR\",\"UFM\",\"UFO\",\"UKJ\",\"VEN\",\"YRA\",\"YRK\"],\"inkluderJournalStatus\":[\"FL\",\"FS\",\"J\",\"E\"],\"inkluderJournalpostType\":[\"I\",\"U\",\"N\"],\"visFeilregistrerte\":false,\"alleIdenter\":[],\"foerste\":5,\"etterPeker\":null,\"siste\":null,\"foerPeker\":null}")));
+				.withRequestBody(containing("{\"gsakSakIds\":[\"119185782\"],\"psakSakIds\":[],\"fraDato\":\"0001-01-01\",\"inkluderJournalStatus\":[\"FL\",\"FS\",\"J\",\"E\"],\"inkluderJournalpostType\":[\"I\",\"U\",\"N\"],\"visFeilregistrerte\":false,\"alleIdenter\":[],\"foerste\":5,\"etterPeker\":null,\"siste\":null,\"foerPeker\":null}")));
 	}
 
 
@@ -322,7 +322,7 @@ public class DokumentoversiktFagsakIT extends AbstractItest {
 		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
 
 		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter"))
-				.withRequestBody(containing("{\"gsakSakIds\":[],\"psakSakIds\":[],\"fraDato\":\"0001-01-01\",\"inkluderTema\":[\"AAP\",\"AAR\",\"AGR\",\"BAR\",\"BID\",\"BIL\",\"DAG\",\"ENF\",\"ERS\",\"FAR\",\"FEI\",\"FOR\",\"FOS\",\"FUL\",\"GEN\",\"GRA\",\"GRU\",\"HEL\",\"HJE\",\"IAR\",\"IND\",\"KON\",\"KTR\",\"MED\",\"MOB\",\"OKO\",\"OMS\",\"OPA\",\"OPP\",\"PEN\",\"PER\",\"REH\",\"REK\",\"RPO\",\"RVE\",\"SAA\",\"SAK\",\"SAP\",\"SER\",\"SIK\",\"STO\",\"SUP\",\"SYK\",\"SYM\",\"TIL\",\"TRK\",\"TRY\",\"TSO\",\"TSR\",\"UFM\",\"UFO\",\"UKJ\",\"VEN\",\"YRA\",\"YRK\"],\"inkluderJournalStatus\":[\"FL\",\"FS\",\"J\",\"E\"],\"inkluderJournalpostType\":[\"I\",\"U\",\"N\"],\"visFeilregistrerte\":false,\"alleIdenter\":[],\"foerste\":5,\"etterPeker\":null,\"siste\":null,\"foerPeker\":null}")));
+				.withRequestBody(containing("{\"gsakSakIds\":[],\"psakSakIds\":[],\"fraDato\":\"0001-01-01\",\"inkluderJournalStatus\":[\"FL\",\"FS\",\"J\",\"E\"],\"inkluderJournalpostType\":[\"I\",\"U\",\"N\"],\"visFeilregistrerte\":false,\"alleIdenter\":[],\"foerste\":5,\"etterPeker\":null,\"siste\":null,\"foerPeker\":null}")));
 		verifyEmptyJournalpostListeAndNullSideInfo(dokumentoversikt);
 		verifyabacDenyPep2AndHttpStatusCode(HttpStatus.OK, responseEntity.getStatusCode());
 	}
@@ -350,7 +350,7 @@ public class DokumentoversiktFagsakIT extends AbstractItest {
 		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
 
 		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter"))
-				.withRequestBody(containing("{\"gsakSakIds\":[\"112233445\"],\"psakSakIds\":[],\"fraDato\":\"0001-01-01\",\"inkluderTema\":[\"AAP\",\"AAR\",\"AGR\",\"BAR\",\"BID\",\"BIL\",\"DAG\",\"ENF\",\"ERS\",\"FAR\",\"FEI\",\"FOR\",\"FOS\",\"FUL\",\"GEN\",\"GRA\",\"GRU\",\"HEL\",\"HJE\",\"IAR\",\"IND\",\"KON\",\"KTR\",\"MED\",\"MOB\",\"OKO\",\"OMS\",\"OPA\",\"OPP\",\"PEN\",\"PER\",\"REH\",\"REK\",\"RPO\",\"RVE\",\"SAA\",\"SAK\",\"SAP\",\"SER\",\"SIK\",\"STO\",\"SUP\",\"SYK\",\"SYM\",\"TIL\",\"TRK\",\"TRY\",\"TSO\",\"TSR\",\"UFM\",\"UFO\",\"UKJ\",\"VEN\",\"YRA\",\"YRK\"],\"inkluderJournalStatus\":[\"FL\",\"FS\",\"J\",\"E\"],\"inkluderJournalpostType\":[\"I\",\"U\",\"N\"],\"visFeilregistrerte\":false,\"alleIdenter\":[],\"foerste\":5,\"etterPeker\":null,\"siste\":null,\"foerPeker\":null}")));
+				.withRequestBody(containing("{\"gsakSakIds\":[\"112233445\"],\"psakSakIds\":[],\"fraDato\":\"0001-01-01\",\"inkluderJournalStatus\":[\"FL\",\"FS\",\"J\",\"E\"],\"inkluderJournalpostType\":[\"I\",\"U\",\"N\"],\"visFeilregistrerte\":false,\"alleIdenter\":[],\"foerste\":5,\"etterPeker\":null,\"siste\":null,\"foerPeker\":null}")));
 		verifyabacDenyPep2dAndHttpStatusCode(true, HttpStatus.OK, responseEntity.getStatusCode());
 	}
 
@@ -377,7 +377,7 @@ public class DokumentoversiktFagsakIT extends AbstractItest {
 		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
 
 		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter"))
-				.withRequestBody(containing("{\"gsakSakIds\":[],\"psakSakIds\":[],\"fraDato\":\"0001-01-01\",\"inkluderTema\":[\"AAP\",\"AAR\",\"AGR\",\"BAR\",\"BID\",\"BIL\",\"DAG\",\"ENF\",\"ERS\",\"FAR\",\"FEI\",\"FOR\",\"FOS\",\"FUL\",\"GEN\",\"GRA\",\"GRU\",\"HEL\",\"HJE\",\"IAR\",\"IND\",\"KON\",\"KTR\",\"MED\",\"MOB\",\"OKO\",\"OMS\",\"OPA\",\"OPP\",\"PEN\",\"PER\",\"REH\",\"REK\",\"RPO\",\"RVE\",\"SAA\",\"SAK\",\"SAP\",\"SER\",\"SIK\",\"STO\",\"SUP\",\"SYK\",\"SYM\",\"TIL\",\"TRK\",\"TRY\",\"TSO\",\"TSR\",\"UFM\",\"UFO\",\"UKJ\",\"VEN\",\"YRA\",\"YRK\"],\"inkluderJournalStatus\":[\"FL\",\"FS\",\"J\",\"E\"],\"inkluderJournalpostType\":[\"I\",\"U\",\"N\"],\"visFeilregistrerte\":false,\"alleIdenter\":[],\"foerste\":5,\"etterPeker\":null,\"siste\":null,\"foerPeker\":null}")));
+				.withRequestBody(containing("{\"gsakSakIds\":[],\"psakSakIds\":[],\"fraDato\":\"0001-01-01\",\"inkluderJournalStatus\":[\"FL\",\"FS\",\"J\",\"E\"],\"inkluderJournalpostType\":[\"I\",\"U\",\"N\"],\"visFeilregistrerte\":false,\"alleIdenter\":[],\"foerste\":5,\"etterPeker\":null,\"siste\":null,\"foerPeker\":null}")));
 		verifyEmptyJournalpostListeAndNullSideInfo(dokumentoversikt);
 		verifyabacDenyPep3AndHttpStatusCode(HttpStatus.OK, responseEntity.getStatusCode());
 	}
@@ -406,7 +406,7 @@ public class DokumentoversiktFagsakIT extends AbstractItest {
 
 		verifyEmptyJournalpostListeAndNullSideInfo(dokumentoversikt);
 		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter"))
-				.withRequestBody(containing("{\"gsakSakIds\":[\"112233445\"],\"psakSakIds\":[],\"fraDato\":\"0001-01-01\",\"inkluderTema\":[\"AAP\",\"AAR\",\"AGR\",\"BAR\",\"BID\",\"BIL\",\"DAG\",\"ENF\",\"ERS\",\"FAR\",\"FEI\",\"FOR\",\"FOS\",\"FUL\",\"GEN\",\"GRA\",\"GRU\",\"HEL\",\"HJE\",\"IAR\",\"IND\",\"KON\",\"KTR\",\"MED\",\"MOB\",\"OKO\",\"OMS\",\"OPA\",\"OPP\",\"PEN\",\"PER\",\"REH\",\"REK\",\"RPO\",\"RVE\",\"SAA\",\"SAK\",\"SAP\",\"SER\",\"SIK\",\"STO\",\"SUP\",\"SYK\",\"SYM\",\"TIL\",\"TRK\",\"TRY\",\"TSO\",\"TSR\",\"UFM\",\"UFO\",\"UKJ\",\"VEN\",\"YRA\",\"YRK\"],\"inkluderJournalStatus\":[\"FL\",\"FS\",\"J\",\"E\"],\"inkluderJournalpostType\":[\"I\",\"U\",\"N\"],\"visFeilregistrerte\":false,\"alleIdenter\":[],\"foerste\":5,\"etterPeker\":null,\"siste\":null,\"foerPeker\":null}")));
+				.withRequestBody(containing("{\"gsakSakIds\":[\"112233445\"],\"psakSakIds\":[],\"fraDato\":\"0001-01-01\",\"inkluderJournalStatus\":[\"FL\",\"FS\",\"J\",\"E\"],\"inkluderJournalpostType\":[\"I\",\"U\",\"N\"],\"visFeilregistrerte\":false,\"alleIdenter\":[],\"foerste\":5,\"etterPeker\":null,\"siste\":null,\"foerPeker\":null}")));
 		verifyabacDenyPep4AndHttpStatusCode(HttpStatus.OK, responseEntity.getStatusCode());
 	}
 
@@ -436,7 +436,7 @@ public class DokumentoversiktFagsakIT extends AbstractItest {
 		assertEquals("429837417", dokumentoversikt.getJournalposter().get(0).getJournalpostId());
 		assertTrue(dokumentoversikt.getJournalposter().get(0).getDokumenter().isEmpty());
 		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter"))
-				.withRequestBody(containing("{\"gsakSakIds\":[\"112233445\"],\"psakSakIds\":[],\"fraDato\":\"0001-01-01\",\"inkluderTema\":[\"AAP\",\"AAR\",\"AGR\",\"BAR\",\"BID\",\"BIL\",\"DAG\",\"ENF\",\"ERS\",\"FAR\",\"FEI\",\"FOR\",\"FOS\",\"FUL\",\"GEN\",\"GRA\",\"GRU\",\"HEL\",\"HJE\",\"IAR\",\"IND\",\"KON\",\"KTR\",\"MED\",\"MOB\",\"OKO\",\"OMS\",\"OPA\",\"OPP\",\"PEN\",\"PER\",\"REH\",\"REK\",\"RPO\",\"RVE\",\"SAA\",\"SAK\",\"SAP\",\"SER\",\"SIK\",\"STO\",\"SUP\",\"SYK\",\"SYM\",\"TIL\",\"TRK\",\"TRY\",\"TSO\",\"TSR\",\"UFM\",\"UFO\",\"UKJ\",\"VEN\",\"YRA\",\"YRK\"],\"inkluderJournalStatus\":[\"FL\",\"FS\",\"J\",\"E\"],\"inkluderJournalpostType\":[\"I\",\"U\",\"N\"],\"visFeilregistrerte\":false,\"alleIdenter\":[],\"foerste\":5,\"etterPeker\":null,\"siste\":null,\"foerPeker\":null}")));
+				.withRequestBody(containing("{\"gsakSakIds\":[\"112233445\"],\"psakSakIds\":[],\"fraDato\":\"0001-01-01\",\"inkluderJournalStatus\":[\"FL\",\"FS\",\"J\",\"E\"],\"inkluderJournalpostType\":[\"I\",\"U\",\"N\"],\"visFeilregistrerte\":false,\"alleIdenter\":[],\"foerste\":5,\"etterPeker\":null,\"siste\":null,\"foerPeker\":null}")));
 		verifyabacDenyPep5AndHttpStatusCode(true, HttpStatus.OK, responseEntity.getStatusCode());
 	}
 
@@ -466,7 +466,7 @@ public class DokumentoversiktFagsakIT extends AbstractItest {
 		assertEquals("429837417", dokumentoversikt.getJournalposter().get(0).getJournalpostId());
 		assertSaksbehandlerHarIkkeTilgang(dokumentoversikt);
 		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter"))
-				.withRequestBody(containing("{\"gsakSakIds\":[\"112233445\"],\"psakSakIds\":[],\"fraDato\":\"0001-01-01\",\"inkluderTema\":[\"AAP\",\"AAR\",\"AGR\",\"BAR\",\"BID\",\"BIL\",\"DAG\",\"ENF\",\"ERS\",\"FAR\",\"FEI\",\"FOR\",\"FOS\",\"FUL\",\"GEN\",\"GRA\",\"GRU\",\"HEL\",\"HJE\",\"IAR\",\"IND\",\"KON\",\"KTR\",\"MED\",\"MOB\",\"OKO\",\"OMS\",\"OPA\",\"OPP\",\"PEN\",\"PER\",\"REH\",\"REK\",\"RPO\",\"RVE\",\"SAA\",\"SAK\",\"SAP\",\"SER\",\"SIK\",\"STO\",\"SUP\",\"SYK\",\"SYM\",\"TIL\",\"TRK\",\"TRY\",\"TSO\",\"TSR\",\"UFM\",\"UFO\",\"UKJ\",\"VEN\",\"YRA\",\"YRK\"],\"inkluderJournalStatus\":[\"FL\",\"FS\",\"J\",\"E\"],\"inkluderJournalpostType\":[\"I\",\"U\",\"N\"],\"visFeilregistrerte\":false,\"alleIdenter\":[],\"foerste\":5,\"etterPeker\":null,\"siste\":null,\"foerPeker\":null}")));
+				.withRequestBody(containing("{\"gsakSakIds\":[\"112233445\"],\"psakSakIds\":[],\"fraDato\":\"0001-01-01\",\"inkluderJournalStatus\":[\"FL\",\"FS\",\"J\",\"E\"],\"inkluderJournalpostType\":[\"I\",\"U\",\"N\"],\"visFeilregistrerte\":false,\"alleIdenter\":[],\"foerste\":5,\"etterPeker\":null,\"siste\":null,\"foerPeker\":null}")));
 		verifyabacDenyPep6dAndHttpStatusCode(HttpStatus.OK, responseEntity.getStatusCode());
 	}
 

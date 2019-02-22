@@ -1,6 +1,6 @@
 package no.nav.saf.query.dokumentoversikt;
 
-import no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoMapper;
+import no.nav.saf.anticorruptionlayer.joark.domain.Rjoark900JournalpostDtoMapper;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.JournalpostDto;
 import no.nav.saf.domain.visningsmodell.Journalpost;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
@@ -16,11 +16,11 @@ import java.util.stream.Collectors;
  */
 @Component
 class DokumentoversiktVisningsmodellRepositoryImpl implements DokumentoversiktVisningsmodellRepository {
-	private final JournalpostDtoMapper journalpostDtoMapper;
+	private final Rjoark900JournalpostDtoMapper rjoark900JournalpostDtoMapper;
 
 	@Inject
-	public DokumentoversiktVisningsmodellRepositoryImpl(JournalpostDtoMapper journalpostDtoMapper) {
-		this.journalpostDtoMapper = journalpostDtoMapper;
+	public DokumentoversiktVisningsmodellRepositoryImpl(Rjoark900JournalpostDtoMapper rjoark900JournalpostDtoMapper) {
+		this.rjoark900JournalpostDtoMapper = rjoark900JournalpostDtoMapper;
 	}
 
 	@Override
@@ -28,7 +28,7 @@ class DokumentoversiktVisningsmodellRepositoryImpl implements DokumentoversiktVi
 											   final SafRequestContext safRequestContext) {
 		return journalpostIds.stream().map(journalpostId -> {
 			JournalpostDto journalpostDto = safRequestContext.getRequestCache().getObject(journalpostId);
-			return journalpostDtoMapper.mapJournalpostDto(journalpostDto, safRequestContext.getRequestCache());
+			return rjoark900JournalpostDtoMapper.mapJournalpostDto(journalpostDto, safRequestContext.getRequestCache());
 		}).filter(Objects::nonNull)
 				.collect(Collectors.toList());
 	}

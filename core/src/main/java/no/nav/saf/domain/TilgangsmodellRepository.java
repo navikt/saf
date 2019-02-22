@@ -29,7 +29,7 @@ public interface TilgangsmodellRepository {
 	List<TilgangJournalpost> findTilgangJournalposter(List<TilgangBruker> tilgangBrukere,
 													  List<TilgangSak> tilgangSakList,
 													  LocalDate fraDato,
-													  List<Tema> inkluderTema, List<Journalposttype> inkluderJournalposttyper,
+													  List<Journalposttype> inkluderJournalposttyper,
 													  List<Journalstatus> inkluderJournalstatuses,
 													  Integer foerste, String etterPeker, Integer siste, String foerPeker,
 													  SafRequestContext safRequestContext);

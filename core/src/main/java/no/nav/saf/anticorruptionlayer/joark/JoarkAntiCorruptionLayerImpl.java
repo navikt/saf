@@ -2,7 +2,6 @@ package no.nav.saf.anticorruptionlayer.joark;
 
 import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.anticorruptionlayer.joark.domain.SafToJoarkJournalstatusMapper;
-import no.nav.saf.anticorruptionlayer.joark.domain.kode.FagomradeCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.JournalpostTypeCode;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.HentJournalsakinfo;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.FinnJournalposterRequestTo;
@@ -11,14 +10,12 @@ import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.Journal
 import no.nav.saf.domain.kode.Arkivsakssystem;
 import no.nav.saf.domain.kode.Journalposttype;
 import no.nav.saf.domain.kode.Journalstatus;
-import no.nav.saf.domain.kode.Tema;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -40,7 +37,6 @@ class JoarkAntiCorruptionLayerImpl implements JoarkAntiCorruptionLayer {
 	public List<JournalpostDto> finnJournalposter(List<String> alleIdenter,
 												  List<TilgangSak> tilgangSakList,
 												  LocalDate fraDato,
-												  List<Tema> inkluderTema,
 												  List<Journalposttype> inkluderJournalposttyper,
 												  List<Journalstatus> inkluderJournalstatuses,
 												  Integer foerste, String etterPeker, Integer siste, String foerPeker) {
@@ -48,10 +44,6 @@ class JoarkAntiCorruptionLayerImpl implements JoarkAntiCorruptionLayer {
 				.alleIdenter(alleIdenter)
 				.inkluderJournalpostType(inkluderJournalposttyper.stream()
 						.map(jt -> JournalpostTypeCode.valueOf(jt.name()))
-						.collect(Collectors.toList()))
-				.inkluderTema(inkluderTema.stream()
-						.map(FagomradeCode::fromTema)
-						.filter(Objects::nonNull)
 						.collect(Collectors.toList()))
 				.inkluderJournalStatus(safToJoarkJournalstatusMapper.map(inkluderJournalstatuses))
 				.visFeilregistrerte(inkluderJournalstatuses.contains(Journalstatus.FEILREGISTRERT))

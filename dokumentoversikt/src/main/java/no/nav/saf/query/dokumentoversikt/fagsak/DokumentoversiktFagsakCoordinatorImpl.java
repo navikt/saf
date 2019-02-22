@@ -109,7 +109,6 @@ class DokumentoversiktFagsakCoordinatorImpl implements DokumentoversiktFagsakCoo
 				new ArrayList<>(),
 				filteredTilgangSakList,
 				dokumentoversiktFagsakArguments.getFilters().getFraDato(),
-				dokumentoversiktFagsakArguments.getFilters().getTema(),
 				dokumentoversiktFagsakArguments.getFilters().getJournalposttyper(),
 				dokumentoversiktFagsakArguments.getFilters().getJournalstatuser(),
 				((DokumentoversiktPagination.SeekPagination) dokumentoversiktFagsakArguments.getPagination()).getFoerste(),
@@ -147,7 +146,8 @@ class DokumentoversiktFagsakCoordinatorImpl implements DokumentoversiktFagsakCoo
 		List<Journalpost> journalposter = visningsmodellRepository.findJournalposter(filteredTilgangJournalpostList.stream()
 				.map(TilgangJournalpost::getJournalpostId)
 				.sorted(Comparator.reverseOrder())
-				.collect(Collectors.toList()), safRequestContext);
+				.collect(Collectors.toList()), safRequestContext)
+				.stream().filter(j -> dokumentoversiktFagsakArguments.getFilters().getTema().contains(j.getTema())).collect(Collectors.toList());;
 		return Dokumentoversikt.builder()
 				.journalposter(journalposter)
 				.sideInfo(sideInfoMapper.mapSideInfo(journalposter, safRequestContext))

@@ -3,7 +3,6 @@ package no.nav.saf.anticorruptionlayer.joark;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.JournalpostDto;
 import no.nav.saf.domain.kode.Journalposttype;
 import no.nav.saf.domain.kode.Journalstatus;
-import no.nav.saf.domain.kode.Tema;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 
 import java.time.LocalDate;
@@ -17,7 +16,6 @@ public interface JoarkAntiCorruptionLayer {
 	List<JournalpostDto> finnJournalposter(List<String> identer,
 										   List<TilgangSak> tilgangSakList,
 										   LocalDate fraDato,
-										   List<Tema> inkluderTema,
 										   List<Journalposttype> inkluderJournalposttyper,
 										   List<Journalstatus> inkluderJournalstatuses,
 										   Integer foerste, String etterPeker, Integer siste, String foerPeker);

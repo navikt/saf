@@ -19,12 +19,12 @@ import no.nav.saf.anticorruptionlayer.joark.domain.kode.JournalStatusCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.JournalpostTypeCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.SkjermingTypeCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.VariantFormatCode;
-import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.DokumentInfoDto;
-import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.JournalpostDto;
-import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.LogiskVedleggDto;
-import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.SaksrelasjonDto;
-import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.TilleggsopplysningDto;
-import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.VariantDto;
+import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark902.DokumentInfoDto;
+import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark902.JournalpostDto;
+import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark902.LogiskVedleggDto;
+import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark902.SaksrelasjonDto;
+import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark902.TilleggsopplysningDto;
+import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark902.VariantDto;
 import no.nav.saf.cache.KeyGeneratorLocalCaching;
 import no.nav.saf.domain.Arkivsak;
 import no.nav.saf.domain.kode.Arkivsakssystem;
@@ -33,6 +33,7 @@ import no.nav.saf.domain.kode.Dokumentstatus;
 import no.nav.saf.domain.kode.Journalposttype;
 import no.nav.saf.domain.kode.Journalstatus;
 import no.nav.saf.domain.kode.Kanal;
+import no.nav.saf.domain.kode.Tema;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.domain.visningsmodell.DokumentInfo;
 import no.nav.saf.domain.visningsmodell.Dokumentvariant;
@@ -58,7 +59,7 @@ import java.util.List;
  * @author Joakim Bjørnstad, Jbit AS
  */
 @ExtendWith(MockitoExtension.class)
-class JournalpostDtoMapperTest {
+class Rjoark902JournalpostDtoMapperTest {
 	private static final String DOKUMENT_INFO_ID = "1234";
 	private static final VariantFormatCode VARIANT_FORMAT_CODE_ARKIV = VariantFormatCode.ARKIV;
 	private static final VariantFormatCode VARIANT_FORMAT_CODE_SLADDET = VariantFormatCode.SLADDET;
@@ -92,7 +93,7 @@ class JournalpostDtoMapperTest {
 	private static final String TILLEGGSOPPLYSNING_NOKKEL = "bucid";
 	private static final String TILLEGGSOPPLYSNING_VERDI = "21521";
 
-	private final JournalpostDtoMapper mapper = new JournalpostDtoMapper();
+	private final Rjoark902JournalpostDtoMapper mapper = new Rjoark902JournalpostDtoMapper();
 
 	@Mock
 	private OidcValidatorTool oidcValidatorTool;
@@ -264,8 +265,50 @@ class JournalpostDtoMapperTest {
 		assertThat(journalpost.getDokumenter(), hasSize(1));
 		journalpost.getDokumenter().forEach(dokumentInfo ->
 				dokumentInfo.getDokumentvarianter().forEach(dokumentvariant -> {
-			assertTrue(dokumentvariant.isSaksbehandlerHarTilgang());
-		}));
+					assertTrue(dokumentvariant.isSaksbehandlerHarTilgang());
+				}));
+	}
+
+	@Test
+	void shouldUseArkivsakTemaWhenSakstilknyttetJournalpost() {
+		JournalpostDto journalpostDto = baseJournalpostDto()
+				.journalposttype(JournalpostTypeCode.I)
+				.saksrelasjon(new SaksrelasjonDto(SAKS_ID, false, FAKSYSTEM_CODE))
+				.fagomrade(FagomradeCode.AAP).build();
+
+		RequestCache arkivsakCacheRequestCache = createArkivsakCacheRequestCache();
+		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, arkivsakCacheRequestCache);
+
+		assertThat(journalpost.getTema(), is(Tema.STO));
+		assertThat(journalpost.getTemanavn(), is(Tema.STO.getTemanavn()));
+	}
+
+	@Test
+	void shouldUseJournalpostTemaWhenIkkeSakstilknyttetJournalpostIngenSaksrelasjon() {
+		JournalpostDto journalpostDto = baseJournalpostDto()
+				.journalposttype(JournalpostTypeCode.I)
+				.saksrelasjon(null)
+				.fagomrade(FagomradeCode.AAP).build();
+
+		RequestCache arkivsakCacheRequestCache = createArkivsakCacheRequestCache();
+		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, arkivsakCacheRequestCache);
+
+		assertThat(journalpost.getTema(), is(Tema.AAP));
+		assertThat(journalpost.getTemanavn(), is(Tema.AAP.getTemanavn()));
+	}
+
+	@Test
+	void shouldUseJournalpostTemaWhenIkkeSakstilknyttetJournalpostIngenSakId() {
+		JournalpostDto journalpostDto = baseJournalpostDto()
+				.journalposttype(JournalpostTypeCode.I)
+				.saksrelasjon(new SaksrelasjonDto(null, false, FAKSYSTEM_CODE))
+				.fagomrade(FagomradeCode.AAP).build();
+
+		RequestCache arkivsakCacheRequestCache = createArkivsakCacheRequestCache();
+		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, arkivsakCacheRequestCache);
+
+		assertThat(journalpost.getTema(), is(Tema.AAP));
+		assertThat(journalpost.getTemanavn(), is(Tema.AAP.getTemanavn()));
 	}
 
 	private void assertCommonMetadata(Journalpost journalpost) {
@@ -302,13 +345,12 @@ class JournalpostDtoMapperTest {
 		assertEquals(AKTOER_ID, journalpost.getBruker().getId());
 	}
 
-
 	private RequestCache createArkivsakCacheRequestCache() {
 		RequestCache requestCache = new RequestCache();
-		requestCache.putObject(TILGANG_BRUKER,
-				TilgangBruker.builder()
-						.foedselsnr(FNR)
+		requestCache.putObject(SAKS_ID + Arkivsakssystem.GSAK.name(),
+				Arkivsak.builder()
 						.aktoerId(AKTOER_ID)
+						.tema(Tema.STO)
 						.build()
 		);
 		return requestCache;
@@ -316,8 +358,9 @@ class JournalpostDtoMapperTest {
 
 	private RequestCache createTilgangBrukerRequestCache() {
 		RequestCache requestCache = new RequestCache();
-		requestCache.putObject(SAKS_ID + Arkivsakssystem.GSAK.name(),
-				Arkivsak.builder()
+		requestCache.putObject(TILGANG_BRUKER,
+				TilgangBruker.builder()
+						.foedselsnr(FNR)
 						.aktoerId(AKTOER_ID)
 						.build()
 		);
@@ -331,6 +374,7 @@ class JournalpostDtoMapperTest {
 						.aktoerId(AKTOER_ID)
 						.arkivsaksystem(Arkivsakssystem.PSAK)
 						.arkivsaksnummer(ARKIVSAK_NR)
+						.tema(Tema.PEN)
 						.build()
 		);
 		return requestCache;
@@ -404,7 +448,6 @@ class JournalpostDtoMapperTest {
 	private JournalpostDto.JournalpostDtoBuilder baseJournalpostDto() {
 		return JournalpostDto.builder()
 				.journalpostId(JOURNALPOST_ID)
-				.nextJournalpostId(405252858L)
 				.innhold(INNHOLD)
 				.fagomrade(FAGOMRADE)
 				.behandlingstema(BEHANDLINGSTEMA)
