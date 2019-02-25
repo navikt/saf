@@ -137,7 +137,8 @@ public class JournalpostTilgangRepositoryImpl implements JournalpostTilgangRepos
 								.build();
 					}
 				}
-				return null;
+				// fallback
+				return journalpostAntiCorruptionLayer.hentTilgangSakFromSafRequestContext(safRequestContext, tilgangBruker);
 			} else {
 				return journalpostAntiCorruptionLayer.hentTilgangSakFromSafRequestContext(safRequestContext, tilgangBruker);
 			}

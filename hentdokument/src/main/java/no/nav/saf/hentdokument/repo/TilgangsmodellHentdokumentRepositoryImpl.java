@@ -133,7 +133,8 @@ public class TilgangsmodellHentdokumentRepositoryImpl implements TilgangsmodellH
 								.build();
 					}
 				}
-				return null;
+				// fallback
+				return hentDokumentAntiCorruptionLayer.hentTilgangSakFromSafRequestContext(safRequestContext, tilgangBruker);
 			} else {
 				return hentDokumentAntiCorruptionLayer.hentTilgangSakFromSafRequestContext(safRequestContext, tilgangBruker);
 			}
