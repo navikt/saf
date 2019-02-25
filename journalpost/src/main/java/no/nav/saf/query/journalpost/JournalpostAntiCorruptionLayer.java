@@ -113,15 +113,18 @@ class JournalpostAntiCorruptionLayer {
 		safRequestContex.getRequestCache().putObject(RJOARK902_JOURNALPOST_DTO, hentJournalpostDto);
 		SaksrelasjonDto saksrelasjon = hentJournalpostDto.getSaksrelasjon();
 		// Journalpost sannsynligvis midlertidig uten saksrelasjon
-		if(saksrelasjon == null) {
+		if (hentJournalpostDto.isTilknyttetSak()) {
 			return Arkivsak.builder()
+					.arkivsaksnummer(saksrelasjon.getSakId())
+					.arkivsaksystem(mapJoarkFagsystemToArkivsakssystemCode(saksrelasjon.getFagsystem(), hentJournalpostDto
+							.getJournalpostId()))
+					.build();
+		} else {
+			return Arkivsak.builder()
+					.tema(FagomradeCode.toSafTema(hentJournalpostDto.getFagomrade()))
 					.build();
 		}
-		return Arkivsak.builder()
-				.arkivsaksnummer(saksrelasjon.getSakId())
-				.arkivsaksystem(mapJoarkFagsystemToArkivsakssystemCode(saksrelasjon.getFagsystem(), hentJournalpostDto
-						.getJournalpostId()))
-				.build();
+
 	}
 
 	private Arkivsakssystem mapJoarkFagsystemToArkivsakssystemCode(FagsystemCode joarkFagsystem, Long journalpostId) {

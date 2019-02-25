@@ -46,7 +46,7 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @Component
-public class JournalpostDtoMapper {
+public class Rjoark900JournalpostDtoMapper {
 
 	public Journalpost mapJournalpostDto(final JournalpostDto journalpostDto, final RequestCache requestCache) {
 		if (journalpostDto == null) {
@@ -54,13 +54,14 @@ public class JournalpostDtoMapper {
 		}
 		final Kanal kanal = mapKanal(journalpostDto);
 		final String journalpostId = journalpostDto.getJournalpostId().toString();
+
 		Journalpost journalpost = Journalpost.builder()
 				.journalpostId(journalpostId)
 				.tittel(journalpostDto.getInnhold())
 				.journalposttype(JournalpostTypeCode.mapToJournalpostType(journalpostDto.getJournalposttype()))
 				.journalstatus(mapJournalstatus(journalpostDto))
-				.tema(FagomradeCode.toSafTema(journalpostDto.getFagomrade()))
-				.temanavn(FagomradeCode.toSafTema(journalpostDto.getFagomrade()).getTemanavn())
+				.tema(mapTema(journalpostDto, requestCache))
+				.temanavn(mapTema(journalpostDto, requestCache).getTemanavn())
 				.behandlingstema(journalpostDto.getBehandlingstema())
 				.behandlingstemanavn(journalpostDto.getBehandlingstemanavn())
 				.sak(mapSak(journalpostDto.getSaksrelasjon(), requestCache))
@@ -99,6 +100,22 @@ public class JournalpostDtoMapper {
 						.build()).collect(Collectors.toList());
 		journalpost.getDokumenter().addAll(dokumenter);
 		return journalpost;
+	}
+
+	private Tema mapTema(JournalpostDto journalpostDto, RequestCache requestCache) {
+		if(journalpostDto.isTilknyttetSak()) {
+			SaksrelasjonDto saksrelasjon = journalpostDto.getSaksrelasjon();
+			Arkivsak arkivsak = requestCache.getObject(saksrelasjon.getSakId() + mapJoarkFagsystem(saksrelasjon.getFagsystem()));
+			if (arkivsak == null) {
+				// For journalposter som mangler saksrelasjon, er gjeldende tema lik Journalpost.fagomrade.
+				return FagomradeCode.toSafTema(journalpostDto.getFagomrade());
+			}
+			// For sakstilknyttede journalposter hentes tema fra arkivsaken (GSAK eller PSAK sak), altså ikke fra joark.
+			return arkivsak.getTema();
+		} else {
+			// For journalposter som mangler saksrelasjon, er gjeldende tema lik Journalpost.fagomrade.
+			return FagomradeCode.toSafTema(journalpostDto.getFagomrade());
+		}
 	}
 
 	private Bruker mapBruker(SaksrelasjonDto saksrelasjon, RequestCache requestCache) {

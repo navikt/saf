@@ -265,7 +265,7 @@ public class TilgangsmodellRepositoryImpl implements TilgangsmodellRepository {
 	public List<TilgangJournalpost> findTilgangJournalposter(List<TilgangBruker> tilgangBrukere,
 															 List<TilgangSak> tilgangSakList,
 															 LocalDate fraDato,
-															 List<Tema> inkluderTema, List<Journalposttype> inkluderJournalposttyper,
+															 List<Journalposttype> inkluderJournalposttyper,
 															 List<Journalstatus> inkluderJournalstatuses,
 															 Integer foerste, String etterPeker, Integer siste, String foerPeker,
 															 SafRequestContext safRequestContext) {
@@ -274,7 +274,7 @@ public class TilgangsmodellRepositoryImpl implements TilgangsmodellRepository {
 					.flatMap(t -> t.getAlleIdenter().stream())
 					.collect(Collectors.toList());
 			List<JournalpostDto> journalposter = joarkAntiCorruptionLayer.finnJournalposter(identer,
-					tilgangSakList, fraDato, inkluderTema, inkluderJournalposttyper, inkluderJournalstatuses, foerste, etterPeker, siste, foerPeker);
+					tilgangSakList, fraDato, inkluderJournalposttyper, inkluderJournalstatuses, foerste, etterPeker, siste, foerPeker);
 			return journalposter.stream()
 					.map(journalpostDto -> {
 						safRequestContext.getRequestCache()

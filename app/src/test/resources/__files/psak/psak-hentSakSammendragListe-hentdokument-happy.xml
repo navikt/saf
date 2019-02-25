@@ -1,0 +1,18 @@
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
+	<soapenv:Body>
+		<a:hentSakSammendragListeResponse xmlns:a="http://nav.no/tjeneste/virksomhet/pensjonSak/v1">
+			<hentSakSammendragListeResponse>
+				<sakSammendragListe>
+					<sakId>10672720</sakId>
+					<sakstype>Alderspensjon</sakstype>
+					<arkivtema kodeverksRef="http://nav.no/kodeverk/Kodeverk/Arkivtema">PEN</arkivtema>
+					<saksstatus>Løpende</saksstatus>
+					<saksperiode>
+						<fom>2015-06-01+02:00</fom>
+					</saksperiode>
+					<enhetId>4410</enhetId>
+				</sakSammendragListe>
+			</hentSakSammendragListeResponse>
+		</a:hentSakSammendragListeResponse>
+	</soapenv:Body>
+</soapenv:Envelope>
