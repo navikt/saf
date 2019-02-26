@@ -8,6 +8,21 @@ Alle nevneverdige endringer blir dokumentert her.
 
 Denne malen er basert på [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [4.1.0] - 2019-02-26 
+### Endret
+* `GraphQL: ` Type `Journalpost`. Nytt felt `skjerming`.
+* `GraphQL: ` Type `DokumentInfo`. Nytt felt `skjerming`.
+* `GraphQL: ` Type `Dokumentvariant`. Nytt felt `skjerming`.
+* `GraphQL: ` Type `Dokumentvariant`. Nytt felt `filnavn`.
+
+## [4.0.3] - 2019-02-25 
+### Rettet
+* Rettet feil visning av tema på sakstilknyttede journalposter. Tema fra saken vises nå på `Journalpost`.
+
+## [4.0.2] - 2019-02-22 
+### Rettet
+* Rettet en feil der man forsøkte slå opp bidrag saker på arkivsaksnummer i stedet for fagsakId.
+
 ## [4.0.1] - 2019-02-21 
 ### Rettet
 * Rettet feil i `journalpost` query der man fikk NullPointerException ved å spørre på midlertidige journalposter uten saksrelasjon.

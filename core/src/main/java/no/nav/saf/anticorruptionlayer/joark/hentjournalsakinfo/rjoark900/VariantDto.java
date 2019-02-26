@@ -12,5 +12,6 @@ import no.nav.saf.anticorruptionlayer.joark.domain.kode.VariantFormatCode;
 @Builder
 public class VariantDto {
 	private VariantFormatCode variantf;
+	private String filnavn;
 	private SkjermingTypeCode skjerming;
 }
