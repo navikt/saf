@@ -34,6 +34,7 @@ public class Journalpost {
 	private final String opprettetAvNavn;
 	private final Kanal kanal;
 	private final String kanalnavn;
+	private final String skjerming;
 	private final LocalDateTime datoOpprettet;
 	@Builder.Default
 	private final List<RelevantDato> relevanteDatoer = new ArrayList<>();

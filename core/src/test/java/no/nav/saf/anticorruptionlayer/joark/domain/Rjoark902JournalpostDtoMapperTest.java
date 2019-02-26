@@ -92,6 +92,8 @@ class Rjoark902JournalpostDtoMapperTest {
 	private static final String OPPRETTET_AV_NAVN = "Max Mekker";
 	private static final String TILLEGGSOPPLYSNING_NOKKEL = "bucid";
 	private static final String TILLEGGSOPPLYSNING_VERDI = "21521";
+	private static final String FILNAVN_1 = "filnavn1";
+	private static final String FILNAVN_2 = "filnavn2";
 
 	private final Rjoark902JournalpostDtoMapper mapper = new Rjoark902JournalpostDtoMapper();
 
@@ -322,6 +324,7 @@ class Rjoark902JournalpostDtoMapperTest {
 		assertEquals(AVSENDER_MOTTAKER_LAND, journalpost.getAvsenderMottakerLand());
 		assertEquals(JOURNALFOERENDE_ENHET, journalpost.getJournalforendeEnhet());
 		assertEquals(OPPRETTET_AV_NAVN, journalpost.getOpprettetAvNavn());
+		assertEquals(SKJERMING_TYPE_CODE_POL.name(), journalpost.getSkjerming());
 
 		assertEquals(LocalDateTime.from(DATO_OPPRETTET.toInstant()
 				.atZone(ZoneId.systemDefault())), LocalDateTime.from(journalpost.getDatoOpprettet()));
@@ -333,12 +336,13 @@ class Rjoark902JournalpostDtoMapperTest {
 		DokumentInfo dokumentInfo1 = journalpost.getDokumenter().get(0);
 		assertEquals(DOKUMENT_INFO_ID, dokumentInfo1.getDokumentInfoId());
 		assertEquals(Long.toString(JOURNALPOST_ID), dokumentInfo1.getOriginalJournalpostId());
+		assertEquals(SKJERMING_TYPE_CODE_POL.name(), dokumentInfo1.getSkjerming());
 
 		Assertions.assertThat(dokumentInfo1.getDokumentvarianter())
-				.extracting(Dokumentvariant::getVariantformat, Dokumentvariant::isSaksbehandlerHarTilgang)
+				.extracting(Dokumentvariant::getVariantformat, Dokumentvariant::getFilnavn, Dokumentvariant::isSaksbehandlerHarTilgang, Dokumentvariant::getSkjerming)
 				.hasSize(2)
-				.containsExactlyInAnyOrder(tuple(VARIANT_FORMAT_CODE_SLADDET.getSafVariantformat(), false),
-						tuple(VARIANT_FORMAT_CODE_ARKIV.getSafVariantformat(), false));
+				.containsExactlyInAnyOrder(tuple(VARIANT_FORMAT_CODE_ARKIV.getSafVariantformat(), FILNAVN_1, false, SKJERMING_TYPE_CODE_POL.name()),
+						tuple(VARIANT_FORMAT_CODE_SLADDET.getSafVariantformat(), FILNAVN_2, false, null));
 
 		assertEquals(BREVKODE, dokumentInfo1.getBrevkode());
 		assertEquals(Dokumentstatus.FERDIGSTILT, dokumentInfo1.getDokumentstatus());
@@ -398,14 +402,17 @@ class Rjoark902JournalpostDtoMapperTest {
 						.brevkode(BREVKODE)
 						.dokumentstatus(DokumentStatusCode.FERDIGSTILT)
 						.origJournalpostId(JOURNALPOST_ID)
+						.skjerming(SKJERMING_TYPE_CODE_POL)
 						.logiske(Collections.singletonList(new LogiskVedleggDto()))
 						.varianter(Arrays.asList(VariantDto.builder()
 										.skjerming(SKJERMING_TYPE_CODE_POL)
 										.variantf(VARIANT_FORMAT_CODE_ARKIV)
+										.filnavn(FILNAVN_1)
 										.build(),
 								VariantDto.builder()
 										.skjerming(null)
 										.variantf(VARIANT_FORMAT_CODE_SLADDET)
+										.filnavn(FILNAVN_2)
 										.build()))
 						.build());
 	}
@@ -459,6 +466,7 @@ class Rjoark902JournalpostDtoMapperTest {
 				.opprettetAvNavn(OPPRETTET_AV_NAVN)
 				.datoOpprettet(DATO_OPPRETTET)
 				.journalstatus(JournalStatusCode.J)
+				.skjerming(SKJERMING_TYPE_CODE_POL)
 				.tilleggsopplysninger(Collections.singletonList(TilleggsopplysningDto.builder()
 						.nokkel(TILLEGGSOPPLYSNING_NOKKEL)
 						.verdi(TILLEGGSOPPLYSNING_VERDI)

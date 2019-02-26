@@ -10,7 +10,8 @@ import no.nav.saf.domain.kode.Variantformat;
 @Value
 @Builder
 public class Dokumentvariant {
-
 	private final Variantformat variantformat;
+	private final String filnavn;
 	private final boolean saksbehandlerHarTilgang;
+	private final String skjerming;
 }
