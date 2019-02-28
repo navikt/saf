@@ -115,12 +115,12 @@ class Rjoark902JournalpostDtoMapperTest {
 		assertEquals(JournalStatusCode.E.toSafJournalstatus(), journalpost.getJournalstatus());
 		assertEquals(SENTRAL_UTSKRIFT.getKanalnavn(), journalpost.getKanalnavn());
 
+		assertThat(journalpost.getRelevanteDatoer(), hasItem(new RelevantDato(JOURNAL_DATO, Datotype.DATO_JOURNALFOERT)));
 		assertThat(journalpost.getRelevanteDatoer(), hasItem(new RelevantDato(DOKUMENT_DATO, Datotype.DATO_DOKUMENT)));
 		assertThat(journalpost.getRelevanteDatoer(), hasItem(new RelevantDato(AVS_RETUR_DATO, Datotype.DATO_AVS_RETUR)));
 		assertThat(journalpost.getRelevanteDatoer(), hasItem(new RelevantDato(SENDT_PRINT_DATO, Datotype.DATO_SENDT_PRINT)));
 		assertThat(journalpost.getRelevanteDatoer(), hasItem(new RelevantDato(EKSPEDERT_DATO, Datotype.DATO_EKSPEDERT)));
 		assertThat(journalpost.getRelevanteDatoer(), not(hasItem(new RelevantDato(MOTTAT_DATO, Datotype.DATO_REGISTRERT))));
-		assertThat(journalpost.getRelevanteDatoer(), not(hasItem(new RelevantDato(JOURNAL_DATO, Datotype.DATO_JOURNALFOERT))));
 	}
 
 	@Test
@@ -422,6 +422,7 @@ class Rjoark902JournalpostDtoMapperTest {
 				.journalposttype(JournalpostTypeCode.U)
 				.saksrelasjon(new SaksrelasjonDto(SAKS_ID, false, FAKSYSTEM_CODE))
 				.journalstatus(journalStatusCode)
+				.journalDato(JOURNAL_DATO)
 				.dokumentDato(DOKUMENT_DATO)
 				.avsReturDato(AVS_RETUR_DATO)
 				.sendtPrintDato(SENDT_PRINT_DATO)
