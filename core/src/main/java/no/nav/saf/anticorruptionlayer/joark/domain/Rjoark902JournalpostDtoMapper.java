@@ -193,6 +193,9 @@ public class Rjoark902JournalpostDtoMapper {
 				}
 				break;
 			case U:
+				if (journalpostDto.getJournalDato() != null) {
+					relevanteDatoer.add(new RelevantDato(journalpostDto.getJournalDato(), Datotype.DATO_JOURNALFOERT));
+				}
 				if (journalpostDto.getSendtPrintDato() != null) {
 					relevanteDatoer.add(new RelevantDato(journalpostDto.getSendtPrintDato(), Datotype.DATO_SENDT_PRINT));
 				}
