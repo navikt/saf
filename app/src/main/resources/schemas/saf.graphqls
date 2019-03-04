@@ -656,7 +656,8 @@ enum Variantformat {
     # * **SLADDET** variant har ikke spesiell tilgangskontroll.
     SLADDET
 
-    # TODO
+    # Produksjonsvariant i eget proprietært format.
+    # * Varianten finnes for dokumenter som er produsert i Metaforce eller Brevklient.
     PRODUKSJON
 
     # Produksjonsvariant i eget proprietært format.
