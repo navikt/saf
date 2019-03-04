@@ -6,7 +6,7 @@ public enum VariantFormatCode {
 	/**
 	 * Produksjonsformat
 	 */
-	PRODUKSJON(null),
+	PRODUKSJON(Variantformat.PRODUKSJON),
 	/**
 	 * Arkivformat
 	 */
