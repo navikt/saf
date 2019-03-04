@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.domain.kode.Journalposttype;
 import no.nav.saf.domain.kode.Journalstatus;
 import no.nav.saf.domain.kode.Tema;
+import no.nav.saf.domain.kode.Tilknytning;
 import no.nav.saf.domain.visningsmodell.Dokumentoversikt;
 import no.nav.saf.domain.visningsmodell.Journalpost;
 import no.nav.saf.exceptions.SafFunctionalException;
@@ -16,11 +17,14 @@ import no.nav.saf.query.dokumentoversikt.bruker.DokumentoversiktBrukerCoordinato
 import no.nav.saf.query.dokumentoversikt.fagsak.DokumentoversiktFagsakArguments;
 import no.nav.saf.query.dokumentoversikt.fagsak.DokumentoversiktFagsakCoordinator;
 import no.nav.saf.query.journalpost.JournalpostCoordinator;
+import no.nav.saf.query.tilknyttedejournalposter.TilknyttedeJournalposterCoordinator;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 /**
  * @author Joakim Bjørnstad, Jbit AS
@@ -32,16 +36,19 @@ public class DokumentoversiktWiring {
 	private final DokumentoversiktBrukerCoordinator dokumentoversiktBrukerCoordinator;
 	private final DokumentoversiktFagsakCoordinator dokumentoversiktFagsakCoordinator;
 	private final JournalpostCoordinator journalpostCoordinator;
+	private final TilknyttedeJournalposterCoordinator tilknyttedeJournalposterCoordinator;
 
 	@Inject
 	public DokumentoversiktWiring(DokumentoversiktCoordinator dokumentoversiktCoordinator,
 								  DokumentoversiktBrukerCoordinator dokumentoversiktBrukerCoordinator,
 								  DokumentoversiktFagsakCoordinator dokumentoversiktFagsakCoordinator,
-								  JournalpostCoordinator journalpostCoordinator) {
+								  JournalpostCoordinator journalpostCoordinator,
+								  TilknyttedeJournalposterCoordinator tilknyttedeJournalposterCoordinator) {
 		this.dokumentoversiktCoordinator = dokumentoversiktCoordinator;
 		this.dokumentoversiktBrukerCoordinator = dokumentoversiktBrukerCoordinator;
 		this.dokumentoversiktFagsakCoordinator = dokumentoversiktFagsakCoordinator;
 		this.journalpostCoordinator = journalpostCoordinator;
+		this.tilknyttedeJournalposterCoordinator = tilknyttedeJournalposterCoordinator;
 	}
 
 	public RuntimeWiring createRuntimeWiring() {
@@ -51,6 +58,7 @@ public class DokumentoversiktWiring {
 				.type("Tema", typeWiring -> typeWiring.enumValues(new NaturalEnumValuesProvider<>(Tema.class)))
 				.type("Journalposttype", typeWiring -> typeWiring.enumValues(new NaturalEnumValuesProvider<>(Journalposttype.class)))
 				.type("Journalstatus", typeWiring -> typeWiring.enumValues(new NaturalEnumValuesProvider<>(Journalstatus.class)))
+				.type("Tilknytning", typeWiring -> typeWiring.enumValues(new NaturalEnumValuesProvider<>(Tilknytning.class)))
 				.type("Query", typeWiring -> typeWiring.dataFetcher("dokumentoversiktBruker", environment -> {
 					try {
 						DokumentoversiktBrukerArguments arguments = DokumentoversiktBrukerArguments.create(environment);
@@ -90,6 +98,20 @@ public class DokumentoversiktWiring {
 						return journalpost;
 					} catch (SafFunctionalException e) {
 						return new DataFetcherResult<Journalpost>(null, Collections.singletonList(e));
+					}
+				}))
+				.type("Query", typeWiring -> typeWiring.dataFetcher("tilknyttedeJournalposter", environment -> {
+					try {
+						final String dokumentInfoId = environment.getArgument("dokumentInfoId");
+						final Tilknytning tilknytning = environment.getArgument("tilknytning");
+						SafRequestContext safRequestContext = environment.getContext();
+						safRequestContext.setCorrelationId(environment.getExecutionId());
+						log.info("tilknyttedeJournalposter for dokumentInfoId={}, tilknytning={}", dokumentInfoId, tilknytning);
+						List<Journalpost> tilknyttedeJournalposter = tilknyttedeJournalposterCoordinator.hentTilknyttedeJournalposter(dokumentInfoId, tilknytning, safRequestContext);
+						log.info("tilknyttedeJournalposter hentet for dokumentInfoId={}, tilknytning={}", dokumentInfoId, tilknytning);
+						return tilknyttedeJournalposter;
+					} catch (SafFunctionalException e) {
+						return new DataFetcherResult<List<Journalpost>>(new ArrayList<>(), Collections.singletonList(e));
 					}
 				}))
 				.type("Journalpost", typeWiring -> typeWiring.dataFetcher("dokumenter", environment -> {

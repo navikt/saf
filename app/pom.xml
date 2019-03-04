@@ -23,6 +23,10 @@
 		</dependency>
 		<dependency>
 			<groupId>no.nav.saf</groupId>
+			<artifactId>tilknyttedejournalposter</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>no.nav.saf</groupId>
 			<artifactId>hentdokument</artifactId>
 		</dependency>
 		<dependency>
