@@ -28,6 +28,7 @@ public class JournalpostDto {
 	private String behandlingstema;
 	private String behandlingstemanavn;
 	private JournalStatusCode journalstatus;
+	private String avsenderMottakerId;
 	private String avsenderMottakerNavn;
 	private String avsenderMottakerLand;
 	private String journalforendeEnhet;
