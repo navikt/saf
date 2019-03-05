@@ -42,6 +42,8 @@ fasitResources:
     resourceType: restservice
     propertyMap:
       url: pensjonsakrs.v1.url
+  - alias: "sak.saker"
+    resourceType: restservice
   - alias: securityTokenService
     resourceType: baseurl
   - alias: Aktoer_v2
