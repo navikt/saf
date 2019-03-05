@@ -65,6 +65,7 @@ public class Rjoark902JournalpostDtoMapper {
 				.behandlingstemanavn(journalpostDto.getBehandlingstemanavn())
 				.sak(mapSak(journalpostDto.getSaksrelasjon(), requestCache))
 				.bruker(mapBruker(journalpostDto.getSaksrelasjon(), requestCache))
+				.avsenderMottakerId(journalpostDto.getAvsenderMottakerId())
 				.avsenderMottakerNavn(journalpostDto.getAvsenderMottakerNavn())
 				.avsenderMottakerLand(journalpostDto.getAvsenderMottakerLand())
 				.journalforendeEnhet(journalpostDto.getJournalforendeEnhet())

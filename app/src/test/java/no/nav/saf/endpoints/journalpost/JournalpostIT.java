@@ -90,6 +90,7 @@ class JournalpostIT extends AbstractItest {
 		assertThat(journalpost.getSak().getArkivsaksnummer(), is("100000000"));
 		assertThat(journalpost.getBruker().getId(), is("***gammelt_fnr***00"));
 		assertThat(journalpost.getBruker().getType(), is(BrukerIdType.AKTOERID));
+		assertThat(journalpost.getAvsenderMottakerId(), is("***gammelt_fnr***"));
 		assertThat(journalpost.getAvsenderMottakerNavn(), is("Bjarne Betjent"));
 		assertThat(journalpost.getAvsenderMottakerLand(), is("NO"));
 		assertThat(journalpost.getJournalforendeEnhet(), is("2990"));

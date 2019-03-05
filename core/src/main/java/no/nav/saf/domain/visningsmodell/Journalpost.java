@@ -27,6 +27,7 @@ public class Journalpost {
 	private final String behandlingstemanavn;
 	private final Sak sak;
 	private final Bruker bruker;
+	private final String avsenderMottakerId;
 	private final String avsenderMottakerNavn;
 	private final String avsenderMottakerLand;
 	private final String journalforendeEnhet;

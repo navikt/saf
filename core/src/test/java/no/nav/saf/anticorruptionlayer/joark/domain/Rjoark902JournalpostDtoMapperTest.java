@@ -94,6 +94,7 @@ class Rjoark902JournalpostDtoMapperTest {
 	private static final String TILLEGGSOPPLYSNING_VERDI = "21521";
 	private static final String FILNAVN_1 = "filnavn1";
 	private static final String FILNAVN_2 = "filnavn2";
+	private static final String AVSENDER_MOTTAKER_ID = "0000000000";
 
 	private final Rjoark902JournalpostDtoMapper mapper = new Rjoark902JournalpostDtoMapper();
 
@@ -320,6 +321,7 @@ class Rjoark902JournalpostDtoMapperTest {
 		assertEquals(JOURNALFOERT_AV, journalpost.getJournalfortAvNavn());
 		assertEquals(BEHANDLINGSTEMA, journalpost.getBehandlingstema());
 		assertEquals(BEHANDLINGSTEMANAVN, journalpost.getBehandlingstemanavn());
+		assertEquals(AVSENDER_MOTTAKER_ID, journalpost.getAvsenderMottakerId());
 		assertEquals(AVSENDER_MOTTAKER_NAVN, journalpost.getAvsenderMottakerNavn());
 		assertEquals(AVSENDER_MOTTAKER_LAND, journalpost.getAvsenderMottakerLand());
 		assertEquals(JOURNALFOERENDE_ENHET, journalpost.getJournalforendeEnhet());
@@ -460,6 +462,7 @@ class Rjoark902JournalpostDtoMapperTest {
 				.fagomrade(FAGOMRADE)
 				.behandlingstema(BEHANDLINGSTEMA)
 				.behandlingstemanavn(BEHANDLINGSTEMANAVN)
+				.avsenderMottakerId(AVSENDER_MOTTAKER_ID)
 				.avsenderMottakerNavn(AVSENDER_MOTTAKER_NAVN)
 				.avsenderMottakerLand(AVSENDER_MOTTAKER_LAND)
 				.journalforendeEnhet(JOURNALFOERENDE_ENHET)

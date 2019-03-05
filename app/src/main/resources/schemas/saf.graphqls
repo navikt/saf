@@ -176,6 +176,9 @@ type Journalpost {
     # * Dersom journalposten er sakstilknyttet, henter SAF bruker fra GSAK/PSAK. Alternativt henter SAF den fra Joark.
     bruker: Bruker
 
+    # Identifikatoren til parten som er avsender eller mottaker av dokumentene på journalposten. Enten fødselsnummer eller organisasjonsnummer.
+    avsenderMottakerId: String
+
     # Navnet på personen eller organisasjonen som er avsender eller mottaker av dokumentene på journalposten.
     avsenderMottakerNavn: String
 
