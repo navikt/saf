@@ -6,6 +6,8 @@ import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.FinnJou
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.FinnJournalposterResponseTo;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark901.HentTilgangJournalpostResponseTo;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark902.HentJournalpostResponseTo;
+import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark903.TilknytningUriParam;
+import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark903.TilknyttedeJournalposterResponse;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark920.HentDokumentResponseTo;
 import no.nav.saf.exceptions.DokumentIkkeFunnetException;
 import no.nav.saf.exceptions.JournalpostIkkeFunnetException;
@@ -113,6 +115,22 @@ public class HentJournalsakinfo {
 				throw new JournalpostIkkeFunnetException("Journalpost med journalpostId=" + journalpostId + " ikke funnet.");
 			}
 			throw new SafFunctionalException(String.format("hentTilgangJournalpost feilet funksjonelt. journalpostId=%s, feilmelding=%s", journalpostId, e.getMessage()));
+		}
+	}
+
+	@Monitor(value = "dok_consumer", extraTags = {"process", "tilknyttedeJournalposter"}, histogram = true)
+	public TilknyttedeJournalposterResponse tilknyttedeJournalposter(final String dokumentInfoId, final TilknytningUriParam tilknytning) {
+		try {
+			String uri = hentjournalsakinfoUrl + "/tilknyttedejournalposter/{dokumentInfoId}/{tilknytning}";
+			return restTemplate.exchange(uri, HttpMethod.GET, new HttpEntity<>(createCorrelationIdHeader()), TilknyttedeJournalposterResponse.class, dokumentInfoId, tilknytning.name()).getBody();
+		} catch (HttpServerErrorException e) {
+			throw new SafTechnicalException(String.format("tilknyttedeJournalposter feilet teknisk med statusKode=%s. Feilmelding=%s", e
+					.getStatusCode(), e.getMessage()), e, e.getStatusCode());
+		} catch (HttpClientErrorException e) {
+			if (e.getStatusCode() == HttpStatus.NOT_FOUND) {
+				throw new JournalpostIkkeFunnetException("Tilknyttede Journalposter for dokumentInfoId=" + dokumentInfoId + " ikke funnet.");
+			}
+			throw new SafFunctionalException(String.format("tilknyttedeJournalposter feilet funksjonelt. dokumentInfoId=%s, feilmelding=%s", dokumentInfoId, e.getMessage()));
 		}
 	}
 

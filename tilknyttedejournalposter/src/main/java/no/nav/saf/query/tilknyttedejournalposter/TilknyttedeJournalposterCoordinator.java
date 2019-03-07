@@ -8,6 +8,7 @@ import static no.nav.saf.domain.DomainConstants.PEP4;
 import static no.nav.saf.domain.DomainConstants.PEP5;
 import static no.nav.saf.domain.DomainConstants.PEP6D;
 
+import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark903.TilknyttetJournalpostDto;
 import no.nav.saf.domain.kode.Tilknytning;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.domain.tilgangsmodell.TilgangDokumentInfo;
@@ -57,8 +58,7 @@ public class TilknyttedeJournalposterCoordinator {
 
 
 	public List<Journalpost> hentTilknyttedeJournalposter(String dokumentInfoId, Tilknytning tilknytning, SafRequestContext safRequestContext) {
-
-
+		List<TilknyttetJournalpostDto> tilgangsmodell = tilknyttedeJournalposterTilgangRepository.tilgangsmodell(dokumentInfoId, tilknytning);
 
 		return new ArrayList<>();
 	}
