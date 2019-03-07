@@ -8,6 +8,10 @@ Alle nevneverdige endringer blir dokumentert her.
 
 Denne malen er basert på [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [4.3.2] - 2019-03-07 
+### Rettet
+* Rettet feil der `DATO_JOURNALFOERT` ikke var en del av `relevanteDatoer` for Notat `Journalpost`.
+
 ## [4.3.0] - 2019-03-05 
 ### Endret
 * `GraphQL: ` Type `Journalpost`. Nytt felt `avsenderMottakerId`.
