@@ -184,19 +184,16 @@ public class Rjoark902JournalpostDtoMapper {
 		if (journalpostDto.getDokumentDato() != null) {
 			relevanteDatoer.add(new RelevantDato(journalpostDto.getDokumentDato(), Datotype.DATO_DOKUMENT));
 		}
+		if (journalpostDto.getJournalDato() != null) {
+			relevanteDatoer.add(new RelevantDato(journalpostDto.getJournalDato(), Datotype.DATO_JOURNALFOERT));
+		}
 		switch (journalpostDto.getJournalposttype()) {
 			case I:
 				if (journalpostDto.getMottattDato() != null) {
 					relevanteDatoer.add(new RelevantDato(journalpostDto.getMottattDato(), Datotype.DATO_REGISTRERT));
 				}
-				if (journalpostDto.getJournalDato() != null) {
-					relevanteDatoer.add(new RelevantDato(journalpostDto.getJournalDato(), Datotype.DATO_JOURNALFOERT));
-				}
 				break;
 			case U:
-				if (journalpostDto.getJournalDato() != null) {
-					relevanteDatoer.add(new RelevantDato(journalpostDto.getJournalDato(), Datotype.DATO_JOURNALFOERT));
-				}
 				if (journalpostDto.getSendtPrintDato() != null) {
 					relevanteDatoer.add(new RelevantDato(journalpostDto.getSendtPrintDato(), Datotype.DATO_SENDT_PRINT));
 				}
