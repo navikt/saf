@@ -148,6 +148,25 @@ class Rjoark902JournalpostDtoMapperTest {
 	}
 
 	@Test
+	void shouldMapJournalpostDtoWithNotatJournalpost() {
+		JournalpostDto journalpostDto = buildJournalpostDtoInternNotatType();
+		RequestCache requestCache = createTilgangBrukerRequestCache();
+		String tilgangKeyPep5LocalCaching = KeyGeneratorLocalCaching.getKeyForPep5(String.valueOf(JOURNALPOST_ID), DOKUMENT_INFO_ID);
+		requestCache.putObject(tilgangKeyPep5LocalCaching, true);
+
+		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, requestCache);
+
+		assertCommonMetadata(journalpost);
+
+		assertEquals(Journalposttype.N, journalpost.getJournalposttype());
+		assertEquals(Journalstatus.JOURNALFOERT, journalpost.getJournalstatus());
+		assertEquals(journalpost.getKanalnavn(), Kanal.INGEN_DISTRIBUSJON.getKanalnavn());
+
+		assertThat(journalpost.getRelevanteDatoer(), hasItem(new RelevantDato(JOURNAL_DATO, Datotype.DATO_JOURNALFOERT)));
+	}
+
+
+	@Test
 	void shouldNotMapDokumentinfoIngenTilgangPep5() {
 		JournalpostDto journalpostDto = buildJournalpostDtoInngaaendeType();
 		RequestCache requestCache = createTilgangBrukerRequestCache();
@@ -445,6 +464,7 @@ class Rjoark902JournalpostDtoMapperTest {
 		return baseJournalpostDto()
 				.journalposttype(JournalpostTypeCode.N)
 				.saksrelasjon(new SaksrelasjonDto(SAKS_ID, false, FAKSYSTEM_CODE))
+				.journalDato(JOURNAL_DATO)
 				.build();
 	}
 
