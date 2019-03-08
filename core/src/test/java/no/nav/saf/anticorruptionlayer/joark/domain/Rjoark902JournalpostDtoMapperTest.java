@@ -94,6 +94,7 @@ class Rjoark902JournalpostDtoMapperTest {
 	private static final String TILLEGGSOPPLYSNING_VERDI = "21521";
 	private static final String FILNAVN_1 = "filnavn1";
 	private static final String FILNAVN_2 = "filnavn2";
+	private static final String AVSENDER_MOTTAKER_ID = "0000000000";
 
 	private final Rjoark902JournalpostDtoMapper mapper = new Rjoark902JournalpostDtoMapper();
 
@@ -145,6 +146,25 @@ class Rjoark902JournalpostDtoMapperTest {
 		assertThat(journalpost.getRelevanteDatoer(), hasItem(new RelevantDato(MOTTAT_DATO, Datotype.DATO_REGISTRERT)));
 		assertThat(journalpost.getRelevanteDatoer(), hasItem(new RelevantDato(JOURNAL_DATO, Datotype.DATO_JOURNALFOERT)));
 	}
+
+	@Test
+	void shouldMapJournalpostDtoWithNotatJournalpost() {
+		JournalpostDto journalpostDto = buildJournalpostDtoInternNotatType();
+		RequestCache requestCache = createTilgangBrukerRequestCache();
+		String tilgangKeyPep5LocalCaching = KeyGeneratorLocalCaching.getKeyForPep5(String.valueOf(JOURNALPOST_ID), DOKUMENT_INFO_ID);
+		requestCache.putObject(tilgangKeyPep5LocalCaching, true);
+
+		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, requestCache);
+
+		assertCommonMetadata(journalpost);
+
+		assertEquals(Journalposttype.N, journalpost.getJournalposttype());
+		assertEquals(Journalstatus.JOURNALFOERT, journalpost.getJournalstatus());
+		assertEquals(journalpost.getKanalnavn(), Kanal.INGEN_DISTRIBUSJON.getKanalnavn());
+
+		assertThat(journalpost.getRelevanteDatoer(), hasItem(new RelevantDato(JOURNAL_DATO, Datotype.DATO_JOURNALFOERT)));
+	}
+
 
 	@Test
 	void shouldNotMapDokumentinfoIngenTilgangPep5() {
@@ -320,6 +340,7 @@ class Rjoark902JournalpostDtoMapperTest {
 		assertEquals(JOURNALFOERT_AV, journalpost.getJournalfortAvNavn());
 		assertEquals(BEHANDLINGSTEMA, journalpost.getBehandlingstema());
 		assertEquals(BEHANDLINGSTEMANAVN, journalpost.getBehandlingstemanavn());
+		assertEquals(AVSENDER_MOTTAKER_ID, journalpost.getAvsenderMottakerId());
 		assertEquals(AVSENDER_MOTTAKER_NAVN, journalpost.getAvsenderMottakerNavn());
 		assertEquals(AVSENDER_MOTTAKER_LAND, journalpost.getAvsenderMottakerLand());
 		assertEquals(JOURNALFOERENDE_ENHET, journalpost.getJournalforendeEnhet());
@@ -443,6 +464,7 @@ class Rjoark902JournalpostDtoMapperTest {
 		return baseJournalpostDto()
 				.journalposttype(JournalpostTypeCode.N)
 				.saksrelasjon(new SaksrelasjonDto(SAKS_ID, false, FAKSYSTEM_CODE))
+				.journalDato(JOURNAL_DATO)
 				.build();
 	}
 
@@ -460,6 +482,7 @@ class Rjoark902JournalpostDtoMapperTest {
 				.fagomrade(FAGOMRADE)
 				.behandlingstema(BEHANDLINGSTEMA)
 				.behandlingstemanavn(BEHANDLINGSTEMANAVN)
+				.avsenderMottakerId(AVSENDER_MOTTAKER_ID)
 				.avsenderMottakerNavn(AVSENDER_MOTTAKER_NAVN)
 				.avsenderMottakerLand(AVSENDER_MOTTAKER_LAND)
 				.journalforendeEnhet(JOURNALFOERENDE_ENHET)

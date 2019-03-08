@@ -149,32 +149,33 @@ type Tilleggsopplysning {
 	verdi: String
 }
 
-# * Et sett dokumenter som er sendt/mottatt samlet, og har felles arkivmetadata som *tema*, *avsender*, *arkivsak* og *sakspart*.
-# * En journalpost kan bestå av ett eller flere dokumenter.
+# Et sett med metadata som er nødvendig for å gjenfinne et dokument i arkivet. En journalpost kan ha ett eller flere dokumenter.
 type Journalpost {
-    # Identifiserer en Journalpost
+    # Unik identifikator per Journalpost
     journalpostId: String!
 
-    # Beskriver innholdet i forsendelsen samlet, f.eks. *"Ettersendelse til søknad om foreldrepenger"*.
+    # Beskriver innholdet i journalposten samlet, f.eks. "Ettersendelse til søknad om foreldrepenger"
     tittel: String
 
-    # Sier hvorvidt journalposten er et inngående dokument (**I**), utgående dokument (**U**) eller notat (**N**).
+    # Sier hvorvidt journalposten er et inngående dokument, et utgående dokument eller et notat.
     journalposttype: Journalposttype
 
-    # Status på journalposten i joark, f.eks. **MOTTATT** eller **JOURNALFOERT**.
+    # Status på journalposten i joark, f.eks. MOTTATT eller JOURNALFØRT. Journalstatusen gir et indikasjon på hvor i journalførings- eller dokumentproduksjonsprosessen journalposten befinner seg.
+    # * Journalposter som er resultat av en feilsituasjon og ikke skal hensyntas for saksbehandling har egne koder, som UTGAAR eller AVBRUTT.
     journalstatus: Journalstatus
 
-    # * Temaet/Fagområdet som journalposten og tilhørende sak tilhører, f.eks. "FOR".
-    # * For sakstilknyttede journalposter, er det tema på GSAK- eller PSAK-saken som er gjeldende tema. For journalposter som enda ikke har fått sakstilknytning, joark likevel kunne ha informasjon om antatt tema.
+    # Temaet/Fagområdet som journalposten og tilhørende sak tilhører, f.eks. "FOR".
+    # * For sakstilknyttede journalposter, er det tema på GSAK- eller PSAK-saken som er gjeldende tema.
+    # * For journalposter som enda ikke har fått sakstilknytning, inneholder joark informasjon om antatt tema for journalposten.
     tema: Tema
 
-    # Dekode av Tema, f.eks. *"Foreldrepenger"*.
+    # Dekode av `Tema`, f.eks. "Foreldrepenger"
     temanavn: String
 
-    # Detaljering av tema på journalpost og tilhørende sak, f.eks. *"ab0072"*.
+    # Detaljering av tema på journalpost og tilhørende sak, f.eks. "ab0072".
     behandlingstema: String
 
-    # Dekode av behandlingstema, f.eks *"Foreldrepenger ved adopsjon"*
+    # Dekode av behandlingstema, f.eks "Foreldrepenger ved adopsjon"
     behandlingstemanavn: String
 
     # Sier hvilken sak journalposten er knyttet til. En journalpost kan maksimalt være knyttet til én sak, men et dokument kan være knyttet til flere journalposter og dermed flere saker.
@@ -183,6 +184,9 @@ type Journalpost {
     # * Personen eller organisasjonen som dokumentene i journalposten gjelder.
     # * Dersom journalposten er sakstilknyttet, henter SAF bruker fra GSAK/PSAK. Alternativt henter SAF den fra Joark.
     bruker: Bruker
+
+    # Identifikatoren til parten som er avsender eller mottaker av dokumentene på journalposten. Enten fødselsnummer eller organisasjonsnummer.
+    avsenderMottakerId: String
 
     # Navnet på personen eller organisasjonen som er avsender eller mottaker av dokumentene på journalposten.
     avsenderMottakerNavn: String
@@ -193,35 +197,35 @@ type Journalpost {
     # NAV-enheten som har journalført forsendelsen. I noen tilfeller brukes journalfEnhet til å rute journalføringsoppgaven til korrekt enhet i NAV. I slike tilfeller vil journalfEnhet være satt også for ikke-journalførte dokumenter.
     journalforendeEnhet: String
 
-    # * Personen i NAV som har journalført forsendelsen.
-    # * Bruken av feltet varierer, og kan inneholde den ansattesnavn eller NAV-ident. Dersom forsendelsen er automatisk journalført, kan innholdet være f.eks. et servicebruker eller et batchnavn.
+    # Personen eller systembrukeren i NAV som har journalført forsendelsen.
+    # * Bruken av feltet varierer, og kan inneholde den ansattes navn eller NAV-ident. Dersom forsendelsen er automatisk journalført, kan innholdet være f.eks. en servicebruker eller et batchnavn.
     journalfortAvNavn: String
 
-    # * Personen eller systembrukeren i NAV som har opprettet journalposten.
+    # Personen eller systembrukeren i NAV som har opprettet journalposten.
     # * Bruken av feltet varierer, og kan inneholde den ansattes navn eller NAV-ident. For inngående dokumenter kan innholdet være f.eks. en servicebruker eller et batchnavn.
     opprettetAvNavn: String
 
-    # * Kanalen dokumentene ble sendt inn eller ut, f.eks. **SENTRAL_UTSKRIFT**.
-    # * Dersom kanal ikke er satt i Joark, returneres verdien **UKJENT**.
+    # Kanalen dokumentene ble mottatt i eller sendt ut på f.eks. "SENTRAL_UTSKRIFT" eller "ALTINN".
+    # * Dersom journalposten ikke har noen kjent kanal, returneres verdien "UKJENT"
     kanal: Kanal
 
-    # Dekode av Kanal, f.eks *"Sentral utskrift"*.
+    # Dekode av `Kanal`, f.eks "Sentral utskrift"
     kanalnavn: String
 
     # Utrykker at tilgangen til alle journalpost data for denne journalposten er begrenset, og at dataene ikke skal brukes i ordinær saksbehandling. De eneste mulige verdiene er foreløpig null og POL, der POL betyr at behandling av denne journalposten er begrenset som følge av personopplysningsloven (GDPR - brukers rett til å bli glemt)
     skjerming: String
 
-    # Datoen journalposten ble opprettet i Joark.
+    # Datoen journalposten ble opprettet i arkivet. Datoen settes automatisk og kan ikke overskrives. Selv om hver journalpost har mange datoer (se `RelevantDato`) er datoOpprettet å anse som "fasit" på journalpostens alder.
     datoOpprettet: DateTime!
 
-    # * Liste over andre datoer som kan være relevante for journalposten, f.eks. **DATO_EKSPEDERT**.
-    # * Hvilke typer relevante datoer som returneres er avhengig av journalposttype.
+    # Liste over datoer som kan være relevante for denne journalposten, f.eks. DATO_EKSPEDERT. Hvilke relevante datoer som returneres, avhenger av journalposttypen.
     relevanteDatoer: [RelevantDato]
 
     # Liste over fagspesifikke metadata som er tilknyttet journalpost.
     tilleggsopplysninger: [Tilleggsopplysning]
 
-    # Liste av dokumenter forbundet til journalposten.
+    # Liste over dokumentinfo tilknyttet journalposten.
+    # * Dokumentene returneres i følgende sorteringsrekkefølge: Hoveddokumentet først, deretter vedleggene i tilfeldig rekkefølge.
     dokumenter: [DokumentInfo]
 }
 
@@ -307,11 +311,12 @@ type LogiskVedlegg {
     tittel: String
 }
 
-# * En variant/versjon av et dokumentet, som er beregnet på et spesielt formål, for eksempel langtidsbevaring eller automatisk saksbehandling.
-# * SAF returnerer kun varianter i *"menneskelesbart"* filformat, som f.eks. PDF eller PNG, og de fleste dokumenter vil kun returneres i variantformat **ARKIV**.
-# * Dersom det eksisterer andre varianter av dokumentet, vil disse også returneres, gitt at saksbehandler har rettigheter som tilsier at han/hun skal vite at det finnes andre varianter.
+# En variant av et dokumentet, som er beregnet på et spesielt formål, for eksempel langtidsbevaring eller automatisk saksbehandling.
+# * De fleste dokumenter vil kun returneres i variantformat ARKIV. Dersom det eksisterer andre varianter av dokumentet, vil disse også returneres, gitt at saksbehandler har rettigheter som tilsier at han/hun skal vite at det finnes andre varianter.
 type Dokumentvariant {
-    # Typen variant som returneres. Normalt vil dette være **ARKIV**, men kan også være **SLADDET**, **PRODUKSJON_DLF** eller **FULLVERSJON**
+    # Typen variant som returneres. Normalt vil dette være ARKIV.
+    # * Andre visningsvarianter er SLADDET
+    # * Et dokument kan ha både en SLADDET og en ARKIV variant, men aldri flere varianter av samme type.
     variantformat: Variantformat!
 
     # Navnet på filen i arkivet. Navnet vil i de fleste tilfeller være autogenerert ved arkivering.
@@ -652,7 +657,7 @@ enum Tema {
     YRK
 }
 
-# Typen variant som returneres. Dette er normalt **ARKIV**, men kan også være **SLADDET**, **PRODUKSJON_DLF** eller **FULLVERSJON**.
+# Typen variant som returneres. Dette er normalt **ARKIV**, men kan også være **SLADDET**,**PRODUKSJON**, **PRODUKSJON_DLF** eller **FULLVERSJON**.
 enum Variantformat {
     # Den *"offisielle"* versjonen av et dokument, som er beregnet på visning og langtidsbevaring. I de fleste tilfeller er arkivvarianten lik dokumentet brukeren sendte inn eller mottok (digitalt eller på papir).
     # * Arkivvarianten er alltid i menneskelesbart format, som PDF, PDF/A eller PNG.
@@ -662,6 +667,10 @@ enum Variantformat {
     # Dette er en sladdet variant av originaldokumentet.
     # * **SLADDET** variant har ikke spesiell tilgangskontroll.
     SLADDET
+
+    # Produksjonsvariant i eget proprietært format.
+    # * Varianten finnes for dokumenter som er produsert i Metaforce eller Brevklient.
+    PRODUKSJON
 
     # Produksjonsvariant i eget proprietært format.
     # * Varianten finnes kun for dokumenter som er produsert i Exstream Live Editor.
