@@ -28,6 +28,7 @@ public class JournalpostDto {
 	private String behandlingstema;
 	private String behandlingstemanavn;
 	private JournalStatusCode journalstatus;
+	private String avsenderMottakerId;
 	private String avsenderMottakerNavn;
 	private String avsenderMottakerLand;
 	private String journalforendeEnhet;
@@ -51,5 +52,9 @@ public class JournalpostDto {
 
 	public boolean isTilknyttetSak() {
 		return saksrelasjon != null && saksrelasjon.getSakId() != null;
+	}
+
+	public boolean isTilknyttetBruker() {
+		return bruker != null && bruker.getBrukerId() != null;
 	}
 }

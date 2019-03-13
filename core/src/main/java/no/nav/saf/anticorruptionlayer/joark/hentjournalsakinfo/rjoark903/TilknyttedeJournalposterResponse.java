@@ -10,9 +10,9 @@ import java.util.List;
  */
 @Value
 public class TilknyttedeJournalposterResponse {
-	private final List<TilknyttetJournalpostDto> tilknyttedeJournalposter;
+	private final List<JournalpostDto> tilknyttedeJournalposter;
 
-	public TilknyttedeJournalposterResponse(@JsonProperty("tilknyttedeJournalposter") List<TilknyttetJournalpostDto> tilknyttedeJournalposter) {
+	public TilknyttedeJournalposterResponse(@JsonProperty("tilknyttedeJournalposter") List<JournalpostDto> tilknyttedeJournalposter) {
 		this.tilknyttedeJournalposter = tilknyttedeJournalposter;
 	}
 }

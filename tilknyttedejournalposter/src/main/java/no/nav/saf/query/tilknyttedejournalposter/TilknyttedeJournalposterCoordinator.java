@@ -7,8 +7,10 @@ import static no.nav.saf.domain.DomainConstants.PEP3;
 import static no.nav.saf.domain.DomainConstants.PEP4;
 import static no.nav.saf.domain.DomainConstants.PEP5;
 import static no.nav.saf.domain.DomainConstants.PEP6D;
+import static no.nav.saf.util.MDCUtility.addMdcData;
 
-import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark903.TilknyttetJournalpostDto;
+import no.nav.saf.anticorruptionlayer.joark.domain.Rjoark903JournalpostDtoMapper;
+import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark903.JournalpostDto;
 import no.nav.saf.domain.kode.Tilknytning;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.domain.tilgangsmodell.TilgangDokumentInfo;
@@ -20,9 +22,11 @@ import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.pep.Pep;
 import org.springframework.stereotype.Component;
 
+import javax.inject.Inject;
 import javax.inject.Named;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * @author Joakim Bjørnstad, Jbit AS
@@ -30,7 +34,8 @@ import java.util.List;
 @Component
 public class TilknyttedeJournalposterCoordinator {
 	private final TilknyttedeJournalposterTilgangRepository tilknyttedeJournalposterTilgangRepository;
-	private final Pep<TilgangBruker> pep1;
+	private final Rjoark903JournalpostDtoMapper rjoark903JournalpostDtoMapper;
+	private final Pep<TilgangBruker> pep1g;
 	private final Pep<TilgangSak> pep2;
 	private final Pep<TilgangSak> pep2d;
 	private final Pep<TilgangSak> pep3;
@@ -38,16 +43,19 @@ public class TilknyttedeJournalposterCoordinator {
 	private final Pep<TilgangDokumentInfo> pep5;
 	private final Pep<TilgangDokumentvariant> pep6d;
 
+	@Inject
 	public TilknyttedeJournalposterCoordinator(TilknyttedeJournalposterTilgangRepository tilknyttedeJournalposterTilgangRepository,
-									  @Named(PEP1G) Pep<TilgangBruker> pep1,
-									  @Named(PEP2) Pep<TilgangSak> pep2,
-									  @Named(PEP2D) Pep<TilgangSak> pep2d,
-									  @Named(PEP3) Pep<TilgangSak> pep3,
-									  @Named(PEP4) Pep<TilgangJournalpost> pep4,
-									  @Named(PEP5) Pep<TilgangDokumentInfo> pep5,
-									  @Named(PEP6D) Pep<TilgangDokumentvariant> pep6d) {
+											   Rjoark903JournalpostDtoMapper rjoark903JournalpostDtoMapper,
+											   @Named(PEP1G) Pep<TilgangBruker> pep1g,
+											   @Named(PEP2) Pep<TilgangSak> pep2,
+											   @Named(PEP2D) Pep<TilgangSak> pep2d,
+											   @Named(PEP3) Pep<TilgangSak> pep3,
+											   @Named(PEP4) Pep<TilgangJournalpost> pep4,
+											   @Named(PEP5) Pep<TilgangDokumentInfo> pep5,
+											   @Named(PEP6D) Pep<TilgangDokumentvariant> pep6d) {
 		this.tilknyttedeJournalposterTilgangRepository = tilknyttedeJournalposterTilgangRepository;
-		this.pep1 = pep1;
+		this.rjoark903JournalpostDtoMapper = rjoark903JournalpostDtoMapper;
+		this.pep1g = pep1g;
 		this.pep2 = pep2;
 		this.pep2d = pep2d;
 		this.pep3 = pep3;
@@ -58,8 +66,33 @@ public class TilknyttedeJournalposterCoordinator {
 
 
 	public List<Journalpost> hentTilknyttedeJournalposter(String dokumentInfoId, Tilknytning tilknytning, SafRequestContext safRequestContext) {
-		List<TilknyttetJournalpostDto> tilgangsmodell = tilknyttedeJournalposterTilgangRepository.tilgangsmodell(dokumentInfoId, tilknytning);
+		addMdcData(safRequestContext);
+		List<JournalpostDto> datagrunnlag = tilknyttedeJournalposterTilgangRepository.datagrunnlag(dokumentInfoId, tilknytning);
 
-		return new ArrayList<>();
+		Set<TilgangBruker> filteredTilgangBruker = tilknyttedeJournalposterTilgangRepository.tilgangBrukere(datagrunnlag)
+				.stream()
+				.filter(tilgangBruker -> pep1g.hasAccess(tilgangBruker, safRequestContext))
+				.collect(Collectors.toSet());
+
+		Set<TilgangSak> filteredTilgangSaker = tilknyttedeJournalposterTilgangRepository.tilgangSaker(filteredTilgangBruker, datagrunnlag, safRequestContext)
+				.stream()
+				.filter(tilgangSak -> pep2.hasAccess(tilgangSak, safRequestContext))
+				.peek(tilgangSak -> pep2d.hasAccess(tilgangSak, safRequestContext))
+				.filter(tilgangSak -> pep3.hasAccess(tilgangSak, safRequestContext))
+				.collect(Collectors.toSet());
+
+		List<TilgangJournalpost> filteredTilgangJournalposter = tilknyttedeJournalposterTilgangRepository.tilgangJournalposter(datagrunnlag)
+				.stream()
+				.filter(tj -> pep4.hasAccess(tj, safRequestContext))
+				.peek(tj -> tj.getDokumenter().forEach(td -> {
+					pep5.hasAccess(td, safRequestContext);
+					td.getTilgangDokumentvarianter().forEach(tdv -> pep6d.hasAccess(tdv, safRequestContext));
+				}))
+				.collect(Collectors.toList());
+
+
+		return datagrunnlag.stream()
+				.map(tilknyttetJournalpostDto -> rjoark903JournalpostDtoMapper.mapJournalpostDto(tilknyttetJournalpostDto, safRequestContext.getRequestCache()))
+				.collect(Collectors.toList());
 	}
 }
