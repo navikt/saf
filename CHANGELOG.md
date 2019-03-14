@@ -8,6 +8,10 @@ Alle nevneverdige endringer blir dokumentert her.
 
 Denne malen er basert på [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [4.3.3] - 2019-03-14 
+### Rettet
+* Rettet feil der tilgang til det fysiske dokumentet ikke ble gitt hvis bruker og sak manglet. Noe som gjorde det umulig å knytte dokumenter til faktisk bruker og sak i Gosys.
+
 ## [4.3.2] - 2019-03-07 
 ### Rettet
 * Rettet feil der `DATO_JOURNALFOERT` ikke var en del av `relevanteDatoer` for Notat `Journalpost`.
