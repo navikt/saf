@@ -39,8 +39,8 @@ public class Pep2Impl implements Pep<TilgangSak> {
 	@Override
 	public boolean hasAccess(TilgangSak ressurs, SafRequestContext safRequestContext) {
 		if (ressurs == null || ressurs.getParagraf19() == null) {
-			log.warn("Pep2 mangler tilstrekkelig datagrunnlag for å kunne gjennomføre tilgangskontroll");
-			return false;
+			log.warn("Pep2 mangler data om sak. Tilgang gis likevel for at saksbehandler skal kunne knytte dokument til sak og bruker.");
+			return true;
 		}
 
 		if (hasMetadataAccess(ressurs)) {
