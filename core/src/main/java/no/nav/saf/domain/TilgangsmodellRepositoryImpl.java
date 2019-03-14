@@ -220,6 +220,9 @@ public class TilgangsmodellRepositoryImpl implements TilgangsmodellRepository {
 	@Override
 	public Flowable<TilgangSak> findTilgangSaker(final TilgangBruker tilgangBruker, final List<Tema> tema, final SafRequestContext safRequestContext) {
 		try {
+			if(tilgangBruker == null) {
+				return Flowable.empty();
+			}
 			Flowable<List<Arkivsak>> gsakerFromOrgnr = Flowable.fromCallable(() ->
 					gsakAntiCorruptionLayer.findArkivsakerByOrgnr(tilgangBruker.getOrgnummer(), tema))
 					.subscribeOn(Schedulers.io());

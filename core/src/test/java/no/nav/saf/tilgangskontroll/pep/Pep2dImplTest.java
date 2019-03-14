@@ -71,7 +71,7 @@ class Pep2dImplTest extends AbstractPepTest {
 				.build(), new SafRequestContext(OIDC_TOKEN_PERSON_USER_TEST, xCorrelationID, oidcValidatorTool));
 
 		verify(abacService, never()).evaluate(any());
-		assertFalse(hasAccess);
+		assertTrue(hasAccess);
 	}
 
 	private void assertCommonXacmlRequestResources(XacmlRequest capturedRequest) {

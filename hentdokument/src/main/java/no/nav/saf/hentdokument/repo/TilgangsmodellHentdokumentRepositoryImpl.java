@@ -44,9 +44,9 @@ public class TilgangsmodellHentdokumentRepositoryImpl implements TilgangsmodellH
 	}
 
 	@Override
-	public TilgangJournalpost findTilgangJournalpostFromSafRequestContext(SafRequestContext safRequestContext, TilgangSak tilgangSak) {
+	public TilgangJournalpost findTilgangJournalpostFromSafRequestContext(SafRequestContext safRequestContext) {
 		try {
-			return hentDokumentAntiCorruptionLayer.hentTilgangJournalpostFromSafRequestContext(safRequestContext, tilgangSak);
+			return hentDokumentAntiCorruptionLayer.hentTilgangJournalpostFromSafRequestContext(safRequestContext);
 		} catch (Exception e) {
 			log.warn("findTilgangJournalpostFromSafRequestContext feilet", e);
 			return null;
@@ -104,30 +104,33 @@ public class TilgangsmodellHentdokumentRepositoryImpl implements TilgangsmodellH
 	}
 
 	@Override
-	public TilgangSak findTilgangSak(String sakId, String arkivsaksystem, TilgangBruker tilgangBruker, SafRequestContext safRequestContext) {
+	public TilgangSak findTilgangSak(Arkivsak arkivsak, TilgangBruker tilgangBruker, SafRequestContext safRequestContext) {
 		try {
-			if (Arkivsakssystem.GSAK.name().equals(arkivsaksystem)) {
-				Arkivsak arkivsak = gsakAntiCorruptionLayer.findArkivsakBySakId(sakId);
-				BidragSak bidragSak = getBidragSakIfTemaIsBidOrFar(arkivsak);
+			if(arkivsak == null || tilgangBruker == null) {
+				return null;
+			}
+			if (Arkivsakssystem.GSAK == arkivsak.getArkivsaksystem()) {
+				Arkivsak gsakArkivsak = gsakAntiCorruptionLayer.findArkivsakBySakId(arkivsak.getArkivsaksnummer());
+				BidragSak bidragSak = getBidragSakIfTemaIsBidOrFar(gsakArkivsak);
 				return TilgangSak.builder()
-						.aktoerId(arkivsak.getAktoerId())
-						.arkivsaksnummer(arkivsak.getArkivsaksnummer())
+						.aktoerId(gsakArkivsak.getAktoerId())
+						.arkivsaksnummer(gsakArkivsak.getArkivsaksnummer())
 						.arkivsaksystem(Arkivsakssystem.GSAK)
-						.tema(arkivsak.getTema())
-						.orgnummer(arkivsak.getOrgnummer())
+						.tema(gsakArkivsak.getTema())
+						.orgnummer(gsakArkivsak.getOrgnummer())
 						.relevanteTredjeparter(bidragSak == null ? null : new ArrayList<>(bidragSak.getRelevanteTredjeparter()))
 						.paragraf19(bidragSak != null && bidragSak.isParagraf19())
 						.build();
-			} else if (Arkivsakssystem.PSAK.name().equals(arkivsaksystem)) {
+			} else if (Arkivsakssystem.PSAK == arkivsak.getArkivsaksystem()) {
 				List<Arkivsak> arkivsaker = pensjonSakAntiCorruptionLayer.findArkivsaker(tilgangBruker, Arrays.asList(Tema.PEN, Tema.UFO));
-				for (Arkivsak arkivsak : arkivsaker) {
-					if (arkivsak.getArkivsaksnummer().equals(sakId)) {
+				for (Arkivsak psakArkivsak : arkivsaker) {
+					if (psakArkivsak.getArkivsaksnummer().equals(arkivsak.getArkivsaksnummer())) {
 						return TilgangSak.builder()
-								.aktoerId(arkivsak.getAktoerId())
-								.arkivsaksnummer(arkivsak.getArkivsaksnummer())
+								.aktoerId(psakArkivsak.getAktoerId())
+								.arkivsaksnummer(psakArkivsak.getArkivsaksnummer())
 								.arkivsaksystem(Arkivsakssystem.PSAK)
-								.tema(arkivsak.getTema())
-								.orgnummer(arkivsak.getOrgnummer())
+								.tema(psakArkivsak.getTema())
+								.orgnummer(psakArkivsak.getOrgnummer())
 								.relevanteTredjeparter(new ArrayList<>())
 								.paragraf19(false)
 								.build();
@@ -139,7 +142,7 @@ public class TilgangsmodellHentdokumentRepositoryImpl implements TilgangsmodellH
 				return hentDokumentAntiCorruptionLayer.hentTilgangSakFromSafRequestContext(safRequestContext, tilgangBruker);
 			}
 		} catch (Exception e) {
-			log.warn("findTilgangBrukerBySakId feilet ved oppslag på sakId={} og arkivsaksystem={}. Feilmelding={}", sakId, arkivsaksystem, e);
+			log.warn("findTilgangBrukerBySakId feilet ved oppslag på sakId={} og arkivsaksystem={}. Feilmelding={}", arkivsak.getArkivsaksnummer(), arkivsak.getArkivsaksystem(), e);
 			return null;
 		}
 	}
