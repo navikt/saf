@@ -298,7 +298,7 @@ public class HentDokumentIT extends AbstractItest {
 
 		ResponseEntity<String> responseEntity = callHentDokument();
 
-		assertEquals(HttpStatus.UNAUTHORIZED, responseEntity.getStatusCode());
+		assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
 	}
 
 	@Test
@@ -329,7 +329,7 @@ public class HentDokumentIT extends AbstractItest {
 
 		ResponseEntity<String> responseEntity = callHentDokument();
 
-		assertEquals(HttpStatus.UNAUTHORIZED, responseEntity.getStatusCode());
+		assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
 	}
 
 	@Test
@@ -349,7 +349,7 @@ public class HentDokumentIT extends AbstractItest {
 
 		ResponseEntity<String> responseEntity = callHentDokument();
 		;
-		assertEquals(HttpStatus.UNAUTHORIZED, responseEntity.getStatusCode());
+		assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
 	}
 
 	@Test
@@ -369,7 +369,7 @@ public class HentDokumentIT extends AbstractItest {
 
 		ResponseEntity<String> responseEntity = callHentDokument();
 
-		assertEquals(HttpStatus.UNAUTHORIZED, responseEntity.getStatusCode());
+		assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
 	}
 
 	@Test
@@ -389,7 +389,7 @@ public class HentDokumentIT extends AbstractItest {
 
 		ResponseEntity<String> responseEntity = callHentDokument();
 
-		assertEquals(HttpStatus.UNAUTHORIZED, responseEntity.getStatusCode());
+		assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
 	}
 
 	@Test
@@ -409,7 +409,7 @@ public class HentDokumentIT extends AbstractItest {
 
 		ResponseEntity<String> responseEntity = callHentDokument();
 
-		assertEquals(HttpStatus.UNAUTHORIZED, responseEntity.getStatusCode());
+		assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
 	}
 
 	@Test
