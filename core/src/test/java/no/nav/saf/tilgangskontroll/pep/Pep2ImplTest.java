@@ -9,7 +9,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -27,13 +26,13 @@ import org.mockito.InjectMocks;
 /**
  * @author Sigurd Midttun, Visma Consulting.
  */
-public class Pep2ImplTest extends AbstractPepTest {
+class Pep2ImplTest extends AbstractPepTest {
 
 	@InjectMocks
 	private Pep2Impl pep2;
 
 	@Test
-	public void shouldPermitWhenTemaFarAndParagraf19AccessIsPermitted() {
+	void shouldPermitWhenTemaFarAndParagraf19AccessIsPermitted() {
 		when(abacService.evaluate(any(XacmlRequest.class))).thenReturn(new XacmlResponse(Decision.PERMIT, null, null, null));
 		when(oidcValidatorTool.validate(OIDC_TOKEN_PERSON_USER_TEST)).thenReturn(true);
 
@@ -54,9 +53,9 @@ public class Pep2ImplTest extends AbstractPepTest {
 		assertThat(capturedRequest.getResources(), hasItem(new XacmlAttribute(RESOURCE_SAF_PARAGRAF19, true)));
 	}
 
-
 	@Test
-	public void shouldDenyWhenParagraf19IsNull() {
+	void shouldDenyWhenParagraf19IsNull() {
+		when(abacService.evaluate(any(XacmlRequest.class))).thenReturn(new XacmlResponse(Decision.DENY, null, null, null));
 		when(oidcValidatorTool.validate(OIDC_TOKEN_PERSON_USER_TEST)).thenReturn(true);
 
 		boolean hasAccess = pep2.hasAccess(TilgangSak.builder()
@@ -64,12 +63,11 @@ public class Pep2ImplTest extends AbstractPepTest {
 				.paragraf19(null)
 				.build(), new SafRequestContext(OIDC_TOKEN_PERSON_USER_TEST, xCorrelationID, oidcValidatorTool));
 
-		verify(abacService, never()).evaluate(any());
 		assertFalse(hasAccess);
 	}
 
 	@Test
-	public void shouldDeny() {
+	void shouldDeny() {
 		when(abacService.evaluate(any(XacmlRequest.class))).thenReturn(new XacmlResponse(Decision.DENY, null, null, null));
 		when(oidcValidatorTool.validate(OIDC_TOKEN_PERSON_USER_TEST)).thenReturn(true);
 
