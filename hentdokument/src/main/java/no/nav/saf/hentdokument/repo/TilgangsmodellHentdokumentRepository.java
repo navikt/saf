@@ -12,7 +12,7 @@ import no.nav.saf.tilgangskontroll.SafRequestContext;
  */
 public interface TilgangsmodellHentdokumentRepository {
 
-	TilgangJournalpost findTilgangJournalpostFromSafRequestContext(SafRequestContext safRequestContext, TilgangSak tilgangSak);
+	TilgangJournalpost findTilgangJournalpostFromSafRequestContext(SafRequestContext safRequestContext);
 
 	TilgangBruker findTilgangBruker(Arkivsak arkivsak, SafRequestContext safRequestContext);
 
@@ -20,6 +20,6 @@ public interface TilgangsmodellHentdokumentRepository {
 
 	Arkivsak findArkivsakAndCacheJournalpostDto(String journalpostId, String dokumentInfoId, String variantFormat, SafRequestContext safRequestContext);
 
-	TilgangSak findTilgangSak(String sakId, String arkivsaksystem, TilgangBruker tilgangBruker, SafRequestContext safRequestContext);
+	TilgangSak findTilgangSak(Arkivsak arkivsak, TilgangBruker tilgangBruker, SafRequestContext safRequestContext);
 
 }

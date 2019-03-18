@@ -16,6 +16,7 @@ import no.nav.saf.domain.tilgangsmodell.TilgangDokumentInfo;
 import no.nav.saf.domain.tilgangsmodell.TilgangDokumentvariant;
 import no.nav.saf.domain.tilgangsmodell.TilgangJournalpost;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
+import no.nav.saf.exceptions.JournalpostIkkeFunnetException;
 import no.nav.saf.exceptions.TilgangskontrollException;
 import no.nav.saf.hentdokument.repo.DokumentRepository;
 import no.nav.saf.hentdokument.repo.TilgangsmodellHentdokumentRepository;
@@ -74,8 +75,7 @@ public class HentDokumentDomainCoordinatorImpl implements HentDokumentDomainCoor
 			throw new TilgangskontrollException();
 		}
 
-		final TilgangSak tilgangSak = tilgangsmodellHentdokumentRepository.findTilgangSak(arkivsak.getArkivsaksnummer(), arkivsak
-				.getArkivsaksystem() == null ? null : arkivsak.getArkivsaksystem().name(), tilgangBruker, safRequestContext);
+		final TilgangSak tilgangSak = tilgangsmodellHentdokumentRepository.findTilgangSak(arkivsak, tilgangBruker, safRequestContext);
 
 		boolean pep2Access = pep2.hasAccess(tilgangSak, safRequestContext);
 		if (!pep2Access) {
@@ -87,8 +87,11 @@ public class HentDokumentDomainCoordinatorImpl implements HentDokumentDomainCoor
 			throw new TilgangskontrollException();
 		}
 
-		final TilgangJournalpost tilgangJournalpost = tilgangsmodellHentdokumentRepository.findTilgangJournalpostFromSafRequestContext(safRequestContext, tilgangSak);
-		if(tilgangJournalpost.getJournalstatus() != Journalstatus.MOTTATT) {
+		final TilgangJournalpost tilgangJournalpost = tilgangsmodellHentdokumentRepository.findTilgangJournalpostFromSafRequestContext(safRequestContext);
+		if (tilgangJournalpost == null) {
+			throw new JournalpostIkkeFunnetException("Dokumentet tilnyttet journalpostId=" + journalpostId + ", dokumentInfoId=" + dokumentInfoId + ", variant=" + variantFormat + " ikke funnet.");
+		}
+		if (tilgangJournalpost.getJournalstatus() != Journalstatus.MOTTATT) {
 			boolean pep2dAccess = pep2d.hasAccess(tilgangSak, safRequestContext);
 			if (!pep2dAccess) {
 				throw new TilgangskontrollException();

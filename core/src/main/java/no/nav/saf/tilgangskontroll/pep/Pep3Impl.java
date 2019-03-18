@@ -38,8 +38,8 @@ public class Pep3Impl implements Pep<TilgangSak> {
 	@Override
 	public boolean hasAccess(TilgangSak ressurs, SafRequestContext safRequestContext) {
 		if (ressurs == null || ressurs.getRelevanteTredjeparter() == null) {
-			log.warn("Pep3 mangler tilstrekkelig datagrunnlag for å kunne gjennomføre tilgangskontroll");
-			return false;
+			log.warn("Pep3 mangler data om sak. Tilgang gis likevel for at saksbehandler skal kunne knytte dokument til sak og bruker.");
+			return true;
 		}
 
 		if (hasMetadataAccess(ressurs)) {

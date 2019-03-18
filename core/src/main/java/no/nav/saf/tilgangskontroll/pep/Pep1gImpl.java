@@ -40,8 +40,8 @@ public class Pep1gImpl implements Pep<TilgangBruker> {
 	@Override
 	public boolean hasAccess(TilgangBruker ressurs, SafRequestContext safRequestContext) {
 		if (ressurs == null) {
-			log.warn("Pep1g mangler tilstrekkelig datagrunnlag for å kunne gjennomføre tilgangskontroll");
-			return false;
+			log.warn("Pep1g mangler data om bruker. Tilgang gis for å kunne identifisere bruker.");
+			return true;
 		} else if (ressurs.getOrgnummer() != null) {
 			return true;
 		}
