@@ -5,6 +5,7 @@ import io.lettuce.core.SocketOptions;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.CachingConfigurerSupport;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.interceptor.CacheErrorHandler;
 import org.springframework.context.annotation.Bean;
@@ -27,16 +28,21 @@ import java.util.Collections;
  */
 @Configuration
 @EnableCaching
-public class RedisCacheConfig {
+public class RedisCacheConfig extends CachingConfigurerSupport {
 	public static final String MANAGER_DISTRIBUTED = "distributed";
+	// Ikke endre denne verdien, en del av NAIS redis oppsett
 	private static final String MASTER_NAME = "mymaster";
+	private static final Duration DEFAULT_TTL = Duration.ofHours(1L);
 	public static final String TILGANG_CACHE = "tilgang";
 
 	@Bean
 	@Named(MANAGER_DISTRIBUTED)
 	CacheManager redisCacheManager(RedisConnectionFactory connectionFactory) {
+		// Tilgang cache brukt av Pep2d
 		RedisCacheConfiguration tilgangCache = RedisCacheConfiguration.defaultCacheConfig();
 		tilgangCache.disableCachingNullValues();
+		tilgangCache.entryTtl(DEFAULT_TTL);
+
 		return RedisCacheManager.builder(connectionFactory)
 				.withInitialCacheConfigurations(
 						Collections.singletonMap(TILGANG_CACHE, tilgangCache))
@@ -83,7 +89,8 @@ public class RedisCacheConfig {
 	}
 
 	@Bean
-	public CacheErrorHandler cacheErrorHandler() {
+	@Override
+	public CacheErrorHandler errorHandler() {
 		return new OnlyLoggingCacheErrorHandler();
 	}
 }
