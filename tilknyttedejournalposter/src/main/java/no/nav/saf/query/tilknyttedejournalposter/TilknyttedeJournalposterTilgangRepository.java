@@ -30,11 +30,13 @@ import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @author Joakim Bjørnstad, Jbit AS
@@ -65,34 +67,35 @@ class TilknyttedeJournalposterTilgangRepository {
 				.getTilknyttedeJournalposter();
 	}
 
-	Set<TilgangBruker> tilgangBrukere(final List<JournalpostDto> tilknyttetJournalpostDto) {
-		Set<Sakstilknytning> saker = tilknyttetJournalpostDto.stream()
+	Set<Arkivsak> arkivsaker(final List<JournalpostDto> tilknyttetJournalpostDto, SafRequestContext safRequestContext) {
+		return tilknyttetJournalpostDto.stream()
 				.map(journalpostDto -> {
+					safRequestContext.getRequestCache().putObject(journalpostDto.getJournalpostId().toString(), journalpostDto);
 					if (journalpostDto.isTilknyttetSak()) {
 						SaksrelasjonDto saksrelasjon = journalpostDto.getSaksrelasjon();
-						return new Sakstilknytning(saksrelasjon.getSakId(), mapJoarkFagsystemToArkivsakssystem(saksrelasjon.getFagsystem()));
+						return Arkivsak.builder()
+								.arkivsaksnummer(saksrelasjon.getSakId())
+								.arkivsaksystem(mapJoarkFagsystemToArkivsakssystem(saksrelasjon.getFagsystem()))
+								.build();
 					}
 					return null;
 				})
 				.filter(Objects::nonNull)
 				.collect(Collectors.toSet());
+	}
 
+	Set<TilgangBruker> tilgangBrukere(final Set<Arkivsak> arkivsaker, final List<JournalpostDto> tilknyttetJournalpostDto) {
+		return Stream.concat(sakstilknyttedeTilgangBrukere(arkivsaker), ikkeSakstilknyttedeTilgangBrukere(tilknyttetJournalpostDto)).collect(Collectors.toSet());
+	}
 
+	Stream<TilgangBruker> sakstilknyttedeTilgangBrukere(final Set<Arkivsak> arkivsaker) {
+		return arkivsaker.stream()
+				.map(this::sakstilknyttetTilgangBruker);
+	}
+
+	Stream<TilgangBruker> ikkeSakstilknyttedeTilgangBrukere(final List<JournalpostDto> tilknyttetJournalpostDto) {
 		return tilknyttetJournalpostDto.stream()
-				.map(journalpostDto -> {
-					if (journalpostDto.isTilknyttetSak()) {
-						// Sakstilknytning
-						return sakstilknyttetTilgangBruker(journalpostDto.getSaksrelasjon());
-					} else if (journalpostDto.isTilknyttetBruker()) {
-						// Midlertidig
-						BrukerDto bruker = journalpostDto.getBruker();
-						return midlertidigTilgangBrukerPersonOrganisasjon(bruker);
-					} else {
-						return null;
-					}
-				})
-				.filter(Objects::nonNull)
-				.collect(Collectors.toSet());
+				.map(journalpostDto -> midlertidigTilgangBrukerPersonOrganisasjon(journalpostDto.getBruker()));
 	}
 
 	private Arkivsakssystem mapJoarkFagsystemToArkivsakssystem(FagsystemCode joarkFagsystem) {
@@ -105,15 +108,15 @@ class TilknyttedeJournalposterTilgangRepository {
 		}
 	}
 
-	private TilgangBruker sakstilknyttetTilgangBruker(SaksrelasjonDto saksrelasjon) {
+	private TilgangBruker sakstilknyttetTilgangBruker(Arkivsak arkivsak) {
 		// For å finne den ekte brukeren på saken så må vi slå opp andre steder
-		if (saksrelasjon.getFagsystem() == FagsystemCode.FS22) {
+		if (arkivsak.getArkivsaksystem() == Arkivsakssystem.GSAK) {
 			// GSAK
-			TilgangBruker tilgangBruker = gsakAntiCorruptionLayer.findTilgangBrukerBySakId(saksrelasjon.getSakId());
+			TilgangBruker tilgangBruker = gsakAntiCorruptionLayer.findTilgangBrukerBySakId(arkivsak.getArkivsaksnummer());
 			return aktoerAntiCorruptionLayer.hentTilgangBrukerByAktoerId(tilgangBruker.getAktoerId());
-		} else if (saksrelasjon.getFagsystem() == FagsystemCode.PEN) {
+		} else if (arkivsak.getArkivsaksystem() == Arkivsakssystem.PSAK) {
 			// PSAK
-			String foedselsnummer = pensjonSakAntiCorruptionLayer.findFoedselsnummerBySakId(saksrelasjon.getSakId());
+			String foedselsnummer = pensjonSakAntiCorruptionLayer.findFoedselsnummerBySakId(arkivsak.getArkivsaksnummer());
 			return aktoerAntiCorruptionLayer.hentTilgangBrukerByFoedselsnummer(foedselsnummer);
 		} else {
 			return null;
@@ -122,9 +125,7 @@ class TilknyttedeJournalposterTilgangRepository {
 
 	private TilgangBruker midlertidigTilgangBrukerPersonOrganisasjon(BrukerDto bruker) {
 		if (bruker.isPerson()) {
-			return TilgangBruker.builder()
-					.foedselsnr(bruker.getBrukerId())
-					.build();
+			return aktoerAntiCorruptionLayer.hentTilgangBrukerByFoedselsnummer(bruker.getBrukerId());
 		} else if (bruker.isOrganisasjon()) {
 			return TilgangBruker.builder()
 					.orgnummer(bruker.getBrukerId())
@@ -134,43 +135,58 @@ class TilknyttedeJournalposterTilgangRepository {
 		}
 	}
 
-	Set<TilgangSak> tilgangSaker(final Set<TilgangBruker> tilgangBrukere,
-								 final List<JournalpostDto> datagrunnlag,
+	Set<TilgangSak> tilgangSaker(Set<TilgangBruker> filteredTilgangBruker, final Set<Arkivsak> arkivsaker,
 								 final SafRequestContext safRequestContext) {
+		if (filteredTilgangBruker.isEmpty() || arkivsaker.isEmpty()) {
+			return new HashSet<>();
+		}
 
-		return new HashSet<>();
+		return arkivsaker.stream()
+				.map(arkivsak -> {
+					if (arkivsak.getArkivsaksystem() == Arkivsakssystem.GSAK) {
+						return tilgangSakGsak(arkivsak, safRequestContext);
+					} else if (arkivsak.getArkivsaksystem() == Arkivsakssystem.PSAK) {
+						return tilgangSakPsak(arkivsak, safRequestContext);
+					} else {
+						return null;
+					}
+				})
+				.filter(Objects::nonNull)
+				.collect(Collectors.toSet());
 	}
 
-	private TilgangSak tilgangSakGsak(SaksrelasjonDto saksrelasjon, SafRequestContext safRequestContext) {
-		Arkivsak arkivsak = gsakAntiCorruptionLayer.findArkivsakBySakId(saksrelasjon.getSakId());
-		safRequestContext.getRequestCache().putObject(arkivsak.getKey(), arkivsak);
-		final BidragSak bidragSak = getBidragSakIfTemaIsBidOrFar(arkivsak);
+	private TilgangSak tilgangSakGsak(final Arkivsak arkivsak, SafRequestContext safRequestContext) {
+		Arkivsak gsakArkivsak = gsakAntiCorruptionLayer.findArkivsakBySakId(arkivsak.getArkivsaksnummer());
+		safRequestContext.getRequestCache().putObject(gsakArkivsak.getKey(), gsakArkivsak);
+		final BidragSak bidragSak = getBidragSakIfTemaIsBidOrFar(gsakArkivsak);
 		return TilgangSak.builder()
-				.aktoerId(arkivsak.getAktoerId())
-				.orgnummer(arkivsak.getOrgnummer())
-				.arkivsaksnummer(arkivsak.getArkivsaksnummer())
-				.arkivsaksystem(arkivsak.getArkivsaksystem())
-				.tema(arkivsak.getTema())
+				.aktoerId(gsakArkivsak.getAktoerId())
+				.orgnummer(gsakArkivsak.getOrgnummer())
+				.arkivsaksnummer(gsakArkivsak.getArkivsaksnummer())
+				.arkivsaksystem(gsakArkivsak.getArkivsaksystem())
+				.tema(gsakArkivsak.getTema())
 				.relevanteTredjeparter(bidragSak == null ? null : new ArrayList<>(bidragSak.getRelevanteTredjeparter()))
 				.paragraf19(bidragSak == null ? null : bidragSak.isParagraf19())
 				.build();
 	}
 
-	private TilgangSak tilgangSakPsak(TilgangBruker tilgangBruker, SaksrelasjonDto saksrelasjon, SafRequestContext safRequestContext) {
-//		List<Arkivsak> arkivsaker = pensjonSakAntiCorruptionLayer.findArkivsaker(tilgangBrukerList.get(0), tema);
-//		return arkivsaker.stream()
-//				.map(arkivsak -> {
-//					safRequestContext.getRequestCache().putObject(arkivsak.getKey(), arkivsak);
-//					return TilgangSak.builder()
-//							.aktoerId(arkivsak.getAktoerId())
-//							.arkivsaksnummer(arkivsak.getArkivsaksnummer())
-//							.arkivsaksystem(arkivsak.getArkivsaksystem())
-//							.tema(arkivsak.getTema())
-//							.paragraf19(false)
-//							.relevanteTredjeparter(new ArrayList<>())
-//							.build();
-//				}).collect(Collectors.toList());
-		return null;
+	private TilgangSak tilgangSakPsak(Arkivsak arkivsak, SafRequestContext safRequestContext) {
+		String foedselsnummer = pensjonSakAntiCorruptionLayer.findFoedselsnummerBySakId(arkivsak.getArkivsaksnummer());
+		TilgangBruker tilgangBruker = aktoerAntiCorruptionLayer.hentTilgangBrukerByFoedselsnummer(foedselsnummer);
+		List<Arkivsak> arkivsaker = pensjonSakAntiCorruptionLayer.findArkivsaker(tilgangBruker, Arrays.asList(Tema.PEN, Tema.UFO));
+		return arkivsaker.stream()
+				.filter(psakArkivsak -> psakArkivsak.getArkivsaksnummer().equals(arkivsak.getArkivsaksnummer()))
+				.map(psakArkivsak -> {
+					safRequestContext.getRequestCache().putObject(psakArkivsak.getKey(), psakArkivsak);
+					return TilgangSak.builder()
+							.aktoerId(psakArkivsak.getAktoerId())
+							.arkivsaksnummer(psakArkivsak.getArkivsaksnummer())
+							.arkivsaksystem(psakArkivsak.getArkivsaksystem())
+							.tema(psakArkivsak.getTema())
+							.paragraf19(false)
+							.relevanteTredjeparter(new ArrayList<>())
+							.build();
+				}).findFirst().orElse(null);
 	}
 
 	private BidragSak getBidragSakIfTemaIsBidOrFar(Arkivsak arkivsak) {
@@ -181,8 +197,21 @@ class TilknyttedeJournalposterTilgangRepository {
 		}
 	}
 
-	List<TilgangJournalpost> tilgangJournalposter(List<JournalpostDto> datagrunnlag) {
-		return datagrunnlag.stream().map(this::mapTilgangJournalpost).collect(Collectors.toList());
+	List<TilgangJournalpost> tilgangJournalposter(Set<TilgangSak> filteredTilgangSaker, List<JournalpostDto> datagrunnlag) {
+		return datagrunnlag.stream()
+				.filter(journalpostDto -> {
+					if(journalpostDto.isTilknyttetSak()) {
+						return filteredTilgangSaker.stream().anyMatch(tilgangSak -> {
+							SaksrelasjonDto saksrelasjon = journalpostDto.getSaksrelasjon();
+							return tilgangSak.getArkivsaksnummer().equals(saksrelasjon.getSakId()) &&
+									tilgangSak.getArkivsaksystem() == mapJoarkFagsystemToArkivsakssystem(saksrelasjon.getFagsystem());
+						});
+					} else {
+						return true;
+					}
+				})
+				.map(this::mapTilgangJournalpost)
+				.collect(Collectors.toList());
 	}
 
 	private TilgangJournalpost mapTilgangJournalpost(JournalpostDto dto) {
