@@ -15,6 +15,7 @@
 		<module>graphiql</module>
 		<module>hentdokument</module>
 		<module>journalpost</module>
+		<module>tilknyttedejournalposter</module>
 	</modules>
 	<parent>
 		<groupId>org.springframework.boot</groupId>
@@ -63,6 +64,11 @@
 			<dependency>
 				<groupId>no.nav.saf</groupId>
 				<artifactId>journalpost</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>no.nav.saf</groupId>
+				<artifactId>tilknyttedejournalposter</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>

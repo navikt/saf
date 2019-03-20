@@ -108,8 +108,23 @@ type Query {
     # * Query returnerer metadata for en journalpost.
     # * Fysiske dokumentet tilknyttet journalposten kan hentes i saf - REST hentdokument
     journalpost(
+       # ID til Journalposten man ønsker å hente detaljer for.
+       # * Hvis argumentet ikke er angitt så returneres en feil.
        journalpostId: String!
     ): Journalpost
+
+    # Henter metadata for en dokumentInfo (dokumentbeskrivelse) med tilknyttede journalposter.
+    # Behovet er å hente journalposter som:
+    # * Deler samme DokumentInfo (mange-til-mange relasjon via JPDokInfoRel). Dette vil typisk være resultat av et dokument som er journalført på flere saker/brukere.
+    # * Er knyttet sammen via originalJournalpostId. Dette vil typisk være resultat av en splitting av et dokument, der det opprettes to nye DokumentInfo med hver sin del av originaldokumentet, og DokumentInfo.originalJournalpostId peker tilbake på journalposten (med status Utgått) som originaldokumentet lå på.
+    tilknyttedeJournalposter(
+       # ID til dokumentet man ønsker å hente tilknyttede Journalpost for.
+       # * Hvis argumentet ikke er angitt så returneres en feil.
+       dokumentInfoId: String!
+
+       # Typen tilknyttet Journalpost.
+       tilknytning: Tilknytning!
+    ): [Journalpost]!
 }
 
 # Dokumentoversikt er en liste av journalposter som tilfredstiller query kriteriene.
@@ -682,4 +697,10 @@ enum Dokumentstatus {
 
     # Dokumentet ble opprettet, men ble avbrutt under redigering. Benyttes for redigerbare brev.
     AVBRUTT
+}
+
+# Forteller hvordan to eller flere journalposter er relatert til hverandre.
+enum Tilknytning {
+    # Ved tilknytningstype 'Gjenbruk', deler to journalposter samme dokumentInfo og underliggende dokumenter. Dette vil typisk være tilfelle når et inngående dokument journalføres på flere saker/brukere.
+    GJENBRUK
 }

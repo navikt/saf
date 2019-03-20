@@ -43,6 +43,7 @@ class AktoerAntiCorruptionLayerImpl implements AktoerAntiCorruptionLayer {
 				.foedselsnr(foedselsnummer)
 				.aktoerId(responseTo.getAktoerId())
 				.historiskeIdenter(responseTo.getHistoriskeIdenter().stream()
+						.filter(historiskIdent -> !foedselsnummer.equals(historiskIdent))
 						.map(ident -> TilgangIdent.builder().identifikator(ident).build()).collect(Collectors.toList()))
 				.build();
 	}
