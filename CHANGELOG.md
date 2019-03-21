@@ -8,7 +8,12 @@ Alle nevneverdige endringer blir dokumentert her.
 
 Denne malen er basert på [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## [4.4.0] - 2019-03-21
+## [4.4.1] - 2019-03-21
+### Rettet
+* Rettet feil i logging i hentdokument, der MDC verdier ble satt etter loggingen.
+* Rettet til fra header `xCorrelationId` til `X-Correlation-ID` for sporing på tvers av kall i hentdokument REST tjenesten. 
+
+## [4.4.0] - 2019-03-20
 ### Lagt til
 * `GraphQL: ` Ny query `tilknyttedeJournalposter` med full tilgangskontroll. Se [dokumentasjon](https://confluence.adeo.no/display/BOA/Query%3A+tilknyttedeJournalposter) for mer informasjon.
 

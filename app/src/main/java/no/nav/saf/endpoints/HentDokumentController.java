@@ -23,7 +23,7 @@ import javax.inject.Inject;
 import java.util.UUID;
 
 /**
- * Endepunktet til hentDokument, som returnerer et dokument fra joark basert på journalpostId, dokumentInfoId og variantFormat".
+ * Endepunktet til hentDokument, som returnerer et dokument fra joark basert på journalpostId, dokumentInfoId og variantFormat.
  * Tjenesten er sikret med Abac
  *
  * @author Sigurd Midttun, Visma Consulting.
@@ -33,6 +33,7 @@ import java.util.UUID;
 @Api(tags = "hentdokument API", description = "Tilbyr henting av fysiske dokumenter")
 @Slf4j
 public class HentDokumentController {
+	private static final String X_CORRELATION_ID = "X-Correlation-ID";
 	private final HentDokumentDomainCoordinator hentDokumentDomainCoordinator;
 	private final OidcValidatorTool oidcValidatorTool;
 
@@ -50,11 +51,12 @@ public class HentDokumentController {
 	public ResponseEntity<byte[]> hentDokument(@ApiParam(name = "journalpostId", value = "Id for aktuell journalpost", required = true) @PathVariable String journalpostId,
 											   @ApiParam(name = "dokumentInfoId", value = "Id for aktuelt dokument", required = true) @PathVariable String dokumentInfoId,
 											   @ApiParam(name = "variantFormat", value = "Format på dokumentet som skal hentes eg. ARKIV, SLADDET m.fl.", required = true) @PathVariable String variantFormat,
-											   @ApiParam(name = "xCorrelationId", value = "(Optional) ID til logging.") @RequestHeader(value = "xCorrelationId", required = false) String xCorrelationId,
+											   @ApiParam(name = X_CORRELATION_ID, value = "(Optional) ID til logging.") @RequestHeader(value = X_CORRELATION_ID, required = false) String xCorrelationId,
 											   @ApiParam(hidden = true) @RequestHeader(value = HttpHeaders.AUTHORIZATION, required = false) String authorizationHeader) {
-
+		SafRequestContext safRequestContext = new SafRequestContext(authorizationHeader, generateCorrelationIdIfNull(xCorrelationId), oidcValidatorTool);
 		log.info("hentDokument har mottatt kall. journalpostId={}, dokumentInfoId={}, variantFormat={}", journalpostId, dokumentInfoId, variantFormat);
-		HentDokument response = hentDokumentDomainCoordinator.hentDokument(journalpostId, dokumentInfoId, variantFormat, new SafRequestContext(authorizationHeader, generateCorrelationIdIfNull(xCorrelationId), oidcValidatorTool));
+		HentDokument response = hentDokumentDomainCoordinator.hentDokument(journalpostId, dokumentInfoId, variantFormat, safRequestContext);
+		log.info("hentDokument hentet dokument. journalpostId={}, dokumentInfoId={}, variantFormat={}", journalpostId, dokumentInfoId, variantFormat);
 
 		return ResponseEntity.ok()
 				.contentType(response.getMediaType())
