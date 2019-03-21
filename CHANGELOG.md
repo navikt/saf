@@ -8,6 +8,10 @@ Alle nevneverdige endringer blir dokumentert her.
 
 Denne malen er basert på [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [4.4.0] - 2019-03-21
+### Lagt til
+* `GraphQL: ` Ny query `tilknyttedeJournalposter` med full tilgangskontroll. Se [dokumentasjon](https://confluence.adeo.no/display/BOA/Query%3A+tilknyttedeJournalposter) for mer informasjon.
+
 ## [4.3.4] - 2019-03-18 
 ### Rettet
 * Rettet feil der kall mot redis feilet fullstendig hvis redis var nede.
