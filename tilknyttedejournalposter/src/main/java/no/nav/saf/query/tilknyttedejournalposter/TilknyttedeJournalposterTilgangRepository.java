@@ -31,7 +31,6 @@ import org.springframework.stereotype.Component;
 import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -88,14 +87,20 @@ class TilknyttedeJournalposterTilgangRepository {
 		return Stream.concat(sakstilknyttedeTilgangBrukere(arkivsaker), ikkeSakstilknyttedeTilgangBrukere(tilknyttetJournalpostDto)).collect(Collectors.toSet());
 	}
 
-	Stream<TilgangBruker> sakstilknyttedeTilgangBrukere(final Set<Arkivsak> arkivsaker) {
+	private Stream<TilgangBruker> sakstilknyttedeTilgangBrukere(final Set<Arkivsak> arkivsaker) {
 		return arkivsaker.stream()
 				.map(this::sakstilknyttetTilgangBruker);
 	}
 
-	Stream<TilgangBruker> ikkeSakstilknyttedeTilgangBrukere(final List<JournalpostDto> tilknyttetJournalpostDto) {
+	private Stream<TilgangBruker> ikkeSakstilknyttedeTilgangBrukere(final List<JournalpostDto> tilknyttetJournalpostDto) {
 		return tilknyttetJournalpostDto.stream()
-				.map(journalpostDto -> midlertidigTilgangBrukerPersonOrganisasjon(journalpostDto.getBruker()));
+				.map(journalpostDto -> {
+					if (journalpostDto.isTilknyttetSak()) {
+						return null;
+					} else {
+						return midlertidigTilgangBrukerPersonOrganisasjon(journalpostDto.getBruker());
+					}
+				}).filter(Objects::nonNull);
 	}
 
 	private Arkivsakssystem mapJoarkFagsystemToArkivsakssystem(FagsystemCode joarkFagsystem) {
@@ -135,12 +140,8 @@ class TilknyttedeJournalposterTilgangRepository {
 		}
 	}
 
-	Set<TilgangSak> tilgangSaker(Set<TilgangBruker> filteredTilgangBruker, final Set<Arkivsak> arkivsaker,
+	Set<TilgangSak> tilgangSaker(final Set<Arkivsak> arkivsaker,
 								 final SafRequestContext safRequestContext) {
-		if (filteredTilgangBruker.isEmpty() || arkivsaker.isEmpty()) {
-			return new HashSet<>();
-		}
-
 		return arkivsaker.stream()
 				.map(arkivsak -> {
 					if (arkivsak.getArkivsaksystem() == Arkivsakssystem.GSAK) {
@@ -200,7 +201,7 @@ class TilknyttedeJournalposterTilgangRepository {
 	List<TilgangJournalpost> tilgangJournalposter(Set<TilgangSak> filteredTilgangSaker, List<JournalpostDto> datagrunnlag) {
 		return datagrunnlag.stream()
 				.filter(journalpostDto -> {
-					if(journalpostDto.isTilknyttetSak()) {
+					if (journalpostDto.isTilknyttetSak()) {
 						return filteredTilgangSaker.stream().anyMatch(tilgangSak -> {
 							SaksrelasjonDto saksrelasjon = journalpostDto.getSaksrelasjon();
 							return tilgangSak.getArkivsaksnummer().equals(saksrelasjon.getSakId()) &&

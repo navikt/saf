@@ -71,14 +71,14 @@ public class TilknyttedeJournalposterCoordinator {
 		List<JournalpostDto> datagrunnlag = tilknyttedeJournalposterTilgangRepository.datagrunnlag(dokumentInfoId, tilknytning);
 		Set<Arkivsak> arkivsaker = tilknyttedeJournalposterTilgangRepository.arkivsaker(datagrunnlag, safRequestContext);
 
-
 		Set<TilgangBruker> filteredTilgangBruker = tilknyttedeJournalposterTilgangRepository.tilgangBrukere(arkivsaker, datagrunnlag)
 				.stream()
 				.filter(tilgangBruker -> pep1g.hasAccess(tilgangBruker, safRequestContext))
 				.collect(Collectors.toSet());
 
-		Set<TilgangSak> filteredTilgangSaker = tilknyttedeJournalposterTilgangRepository.tilgangSaker(filteredTilgangBruker, arkivsaker, safRequestContext)
+		Set<TilgangSak> filteredTilgangSaker = tilknyttedeJournalposterTilgangRepository.tilgangSaker(arkivsaker, safRequestContext)
 				.stream()
+				.filter(tilgangSak -> filteredTilgangBruker.stream().anyMatch(tilgangBruker -> tilgangBruker.getAktoerId().equals(tilgangSak.getAktoerId())))
 				.filter(tilgangSak -> pep2.hasAccess(tilgangSak, safRequestContext))
 				.peek(tilgangSak -> pep2d.hasAccess(tilgangSak, safRequestContext))
 				.filter(tilgangSak -> pep3.hasAccess(tilgangSak, safRequestContext))
