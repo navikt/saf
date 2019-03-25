@@ -2,6 +2,7 @@ package no.nav.saf.exceptionhandler;
 
 import graphql.execution.DataFetcherExceptionHandler;
 import graphql.execution.DataFetcherExceptionHandlerParameters;
+import graphql.execution.DataFetcherExceptionHandlerResult;
 import graphql.execution.ExecutionPath;
 import graphql.language.SourceLocation;
 import io.micrometer.core.instrument.Counter;
@@ -24,19 +25,21 @@ public class GraphQLExceptionHandler implements DataFetcherExceptionHandler {
 	}
 
 	@Override
-	public void accept(DataFetcherExceptionHandlerParameters handlerParameters) {
-		Throwable exception = handlerParameters.getException();
-		SourceLocation sourceLocation = handlerParameters.getField().getSourceLocation();
-		ExecutionPath path = handlerParameters.getPath();
+	public DataFetcherExceptionHandlerResult onException(DataFetcherExceptionHandlerParameters dataFetcherExceptionHandlerParameters) {
+		Throwable exception = dataFetcherExceptionHandlerParameters.getException();
+		SourceLocation sourceLocation = dataFetcherExceptionHandlerParameters.getSourceLocation();
+		ExecutionPath path = dataFetcherExceptionHandlerParameters.getPath();
 
 		CustomExceptionWhileDataFetching error = new CustomExceptionWhileDataFetching(path, exception, sourceLocation);
-		handlerParameters.getExecutionContext().addError(error);
 		log.warn(error.getMessage(), exception);
 
 		incrementExceptionCounter("dok_request_seconds_count", error.getException(), meterRegistry, "dokumentOversikt");
+		return DataFetcherExceptionHandlerResult.newResult()
+				.error(error)
+				.build();
 	}
 
-	public static void incrementExceptionCounter(String counterName, Throwable throwable, MeterRegistry meterRegistry, String process) {
+	private static void incrementExceptionCounter(String counterName, Throwable throwable, MeterRegistry meterRegistry, String process) {
 		Counter.builder(counterName)
 				.tags("error_type", isFunctionalException(throwable) ? "functional" : "technical")
 				.tags("exception_name", throwable.getClass().getSimpleName())
@@ -45,8 +48,7 @@ public class GraphQLExceptionHandler implements DataFetcherExceptionHandler {
 				.increment();
 	}
 
-	public static boolean isFunctionalException(Throwable e) {
+	static boolean isFunctionalException(Throwable e) {
 		return e instanceof SafFunctionalException;
 	}
-
 }

@@ -14,25 +14,29 @@ import java.time.LocalDateTime;
  * @author Joakim Bjørnstad, Jbit AS
  */
 class DateTimeScalar {
-	static final GraphQLScalarType DATE_TIME = new GraphQLScalarType("DateTime", "Identifikasjon av dato og tidspunkt etter ISO-8601 standarden.", new Coercing() {
-		@Override
-		public Object serialize(Object dataFetcherResult) throws CoercingSerializeException {
-			return serializeDato(dataFetcherResult);
-		}
+	static final GraphQLScalarType DATE_TIME = GraphQLScalarType.newScalar()
+			.name("DateTime")
+			.description("Identifikasjon av dato og tidspunkt etter ISO-8601 standarden.")
+			.coercing(new Coercing() {
+				@Override
+				public Object serialize(Object dataFetcherResult) throws CoercingSerializeException {
+					return serializeDato(dataFetcherResult);
+				}
 
-		@Override
-		public Object parseValue(Object input) throws CoercingParseValueException {
-			return parseDatoFromValue(input);
-		}
+				@Override
+				public Object parseValue(Object input) throws CoercingParseValueException {
+					return parseDatoFromValue(input);
+				}
 
-		@Override
-		public Object parseLiteral(Object input) throws CoercingParseLiteralException {
-			return parseDatoFromAstLiteral(input);
-		}
-	});
+				@Override
+				public Object parseLiteral(Object input) throws CoercingParseLiteralException {
+					return parseDatoFromAstLiteral(input);
+				}
+			})
+			.build();
 
 	private static Object serializeDato(Object datafetcherResult) {
-		if(datafetcherResult instanceof LocalDateTime) {
+		if (datafetcherResult instanceof LocalDateTime) {
 			return ((LocalDateTime) datafetcherResult).truncatedTo(SECONDS).toString();
 		}
 		throw new CoercingSerializeException("Serialisering av " + datafetcherResult.getClass() + " til " + DATE_TIME.getName() + " er ikke implementert.");

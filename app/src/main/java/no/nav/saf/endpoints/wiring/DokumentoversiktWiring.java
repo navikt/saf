@@ -23,7 +23,6 @@ import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -70,7 +69,10 @@ public class DokumentoversiktWiring {
 								.size(), arguments.getBrukerIdInput());
 						return dokumentoversikt;
 					} catch (SafFunctionalException e) {
-						return new DataFetcherResult<Dokumentoversikt>(Dokumentoversikt.empty(), Collections.singletonList(e));
+						return DataFetcherResult.newResult()
+								.data(Dokumentoversikt.empty())
+								.error(e)
+								.build();
 					}
 				}))
 				.type("Query", typeWiring -> typeWiring.dataFetcher("dokumentoversiktFagsak", environment -> {
@@ -84,7 +86,10 @@ public class DokumentoversiktWiring {
 								dokumentoversikt.getJournalposter().size(), arguments.getFagsakInput());
 						return dokumentoversikt;
 					} catch (SafFunctionalException e) {
-						return new DataFetcherResult<Dokumentoversikt>(Dokumentoversikt.empty(), Collections.singletonList(e));
+						return DataFetcherResult.newResult()
+								.data(Dokumentoversikt.empty())
+								.error(e)
+								.build();
 					}
 				}))
 				.type("Query", typeWiring -> typeWiring.dataFetcher("journalpost", environment -> {
@@ -97,7 +102,10 @@ public class DokumentoversiktWiring {
 						log.info("journalpost hentet for journalpostId={}", journalpostId);
 						return journalpost;
 					} catch (SafFunctionalException e) {
-						return new DataFetcherResult<Journalpost>(null, Collections.singletonList(e));
+						return DataFetcherResult.newResult()
+								.data(null)
+								.error(e)
+								.build();
 					}
 				}))
 				.type("Query", typeWiring -> typeWiring.dataFetcher("tilknyttedeJournalposter", environment -> {
@@ -111,7 +119,10 @@ public class DokumentoversiktWiring {
 						log.info("tilknyttedeJournalposter hentet for dokumentInfoId={}, tilknytning={}", dokumentInfoId, tilknytning);
 						return tilknyttedeJournalposter;
 					} catch (SafFunctionalException e) {
-						return new DataFetcherResult<List<Journalpost>>(new ArrayList<>(), Collections.singletonList(e));
+						return DataFetcherResult.newResult()
+								.data(new ArrayList<>())
+								.error(e)
+								.build();
 					}
 				}))
 				.type("Journalpost", typeWiring -> typeWiring.dataFetcher("dokumenter", environment -> {
@@ -121,5 +132,4 @@ public class DokumentoversiktWiring {
 				}))
 				.build();
 	}
-
 }

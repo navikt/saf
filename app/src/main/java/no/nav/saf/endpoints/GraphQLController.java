@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.inject.Inject;
 import java.io.InputStreamReader;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
 
@@ -76,7 +77,7 @@ public class GraphQLController {
 						.build().execute(ExecutionInput.newExecutionInput()
 						.query(request.getQuery())
 						.operationName(request.getOperationName())
-						.variables(request.getVariables())
+						.variables(request.getVariables() == null ? Collections.emptyMap() : request.getVariables())
 						.context(new SafRequestContext(authorizationHeader, xCorrelationIDHeader, oidcValidatorTool))
 						.build());
 

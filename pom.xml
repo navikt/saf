@@ -32,7 +32,7 @@
 		<aktoer.version>2.0.1</aktoer.version>
 		<pensjonsakv1.version>1.0.3</pensjonsakv1.version>
 		<cxf.version>3.2.8</cxf.version>
-		<graphql-java.version>11.0</graphql-java.version>
+		<graphql-java.version>12.0</graphql-java.version>
 		<abac-attribute-constants.version>3.4.4</abac-attribute-constants.version>
 		<abac-common-attributes-alfa.version>4.0.5</abac-common-attributes-alfa.version>
 		<abac-saf-policies-alfa.version>4.3.0</abac-saf-policies-alfa.version>
@@ -49,8 +49,8 @@
 		<freg.security.test.version>3.1.0</freg.security.test.version>
 		<jose4j.version>0.6.4</jose4j.version>
 		<sonar.exclusions>no.nav.saf.graphiql/**/*</sonar.exclusions>
-		<spring-cloud-contract-wiremock.version>1.2.5.RELEASE</spring-cloud-contract-wiremock.version>
-		<wiremock-standalone.version>2.19.0</wiremock-standalone.version>
+		<spring-cloud-contract-wiremock.version>2.1.1.RELEASE</spring-cloud-contract-wiremock.version>
+		<wiremock-standalone.version>2.22.0</wiremock-standalone.version>
 	</properties>
 
 	<dependencyManagement>
