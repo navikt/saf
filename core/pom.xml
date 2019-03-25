@@ -94,7 +94,6 @@
 		<dependency>
 			<groupId>no.nav.sbl</groupId>
 			<artifactId>pensjon-sak-v1-tjenestespesifikasjon</artifactId>
-			<version>1.0.3</version>
 		</dependency>
 		<dependency>
 			<groupId>io.micrometer</groupId>
@@ -103,6 +102,10 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-aspects</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.bitbucket.b_c</groupId>
+			<artifactId>jose4j</artifactId>
 		</dependency>
 
 		<!--Test dependencies-->
@@ -141,10 +144,6 @@
 			<groupId>no.nav.freg</groupId>
 			<artifactId>freg-security-test-oidc-tools</artifactId>
 			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.bitbucket.b_c</groupId>
-			<artifactId>jose4j</artifactId>
 		</dependency>
 	</dependencies>
 	<build>
