@@ -49,7 +49,7 @@ public class SideInfoMapper {
 
 	private boolean finnesNesteSide(String sluttJournalpostId, SafRequestContext safRequestContext) {
 		JournalpostDto journalpostDto = safRequestContext.getRequestCache().getObject(sluttJournalpostId);
-		return journalpostDto.getNextJournalpostId() != null;
+		return journalpostDto.getNextJournalpostId() != null && !journalpostDto.getJournalpostId().equals(journalpostDto.getNextJournalpostId());
 	}
 
 	private boolean finnesForrigeSide(String startJournalpostId, SafRequestContext safRequestContext) {
