@@ -41,6 +41,7 @@ public class JournalpostDto {
 	private UtsendingsKanalCode utsendingskanal;
 	private JournalpostTypeCode journalposttype;
 	private SaksrelasjonDto saksrelasjon;
+	private BrukerDto bruker;
 	private Date datoOpprettet;
 	private Date mottattDato;
 	private Date journalDato;
