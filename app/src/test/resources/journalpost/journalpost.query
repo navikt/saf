@@ -8,6 +8,12 @@
         temanavn
         behandlingstema
         behandlingstemanavn
+        avsenderMottaker {
+          id
+          navn
+          land
+          erLikBruker
+        }
         avsenderMottakerId
         avsenderMottakerNavn
         avsenderMottakerLand

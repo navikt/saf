@@ -8,6 +8,14 @@ Alle nevneverdige endringer blir dokumentert her.
 
 Denne malen er basert på [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [4.5.0] - 2019-03-27
+### Endret
+* `GraphQL: ` Type `Journalpost`. Nytt felt `avsenderMottaker`.
+* `GraphQL: ` Type `Journalpost`. Deprekert felt `avsenderMottakerId`.
+* `GraphQL: ` Type `Journalpost`. Deprekert felt `avsenderMottakerNavn`.
+* `GraphQL: ` Type `Journalpost`. Deprekert felt `avsenderMottakerLand`.
+* `GraphQL: ` Ny Type `AvsenderMottaker`. For mer informasjon, se GraphiQL eller [Type: AvsenderMottaker](https://confluence.adeo.no/display/BOA/Type%3A+AvsenderMottaker).
+
 ## [4.4.1] - 2019-03-21
 ### Rettet
 * Rettet feil i logging i hentdokument, der MDC verdier ble satt etter loggingen.

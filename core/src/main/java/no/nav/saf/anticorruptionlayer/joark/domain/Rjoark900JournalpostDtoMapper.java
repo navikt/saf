@@ -11,6 +11,7 @@ import no.nav.saf.anticorruptionlayer.joark.domain.kode.DokumentStatusCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.FagomradeCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.FagsystemCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.JournalpostTypeCode;
+import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.BrukerDto;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.DokumentInfoDto;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.JournalpostDto;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.SaksrelasjonDto;
@@ -23,6 +24,7 @@ import no.nav.saf.domain.kode.Journalstatus;
 import no.nav.saf.domain.kode.Kanal;
 import no.nav.saf.domain.kode.Tema;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
+import no.nav.saf.domain.visningsmodell.AvsenderMottaker;
 import no.nav.saf.domain.visningsmodell.Bruker;
 import no.nav.saf.domain.visningsmodell.BrukerIdType;
 import no.nav.saf.domain.visningsmodell.DokumentInfo;
@@ -66,6 +68,7 @@ public class Rjoark900JournalpostDtoMapper {
 				.behandlingstemanavn(journalpostDto.getBehandlingstemanavn())
 				.sak(mapSak(journalpostDto.getSaksrelasjon(), requestCache))
 				.bruker(mapBruker(journalpostDto.getSaksrelasjon(), requestCache))
+				.avsenderMottaker(mapAvsenderMottaker(journalpostDto))
 				.avsenderMottakerId(journalpostDto.getAvsenderMottakerId())
 				.avsenderMottakerNavn(journalpostDto.getAvsenderMottakerNavn())
 				.avsenderMottakerLand(journalpostDto.getAvsenderMottakerLand())
@@ -108,7 +111,7 @@ public class Rjoark900JournalpostDtoMapper {
 	}
 
 	private Tema mapTema(JournalpostDto journalpostDto, RequestCache requestCache) {
-		if(journalpostDto.isTilknyttetSak()) {
+		if (journalpostDto.isTilknyttetSak()) {
 			SaksrelasjonDto saksrelasjon = journalpostDto.getSaksrelasjon();
 			Arkivsak arkivsak = requestCache.getObject(saksrelasjon.getSakId() + mapJoarkFagsystem(saksrelasjon.getFagsystem()));
 			if (arkivsak == null) {
@@ -134,6 +137,22 @@ public class Rjoark900JournalpostDtoMapper {
 		} else {
 			return getBrukerFromTilgangBrukerCache(requestCache);
 		}
+	}
+
+	private AvsenderMottaker mapAvsenderMottaker(JournalpostDto journalpostDto) {
+		return AvsenderMottaker.builder()
+				.id(journalpostDto.getAvsenderMottakerId())
+				.navn(journalpostDto.getAvsenderMottakerNavn())
+				.land(journalpostDto.getAvsenderMottakerLand())
+				.erLikBruker(mapErLikBruker(journalpostDto.getAvsenderMottakerId(), journalpostDto.getBruker()))
+				.build();
+	}
+
+	private boolean mapErLikBruker(String avsenderMottakerId, BrukerDto brukerDto) {
+		if (avsenderMottakerId == null || brukerDto == null) {
+			return false;
+		}
+		return avsenderMottakerId.equals(brukerDto.getBrukerId());
 	}
 
 	private Sak mapSak(SaksrelasjonDto saksrelasjon, RequestCache requestCache) {
@@ -172,7 +191,7 @@ public class Rjoark900JournalpostDtoMapper {
 	}
 
 	private List<Tilleggsopplysning> mapTilleggsopplysninger(JournalpostDto journalpostDto) {
-		if(journalpostDto.getTilleggsopplysninger() == null || journalpostDto.getTilleggsopplysninger().isEmpty()) {
+		if (journalpostDto.getTilleggsopplysninger() == null || journalpostDto.getTilleggsopplysninger().isEmpty()) {
 			return new ArrayList<>();
 		}
 		return journalpostDto.getTilleggsopplysninger().stream()

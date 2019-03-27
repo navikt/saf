@@ -10,6 +10,7 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
 import static org.hamcrest.core.IsNot.not;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.DokumentStatusCode;
@@ -332,6 +333,11 @@ class Rjoark900JournalpostDtoMapperTest {
 		assertThat(journalpost.getTemanavn(), is(Tema.AAP.getTemanavn()));
 	}
 
+	@Test
+	void shouldAvsenderMottakerErLikBrukerTrueWhenBrukerIsSameAsAvsenderMottakerId() {
+
+	}
+
 	private void assertCommonMetadata(Journalpost journalpost) {
 		assertEquals(Long.toString(JOURNALPOST_ID), journalpost.getJournalpostId());
 		assertEquals(INNHOLD, journalpost.getTittel());
@@ -339,6 +345,10 @@ class Rjoark900JournalpostDtoMapperTest {
 		assertEquals(JOURNALFOERT_AV, journalpost.getJournalfortAvNavn());
 		assertEquals(BEHANDLINGSTEMA, journalpost.getBehandlingstema());
 		assertEquals(BEHANDLINGSTEMANAVN, journalpost.getBehandlingstemanavn());
+		assertThat(journalpost.getAvsenderMottaker().getId(), is(AVSENDER_MOTTAKER_ID));
+		assertThat(journalpost.getAvsenderMottaker().getNavn(), is(AVSENDER_MOTTAKER_NAVN));
+		assertThat(journalpost.getAvsenderMottaker().getLand(), is(AVSENDER_MOTTAKER_LAND));
+		assertFalse(journalpost.getAvsenderMottaker().isErLikBruker());
 		assertEquals(AVSENDER_MOTTAKER_ID, journalpost.getAvsenderMottakerId());
 		assertEquals(AVSENDER_MOTTAKER_NAVN, journalpost.getAvsenderMottakerNavn());
 		assertEquals(AVSENDER_MOTTAKER_LAND, journalpost.getAvsenderMottakerLand());

@@ -191,14 +191,17 @@ type Journalpost {
     # * Dersom journalposten er sakstilknyttet, henter SAF bruker fra GSAK/PSAK. Alternativt henter SAF den fra Joark.
     bruker: Bruker
 
+    # Personen eller organisasjonen som er avsender eller mottaker av dokumentene i journalposten.
+    avsenderMottaker: AvsenderMottaker
+
     # Identifikatoren til parten som er avsender eller mottaker av dokumentene på journalposten. Enten fødselsnummer eller organisasjonsnummer.
-    avsenderMottakerId: String
+    avsenderMottakerId: String @deprecated(reason: "Feltet er deprekert og vil bli fjernet i fremtiden. Bruk avsenderMottaker.id i stedet.")
 
     # Navnet på personen eller organisasjonen som er avsender eller mottaker av dokumentene på journalposten.
-    avsenderMottakerNavn: String
+    avsenderMottakerNavn: String @deprecated(reason: "Feltet er deprekert og vil bli fjernet i fremtiden. Bruk avsenderMottaker.navn i stedet.")
 
     # Landet forsendelsen er mottatt fra eller sendt til. Feltet skal i utgangspunktet kun være populert dersom avsender eller mottaker er en institusjon med adresse i utlandet.
-    avsenderMottakerLand: String
+    avsenderMottakerLand: String @deprecated(reason: "Feltet er deprekert og vil bli fjernet i fremtiden. Bruk avsenderMottaker.land i stedet.")
 
     # NAV-enheten som har journalført forsendelsen. I noen tilfeller brukes journalfEnhet til å rute journalføringsoppgaven til korrekt enhet i NAV. I slike tilfeller vil journalfEnhet være satt også for ikke-journalførte dokumenter.
     journalforendeEnhet: String
@@ -277,6 +280,23 @@ type Bruker {
 
     # Angir hvilken type brukeren sin id er.
     type: BrukerIdType
+}
+
+# En person, organisasjon eller annen samhandler som er mottaker eller avsender av dokumentene på en journalpost.
+type AvsenderMottaker {
+    # Identifikatoren til parten som er avsender eller mottaker av dokumentene på journalposten.
+    # * Normalt et fødselsnummer eller organisasjonsnummer.
+    id: String
+
+    # Navnet på personen eller organisasjonen som er avsender eller mottaker av dokumentene på journalposten.
+    navn: String
+
+    # Landet forsendelsen er mottatt fra eller sendt til. Feltet brukes kun dersom avsender / mottaker er en institusjon med adresse i utlandet.
+    land: String
+
+    # Angir hvorvidt bruker er lik avsender/mottaker av journalposten.
+    # * Informasjonen er ikke garantert korrekt, da tjenesten sammenlikner avsenderMottaker med bruker tilknyttet journalposten, ikke bruker tilknyttet saken.
+    erLikBruker: Boolean!
 }
 
 # Metadata tilknyttet et bestemt dokument i Joark (evt til flere varianter av samme dokument).
