@@ -8,6 +8,10 @@ Alle nevneverdige endringer blir dokumentert her.
 
 Denne malen er basert på [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [4.5.1] - 2019-03-28
+### Endret
+* `GraphQL: ` Type `DokumentInfo`. Nytt felt `datoFerdigstilt`.
+
 ## [4.5.0] - 2019-03-27
 ### Endret
 * `GraphQL: ` Type `Journalpost`. Nytt felt `avsenderMottaker`.

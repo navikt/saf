@@ -91,6 +91,8 @@ public class Rjoark903JournalpostDtoMapper {
 						.tittel(dokumentInfoDto.getTittel())
 						.brevkode(dokumentInfoDto.getBrevkode())
 						.dokumentstatus(mapDokumentstatus(dokumentInfoDto.getDokumentstatus()))
+						.datoFerdigstilt(dokumentInfoDto.getDatoFerdigstilt() == null ? null :
+								LocalDateTime.from(dokumentInfoDto.getDatoFerdigstilt().toInstant().atZone(ZoneId.systemDefault())))
 						.originalJournalpostId(dokumentInfoDto.getOrigJournalpostId() == null ? null : dokumentInfoDto.getOrigJournalpostId().toString())
 						.skjerming(dokumentInfoDto.getSkjerming() == null ? null : dokumentInfoDto.getSkjerming().getSafSkjerming().name())
 						.dokumentvarianter(dokumentInfoDto.getVarianter().stream()

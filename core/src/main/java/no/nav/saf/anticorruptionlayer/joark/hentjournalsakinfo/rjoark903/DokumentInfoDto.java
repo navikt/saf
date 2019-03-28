@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.DokumentStatusCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.SkjermingTypeCode;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -19,6 +20,7 @@ import java.util.List;
 public class DokumentInfoDto {
 	private String dokumentInfoId;
 	private DokumentStatusCode dokumentstatus;
+	private Date datoFerdigstilt;
 	private String brevkode;
 	private String tittel;
 	private SkjermingTypeCode skjerming;

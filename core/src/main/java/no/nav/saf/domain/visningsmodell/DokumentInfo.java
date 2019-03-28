@@ -5,6 +5,7 @@ import lombok.ToString;
 import lombok.Value;
 import no.nav.saf.domain.kode.Dokumentstatus;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,6 +23,7 @@ public class DokumentInfo {
 	private final String tittel;
 	private final String brevkode;
 	private final Dokumentstatus dokumentstatus;
+	private final LocalDateTime datoFerdigstilt;
 	private final String originalJournalpostId;
 	private final String skjerming;
 	@Builder.Default

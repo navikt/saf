@@ -3,6 +3,7 @@ package no.nav.saf.anticorruptionlayer.joark.domain;
 import static no.nav.saf.domain.DomainConstants.TILGANG_BRUKER;
 import static no.nav.saf.domain.kode.Kanal.SENTRAL_UTSKRIFT;
 import static org.assertj.core.groups.Tuple.tuple;
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -77,6 +78,7 @@ class Rjoark903JournalpostDtoMapperTest {
 	private static final Date DOKUMENT_DATO = new Date(5000L);
 	private static final Date JOURNAL_DATO = new Date(6000L);
 	private static final Date MOTTAT_DATO = new Date(7000L);
+	private static final Date DATO_FERDIGSTILT = new Date(8000L);
 	private static final String FNR = "***gammelt_fnr***";
 	private static final String AKTOER_ID = "***gammelt_fnr***31";
 	private static final String SAKS_ID = "12345";
@@ -375,6 +377,7 @@ class Rjoark903JournalpostDtoMapperTest {
 
 		DokumentInfo dokumentInfo1 = journalpost.getDokumenter().get(0);
 		assertEquals(DOKUMENT_INFO_ID, dokumentInfo1.getDokumentInfoId());
+		assertThat(dokumentInfo1.getDatoFerdigstilt(), equalTo(LocalDateTime.from(DATO_FERDIGSTILT.toInstant().atZone(ZoneId.systemDefault()))));
 		assertEquals(Long.toString(JOURNALPOST_ID), dokumentInfo1.getOriginalJournalpostId());
 		assertEquals(SKJERMING_TYPE_CODE_POL.name(), dokumentInfo1.getSkjerming());
 
@@ -441,6 +444,7 @@ class Rjoark903JournalpostDtoMapperTest {
 						.tittel("veldigViktigTittel")
 						.brevkode(BREVKODE)
 						.dokumentstatus(DokumentStatusCode.FERDIGSTILT)
+						.datoFerdigstilt(DATO_FERDIGSTILT)
 						.origJournalpostId(JOURNALPOST_ID)
 						.skjerming(SKJERMING_TYPE_CODE_POL)
 						.logiske(Collections.singletonList(new LogiskVedleggDto()))
