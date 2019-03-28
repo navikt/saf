@@ -316,6 +316,9 @@ type DokumentInfo {
     # Dokumentstatus gir et indikasjon på hvorvidt dokumentet er ferdigstilt eller under arbeid, eventuelt avbrutt. Dersom dokumentet ikke har noen dokumentstatus, er dokumentet komplett / ferdigstilt.
     dokumentstatus: Dokumentstatus
 
+    # Dato dokumentet ble ferdigstilt.
+    datoFerdigstilt: DateTime
+
     # Et dokumentInfo-objekt kan være gjenbrukt på flere journalposter. OriginalJournalpostId peker på den journalposten som dokumentene var knyttet til på arkiveringstidspunktet.
     originalJournalpostId: String
 

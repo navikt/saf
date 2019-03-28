@@ -3,6 +3,7 @@ package no.nav.saf.anticorruptionlayer.joark.domain;
 import static no.nav.saf.domain.DomainConstants.TILGANG_BRUKER;
 import static no.nav.saf.domain.kode.Kanal.SENTRAL_UTSKRIFT;
 import static org.assertj.core.groups.Tuple.tuple;
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -20,6 +21,7 @@ import no.nav.saf.anticorruptionlayer.joark.domain.kode.JournalStatusCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.JournalpostTypeCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.SkjermingTypeCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.VariantFormatCode;
+import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.BrukerDto;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.DokumentInfoDto;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.JournalpostDto;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.LogiskVedleggDto;
@@ -76,6 +78,7 @@ class Rjoark900JournalpostDtoMapperTest {
 	private static final Date DOKUMENT_DATO = new Date(5000L);
 	private static final Date JOURNAL_DATO = new Date(6000L);
 	private static final Date MOTTAT_DATO = new Date(7000L);
+	private static final Date DATO_FERDIGSTILT = new Date(8000L);
 	private static final String FNR = "***gammelt_fnr***";
 	private static final String AKTOER_ID = "***gammelt_fnr***31";
 	private static final String SAKS_ID = "12345";
@@ -335,7 +338,15 @@ class Rjoark900JournalpostDtoMapperTest {
 
 	@Test
 	void shouldAvsenderMottakerErLikBrukerTrueWhenBrukerIsSameAsAvsenderMottakerId() {
+	JournalpostDto journalpostDto = baseJournalpostDto()
+			.journalposttype(JournalpostTypeCode.I)
+			.avsenderMottakerId(AVSENDER_MOTTAKER_ID)
+			.bruker(BrukerDto.builder().brukerId(AVSENDER_MOTTAKER_ID).build())
+			.build();
 
+		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, new RequestCache());
+
+		assertTrue(journalpost.getAvsenderMottaker().isErLikBruker());
 	}
 
 	private void assertCommonMetadata(Journalpost journalpost) {
@@ -365,6 +376,7 @@ class Rjoark900JournalpostDtoMapperTest {
 
 		DokumentInfo dokumentInfo1 = journalpost.getDokumenter().get(0);
 		assertEquals(DOKUMENT_INFO_ID, dokumentInfo1.getDokumentInfoId());
+		assertThat(dokumentInfo1.getDatoFerdigstilt(), equalTo(LocalDateTime.from(DATO_FERDIGSTILT.toInstant().atZone(ZoneId.systemDefault()))));
 		assertEquals(Long.toString(JOURNALPOST_ID), dokumentInfo1.getOriginalJournalpostId());
 		assertEquals(SKJERMING_TYPE_CODE_POL.name(), dokumentInfo1.getSkjerming());
 
@@ -431,6 +443,7 @@ class Rjoark900JournalpostDtoMapperTest {
 						.tittel("veldigViktigTittel")
 						.brevkode(BREVKODE)
 						.dokumentstatus(DokumentStatusCode.FERDIGSTILT)
+						.datoFerdigstilt(DATO_FERDIGSTILT)
 						.origJournalpostId(JOURNALPOST_ID)
 						.skjerming(SKJERMING_TYPE_CODE_POL)
 						.logiske(Collections.singletonList(new LogiskVedleggDto()))
