@@ -1,4 +1,4 @@
-package no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark903;
+package no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,6 +23,9 @@ import java.util.List;
 @Builder
 public class JournalpostDto {
 	private Long journalpostId;
+	private Long prevJournalpostId;
+	private Long nextJournalpostId;
+	private Long totaltAntall;
 	private String innhold;
 	private FagomradeCode fagomrade;
 	private String behandlingstema;
@@ -37,8 +40,8 @@ public class JournalpostDto {
 	private MottaksKanalCode mottakskanal;
 	private UtsendingsKanalCode utsendingskanal;
 	private JournalpostTypeCode journalposttype;
-	private BrukerDto bruker;
 	private SaksrelasjonDto saksrelasjon;
+	private BrukerDto bruker;
 	private Date datoOpprettet;
 	private Date mottattDato;
 	private Date journalDato;
@@ -52,9 +55,5 @@ public class JournalpostDto {
 
 	public boolean isTilknyttetSak() {
 		return saksrelasjon != null && saksrelasjon.getSakId() != null;
-	}
-
-	public boolean isTilknyttetBruker() {
-		return bruker != null && bruker.getBrukerId() != null;
 	}
 }

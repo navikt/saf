@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.anticorruptionlayer.joark.JoarkAntiCorruptionLayer;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.SkjermingTypeCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.VariantFormatCode;
-import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.JournalpostDto;
+import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.dto.JournalpostDto;
 import no.nav.saf.domain.kode.Journalposttype;
 import no.nav.saf.domain.kode.Journalstatus;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;

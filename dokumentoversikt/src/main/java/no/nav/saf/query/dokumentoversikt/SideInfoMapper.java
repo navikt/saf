@@ -1,6 +1,6 @@
 package no.nav.saf.query.dokumentoversikt;
 
-import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.JournalpostDto;
+import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.dto.JournalpostDto;
 import no.nav.saf.domain.visningsmodell.Journalpost;
 import no.nav.saf.domain.visningsmodell.SideInfo;
 import no.nav.saf.tilgangskontroll.SafRequestContext;

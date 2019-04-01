@@ -11,11 +11,11 @@ import no.nav.saf.anticorruptionlayer.joark.domain.kode.DokumentStatusCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.FagomradeCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.FagsystemCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.JournalpostTypeCode;
-import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark903.BrukerDto;
-import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark903.DokumentInfoDto;
-import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark903.JournalpostDto;
-import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark903.SaksrelasjonDto;
-import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark903.VariantDto;
+import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.dto.BrukerDto;
+import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.dto.DokumentInfoDto;
+import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.dto.JournalpostDto;
+import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.dto.SaksrelasjonDto;
+import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.dto.VariantDto;
 import no.nav.saf.domain.Arkivsak;
 import no.nav.saf.domain.kode.Arkivsakssystem;
 import no.nav.saf.domain.kode.Datotype;
@@ -48,7 +48,7 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @Component
-public class Rjoark903JournalpostDtoMapper {
+public class JournalpostDtoMapper {
 
 	public Journalpost mapJournalpostDto(final JournalpostDto journalpostDto, final RequestCache requestCache) {
 		if (journalpostDto == null) {
@@ -56,6 +56,7 @@ public class Rjoark903JournalpostDtoMapper {
 		}
 		final Kanal kanal = mapKanal(journalpostDto);
 		final String journalpostId = journalpostDto.getJournalpostId().toString();
+
 		Journalpost journalpost = Journalpost.builder()
 				.journalpostId(journalpostId)
 				.tittel(journalpostDto.getInnhold())
@@ -112,7 +113,7 @@ public class Rjoark903JournalpostDtoMapper {
 	}
 
 	private Tema mapTema(JournalpostDto journalpostDto, RequestCache requestCache) {
-		if(journalpostDto.isTilknyttetSak()) {
+		if (journalpostDto.isTilknyttetSak()) {
 			SaksrelasjonDto saksrelasjon = journalpostDto.getSaksrelasjon();
 			Arkivsak arkivsak = requestCache.getObject(saksrelasjon.getSakId() + mapJoarkFagsystem(saksrelasjon.getFagsystem()));
 			if (arkivsak == null) {
@@ -150,7 +151,7 @@ public class Rjoark903JournalpostDtoMapper {
 	}
 
 	private boolean mapErLikBruker(String avsenderMottakerId, BrukerDto brukerDto) {
-		if(avsenderMottakerId == null || brukerDto == null) {
+		if (avsenderMottakerId == null || brukerDto == null) {
 			return false;
 		}
 		return avsenderMottakerId.equals(brukerDto.getBrukerId());
@@ -192,7 +193,7 @@ public class Rjoark903JournalpostDtoMapper {
 	}
 
 	private List<Tilleggsopplysning> mapTilleggsopplysninger(JournalpostDto journalpostDto) {
-		if(journalpostDto.getTilleggsopplysninger() == null || journalpostDto.getTilleggsopplysninger().isEmpty()) {
+		if (journalpostDto.getTilleggsopplysninger() == null || journalpostDto.getTilleggsopplysninger().isEmpty()) {
 			return new ArrayList<>();
 		}
 		return journalpostDto.getTilleggsopplysninger().stream()

@@ -9,8 +9,8 @@ import static no.nav.saf.domain.DomainConstants.PEP5;
 import static no.nav.saf.domain.DomainConstants.PEP6D;
 import static no.nav.saf.util.MDCUtility.addMdcData;
 
-import no.nav.saf.anticorruptionlayer.joark.domain.Rjoark903JournalpostDtoMapper;
-import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark903.JournalpostDto;
+import no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoMapper;
+import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.dto.JournalpostDto;
 import no.nav.saf.domain.Arkivsak;
 import no.nav.saf.domain.kode.Tilknytning;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
@@ -35,7 +35,7 @@ import java.util.stream.Collectors;
 @Component
 public class TilknyttedeJournalposterCoordinator {
 	private final TilknyttedeJournalposterTilgangRepository tilknyttedeJournalposterTilgangRepository;
-	private final Rjoark903JournalpostDtoMapper rjoark903JournalpostDtoMapper;
+	private final JournalpostDtoMapper journalpostDtoMapper;
 	private final Pep<TilgangBruker> pep1g;
 	private final Pep<TilgangSak> pep2;
 	private final Pep<TilgangSak> pep2d;
@@ -46,7 +46,7 @@ public class TilknyttedeJournalposterCoordinator {
 
 	@Inject
 	public TilknyttedeJournalposterCoordinator(TilknyttedeJournalposterTilgangRepository tilknyttedeJournalposterTilgangRepository,
-											   Rjoark903JournalpostDtoMapper rjoark903JournalpostDtoMapper,
+											   JournalpostDtoMapper journalpostDtoMapper,
 											   @Named(PEP1G) Pep<TilgangBruker> pep1g,
 											   @Named(PEP2) Pep<TilgangSak> pep2,
 											   @Named(PEP2D) Pep<TilgangSak> pep2d,
@@ -55,7 +55,7 @@ public class TilknyttedeJournalposterCoordinator {
 											   @Named(PEP5) Pep<TilgangDokumentInfo> pep5,
 											   @Named(PEP6D) Pep<TilgangDokumentvariant> pep6d) {
 		this.tilknyttedeJournalposterTilgangRepository = tilknyttedeJournalposterTilgangRepository;
-		this.rjoark903JournalpostDtoMapper = rjoark903JournalpostDtoMapper;
+		this.journalpostDtoMapper = journalpostDtoMapper;
 		this.pep1g = pep1g;
 		this.pep2 = pep2;
 		this.pep2d = pep2d;
@@ -100,7 +100,7 @@ public class TilknyttedeJournalposterCoordinator {
 		return tilgangJournalposts.stream()
 				.map(tj -> {
 					JournalpostDto journalpostDto = safRequestContext.getRequestCache().getObject(tj.getJournalpostId());
-					return rjoark903JournalpostDtoMapper.mapJournalpostDto(journalpostDto, safRequestContext.getRequestCache());
+					return journalpostDtoMapper.mapJournalpostDto(journalpostDto, safRequestContext.getRequestCache());
 				}).collect(Collectors.toList());
 	}
 }

@@ -1,4 +1,4 @@
-package no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900;
+package no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.dto;
 
 import lombok.Builder;
 import lombok.Value;

@@ -10,8 +10,8 @@ import static no.nav.saf.domain.DomainConstants.PEP6D;
 import static no.nav.saf.domain.DomainConstants.RJOARK902_JOURNALPOST_DTO;
 import static no.nav.saf.domain.DomainConstants.TILGANG_BRUKER;
 
-import no.nav.saf.anticorruptionlayer.joark.domain.Rjoark902JournalpostDtoMapper;
-import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark902.JournalpostDto;
+import no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoMapper;
+import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.dto.JournalpostDto;
 import no.nav.saf.domain.Arkivsak;
 import no.nav.saf.domain.kode.Journalstatus;
 import no.nav.saf.domain.kode.Tema;
@@ -42,7 +42,7 @@ public class JournalpostCoordinatorImpl implements JournalpostCoordinator {
 	public static final String PEP4_ERRORMESSAGE = "Tilgang til journalpost er avvist. Journalposten er skjermet ihht personopplysningsloven.";
 
 	private final JournalpostTilgangRepository journalpostTilgangRepository;
-	private final Rjoark902JournalpostDtoMapper rjoark902JournalpostDtoMapper;
+	private final JournalpostDtoMapper journalpostDtoMapper;
 	private final Pep<TilgangBruker> pep1;
 	private final Pep<TilgangSak> pep2;
 	private final Pep<TilgangSak> pep2d;
@@ -52,7 +52,7 @@ public class JournalpostCoordinatorImpl implements JournalpostCoordinator {
 	private final Pep<TilgangDokumentvariant> pep6d;
 
 	public JournalpostCoordinatorImpl(JournalpostTilgangRepository journalpostTilgangRepository,
-									  Rjoark902JournalpostDtoMapper rjoark902JournalpostDtoMapper,
+									  JournalpostDtoMapper journalpostDtoMapper,
 									  @Named(PEP1G) Pep<TilgangBruker> pep1,
 									  @Named(PEP2) Pep<TilgangSak> pep2,
 									  @Named(PEP2D) Pep<TilgangSak> pep2d,
@@ -61,7 +61,7 @@ public class JournalpostCoordinatorImpl implements JournalpostCoordinator {
 									  @Named(PEP5) Pep<TilgangDokumentInfo> pep5,
 									  @Named(PEP6D) Pep<TilgangDokumentvariant> pep6d) {
 		this.journalpostTilgangRepository = journalpostTilgangRepository;
-		this.rjoark902JournalpostDtoMapper = rjoark902JournalpostDtoMapper;
+		this.journalpostDtoMapper = journalpostDtoMapper;
 		this.pep1 = pep1;
 		this.pep2 = pep2;
 		this.pep2d = pep2d;
@@ -120,6 +120,6 @@ public class JournalpostCoordinatorImpl implements JournalpostCoordinator {
 
 	private Journalpost hentVisningsmodell(SafRequestContext safRequestContext) {
 		final JournalpostDto journalpostDto = safRequestContext.getRequestCache().getObject(RJOARK902_JOURNALPOST_DTO);
-		return rjoark902JournalpostDtoMapper.mapJournalpostDto(journalpostDto, safRequestContext.getRequestCache());
+		return journalpostDtoMapper.mapJournalpostDto(journalpostDto, safRequestContext.getRequestCache());
 	}
 }

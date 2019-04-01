@@ -21,13 +21,13 @@ import no.nav.saf.anticorruptionlayer.joark.domain.kode.JournalStatusCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.JournalpostTypeCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.SkjermingTypeCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.VariantFormatCode;
-import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark902.BrukerDto;
-import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark902.DokumentInfoDto;
-import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark902.JournalpostDto;
-import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark902.LogiskVedleggDto;
-import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark902.SaksrelasjonDto;
-import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark902.TilleggsopplysningDto;
-import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark902.VariantDto;
+import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.dto.BrukerDto;
+import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.dto.DokumentInfoDto;
+import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.dto.JournalpostDto;
+import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.dto.LogiskVedleggDto;
+import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.dto.SaksrelasjonDto;
+import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.dto.TilleggsopplysningDto;
+import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.dto.VariantDto;
 import no.nav.saf.cache.KeyGeneratorLocalCaching;
 import no.nav.saf.domain.Arkivsak;
 import no.nav.saf.domain.kode.Arkivsakssystem;
@@ -62,7 +62,7 @@ import java.util.List;
  * @author Joakim Bjørnstad, Jbit AS
  */
 @ExtendWith(MockitoExtension.class)
-class Rjoark902JournalpostDtoMapperTest {
+class JournalpostDtoMapperTest {
 	private static final String DOKUMENT_INFO_ID = "1234";
 	private static final VariantFormatCode VARIANT_FORMAT_CODE_ARKIV = VariantFormatCode.ARKIV;
 	private static final VariantFormatCode VARIANT_FORMAT_CODE_SLADDET = VariantFormatCode.SLADDET;
@@ -98,9 +98,9 @@ class Rjoark902JournalpostDtoMapperTest {
 	private static final String TILLEGGSOPPLYSNING_VERDI = "21521";
 	private static final String FILNAVN_1 = "filnavn1";
 	private static final String FILNAVN_2 = "filnavn2";
-	private static final String AVSENDER_MOTTAKER_ID = "0000000000";
+	private static final String AVSENDER_MOTTAKER_ID = "***gammelt_fnr***";
 
-	private final Rjoark902JournalpostDtoMapper mapper = new Rjoark902JournalpostDtoMapper();
+	private final JournalpostDtoMapper mapper = new JournalpostDtoMapper();
 
 	@Mock
 	private OidcValidatorTool oidcValidatorTool;
@@ -168,7 +168,6 @@ class Rjoark902JournalpostDtoMapperTest {
 
 		assertThat(journalpost.getRelevanteDatoer(), hasItem(new RelevantDato(JOURNAL_DATO, Datotype.DATO_JOURNALFOERT)));
 	}
-
 
 	@Test
 	void shouldNotMapDokumentinfoIngenTilgangPep5() {
@@ -339,11 +338,11 @@ class Rjoark902JournalpostDtoMapperTest {
 
 	@Test
 	void shouldAvsenderMottakerErLikBrukerTrueWhenBrukerIsSameAsAvsenderMottakerId() {
-		JournalpostDto journalpostDto = baseJournalpostDto()
-				.journalposttype(JournalpostTypeCode.I)
-				.avsenderMottakerId(AVSENDER_MOTTAKER_ID)
-				.bruker(BrukerDto.builder().brukerId(AVSENDER_MOTTAKER_ID).build())
-				.build();
+	JournalpostDto journalpostDto = baseJournalpostDto()
+			.journalposttype(JournalpostTypeCode.I)
+			.avsenderMottakerId(AVSENDER_MOTTAKER_ID)
+			.bruker(BrukerDto.builder().brukerId(AVSENDER_MOTTAKER_ID).build())
+			.build();
 
 		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, new RequestCache());
 
@@ -501,6 +500,7 @@ class Rjoark902JournalpostDtoMapperTest {
 	private JournalpostDto.JournalpostDtoBuilder baseJournalpostDto() {
 		return JournalpostDto.builder()
 				.journalpostId(JOURNALPOST_ID)
+				.nextJournalpostId(405252858L)
 				.innhold(INNHOLD)
 				.fagomrade(FAGOMRADE)
 				.behandlingstema(BEHANDLINGSTEMA)

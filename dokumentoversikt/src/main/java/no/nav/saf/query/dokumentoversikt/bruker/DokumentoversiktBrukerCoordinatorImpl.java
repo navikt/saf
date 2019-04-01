@@ -14,7 +14,7 @@ import io.reactivex.Flowable;
 import io.reactivex.schedulers.Schedulers;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.FagomradeCode;
-import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.JournalpostDto;
+import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.dto.JournalpostDto;
 import no.nav.saf.domain.TilgangsmodellRepository;
 import no.nav.saf.domain.kode.Journalstatus;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
