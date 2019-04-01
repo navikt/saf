@@ -4,13 +4,10 @@ import no.nav.saf.tilgangskontroll.abac.consumer.AbacConsumer;
 import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlRequest;
 import no.nav.saf.tilgangskontroll.abac.dto.response.Advice;
 import no.nav.saf.tilgangskontroll.abac.dto.response.Decision;
-import no.nav.saf.tilgangskontroll.abac.dto.response.Obligation;
 import no.nav.saf.tilgangskontroll.abac.dto.response.XacmlResponse;
 import no.nav.saf.tilgangskontroll.abac.exception.IndeterminateDecisionException;
-import no.nav.saf.tilgangskontroll.abac.exception.UnhandledObligationException;
 import no.nav.saf.tilgangskontroll.abac.service.advice.AdviceStrategy;
 import no.nav.saf.tilgangskontroll.abac.service.common.AttributeStrategy;
-import no.nav.saf.tilgangskontroll.abac.service.obligation.ObligationStrategy;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -20,14 +17,11 @@ import java.util.List;
 public class AbacServiceImpl implements AbacService {
 
 	private final AbacConsumer abacConsumer;
-	private final List<ObligationStrategy> obligationStrategies;
 	private final List<AdviceStrategy> adviceStrategies;
 
 	public AbacServiceImpl(AbacConsumer abacConsumer,
-						   List<ObligationStrategy> obligationStrategies,
 						   List<AdviceStrategy> adviceStrategies) {
 		this.abacConsumer = abacConsumer;
-		this.obligationStrategies = new ArrayList<>(obligationStrategies);
 		this.adviceStrategies = new ArrayList<>(adviceStrategies);
 	}
 
@@ -36,7 +30,6 @@ public class AbacServiceImpl implements AbacService {
 		XacmlResponse response = abacConsumer.evaluate(request);
 		response = assignResultBasedOnBias(request, response);
 
-		handleObligations(request, response);
 		handleAdvice(request, response);
 
 		return response;
@@ -49,16 +42,6 @@ public class AbacServiceImpl implements AbacService {
 			return new XacmlResponse(request.getBias(), response.getOriginalDecision(), response.getObligations(), response.getAdvices());
 		}
 		return response;
-	}
-
-	private void handleObligations(XacmlRequest request, XacmlResponse response) {
-		for (Obligation obligation : response.getObligations()) {
-			ObligationStrategy strategy = findSupportedStrategy(obligation.getId(), obligationStrategies);
-			if (strategy == null) {
-				throw new UnhandledObligationException(obligation.getId());
-			}
-			strategy.perform(obligation, request, response);
-		}
 	}
 
 	private void handleAdvice(XacmlRequest request, XacmlResponse response) {
