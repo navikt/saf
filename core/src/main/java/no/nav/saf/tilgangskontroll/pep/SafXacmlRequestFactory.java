@@ -15,6 +15,10 @@ final class SafXacmlRequestFactory {
 
 	public static final String ACTION_READ = "read";
 
+	private SafXacmlRequestFactory() {
+		//Ingen instansiering
+	}
+
 	static XacmlRequest create(final String tokenBody) {
 		XacmlRequest request = new XacmlRequest();
 		request.environment(ENVIRONMENT_FELLES_OIDC_TOKEN_BODY, tokenBody);
@@ -23,9 +27,5 @@ final class SafXacmlRequestFactory {
 		request.action(XACML_1_0_ACTION_ACTION_ID, ACTION_READ);
 
 		return request;
-	}
-
-	private SafXacmlRequestFactory() {
-		//Ingen instansiering
 	}
 }

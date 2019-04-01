@@ -8,7 +8,6 @@ import java.util.List;
 
 /**
  * Mapper fra saf sine journalstatuser til joark sine journalstatuser
- * TODO lag enhetstest
  *
  * @author Joakim Bjørnstad, Jbit AS
  */

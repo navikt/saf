@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
  */
 public abstract class AbacLogger {
 
-	static final String SEPARATOR = ".";
+	private static final String SEPARATOR = ".";
 
 	public abstract void logAbacDeny(final XacmlRequest xacmlRequest, final XacmlResponse xacmlResponse);
 

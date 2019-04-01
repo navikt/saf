@@ -8,10 +8,6 @@ import java.util.stream.Collectors;
  */
 
 abstract class AbstractKeyGeneratorCaching {
-
-	AbstractKeyGeneratorCaching() {
-	}
-
 	static final String RESSURSTYPE = "ressurstype";
 	static final String RESSURSTYPE_SAK_DOKUMENT = "sak_dokument";
 	static final String RESSURSTYPE_DOKUMENT_METADATA = "dokument_metadata";
@@ -23,6 +19,9 @@ abstract class AbstractKeyGeneratorCaching {
 	static final String DOKUMENTINFO_ID = "dokumentInfoId";
 	static final String VARIANTFORMAT = "variantFormat";
 	static final String SKJERMING = "skjerming";
+
+	AbstractKeyGeneratorCaching() {
+	}
 
 	static String createUniqueIdentifier(String... uniqueIdentifiers) {
 		return Arrays.stream(uniqueIdentifiers).map(identifier -> ";" + identifier).collect(Collectors.joining());
