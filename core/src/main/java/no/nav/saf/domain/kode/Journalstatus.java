@@ -20,8 +20,6 @@ public enum Journalstatus {
 	OPPLASTING_DOKUMENT,
 	UKJENT;
 
-	public static final List<Journalstatus> ALL = asList();
-
 	public static List<Journalstatus> asList() {
 		return Arrays.asList(values());
 	}

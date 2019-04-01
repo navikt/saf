@@ -26,11 +26,11 @@ public class TilgangBruker {
 	private List<String> alleIdenter;
 
 	public List<String> getAlleIdenter() {
-		List<String> alleIdenter = historiskeIdenter.stream()
+		List<String> tmpAlleIdenter = historiskeIdenter.stream()
 				.map(TilgangIdent::getIdentifikator)
 				.collect(Collectors.toList());
-		alleIdenter.add(foedselsnr);
-		return alleIdenter;
+		tmpAlleIdenter.add(foedselsnr);
+		return tmpAlleIdenter;
 	}
 
 	public boolean isBrukerPerson() {

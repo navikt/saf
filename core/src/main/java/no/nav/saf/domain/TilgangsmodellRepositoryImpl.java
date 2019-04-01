@@ -1,7 +1,6 @@
 package no.nav.saf.domain;
 
 import static no.nav.saf.anticorruptionlayer.pensjonsak.PensjonSakAntiCorruptionLayerImpl.PSAK_FAGSYSTEM;
-import static no.nav.saf.anticorruptionlayer.pensjonsak.PensjonSakAntiCorruptionLayerImpl.TEMA_PENSJON;
 import static no.nav.saf.domain.DomainConstants.AKTOER_ID_LIST;
 import static no.nav.saf.domain.DomainConstants.ORGNR_LIST;
 
@@ -36,8 +35,10 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -47,7 +48,8 @@ import java.util.stream.Stream;
 @Repository
 @Slf4j
 public class TilgangsmodellRepositoryImpl implements TilgangsmodellRepository {
-	public static final int MAX_ARKIVSAKER_LOGG = 1000;
+	private static final Set<Tema> TEMA_PENSJON = EnumSet.of(Tema.PEN, Tema.UFO);
+	private static final int MAX_ARKIVSAKER_LOGG = 1000;
 
 	private final AktoerAntiCorruptionLayer aktoerAntiCorruptionLayer;
 	private final GsakAntiCorruptionLayer gsakAntiCorruptionLayer;

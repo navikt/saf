@@ -50,6 +50,8 @@ public class CustomExceptionWhileDataFetching implements GraphQLError {
         return ExceptionType.TECHNICAL;
     }
 
+
+
     private String mkMessage(ExecutionPath path, Throwable exception) {
         return format("Feilet ved henting av data (%s) : %s", path, exception.getMessage());
     }

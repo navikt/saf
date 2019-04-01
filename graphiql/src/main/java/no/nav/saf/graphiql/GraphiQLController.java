@@ -1,7 +1,7 @@
 package no.nav.saf.graphiql;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.text.StrSubstitutor;
+import org.apache.commons.text.StringSubstitutor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.core.io.ClassPathResource;
@@ -77,7 +77,7 @@ public class GraphiQLController {
 		replacements.put("graphiqlCssUrl", graphiqlCssUrl);
 		replacements.put("graphiqlJsUrl", graphiqlJsUrl);
 
-		String populatedTemplate = StrSubstitutor.replace(template, replacements);
+		String populatedTemplate = StringSubstitutor.replace(template, replacements);
 
 		if (StringUtils.isNotBlank(request.getContextPath())) {
 			String vendorPathWithContext = String.format("%s/vendor", request.getContextPath());

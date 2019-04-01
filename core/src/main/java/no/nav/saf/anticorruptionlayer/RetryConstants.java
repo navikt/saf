@@ -3,7 +3,10 @@ package no.nav.saf.anticorruptionlayer;
 /**
  * @author Ugur Alpay Cenar, Visma Consulting.
  */
-public class RetryConstants {
+public final class RetryConstants {
+	private RetryConstants() {
+		// ingen instansiering
+	}
 
 	//retries: 500ms, 1s sum = max vente-tid = 1.5s. maxAttempts inkluderer første forsøk
 	public static final int MAX_ATTEMPTS_SHORT_PENSJON_V1 = 3;

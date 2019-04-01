@@ -16,24 +16,11 @@ public class SideInfoMapper {
 		if(journalposter.isEmpty()) {
 			return SideInfo.empty();
 		}
-		String startJournalpostId = startJournalpostId(journalposter);
 		String sluttJournalpostId = sluttJournalpostId(journalposter);
 		return new SideInfo(
-				totaltAntall(startJournalpostId, safRequestContext),
 				base64(sluttJournalpostId),
-				finnesNesteSide(sluttJournalpostId, safRequestContext),
-				base64(startJournalpostId),
-				finnesForrigeSide(startJournalpostId, safRequestContext)
+				finnesNesteSide(sluttJournalpostId, safRequestContext)
 		);
-	}
-
-	private int totaltAntall(String journalpostId, SafRequestContext safRequestContext) {
-		JournalpostDto journalpostDto = safRequestContext.getRequestCache().getObject(journalpostId);
-		return journalpostDto.getTotaltAntall().intValue();
-	}
-
-	private String startJournalpostId(List<Journalpost> journalposter) {
-		return journalposter.get(0).getJournalpostId();
 	}
 
 	private String sluttJournalpostId(List<Journalpost> journalposter) {
@@ -50,10 +37,5 @@ public class SideInfoMapper {
 	private boolean finnesNesteSide(String sluttJournalpostId, SafRequestContext safRequestContext) {
 		JournalpostDto journalpostDto = safRequestContext.getRequestCache().getObject(sluttJournalpostId);
 		return journalpostDto.getNextJournalpostId() != null && !journalpostDto.getJournalpostId().equals(journalpostDto.getNextJournalpostId());
-	}
-
-	private boolean finnesForrigeSide(String startJournalpostId, SafRequestContext safRequestContext) {
-		JournalpostDto journalpostDto = safRequestContext.getRequestCache().getObject(startJournalpostId);
-		return journalpostDto.getPrevJournalpostId() != null;
 	}
 }
