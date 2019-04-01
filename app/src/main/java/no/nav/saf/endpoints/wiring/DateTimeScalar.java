@@ -14,10 +14,6 @@ import java.time.LocalDateTime;
  * @author Joakim Bjørnstad, Jbit AS
  */
 final class DateTimeScalar {
-	private DateTimeScalar() {
-		// ingen instansiering
-	}
-
 	static final GraphQLScalarType DATE_TIME = GraphQLScalarType.newScalar()
 			.name("DateTime")
 			.description("Identifikasjon av dato og tidspunkt etter ISO-8601 standarden.")
@@ -41,4 +37,8 @@ final class DateTimeScalar {
 				}
 			})
 			.build();
+
+	private DateTimeScalar() {
+		// ingen instansiering
+	}
 }

@@ -14,10 +14,6 @@ import java.time.format.DateTimeParseException;
  * @author Joakim Bjørnstad, Jbit AS
  */
 final class DateScalar {
-	private DateScalar() {
-		// ingen instansiering
-	}
-
 	static final GraphQLScalarType DATE = GraphQLScalarType.newScalar()
 			.name("Date")
 			.description("Identifikasjon av et døgn i kalenderen etter ISO-8601 standarden.")
@@ -48,4 +44,8 @@ final class DateScalar {
 				}
 			})
 			.build();
+
+	private DateScalar() {
+		// ingen instansiering
+	}
 }
