@@ -7,18 +7,18 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author Joakim Bjørnstad, Jbit AS
  */
 public class RequestCache {
-	private final Map<String, Object> requestCache = new ConcurrentHashMap<>(300);
+	private final Map<String, Object> holder = new ConcurrentHashMap<>(300);
 
 	public void putObjects(Map<String, ?> objectMap) {
-		requestCache.putAll(objectMap);
+		holder.putAll(objectMap);
 	}
 
 	public void putObject(String key, Object object) {
-		requestCache.put(key, object);
+		holder.put(key, object);
 	}
 
 	@SuppressWarnings("unchecked")
 	public <T> T getObject(String key) {
-		return (T) requestCache.get(key);
+		return (T) holder.get(key);
 	}
 }

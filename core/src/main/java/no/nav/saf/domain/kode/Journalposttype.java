@@ -11,8 +11,6 @@ public enum Journalposttype {
 	U,
 	N;
 
-	public static final List<Journalposttype> ALL = asList();
-
 	public static List<Journalposttype> asList() {
 		return Arrays.asList(values());
 	}

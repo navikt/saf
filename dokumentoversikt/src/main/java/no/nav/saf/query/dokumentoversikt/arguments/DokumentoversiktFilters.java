@@ -29,17 +29,17 @@ public class DokumentoversiktFilters {
 			this.fraDato = fraDato;
 		}
 		if (tema.isEmpty()) {
-			this.tema = Tema.ALL;
+			this.tema = Tema.asList();
 		} else {
 			this.tema = new ArrayList<>(tema);
 		}
 		if (journalposttyper.isEmpty()) {
-			this.journalposttyper = Journalposttype.ALL;
+			this.journalposttyper = Journalposttype.asList();
 		} else {
 			this.journalposttyper = new ArrayList<>(journalposttyper);
 		}
 		if (journalstatuser.isEmpty()) {
-			this.journalstatuser = Journalstatus.ALL;
+			this.journalstatuser = Journalstatus.asList();
 		} else {
 			this.journalstatuser =  new ArrayList<>(journalstatuser);
 		}

@@ -13,47 +13,39 @@ import java.time.format.DateTimeParseException;
 /**
  * @author Joakim Bjørnstad, Jbit AS
  */
-class DateScalar {
+final class DateScalar {
 	static final GraphQLScalarType DATE = GraphQLScalarType.newScalar()
 			.name("Date")
 			.description("Identifikasjon av et døgn i kalenderen etter ISO-8601 standarden.")
 			.coercing(new Coercing() {
 				@Override
 				public Object serialize(Object dataFetcherResult) throws CoercingSerializeException {
-					return serializeDato(dataFetcherResult);
+					if (dataFetcherResult instanceof LocalDate) {
+						return dataFetcherResult.toString();
+					}
+					throw new CoercingSerializeException("Serialisering av " + dataFetcherResult.getClass() + " til " + DATE.getName() + " er ikke implementert.");
 				}
 
 				@Override
 				public Object parseValue(Object input) throws CoercingParseValueException {
-					return parseDatoFromValue(input);
+					throw new CoercingParseValueException("Parsing av query variabel " + input.getClass() + " til " + DATE.getName() + " er ikke implementert.");
 				}
 
 				@Override
 				public Object parseLiteral(Object input) throws CoercingParseLiteralException {
-					return parseDatoFromAstLiteral(input);
+					if (input instanceof StringValue) {
+						try {
+							return LocalDate.parse(((StringValue) input).getValue());
+						} catch (DateTimeParseException e) {
+							throw new CoercingParseLiteralException("Verdi er ikke en gyldig Date: " + input.toString());
+						}
+					}
+					throw new CoercingParseLiteralException("Verdi er ikke en gyldig Date: " + input.toString());
 				}
 			})
 			.build();
 
-	private static Object serializeDato(Object datafetcherResult) {
-		if (datafetcherResult instanceof LocalDate) {
-			return datafetcherResult.toString();
-		}
-		throw new CoercingSerializeException("Serialisering av " + datafetcherResult.getClass() + " til " + DATE.getName() + " er ikke implementert.");
-	}
-
-	private static Object parseDatoFromValue(Object input) {
-		throw new CoercingParseValueException("Parsing av query variabel " + input.getClass() + " til " + DATE.getName() + " er ikke implementert.");
-	}
-
-	private static Object parseDatoFromAstLiteral(Object input) {
-		if (input instanceof StringValue) {
-			try {
-				return LocalDate.parse(((StringValue) input).getValue());
-			} catch (DateTimeParseException e) {
-				throw new CoercingParseLiteralException("Verdi er ikke en gyldig Date: " + input.toString());
-			}
-		}
-		throw new CoercingParseLiteralException("Verdi er ikke en gyldig Date: " + input.toString());
+	private DateScalar() {
+		// ingen instansiering
 	}
 }

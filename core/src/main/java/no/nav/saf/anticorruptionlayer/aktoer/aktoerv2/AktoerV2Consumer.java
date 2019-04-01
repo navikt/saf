@@ -124,7 +124,7 @@ public class AktoerV2Consumer {
 
 	private void checkAndLogErrors(HentIdentForAktoerIdListeResponse response) {
 
-		if (response != null && response.getFeilListe().size() > 0) {
+		if (response != null && !response.getFeilListe().isEmpty()) {
 			StringBuilder feilmelding = new StringBuilder();
 			feilmelding.append("Feil ved oppslag mot aktoerV2: Ident ikke funnet for aktørId(er)=");
 			response.getFeilListe().forEach(feil -> {

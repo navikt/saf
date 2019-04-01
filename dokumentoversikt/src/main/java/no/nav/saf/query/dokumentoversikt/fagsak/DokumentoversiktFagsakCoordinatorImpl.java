@@ -44,6 +44,7 @@ import java.util.stream.Collectors;
 class DokumentoversiktFagsakCoordinatorImpl implements DokumentoversiktFagsakCoordinator {
 
 	private final SideInfoMapper sideInfoMapper = new SideInfoMapper();
+	private final DokumentoversiktFagsakTilgangsmodellRepository dokumentoversiktFagsakTilgangsmodellRepository;
 	private final TilgangsmodellRepository tilgangsmodellRepository;
 	private final DokumentoversiktVisningsmodellRepository visningsmodellRepository;
 	private final Pep<TilgangBruker> pep1g;
@@ -55,7 +56,8 @@ class DokumentoversiktFagsakCoordinatorImpl implements DokumentoversiktFagsakCoo
 	private final Pep<TilgangDokumentvariant> pep6d;
 
 	@Inject
-	public DokumentoversiktFagsakCoordinatorImpl(TilgangsmodellRepository tilgangsmodellRepository,
+	public DokumentoversiktFagsakCoordinatorImpl(DokumentoversiktFagsakTilgangsmodellRepository dokumentoversiktFagsakTilgangsmodellRepository,
+												 TilgangsmodellRepository tilgangsmodellRepository,
 												 DokumentoversiktVisningsmodellRepository visningsmodellRepository,
 												 @Named(PEP1G) Pep<TilgangBruker> pep1g,
 												 @Named(PEP2) Pep<TilgangSak> pep2,
@@ -64,6 +66,7 @@ class DokumentoversiktFagsakCoordinatorImpl implements DokumentoversiktFagsakCoo
 												 @Named(PEP4) Pep<TilgangJournalpost> pep4,
 												 @Named(PEP5) Pep<TilgangDokumentInfo> pep5,
 												 @Named(PEP6D) Pep<TilgangDokumentvariant> pep6d) {
+		this.dokumentoversiktFagsakTilgangsmodellRepository = dokumentoversiktFagsakTilgangsmodellRepository;
 		this.tilgangsmodellRepository = tilgangsmodellRepository;
 		this.visningsmodellRepository = visningsmodellRepository;
 		this.pep1g = pep1g;
@@ -79,7 +82,7 @@ class DokumentoversiktFagsakCoordinatorImpl implements DokumentoversiktFagsakCoo
 	@Monitor(value = "dok_request", extraTags = {"process", "dokumentOversikt", "requestType", "fagsak"}, histogram = true)
 	public Dokumentoversikt hentDokumentoversikt(DokumentoversiktFagsakArguments dokumentoversiktFagsakArguments, SafRequestContext safRequestContext) {
 		final FagsakInput fagsakInput = dokumentoversiktFagsakArguments.getFagsakInput();
-		final List<TilgangBruker> tilgangBrukerList = tilgangsmodellRepository.findTilgangBrukerList(fagsakInput);
+		final List<TilgangBruker> tilgangBrukerList = dokumentoversiktFagsakTilgangsmodellRepository.findTilgangBrukerList(fagsakInput);
 
 		List<TilgangBruker> filteredTilgangBrukerList = Flowable.fromIterable(tilgangBrukerList)
 				.onErrorResumeNext((Function<Throwable, Publisher<? extends TilgangBruker>>) Flowable::error)
@@ -91,7 +94,7 @@ class DokumentoversiktFagsakCoordinatorImpl implements DokumentoversiktFagsakCoo
 				.toList()
 				.blockingGet();
 
-		final List<TilgangSak> tilgangSakList = tilgangsmodellRepository.findTilgangSaker(filteredTilgangBrukerList, fagsakInput, dokumentoversiktFagsakArguments
+		final List<TilgangSak> tilgangSakList = dokumentoversiktFagsakTilgangsmodellRepository.findTilgangSaker(filteredTilgangBrukerList, fagsakInput, dokumentoversiktFagsakArguments
 				.getFilters().getTema(), safRequestContext);
 
 		final List<TilgangSak> filteredTilgangSakList = Flowable.fromIterable(tilgangSakList)

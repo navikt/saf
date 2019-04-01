@@ -6,6 +6,7 @@ import graphql.language.SourceLocation;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -34,7 +35,7 @@ public class SafTechnicalException extends RuntimeException  implements GraphQLE
 
 	@Override
 	public List<SourceLocation> getLocations() {
-		return null;
+		return new ArrayList<>();
 	}
 
 	@Override

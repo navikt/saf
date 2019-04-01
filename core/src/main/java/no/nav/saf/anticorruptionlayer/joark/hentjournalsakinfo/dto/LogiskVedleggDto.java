@@ -1,4 +1,4 @@
-package no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark902;
+package no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.dto;
 
 import lombok.Data;
 

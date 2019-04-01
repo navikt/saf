@@ -11,15 +11,12 @@ import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
-import java.util.EnumSet;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Slf4j
 @Component
 public class PensjonSakAntiCorruptionLayerImpl implements PensjonSakAntiCorruptionLayer {
-	public static final Set<Tema> TEMA_PENSJON = EnumSet.of(Tema.PEN, Tema.UFO);
 	public static final String PSAK_FAGSYSTEM = "PP01";
 	private final PensjonSakWsConsumer pensjonSakWsConsumer;
 	private final PensjonSakRestConsumer pensjonSakRestConsumer;
