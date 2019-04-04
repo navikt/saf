@@ -1,11 +1,11 @@
 package no.nav.saf.tilgangskontroll.validation.registry;
 
-import lombok.Data;
+import lombok.Value;
 
 /**
  * Class containing identity provider information.
  */
-@Data
+@Value
 public class Idp {
 	private String issuerUrl;
 	private String jwksUrl;

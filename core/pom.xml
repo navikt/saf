@@ -140,11 +140,6 @@
 			<artifactId>spring-cloud-contract-wiremock</artifactId>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
-			<groupId>no.nav.freg</groupId>
-			<artifactId>freg-security-test-oidc-tools</artifactId>
-			<scope>test</scope>
-		</dependency>
 	</dependencies>
 	<build>
 		<plugins>
