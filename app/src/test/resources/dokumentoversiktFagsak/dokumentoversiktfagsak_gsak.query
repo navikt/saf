@@ -1,0 +1,12 @@
+{
+  dokumentoversiktFagsak(fagsak: {fagsakId: "***gammelt_fnr***59", fagsaksystem: "AO01"}, foerste: 5) {
+    journalposter {
+      journalpostId
+      dokumenter {
+        dokumentvarianter {
+          saksbehandlerHarTilgang
+        }
+      }
+    }
+  }
+}

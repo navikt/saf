@@ -1,10 +1,6 @@
 package no.nav.saf.endpoints;
 
 import com.nimbusds.jose.util.IOUtils;
-import no.nav.saf.tilgangskontroll.validation.config.IdpProperties;
-import no.nav.saf.tilgangskontroll.validation.registry.Idp;
-import no.nav.saf.tilgangskontroll.validation.registry.IdpRegistry;
-import no.nav.saf.tilgangskontroll.validation.registry.IdpRegistryImpl;
 import no.nav.security.oidc.test.support.JwkGenerator;
 import org.jose4j.http.Response;
 import org.jose4j.http.SimpleGet;
@@ -21,14 +17,6 @@ import java.util.HashMap;
 @Configuration
 @Profile("itest")
 public class OidcTestConfig {
-	@Bean
-	@Primary
-	IdpRegistry idpRegistry() {
-		IdpProperties idpProperties = new IdpProperties();
-		idpProperties.getIdp().put("iss-localhost", new Idp("iss-localhost","http://jwks"));
-		return new IdpRegistryImpl(idpProperties.getIdp());
-	}
-
 	@Bean
 	@Primary
 	SimpleGet simpleGetTest() {
