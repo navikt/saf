@@ -73,6 +73,11 @@ public class DokMonitoringAspect {
 		try {
 			return pjp.proceed();
 		} catch (Exception e) {
+			if(isFunctionalException(e)) {
+				log.warn("Funksjonell feil: " + e.getMessage(), e);
+			} else {
+				log.error("Teknisk feil: " + e.getMessage(), e);
+			}
 			Counter.builder(monitor.value() + "_exception")
 					.tags("error_type", isFunctionalException(e) ? "functional" : "technical")
 					.tags("exception_name", e.getClass().getSimpleName())
