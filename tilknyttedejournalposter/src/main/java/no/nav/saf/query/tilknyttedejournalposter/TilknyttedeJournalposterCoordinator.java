@@ -78,7 +78,13 @@ public class TilknyttedeJournalposterCoordinator {
 
 		Set<TilgangSak> filteredTilgangSaker = tilknyttedeJournalposterTilgangRepository.tilgangSaker(arkivsaker, safRequestContext)
 				.stream()
-				.filter(tilgangSak -> filteredTilgangBruker.stream().anyMatch(tilgangBruker -> tilgangBruker.getAktoerId().equals(tilgangSak.getAktoerId())))
+				.filter(tilgangSak -> filteredTilgangBruker.stream().anyMatch(tilgangBruker -> {
+					if(tilgangBruker.isBrukerPerson()) {
+						return tilgangBruker.getAktoerId().equals(tilgangSak.getAktoerId());
+					} else {
+						return tilgangBruker.getOrgnummer().equals(tilgangSak.getOrgnummer());
+					}
+				}))
 				.filter(tilgangSak -> pep2.hasAccess(tilgangSak, safRequestContext))
 				.peek(tilgangSak -> pep2d.hasAccess(tilgangSak, safRequestContext))
 				.filter(tilgangSak -> pep3.hasAccess(tilgangSak, safRequestContext))

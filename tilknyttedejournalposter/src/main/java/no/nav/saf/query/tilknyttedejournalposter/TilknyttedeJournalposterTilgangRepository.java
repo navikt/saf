@@ -118,7 +118,11 @@ class TilknyttedeJournalposterTilgangRepository {
 		if (arkivsak.getArkivsaksystem() == Arkivsakssystem.GSAK) {
 			// GSAK
 			TilgangBruker tilgangBruker = gsakAntiCorruptionLayer.findTilgangBrukerBySakId(arkivsak.getArkivsaksnummer());
-			return aktoerAntiCorruptionLayer.hentTilgangBrukerByAktoerId(tilgangBruker.getAktoerId());
+			if(!tilgangBruker.isBrukerPerson()) {
+				return tilgangBruker;
+			} else {
+				return aktoerAntiCorruptionLayer.hentTilgangBrukerByAktoerId(tilgangBruker.getAktoerId());
+			}
 		} else if (arkivsak.getArkivsaksystem() == Arkivsakssystem.PSAK) {
 			// PSAK
 			String foedselsnummer = pensjonSakAntiCorruptionLayer.findFoedselsnummerBySakId(arkivsak.getArkivsaksnummer());
