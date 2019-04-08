@@ -8,6 +8,14 @@ Alle nevneverdige endringer blir dokumentert her.
 
 Denne malen er basert på [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [4.5.3] - 2019-04-08
+### Rettet
+* Rettet feil der journalposter tilknyttet organisasjon i query `tilknyttedeJournalposter` ikke ble håndtert.
+
+## [4.5.2] - 2019-04-01
+### Endret
+* Større runde med refaktoring.
+
 ## [4.5.1] - 2019-03-28
 ### Endret
 * `GraphQL: ` Type `DokumentInfo`. Nytt felt `datoFerdigstilt`.
