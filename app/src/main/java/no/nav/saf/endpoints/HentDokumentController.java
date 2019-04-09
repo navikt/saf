@@ -6,6 +6,7 @@ import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.Authorization;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.domain.HentDokument;
+import no.nav.saf.exceptions.TilgangskontrollException;
 import no.nav.saf.hentdokument.HentDokumentDomainCoordinator;
 import no.nav.saf.metrics.Monitor;
 import no.nav.saf.swagger.SwaggerRestHentDokument;
@@ -55,13 +56,18 @@ public class HentDokumentController {
 											   @ApiParam(hidden = true) @RequestHeader(value = HttpHeaders.AUTHORIZATION, required = false) String authorizationHeader) {
 		SafRequestContext safRequestContext = new SafRequestContext(authorizationHeader, generateCorrelationIdIfNull(xCorrelationId), oidcValidatorTool);
 		log.info("hentDokument har mottatt kall. journalpostId={}, dokumentInfoId={}, variantFormat={}", journalpostId, dokumentInfoId, variantFormat);
-		HentDokument response = hentDokumentDomainCoordinator.hentDokument(journalpostId, dokumentInfoId, variantFormat, safRequestContext);
-		log.info("hentDokument hentet dokument. journalpostId={}, dokumentInfoId={}, variantFormat={}", journalpostId, dokumentInfoId, variantFormat);
+		try {
+			HentDokument response = hentDokumentDomainCoordinator.hentDokument(journalpostId, dokumentInfoId, variantFormat, safRequestContext);
+			log.info("hentDokument hentet dokument. journalpostId={}, dokumentInfoId={}, variantFormat={}", journalpostId, dokumentInfoId, variantFormat);
 
-		return ResponseEntity.ok()
-				.contentType(response.getMediaType())
-				.header("content-disposition", "inline; filename=" + dokumentInfoId + "_" + variantFormat)
-				.body(response.getDokument());
+			return ResponseEntity.ok()
+					.contentType(response.getMediaType())
+					.header("content-disposition", "inline; filename=" + dokumentInfoId + "_" + variantFormat)
+					.body(response.getDokument());
+		} catch(TilgangskontrollException e) {
+			log.warn("hentDokument hentet ikke dokument. journalpostId={}, dokumentInfoId={}, variantFormat={}. Tilgang ble avvist av policy: " + e.getMessage(), journalpostId, dokumentInfoId, variantFormat);
+			throw e;
+		}
 	}
 
 	private String generateCorrelationIdIfNull(String xCorrelationId) {
