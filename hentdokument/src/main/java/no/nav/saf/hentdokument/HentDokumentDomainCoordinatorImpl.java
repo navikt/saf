@@ -36,7 +36,7 @@ public class HentDokumentDomainCoordinatorImpl implements HentDokumentDomainCoor
 
 	private final DokumentRepository dokumentRepository;
 	private final TilgangsmodellHentdokumentRepository tilgangsmodellHentdokumentRepository;
-	private final Pep<TilgangBruker> pep1;
+	private final Pep<TilgangBruker> pep1g;
 	private final Pep<TilgangSak> pep2;
 	private final Pep<TilgangSak> pep2d;
 	private final Pep<TilgangSak> pep3;
@@ -47,7 +47,7 @@ public class HentDokumentDomainCoordinatorImpl implements HentDokumentDomainCoor
 	@Inject
 	public HentDokumentDomainCoordinatorImpl(DokumentRepository dokumentRepository,
 											 TilgangsmodellHentdokumentRepository tilgangsmodellHentdokumentRepository,
-											 @Named(PEP1G) Pep<TilgangBruker> pep1,
+											 @Named(PEP1G) Pep<TilgangBruker> pep1g,
 											 @Named(PEP2) Pep<TilgangSak> pep2,
 											 @Named(PEP2D) Pep<TilgangSak> pep2d,
 											 @Named(PEP3) Pep<TilgangSak> pep3,
@@ -56,7 +56,7 @@ public class HentDokumentDomainCoordinatorImpl implements HentDokumentDomainCoor
 											 @Named(PEP6D) Pep<TilgangDokumentvariant> pep6d) {
 		this.dokumentRepository = dokumentRepository;
 		this.tilgangsmodellHentdokumentRepository = tilgangsmodellHentdokumentRepository;
-		this.pep1 = pep1;
+		this.pep1g = pep1g;
 		this.pep2 = pep2;
 		this.pep2d = pep2d;
 		this.pep3 = pep3;
@@ -70,21 +70,21 @@ public class HentDokumentDomainCoordinatorImpl implements HentDokumentDomainCoor
 		final Arkivsak arkivsak = tilgangsmodellHentdokumentRepository.findArkivsakAndCacheJournalpostDto(journalpostId, dokumentInfoId, variantFormat, safRequestContext);
 		final TilgangBruker tilgangBruker = tilgangsmodellHentdokumentRepository.findTilgangBruker(arkivsak, safRequestContext);
 
-		boolean pep1Access = pep1.hasAccess(tilgangBruker, safRequestContext);
+		boolean pep1Access = pep1g.hasAccess(tilgangBruker, safRequestContext);
 		if (!pep1Access) {
-			throw new TilgangskontrollException();
+			throw new TilgangskontrollException("pep1g");
 		}
 
 		final TilgangSak tilgangSak = tilgangsmodellHentdokumentRepository.findTilgangSak(arkivsak, tilgangBruker, safRequestContext);
 
 		boolean pep2Access = pep2.hasAccess(tilgangSak, safRequestContext);
 		if (!pep2Access) {
-			throw new TilgangskontrollException();
+			throw new TilgangskontrollException("pep2");
 		}
 
 		boolean pep3Access = pep3.hasAccess(tilgangSak, safRequestContext);
 		if (!pep3Access) {
-			throw new TilgangskontrollException();
+			throw new TilgangskontrollException("pep3");
 		}
 
 		final TilgangJournalpost tilgangJournalpost = tilgangsmodellHentdokumentRepository.findTilgangJournalpostFromSafRequestContext(safRequestContext);
@@ -94,25 +94,25 @@ public class HentDokumentDomainCoordinatorImpl implements HentDokumentDomainCoor
 		if (tilgangJournalpost.getJournalstatus() != Journalstatus.MOTTATT) {
 			boolean pep2dAccess = pep2d.hasAccess(tilgangSak, safRequestContext);
 			if (!pep2dAccess) {
-				throw new TilgangskontrollException();
+				throw new TilgangskontrollException("pep2d");
 			}
 		}
 
 		boolean pep4Access = pep4.hasAccess(tilgangJournalpost, safRequestContext);
 		if (!pep4Access) {
-			throw new TilgangskontrollException();
+			throw new TilgangskontrollException("pep4");
 		}
 
 		boolean pep5Access = pep5.hasAccess(tilgangJournalpost.getDokumenter().get(0), safRequestContext);
 		if (!pep5Access) {
-			throw new TilgangskontrollException();
+			throw new TilgangskontrollException("pep5");
 		}
 
 		boolean pep6dAccess = pep6d.hasAccess(tilgangJournalpost.getDokumenter()
 				.get(0).getTilgangDokumentvarianter().get(0), safRequestContext);
 
 		if (!pep6dAccess) {
-			throw new TilgangskontrollException();
+			throw new TilgangskontrollException("pep6d");
 		}
 
 		return dokumentRepository.findDokument(dokumentInfoId, variantFormat);

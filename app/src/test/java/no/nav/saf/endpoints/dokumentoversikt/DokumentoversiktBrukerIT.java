@@ -611,19 +611,19 @@ public class DokumentoversiktBrukerIT extends AbstractItest {
 	}
 
 	private ResponseEntity<LinkedHashMap> callDokumentOversikBrukerWithAktoerId() throws IOException, URISyntaxException {
-		GraphQLRequest request = new GraphQLRequest(stringFromClasspath("dokumentoversiktBruker/query-aktoerid.json"), null, null);
+		GraphQLRequest request = new GraphQLRequest(stringFromClasspath("dokumentoversiktBruker/dokumentoversiktbruker_aktoerid.query"), null, null);
 		RequestEntity<GraphQLRequest> requestEntity = new RequestEntity<>(request, createHeaders(), HttpMethod.POST, new URI("/graphql"));
 		return restTemplate.exchange(requestEntity, LinkedHashMap.class);
 	}
 
 	private ResponseEntity<LinkedHashMap> callDokumentOversikBrukerWithFnr() throws IOException, URISyntaxException {
-		GraphQLRequest request = new GraphQLRequest(stringFromClasspath("dokumentoversiktBruker/query-fnr.json"), null, null);
+		GraphQLRequest request = new GraphQLRequest(stringFromClasspath("dokumentoversiktBruker/dokumentoversiktbruker_fnr.query"), null, null);
 		RequestEntity<GraphQLRequest> requestEntity = new RequestEntity<>(request, createHeaders(), HttpMethod.POST, new URI("/graphql"));
 		return restTemplate.exchange(requestEntity, LinkedHashMap.class);
 	}
 
 	private ResponseEntity<LinkedHashMap> callDokumentOversikBrukerWithOrgnr() throws IOException, URISyntaxException {
-		GraphQLRequest request = new GraphQLRequest(stringFromClasspath("dokumentoversiktBruker/query-orgnr.json"), null, null);
+		GraphQLRequest request = new GraphQLRequest(stringFromClasspath("dokumentoversiktBruker/dokumentoversiktbruker_orgnr.query"), null, null);
 		RequestEntity<GraphQLRequest> requestEntity = new RequestEntity<>(request, createHeaders(), HttpMethod.POST, new URI("/graphql"));
 		return restTemplate.exchange(requestEntity, LinkedHashMap.class);
 	}

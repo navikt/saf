@@ -5,8 +5,6 @@ import graphql.execution.DataFetcherExceptionHandlerParameters;
 import graphql.execution.DataFetcherExceptionHandlerResult;
 import graphql.execution.ExecutionPath;
 import graphql.language.SourceLocation;
-import io.micrometer.core.instrument.Counter;
-import io.micrometer.core.instrument.MeterRegistry;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.exceptions.SafFunctionalException;
 import org.springframework.stereotype.Component;
@@ -18,12 +16,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class GraphQLExceptionHandler implements DataFetcherExceptionHandler {
 
-	private MeterRegistry meterRegistry;
-
-	public GraphQLExceptionHandler(MeterRegistry meterRegistry) {
-		this.meterRegistry = meterRegistry;
-	}
-
 	@Override
 	public DataFetcherExceptionHandlerResult onException(DataFetcherExceptionHandlerParameters dataFetcherExceptionHandlerParameters) {
 		Throwable exception = dataFetcherExceptionHandlerParameters.getException();
@@ -33,19 +25,9 @@ public class GraphQLExceptionHandler implements DataFetcherExceptionHandler {
 		CustomExceptionWhileDataFetching error = new CustomExceptionWhileDataFetching(path, exception, sourceLocation);
 		log.warn(error.getMessage(), exception);
 
-		incrementExceptionCounter("dok_request_seconds_count", error.getException(), meterRegistry, "dokumentOversikt");
 		return DataFetcherExceptionHandlerResult.newResult()
 				.error(error)
 				.build();
-	}
-
-	private static void incrementExceptionCounter(String counterName, Throwable throwable, MeterRegistry meterRegistry, String process) {
-		Counter.builder(counterName)
-				.tags("error_type", isFunctionalException(throwable) ? "functional" : "technical")
-				.tags("exception_name", throwable.getClass().getSimpleName())
-				.tags("process", process)
-				.register(meterRegistry)
-				.increment();
 	}
 
 	static boolean isFunctionalException(Throwable e) {
