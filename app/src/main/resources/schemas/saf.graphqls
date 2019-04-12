@@ -336,6 +336,9 @@ type DokumentInfo {
 # * Dette skjer hyppig under skanning av papirpost, fordi dokumenter mottatt i samme konvolutt skannes i én operasjon, og ender opp som én fil i Joark.
 # * En bruker sender inn en papirsøknad om foreldrepenger, med en legeerklæring som vedlegg. Journalposten vil da ha ett dokument med navn *"Søknad om foreldrepenger ved fødsel"*, og det logiske vedlegget *"Legerklæring"*.
 type LogiskVedlegg {
+    # Unik identifikator per logisk vedlegg
+    logiskVedleggId: String!
+
     # Tittel på det logiske vedlegget, f.eks. *"Legeerklæring"*
     tittel: String
 }

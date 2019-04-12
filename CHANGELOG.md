@@ -8,6 +8,10 @@ Alle nevneverdige endringer blir dokumentert her.
 
 Denne malen er basert på [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [4.5.5] - 2019-04-12
+### Endret
+* `GraphQL: ` Type `LogiskVedlegg`. Nytt felt `logiskVedleggId`.
+
 ## [4.5.3] - 2019-04-08
 ### Rettet
 * Rettet feil der journalposter tilknyttet organisasjon i query `tilknyttedeJournalposter` ikke ble håndtert.
