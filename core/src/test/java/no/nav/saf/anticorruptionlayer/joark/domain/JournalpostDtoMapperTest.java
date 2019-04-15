@@ -99,6 +99,9 @@ class JournalpostDtoMapperTest {
 	private static final String FILNAVN_1 = "filnavn1";
 	private static final String FILNAVN_2 = "filnavn2";
 	private static final String AVSENDER_MOTTAKER_ID = "***gammelt_fnr***";
+	private static final String LOGISK_VEDLEGG_ID = "logisk1";
+	private static final String LOGISK_VEDLEGG_TITTEL = "logisktittel";
+
 
 	private final JournalpostDtoMapper mapper = new JournalpostDtoMapper();
 
@@ -379,6 +382,8 @@ class JournalpostDtoMapperTest {
 		assertThat(dokumentInfo1.getDatoFerdigstilt(), equalTo(LocalDateTime.from(DATO_FERDIGSTILT.toInstant().atZone(ZoneId.systemDefault()))));
 		assertEquals(Long.toString(JOURNALPOST_ID), dokumentInfo1.getOriginalJournalpostId());
 		assertEquals(SKJERMING_TYPE_CODE_POL.name(), dokumentInfo1.getSkjerming());
+		assertThat(dokumentInfo1.getLogiskeVedlegg().get(0).getLogiskVedleggId(), is(LOGISK_VEDLEGG_ID));
+		assertThat(dokumentInfo1.getLogiskeVedlegg().get(0).getTittel(), is(LOGISK_VEDLEGG_TITTEL));
 
 		Assertions.assertThat(dokumentInfo1.getDokumentvarianter())
 				.extracting(Dokumentvariant::getVariantformat, Dokumentvariant::getFilnavn, Dokumentvariant::isSaksbehandlerHarTilgang, Dokumentvariant::getSkjerming)
@@ -446,7 +451,7 @@ class JournalpostDtoMapperTest {
 						.datoFerdigstilt(DATO_FERDIGSTILT)
 						.origJournalpostId(JOURNALPOST_ID)
 						.skjerming(SKJERMING_TYPE_CODE_POL)
-						.logiske(Collections.singletonList(new LogiskVedleggDto()))
+						.logiske(logiskeVedlegg())
 						.varianter(Arrays.asList(VariantDto.builder()
 										.skjerming(SKJERMING_TYPE_CODE_POL)
 										.variantf(VARIANT_FORMAT_CODE_ARKIV)
@@ -458,6 +463,13 @@ class JournalpostDtoMapperTest {
 										.filnavn(FILNAVN_2)
 										.build()))
 						.build());
+	}
+
+	private List<LogiskVedleggDto> logiskeVedlegg() {
+		LogiskVedleggDto logiskVedleggDto = new LogiskVedleggDto();
+		logiskVedleggDto.setVedleggId(LOGISK_VEDLEGG_ID);
+		logiskVedleggDto.setTittel(LOGISK_VEDLEGG_TITTEL);
+		return Collections.singletonList(logiskVedleggDto);
 	}
 
 	private JournalpostDto buildJournalpostDtoUtgaaendeType(JournalStatusCode journalStatusCode) {

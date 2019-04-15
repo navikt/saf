@@ -105,7 +105,7 @@ public class JournalpostDtoMapper {
 										.build())
 								.collect(Collectors.toList()))
 						.logiskeVedlegg(dokumentInfoDto.getLogiske().stream()
-								.map(logiskVedleggDto -> new LogiskVedlegg(logiskVedleggDto.getTittel()))
+								.map(logiskVedleggDto -> new LogiskVedlegg(logiskVedleggDto.getVedleggId(), logiskVedleggDto.getTittel()))
 								.collect(Collectors.toList()))
 						.build()).collect(Collectors.toList());
 		journalpost.getDokumenter().addAll(dokumenter);
