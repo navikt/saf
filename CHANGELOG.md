@@ -8,6 +8,10 @@ Alle nevneverdige endringer blir dokumentert her.
 
 Denne malen er basert på [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [4.5.6] - 2019-04-17
+### Endret
+* La til filendelse i Content-Disposition headeren til REST hentdokument tjenesten. Slik at dokumenter hentet i Chrome får riktig filendelse ved nedlasting.
+
 ## [4.5.5] - 2019-04-12
 ### Endret
 * `GraphQL: ` Type `LogiskVedlegg`. Nytt felt `logiskVedleggId`.

@@ -20,6 +20,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
 import java.util.Base64;
@@ -27,7 +28,7 @@ import java.util.Base64;
 /**
  * @author Sigurd Midttun, Visma Consulting.
  */
-public class HentDokumentIT extends AbstractItest {
+class HentDokumentIT extends AbstractItest {
 
 	private static String DOKUMENT_ID = "123";
 	private static String JOURNALPOST_ID = "123";
@@ -38,7 +39,7 @@ public class HentDokumentIT extends AbstractItest {
 	private static byte[] TEST_FILE_BYTES = "TestThis".getBytes();
 
 	@Test
-	public void hentGsakDokumentHappyPath() {
+	void hentGsakDokumentHappyPath() {
 		abacPermit();
 		stubFor(get("/hentjournalsakinfo/hentdokument/" + DOKUMENT_ID + "/" + VARIANTFORMAT).willReturn(aResponse().withStatus(HttpStatus.OK
 				.value())
@@ -56,15 +57,14 @@ public class HentDokumentIT extends AbstractItest {
 
 		ResponseEntity<String> responseEntity = callHentDokument();
 
-		assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-		assertEquals(new String(TEST_FILE_BYTES), responseEntity.getBody());
+		assertOkArkivResponse(responseEntity);
 
 		verify(getRequestedFor(urlEqualTo("/hentjournalsakinfo/hentdokument/" + DOKUMENT_ID + "/" + VARIANTFORMAT)).withBasicAuth(new BasicCredentials("srvsaf", "srvsafpw")));
 		verify(getRequestedFor(urlEqualTo("/gsak/10672720")).withBasicAuth(new BasicCredentials("srvsaf", "srvsafpw")));
 	}
 
 	@Test
-	public void hentGsakDokumentHappyPathBrukerOrganisasjon() {
+	void hentGsakDokumentHappyPathBrukerOrganisasjon() {
 		abacPermit();
 		stubFor(get("/hentjournalsakinfo/hentdokument/" + DOKUMENT_ID + "/" + VARIANTFORMAT).willReturn(aResponse().withStatus(HttpStatus.OK
 				.value())
@@ -82,15 +82,14 @@ public class HentDokumentIT extends AbstractItest {
 
 		ResponseEntity<String> responseEntity = callHentDokument();
 
-		assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-		assertEquals(new String(TEST_FILE_BYTES), responseEntity.getBody());
+		assertOkArkivResponse(responseEntity);
 		verify(getRequestedFor(urlEqualTo("/hentjournalsakinfo/hentdokument/" + DOKUMENT_ID + "/" + VARIANTFORMAT)).withBasicAuth(new BasicCredentials("srvsaf", "srvsafpw")));
 		verify(getRequestedFor(urlEqualTo("/gsak/10672720")).withBasicAuth(new BasicCredentials("srvsaf", "srvsafpw")));
 	}
 
 
 	@Test
-	public void hentPsakDokumentHappyPath() {
+	void hentPsakDokumentHappyPath() {
 		abacPermit();
 		stubFor(get("/hentjournalsakinfo/hentdokument/" + DOKUMENT_ID + "/" + VARIANTFORMAT).willReturn(aResponse().withStatus(HttpStatus.OK
 				.value())
@@ -109,15 +108,14 @@ public class HentDokumentIT extends AbstractItest {
 
 		ResponseEntity<String> responseEntity = callHentDokument();
 
-		assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-		assertEquals(new String(TEST_FILE_BYTES), responseEntity.getBody());
+		assertOkArkivResponse(responseEntity);
 		verify(getRequestedFor(urlEqualTo("/hentjournalsakinfo/hentdokument/" + DOKUMENT_ID + "/" + VARIANTFORMAT)).withBasicAuth(new BasicCredentials("srvsaf", "srvsafpw")));
 		verify(getRequestedFor(urlEqualTo("/pensjonsakrs")).withBasicAuth(new BasicCredentials("srvsaf", "srvsafpw")));
 		verify(getRequestedFor(urlEqualTo("/pensjonsakrs")).withHeader("sakId", equalTo("10672720")));
 	}
 
 	@Test
-	public void hentMidlertidigDokumentHappyPath() {
+	void hentMidlertidigDokumentHappyPath() {
 		abacPermit();
 		stubFor(get("/hentjournalsakinfo/hentdokument/" + DOKUMENT_ID + "/" + VARIANTFORMAT).willReturn(aResponse().withStatus(HttpStatus.OK
 				.value())
@@ -131,14 +129,13 @@ public class HentDokumentIT extends AbstractItest {
 
 		ResponseEntity<String> responseEntity = callHentDokument();
 
-		assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-		assertEquals(new String(TEST_FILE_BYTES), responseEntity.getBody());
+		assertOkArkivResponse(responseEntity);
 		verify(getRequestedFor(urlEqualTo("/hentjournalsakinfo/hentdokument/" + DOKUMENT_ID + "/" + VARIANTFORMAT))
 				.withBasicAuth(new BasicCredentials("srvsaf", "srvsafpw")));
 	}
 
 	@Test
-	public void hentGsakDokumentSladdet() {
+	void hentGsakDokumentSladdet() {
 		abacPermit();
 		stubFor(get("/hentjournalsakinfo/hentdokument/" + DOKUMENT_ID + "/" + SLADDET_VARIANTFORMAT).willReturn(aResponse().withStatus(HttpStatus.OK
 				.value())
@@ -156,15 +153,13 @@ public class HentDokumentIT extends AbstractItest {
 
 		ResponseEntity<String> responseEntity = callHentDokumentSladdetVariant();
 
-		assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-		assertEquals(new String(TEST_FILE_BYTES), responseEntity.getBody());
-
+		assertOkSladdetResponse(responseEntity);
 		verify(getRequestedFor(urlEqualTo("/hentjournalsakinfo/hentdokument/" + DOKUMENT_ID + "/" + SLADDET_VARIANTFORMAT)).withBasicAuth(new BasicCredentials("srvsaf", "srvsafpw")));
 		verify(getRequestedFor(urlEqualTo("/gsak/10672720")).withBasicAuth(new BasicCredentials("srvsaf", "srvsafpw")));
 	}
 
 	@Test
-	public void hentBrukerForSakTechnicalError() {
+	void hentBrukerForSakTechnicalError() {
 		abacPermit();
 		stubFor(get("/hentjournalsakinfo/henttilgangjournalpost/" + JOURNALPOST_ID + "/" + DOKUMENT_ID + "/" + VARIANTFORMAT).willReturn(aResponse()
 				.withStatus(HttpStatus.OK.value())
@@ -181,7 +176,7 @@ public class HentDokumentIT extends AbstractItest {
 	}
 
 	@Test
-	public void hentBrukerForSakFunctionalErrorEmptyResponse() {
+	void hentBrukerForSakFunctionalErrorEmptyResponse() {
 		abacPermit();
 		stubFor(get("/hentjournalsakinfo/henttilgangjournalpost/" + JOURNALPOST_ID + "/" + DOKUMENT_ID + "/" + VARIANTFORMAT).willReturn(aResponse()
 				.withStatus(HttpStatus.OK.value())
@@ -198,7 +193,7 @@ public class HentDokumentIT extends AbstractItest {
 	}
 
 	@Test
-	public void hentBrukerForSakFunctionalErrorUnauthorized() {
+	void hentBrukerForSakFunctionalErrorUnauthorized() {
 		abacPermit();
 		stubFor(get("/hentjournalsakinfo/henttilgangjournalpost/" + JOURNALPOST_ID + "/" + DOKUMENT_ID + "/" + VARIANTFORMAT).willReturn(aResponse()
 				.withStatus(HttpStatus.OK.value())
@@ -215,7 +210,7 @@ public class HentDokumentIT extends AbstractItest {
 	}
 
 	@Test
-	public void hentDokumentNotFound() {
+	void hentDokumentNotFound() {
 		abacPermit();
 		stubFor(get("/hentjournalsakinfo/hentdokument/" + DOKUMENT_ID + "/" + VARIANTFORMAT).willReturn(aResponse().withStatus(HttpStatus.NOT_FOUND
 				.value())));
@@ -235,7 +230,7 @@ public class HentDokumentIT extends AbstractItest {
 	}
 
 	@Test
-	public void hentDokumentDecodeFail() {
+	void hentDokumentDecodeFail() {
 
 		byte[] decodeFailProvokerFile = "whitespace breaks base64 decode".getBytes();
 
@@ -261,7 +256,7 @@ public class HentDokumentIT extends AbstractItest {
 
 
 	@Test
-	public void hentDokumentJoarkTechnicalFail() {
+	void hentDokumentJoarkTechnicalFail() {
 
 		abacPermit();
 		stubFor(get("/hentjournalsakinfo/hentdokument/" + DOKUMENT_ID + "/" + VARIANTFORMAT).willReturn(aResponse().withStatus(HttpStatus.INTERNAL_SERVER_ERROR
@@ -282,7 +277,7 @@ public class HentDokumentIT extends AbstractItest {
 	}
 
 	@Test
-	public void hentDokumentHentSakBySakIdTechnicalFailOnTilgangBruker() {
+	void hentDokumentHentSakBySakIdTechnicalFailOnTilgangBruker() {
 		abacPermit();
 		stubFor(get("/hentjournalsakinfo/hentdokument/" + DOKUMENT_ID + "/" + VARIANTFORMAT).willReturn(aResponse().withStatus(HttpStatus.OK
 				.value())
@@ -302,7 +297,7 @@ public class HentDokumentIT extends AbstractItest {
 	}
 
 	@Test
-	public void hentDokumentHentSakBySakIdTechnicalFailOnTilgangSak() {
+	void hentDokumentHentSakBySakIdTechnicalFailOnTilgangSak() {
 		abacPermit();
 		stubFor(get("/hentjournalsakinfo/hentdokument/" + DOKUMENT_ID + "/" + VARIANTFORMAT).willReturn(aResponse().withStatus(HttpStatus.OK
 				.value())
@@ -333,7 +328,7 @@ public class HentDokumentIT extends AbstractItest {
 	}
 
 	@Test
-	public void hentDokumentHentSakBySakIdFunctionalFail() {
+	void hentDokumentHentSakBySakIdFunctionalFail() {
 		abacPermit();
 		stubFor(get("/hentjournalsakinfo/hentdokument/" + DOKUMENT_ID + "/" + VARIANTFORMAT).willReturn(aResponse().withStatus(HttpStatus.OK
 				.value())
@@ -348,12 +343,12 @@ public class HentDokumentIT extends AbstractItest {
 		stubFor(get("/gsak/10672720").willReturn(aResponse().withStatus(HttpStatus.BAD_REQUEST.value())));
 
 		ResponseEntity<String> responseEntity = callHentDokument();
-		;
-		assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+
+		assertOkArkivResponse(responseEntity);
 	}
 
 	@Test
-	public void hentDokumentHentTilgangJournalPostTechnicalFail() {
+	void hentDokumentHentTilgangJournalPostTechnicalFail() {
 		abacPermit();
 		stubFor(get("/hentjournalsakinfo/hentdokument/" + DOKUMENT_ID + "/" + VARIANTFORMAT).willReturn(aResponse().withStatus(HttpStatus.OK
 				.value())
@@ -373,7 +368,7 @@ public class HentDokumentIT extends AbstractItest {
 	}
 
 	@Test
-	public void hentDokumentHentTilgangJournalPostTechnicalFunctionalFailNotFound() {
+	void hentDokumentHentTilgangJournalPostTechnicalFunctionalFailNotFound() {
 		abacPermit();
 		stubFor(get("/hentjournalsakinfo/hentdokument/" + DOKUMENT_ID + "/" + VARIANTFORMAT).willReturn(aResponse().withStatus(HttpStatus.OK
 				.value())
@@ -393,7 +388,7 @@ public class HentDokumentIT extends AbstractItest {
 	}
 
 	@Test
-	public void hentDokumentHentTilgangJournalPostTechnicalFunctionalFailBadRequest() {
+	void hentDokumentHentTilgangJournalPostTechnicalFunctionalFailBadRequest() {
 		abacPermit();
 		stubFor(get("/hentjournalsakinfo/hentdokument/" + DOKUMENT_ID + "/" + VARIANTFORMAT).willReturn(aResponse().withStatus(HttpStatus.OK
 				.value())
@@ -413,7 +408,7 @@ public class HentDokumentIT extends AbstractItest {
 	}
 
 	@Test
-	public void shouldGetUnauthorizedFromPep1g() {
+	void shouldGetUnauthorizedFromPep1g() {
 		abacDenyPep1g();
 		stubFor(get("/hentjournalsakinfo/hentdokument/" + DOKUMENT_ID + "/" + VARIANTFORMAT).willReturn(aResponse().withStatus(HttpStatus.OK
 				.value())
@@ -435,7 +430,7 @@ public class HentDokumentIT extends AbstractItest {
 	}
 
 	@Test
-	public void shouldGetUnauthorizedFromPep2() {
+	void shouldGetUnauthorizedFromPep2() {
 		abacDenyPep2();
 		stubFor(get("/hentjournalsakinfo/hentdokument/" + DOKUMENT_ID + "/" + VARIANTFORMAT).willReturn(aResponse().withStatus(HttpStatus.OK
 				.value())
@@ -462,7 +457,7 @@ public class HentDokumentIT extends AbstractItest {
 	}
 
 	@Test
-	public void shouldGetUnauthorizedFromPep2d() {
+	void shouldGetUnauthorizedFromPep2d() {
 		abacDenyPep2d();
 		stubFor(get("/hentjournalsakinfo/hentdokument/" + DOKUMENT_ID + "/" + VARIANTFORMAT).willReturn(aResponse().withStatus(HttpStatus.OK
 				.value())
@@ -489,7 +484,7 @@ public class HentDokumentIT extends AbstractItest {
 	}
 
 	@Test
-	public void shouldGetUnauthorizedFromPep3() {
+	void shouldGetUnauthorizedFromPep3() {
 		abacDenyPep3();
 		stubFor(get("/hentjournalsakinfo/hentdokument/" + DOKUMENT_ID + "/" + VARIANTFORMAT).willReturn(aResponse().withStatus(HttpStatus.OK
 				.value())
@@ -516,7 +511,7 @@ public class HentDokumentIT extends AbstractItest {
 	}
 
 	@Test
-	public void shouldGetUnauthorizedFromPep4() {
+	void shouldGetUnauthorizedFromPep4() {
 		abacDenyPep4();
 		stubFor(get("/hentjournalsakinfo/hentdokument/" + DOKUMENT_ID + "/" + VARIANTFORMAT).willReturn(aResponse().withStatus(HttpStatus.OK
 				.value())
@@ -544,7 +539,7 @@ public class HentDokumentIT extends AbstractItest {
 
 
 	@Test
-	public void shouldGetUnauthorizedFromPep5() {
+	void shouldGetUnauthorizedFromPep5() {
 		abacDenyPep5();
 		stubFor(get("/hentjournalsakinfo/hentdokument/" + DOKUMENT_ID + "/" + VARIANTFORMAT).willReturn(aResponse().withStatus(HttpStatus.OK
 				.value())
@@ -571,7 +566,7 @@ public class HentDokumentIT extends AbstractItest {
 	}
 
 	@Test
-	public void shouldGetUnauthorizedFromPep6d() {
+	void shouldGetUnauthorizedFromPep6d() {
 		abacDenyPep6d();
 		stubFor(get("/hentjournalsakinfo/hentdokument/" + DOKUMENT_ID + "/" + VARIANTFORMAT).willReturn(aResponse().withStatus(HttpStatus.OK
 				.value())
@@ -595,6 +590,22 @@ public class HentDokumentIT extends AbstractItest {
 		ResponseEntity<String> responseEntity = callHentDokument();
 
 		verifyabacDenyPep6dAndHttpStatusCode(HttpStatus.UNAUTHORIZED, responseEntity.getStatusCode());
+	}
+
+	private void assertOkArkivResponse(ResponseEntity<String> responseEntity) {
+		assertEquals(DOKUMENT_ID + "_" + VARIANTFORMAT + ".pdf", responseEntity.getHeaders().getContentDisposition().getFilename());
+	}
+
+	private void assertOkSladdetResponse(ResponseEntity<String> responseEntity) {
+		assertEquals(DOKUMENT_ID + "_" + SLADDET_VARIANTFORMAT + ".pdf", responseEntity.getHeaders().getContentDisposition().getFilename());
+		assertOkResponse(responseEntity);
+	}
+
+	private void assertOkResponse(ResponseEntity<String> responseEntity) {
+		assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+		assertEquals(MediaType.APPLICATION_PDF, responseEntity.getHeaders().getContentType());
+		assertEquals("inline", responseEntity.getHeaders().getContentDisposition().getType());
+		assertEquals(new String(TEST_FILE_BYTES), responseEntity.getBody());
 	}
 
 	private ResponseEntity<String> callHentDokument() {
