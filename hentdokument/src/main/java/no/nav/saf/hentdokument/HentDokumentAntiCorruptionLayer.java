@@ -5,6 +5,7 @@ import static no.nav.saf.anticorruptionlayer.joark.domain.kode.FagsystemCode.PEN
 import static no.nav.saf.domain.DomainConstants.ORGANISASJON;
 import static no.nav.saf.domain.DomainConstants.PERSON;
 import static no.nav.saf.domain.DomainConstants.RJOARK901_TILGANG_JOURNALPOST_DTO;
+import static no.nav.saf.util.MimetypeFileextensionMapper.toFileextension;
 
 import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.FagomradeCode;
@@ -97,7 +98,7 @@ public class HentDokumentAntiCorruptionLayer {
 						.build();
 			default:
 				log.warn("Forventet brukerType=(PERSON, ORGANISASJON) for midlertidig journalpost med journalpostId={}. Fikk brukerType={}", tilgangJournalpostDto
-						.getJournalpostId());
+						.getJournalpostId(), tilgangBruker.getBrukerType());
 				return null;
 		}
 	}
@@ -115,6 +116,7 @@ public class HentDokumentAntiCorruptionLayer {
 		return HentDokument.builder()
 				.dokument(dokumentByteArray)
 				.mediaType(responseTo.getMediaType())
+				.extension(toFileextension(responseTo.getMediaType()))
 				.build();
 	}
 

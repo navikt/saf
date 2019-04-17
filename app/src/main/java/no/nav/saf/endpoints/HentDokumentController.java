@@ -62,7 +62,7 @@ public class HentDokumentController {
 
 			return ResponseEntity.ok()
 					.contentType(response.getMediaType())
-					.header("content-disposition", "inline; filename=" + dokumentInfoId + "_" + variantFormat)
+					.header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=" + dokumentInfoId + "_" + variantFormat + response.getExtension())
 					.body(response.getDokument());
 		} catch(TilgangskontrollException e) {
 			log.warn("hentDokument hentet ikke dokument. journalpostId={}, dokumentInfoId={}, variantFormat={}. Tilgang ble avvist av policy: " + e.getMessage(), journalpostId, dokumentInfoId, variantFormat);
