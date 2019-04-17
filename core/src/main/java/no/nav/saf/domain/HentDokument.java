@@ -1,8 +1,6 @@
 package no.nav.saf.domain;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.NoArgsConstructor;
 import lombok.Value;
 import org.springframework.http.MediaType;
 
@@ -11,12 +9,11 @@ import org.springframework.http.MediaType;
  */
 @Value
 @Builder
-@NoArgsConstructor
-@AllArgsConstructor
 public class HentDokument {
 	@Builder.Default
 	private final byte[] dokument = new byte[0];
 	@Builder.Default
 	private final MediaType mediaType = MediaType.TEXT_PLAIN;
-
+	@Builder.Default
+	private final String extension = "";
 }
