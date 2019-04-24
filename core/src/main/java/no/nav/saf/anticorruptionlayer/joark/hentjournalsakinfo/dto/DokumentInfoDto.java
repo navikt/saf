@@ -22,6 +22,7 @@ public class DokumentInfoDto {
 	private DokumentStatusCode dokumentstatus;
 	private Date datoFerdigstilt;
 	private String brevkode;
+	private String dokumenttypeId;
 	private String tittel;
 	private SkjermingTypeCode skjerming;
 	private List<VariantDto> varianter;
