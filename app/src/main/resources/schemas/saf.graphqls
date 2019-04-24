@@ -310,7 +310,7 @@ type DokumentInfo {
 
     # Kode som sier noe om dokumentets innhold og oppbygning.
     # * For inngående skjema er brevkoden normalt en NAV-skjemaID f.eks. *"NAV 14-05.09"*. Enkelte vedlegg har en vedleggskode som sier noe om innholdet.
-    # * For utgående dokumenter sier brevkoden hvilken brevmal som har vært benyttet ved produksjon av brevet.
+    # * For utgående dokumenter sier brevkoden noe om hvilken dokumentmal som er benyttet og hvordan dokumentet skal distribueres.
     brevkode: String
 
     # Dokumentstatus gir et indikasjon på hvorvidt dokumentet er ferdigstilt eller under arbeid, eventuelt avbrutt. Dersom dokumentet ikke har noen dokumentstatus, er dokumentet komplett / ferdigstilt.
