@@ -5,6 +5,7 @@ import static no.nav.saf.cache.KeyGeneratorLocalCaching.getKeyForPep5;
 import static no.nav.saf.cache.KeyGeneratorLocalCaching.getKeyForPep6d;
 import static no.nav.saf.domain.DomainConstants.TILGANG_BRUKER;
 import static no.nav.saf.domain.visningsmodell.RelevantDato.INVALID_DATE;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.DokumentStatusCode;
@@ -90,7 +91,7 @@ public class JournalpostDtoMapper {
 						.parent(journalpost)
 						.dokumentInfoId(dokumentInfoDto.getDokumentInfoId())
 						.tittel(dokumentInfoDto.getTittel())
-						.brevkode(dokumentInfoDto.getBrevkode())
+						.brevkode(mapBrevkode(journalpostDto, dokumentInfoDto))
 						.dokumentstatus(mapDokumentstatus(dokumentInfoDto.getDokumentstatus()))
 						.datoFerdigstilt(dokumentInfoDto.getDatoFerdigstilt() == null ? null :
 								LocalDateTime.from(dokumentInfoDto.getDatoFerdigstilt().toInstant().atZone(ZoneId.systemDefault())))
@@ -110,6 +111,17 @@ public class JournalpostDtoMapper {
 						.build()).collect(Collectors.toList());
 		journalpost.getDokumenter().addAll(dokumenter);
 		return journalpost;
+	}
+
+	private String mapBrevkode(JournalpostDto journalpostDto, DokumentInfoDto dokumentInfoDto) {
+		switch (journalpostDto.getJournalposttype()) {
+			case U:
+				return isBlank(dokumentInfoDto.getDokumenttypeId()) ? dokumentInfoDto.getBrevkode() : dokumentInfoDto.getDokumenttypeId();
+			case I:
+			case N:
+			default:
+				return dokumentInfoDto.getBrevkode();
+		}
 	}
 
 	private Tema mapTema(JournalpostDto journalpostDto, RequestCache requestCache) {

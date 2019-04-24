@@ -101,6 +101,7 @@ class JournalpostDtoMapperTest {
 	private static final String AVSENDER_MOTTAKER_ID = "***gammelt_fnr***";
 	private static final String LOGISK_VEDLEGG_ID = "logisk1";
 	private static final String LOGISK_VEDLEGG_TITTEL = "logisktittel";
+	private static final String DOKUMENTTYPE_ID = "00000001";
 
 
 	private final JournalpostDtoMapper mapper = new JournalpostDtoMapper();
@@ -111,9 +112,7 @@ class JournalpostDtoMapperTest {
 	@Test
 	void shouldMapJournalpostDtoWithUtgaaendeJournalpost() {
 		JournalpostDto journalpostDto = buildJournalpostDtoUtgaaendeType(JournalStatusCode.E);
-		RequestCache requestCache = createArkivsakCacheRequestCache();
-		String tilgangKeyPep5LocalCaching = KeyGeneratorLocalCaching.getKeyForPep5(String.valueOf(JOURNALPOST_ID), DOKUMENT_INFO_ID);
-		requestCache.putObject(tilgangKeyPep5LocalCaching, true);
+		RequestCache requestCache = pep5RequestCache();
 
 		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, requestCache);
 
@@ -134,11 +133,8 @@ class JournalpostDtoMapperTest {
 	@Test
 	void shouldMapJournalpostDtoWithInngaaendeJournalpost() {
 		JournalpostDto journalpostDto = buildJournalpostDtoInngaaendeType();
-		RequestCache requestCache = createTilgangBrukerRequestCache();
-		String tilgangKeyPep5LocalCaching = KeyGeneratorLocalCaching.getKeyForPep5(String.valueOf(JOURNALPOST_ID), DOKUMENT_INFO_ID);
-		requestCache.putObject(tilgangKeyPep5LocalCaching, true);
 
-		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, requestCache);
+		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, pep5RequestCache());
 
 		assertCommonMetadata(journalpost);
 
@@ -352,6 +348,51 @@ class JournalpostDtoMapperTest {
 		assertTrue(journalpost.getAvsenderMottaker().isErLikBruker());
 	}
 
+	@Test
+	void shouldMapBrevkodeAsBrevkodeWhenJournalpostIsInngaaende() {
+		RequestCache requestCache = pep5RequestCache();
+		JournalpostDto journalpostDto = buildJournalpostDtoInngaaendeType();
+
+		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, requestCache);
+
+		assertThat(journalpost.getDokumenter().get(0).getBrevkode(), is(BREVKODE));
+	}
+
+	@Test
+	void shouldMapBrevkodeAsBrevkodeWhenJournalpostIsNotat() {
+		JournalpostDto journalpostDto = buildJournalpostDtoInngaaendeType();
+
+		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, pep5RequestCache());
+
+		assertThat(journalpost.getDokumenter().get(0).getBrevkode(), is(BREVKODE));
+	}
+
+	@Test
+	void shouldMapDokumenttypeIdAsBrevkodeWhenJournalpostIsUtgaaende() {
+		JournalpostDto journalpostDto = buildJournalpostDtoUtgaaendeType(JournalStatusCode.E);
+
+		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, pep5RequestCache());
+
+		assertThat(journalpost.getDokumenter().get(0).getBrevkode(), is(DOKUMENTTYPE_ID));
+	}
+
+	@Test
+	void shouldMapBrevkodeAsBrevkodeWhenJournalpostIsUtgaaendeAndDokumenttypeIdNotSet() {
+		JournalpostDto journalpostDto = buildJournalpostDtoUtgaaendeType(JournalStatusCode.E);
+		journalpostDto.getDokumenter().get(0).setDokumenttypeId(null);
+
+		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, pep5RequestCache());
+
+		assertThat(journalpost.getDokumenter().get(0).getBrevkode(), is(BREVKODE));
+	}
+
+	private RequestCache pep5RequestCache() {
+		RequestCache requestCache = createArkivsakCacheRequestCache();
+		String tilgangKeyPep5LocalCaching = KeyGeneratorLocalCaching.getKeyForPep5(String.valueOf(JOURNALPOST_ID), DOKUMENT_INFO_ID);
+		requestCache.putObject(tilgangKeyPep5LocalCaching, true);
+		return requestCache;
+	}
+
 	private void assertCommonMetadata(Journalpost journalpost) {
 		assertEquals(Long.toString(JOURNALPOST_ID), journalpost.getJournalpostId());
 		assertEquals(INNHOLD, journalpost.getTittel());
@@ -391,7 +432,6 @@ class JournalpostDtoMapperTest {
 				.containsExactlyInAnyOrder(tuple(VARIANT_FORMAT_CODE_ARKIV.getSafVariantformat(), FILNAVN_1, false, SKJERMING_TYPE_CODE_POL.name()),
 						tuple(VARIANT_FORMAT_CODE_SLADDET.getSafVariantformat(), FILNAVN_2, false, null));
 
-		assertEquals(BREVKODE, dokumentInfo1.getBrevkode());
 		assertEquals(Dokumentstatus.FERDIGSTILT, dokumentInfo1.getDokumentstatus());
 		assertEquals(AKTOER_ID, journalpost.getBruker().getId());
 	}
@@ -447,6 +487,7 @@ class JournalpostDtoMapperTest {
 						.dokumentInfoId(DOKUMENT_INFO_ID)
 						.tittel("veldigViktigTittel")
 						.brevkode(BREVKODE)
+						.dokumenttypeId(DOKUMENTTYPE_ID)
 						.dokumentstatus(DokumentStatusCode.FERDIGSTILT)
 						.datoFerdigstilt(DATO_FERDIGSTILT)
 						.origJournalpostId(JOURNALPOST_ID)
