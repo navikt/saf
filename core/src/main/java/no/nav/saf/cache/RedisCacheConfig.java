@@ -39,9 +39,9 @@ public class RedisCacheConfig extends CachingConfigurerSupport {
 	@Named(MANAGER_DISTRIBUTED)
 	CacheManager redisCacheManager(RedisConnectionFactory connectionFactory) {
 		// Tilgang cache brukt av Pep2d
-		RedisCacheConfiguration tilgangCache = RedisCacheConfiguration.defaultCacheConfig();
-		tilgangCache.disableCachingNullValues();
-		tilgangCache.entryTtl(DEFAULT_TTL);
+		RedisCacheConfiguration tilgangCache = RedisCacheConfiguration.defaultCacheConfig()
+				.disableCachingNullValues()
+				.entryTtl(DEFAULT_TTL);
 
 		return RedisCacheManager.builder(connectionFactory)
 				.withInitialCacheConfigurations(
