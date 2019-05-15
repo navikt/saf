@@ -103,7 +103,6 @@ class JournalpostDtoMapperTest {
 	private static final String LOGISK_VEDLEGG_TITTEL = "logisktittel";
 	private static final String DOKUMENTTYPE_ID = "00000001";
 
-
 	private final JournalpostDtoMapper mapper = new JournalpostDtoMapper();
 
 	@Mock
@@ -384,6 +383,17 @@ class JournalpostDtoMapperTest {
 		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, pep5RequestCache());
 
 		assertThat(journalpost.getDokumenter().get(0).getBrevkode(), is(BREVKODE));
+	}
+
+	// Se https://jira.adeo.no/browse/MMA-3076
+	@Test
+	void shouldMapFromFagomradeOKOToTemaSTO() {
+		JournalpostDto journalpostDto = buildJournalpostDtoUtgaaendeType(JournalStatusCode.E);
+		journalpostDto.setFagomrade(FagomradeCode.OKO);
+
+		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, pep5RequestCache());
+
+		assertThat(journalpost.getTema(), is(Tema.STO));
 	}
 
 	private RequestCache pep5RequestCache() {

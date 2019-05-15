@@ -32,7 +32,6 @@ public enum Tema {
 	KTR("Kontroll"),
 	MED("Medlemskap"),
 	MOB("Mobilitetsfremmende stønad"),
-	OKO("Økonomi"),
 	OMS("Omsorgspenger, pleiepenger og opplæringspenger"),
 	OPA("Oppfølging - Arbeidsgiver"),
 	OPP("Oppfølging"),

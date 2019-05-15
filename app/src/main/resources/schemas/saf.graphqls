@@ -598,9 +598,6 @@ enum Tema {
     # Mobilitetsfremmende stønad
     MOB
 
-    # Økonomi
-    OKO
-
     # Omsorgspenger, pleiepenger og opplæringspenger
     OMS
 
