@@ -246,6 +246,10 @@ public enum FagomradeCode {
 	FAR;
 
 	public static Tema toSafTema(FagomradeCode joarkFagomradeCode) {
+		// Vennligst se https://jira.adeo.no/browse/MMA-3076 . Tema OKO korrigeres til Tema STO
+		if(joarkFagomradeCode == OKO) {
+			return Tema.STO;
+		}
 		return joarkFagomradeCode == null ? null : Tema.valueOf(joarkFagomradeCode.name());
 	}
 

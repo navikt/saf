@@ -6,6 +6,7 @@ import static no.nav.saf.domain.DomainConstants.ORGNR_LIST;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.anticorruptionlayer.gsak.hentgsaksaker.GsakConsumer;
 import no.nav.saf.anticorruptionlayer.gsak.hentgsaksaker.GsakSakerTo;
+import no.nav.saf.anticorruptionlayer.joark.domain.kode.FagomradeCode;
 import no.nav.saf.domain.Arkivsak;
 import no.nav.saf.domain.kode.Arkivsakssystem;
 import no.nav.saf.domain.kode.Tema;
@@ -45,7 +46,7 @@ class GsakAntiCorruptionLayerImpl implements GsakAntiCorruptionLayer {
 				List<GsakSakerTo> gsakSakerTo = gsakConsumer.hentSakerByAktoerId(aktoerId);
 				gsakSakerToFiltered =
 						gsakSakerTo.stream()
-								.filter(gsak -> tema.contains(mapToTema(gsak.getTema())))
+								.filter(gsak -> tema.contains(mapTema(gsak.getTema())))
 								.collect(Collectors.toList());
 			}
 
@@ -69,7 +70,7 @@ class GsakAntiCorruptionLayerImpl implements GsakAntiCorruptionLayer {
 				List<GsakSakerTo> gsakSakerTo = gsakConsumer.hentSakerByOrgNr(orgnr);
 				gsakSakerToFiltered =
 						gsakSakerTo.stream()
-								.filter(gsak -> tema.contains(mapToTema(gsak.getTema())))
+								.filter(gsak -> tema.contains(mapTema(gsak.getTema())))
 								.collect(Collectors.toList());
 			}
 
@@ -77,14 +78,6 @@ class GsakAntiCorruptionLayerImpl implements GsakAntiCorruptionLayer {
 		} catch (Exception e) {
 			log.warn("Klarte ikke hente gsaker for orgnr={}", orgnr, e);
 			return new ArrayList<>();
-		}
-	}
-
-	private Tema mapToTema(String tema) {
-		try {
-			return Tema.valueOf(tema);
-		} catch (Exception e) {
-			return null;
 		}
 	}
 
@@ -97,7 +90,7 @@ class GsakAntiCorruptionLayerImpl implements GsakAntiCorruptionLayer {
 				.arkivsaksystem(Arkivsakssystem.GSAK)
 				.fagsaksystem(gsakSakerTo.getApplikasjon())
 				.fagsakId(gsakSakerTo.getFagsakNr())
-				.tema(gsakSakerTo.getTema() == null ? null : Tema.valueOf(gsakSakerTo.getTema()))
+				.tema(mapTema(gsakSakerTo.getTema()))
 				.orgnummer(gsakSakerTo.getOrgnr())
 				.datoOpprettet(gsakSakerTo.getOpprettetTidspunkt().toLocalDateTime())
 				.build();
@@ -113,7 +106,7 @@ class GsakAntiCorruptionLayerImpl implements GsakAntiCorruptionLayer {
 				List<GsakSakerTo> gsakSakerTo = gsakConsumer.hentSakerByFagsakIdAndFagsaksystem(fagsakId, fagsaksystem);
 				gsakSakerToFiltered =
 						gsakSakerTo.stream()
-								.filter(gsak -> tema.contains(mapToTema(gsak.getTema())))
+								.filter(gsak -> tema.contains(mapTema(gsak.getTema())))
 								.collect(Collectors.toList());
 			}
 			return mapToArkivsak(gsakSakerToFiltered);
@@ -132,7 +125,7 @@ class GsakAntiCorruptionLayerImpl implements GsakAntiCorruptionLayer {
 						.arkivsaksystem(Arkivsakssystem.GSAK)
 						.fagsakId(gsak.getFagsakNr())
 						.fagsaksystem(gsak.getApplikasjon())
-						.tema(Tema.valueOf(gsak.getTema()))
+						.tema(mapTema(gsak.getTema()))
 						.datoOpprettet(gsak.getOpprettetTidspunkt().toLocalDateTime())
 						.build())
 				.collect(Collectors.toList());
@@ -180,5 +173,21 @@ class GsakAntiCorruptionLayerImpl implements GsakAntiCorruptionLayer {
 					.build();
 		}
 		return tilgangBruker;
+	}
+
+	private Tema mapTema(String tema) {
+		if(tema == null) {
+			return null;
+		}
+
+		// Vennligst se https://jira.adeo.no/browse/MMA-3076 . Tema OKO korrigeres til Tema STO
+		if(FagomradeCode.OKO.name().equals(tema.trim())) {
+			return Tema.STO;
+		}
+		try {
+			return Tema.valueOf(tema.trim());
+		} catch (Exception e) {
+			return null;
+		}
 	}
 }
