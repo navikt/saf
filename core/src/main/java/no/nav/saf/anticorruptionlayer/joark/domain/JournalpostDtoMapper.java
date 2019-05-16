@@ -8,7 +8,6 @@ import static no.nav.saf.domain.visningsmodell.RelevantDato.INVALID_DATE;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 import lombok.extern.slf4j.Slf4j;
-import no.nav.saf.anticorruptionlayer.joark.domain.kode.DokumentStatusCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.FagomradeCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.FagsystemCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.JournalpostTypeCode;
@@ -197,7 +196,7 @@ public class JournalpostDtoMapper {
 	}
 
 	private Dokumentstatus mapDokumentstatus(DokumentInfoDto dokumentInfoDto) {
-		if (dokumentInfoDto.getKassert()) {
+		if (dokumentInfoDto.getKassert() == null ? false : dokumentInfoDto.getKassert()) {
 			return Dokumentstatus.KASSERT;
 		}
 
