@@ -720,6 +720,9 @@ enum Dokumentstatus {
 
     # Dokumentet ble opprettet, men ble avbrutt under redigering. Benyttes for redigerbare brev.
     AVBRUTT
+
+    # TODO.
+    KASSERT
 }
 
 # Forteller hvordan to eller flere journalposter er relatert til hverandre.

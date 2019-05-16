@@ -92,7 +92,7 @@ public class JournalpostDtoMapper {
 						.dokumentInfoId(dokumentInfoDto.getDokumentInfoId())
 						.tittel(dokumentInfoDto.getTittel())
 						.brevkode(mapBrevkode(journalpostDto, dokumentInfoDto))
-						.dokumentstatus(mapDokumentstatus(dokumentInfoDto.getDokumentstatus()))
+						.dokumentstatus(mapDokumentstatus(dokumentInfoDto))
 						.datoFerdigstilt(dokumentInfoDto.getDatoFerdigstilt() == null ? null :
 								LocalDateTime.from(dokumentInfoDto.getDatoFerdigstilt().toInstant().atZone(ZoneId.systemDefault())))
 						.originalJournalpostId(dokumentInfoDto.getOrigJournalpostId() == null ? null : dokumentInfoDto.getOrigJournalpostId().toString())
@@ -196,12 +196,12 @@ public class JournalpostDtoMapper {
 		}
 	}
 
-	private Dokumentstatus mapDokumentstatus(DokumentStatusCode dokumentstatus) {
-		if (dokumentstatus == null) {
-			return null;
-		} else {
-			return dokumentstatus.toSafDokumentstatus();
+	private Dokumentstatus mapDokumentstatus(DokumentInfoDto dokumentInfoDto) {
+		if (dokumentInfoDto.getKassert()) {
+			return Dokumentstatus.KASSERT;
 		}
+
+		return dokumentInfoDto.getDokumentstatus() == null ? null : dokumentInfoDto.getDokumentstatus().toSafDokumentstatus();
 	}
 
 	private List<Tilleggsopplysning> mapTilleggsopplysninger(JournalpostDto journalpostDto) {

@@ -28,4 +28,5 @@ public class DokumentInfoDto {
 	private List<VariantDto> varianter;
 	private Long origJournalpostId;
 	private List<LogiskVedleggDto> logiske;
+	private Boolean kassert;
 }
