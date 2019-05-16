@@ -721,7 +721,7 @@ enum Dokumentstatus {
     # Dokumentet ble opprettet, men ble avbrutt under redigering. Benyttes for redigerbare brev.
     AVBRUTT
 
-    # TODO.
+    # Dokumentet er kassert.
     KASSERT
 }
 
