@@ -413,6 +413,7 @@ class JournalpostDtoMapperTest {
 		assertEquals(BEHANDLINGSTEMA, journalpost.getBehandlingstema());
 		assertEquals(BEHANDLINGSTEMANAVN, journalpost.getBehandlingstemanavn());
 		assertThat(journalpost.getAvsenderMottaker().getId(), is(AVSENDER_MOTTAKER_ID));
+		assertThat(journalpost.getAvsenderMottaker().getIdType(), is(AVSENDER_MOTTAKER_ID_TYPE));
 		assertThat(journalpost.getAvsenderMottaker().getNavn(), is(AVSENDER_MOTTAKER_NAVN));
 		assertThat(journalpost.getAvsenderMottaker().getLand(), is(AVSENDER_MOTTAKER_LAND));
 		assertFalse(journalpost.getAvsenderMottaker().isErLikBruker());
