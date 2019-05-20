@@ -14,6 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import no.nav.saf.anticorruptionlayer.joark.domain.kode.AvsenderMottakerIdTypeCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.DokumentStatusCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.FagomradeCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.FagsystemCode;
@@ -99,6 +100,7 @@ class JournalpostDtoMapperTest {
 	private static final String FILNAVN_1 = "filnavn1";
 	private static final String FILNAVN_2 = "filnavn2";
 	private static final String AVSENDER_MOTTAKER_ID = "***gammelt_fnr***";
+	private static final AvsenderMottakerIdTypeCode AVSENDER_MOTTAKER_ID_TYPE = AvsenderMottakerIdTypeCode.FNR;
 	private static final String LOGISK_VEDLEGG_ID = "logisk1";
 	private static final String LOGISK_VEDLEGG_TITTEL = "logisktittel";
 	private static final String DOKUMENTTYPE_ID = "00000001";
@@ -569,6 +571,7 @@ class JournalpostDtoMapperTest {
 				.behandlingstema(BEHANDLINGSTEMA)
 				.behandlingstemanavn(BEHANDLINGSTEMANAVN)
 				.avsenderMottakerId(AVSENDER_MOTTAKER_ID)
+				.avsenderMottakerIdType(AVSENDER_MOTTAKER_ID_TYPE)
 				.avsenderMottakerNavn(AVSENDER_MOTTAKER_NAVN)
 				.avsenderMottakerLand(AVSENDER_MOTTAKER_LAND)
 				.journalforendeEnhet(JOURNALFOERENDE_ENHET)

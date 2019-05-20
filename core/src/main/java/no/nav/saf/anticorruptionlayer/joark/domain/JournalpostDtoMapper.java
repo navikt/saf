@@ -8,6 +8,7 @@ import static no.nav.saf.domain.visningsmodell.RelevantDato.INVALID_DATE;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 import lombok.extern.slf4j.Slf4j;
+import no.nav.saf.anticorruptionlayer.joark.domain.kode.AvsenderMottakerIdTypeCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.DokumentStatusCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.FagomradeCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.FagsystemCode;
@@ -78,7 +79,9 @@ public class JournalpostDtoMapper {
 				.opprettetAvNavn(journalpostDto.getOpprettetAvNavn())
 				.kanal(kanal)
 				.kanalnavn(kanal == null ? null : kanal.getKanalnavn())
-				.skjerming(journalpostDto.getSkjerming() == null ? null : journalpostDto.getSkjerming().getSafSkjerming().name())
+				.skjerming(journalpostDto.getSkjerming() == null ? null : journalpostDto.getSkjerming()
+						.getSafSkjerming()
+						.name())
 				.datoOpprettet(journalpostDto.getDatoOpprettet() == null ? INVALID_DATE : LocalDateTime.from(journalpostDto.getDatoOpprettet()
 						.toInstant()
 						.atZone(ZoneId.systemDefault())))
@@ -94,15 +97,22 @@ public class JournalpostDtoMapper {
 						.brevkode(mapBrevkode(journalpostDto, dokumentInfoDto))
 						.dokumentstatus(mapDokumentstatus(dokumentInfoDto.getDokumentstatus()))
 						.datoFerdigstilt(dokumentInfoDto.getDatoFerdigstilt() == null ? null :
-								LocalDateTime.from(dokumentInfoDto.getDatoFerdigstilt().toInstant().atZone(ZoneId.systemDefault())))
-						.originalJournalpostId(dokumentInfoDto.getOrigJournalpostId() == null ? null : dokumentInfoDto.getOrigJournalpostId().toString())
-						.skjerming(dokumentInfoDto.getSkjerming() == null ? null : dokumentInfoDto.getSkjerming().getSafSkjerming().name())
+								LocalDateTime.from(dokumentInfoDto.getDatoFerdigstilt()
+										.toInstant()
+										.atZone(ZoneId.systemDefault())))
+						.originalJournalpostId(dokumentInfoDto.getOrigJournalpostId() == null ? null : dokumentInfoDto.getOrigJournalpostId()
+								.toString())
+						.skjerming(dokumentInfoDto.getSkjerming() == null ? null : dokumentInfoDto.getSkjerming()
+								.getSafSkjerming()
+								.name())
 						.dokumentvarianter(dokumentInfoDto.getVarianter().stream()
 								.map(variantDto -> Dokumentvariant.builder()
 										.saksbehandlerHarTilgang(determineSaksbehandlerTilgang(journalpost, dokumentInfoDto, variantDto, requestCache))
 										.variantformat(variantDto.getVariantf().getSafVariantformat())
 										.filnavn(variantDto.getFilnavn())
-										.skjerming(variantDto.getSkjerming() == null ? null : variantDto.getSkjerming().getSafSkjerming().name())
+										.skjerming(variantDto.getSkjerming() == null ? null : variantDto.getSkjerming()
+												.getSafSkjerming()
+												.name())
 										.build())
 								.collect(Collectors.toList()))
 						.logiskeVedlegg(dokumentInfoDto.getLogiske().stream()
@@ -156,10 +166,30 @@ public class JournalpostDtoMapper {
 	private AvsenderMottaker mapAvsenderMottaker(JournalpostDto journalpostDto) {
 		return AvsenderMottaker.builder()
 				.id(journalpostDto.getAvsenderMottakerId())
+				.idType(mapAvsenderMottakerIdType(journalpostDto.getAvsenderMottakerId()))
 				.navn(journalpostDto.getAvsenderMottakerNavn())
 				.land(journalpostDto.getAvsenderMottakerLand())
 				.erLikBruker(mapErLikBruker(journalpostDto.getAvsenderMottakerId(), journalpostDto.getBruker()))
 				.build();
+	}
+
+	private AvsenderMottakerIdTypeCode mapAvsenderMottakerIdType(String avsenderMottakerId) {
+		AvsenderMottakerIdTypeCode avsenderMottakerIdTypeCode;
+		switch (avsenderMottakerId.length()) {
+			case 11:
+				avsenderMottakerIdTypeCode = AvsenderMottakerIdTypeCode.FNR;
+				break;
+			case 9:
+				avsenderMottakerIdTypeCode = AvsenderMottakerIdTypeCode.ORGNR;
+				break;
+			case 0:
+				avsenderMottakerIdTypeCode = AvsenderMottakerIdTypeCode.NULL;
+				break;
+			default:
+				avsenderMottakerIdTypeCode = AvsenderMottakerIdTypeCode.UKJENT;
+		}
+		return avsenderMottakerIdTypeCode;
+
 	}
 
 	private boolean mapErLikBruker(String avsenderMottakerId, BrukerDto brukerDto) {
