@@ -572,7 +572,7 @@ class JournalpostDtoMapperTest {
 				.behandlingstema(BEHANDLINGSTEMA)
 				.behandlingstemanavn(BEHANDLINGSTEMANAVN)
 				.avsenderMottakerId(AVSENDER_MOTTAKER_ID)
-				.avsenderMottakerIdType(AVSENDER_MOTTAKER_ID_TYPE)
+				//.avsenderMottakerIdType(AVSENDER_MOTTAKER_ID_TYPE)
 				.avsenderMottakerNavn(AVSENDER_MOTTAKER_NAVN)
 				.avsenderMottakerLand(AVSENDER_MOTTAKER_LAND)
 				.journalforendeEnhet(JOURNALFOERENDE_ENHET)

@@ -175,18 +175,20 @@ public class JournalpostDtoMapper {
 
 	private AvsenderMottakerIdTypeCode mapAvsenderMottakerIdType(String avsenderMottakerId) {
 		AvsenderMottakerIdTypeCode avsenderMottakerIdTypeCode;
-		switch (avsenderMottakerId.length()) {
-			case 11:
-				avsenderMottakerIdTypeCode = AvsenderMottakerIdTypeCode.FNR;
-				break;
-			case 9:
-				avsenderMottakerIdTypeCode = AvsenderMottakerIdTypeCode.ORGNR;
-				break;
-			case 0:
-				avsenderMottakerIdTypeCode = AvsenderMottakerIdTypeCode.NULL;
-				break;
-			default:
-				avsenderMottakerIdTypeCode = AvsenderMottakerIdTypeCode.UKJENT;
+		if (avsenderMottakerId == null) {
+			return AvsenderMottakerIdTypeCode.NULL;
+		} else {
+			switch (avsenderMottakerId.length()) {
+				case 11:
+					avsenderMottakerIdTypeCode = AvsenderMottakerIdTypeCode.FNR;
+					break;
+				case 9:
+					avsenderMottakerIdTypeCode = AvsenderMottakerIdTypeCode.ORGNR;
+					break;
+				default:
+					avsenderMottakerIdTypeCode = AvsenderMottakerIdTypeCode.UKJENT;
+					break;
+			}
 		}
 		return avsenderMottakerIdTypeCode;
 
