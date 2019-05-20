@@ -739,4 +739,10 @@ enum AvsenderMottakerIdType {
     # Foretaksregisterets organisasjonsnummer for en juridisk person.
     ORGNR
 
+    # AvsenderMottakerId er tom
+     NULL
+
+    # Ukjent IdType
+     UKJENT
+
 }

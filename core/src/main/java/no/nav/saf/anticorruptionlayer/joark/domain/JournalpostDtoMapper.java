@@ -8,7 +8,6 @@ import static no.nav.saf.domain.visningsmodell.RelevantDato.INVALID_DATE;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 import lombok.extern.slf4j.Slf4j;
-import no.nav.saf.anticorruptionlayer.joark.domain.kode.AvsenderMottakerIdTypeCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.DokumentStatusCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.FagomradeCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.FagsystemCode;
@@ -27,6 +26,7 @@ import no.nav.saf.domain.kode.Kanal;
 import no.nav.saf.domain.kode.Tema;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.domain.visningsmodell.AvsenderMottaker;
+import no.nav.saf.domain.visningsmodell.AvsenderMottakerIdType;
 import no.nav.saf.domain.visningsmodell.Bruker;
 import no.nav.saf.domain.visningsmodell.BrukerIdType;
 import no.nav.saf.domain.visningsmodell.DokumentInfo;
@@ -166,31 +166,31 @@ public class JournalpostDtoMapper {
 	private AvsenderMottaker mapAvsenderMottaker(JournalpostDto journalpostDto) {
 		return AvsenderMottaker.builder()
 				.id(journalpostDto.getAvsenderMottakerId())
-				.idType(mapAvsenderMottakerIdType(journalpostDto.getAvsenderMottakerId()))
+				.type(mapAvsenderMottakerIdType(journalpostDto.getAvsenderMottakerId()))
 				.navn(journalpostDto.getAvsenderMottakerNavn())
 				.land(journalpostDto.getAvsenderMottakerLand())
 				.erLikBruker(mapErLikBruker(journalpostDto.getAvsenderMottakerId(), journalpostDto.getBruker()))
 				.build();
 	}
 
-	private AvsenderMottakerIdTypeCode mapAvsenderMottakerIdType(String avsenderMottakerId) {
-		AvsenderMottakerIdTypeCode avsenderMottakerIdTypeCode;
+	private AvsenderMottakerIdType mapAvsenderMottakerIdType(String avsenderMottakerId) {
+		AvsenderMottakerIdType avsenderMottakerIdType;
 		if (avsenderMottakerId == null) {
-			return AvsenderMottakerIdTypeCode.NULL;
+			return AvsenderMottakerIdType.NULL;
 		} else {
 			switch (avsenderMottakerId.length()) {
 				case 11:
-					avsenderMottakerIdTypeCode = AvsenderMottakerIdTypeCode.FNR;
+					avsenderMottakerIdType = AvsenderMottakerIdType.FNR;
 					break;
 				case 9:
-					avsenderMottakerIdTypeCode = AvsenderMottakerIdTypeCode.ORGNR;
+					avsenderMottakerIdType = AvsenderMottakerIdType.ORGNR;
 					break;
 				default:
-					avsenderMottakerIdTypeCode = AvsenderMottakerIdTypeCode.UKJENT;
+					avsenderMottakerIdType = AvsenderMottakerIdType.UKJENT;
 					break;
 			}
 		}
-		return avsenderMottakerIdTypeCode;
+		return avsenderMottakerIdType;
 
 	}
 

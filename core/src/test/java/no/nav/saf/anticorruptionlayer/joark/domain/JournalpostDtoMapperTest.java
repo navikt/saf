@@ -14,7 +14,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import no.nav.saf.anticorruptionlayer.joark.domain.kode.AvsenderMottakerIdTypeCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.DokumentStatusCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.FagomradeCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.FagsystemCode;
@@ -43,6 +42,8 @@ import no.nav.saf.domain.visningsmodell.DokumentInfo;
 import no.nav.saf.domain.visningsmodell.Dokumentvariant;
 import no.nav.saf.domain.visningsmodell.Journalpost;
 import no.nav.saf.domain.visningsmodell.RelevantDato;
+import no.nav.saf.domain.visningsmodell.AvsenderMottakerIdType;
+
 import no.nav.saf.tilgangskontroll.RequestCache;
 import no.nav.saf.tilgangskontroll.validation.OidcValidatorTool;
 import org.assertj.core.api.Assertions;
@@ -100,7 +101,7 @@ class JournalpostDtoMapperTest {
 	private static final String FILNAVN_1 = "filnavn1";
 	private static final String FILNAVN_2 = "filnavn2";
 	private static final String AVSENDER_MOTTAKER_ID = "***gammelt_fnr***";
-	private static final AvsenderMottakerIdTypeCode AVSENDER_MOTTAKER_ID_TYPE = AvsenderMottakerIdTypeCode.FNR;
+	private static final AvsenderMottakerIdType AVSENDER_MOTTAKER_ID_TYPE = AvsenderMottakerIdType.FNR;
 	private static final String LOGISK_VEDLEGG_ID = "logisk1";
 	private static final String LOGISK_VEDLEGG_TITTEL = "logisktittel";
 	private static final String DOKUMENTTYPE_ID = "00000001";
@@ -413,7 +414,7 @@ class JournalpostDtoMapperTest {
 		assertEquals(BEHANDLINGSTEMA, journalpost.getBehandlingstema());
 		assertEquals(BEHANDLINGSTEMANAVN, journalpost.getBehandlingstemanavn());
 		assertThat(journalpost.getAvsenderMottaker().getId(), is(AVSENDER_MOTTAKER_ID));
-		assertThat(journalpost.getAvsenderMottaker().getIdType(), is(AVSENDER_MOTTAKER_ID_TYPE));
+		assertThat(journalpost.getAvsenderMottaker().getType(), is(AVSENDER_MOTTAKER_ID_TYPE));
 		assertThat(journalpost.getAvsenderMottaker().getNavn(), is(AVSENDER_MOTTAKER_NAVN));
 		assertThat(journalpost.getAvsenderMottaker().getLand(), is(AVSENDER_MOTTAKER_LAND));
 		assertFalse(journalpost.getAvsenderMottaker().isErLikBruker());
@@ -572,7 +573,7 @@ class JournalpostDtoMapperTest {
 				.behandlingstema(BEHANDLINGSTEMA)
 				.behandlingstemanavn(BEHANDLINGSTEMANAVN)
 				.avsenderMottakerId(AVSENDER_MOTTAKER_ID)
-				//.avsenderMottakerIdType(AVSENDER_MOTTAKER_ID_TYPE)
+				.avsenderMottakerIdType(AVSENDER_MOTTAKER_ID_TYPE)
 				.avsenderMottakerNavn(AVSENDER_MOTTAKER_NAVN)
 				.avsenderMottakerLand(AVSENDER_MOTTAKER_LAND)
 				.journalforendeEnhet(JOURNALFOERENDE_ENHET)
