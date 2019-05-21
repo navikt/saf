@@ -10,7 +10,6 @@ import no.nav.saf.anticorruptionlayer.joark.domain.kode.JournalpostTypeCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.MottaksKanalCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.SkjermingTypeCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.UtsendingsKanalCode;
-import no.nav.saf.domain.visningsmodell.AvsenderMottakerIdType;
 
 import java.util.Date;
 import java.util.List;
@@ -33,7 +32,6 @@ public class JournalpostDto {
 	private String behandlingstemanavn;
 	private JournalStatusCode journalstatus;
 	private String avsenderMottakerId;
-	private AvsenderMottakerIdType avsenderMottakerIdType;
 	private String avsenderMottakerNavn;
 	private String avsenderMottakerLand;
 	private String journalforendeEnhet;

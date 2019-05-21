@@ -24,7 +24,6 @@ import no.nav.saf.domain.kode.Journalstatus;
 import no.nav.saf.domain.kode.Kanal;
 import no.nav.saf.domain.kode.Tema;
 import no.nav.saf.domain.kode.Variantformat;
-import no.nav.saf.domain.visningsmodell.AvsenderMottakerIdType;
 import no.nav.saf.domain.visningsmodell.BrukerIdType;
 import no.nav.saf.domain.visningsmodell.DokumentInfo;
 import no.nav.saf.domain.visningsmodell.Journalpost;
@@ -105,7 +104,6 @@ class TilknyttedeJournalposterIT extends AbstractItest {
 		assertThat(journalpost.getBruker().getId(), is("***gammelt_fnr***00"));
 		assertThat(journalpost.getBruker().getType(), is(BrukerIdType.AKTOERID));
 		assertThat(journalpost.getAvsenderMottaker().getId(), is("***gammelt_fnr***"));
-		assertThat(journalpost.getAvsenderMottaker().getType(), is(AvsenderMottakerIdType.FNR));
 		assertThat(journalpost.getAvsenderMottaker().getNavn(), is("Bjarne Betjent"));
 		assertThat(journalpost.getAvsenderMottaker().getLand(), is("NO"));
 		assertTrue(journalpost.getAvsenderMottaker().isErLikBruker());
