@@ -14,12 +14,7 @@ public enum DokumentStatusCode {
 	/**
 	 * Dokumentet er avbrutt
 	 */
-	AVBRUTT(Dokumentstatus.AVBRUTT),
-
-	/**
-	 * Dokumentet er kassert
-	 */
-	KASSERT(Dokumentstatus.KASSERT);
+	AVBRUTT(Dokumentstatus.AVBRUTT);
 
 	private final Dokumentstatus safDokumentstatus;
 

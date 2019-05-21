@@ -5,6 +5,7 @@ import static no.nav.saf.cache.KeyGeneratorLocalCaching.getKeyForPep5;
 import static no.nav.saf.cache.KeyGeneratorLocalCaching.getKeyForPep6d;
 import static no.nav.saf.domain.DomainConstants.TILGANG_BRUKER;
 import static no.nav.saf.domain.visningsmodell.RelevantDato.INVALID_DATE;
+import static org.apache.commons.lang3.BooleanUtils.isTrue;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 import lombok.extern.slf4j.Slf4j;
@@ -196,7 +197,7 @@ public class JournalpostDtoMapper {
 	}
 
 	private Dokumentstatus mapDokumentstatus(DokumentInfoDto dokumentInfoDto) {
-		if (dokumentInfoDto.getKassert() == null ? false : dokumentInfoDto.getKassert()) {
+		if (isTrue(dokumentInfoDto.getKassert())) {
 			return Dokumentstatus.KASSERT;
 		}
 
