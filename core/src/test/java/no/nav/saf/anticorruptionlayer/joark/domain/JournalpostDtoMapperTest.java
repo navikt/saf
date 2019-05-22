@@ -234,6 +234,30 @@ class JournalpostDtoMapperTest {
 	}
 
 	@Test
+	void shouldMapJournalpostWithKasserDokument() {
+		JournalpostDto journalpostDto = buildJournalpostDtoUtgaaendeType(JournalStatusCode.E);
+		journalpostDto.getDokumenter().get(0).setKassert(true);
+		RequestCache requestCache = pep5RequestCache();
+
+		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, requestCache);
+
+		assertEquals(Dokumentstatus.KASSERT, journalpost.getDokumenter().get(0).getDokumentstatus());
+	}
+
+	@Test
+	void shouldMapJournalpostWithNullDokumentStatus() {
+		JournalpostDto journalpostDto = buildJournalpostDtoUtgaaendeType(JournalStatusCode.E);
+		journalpostDto.getDokumenter().get(0).setDokumentstatus(null);
+		journalpostDto.getDokumenter().get(0).setKassert(null);
+		RequestCache requestCache = pep5RequestCache();
+
+		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, requestCache);
+
+		assertEquals(null, journalpost.getDokumenter().get(0).getDokumentstatus());
+	}
+
+
+	@Test
 	void shouldMapSaksbehandlerHarTilgang() {
 		JournalpostDto journalpostDto = buildJournalpostDtoPenSaksrelasjonDto();
 

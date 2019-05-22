@@ -5,10 +5,10 @@ import static no.nav.saf.cache.KeyGeneratorLocalCaching.getKeyForPep5;
 import static no.nav.saf.cache.KeyGeneratorLocalCaching.getKeyForPep6d;
 import static no.nav.saf.domain.DomainConstants.TILGANG_BRUKER;
 import static no.nav.saf.domain.visningsmodell.RelevantDato.INVALID_DATE;
+import static org.apache.commons.lang3.BooleanUtils.isTrue;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 import lombok.extern.slf4j.Slf4j;
-import no.nav.saf.anticorruptionlayer.joark.domain.kode.DokumentStatusCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.FagomradeCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.FagsystemCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.JournalpostTypeCode;
@@ -92,7 +92,7 @@ public class JournalpostDtoMapper {
 						.dokumentInfoId(dokumentInfoDto.getDokumentInfoId())
 						.tittel(dokumentInfoDto.getTittel())
 						.brevkode(mapBrevkode(journalpostDto, dokumentInfoDto))
-						.dokumentstatus(mapDokumentstatus(dokumentInfoDto.getDokumentstatus()))
+						.dokumentstatus(mapDokumentstatus(dokumentInfoDto))
 						.datoFerdigstilt(dokumentInfoDto.getDatoFerdigstilt() == null ? null :
 								LocalDateTime.from(dokumentInfoDto.getDatoFerdigstilt().toInstant().atZone(ZoneId.systemDefault())))
 						.originalJournalpostId(dokumentInfoDto.getOrigJournalpostId() == null ? null : dokumentInfoDto.getOrigJournalpostId().toString())
@@ -196,12 +196,12 @@ public class JournalpostDtoMapper {
 		}
 	}
 
-	private Dokumentstatus mapDokumentstatus(DokumentStatusCode dokumentstatus) {
-		if (dokumentstatus == null) {
-			return null;
-		} else {
-			return dokumentstatus.toSafDokumentstatus();
+	private Dokumentstatus mapDokumentstatus(DokumentInfoDto dokumentInfoDto) {
+		if (isTrue(dokumentInfoDto.getKassert())) {
+			return Dokumentstatus.KASSERT;
 		}
+
+		return dokumentInfoDto.getDokumentstatus() == null ? null : dokumentInfoDto.getDokumentstatus().toSafDokumentstatus();
 	}
 
 	private List<Tilleggsopplysning> mapTilleggsopplysninger(JournalpostDto journalpostDto) {
