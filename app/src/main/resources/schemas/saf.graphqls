@@ -744,5 +744,4 @@ enum AvsenderMottakerIdType {
 
     # Ukjent IdType
      UKJENT
-
 }
