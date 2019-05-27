@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import no.nav.saf.anticorruptionlayer.joark.domain.kode.AvsenderMottakerIdTypeCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.FagomradeCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.JournalStatusCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.JournalpostTypeCode;
@@ -32,6 +33,7 @@ public class JournalpostDto {
 	private String behandlingstemanavn;
 	private JournalStatusCode journalstatus;
 	private String avsenderMottakerId;
+	private AvsenderMottakerIdTypeCode avsenderMottakerIdTypeCode;
 	private String avsenderMottakerNavn;
 	private String avsenderMottakerLand;
 	private String journalforendeEnhet;

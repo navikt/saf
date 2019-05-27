@@ -9,6 +9,7 @@ import static org.apache.commons.lang3.BooleanUtils.isTrue;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 import lombok.extern.slf4j.Slf4j;
+import no.nav.saf.anticorruptionlayer.joark.domain.kode.AvsenderMottakerIdTypeCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.FagomradeCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.FagsystemCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.JournalpostTypeCode;
@@ -166,28 +167,49 @@ public class JournalpostDtoMapper {
 	private AvsenderMottaker mapAvsenderMottaker(JournalpostDto journalpostDto) {
 		return AvsenderMottaker.builder()
 				.id(journalpostDto.getAvsenderMottakerId())
-				.type(mapAvsenderMottakerIdType(journalpostDto.getAvsenderMottakerId()))
+				.type(mapAvsenderMottakerIdType(journalpostDto.getAvsenderMottakerId(), journalpostDto.getAvsenderMottakerIdTypeCode()))
 				.navn(journalpostDto.getAvsenderMottakerNavn())
 				.land(journalpostDto.getAvsenderMottakerLand())
 				.erLikBruker(mapErLikBruker(journalpostDto.getAvsenderMottakerId(), journalpostDto.getBruker()))
 				.build();
 	}
 
-	private AvsenderMottakerIdType mapAvsenderMottakerIdType(String avsenderMottakerId) {
+	private AvsenderMottakerIdType mapAvsenderMottakerIdType(String avsenderMottakerId, AvsenderMottakerIdTypeCode avsenderMottakerIdTypeCode) {
 		AvsenderMottakerIdType avsenderMottakerIdType;
-		if (avsenderMottakerId == null) {
-			return AvsenderMottakerIdType.NULL;
-		} else {
-			switch (avsenderMottakerId.length()) {
-				case 11:
+		if (avsenderMottakerIdTypeCode != null) {
+			switch (avsenderMottakerIdTypeCode) {
+				case FNR:
 					avsenderMottakerIdType = AvsenderMottakerIdType.FNR;
 					break;
-				case 9:
+				case ORGNR:
 					avsenderMottakerIdType = AvsenderMottakerIdType.ORGNR;
+					break;
+				case HPRNR:
+					avsenderMottakerIdType = AvsenderMottakerIdType.HPRNR;
+					break;
+				case UTL_ORG:
+					avsenderMottakerIdType = AvsenderMottakerIdType.UTL_ORG;
 					break;
 				default:
 					avsenderMottakerIdType = AvsenderMottakerIdType.UKJENT;
 					break;
+			}
+
+		} else {
+			if (avsenderMottakerId == null) {
+				return AvsenderMottakerIdType.NULL;
+			} else {
+				switch (avsenderMottakerId.length()) {
+					case 11:
+						avsenderMottakerIdType = AvsenderMottakerIdType.FNR;
+						break;
+					case 9:
+						avsenderMottakerIdType = AvsenderMottakerIdType.ORGNR;
+						break;
+					default:
+						avsenderMottakerIdType = AvsenderMottakerIdType.UKJENT;
+						break;
+				}
 			}
 		}
 		return avsenderMottakerIdType;
