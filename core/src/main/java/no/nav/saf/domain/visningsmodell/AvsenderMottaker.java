@@ -10,6 +10,7 @@ import lombok.Value;
 @Builder
 public class AvsenderMottaker {
 	private final String id;
+	private final AvsenderMottakerIdType type;
 	private final String navn;
 	private final String land;
 	private final boolean erLikBruker;

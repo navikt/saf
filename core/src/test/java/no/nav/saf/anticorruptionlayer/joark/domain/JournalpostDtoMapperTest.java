@@ -42,6 +42,8 @@ import no.nav.saf.domain.visningsmodell.DokumentInfo;
 import no.nav.saf.domain.visningsmodell.Dokumentvariant;
 import no.nav.saf.domain.visningsmodell.Journalpost;
 import no.nav.saf.domain.visningsmodell.RelevantDato;
+import no.nav.saf.domain.visningsmodell.AvsenderMottakerIdType;
+
 import no.nav.saf.tilgangskontroll.RequestCache;
 import no.nav.saf.tilgangskontroll.validation.OidcValidatorTool;
 import org.assertj.core.api.Assertions;
@@ -99,6 +101,7 @@ class JournalpostDtoMapperTest {
 	private static final String FILNAVN_1 = "filnavn1";
 	private static final String FILNAVN_2 = "filnavn2";
 	private static final String AVSENDER_MOTTAKER_ID = "***gammelt_fnr***";
+	private static final AvsenderMottakerIdType AVSENDER_MOTTAKER_ID_TYPE = AvsenderMottakerIdType.FNR;
 	private static final String LOGISK_VEDLEGG_ID = "logisk1";
 	private static final String LOGISK_VEDLEGG_TITTEL = "logisktittel";
 	private static final String DOKUMENTTYPE_ID = "00000001";
@@ -360,11 +363,11 @@ class JournalpostDtoMapperTest {
 
 	@Test
 	void shouldAvsenderMottakerErLikBrukerTrueWhenBrukerIsSameAsAvsenderMottakerId() {
-	JournalpostDto journalpostDto = baseJournalpostDto()
-			.journalposttype(JournalpostTypeCode.I)
-			.avsenderMottakerId(AVSENDER_MOTTAKER_ID)
-			.bruker(BrukerDto.builder().brukerId(AVSENDER_MOTTAKER_ID).build())
-			.build();
+		JournalpostDto journalpostDto = baseJournalpostDto()
+				.journalposttype(JournalpostTypeCode.I)
+				.avsenderMottakerId(AVSENDER_MOTTAKER_ID)
+				.bruker(BrukerDto.builder().brukerId(AVSENDER_MOTTAKER_ID).build())
+				.build();
 
 		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, new RequestCache());
 
@@ -420,6 +423,17 @@ class JournalpostDtoMapperTest {
 		assertThat(journalpost.getTema(), is(Tema.STO));
 	}
 
+	@Test
+	void shouldMapAvsenderMottakerIdTypeNull(){
+		JournalpostDto journalpostDto =  buildJournalpostDtoInngaaendeType();
+		journalpostDto.setAvsenderMottakerId(null);
+
+		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, pep5RequestCache());
+
+		assertThat(journalpost.getAvsenderMottaker().getType(), is(AvsenderMottakerIdType.NULL));
+
+	}
+
 	private RequestCache pep5RequestCache() {
 		RequestCache requestCache = createArkivsakCacheRequestCache();
 		String tilgangKeyPep5LocalCaching = KeyGeneratorLocalCaching.getKeyForPep5(String.valueOf(JOURNALPOST_ID), DOKUMENT_INFO_ID);
@@ -435,6 +449,7 @@ class JournalpostDtoMapperTest {
 		assertEquals(BEHANDLINGSTEMA, journalpost.getBehandlingstema());
 		assertEquals(BEHANDLINGSTEMANAVN, journalpost.getBehandlingstemanavn());
 		assertThat(journalpost.getAvsenderMottaker().getId(), is(AVSENDER_MOTTAKER_ID));
+		assertThat(journalpost.getAvsenderMottaker().getType(), is(AVSENDER_MOTTAKER_ID_TYPE));
 		assertThat(journalpost.getAvsenderMottaker().getNavn(), is(AVSENDER_MOTTAKER_NAVN));
 		assertThat(journalpost.getAvsenderMottaker().getLand(), is(AVSENDER_MOTTAKER_LAND));
 		assertFalse(journalpost.getAvsenderMottaker().isErLikBruker());
@@ -454,7 +469,8 @@ class JournalpostDtoMapperTest {
 
 		DokumentInfo dokumentInfo1 = journalpost.getDokumenter().get(0);
 		assertEquals(DOKUMENT_INFO_ID, dokumentInfo1.getDokumentInfoId());
-		assertThat(dokumentInfo1.getDatoFerdigstilt(), equalTo(LocalDateTime.from(DATO_FERDIGSTILT.toInstant().atZone(ZoneId.systemDefault()))));
+		assertThat(dokumentInfo1.getDatoFerdigstilt(), equalTo(LocalDateTime.from(DATO_FERDIGSTILT.toInstant()
+				.atZone(ZoneId.systemDefault()))));
 		assertEquals(Long.toString(JOURNALPOST_ID), dokumentInfo1.getOriginalJournalpostId());
 		assertEquals(SKJERMING_TYPE_CODE_POL.name(), dokumentInfo1.getSkjerming());
 		assertThat(dokumentInfo1.getLogiskeVedlegg().get(0).getLogiskVedleggId(), is(LOGISK_VEDLEGG_ID));
@@ -463,7 +479,8 @@ class JournalpostDtoMapperTest {
 		Assertions.assertThat(dokumentInfo1.getDokumentvarianter())
 				.extracting(Dokumentvariant::getVariantformat, Dokumentvariant::getFilnavn, Dokumentvariant::isSaksbehandlerHarTilgang, Dokumentvariant::getSkjerming)
 				.hasSize(2)
-				.containsExactlyInAnyOrder(tuple(VARIANT_FORMAT_CODE_ARKIV.getSafVariantformat(), FILNAVN_1, false, SKJERMING_TYPE_CODE_POL.name()),
+				.containsExactlyInAnyOrder(tuple(VARIANT_FORMAT_CODE_ARKIV.getSafVariantformat(), FILNAVN_1, false, SKJERMING_TYPE_CODE_POL
+								.name()),
 						tuple(VARIANT_FORMAT_CODE_SLADDET.getSafVariantformat(), FILNAVN_2, false, null));
 
 		assertEquals(Dokumentstatus.FERDIGSTILT, dokumentInfo1.getDokumentstatus());
@@ -583,6 +600,7 @@ class JournalpostDtoMapperTest {
 				.saksrelasjon(new SaksrelasjonDto(SAKS_ID, false, FagsystemCode.PEN))
 				.build();
 	}
+
 
 	private JournalpostDto.JournalpostDtoBuilder baseJournalpostDto() {
 		return JournalpostDto.builder()

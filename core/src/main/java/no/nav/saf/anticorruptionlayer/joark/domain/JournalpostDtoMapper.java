@@ -26,6 +26,7 @@ import no.nav.saf.domain.kode.Kanal;
 import no.nav.saf.domain.kode.Tema;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.domain.visningsmodell.AvsenderMottaker;
+import no.nav.saf.domain.visningsmodell.AvsenderMottakerIdType;
 import no.nav.saf.domain.visningsmodell.Bruker;
 import no.nav.saf.domain.visningsmodell.BrukerIdType;
 import no.nav.saf.domain.visningsmodell.DokumentInfo;
@@ -78,7 +79,9 @@ public class JournalpostDtoMapper {
 				.opprettetAvNavn(journalpostDto.getOpprettetAvNavn())
 				.kanal(kanal)
 				.kanalnavn(kanal == null ? null : kanal.getKanalnavn())
-				.skjerming(journalpostDto.getSkjerming() == null ? null : journalpostDto.getSkjerming().getSafSkjerming().name())
+				.skjerming(journalpostDto.getSkjerming() == null ? null : journalpostDto.getSkjerming()
+						.getSafSkjerming()
+						.name())
 				.datoOpprettet(journalpostDto.getDatoOpprettet() == null ? INVALID_DATE : LocalDateTime.from(journalpostDto.getDatoOpprettet()
 						.toInstant()
 						.atZone(ZoneId.systemDefault())))
@@ -94,15 +97,22 @@ public class JournalpostDtoMapper {
 						.brevkode(mapBrevkode(journalpostDto, dokumentInfoDto))
 						.dokumentstatus(mapDokumentstatus(dokumentInfoDto))
 						.datoFerdigstilt(dokumentInfoDto.getDatoFerdigstilt() == null ? null :
-								LocalDateTime.from(dokumentInfoDto.getDatoFerdigstilt().toInstant().atZone(ZoneId.systemDefault())))
-						.originalJournalpostId(dokumentInfoDto.getOrigJournalpostId() == null ? null : dokumentInfoDto.getOrigJournalpostId().toString())
-						.skjerming(dokumentInfoDto.getSkjerming() == null ? null : dokumentInfoDto.getSkjerming().getSafSkjerming().name())
+								LocalDateTime.from(dokumentInfoDto.getDatoFerdigstilt()
+										.toInstant()
+										.atZone(ZoneId.systemDefault())))
+						.originalJournalpostId(dokumentInfoDto.getOrigJournalpostId() == null ? null : dokumentInfoDto.getOrigJournalpostId()
+								.toString())
+						.skjerming(dokumentInfoDto.getSkjerming() == null ? null : dokumentInfoDto.getSkjerming()
+								.getSafSkjerming()
+								.name())
 						.dokumentvarianter(dokumentInfoDto.getVarianter().stream()
 								.map(variantDto -> Dokumentvariant.builder()
 										.saksbehandlerHarTilgang(determineSaksbehandlerTilgang(journalpost, dokumentInfoDto, variantDto, requestCache))
 										.variantformat(variantDto.getVariantf().getSafVariantformat())
 										.filnavn(variantDto.getFilnavn())
-										.skjerming(variantDto.getSkjerming() == null ? null : variantDto.getSkjerming().getSafSkjerming().name())
+										.skjerming(variantDto.getSkjerming() == null ? null : variantDto.getSkjerming()
+												.getSafSkjerming()
+												.name())
 										.build())
 								.collect(Collectors.toList()))
 						.logiskeVedlegg(dokumentInfoDto.getLogiske().stream()
@@ -156,10 +166,32 @@ public class JournalpostDtoMapper {
 	private AvsenderMottaker mapAvsenderMottaker(JournalpostDto journalpostDto) {
 		return AvsenderMottaker.builder()
 				.id(journalpostDto.getAvsenderMottakerId())
+				.type(mapAvsenderMottakerIdType(journalpostDto.getAvsenderMottakerId()))
 				.navn(journalpostDto.getAvsenderMottakerNavn())
 				.land(journalpostDto.getAvsenderMottakerLand())
 				.erLikBruker(mapErLikBruker(journalpostDto.getAvsenderMottakerId(), journalpostDto.getBruker()))
 				.build();
+	}
+
+	private AvsenderMottakerIdType mapAvsenderMottakerIdType(String avsenderMottakerId) {
+		AvsenderMottakerIdType avsenderMottakerIdType;
+		if (avsenderMottakerId == null) {
+			return AvsenderMottakerIdType.NULL;
+		} else {
+			switch (avsenderMottakerId.length()) {
+				case 11:
+					avsenderMottakerIdType = AvsenderMottakerIdType.FNR;
+					break;
+				case 9:
+					avsenderMottakerIdType = AvsenderMottakerIdType.ORGNR;
+					break;
+				default:
+					avsenderMottakerIdType = AvsenderMottakerIdType.UKJENT;
+					break;
+			}
+		}
+		return avsenderMottakerIdType;
+
 	}
 
 	private boolean mapErLikBruker(String avsenderMottakerId, BrukerDto brukerDto) {

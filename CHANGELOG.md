@@ -8,6 +8,10 @@ Alle nevneverdige endringer blir dokumentert her.
 
 Denne malen er basert på [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [5.1.2] - 2019-05-27
+### Endret
+* `GraphQl: ` Type `AvsenderMottaker` . Nytt felt `avsenderMottakerIdType` 
+
 ## [5.1.1] - 2019-05-24
 ### Rettet
 * Filtrerer bort journalposter med Tema `CON`.

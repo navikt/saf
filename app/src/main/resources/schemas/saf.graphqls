@@ -288,6 +288,9 @@ type AvsenderMottaker {
     # * Normalt et fødselsnummer eller organisasjonsnummer.
     id: String
 
+    # Identifikatortypen til parten som er avsender eller mottaker av dokumentene på journalposten.
+    type: AvsenderMottakerIdType
+
     # Navnet på personen eller organisasjonen som er avsender eller mottaker av dokumentene på journalposten.
     navn: String
 
@@ -729,4 +732,19 @@ enum Dokumentstatus {
 enum Tilknytning {
     # Ved tilknytningstype 'Gjenbruk', deler to journalposter samme dokumentInfo og underliggende dokumenter. Dette vil typisk være tilfelle når et inngående dokument journalføres på flere saker/brukere.
     GJENBRUK
+}
+
+# Indikator på hvilken type id som brukes i spørringen.
+enum AvsenderMottakerIdType {
+    # Folkeregisterets fødselsnummer eller d-nummer for en person.
+    FNR
+
+    # Foretaksregisterets organisasjonsnummer for en juridisk person.
+    ORGNR
+
+    # AvsenderMottakerId er tom
+     NULL
+
+    # Ukjent IdType
+     UKJENT
 }
