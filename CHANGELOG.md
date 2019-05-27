@@ -12,6 +12,18 @@ Denne malen er basert på [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 ### Endret
 * `GraphQl: ` Type `AvsenderMottaker` . Nytt felt `avsenderMottakerIdType` 
 
+## [5.1.1] - 2019-05-24
+### Rettet
+* Filtrerer bort journalposter med Tema `CON`.
+
+## [5.1.0] - 2019-05-22
+### Endret
+* `GraphQL: ` Enum `Dokumentstatus`. Ny verdi `KASSERT`.
+
+## [5.0.0] - 2019-05-15
+### Rettet
+* Tema `OKO` korrigeres til Tema `STO` for saker og journalposter.
+
 ## [4.5.7] - 2019-04-24
 ### Endret
 * `GraphQL: ` Type `DokumentInfo`. Feltet `brevkode` er endret til å betinget returnere dokumenttypeId fra fagarkivet hvis `Journalpost.journalposttype` har `Journalposttype.U` og feltet er satt i fagarkivet.

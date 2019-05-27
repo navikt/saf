@@ -2,6 +2,7 @@ package no.nav.saf.anticorruptionlayer.joark;
 
 import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.anticorruptionlayer.joark.domain.SafToJoarkJournalstatusMapper;
+import no.nav.saf.anticorruptionlayer.joark.domain.kode.FagomradeCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.JournalpostTypeCode;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.HentJournalsakinfo;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.dto.JournalpostDto;
@@ -60,6 +61,8 @@ class JoarkAntiCorruptionLayerImpl implements JoarkAntiCorruptionLayer {
 				.foerPeker(foerPeker)
 				.build());
 
-		return responseTo.getTilgangJournalposter();
+		return responseTo.getTilgangJournalposter().stream()
+				.filter(journalpostDto -> FagomradeCode.isValid(journalpostDto.getFagomrade()))
+				.collect(Collectors.toList());
 	}
 }

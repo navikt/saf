@@ -15,5 +15,10 @@ public enum Dokumentstatus {
 	/**
 	 * Dokumentet er avbrutt
 	 */
-	AVBRUTT;
+	AVBRUTT,
+
+	/**
+	 * Dokumentet er kassert
+	 */
+	KASSERT;
 }
