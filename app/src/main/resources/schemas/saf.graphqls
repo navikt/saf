@@ -357,6 +357,10 @@ type Dokumentvariant {
     # Navnet på filen i arkivet. Navnet vil i de fleste tilfeller være autogenerert ved arkivering.
     filnavn: String
 
+    # Unik identifikator per fil.
+    # * NB: Feltet skal kun brukes etter avtale med Team Dokument.
+    filuuid: String @deprecated(reason: "Feltet er deprekert og vil bli fjernet i fremtiden. Feltet skal kun brukes etter avtale med Team Dokument.")
+
     # Sier hvorvidt saksbehandler som gjør oppslaget vil få tilgang til å åpne denne dokumentvarianten.
     # * Dersom verdien er false, vil tilgang bli avslått dersom saksbehandler forsøker å åpne dokumentet.
     saksbehandlerHarTilgang: Boolean!

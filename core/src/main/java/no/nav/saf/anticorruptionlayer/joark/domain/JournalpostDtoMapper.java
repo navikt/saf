@@ -110,6 +110,7 @@ public class JournalpostDtoMapper {
 										.saksbehandlerHarTilgang(determineSaksbehandlerTilgang(journalpost, dokumentInfoDto, variantDto, requestCache))
 										.variantformat(variantDto.getVariantf().getSafVariantformat())
 										.filnavn(variantDto.getFilnavn())
+										.filuuid(variantDto.getFiluuid())
 										.skjerming(variantDto.getSkjerming() == null ? null : variantDto.getSkjerming()
 												.getSafSkjerming()
 												.name())
