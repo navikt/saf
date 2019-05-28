@@ -38,12 +38,11 @@ import no.nav.saf.domain.kode.Journalstatus;
 import no.nav.saf.domain.kode.Kanal;
 import no.nav.saf.domain.kode.Tema;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
+import no.nav.saf.domain.visningsmodell.AvsenderMottakerIdType;
 import no.nav.saf.domain.visningsmodell.DokumentInfo;
 import no.nav.saf.domain.visningsmodell.Dokumentvariant;
 import no.nav.saf.domain.visningsmodell.Journalpost;
 import no.nav.saf.domain.visningsmodell.RelevantDato;
-import no.nav.saf.domain.visningsmodell.AvsenderMottakerIdType;
-
 import no.nav.saf.tilgangskontroll.RequestCache;
 import no.nav.saf.tilgangskontroll.validation.OidcValidatorTool;
 import org.assertj.core.api.Assertions;
@@ -105,6 +104,8 @@ class JournalpostDtoMapperTest {
 	private static final String LOGISK_VEDLEGG_ID = "logisk1";
 	private static final String LOGISK_VEDLEGG_TITTEL = "logisktittel";
 	private static final String DOKUMENTTYPE_ID = "00000001";
+	private static final String FILUUID_1 = "abcd";
+	private static final String FILUUID_2 = "dcba";
 
 	private final JournalpostDtoMapper mapper = new JournalpostDtoMapper();
 
@@ -424,8 +425,8 @@ class JournalpostDtoMapperTest {
 	}
 
 	@Test
-	void shouldMapAvsenderMottakerIdTypeNull(){
-		JournalpostDto journalpostDto =  buildJournalpostDtoInngaaendeType();
+	void shouldMapAvsenderMottakerIdTypeNull() {
+		JournalpostDto journalpostDto = buildJournalpostDtoInngaaendeType();
 		journalpostDto.setAvsenderMottakerId(null);
 
 		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, pep5RequestCache());
@@ -477,11 +478,11 @@ class JournalpostDtoMapperTest {
 		assertThat(dokumentInfo1.getLogiskeVedlegg().get(0).getTittel(), is(LOGISK_VEDLEGG_TITTEL));
 
 		Assertions.assertThat(dokumentInfo1.getDokumentvarianter())
-				.extracting(Dokumentvariant::getVariantformat, Dokumentvariant::getFilnavn, Dokumentvariant::isSaksbehandlerHarTilgang, Dokumentvariant::getSkjerming)
+				.extracting(Dokumentvariant::getVariantformat, Dokumentvariant::getFilnavn, Dokumentvariant::getFiluuid, Dokumentvariant::isSaksbehandlerHarTilgang, Dokumentvariant::getSkjerming)
 				.hasSize(2)
-				.containsExactlyInAnyOrder(tuple(VARIANT_FORMAT_CODE_ARKIV.getSafVariantformat(), FILNAVN_1, false, SKJERMING_TYPE_CODE_POL
+				.containsExactlyInAnyOrder(tuple(VARIANT_FORMAT_CODE_ARKIV.getSafVariantformat(), FILNAVN_1, FILUUID_1, false, SKJERMING_TYPE_CODE_POL
 								.name()),
-						tuple(VARIANT_FORMAT_CODE_SLADDET.getSafVariantformat(), FILNAVN_2, false, null));
+						tuple(VARIANT_FORMAT_CODE_SLADDET.getSafVariantformat(), FILNAVN_2, FILUUID_2, false, null));
 
 		assertEquals(Dokumentstatus.FERDIGSTILT, dokumentInfo1.getDokumentstatus());
 		assertEquals(AKTOER_ID, journalpost.getBruker().getId());
@@ -548,11 +549,13 @@ class JournalpostDtoMapperTest {
 										.skjerming(SKJERMING_TYPE_CODE_POL)
 										.variantf(VARIANT_FORMAT_CODE_ARKIV)
 										.filnavn(FILNAVN_1)
+										.filuuid(FILUUID_1)
 										.build(),
 								VariantDto.builder()
 										.skjerming(null)
 										.variantf(VARIANT_FORMAT_CODE_SLADDET)
 										.filnavn(FILNAVN_2)
+										.filuuid(FILUUID_2)
 										.build()))
 						.build());
 	}

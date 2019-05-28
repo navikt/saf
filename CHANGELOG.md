@@ -8,9 +8,11 @@ Alle nevneverdige endringer blir dokumentert her.
 
 Denne malen er basert på [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## [5.1.2] - 2019-05-27
+## [5.1.2] - 2019-05-28
 ### Endret
-* `GraphQl: ` Type `AvsenderMottaker` . Nytt felt `avsenderMottakerIdType` 
+* `GraphQL: ` Type `Dokumentvariant`. Nytt felt `filuuid` for å støtte legacy funksjonalitet i en overgangsperiode.
+* `GraphQl: ` Type `AvsenderMottaker` . Nytt felt `avsenderMottakerIdType`
+* `GraphQL: ` Ny Enum `AvsenderMottakerIdType`. 
 
 ## [5.1.1] - 2019-05-24
 ### Rettet
