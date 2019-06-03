@@ -14,6 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import no.nav.saf.anticorruptionlayer.joark.domain.kode.AvsenderMottakerIdTypeCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.DokumentStatusCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.FagomradeCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.FagsystemCode;
@@ -86,6 +87,7 @@ class JournalpostDtoMapperTest {
 	private static final String ORG_NR = "54321";
 	private static final String ARKIVSAK_NR = "1337";
 	private static final FagsystemCode FAKSYSTEM_CODE = FagsystemCode.FS22;
+	private static final AvsenderMottakerIdTypeCode AVSENDER_MOTTAKER_ID_TYPE_CODE = AvsenderMottakerIdTypeCode.FNR;
 
 	private static final FagomradeCode FAGOMRADE = FagomradeCode.STO;
 	private static final String JOURNALFOERT_AV = "Automatisk jobb";
@@ -432,6 +434,17 @@ class JournalpostDtoMapperTest {
 		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, pep5RequestCache());
 
 		assertThat(journalpost.getAvsenderMottaker().getType(), is(AvsenderMottakerIdType.NULL));
+
+	}
+
+	@Test
+	void shouldMapAvsenderMottakerIdTypeFNR(){
+		JournalpostDto journalpostDto =  buildJournalpostDtoInngaaendeType();
+		journalpostDto.setAvsenderMottakerIdTypeCode(AVSENDER_MOTTAKER_ID_TYPE_CODE);
+
+		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, pep5RequestCache());
+
+		assertThat(journalpost.getAvsenderMottaker().getType(), is(AvsenderMottakerIdType.FNR));
 
 	}
 
