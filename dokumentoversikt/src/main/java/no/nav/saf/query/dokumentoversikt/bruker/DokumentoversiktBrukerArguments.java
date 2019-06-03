@@ -21,7 +21,7 @@ public class DokumentoversiktBrukerArguments extends AbstractDokumentoversiktArg
 
 	public DokumentoversiktBrukerArguments(BrukerIdInput brukerIdInput,
 										   DokumentoversiktFilters filters,
-										   DokumentoversiktPagination.Pagination pagination) {
+										   DokumentoversiktPagination.SeekPagination pagination) {
 		super(filters, pagination);
 		this.brukerIdInput = brukerIdInput;
 	}

@@ -27,7 +27,6 @@ import no.nav.saf.domain.visningsmodell.Journalpost;
 import no.nav.saf.metrics.Monitor;
 import no.nav.saf.query.dokumentoversikt.DokumentoversiktVisningsmodellRepository;
 import no.nav.saf.query.dokumentoversikt.SideInfoMapper;
-import no.nav.saf.query.dokumentoversikt.arguments.DokumentoversiktPagination;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.pep.Pep;
 import org.springframework.stereotype.Component;
@@ -120,10 +119,10 @@ class DokumentoversiktBrukerCoordinatorImpl implements DokumentoversiktBrukerCoo
 				dokumentoversiktBrukerArguments.getFilters().getFraDato(),
 				dokumentoversiktBrukerArguments.getFilters().getJournalposttyper(),
 				dokumentoversiktBrukerArguments.getFilters().getJournalstatuser(),
-				((DokumentoversiktPagination.SeekPagination) dokumentoversiktBrukerArguments.getPagination()).getFoerste(),
-				((DokumentoversiktPagination.SeekPagination) dokumentoversiktBrukerArguments.getPagination()).getEtterPeker(),
-				((DokumentoversiktPagination.SeekPagination) dokumentoversiktBrukerArguments.getPagination()).getSiste(),
-				((DokumentoversiktPagination.SeekPagination) dokumentoversiktBrukerArguments.getPagination()).getFoerPeker(),
+				dokumentoversiktBrukerArguments.getPagination().getFoerste(),
+				dokumentoversiktBrukerArguments.getPagination().getEtterPeker(),
+				dokumentoversiktBrukerArguments.getPagination().getSiste(),
+				dokumentoversiktBrukerArguments.getPagination().getFoerPeker(),
 				safRequestContext
 		);
 
@@ -165,7 +164,7 @@ class DokumentoversiktBrukerCoordinatorImpl implements DokumentoversiktBrukerCoo
 
 		return Dokumentoversikt.builder()
 				.journalposter(visningJournalposter)
-				.sideInfo(sideInfoMapper.mapSideInfo(visningJournalposter, safRequestContext))
+				.sideInfo(sideInfoMapper.mapSideInfo(dokumentoversiktBrukerArguments.getPagination(), visningJournalposter, safRequestContext))
 				.build();
 	}
 

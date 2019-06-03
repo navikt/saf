@@ -3,6 +3,7 @@ package no.nav.saf.query.dokumentoversikt;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.dto.JournalpostDto;
 import no.nav.saf.domain.visningsmodell.Journalpost;
 import no.nav.saf.domain.visningsmodell.SideInfo;
+import no.nav.saf.query.dokumentoversikt.arguments.DokumentoversiktPagination;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 
 import java.util.Base64;
@@ -12,14 +13,14 @@ import java.util.List;
  * @author Joakim Bjørnstad, Jbit AS
  */
 public class SideInfoMapper {
-	public SideInfo mapSideInfo(List<Journalpost> journalposter, SafRequestContext safRequestContext) {
-		if(journalposter.isEmpty()) {
+	public SideInfo mapSideInfo(DokumentoversiktPagination.SeekPagination pagination, List<Journalpost> journalposter, SafRequestContext safRequestContext) {
+		if (journalposter.isEmpty()) {
 			return SideInfo.empty();
 		}
 		String sluttJournalpostId = sluttJournalpostId(journalposter);
 		return new SideInfo(
 				base64(sluttJournalpostId),
-				finnesNesteSide(sluttJournalpostId, safRequestContext)
+				finnesNesteSide(pagination.getFoerste(), journalposter, sluttJournalpostId, safRequestContext)
 		);
 	}
 
@@ -28,14 +29,23 @@ public class SideInfoMapper {
 	}
 
 	private String base64(String journalpostId) {
-		if(journalpostId == null) {
+		if (journalpostId == null) {
 			return null;
 		}
 		return Base64.getEncoder().encodeToString(journalpostId.getBytes());
 	}
 
-	private boolean finnesNesteSide(String sluttJournalpostId, SafRequestContext safRequestContext) {
-		JournalpostDto journalpostDto = safRequestContext.getRequestCache().getObject(sluttJournalpostId);
-		return journalpostDto.getNextJournalpostId() != null && !journalpostDto.getJournalpostId().equals(journalpostDto.getNextJournalpostId());
+	private boolean finnesNesteSide(int foerste, List<Journalpost> journalposter, String sluttJournalpostId, SafRequestContext safRequestContext) {
+		if (journalposter.size() < foerste) {
+			return false;
+		} else {
+			JournalpostDto journalpostDto = safRequestContext.getRequestCache().getObject(sluttJournalpostId);
+			Long nextJournalpostId = journalpostDto.getNextJournalpostId();
+			return finnesNesteJournalpostId(journalpostDto, nextJournalpostId);
+		}
+	}
+
+	private boolean finnesNesteJournalpostId(JournalpostDto journalpostDto, Long nextJournalpostId) {
+		return nextJournalpostId != null && !journalpostDto.getJournalpostId().equals(nextJournalpostId);
 	}
 }
