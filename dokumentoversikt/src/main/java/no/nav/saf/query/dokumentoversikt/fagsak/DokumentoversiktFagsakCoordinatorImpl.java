@@ -23,7 +23,6 @@ import no.nav.saf.domain.visningsmodell.Journalpost;
 import no.nav.saf.metrics.Monitor;
 import no.nav.saf.query.dokumentoversikt.DokumentoversiktVisningsmodellRepository;
 import no.nav.saf.query.dokumentoversikt.SideInfoMapper;
-import no.nav.saf.query.dokumentoversikt.arguments.DokumentoversiktPagination;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.pep.Pep;
 import no.nav.saf.tjeneste.argumenter.FagsakInput;
@@ -114,10 +113,10 @@ class DokumentoversiktFagsakCoordinatorImpl implements DokumentoversiktFagsakCoo
 				dokumentoversiktFagsakArguments.getFilters().getFraDato(),
 				dokumentoversiktFagsakArguments.getFilters().getJournalposttyper(),
 				dokumentoversiktFagsakArguments.getFilters().getJournalstatuser(),
-				((DokumentoversiktPagination.SeekPagination) dokumentoversiktFagsakArguments.getPagination()).getFoerste(),
-				((DokumentoversiktPagination.SeekPagination) dokumentoversiktFagsakArguments.getPagination()).getEtterPeker(),
-				((DokumentoversiktPagination.SeekPagination) dokumentoversiktFagsakArguments.getPagination()).getSiste(),
-				((DokumentoversiktPagination.SeekPagination) dokumentoversiktFagsakArguments.getPagination()).getFoerPeker(),
+				dokumentoversiktFagsakArguments.getPagination().getFoerste(),
+				dokumentoversiktFagsakArguments.getPagination().getEtterPeker(),
+				dokumentoversiktFagsakArguments.getPagination().getSiste(),
+				dokumentoversiktFagsakArguments.getPagination().getFoerPeker(),
 				safRequestContext);
 
 		final List<TilgangJournalpost> filteredTilgangJournalpostList = Flowable.fromIterable(tilgangJournalpostList)
@@ -153,7 +152,7 @@ class DokumentoversiktFagsakCoordinatorImpl implements DokumentoversiktFagsakCoo
 				.stream().filter(j -> dokumentoversiktFagsakArguments.getFilters().getTema().contains(j.getTema())).collect(Collectors.toList());;
 		return Dokumentoversikt.builder()
 				.journalposter(journalposter)
-				.sideInfo(sideInfoMapper.mapSideInfo(journalposter, safRequestContext))
+				.sideInfo(sideInfoMapper.mapSideInfo(dokumentoversiktFagsakArguments.getPagination(), journalposter, safRequestContext))
 				.build();
 	}
 

@@ -11,11 +11,8 @@ public final class DokumentoversiktPagination {
 		// ingen instansiering
 	}
 
-	public interface Pagination {
-	}
-
 	@Value
-	public static class SeekPagination implements Pagination {
+	public static class SeekPagination {
 		private final Integer foerste;
 		private final String etterPeker;
 		// det er ikke noe behov for å paginere bakover
@@ -26,7 +23,7 @@ public final class DokumentoversiktPagination {
 		private final String foerPeker;
 	}
 
-	public static Pagination create(DataFetchingEnvironment environment) {
+	public static SeekPagination create(DataFetchingEnvironment environment) {
 		if (environment.getArgument("foerste") == null) {
 			throw new IllegalArgumentException("Du må angi en `foerste` verdi for å paginere.");
 		}

@@ -8,9 +8,9 @@ import lombok.Data;
 @Data
 public abstract class AbstractDokumentoversiktArguments {
 	private final DokumentoversiktFilters filters;
-	private final DokumentoversiktPagination.Pagination pagination;
+	private final DokumentoversiktPagination.SeekPagination pagination;
 
-	protected AbstractDokumentoversiktArguments(DokumentoversiktFilters filters, DokumentoversiktPagination.Pagination pagination) {
+	protected AbstractDokumentoversiktArguments(DokumentoversiktFilters filters, DokumentoversiktPagination.SeekPagination pagination) {
 		this.filters = filters;
 		this.pagination = pagination;
 	}

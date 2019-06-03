@@ -20,7 +20,7 @@ public class DokumentoversiktFagsakArguments extends AbstractDokumentoversiktArg
 
 	public DokumentoversiktFagsakArguments(FagsakInput fagsakInput,
 										   DokumentoversiktFilters filters,
-										   DokumentoversiktPagination.Pagination pagination) {
+										   DokumentoversiktPagination.SeekPagination pagination) {
 		super(filters, pagination);
 		this.fagsakInput = fagsakInput;
 	}
