@@ -36,20 +36,21 @@ public class Pep5Impl implements Pep<TilgangDokumentInfo> {
 	}
 
 	@Override
-	public boolean hasAccess(TilgangDokumentInfo ressurs, SafRequestContext safRequestContext) {
+	public XacmlResponse verifyAccessXacmlResponse(TilgangDokumentInfo ressurs, SafRequestContext safRequestContext) {
 		if (ressurs == null) {
 			log.warn("Pep5 mangler tilstrekkelig datagrunnlag for å kunne gjennomføre tilgangskontroll");
-			return false;
+			return XacmlResponse.deny();
 		}
 
 		String tilgangKeyLocalCaching = KeyGeneratorLocalCaching.getKeyForPep5(ressurs.getJournalpostId(), ressurs.getDokumentInfoId());
 		if (isSkjermingPresent(ressurs)) {
-			boolean decide = decide(hasDokumentAccess(ressurs, safRequestContext));
+			XacmlResponse response = hasDokumentAccess(ressurs, safRequestContext);
+			boolean decide = decide(response.getDecision());
 			safRequestContext.getRequestCache().putObject(tilgangKeyLocalCaching, decide);
-			return decide;
+			return response;
 		} else {
 			safRequestContext.getRequestCache().putObject(tilgangKeyLocalCaching, true);
-			return true;
+			return XacmlResponse.permit();
 		}
 	}
 
@@ -57,7 +58,7 @@ public class Pep5Impl implements Pep<TilgangDokumentInfo> {
 		return Decision.PERMIT.equals(decision);
 	}
 
-	private Decision hasDokumentAccess(TilgangDokumentInfo ressurs, SafRequestContext safRequestContext) {
+	private XacmlResponse hasDokumentAccess(TilgangDokumentInfo ressurs, SafRequestContext safRequestContext) {
 		XacmlRequest request = SafXacmlRequestFactory.create(safRequestContext.getSecurityContext().getOidcTokenBody());
 		request.resource(RESOURCE_FELLES_RESOURCE_TYPE, RESOURCE_SAF_DOKUMENT_METADATA);
 		request.resource(RESOURCE_SAF_SKJERMING, ressurs.getSkjerming().name());
@@ -66,7 +67,7 @@ public class Pep5Impl implements Pep<TilgangDokumentInfo> {
 		XacmlResponse response = abacService.evaluate(request);
 		Pep.traceLogPepFinished(PEP5, ressurs);
 
-		return response.getDecision();
+		return response;
 	}
 
 	private boolean isSkjermingPresent(TilgangDokumentInfo ressurs) {

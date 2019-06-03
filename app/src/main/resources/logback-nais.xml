@@ -18,7 +18,7 @@
 
 	<appender name="sporbarhetslogg" class="com.papertrailapp.logback.Syslog4jAppender">
 		<layout class="ch.qos.logback.classic.PatternLayout">
-			<pattern>[%d, %-5p, %C:%L] - [%X{user},%X{transaction},%X{applicationKey}] - %m%n</pattern>
+			<pattern>[%d, %X{correlationId}] - %m%n</pattern>
 		</layout>
 
 		<syslogConfig class="org.productivity.java.syslog4j.impl.net.tcp.TCPNetSyslogConfig">
@@ -31,6 +31,24 @@
 
 	<logger level="INFO" name="sporbarhetslogg" additivity="false">
 		<appender-ref ref="sporbarhetslogg"/>
+	</logger>
+
+	<appender name="hentdokument_sporbarhetslogg" class="com.papertrailapp.logback.Syslog4jAppender">
+		<layout class="ch.qos.logback.classic.PatternLayout">
+			<pattern>[%d, %X{correlationId}] - %m%n</pattern>
+		</layout>
+		correlationId
+
+		<syslogConfig class="org.productivity.java.syslog4j.impl.net.tcp.TCPNetSyslogConfig">
+			<host>audit.nais</host>
+			<port>6514</port>
+			<ident>saf_audit_hentdokument</ident>
+			<maxMessageLength>128000</maxMessageLength>
+		</syslogConfig>
+	</appender>
+
+	<logger level="INFO" name="hentdokument_sporbarhetslogg" additivity="false">
+		<appender-ref ref="hentdokument_sporbarhetslogg"/>
 	</logger>
 
 	<root level="WARN">

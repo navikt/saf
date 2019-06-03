@@ -21,7 +21,7 @@ import no.nav.saf.domain.tilgangsmodell.TilgangDokumentvariant;
 import no.nav.saf.domain.tilgangsmodell.TilgangJournalpost;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 import no.nav.saf.domain.visningsmodell.Journalpost;
-import no.nav.saf.exceptions.TilgangskontrollException;
+import no.nav.saf.exceptions.JournalpostTilgangskontrollException;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.pep.Pep;
 import org.springframework.stereotype.Component;
@@ -83,7 +83,7 @@ public class JournalpostCoordinatorImpl implements JournalpostCoordinator {
 		boolean pep1Access = pep1.hasAccess(tilgangBruker, safRequestContext);
 		if (!pep1Access) {
 			// Vi informerer ikke om hvorfor pga kode6/7/egen ansatt
-			throw new TilgangskontrollException(PEP1G_ERRORMESSAGE);
+			throw new JournalpostTilgangskontrollException(PEP1G_ERRORMESSAGE);
 		}
 
 		final TilgangSak tilgangSak = journalpostTilgangRepository.findTilgangSak(arkivsak.getArkivsaksnummer(), arkivsak
@@ -91,7 +91,7 @@ public class JournalpostCoordinatorImpl implements JournalpostCoordinator {
 
 		boolean pep2Access = pep2.hasAccess(tilgangSak, safRequestContext);
 		if (!pep2Access) {
-			throw new TilgangskontrollException(PEP2_ERRORMESSAGE);
+			throw new JournalpostTilgangskontrollException(PEP2_ERRORMESSAGE);
 		}
 
 		final TilgangJournalpost tilgangJournalpost = journalpostTilgangRepository.findTilgangJournalpostFromSafRequestContext(safRequestContext, tilgangSak);
@@ -101,12 +101,12 @@ public class JournalpostCoordinatorImpl implements JournalpostCoordinator {
 
 		boolean pep3Access = pep3.hasAccess(tilgangSak, safRequestContext);
 		if (!pep3Access) {
-			throw new TilgangskontrollException(PEP3_ERRORMESSAGE);
+			throw new JournalpostTilgangskontrollException(PEP3_ERRORMESSAGE);
 		}
 
 		boolean pep4Access = pep4.hasAccess(tilgangJournalpost, safRequestContext);
 		if (!pep4Access) {
-			throw new TilgangskontrollException(PEP4_ERRORMESSAGE);
+			throw new JournalpostTilgangskontrollException(PEP4_ERRORMESSAGE);
 		}
 
 		tilgangJournalpost.getDokumenter().forEach(tilgangDokumentInfo -> {

@@ -10,7 +10,6 @@ import no.nav.saf.domain.kode.Tema;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlRequest;
-import no.nav.saf.tilgangskontroll.abac.dto.response.Decision;
 import no.nav.saf.tilgangskontroll.abac.dto.response.XacmlResponse;
 import no.nav.saf.tilgangskontroll.abac.service.AbacService;
 import org.springframework.stereotype.Component;
@@ -36,19 +35,19 @@ public class Pep3Impl implements Pep<TilgangSak> {
 	}
 
 	@Override
-	public boolean hasAccess(TilgangSak ressurs, SafRequestContext safRequestContext) {
+	public XacmlResponse verifyAccessXacmlResponse(TilgangSak ressurs, SafRequestContext safRequestContext) {
 		if (ressurs == null || ressurs.getRelevanteTredjeparter() == null) {
 			log.warn("Pep3 mangler data om sak. Tilgang gis likevel for at saksbehandler skal kunne knytte dokument til sak og bruker.");
-			return true;
+			return XacmlResponse.permit();
 		}
 
 		if (hasMetadataAccess(ressurs)) {
 			if (hasNotRelevanteTredjeparter(ressurs)) {
-				return true;
+				return XacmlResponse.permit();
 			}
 			XacmlRequest request = SafXacmlRequestFactory.create(safRequestContext.getSecurityContext().getOidcTokenBody());
 			request.resource(RESOURCE_FELLES_RESOURCE_TYPE, RESOURCE_SAF_TREDJEPART);
-			ressurs.getRelevanteTredjeparter().stream()
+			ressurs.getRelevanteTredjeparter()
 					.forEach(tilgangRelevantTredjepart -> request.resource(RESOURCE_FELLES_PERSON_FNR, tilgangRelevantTredjepart
 							.getIdent().getIdentifikator()));
 
@@ -56,9 +55,9 @@ public class Pep3Impl implements Pep<TilgangSak> {
 			XacmlResponse response = abacService.evaluate(request);
 			Pep.traceLogPepFinished(PEP3, ressurs);
 
-			return Decision.PERMIT.equals(response.getDecision());
+			return response;
 		} else {
-			return true;
+			return XacmlResponse.permit();
 		}
 	}
 

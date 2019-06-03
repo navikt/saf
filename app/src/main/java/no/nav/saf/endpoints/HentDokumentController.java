@@ -6,7 +6,7 @@ import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.Authorization;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.domain.HentDokument;
-import no.nav.saf.exceptions.TilgangskontrollException;
+import no.nav.saf.exceptions.HentdokumentTilgangskontrollException;
 import no.nav.saf.hentdokument.HentDokumentDomainCoordinator;
 import no.nav.saf.metrics.Monitor;
 import no.nav.saf.swagger.SwaggerRestHentDokument;
@@ -64,7 +64,7 @@ public class HentDokumentController {
 					.contentType(response.getMediaType())
 					.header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=" + dokumentInfoId + "_" + variantFormat + response.getExtension())
 					.body(response.getDokument());
-		} catch(TilgangskontrollException e) {
+		} catch(HentdokumentTilgangskontrollException e) {
 			log.warn("hentDokument hentet ikke dokument. journalpostId={}, dokumentInfoId={}, variantFormat={}. Tilgang ble avvist av policy: " + e.getMessage(), journalpostId, dokumentInfoId, variantFormat);
 			throw e;
 		}
