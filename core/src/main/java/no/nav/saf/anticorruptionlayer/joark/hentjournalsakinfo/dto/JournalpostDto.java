@@ -33,7 +33,7 @@ public class JournalpostDto {
 	private String behandlingstemanavn;
 	private JournalStatusCode journalstatus;
 	private String avsenderMottakerId;
-	private AvsenderMottakerIdTypeCode avsenderMottakerIdTypeCode;
+	private AvsenderMottakerIdTypeCode avsenderMottakerIdType;
 	private String avsenderMottakerNavn;
 	private String avsenderMottakerLand;
 	private String journalforendeEnhet;
