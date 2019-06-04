@@ -746,6 +746,12 @@ enum AvsenderMottakerIdType {
     # Foretaksregisterets organisasjonsnummer for en juridisk person.
     ORGNR
 
+    # Helsepersonellregisterets identifikator for leger og annet helsepersonell.
+     HPRNR
+
+    # Unik identifikator for utenlandske institusjoner / organisasjoner. Identifikatorene vedlikeholdes i EUs institusjonskatalog.
+     UTL_ORG
+
     # AvsenderMottakerId er tom
      NULL
 

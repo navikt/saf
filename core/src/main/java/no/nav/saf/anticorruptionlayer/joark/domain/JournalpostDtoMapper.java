@@ -168,7 +168,7 @@ public class JournalpostDtoMapper {
 	private AvsenderMottaker mapAvsenderMottaker(JournalpostDto journalpostDto) {
 		return AvsenderMottaker.builder()
 				.id(journalpostDto.getAvsenderMottakerId())
-				.type(mapAvsenderMottakerIdType(journalpostDto.getAvsenderMottakerId(), journalpostDto.getAvsenderMottakerIdTypeCode()))
+				.type(mapAvsenderMottakerIdType(journalpostDto.getAvsenderMottakerId(), journalpostDto.getAvsenderMottakerIdType()))
 				.navn(journalpostDto.getAvsenderMottakerNavn())
 				.land(journalpostDto.getAvsenderMottakerLand())
 				.erLikBruker(mapErLikBruker(journalpostDto.getAvsenderMottakerId(), journalpostDto.getBruker()))

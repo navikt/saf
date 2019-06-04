@@ -440,7 +440,7 @@ class JournalpostDtoMapperTest {
 	@Test
 	void shouldMapAvsenderMottakerIdTypeFNR(){
 		JournalpostDto journalpostDto =  buildJournalpostDtoInngaaendeType();
-		journalpostDto.setAvsenderMottakerIdTypeCode(AVSENDER_MOTTAKER_ID_TYPE_CODE);
+		journalpostDto.setAvsenderMottakerIdType(AVSENDER_MOTTAKER_ID_TYPE_CODE);
 
 		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, pep5RequestCache());
 
