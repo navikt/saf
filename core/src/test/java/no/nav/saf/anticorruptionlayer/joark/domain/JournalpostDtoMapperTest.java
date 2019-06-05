@@ -37,6 +37,7 @@ import no.nav.saf.domain.kode.Dokumentstatus;
 import no.nav.saf.domain.kode.Journalposttype;
 import no.nav.saf.domain.kode.Journalstatus;
 import no.nav.saf.domain.kode.Kanal;
+import no.nav.saf.domain.kode.Skjerming;
 import no.nav.saf.domain.kode.Tema;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.domain.visningsmodell.AvsenderMottakerIdType;
@@ -227,6 +228,17 @@ class JournalpostDtoMapperTest {
 
 		assertEquals(ARKIVSAK_NR, journalpost.getSak().getArkivsaksnummer());
 		assertEquals(Arkivsakssystem.PSAK.name(), journalpost.getSak().getArkivsaksystem().name());
+	}
+
+	@Test
+	void shouldMapJournalpostSkjermingType() {
+		JournalpostDto journalpostDto = buildJournalpostDtoPenSaksrelasjonDto();
+		journalpostDto.setSkjerming(SkjermingTypeCode.FEIL);
+		RequestCache requestCache = createTilgangBrukerRequestCachePSAK();
+
+		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, requestCache);
+
+		assertEquals(Skjerming.FEIL, journalpost.getSkjerming());
 	}
 
 	@Test

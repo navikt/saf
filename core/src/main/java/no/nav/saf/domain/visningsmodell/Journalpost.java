@@ -5,6 +5,7 @@ import lombok.Value;
 import no.nav.saf.domain.kode.Journalposttype;
 import no.nav.saf.domain.kode.Journalstatus;
 import no.nav.saf.domain.kode.Kanal;
+import no.nav.saf.domain.kode.Skjerming;
 import no.nav.saf.domain.kode.Tema;
 
 import java.time.LocalDateTime;
@@ -39,7 +40,7 @@ public class Journalpost {
 	private final String opprettetAvNavn;
 	private final Kanal kanal;
 	private final String kanalnavn;
-	private final String skjerming;
+	private final Skjerming skjerming;
 	private final LocalDateTime datoOpprettet;
 	@Builder.Default
 	private final List<RelevantDato> relevanteDatoer = new ArrayList<>();

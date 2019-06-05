@@ -366,9 +366,17 @@ type Dokumentvariant {
     saksbehandlerHarTilgang: Boolean!
 
     # Uttrykker at tilgangen til metadata for dette dokumentet er begrenset, og at dataene ikke skal brukes i ordinær saksbehandling. De eneste mulige verdiene er foreløpig null og POL, der POL betyr at behandling av dette dokumentet er begrenset som følge av personopplysningsloven (GDPR - brukers rett til å bli glemt)
-    skjerming: String
+    skjerming: SkjermingType
 }
 
+# Beskriver hvorfor journalposten eller dokumentet er skjermet. Det kan komme flere verdier enn disse i fremtiden.
+enum SkjermingType {
+    # Indikerer at det er fattet et vedtak etter personopplysningsloven (GDPR - brukers rett til å bli glemt).
+    POL
+
+    # Indikerer at det har blitt gjort en feil under mottak, journalføring eller brevproduksjon, slik at journalposten eller dokumentene er markert for sletting.
+    FEIL
+}
 # Beskriver en type dato som kan være relevant for en journalpost, for eksempel **DATO_OPPRETTET**. Ulike datotyper returneres for ulike journalstatuser.
 enum Datotype {
     # * Tidspunktet journalposten er opprettet i joark. Tidspunktet settes automatisk og kan ikke overskrives. Selv om hver journalpost har mange datoer (se relevanteDatoer) er datoOpprettet å anse som "fasit" på journalpostens alder.

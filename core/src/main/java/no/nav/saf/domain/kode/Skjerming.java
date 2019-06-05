@@ -7,5 +7,6 @@ public enum Skjerming {
 	/**
 	 * POL
 	 */
-	POL
+	POL,
+	FEIL;
 }

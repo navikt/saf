@@ -4,6 +4,7 @@ import lombok.Builder;
 import lombok.ToString;
 import lombok.Value;
 import no.nav.saf.domain.kode.Dokumentstatus;
+import no.nav.saf.domain.kode.Skjerming;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -25,7 +26,7 @@ public class DokumentInfo {
 	private final Dokumentstatus dokumentstatus;
 	private final LocalDateTime datoFerdigstilt;
 	private final String originalJournalpostId;
-	private final String skjerming;
+	private final Skjerming skjerming;
 	@Builder.Default
 	private final List<LogiskVedlegg> logiskeVedlegg = new ArrayList<>();
 	@Builder.Default
