@@ -12,6 +12,7 @@
 				<exclude>org\.apache\.catalina\..*</exclude>
 				<exclude>org\.springframework\.web\..*</exclude>
 				<exclude>sun\.net\.www\..*</exclude>
+				<exclude>io\.reactivex\.internal\..*</exclude>
 			</throwableConverter>
 		</encoder>
 	</appender>

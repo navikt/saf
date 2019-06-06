@@ -25,6 +25,14 @@ public class XacmlResponse {
 		return Decision.DENY.equals(decision);
 	}
 
+	public static XacmlResponse fromDecision(Decision decision) {
+		if(Decision.PERMIT.equals(decision)) {
+			return PERMIT;
+		} else {
+			return DENY;
+		}
+	}
+
 	public static XacmlResponse permit() {
 		return PERMIT;
 	}

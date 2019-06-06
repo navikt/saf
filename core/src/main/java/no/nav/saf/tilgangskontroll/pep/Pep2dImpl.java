@@ -60,15 +60,25 @@ public class Pep2dImpl implements Pep<TilgangSak> {
 		String tilgangKeyLocalCaching = KeyGeneratorLocalCaching.getKeyForPep2d(ressurs.getTema().name());
 		// Ty-catch er fordi redis ikke fungerer lokalt
 		try {
-			XacmlResponse response = tilgangCache.get(tilgangKeyDistributedCaching,
+			Object response = tilgangCache.get(tilgangKeyDistributedCaching,
 					() -> hasDokumentAccess(ressurs, safRequestContext));
+
 			if(response == null) {
 				return XacmlResponse.deny();
 			}
-			safRequestContext.getRequestCache().putObject(tilgangKeyLocalCaching, decide(response.getDecision()));
-			return response;
+
+			// Bakoverkompatibilitet med produksjon. I en overgangsperiode vil redis cache ha Decision objekter på key.
+			if(response instanceof XacmlResponse) {
+				XacmlResponse xacmlResponse = (XacmlResponse) response;
+				safRequestContext.getRequestCache().putObject(tilgangKeyLocalCaching, decide(xacmlResponse.getDecision()));
+				return xacmlResponse;
+			} else {
+				Decision decision = (Decision) response;
+				safRequestContext.getRequestCache().putObject(tilgangKeyLocalCaching, decide(decision));
+				return XacmlResponse.fromDecision(decision);
+			}
 		} catch (RedisException | PoolException | Cache.ValueRetrievalException e) {
-			XacmlResponse response = hasDokumentAccess(ressurs, safRequestContext);
+			XacmlResponse response = (XacmlResponse) hasDokumentAccess(ressurs, safRequestContext);
 			safRequestContext.getRequestCache().putObject(tilgangKeyLocalCaching, decide(response.getDecision()));
 			return response;
 		} finally {
@@ -80,7 +90,7 @@ public class Pep2dImpl implements Pep<TilgangSak> {
 		return Decision.PERMIT.equals(decision);
 	}
 
-	private XacmlResponse hasDokumentAccess(TilgangSak ressurs, SafRequestContext safRequestContext) {
+	private Object hasDokumentAccess(TilgangSak ressurs, SafRequestContext safRequestContext) {
 		XacmlRequest request = SafXacmlRequestFactory.create(safRequestContext.getSecurityContext().getOidcTokenBody());
 		request.resource(RESOURCE_FELLES_RESOURCE_TYPE, RESOURCE_SAF_SAK_DOKUMENT);
 		request.resource(RESOURCE_SAF_TEMA, ressurs.getTema().name());
