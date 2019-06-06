@@ -51,8 +51,8 @@ public class HentDokumentController {
 	@Monitor(value = "dok_request", extraTags = {"process", "hentDokument", "requestType", "hentDokument"}, histogram = true)
 	public ResponseEntity<byte[]> hentDokument(@ApiParam(name = "journalpostId", value = "Id for aktuell journalpost", required = true) @PathVariable String journalpostId,
 											   @ApiParam(name = "dokumentInfoId", value = "Id for aktuelt dokument", required = true) @PathVariable String dokumentInfoId,
-											   @ApiParam(name = "variantFormat", value = "Format på dokumentet som skal hentes eg. ARKIV, SLADDET m.fl.", required = true) @PathVariable String variantFormat,
-											   @ApiParam(name = X_CORRELATION_ID, value = "(Optional) ID til logging.") @RequestHeader(value = X_CORRELATION_ID, required = false) String xCorrelationId,
+											   @ApiParam(name = "variantFormat", value = "Varianten til dokumentet som skal hentes. [Følg lenken for gyldige verdier](https://confluence.adeo.no/display/BOA/Enum%3A+Variantformat).", required = true) @PathVariable String variantFormat,
+											   @ApiParam(name = X_CORRELATION_ID, value = "(Optional) ID til logging og sporing på tvers av verdikjeder.") @RequestHeader(value = X_CORRELATION_ID, required = false) String xCorrelationId,
 											   @ApiParam(hidden = true) @RequestHeader(value = HttpHeaders.AUTHORIZATION, required = false) String authorizationHeader) {
 		SafRequestContext safRequestContext = new SafRequestContext(authorizationHeader, generateCorrelationIdIfNull(xCorrelationId), oidcValidatorTool);
 		log.info("hentDokument har mottatt kall. journalpostId={}, dokumentInfoId={}, variantFormat={}", journalpostId, dokumentInfoId, variantFormat);
