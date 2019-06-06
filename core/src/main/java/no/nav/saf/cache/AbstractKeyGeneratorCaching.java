@@ -8,10 +8,10 @@ import java.util.stream.Collectors;
  */
 
 abstract class AbstractKeyGeneratorCaching {
-	static final String RESSURSTYPE = "ressurstype";
-	static final String RESSURSTYPE_SAK_DOKUMENT = "sak_dokument";
-	static final String RESSURSTYPE_DOKUMENT_METADATA = "dokument_metadata";
-	static final String RESSURSTYPE_DOKUMENT_FIL = "dokument_fil";
+	static final String RESSURS = "ressurs";
+	static final String RESSURS_SAK_DOKUMENT = "sak_dokument";
+	static final String RESSURS_DOKUMENT_METADATA = "dokument_metadata";
+	static final String RESSURS_DOKUMENT_FIL = "dokument_fil";
 
 	static final String SAKSBEHANDLER_ID = "saksbehandlerId";
 	static final String TEMA = "tema";
