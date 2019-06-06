@@ -75,15 +75,25 @@ public class Pep6dImpl implements Pep<TilgangDokumentvariant> {
 					ressurs.getSkjerming().name());
 
 			try {
-				XacmlResponse response = tilgangCache.get(tilgangKeyDistributedCaching,
+				Object response = tilgangCache.get(tilgangKeyDistributedCaching,
 						() -> hasDokumentFilAccess(ressurs, safRequestContext));
+
 				if(response == null) {
 					return XacmlResponse.deny();
 				}
-				safRequestContext.getRequestCache().putObject(tilgangKeyLocalCaching, decide(response.getDecision()));
-				return response;
+
+				// Bakoverkompatibilitet med produksjon. I en overgangsperiode vil redis cache ha Decision objekter på key.
+				if(response instanceof XacmlResponse) {
+					XacmlResponse xacmlResponse = (XacmlResponse) response;
+					safRequestContext.getRequestCache().putObject(tilgangKeyLocalCaching, decide(xacmlResponse.getDecision()));
+					return xacmlResponse;
+				} else {
+					Decision decision = (Decision) response;
+					safRequestContext.getRequestCache().putObject(tilgangKeyLocalCaching, decide(decision));
+					return XacmlResponse.fromDecision(decision);
+				}
 			} catch (RedisException | PoolException | Cache.ValueRetrievalException e) {
-				XacmlResponse response = hasDokumentFilAccess(ressurs, safRequestContext);
+				XacmlResponse response = (XacmlResponse) hasDokumentFilAccess(ressurs, safRequestContext);
 				safRequestContext.getRequestCache().putObject(tilgangKeyLocalCaching, decide(response.getDecision()));
 				return response;
 			} finally {
@@ -104,7 +114,7 @@ public class Pep6dImpl implements Pep<TilgangDokumentvariant> {
 		return Decision.PERMIT.equals(decision);
 	}
 
-	private XacmlResponse hasDokumentFilAccess(TilgangDokumentvariant ressurs, SafRequestContext safRequestContext) {
+	private Object hasDokumentFilAccess(TilgangDokumentvariant ressurs, SafRequestContext safRequestContext) {
 		XacmlRequest request = SafXacmlRequestFactory.create(safRequestContext.getSecurityContext().getOidcTokenBody());
 		request.resource(RESOURCE_FELLES_RESOURCE_TYPE, RESOURCE_SAF_DOKUMENT_FIL);
 		request.resource(RESOURCE_SAF_SKJERMING, ressurs.getSkjerming().name());
