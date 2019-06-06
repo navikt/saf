@@ -2,6 +2,7 @@ package no.nav.saf.domain.visningsmodell;
 
 import lombok.Builder;
 import lombok.Value;
+import no.nav.saf.domain.kode.Skjerming;
 import no.nav.saf.domain.kode.Variantformat;
 
 /**
@@ -14,5 +15,5 @@ public class Dokumentvariant {
 	private final String filnavn;
 	private final String filuuid;
 	private final boolean saksbehandlerHarTilgang;
-	private final String skjerming;
+	private final Skjerming skjerming;
 }

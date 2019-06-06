@@ -37,6 +37,7 @@ import no.nav.saf.domain.kode.Dokumentstatus;
 import no.nav.saf.domain.kode.Journalposttype;
 import no.nav.saf.domain.kode.Journalstatus;
 import no.nav.saf.domain.kode.Kanal;
+import no.nav.saf.domain.kode.Skjerming;
 import no.nav.saf.domain.kode.Tema;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.domain.visningsmodell.AvsenderMottakerIdType;
@@ -227,6 +228,17 @@ class JournalpostDtoMapperTest {
 
 		assertEquals(ARKIVSAK_NR, journalpost.getSak().getArkivsaksnummer());
 		assertEquals(Arkivsakssystem.PSAK.name(), journalpost.getSak().getArkivsaksystem().name());
+	}
+
+	@Test
+	void shouldMapJournalpostSkjermingType() {
+		JournalpostDto journalpostDto = buildJournalpostDtoPenSaksrelasjonDto();
+		journalpostDto.setSkjerming(SkjermingTypeCode.FEIL);
+		RequestCache requestCache = createTilgangBrukerRequestCachePSAK();
+
+		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, requestCache);
+
+		assertEquals(Skjerming.FEIL, journalpost.getSkjerming());
 	}
 
 	@Test
@@ -440,7 +452,7 @@ class JournalpostDtoMapperTest {
 	@Test
 	void shouldMapAvsenderMottakerIdTypeFNR(){
 		JournalpostDto journalpostDto =  buildJournalpostDtoInngaaendeType();
-		journalpostDto.setAvsenderMottakerIdTypeCode(AVSENDER_MOTTAKER_ID_TYPE_CODE);
+		journalpostDto.setAvsenderMottakerIdType(AVSENDER_MOTTAKER_ID_TYPE_CODE);
 
 		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, pep5RequestCache());
 
@@ -472,7 +484,7 @@ class JournalpostDtoMapperTest {
 		assertEquals(AVSENDER_MOTTAKER_LAND, journalpost.getAvsenderMottakerLand());
 		assertEquals(JOURNALFOERENDE_ENHET, journalpost.getJournalforendeEnhet());
 		assertEquals(OPPRETTET_AV_NAVN, journalpost.getOpprettetAvNavn());
-		assertEquals(SKJERMING_TYPE_CODE_POL.name(), journalpost.getSkjerming());
+		assertEquals(Skjerming.POL, journalpost.getSkjerming());
 
 		assertEquals(LocalDateTime.from(DATO_OPPRETTET.toInstant()
 				.atZone(ZoneId.systemDefault())), LocalDateTime.from(journalpost.getDatoOpprettet()));
@@ -486,15 +498,14 @@ class JournalpostDtoMapperTest {
 		assertThat(dokumentInfo1.getDatoFerdigstilt(), equalTo(LocalDateTime.from(DATO_FERDIGSTILT.toInstant()
 				.atZone(ZoneId.systemDefault()))));
 		assertEquals(Long.toString(JOURNALPOST_ID), dokumentInfo1.getOriginalJournalpostId());
-		assertEquals(SKJERMING_TYPE_CODE_POL.name(), dokumentInfo1.getSkjerming());
+		assertEquals(Skjerming.POL, dokumentInfo1.getSkjerming());
 		assertThat(dokumentInfo1.getLogiskeVedlegg().get(0).getLogiskVedleggId(), is(LOGISK_VEDLEGG_ID));
 		assertThat(dokumentInfo1.getLogiskeVedlegg().get(0).getTittel(), is(LOGISK_VEDLEGG_TITTEL));
 
 		Assertions.assertThat(dokumentInfo1.getDokumentvarianter())
 				.extracting(Dokumentvariant::getVariantformat, Dokumentvariant::getFilnavn, Dokumentvariant::getFiluuid, Dokumentvariant::isSaksbehandlerHarTilgang, Dokumentvariant::getSkjerming)
 				.hasSize(2)
-				.containsExactlyInAnyOrder(tuple(VARIANT_FORMAT_CODE_ARKIV.getSafVariantformat(), FILNAVN_1, FILUUID_1, false, SKJERMING_TYPE_CODE_POL
-								.name()),
+				.containsExactlyInAnyOrder(tuple(VARIANT_FORMAT_CODE_ARKIV.getSafVariantformat(), FILNAVN_1, FILUUID_1, false, Skjerming.POL),
 						tuple(VARIANT_FORMAT_CODE_SLADDET.getSafVariantformat(), FILNAVN_2, FILUUID_2, false, null));
 
 		assertEquals(Dokumentstatus.FERDIGSTILT, dokumentInfo1.getDokumentstatus());

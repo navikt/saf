@@ -8,6 +8,14 @@ Alle nevneverdige endringer blir dokumentert her.
 
 Denne malen er basert på [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [5.3.0] - 2019-06-06
+### Endret
+* `GraphQL: ` Ny Enum `SkjermingType` med verdi `POL` og `FEIL`. Erstatter type på feltet `skjerming` som brukes på Type `Journalpost` `Dokumentvariant` og `DokumentInfo`  
+
+## [5.2.1] - 2019-06-04
+### Endret
+* `GraphQL: ` Enum `AvsenderMottakerIdType`. Ny verdi `HPRNR` og `UTL_ORG`.
+
 ## [5.1.2] - 2019-05-28
 ### Endret
 * `GraphQL: ` Type `Dokumentvariant`. Nytt felt `filuuid` for å støtte legacy funksjonalitet i en overgangsperiode.
