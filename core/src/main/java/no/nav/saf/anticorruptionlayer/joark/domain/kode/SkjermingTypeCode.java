@@ -11,7 +11,8 @@ public enum SkjermingTypeCode {
 	/**
 	 * POL
 	 */
-	POL(Skjerming.POL);
+	POL(Skjerming.POL),
+	FEIL(Skjerming.FEIL);
 
 	private final Skjerming safSkjerming;
 
