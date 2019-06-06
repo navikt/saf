@@ -2,9 +2,9 @@ package no.nav.saf.cache;
 
 import static org.springframework.data.redis.serializer.RedisSerializationContext.SerializationPair.fromSerializer;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.lettuce.core.ClientOptions;
 import io.lettuce.core.SocketOptions;
+import no.nav.saf.tilgangskontroll.abac.dto.response.XacmlResponse;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.CacheManager;
@@ -21,7 +21,7 @@ import org.springframework.data.redis.connection.RedisSentinelConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceClientConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.connection.lettuce.LettucePoolingClientConfiguration;
-import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
+import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 import javax.inject.Named;
@@ -42,13 +42,13 @@ public class RedisCacheConfig extends CachingConfigurerSupport {
 
 	@Bean
 	@Named(MANAGER_DISTRIBUTED)
-	CacheManager redisCacheManager(RedisConnectionFactory connectionFactory, ObjectMapper objectMapper) {
+	CacheManager redisCacheManager(RedisConnectionFactory connectionFactory) {
 		// Tilgang cache brukt av Pep2d
 		RedisCacheConfiguration tilgangCache = RedisCacheConfiguration.defaultCacheConfig()
 				.disableCachingNullValues()
 				.entryTtl(DEFAULT_TTL)
 				.serializeKeysWith(fromSerializer(new StringRedisSerializer()))
-				.serializeValuesWith(fromSerializer(new GenericJackson2JsonRedisSerializer(objectMapper)));
+				.serializeValuesWith(fromSerializer(new Jackson2JsonRedisSerializer<>(XacmlResponse.class)));
 
 		return RedisCacheManager.builder(connectionFactory)
 				.withInitialCacheConfigurations(
