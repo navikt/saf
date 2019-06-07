@@ -14,11 +14,13 @@ public enum Kanal {
 	SDP("Digital postkasse til innbyggere"),
 	SKAN_NETS("Skanning Nets"),
 	SKAN_PEN("Skanning Pensjon"),
+	TRYGDERETTEN("Trygderetten"),
+	HELSENETTET("Helsenettet"),
 	INGEN_DISTRIBUSJON("Ingen distribusjon"),
 	UKJENT("Ukjent");
 
 	private final String kanalnavn;
-	
+
 	Kanal(String kanalnavn) {
 		this.kanalnavn = kanalnavn;
 	}

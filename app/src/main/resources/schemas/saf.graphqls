@@ -489,49 +489,58 @@ enum Journalstatus {
 # * Dersom journalposten ikke har noen kjent kanal, returneres verdien **UKJENT**
 enum Kanal {
     # Forsendelsen er sendt inn via et Altinn-skjema.
-    # * *Kun inngående*
+    # * Brukes for inngående journalposter.
     ALTINN
 
     # Forsendelsen er mottatt eller distribuert via applikasjoner som EU har levert og som benyttes for utveksling av informasjon med andre EU-land.
-    # * *Inngående og utgående*
+    # * Brukes for inngående og utgående journalposter.
 	EESSI
 
 	# Forsendelsen er arkivert av applikasjonen EIA.
-	# * *Kun inngående og utgående*
+	# * Brukes for inngående journalposter.
 	EIA
 
 	# Dokumentene i journalposten er hentet fra en ekstern kilde, for eksempel informasjon om oppholdstillatelse fra Utlendingsdirektoratet.
-	# * *Kun inngående*
+	# * Brukes for inngående journalposter.
 	EKST_OPPS
 
 	# Brevet er skrevet ut lokalt og kan være sendt i posten på papir.
-	# * *Kun utgående og notater*
+	# * Brukes for utgående journalposter og notater.
 	LOKAL_UTSKRIFT
 
-	# Forsendelsen er sendt inn digitalt via selvbetjeningsløsninger på nav.no, eller distribuert digitalt til brukers meldingsboks på nav.no
-	# * *Kun inngående og utgående*
+	# Forsendelsen er sendt inn digitalt via selvbetjeningsløsninger på nav.no, eller distribuert digitalt til brukers meldingsboks på nav.no.
+	# * Brukes for inngående og utgående journalposter.
 	NAV_NO
 
 	# Brevet er overført til sentral distribusjon og sendt i posten på papir.
-	# * *Kun utgående*
+	# * Brukes for utgående journalposter.
 	SENTRAL_UTSKRIFT
 
 	# Brevet er sendt via digital post til innbyggere.
-	# * *Kun utgående*
+	# * Brukes for utgående journalposter.
 	SDP
 
 	# Forsendelsen er sendt inn på papir og skannet hos NETS.
-	# * *Inngående, utgående og notater*
+	# * Brukes for inngående, utgående journalposter og notater.
 	SKAN_NETS
 
 	# Forsendelsen er sendt inn på papir og skannet på NAVs skanningsenter for pensjon og bidrag.
-    # * *Kun inngående*
+    # * Brukes for inngående journalposter.
 	SKAN_PEN
 
-	# Alle journalposter med journalposttype **N** (Notat) skal mappes til "INGEN_DISTRIBUSJON"
+    # Forsendelen er distribuert via integrasjonspunkt for eFormidling til Trygderetten.
+    # * Brukes for utgående journalposter.
+    TRYGDERETTEN
+
+    # Forsendelsen er mottatt eller distribuert via Norsk Helsenett, helsesektorens løsning for elektronisk meldingsutveksling.
+    # * Brukes for inngående og utgående journalposter.
+    HELSENETTET
+
+    # Forsendelsen skal ikke distribueres ut av NAV.
+	# * Brukes for alle notater og noen utgående journalposter
 	INGEN_DISTRIBUSJON
 
-	# Journalposten ikke har noen kjent kanal, derfor returneres verdien **UKJENT**
+	# Forsendelsen har ingen kjent kanal.
 	UKJENT
 }
 
