@@ -8,6 +8,10 @@ Alle nevneverdige endringer blir dokumentert her.
 
 Denne malen er basert på [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [6.0.0] - 2019-06-10
+### Lagt til
+* Sporingslogging til naudit (ArcSight) for REST hentdokument kall. 
+
 ## [5.4.0] - 2019-06-07
 ### Endret
 * `GraphQL: ` Enum `Kanal`. Ny verdi `TRYGDERETTEN`.
