@@ -19,7 +19,7 @@
 
 	<appender name="sporbarhetslogg" class="com.papertrailapp.logback.Syslog4jAppender">
 		<layout class="ch.qos.logback.classic.PatternLayout">
-			<pattern>[%d, %X{correlationId}] - %m%n</pattern>
+			<pattern>[%X{correlationId}] - %m%n</pattern>
 		</layout>
 
 		<syslogConfig class="org.productivity.java.syslog4j.impl.net.tcp.TCPNetSyslogConfig">
@@ -34,11 +34,14 @@
 		<appender-ref ref="sporbarhetslogg"/>
 	</logger>
 
+	<!--
+	 Timestamp blir generert av appenderen.
+	 Eksempel: 2019-06-07T07:21:20+02:00 <pod_navn> saf_audit_hentdokument: [correlationId] - message
+	 -->
 	<appender name="hentdokument_sporbarhetslogg" class="com.papertrailapp.logback.Syslog4jAppender">
 		<layout class="ch.qos.logback.classic.PatternLayout">
-			<pattern>[%d, %X{correlationId}] - %m%n</pattern>
+			<pattern>[%X{correlationId}] - %m%n</pattern>
 		</layout>
-		correlationId
 
 		<syslogConfig class="org.productivity.java.syslog4j.impl.net.tcp.TCPNetSyslogConfig">
 			<host>audit.nais</host>

@@ -10,7 +10,7 @@
 
 	<appender name="sporbarhetslogg" class="ch.qos.logback.core.ConsoleAppender">
 		<layout class="ch.qos.logback.classic.PatternLayout">
-			<pattern>[%d, %X{correlationId}] - %m%n</pattern>
+			<pattern>[%X{correlationId}] - %m%n</pattern>
 		</layout>
 	</appender>
 
@@ -20,7 +20,7 @@
 
 	<appender name="hentdokument_sporbarhetslogg" class="ch.qos.logback.core.ConsoleAppender">
 		<layout class="ch.qos.logback.classic.PatternLayout">
-			<pattern>[%d, %X{correlationId}] - %m%n</pattern>
+			<pattern>[%X{correlationId}] - %m%n</pattern>
 		</layout>
 	</appender>
 
