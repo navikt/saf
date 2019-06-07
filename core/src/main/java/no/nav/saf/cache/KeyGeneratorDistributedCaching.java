@@ -3,7 +3,7 @@ package no.nav.saf.cache;
 /**
  * @author Sigurd Midttun, Visma Consulting.
  * <p>
- * Nøklene genereres med følgende format: key = "ressurstype:*ressurstype*" + "unik_id_for_distribuert_caching"
+ * Nøklene genereres med følgende format: key = "ressurs:*ressurs*" + "unik_id_for_distribuert_caching"
  */
 public final class KeyGeneratorDistributedCaching extends AbstractKeyGeneratorCaching {
 
