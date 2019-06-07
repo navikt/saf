@@ -8,6 +8,26 @@
 		</encoder>
 	</appender>
 
+	<appender name="sporbarhetslogg" class="ch.qos.logback.core.ConsoleAppender">
+		<layout class="ch.qos.logback.classic.PatternLayout">
+			<pattern>[%X{correlationId}] - %m%n</pattern>
+		</layout>
+	</appender>
+
+	<logger level="INFO" name="sporbarhetslogg" additivity="false">
+		<appender-ref ref="sporbarhetslogg"/>
+	</logger>
+
+	<appender name="hentdokument_sporbarhetslogg" class="ch.qos.logback.core.ConsoleAppender">
+		<layout class="ch.qos.logback.classic.PatternLayout">
+			<pattern>[%X{correlationId}] - %m%n</pattern>
+		</layout>
+	</appender>
+
+	<logger level="INFO" name="hentdokument_sporbarhetslogg" additivity="false">
+		<appender-ref ref="hentdokument_sporbarhetslogg"/>
+	</logger>
+
 	<root level="WARN">
 		<appender-ref ref="CONSOLE"/>
 	</root>

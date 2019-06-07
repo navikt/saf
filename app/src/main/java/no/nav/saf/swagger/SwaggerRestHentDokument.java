@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiResponses;
 import io.swagger.annotations.ResponseHeader;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.core.annotation.AliasFor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.lang.annotation.Documented;
@@ -21,7 +22,15 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @ApiResponses(value = {
-		@ApiResponse(code = 200, message = "OK - dokument returneres.", response = void.class, responseHeaders =  @ResponseHeader(name = "Content-type", description = "Identifiserer filformatet til dokumentet. F.eks vil et dokument av typen PDF gi Content-type \"application\\pdf\", mens et dokument av typen XML gir Content type \"text\\xml\"", response = String.class)),
+		@ApiResponse(code = 200, message = "OK - dokument returneres.", response = byte[].class,
+				responseHeaders = {
+						@ResponseHeader(name = HttpHeaders.CONTENT_TYPE, description = "Mimetypen til dokumentet. Eksempel: Content-Type: application/pdf.", response = String.class),
+						@ResponseHeader(name = HttpHeaders.CONTENT_DISPOSITION, description = "Hvordan dokumentet skal vises og filnavnet hvis det skal lastes ned. " +
+								"Standardverdi er inline for visning. Filnavnet er formattert som <dokumentInfoId>_<variantformat>.<filendelse>. " +
+								"Fileendelse vil være tilpasset for mimetypen, f.eks Content-Type: application/pdf vil gi filendelse .pdf. " +
+								"Eksempel: Content-Disposition: inline; filename=400000000_ARKIV.pdf", response = String.class)
+				}
+		),
 		@ApiResponse(code = 400, message = "* Ugyldig input. JournalpostId og dokumentInfoId må være tall og variantFormat må være en gyldig kodeverk-verdi.\n* Journalposten tilhører et ustøttet arkivsaksystem. Arkivsaksystem må være GSAK, PSAK eller NULL (midlertidig journalpost)."),
 		@ApiResponse(code = 401, message = "* Bruker mangler tilgang for å vise dokumentet.\n* Ugyldig OIDC token. Denne feilen gis dersom tokenet ikke har riktig format eller er utgått."),
 		@ApiResponse(code = 404, message = "Dokument eller journalpost ble ikke funnet.")}

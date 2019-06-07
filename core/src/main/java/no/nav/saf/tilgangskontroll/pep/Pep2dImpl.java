@@ -48,10 +48,10 @@ public class Pep2dImpl implements Pep<TilgangSak> {
 	}
 
 	@Override
-	public boolean hasAccess(TilgangSak ressurs, SafRequestContext safRequestContext) {
+	public XacmlResponse verifyAccessXacmlResponse(TilgangSak ressurs, SafRequestContext safRequestContext) {
 		if (ressurs == null || ressurs.getTema() == null) {
 			log.warn("Pep2d mangler data om sak. Tilgang gis likevel for at saksbehandler skal kunne knytte dokument til sak og bruker.");
-			return true;
+			return XacmlResponse.permit();
 		}
 
 		Pep.traceLogPepStarted(PEP2D, ressurs);
@@ -60,14 +60,17 @@ public class Pep2dImpl implements Pep<TilgangSak> {
 		String tilgangKeyLocalCaching = KeyGeneratorLocalCaching.getKeyForPep2d(ressurs.getTema().name());
 		// Ty-catch er fordi redis ikke fungerer lokalt
 		try {
-			boolean decide = decide(tilgangCache.get(tilgangKeyDistributedCaching,
-					() -> hasDokumentAccess(ressurs, safRequestContext)));
-			safRequestContext.getRequestCache().putObject(tilgangKeyLocalCaching, decide);
-			return decide;
+			XacmlResponse response = tilgangCache.get(tilgangKeyDistributedCaching,
+					() -> hasDokumentAccess(ressurs, safRequestContext));
+			if(response == null) {
+				return XacmlResponse.deny();
+			}
+			safRequestContext.getRequestCache().putObject(tilgangKeyLocalCaching, decide(response.getDecision()));
+			return response;
 		} catch (RedisException | PoolException | Cache.ValueRetrievalException e) {
-			boolean decide = decide(hasDokumentAccess(ressurs, safRequestContext));
-			safRequestContext.getRequestCache().putObject(tilgangKeyLocalCaching, decide);
-			return decide;
+			XacmlResponse response = hasDokumentAccess(ressurs, safRequestContext);
+			safRequestContext.getRequestCache().putObject(tilgangKeyLocalCaching, decide(response.getDecision()));
+			return response;
 		} finally {
 			Pep.traceLogPepFinished(PEP2D, ressurs);
 		}
@@ -77,11 +80,10 @@ public class Pep2dImpl implements Pep<TilgangSak> {
 		return Decision.PERMIT.equals(decision);
 	}
 
-	private Decision hasDokumentAccess(TilgangSak ressurs, SafRequestContext safRequestContext) {
+	private XacmlResponse hasDokumentAccess(TilgangSak ressurs, SafRequestContext safRequestContext) {
 		XacmlRequest request = SafXacmlRequestFactory.create(safRequestContext.getSecurityContext().getOidcTokenBody());
 		request.resource(RESOURCE_FELLES_RESOURCE_TYPE, RESOURCE_SAF_SAK_DOKUMENT);
 		request.resource(RESOURCE_SAF_TEMA, ressurs.getTema().name());
-		XacmlResponse response = abacService.evaluate(request);
-		return response.getDecision();
+		return abacService.evaluate(request);
 	}
 }

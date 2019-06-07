@@ -3,7 +3,7 @@ package no.nav.saf.cache;
 /**
  * @author Sigurd Midttun, Visma Consulting.
  * <p>
- * Nøklene genereres med følgende format: key = "ressurstype:*ressurstype*" + "unik_id_for_lokal_caching"
+ * Nøklene genereres med følgende format: key = "ressurs:*ressurs*" + "unik_id_for_lokal_caching"
  */
 public final class KeyGeneratorLocalCaching extends AbstractKeyGeneratorCaching {
 
@@ -12,16 +12,16 @@ public final class KeyGeneratorLocalCaching extends AbstractKeyGeneratorCaching 
 	}
 
 	public static String getKeyForPep2d(String tema) {
-		return createIdentifierPair(RESSURSTYPE, RESSURSTYPE_SAK_DOKUMENT) + createUniqueIdentifier(createIdentifierPair(TEMA, tema));
+		return createIdentifierPair(RESSURS, RESSURS_SAK_DOKUMENT) + createUniqueIdentifier(createIdentifierPair(TEMA, tema));
 	}
 
 	public static String getKeyForPep5(String journalpostId, String dokumentInfoId) {
-		return createIdentifierPair(RESSURSTYPE, RESSURSTYPE_DOKUMENT_METADATA) + createUniqueIdentifier(createIdentifierPair(JOURNALPOST_ID, journalpostId),
+		return createIdentifierPair(RESSURS, RESSURS_DOKUMENT_METADATA) + createUniqueIdentifier(createIdentifierPair(JOURNALPOST_ID, journalpostId),
 				createIdentifierPair(DOKUMENTINFO_ID, dokumentInfoId));
 	}
 
 	public static String getKeyForPep6d(String journalpostId, String dokumentInfoId, String variantFormat, String skjerming) {
-		return createIdentifierPair(RESSURSTYPE, RESSURSTYPE_DOKUMENT_FIL) + createUniqueIdentifier(createIdentifierPair(JOURNALPOST_ID, journalpostId), createIdentifierPair(DOKUMENTINFO_ID, dokumentInfoId), createIdentifierPair(VARIANTFORMAT, variantFormat),
+		return createIdentifierPair(RESSURS, RESSURS_DOKUMENT_FIL) + createUniqueIdentifier(createIdentifierPair(JOURNALPOST_ID, journalpostId), createIdentifierPair(DOKUMENTINFO_ID, dokumentInfoId), createIdentifierPair(VARIANTFORMAT, variantFormat),
 				createIdentifierPair(SKJERMING, skjerming));
 	}
 }

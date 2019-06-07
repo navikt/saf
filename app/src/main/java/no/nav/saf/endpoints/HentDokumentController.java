@@ -6,7 +6,7 @@ import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.Authorization;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.domain.HentDokument;
-import no.nav.saf.exceptions.TilgangskontrollException;
+import no.nav.saf.exceptions.HentdokumentTilgangskontrollException;
 import no.nav.saf.hentdokument.HentDokumentDomainCoordinator;
 import no.nav.saf.metrics.Monitor;
 import no.nav.saf.swagger.SwaggerRestHentDokument;
@@ -51,8 +51,8 @@ public class HentDokumentController {
 	@Monitor(value = "dok_request", extraTags = {"process", "hentDokument", "requestType", "hentDokument"}, histogram = true)
 	public ResponseEntity<byte[]> hentDokument(@ApiParam(name = "journalpostId", value = "Id for aktuell journalpost", required = true) @PathVariable String journalpostId,
 											   @ApiParam(name = "dokumentInfoId", value = "Id for aktuelt dokument", required = true) @PathVariable String dokumentInfoId,
-											   @ApiParam(name = "variantFormat", value = "Format på dokumentet som skal hentes eg. ARKIV, SLADDET m.fl.", required = true) @PathVariable String variantFormat,
-											   @ApiParam(name = X_CORRELATION_ID, value = "(Optional) ID til logging.") @RequestHeader(value = X_CORRELATION_ID, required = false) String xCorrelationId,
+											   @ApiParam(name = "variantFormat", value = "Varianten til dokumentet som skal hentes. [Følg lenken for gyldige verdier](https://confluence.adeo.no/display/BOA/Enum%3A+Variantformat).", required = true) @PathVariable String variantFormat,
+											   @ApiParam(name = X_CORRELATION_ID, value = "(Optional) ID til logging og sporing på tvers av verdikjeder.") @RequestHeader(value = X_CORRELATION_ID, required = false) String xCorrelationId,
 											   @ApiParam(hidden = true) @RequestHeader(value = HttpHeaders.AUTHORIZATION, required = false) String authorizationHeader) {
 		SafRequestContext safRequestContext = new SafRequestContext(authorizationHeader, generateCorrelationIdIfNull(xCorrelationId), oidcValidatorTool);
 		log.info("hentDokument har mottatt kall. journalpostId={}, dokumentInfoId={}, variantFormat={}", journalpostId, dokumentInfoId, variantFormat);
@@ -64,7 +64,7 @@ public class HentDokumentController {
 					.contentType(response.getMediaType())
 					.header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=" + dokumentInfoId + "_" + variantFormat + response.getExtension())
 					.body(response.getDokument());
-		} catch(TilgangskontrollException e) {
+		} catch(HentdokumentTilgangskontrollException e) {
 			log.warn("hentDokument hentet ikke dokument. journalpostId={}, dokumentInfoId={}, variantFormat={}. Tilgang ble avvist av policy: " + e.getMessage(), journalpostId, dokumentInfoId, variantFormat);
 			throw e;
 		}

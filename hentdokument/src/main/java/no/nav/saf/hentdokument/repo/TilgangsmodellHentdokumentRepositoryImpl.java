@@ -62,7 +62,7 @@ public class TilgangsmodellHentdokumentRepositoryImpl implements TilgangsmodellH
 			return findTilgangBrukerBrukerFromSafRequestContext(safRequestContext);
 		} else {
 			//Bruker hentes fra gsak eller psak
-			return findTilgangBrukerBySakId(arkivsak.getArkivsaksnummer(), arkivsak.getArkivsaksystem());
+			return findTilgangBrukerBySakId(arkivsak.getArkivsaksnummer(), arkivsak.getArkivsaksystem(), safRequestContext);
 		}
 	}
 
@@ -80,10 +80,15 @@ public class TilgangsmodellHentdokumentRepositoryImpl implements TilgangsmodellH
 		}
 	}
 
-	public TilgangBruker findTilgangBrukerBySakId(String sakId, Arkivsakssystem arkivsaksystem) {
+	public TilgangBruker findTilgangBrukerBySakId(String sakId, Arkivsakssystem arkivsaksystem, SafRequestContext safRequestContext) {
 		try {
 			if (Arkivsakssystem.GSAK.equals(arkivsaksystem)) {
-				return gsakAntiCorruptionLayer.findTilgangBrukerBySakId(sakId);
+				TilgangBruker gsakTilgangBruker = gsakAntiCorruptionLayer.findTilgangBrukerBySakId(sakId);
+				// GSAK har ikke aktørId så vi har bruker på journalposten for sporing
+				TilgangBruker journalpostTilgangBruker = hentDokumentAntiCorruptionLayer.hentTilgangBruker(safRequestContext);
+				return gsakTilgangBruker.toBuilder()
+						.foedselsnr(journalpostTilgangBruker.getFoedselsnr())
+						.build();
 			} else if (Arkivsakssystem.PSAK.equals(arkivsaksystem)) {
 				String fnr = pensjonSakAntiCorruptionLayer.findFoedselsnummerBySakId(sakId);
 				return TilgangBruker.builder()

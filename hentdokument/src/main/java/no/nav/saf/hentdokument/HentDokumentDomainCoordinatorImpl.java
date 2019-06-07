@@ -16,11 +16,12 @@ import no.nav.saf.domain.tilgangsmodell.TilgangDokumentInfo;
 import no.nav.saf.domain.tilgangsmodell.TilgangDokumentvariant;
 import no.nav.saf.domain.tilgangsmodell.TilgangJournalpost;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
+import no.nav.saf.exceptions.HentdokumentTilgangskontrollException;
 import no.nav.saf.exceptions.JournalpostIkkeFunnetException;
-import no.nav.saf.exceptions.TilgangskontrollException;
 import no.nav.saf.hentdokument.repo.DokumentRepository;
 import no.nav.saf.hentdokument.repo.TilgangsmodellHentdokumentRepository;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
+import no.nav.saf.tilgangskontroll.abac.dto.response.XacmlResponse;
 import no.nav.saf.tilgangskontroll.pep.Pep;
 import org.springframework.stereotype.Component;
 
@@ -43,6 +44,7 @@ public class HentDokumentDomainCoordinatorImpl implements HentDokumentDomainCoor
 	private final Pep<TilgangJournalpost> pep4;
 	private final Pep<TilgangDokumentInfo> pep5;
 	private final Pep<TilgangDokumentvariant> pep6d;
+	private final HentDokumentSporbarhetslogger hentDokumentSporbarhetslogger;
 
 	@Inject
 	public HentDokumentDomainCoordinatorImpl(DokumentRepository dokumentRepository,
@@ -63,28 +65,39 @@ public class HentDokumentDomainCoordinatorImpl implements HentDokumentDomainCoor
 		this.pep4 = pep4;
 		this.pep5 = pep5;
 		this.pep6d = pep6d;
+		this.hentDokumentSporbarhetslogger = new HentDokumentSporbarhetslogger();
 	}
 
 	@Override
 	public HentDokument hentDokument(final String journalpostId, final String dokumentInfoId, final String variantFormat, final SafRequestContext safRequestContext) {
 		final Arkivsak arkivsak = tilgangsmodellHentdokumentRepository.findArkivsakAndCacheJournalpostDto(journalpostId, dokumentInfoId, variantFormat, safRequestContext);
 		final TilgangBruker tilgangBruker = tilgangsmodellHentdokumentRepository.findTilgangBruker(arkivsak, safRequestContext);
-
-		boolean pep1Access = pep1g.hasAccess(tilgangBruker, safRequestContext);
-		if (!pep1Access) {
-			throw new TilgangskontrollException("pep1g");
-		}
-
 		final TilgangSak tilgangSak = tilgangsmodellHentdokumentRepository.findTilgangSak(arkivsak, tilgangBruker, safRequestContext);
 
-		boolean pep2Access = pep2.hasAccess(tilgangSak, safRequestContext);
-		if (!pep2Access) {
-			throw new TilgangskontrollException("pep2");
+		try {
+			doTilgangskontroll(journalpostId, dokumentInfoId, variantFormat, tilgangSak, tilgangBruker, safRequestContext);
+			hentDokumentSporbarhetslogger.logPermit(journalpostId, dokumentInfoId, variantFormat, tilgangSak, tilgangBruker, safRequestContext);
+			return dokumentRepository.findDokument(dokumentInfoId, variantFormat);
+		} catch(HentdokumentTilgangskontrollException e) {
+			hentDokumentSporbarhetslogger.logDeny(journalpostId, dokumentInfoId, variantFormat, tilgangSak, tilgangBruker, safRequestContext, e);
+			throw e;
+		}
+	}
+
+	private void doTilgangskontroll(String journalpostId, String dokumentInfoId, String variantFormat, TilgangSak tilgangSak, TilgangBruker tilgangBruker, SafRequestContext safRequestContext) {
+		XacmlResponse pep1gResponse = pep1g.verifyAccessXacmlResponse(tilgangBruker, safRequestContext);
+		if (pep1gResponse.isDeny()) {
+			throw new HentdokumentTilgangskontrollException("pep1g", pep1gResponse);
 		}
 
-		boolean pep3Access = pep3.hasAccess(tilgangSak, safRequestContext);
-		if (!pep3Access) {
-			throw new TilgangskontrollException("pep3");
+		XacmlResponse pep2Response = pep2.verifyAccessXacmlResponse(tilgangSak, safRequestContext);
+		if (pep2Response.isDeny()) {
+			throw new HentdokumentTilgangskontrollException("pep2", pep2Response);
+		}
+
+		XacmlResponse pep3Response = pep3.verifyAccessXacmlResponse(tilgangSak, safRequestContext);
+		if (pep3Response.isDeny()) {
+			throw new HentdokumentTilgangskontrollException("pep3", pep3Response);
 		}
 
 		final TilgangJournalpost tilgangJournalpost = tilgangsmodellHentdokumentRepository.findTilgangJournalpostFromSafRequestContext(safRequestContext);
@@ -92,30 +105,28 @@ public class HentDokumentDomainCoordinatorImpl implements HentDokumentDomainCoor
 			throw new JournalpostIkkeFunnetException("Dokumentet tilnyttet journalpostId=" + journalpostId + ", dokumentInfoId=" + dokumentInfoId + ", variant=" + variantFormat + " ikke funnet.");
 		}
 		if (tilgangJournalpost.getJournalstatus() != Journalstatus.MOTTATT) {
-			boolean pep2dAccess = pep2d.hasAccess(tilgangSak, safRequestContext);
-			if (!pep2dAccess) {
-				throw new TilgangskontrollException("pep2d");
+			XacmlResponse pep2dResponse = pep2d.verifyAccessXacmlResponse(tilgangSak, safRequestContext);
+			if (pep2dResponse.isDeny()) {
+				throw new HentdokumentTilgangskontrollException("pep2d", pep2dResponse);
 			}
 		}
 
-		boolean pep4Access = pep4.hasAccess(tilgangJournalpost, safRequestContext);
-		if (!pep4Access) {
-			throw new TilgangskontrollException("pep4");
+		XacmlResponse pep4Response = pep4.verifyAccessXacmlResponse(tilgangJournalpost, safRequestContext);
+		if (pep4Response.isDeny()) {
+			throw new HentdokumentTilgangskontrollException("pep4", pep4Response);
 		}
 
-		boolean pep5Access = pep5.hasAccess(tilgangJournalpost.getDokumenter().get(0), safRequestContext);
-		if (!pep5Access) {
-			throw new TilgangskontrollException("pep5");
+		XacmlResponse pep5Response = pep5.verifyAccessXacmlResponse(tilgangJournalpost.getDokumenter().get(0), safRequestContext);
+		if (pep5Response.isDeny()) {
+			throw new HentdokumentTilgangskontrollException("pep5", pep5Response);
 		}
 
-		boolean pep6dAccess = pep6d.hasAccess(tilgangJournalpost.getDokumenter()
+		XacmlResponse pep6dResponse = pep6d.verifyAccessXacmlResponse(tilgangJournalpost.getDokumenter()
 				.get(0).getTilgangDokumentvarianter().get(0), safRequestContext);
 
-		if (!pep6dAccess) {
-			throw new TilgangskontrollException("pep6d");
+		if (pep6dResponse.isDeny()) {
+			throw new HentdokumentTilgangskontrollException("pep6d", pep6dResponse);
 		}
-
-		return dokumentRepository.findDokument(dokumentInfoId, variantFormat);
 	}
 
 }

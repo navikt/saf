@@ -10,7 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlRequest;
-import no.nav.saf.tilgangskontroll.abac.dto.response.Decision;
 import no.nav.saf.tilgangskontroll.abac.dto.response.XacmlResponse;
 import no.nav.saf.tilgangskontroll.abac.service.AbacService;
 import org.springframework.stereotype.Component;
@@ -38,12 +37,12 @@ public class Pep1gImpl implements Pep<TilgangBruker> {
 	}
 
 	@Override
-	public boolean hasAccess(TilgangBruker ressurs, SafRequestContext safRequestContext) {
+	public XacmlResponse verifyAccessXacmlResponse(TilgangBruker ressurs, SafRequestContext safRequestContext) {
 		if (ressurs == null) {
 			log.warn("Pep1g mangler data om bruker. Tilgang gis for å kunne identifisere bruker.");
-			return true;
+			return XacmlResponse.permit();
 		} else if (ressurs.getOrgnummer() != null) {
-			return true;
+			return XacmlResponse.permit();
 		}
 
 		XacmlRequest request = SafXacmlRequestFactory.create(safRequestContext.getSecurityContext().getOidcTokenBody());
@@ -54,12 +53,11 @@ public class Pep1gImpl implements Pep<TilgangBruker> {
 		} else if (ressurs.getFoedselsnr() != null) {
 			request.resource(RESOURCE_FELLES_PERSON_FNR, ressurs.getFoedselsnr());
 		} else {
-			return false;
+			return XacmlResponse.deny();
 		}
 		Pep.traceLogPepStarted(PEP1G, ressurs);
 		XacmlResponse response = abacService.evaluate(request);
 		Pep.traceLogPepFinished(PEP1G, ressurs);
-		return Decision.PERMIT.equals(response.getDecision());
+		return response;
 	}
-
 }

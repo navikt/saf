@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
  * @author Joakim Bjørnstad, Jbit AS
  */
 @Value
-@Builder
+@Builder(toBuilder = true)
 public class TilgangBruker {
 	private final String foedselsnr;
 	private final String aktoerId;

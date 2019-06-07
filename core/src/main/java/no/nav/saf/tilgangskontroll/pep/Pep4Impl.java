@@ -38,20 +38,26 @@ public class Pep4Impl implements Pep<TilgangJournalpost> {
 	}
 
 	@Override
-	public boolean hasAccess(TilgangJournalpost ressurs, SafRequestContext safRequestContext) {
+	public XacmlResponse verifyAccessXacmlResponse(TilgangJournalpost ressurs, SafRequestContext safRequestContext) {
 		if (ressurs == null) {
 			log.warn("Pep4 mangler tilstrekkelig datagrunnlag for å kunne gjennomføre tilgangskontroll");
-			return false;
+			return XacmlResponse.deny();
 		}
 
 		if (isJournalpoststatusUtgaar(ressurs) || isSkjermingPresent(ressurs)) {
 			return hasJournalpostAccess(safRequestContext, ressurs);
 		} else {
-			return true;
+			return XacmlResponse.permit();
 		}
 	}
 
-	private boolean hasJournalpostAccess(SafRequestContext safRequestContext, TilgangJournalpost ressurs) {
+	@Override
+	public boolean hasAccess(TilgangJournalpost ressurs, SafRequestContext safRequestContext) {
+		XacmlResponse response = verifyAccessXacmlResponse(ressurs, safRequestContext);
+		return Decision.PERMIT.equals(response.getDecision());
+	}
+
+	private XacmlResponse hasJournalpostAccess(SafRequestContext safRequestContext, TilgangJournalpost ressurs) {
 		XacmlRequest request = SafXacmlRequestFactory.create(safRequestContext.getSecurityContext().getOidcTokenBody());
 		request.resource(RESOURCE_FELLES_RESOURCE_TYPE, RESOURCE_SAF_JOURNAL_METADATA);
 
@@ -66,7 +72,7 @@ public class Pep4Impl implements Pep<TilgangJournalpost> {
 		XacmlResponse response = abacService.evaluate(request);
 		Pep.traceLogPepFinished(PEP4, ressurs);
 
-		return Decision.PERMIT.equals(response.getDecision());
+		return response;
 	}
 
 	private boolean isJournalpoststatusUtgaar(TilgangJournalpost ressurs) {

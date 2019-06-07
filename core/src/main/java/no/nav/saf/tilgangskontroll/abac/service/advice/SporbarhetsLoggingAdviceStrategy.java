@@ -14,11 +14,11 @@ import org.springframework.stereotype.Component;
  * @author Sigurd Midttun, Visma Consulting.
  */
 @Component
-public class SprbarhetsLoggingAdviceStrategy implements AdviceStrategy {
+public class SporbarhetsLoggingAdviceStrategy implements AdviceStrategy {
 
 	private final AbacLogger abacLogger;
 
-	public SprbarhetsLoggingAdviceStrategy(@Qualifier("sporbarhetslogg") AbacLogger abacLogger) {
+	public SporbarhetsLoggingAdviceStrategy(@Qualifier("sporbarhetslogg") AbacLogger abacLogger) {
 		this.abacLogger = abacLogger;
 	}
 
