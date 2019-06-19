@@ -221,7 +221,7 @@ type Journalpost {
     # Dekode av `Kanal`, f.eks "Sentral utskrift"
     kanalnavn: String
 
-    # Utrykker at tilgangen til alle journalpost data for denne journalposten er begrenset, og at dataene ikke skal brukes i ordinær saksbehandling. De eneste mulige verdiene er foreløpig null og POL, der POL betyr at behandling av denne journalposten er begrenset som følge av personopplysningsloven (GDPR - brukers rett til å bli glemt)
+    # Utrykker at tilgangen til alle journalpost data for denne journalposten er begrenset, og at dataene ikke skal brukes i ordinær saksbehandling.
     skjerming: String
 
     # Datoen journalposten ble opprettet i arkivet. Datoen settes automatisk og kan ikke overskrives. Selv om hver journalpost har mange datoer (se `RelevantDato`) er datoOpprettet å anse som "fasit" på journalpostens alder.
@@ -325,7 +325,7 @@ type DokumentInfo {
     # Et dokumentInfo-objekt kan være gjenbrukt på flere journalposter. OriginalJournalpostId peker på den journalposten som dokumentene var knyttet til på arkiveringstidspunktet.
     originalJournalpostId: String
 
-    # Uttrykker at tilgangen til metadata for dette dokumentet er begrenset, og at dataene ikke skal brukes i ordinær saksbehandling. De eneste mulige verdiene er foreløpig null og POL, der POL betyr at behandling av dette dokumentet er begrenset som følge av personopplysningsloven (GDPR - brukers rett til å bli glemt)
+    # Uttrykker at tilgangen til metadata for dette dokumentet er begrenset, og at dataene ikke skal brukes i ordinær saksbehandling.
     skjerming: String
 
     # Liste over andre dokumenter som også befinner seg inne i den fysiske filen som dokumentinfo-objektet peker på.
@@ -365,7 +365,7 @@ type Dokumentvariant {
     # * Dersom verdien er false, vil tilgang bli avslått dersom saksbehandler forsøker å åpne dokumentet.
     saksbehandlerHarTilgang: Boolean!
 
-    # Uttrykker at tilgangen til metadata for dette dokumentet er begrenset, og at dataene ikke skal brukes i ordinær saksbehandling. De eneste mulige verdiene er foreløpig null og POL, der POL betyr at behandling av dette dokumentet er begrenset som følge av personopplysningsloven (GDPR - brukers rett til å bli glemt)
+    # Uttrykker at tilgangen til metadata for dette dokumentet er begrenset, og at dataene ikke skal brukes i ordinær saksbehandling.
     skjerming: SkjermingType
 }
 
