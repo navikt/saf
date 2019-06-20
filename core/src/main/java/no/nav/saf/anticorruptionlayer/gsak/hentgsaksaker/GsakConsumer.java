@@ -1,6 +1,8 @@
 package no.nav.saf.anticorruptionlayer.gsak.hentgsaksaker;
 
 import static no.nav.saf.util.MDCConstants.CORRELATION_ID;
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.trim;
 
 import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.domain.kode.Tema;
@@ -119,9 +121,9 @@ public class GsakConsumer {
 	}
 
 	private String getOrGenerateCorrelationId() {
-		String correlationId = MDC.get(CORRELATION_ID);
-		if (correlationId == null) {
-			correlationId = UUID.randomUUID().toString();
+		String correlationId = trim(MDC.get(CORRELATION_ID));
+		if (isBlank(correlationId)) {
+			return UUID.randomUUID().toString();
 		}
 		return correlationId;
 	}

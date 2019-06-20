@@ -1,6 +1,8 @@
 package no.nav.saf.tilgangskontroll;
 
 import static no.nav.saf.util.MDCUtility.addMdcData;
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.trim;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.exceptions.JWTDecodeException;
@@ -28,7 +30,7 @@ public class SafSecurityContext {
 		this.oidcValidatorTool = oidcValidatorTool;
 		this.oidcTokenBody = getOidcTokenBody(authorizationHeader);
 		// if zero, then executionId from graphQl is used.
-		this.xCorrelationID = xCorrelationIDHeader;
+		this.xCorrelationID = trim(xCorrelationIDHeader);
 
 		addMdcData(this.saksbehandlerId, this.xCorrelationID);
 	}
@@ -59,7 +61,7 @@ public class SafSecurityContext {
 	}
 
 	public void useExecutionIDIfXCorrelationIDNull(ExecutionId executionId) {
-		if (xCorrelationID == null) {
+		if (isBlank(xCorrelationID)) {
 			this.xCorrelationID = executionId.toString();
 			addMdcData(this.saksbehandlerId, this.xCorrelationID);
 		}
