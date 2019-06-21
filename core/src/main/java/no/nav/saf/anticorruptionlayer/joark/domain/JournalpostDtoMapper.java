@@ -7,6 +7,7 @@ import static no.nav.saf.domain.DomainConstants.TILGANG_BRUKER;
 import static no.nav.saf.domain.visningsmodell.RelevantDato.INVALID_DATE;
 import static org.apache.commons.lang3.BooleanUtils.isTrue;
 import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.trim;
 
 import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.AvsenderMottakerIdTypeCode;
@@ -19,6 +20,7 @@ import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.dto.JournalpostDt
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.dto.SaksrelasjonDto;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.dto.VariantDto;
 import no.nav.saf.domain.Arkivsak;
+import no.nav.saf.domain.DomainConstants;
 import no.nav.saf.domain.kode.Arkivsakssystem;
 import no.nav.saf.domain.kode.Datotype;
 import no.nav.saf.domain.kode.Dokumentstatus;
@@ -70,7 +72,7 @@ public class JournalpostDtoMapper {
 				.behandlingstema(journalpostDto.getBehandlingstema())
 				.behandlingstemanavn(journalpostDto.getBehandlingstemanavn())
 				.sak(mapSak(journalpostDto.getSaksrelasjon(), requestCache))
-				.bruker(mapBruker(journalpostDto.getSaksrelasjon(), requestCache))
+				.bruker(mapBruker(journalpostDto.getBruker(), journalpostDto.getSaksrelasjon(), requestCache))
 				.avsenderMottaker(mapAvsenderMottaker(journalpostDto))
 				.avsenderMottakerId(journalpostDto.getAvsenderMottakerId())
 				.avsenderMottakerNavn(journalpostDto.getAvsenderMottakerNavn())
@@ -150,9 +152,10 @@ public class JournalpostDtoMapper {
 		}
 	}
 
-	private Bruker mapBruker(SaksrelasjonDto saksrelasjon, RequestCache requestCache) {
+	private Bruker mapBruker(BrukerDto brukerDto, SaksrelasjonDto saksrelasjon, RequestCache requestCache) {
 		if (saksrelasjon == null) {
-			return null;
+			// Fall tilbake på bruker på Journalpost
+			return mapBrukerDtoToBruker(brukerDto);
 		}
 
 		Bruker bruker = getBrukerFromArkivsakCache(saksrelasjon, requestCache);
@@ -160,6 +163,26 @@ public class JournalpostDtoMapper {
 			return bruker;
 		} else {
 			return getBrukerFromTilgangBrukerCache(requestCache);
+		}
+	}
+
+	private Bruker mapBrukerDtoToBruker(BrukerDto brukerDto) {
+		if(brukerDto == null) {
+			return null;
+		}
+
+		final String brukerId = brukerDto.getBrukerId();
+		final String brukerType = brukerDto.getBrukerIdType();
+		if(isBlank(trim(brukerDto.getBrukerId())) || isBlank(brukerType)) {
+			return null;
+		}
+
+		if(brukerType.equals(DomainConstants.PERSON)) {
+			return new Bruker(brukerId, BrukerIdType.FNR);
+		} else if(brukerType.equals(DomainConstants.ORGANISASJON)) {
+			return new Bruker(brukerId, BrukerIdType.ORGNR);
+		} else {
+			return null;
 		}
 	}
 

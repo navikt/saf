@@ -31,6 +31,7 @@ import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.dto.Tilleggsopply
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.dto.VariantDto;
 import no.nav.saf.cache.KeyGeneratorLocalCaching;
 import no.nav.saf.domain.Arkivsak;
+import no.nav.saf.domain.DomainConstants;
 import no.nav.saf.domain.kode.Arkivsakssystem;
 import no.nav.saf.domain.kode.Datotype;
 import no.nav.saf.domain.kode.Dokumentstatus;
@@ -41,6 +42,7 @@ import no.nav.saf.domain.kode.Skjerming;
 import no.nav.saf.domain.kode.Tema;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.domain.visningsmodell.AvsenderMottakerIdType;
+import no.nav.saf.domain.visningsmodell.BrukerIdType;
 import no.nav.saf.domain.visningsmodell.DokumentInfo;
 import no.nav.saf.domain.visningsmodell.Dokumentvariant;
 import no.nav.saf.domain.visningsmodell.Journalpost;
@@ -109,6 +111,8 @@ class JournalpostDtoMapperTest {
 	private static final String DOKUMENTTYPE_ID = "00000001";
 	private static final String FILUUID_1 = "abcd";
 	private static final String FILUUID_2 = "dcba";
+	private static final String BRUKER_ID_PERSON = "***gammelt_fnr***";
+	private static final String BRUKER_ID_ORGANISASJON = "999999999";
 
 	private final JournalpostDtoMapper mapper = new JournalpostDtoMapper();
 
@@ -458,6 +462,40 @@ class JournalpostDtoMapperTest {
 
 		assertThat(journalpost.getAvsenderMottaker().getType(), is(AvsenderMottakerIdType.FNR));
 
+	}
+
+	@Test
+	void shouldMapToBrukerInJournalpostWhenNoSakstilknytningForPerson() {
+		JournalpostDto journalpostDto = baseJournalpostDto()
+				.journalposttype(JournalpostTypeCode.I)
+				.saksrelasjon(null)
+				.bruker(BrukerDto.builder()
+						.brukerId(BRUKER_ID_PERSON)
+						.brukerIdType(DomainConstants.PERSON)
+						.build())
+				.fagomrade(FagomradeCode.AAP).build();
+
+		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, new RequestCache());
+
+		assertThat(journalpost.getBruker().getId(), is(BRUKER_ID_PERSON));
+		assertThat(journalpost.getBruker().getType(), is(BrukerIdType.FNR));
+	}
+
+	@Test
+	void shouldMapToBrukerInJournalpostWhenNoSakstilknytningForOrganisasjon() {
+		JournalpostDto journalpostDto = baseJournalpostDto()
+				.journalposttype(JournalpostTypeCode.I)
+				.saksrelasjon(null)
+				.bruker(BrukerDto.builder()
+						.brukerId(BRUKER_ID_ORGANISASJON)
+						.brukerIdType(DomainConstants.ORGANISASJON)
+						.build())
+				.fagomrade(FagomradeCode.AAP).build();
+
+		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, new RequestCache());
+
+		assertThat(journalpost.getBruker().getId(), is(BRUKER_ID_ORGANISASJON));
+		assertThat(journalpost.getBruker().getType(), is(BrukerIdType.ORGNR));
 	}
 
 	private RequestCache pep5RequestCache() {
