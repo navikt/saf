@@ -275,7 +275,7 @@ type Sak {
 
 # Person eller organisasjon som har et forhold til NAV, f.eks. som mottaker av tjenester eller ytelser.
 type Bruker {
-    # Brukerens identifikator. For personbrukere returneres personens aktørID. For organisasjonsbrukere returneres et organisasjonsnummer.
+    # Brukerens identifikator. For personbrukere returneres personens aktørID eller fødselsnummer. For organisasjonsbrukere returneres et organisasjonsnummer.
     id: String
 
     # Angir hvilken type brukeren sin id er.
