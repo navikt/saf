@@ -23,7 +23,7 @@ class HentDokumentSporbarhetslogger {
 				   TilgangSak tilgangSak, TilgangBruker tilgangBruker, final SafRequestContext safRequestContext) {
 		logAccess(HentDokumentSporingLogglinje.builder()
 				.brukerId(getBrukerId(tilgangBruker))
-				.navIdent(safRequestContext.getSecurityContext().getSaksbehandlerId())
+				.navIdent(safRequestContext.getSecurityContext().getSubjectId())
 				.tilgangsbeslutning(BESLUTNING_PERMIT)
 				.journalpostId(journalpostId)
 				.dokumentInfoId(dokumentInfoId)
@@ -36,7 +36,7 @@ class HentDokumentSporbarhetslogger {
 				 TilgangSak tilgangSak, TilgangBruker tilgangBruker, final SafRequestContext safRequestContext, HentdokumentTilgangskontrollException e) {
 		logAccess(HentDokumentSporingLogglinje.builder()
 				.brukerId(getBrukerId(tilgangBruker))
-				.navIdent(safRequestContext.getSecurityContext().getSaksbehandlerId())
+				.navIdent(safRequestContext.getSecurityContext().getSubjectId())
 				.tilgangsbeslutning(BESLUTNING_DENY)
 				.begrunnelse(convertToString(e.getXacmlResponse().getAdvices()))
 				.journalpostId(journalpostId)

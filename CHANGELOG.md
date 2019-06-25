@@ -8,6 +8,18 @@ Alle nevneverdige endringer blir dokumentert her.
 
 Denne malen er basert på [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [6.0.3] - 2019-06-25
+### Endret
+* Endret tilgang til hentdokument tjenesten. Servicebrukere kan kun hente `ORIGINAL` varianter av et dokument. Med mindre man har avtalt spesifikke privilegier med teamet.
+
+## [6.0.2] - 2019-06-21
+### Rettet
+* Rettet mapping av bruker for ikke sakstilknyttede journalposter.
+
+## [6.0.1] - 2019-06-20
+### Rettet
+* Hindrer at blanke `X-Correlation-ID` propageres videre til andre grensesnitt der det er påkrevd.
+
 ## [6.0.0] - 2019-06-10
 ### Lagt til
 * Sporingslogging til naudit (ArcSight) for REST hentdokument kall. 
