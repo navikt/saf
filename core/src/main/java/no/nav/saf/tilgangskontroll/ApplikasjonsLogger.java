@@ -17,7 +17,7 @@ public class ApplikasjonsLogger extends AbacLogger {
 	}
 
 	public void logAbacPermit(final XacmlRequest xacmlRequest, final XacmlResponse xacmlResponse) {
-		log.info("{}. {};", mapRequest(xacmlRequest), mapResponse(xacmlResponse));
+		log.debug("{}. {};", mapRequest(xacmlRequest), mapResponse(xacmlResponse));
 	}
 
 }

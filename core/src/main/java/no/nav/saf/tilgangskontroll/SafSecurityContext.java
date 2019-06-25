@@ -11,28 +11,42 @@ import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.exceptions.OidcAuthorizationException;
 import no.nav.saf.tilgangskontroll.validation.OidcValidatorTool;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * @author Joakim Bjørnstad, Jbit AS
  */
 @Slf4j
 public class SafSecurityContext {
+	public static final String SERVICEUSER_PREFIX = "srv";
 	private static final String OIDC_TOKEN_PREFIX = "Bearer ";
+	public static final String AUTH_ERRORMESSAGE = "Autentiseringsmekanisme er ikke støttet. " +
+			"Kun OIDC-token (JWT via OAuth 2.0) med header \"Authorization\" : \"Bearer {token}\" er tillatt.";
+	private static final Map<String, Boolean> PRIVILEGIED_SERVICEUSERS = new HashMap<>();
 	private final String oidcTokenBody;
-	private final String saksbehandlerId;
+	private final String subjectId;
 	private String xCorrelationID;
 	private final OidcValidatorTool oidcValidatorTool;
+
+	static {
+		// Disse servicebrukerene får tilgang til å hente dokumentvarianter
+		PRIVILEGIED_SERVICEUSERS.put("srvdokdistfordeling", true);
+		PRIVILEGIED_SERVICEUSERS.put("srvdokdisteformidling", true);
+		PRIVILEGIED_SERVICEUSERS.put("srvdokarkivproxy", true);
+	}
 
 	SafSecurityContext(String authorizationHeader,
 					   String xCorrelationIDHeader,
 					   OidcValidatorTool oidcValidatorTool) {
 
-		this.saksbehandlerId = getSubjectFromToken(authorizationHeader);
+		this.subjectId = getSubjectFromToken(authorizationHeader);
 		this.oidcValidatorTool = oidcValidatorTool;
 		this.oidcTokenBody = getOidcTokenBody(authorizationHeader);
 		// if zero, then executionId from graphQl is used.
 		this.xCorrelationID = trim(xCorrelationIDHeader);
 
-		addMdcData(this.saksbehandlerId, this.xCorrelationID);
+		addMdcData(this.subjectId, this.xCorrelationID);
 	}
 
 	private String getOidcTokenBody(String authorizationHeader) {
@@ -63,7 +77,7 @@ public class SafSecurityContext {
 	public void useExecutionIDIfXCorrelationIDNull(ExecutionId executionId) {
 		if (isBlank(xCorrelationID)) {
 			this.xCorrelationID = executionId.toString();
-			addMdcData(this.saksbehandlerId, this.xCorrelationID);
+			addMdcData(this.subjectId, this.xCorrelationID);
 		}
 	}
 
@@ -73,20 +87,30 @@ public class SafSecurityContext {
 
 	public String getOidcTokenBody() {
 		if (oidcTokenBody == null) {
-			throw new OidcAuthorizationException("Autentiseringsmekanisme er ikke støttet. " +
-					"Kun OIDC-token (JWT via OAuth 2.0) med header \"Authorization\" : \"Bearer {token}\" er tillatt.");
+			throw new OidcAuthorizationException(AUTH_ERRORMESSAGE);
 		} else {
 			return oidcTokenBody;
 		}
 	}
 
-	public String getSaksbehandlerId() {
-		if (saksbehandlerId == null) {
-			throw new OidcAuthorizationException("Autentiseringsmekanisme er ikke støttet. " +
-					"Kun OIDC-token (JWT via OAuth 2.0) med header \"Authorization\" : \"Bearer {token}\" er tillatt.");
+	public String getSubjectId() {
+		if (subjectId == null) {
+			throw new OidcAuthorizationException(AUTH_ERRORMESSAGE);
 		} else {
-			return saksbehandlerId;
+			return subjectId;
 		}
+	}
+
+	public boolean isServiceUser() {
+		if(subjectId == null) {
+			throw new OidcAuthorizationException(AUTH_ERRORMESSAGE);
+		} else {
+			return subjectId.toLowerCase().startsWith(SERVICEUSER_PREFIX);
+		}
+	}
+
+	public boolean isPrivilegiedServiceUser() {
+		return isServiceUser() && PRIVILEGIED_SERVICEUSERS.containsKey(subjectId.toLowerCase());
 	}
 
 	private boolean isNotValidAuthorizationHeader(String authorizationHeader) {

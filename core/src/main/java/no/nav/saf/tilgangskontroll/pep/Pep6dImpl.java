@@ -62,7 +62,7 @@ public class Pep6dImpl implements Pep<TilgangDokumentvariant> {
 			Pep.traceLogPepStarted(PEP6D, ressurs);
 
 			String tilgangKeyDistributedCaching = KeyGeneratorDistributedCaching.getKeyForPep6d(
-					safRequestContext.getSecurityContext().getSaksbehandlerId(),
+					safRequestContext.getSecurityContext().getSubjectId(),
 					ressurs.getJournalpostId(),
 					ressurs.getDokumentInfoId(),
 					ressurs.getVariantformat().name(),

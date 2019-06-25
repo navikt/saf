@@ -8,5 +8,6 @@ public enum Variantformat {
 	SLADDET,
 	PRODUKSJON,
 	PRODUKSJON_DLF,
-	FULLVERSJON
+	FULLVERSJON,
+	ORIGINAL
 }

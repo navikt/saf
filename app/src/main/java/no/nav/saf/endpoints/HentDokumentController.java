@@ -6,11 +6,13 @@ import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.Authorization;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.domain.HentDokument;
+import no.nav.saf.domain.kode.Variantformat;
 import no.nav.saf.exceptions.HentdokumentTilgangskontrollException;
 import no.nav.saf.hentdokument.HentDokumentDomainCoordinator;
 import no.nav.saf.metrics.Monitor;
 import no.nav.saf.swagger.SwaggerRestHentDokument;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
+import no.nav.saf.tilgangskontroll.SafSecurityContext;
 import no.nav.saf.tilgangskontroll.validation.OidcValidatorTool;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -57,6 +59,7 @@ public class HentDokumentController {
 		SafRequestContext safRequestContext = new SafRequestContext(authorizationHeader, generateCorrelationIdIfNull(xCorrelationId), oidcValidatorTool);
 		log.info("hentDokument har mottatt kall. journalpostId={}, dokumentInfoId={}, variantFormat={}", journalpostId, dokumentInfoId, variantFormat);
 		try {
+			validateServiceUserAccess(safRequestContext, variantFormat);
 			HentDokument response = hentDokumentDomainCoordinator.hentDokument(journalpostId, dokumentInfoId, variantFormat, safRequestContext);
 			log.info("hentDokument hentet dokument. journalpostId={}, dokumentInfoId={}, variantFormat={}", journalpostId, dokumentInfoId, variantFormat);
 
@@ -64,8 +67,8 @@ public class HentDokumentController {
 					.contentType(response.getMediaType())
 					.header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=" + dokumentInfoId + "_" + variantFormat + response.getExtension())
 					.body(response.getDokument());
-		} catch(HentdokumentTilgangskontrollException e) {
-			log.warn("hentDokument hentet ikke dokument. journalpostId={}, dokumentInfoId={}, variantFormat={}. Tilgang ble avvist av policy: " + e.getMessage(), journalpostId, dokumentInfoId, variantFormat);
+		} catch (HentdokumentTilgangskontrollException e) {
+			log.warn("hentDokument hentet ikke dokument. journalpostId={}, dokumentInfoId={}, variantFormat={}. Tilgang ble avvist av grunn: " + e.getMessage(), journalpostId, dokumentInfoId, variantFormat);
 			throw e;
 		}
 	}
@@ -78,4 +81,17 @@ public class HentDokumentController {
 		}
 	}
 
+	private void validateServiceUserAccess(SafRequestContext safRequestContext, String variantFormat) {
+		SafSecurityContext securityContext = safRequestContext.getSecurityContext();
+		if (securityContext.isPrivilegiedServiceUser()) {
+			return;
+		}
+		if (securityContext.isServiceUser()) {
+			if (!Variantformat.ORIGINAL.name().equals(variantFormat)) {
+				throw new HentdokumentTilgangskontrollException(
+						"Servicebruker forsøker hente dokument med variantFormat=" +
+						variantFormat + ". HentDokument tjenesten tillater kun at servicebrukere uten spesiell avtale kun får tilgang til variantFormat=" + Variantformat.ORIGINAL + ".");
+			}
+		}
+	}
 }

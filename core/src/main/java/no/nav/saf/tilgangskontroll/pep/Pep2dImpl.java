@@ -56,7 +56,7 @@ public class Pep2dImpl implements Pep<TilgangSak> {
 
 		Pep.traceLogPepStarted(PEP2D, ressurs);
 		String tilgangKeyDistributedCaching = KeyGeneratorDistributedCaching.getKeyForPep2d(safRequestContext.getSecurityContext()
-				.getSaksbehandlerId(), ressurs.getTema().name());
+				.getSubjectId(), ressurs.getTema().name());
 		String tilgangKeyLocalCaching = KeyGeneratorLocalCaching.getKeyForPep2d(ressurs.getTema().name());
 		// Ty-catch er fordi redis ikke fungerer lokalt
 		try {

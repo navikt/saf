@@ -13,7 +13,7 @@ public final class MDCUtility {
 	}
 
 	public static void addMdcData(SafRequestContext safRequestContext) {
-		addMdcData(safRequestContext.getSecurityContext().getSaksbehandlerId(), safRequestContext.getSecurityContext().getXCorrelationID());
+		addMdcData(safRequestContext.getSecurityContext().getSubjectId(), safRequestContext.getSecurityContext().getXCorrelationID());
 	}
 
 	public static void addMdcData(String userId, String callId) {
