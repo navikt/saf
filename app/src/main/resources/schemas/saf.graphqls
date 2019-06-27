@@ -732,6 +732,10 @@ enum Variantformat {
     # Variant av dokument som inneholder spørsmålstekster, hjelpetekster og ubesvarte spørsmål fra søknadsdialogen.
     # * Fullversjon genereres for enkelte søknadsskjema fra nav.no, og brukes ved klagebehandling.
     FULLVERSJON
+
+    # Variant av dokumentet i strukturert format, f.eks. XML eller JSON.
+    # * Originalvarianten er beregnet på maskinell lesning og behandling.
+    ORIGINAL
 }
 
 # Dokumentstatus gir en indikasjon på hvorvidt dokumentet er ferdigstilt eller under arbeid, eventuelt avbrutt. Dersom dokumentet ikke har noen dokumentstatus, er dokumentet komplett / ferdigstilt.

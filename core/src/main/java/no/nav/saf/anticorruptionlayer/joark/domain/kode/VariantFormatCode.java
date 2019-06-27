@@ -22,7 +22,7 @@ public enum VariantFormatCode {
 	/**
 	 * Originalformat
 	 */
-	ORIGINAL(null),
+	ORIGINAL(Variantformat.ORIGINAL),
 	/**
 	 * Sladdetformat
 	 */
