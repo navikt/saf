@@ -8,6 +8,10 @@ Alle nevneverdige endringer blir dokumentert her.
 
 Denne malen er basert på [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [6.1.0] - 2019-06-27
+### Endret
+* `GraphQL: ` Enum `Variantformat`. Ny verdi `ORIGINAL`.
+
 ## [6.0.3] - 2019-06-25
 ### Endret
 * Endret tilgang til hentdokument tjenesten. Servicebrukere kan kun hente `ORIGINAL` varianter av et dokument. Med mindre man har avtalt spesifikke privilegier med teamet.
