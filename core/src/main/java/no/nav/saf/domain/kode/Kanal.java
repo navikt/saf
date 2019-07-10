@@ -17,7 +17,8 @@ public enum Kanal {
 	TRYGDERETTEN("Trygderetten"),
 	HELSENETTET("Helsenettet"),
 	INGEN_DISTRIBUSJON("Ingen distribusjon"),
-	UKJENT("Ukjent");
+	UKJENT("Ukjent"),
+	NAV_NO_UINNLOGGET("Ditt NAV uten ID-porten-pålogging");
 
 	private final String kanalnavn;
 

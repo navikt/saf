@@ -540,6 +540,10 @@ enum Kanal {
 	# * Brukes for alle notater og noen utgående journalposter
 	INGEN_DISTRIBUSJON
 
+    # Forsendelsen er sendt inn digitalt via selvbetjeningsløsninger på nav.no, uten at avsenderen ble digitalt autentisert
+    # * Brukes for inngående journalposter
+    NAV_NO_UINNLOGGET
+
 	# Forsendelsen har ingen kjent kanal.
 	UKJENT
 }
