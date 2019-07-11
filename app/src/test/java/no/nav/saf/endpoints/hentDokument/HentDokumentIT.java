@@ -172,7 +172,7 @@ class HentDokumentIT extends AbstractItest {
 
 		ResponseEntity<String> responseEntity = callHentDokument();
 
-		assertEquals(HttpStatus.UNAUTHORIZED, responseEntity.getStatusCode());
+		assertEquals(HttpStatus.FORBIDDEN, responseEntity.getStatusCode());
 	}
 
 	@Test
@@ -189,7 +189,7 @@ class HentDokumentIT extends AbstractItest {
 
 		ResponseEntity<String> responseEntity = callHentDokument();
 
-		assertEquals(HttpStatus.UNAUTHORIZED, responseEntity.getStatusCode());
+		assertEquals(HttpStatus.FORBIDDEN, responseEntity.getStatusCode());
 	}
 
 	@Test
@@ -206,7 +206,7 @@ class HentDokumentIT extends AbstractItest {
 
 		ResponseEntity<String> responseEntity = callHentDokument();
 
-		assertEquals(HttpStatus.UNAUTHORIZED, responseEntity.getStatusCode());
+		assertEquals(HttpStatus.FORBIDDEN, responseEntity.getStatusCode());
 	}
 
 	@Test
@@ -426,7 +426,7 @@ class HentDokumentIT extends AbstractItest {
 
 		ResponseEntity<String> responseEntity = callHentDokument();
 
-		verifyabacDenyPep1gAndHttpStatusCode(HttpStatus.UNAUTHORIZED, responseEntity.getStatusCode());
+		verifyabacDenyPep1gAndHttpStatusCode(HttpStatus.FORBIDDEN, responseEntity.getStatusCode());
 	}
 
 	@Test
@@ -453,7 +453,7 @@ class HentDokumentIT extends AbstractItest {
 
 		ResponseEntity<String> responseEntity = callHentDokument();
 
-		verifyabacDenyPep2AndHttpStatusCode(HttpStatus.UNAUTHORIZED, responseEntity.getStatusCode());
+		verifyabacDenyPep2AndHttpStatusCode(HttpStatus.FORBIDDEN, responseEntity.getStatusCode());
 	}
 
 	@Test
@@ -480,7 +480,7 @@ class HentDokumentIT extends AbstractItest {
 
 		ResponseEntity<String> responseEntity = callHentDokument();
 
-		verifyabacDenyPep2dAndHttpStatusCode(false, HttpStatus.UNAUTHORIZED, responseEntity.getStatusCode());
+		verifyabacDenyPep2dAndHttpStatusCode(false, HttpStatus.FORBIDDEN, responseEntity.getStatusCode());
 	}
 
 	@Test
@@ -507,7 +507,7 @@ class HentDokumentIT extends AbstractItest {
 
 		ResponseEntity<String> responseEntity = callHentDokument();
 
-		verifyabacDenyPep3AndHttpStatusCode(HttpStatus.UNAUTHORIZED, responseEntity.getStatusCode());
+		verifyabacDenyPep3AndHttpStatusCode(HttpStatus.FORBIDDEN, responseEntity.getStatusCode());
 	}
 
 	@Test
@@ -534,7 +534,7 @@ class HentDokumentIT extends AbstractItest {
 
 		ResponseEntity<String> responseEntity = callHentDokument();
 
-		verifyabacDenyPep4AndHttpStatusCode(HttpStatus.UNAUTHORIZED, responseEntity.getStatusCode());
+		verifyabacDenyPep4AndHttpStatusCode(HttpStatus.FORBIDDEN, responseEntity.getStatusCode());
 	}
 
 
@@ -562,7 +562,7 @@ class HentDokumentIT extends AbstractItest {
 
 		ResponseEntity<String> responseEntity = callHentDokument();
 
-		verifyabacDenyPep5AndHttpStatusCode(false, HttpStatus.UNAUTHORIZED, responseEntity.getStatusCode());
+		verifyabacDenyPep5AndHttpStatusCode(false, HttpStatus.FORBIDDEN, responseEntity.getStatusCode());
 	}
 
 	@Test
@@ -589,7 +589,7 @@ class HentDokumentIT extends AbstractItest {
 
 		ResponseEntity<String> responseEntity = callHentDokument();
 
-		verifyabacDenyPep6dAndHttpStatusCode(HttpStatus.UNAUTHORIZED, responseEntity.getStatusCode());
+		verifyabacDenyPep6dAndHttpStatusCode(HttpStatus.FORBIDDEN, responseEntity.getStatusCode());
 	}
 
 	private void assertOkArkivResponse(ResponseEntity<String> responseEntity) {
