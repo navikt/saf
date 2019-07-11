@@ -11,7 +11,7 @@ import java.util.List;
 
 
 @Getter
-public class SafTechnicalException extends RuntimeException  implements GraphQLError {
+public class SafTechnicalException extends RuntimeException implements GraphQLError {
 	private final HttpStatus httpStatus;
 
 	public SafTechnicalException(HttpStatus httpStatus) {
@@ -28,6 +28,7 @@ public class SafTechnicalException extends RuntimeException  implements GraphQLE
 		super(message, cause);
 		this.httpStatus = httpStatus;
 	}
+
 	public SafTechnicalException(String message, Throwable cause) {
 		super(message, cause);
 		this.httpStatus = null;
