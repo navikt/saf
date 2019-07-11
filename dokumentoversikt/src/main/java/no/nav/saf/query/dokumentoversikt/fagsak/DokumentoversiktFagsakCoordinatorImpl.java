@@ -13,6 +13,7 @@ import io.reactivex.Flowable;
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 import no.nav.saf.domain.TilgangsmodellRepository;
+import no.nav.saf.domain.kode.Journalstatus;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.domain.tilgangsmodell.TilgangDokumentInfo;
 import no.nav.saf.domain.tilgangsmodell.TilgangDokumentvariant;
@@ -149,11 +150,21 @@ class DokumentoversiktFagsakCoordinatorImpl implements DokumentoversiktFagsakCoo
 				.map(TilgangJournalpost::getJournalpostId)
 				.sorted(Comparator.reverseOrder())
 				.collect(Collectors.toList()), safRequestContext)
-				.stream().filter(j -> dokumentoversiktFagsakArguments.getFilters().getTema().contains(j.getTema())).collect(Collectors.toList());;
+				.stream()
+				.filter(j -> dokumentoversiktFagsakArguments.getFilters().getTema().contains(j.getTema()))
+				.filter(j -> filterFeilregistrerte(dokumentoversiktFagsakArguments, j))
+				.collect(Collectors.toList());
 		return Dokumentoversikt.builder()
 				.journalposter(journalposter)
 				.sideInfo(sideInfoMapper.mapSideInfo(dokumentoversiktFagsakArguments.getPagination(), journalposter, safRequestContext))
 				.build();
 	}
 
+	private boolean filterFeilregistrerte(DokumentoversiktFagsakArguments dokumentoversiktFagsakArguments, Journalpost j) {
+		if(Journalstatus.FEILREGISTRERT.equals(j.getJournalstatus())) {
+			return dokumentoversiktFagsakArguments.getFilters().isVisFeilregistrerte();
+		} else {
+			return true;
+		}
+	}
 }
