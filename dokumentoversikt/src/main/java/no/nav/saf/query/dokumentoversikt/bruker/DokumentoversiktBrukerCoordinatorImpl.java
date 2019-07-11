@@ -160,12 +160,23 @@ class DokumentoversiktBrukerCoordinatorImpl implements DokumentoversiktBrukerCoo
 				.map(TilgangJournalpost::getJournalpostId)
 				.sorted(Comparator.reverseOrder())
 				.collect(Collectors.toList()), safRequestContext)
-				.stream().filter(j -> dokumentoversiktBrukerArguments.getFilters().getTema().contains(j.getTema())).collect(Collectors.toList());
+				.stream()
+				.filter(j -> dokumentoversiktBrukerArguments.getFilters().getTema().contains(j.getTema()))
+				.filter(j -> filterFeilregistrerte(dokumentoversiktBrukerArguments, j))
+				.collect(Collectors.toList());
 
 		return Dokumentoversikt.builder()
 				.journalposter(visningJournalposter)
 				.sideInfo(sideInfoMapper.mapSideInfo(dokumentoversiktBrukerArguments.getPagination(), visningJournalposter, safRequestContext))
 				.build();
+	}
+
+	private boolean filterFeilregistrerte(DokumentoversiktBrukerArguments dokumentoversiktBrukerArguments, Journalpost j) {
+		if(Journalstatus.FEILREGISTRERT == j.getJournalstatus()) {
+			return dokumentoversiktBrukerArguments.getFilters().isVisFeilregistrerte();
+		} else {
+			return true;
+		}
 	}
 
 	private boolean pep2CheckMidlertidigAccess(TilgangJournalpost tj, SafRequestContext safRequestContext) {
