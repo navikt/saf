@@ -32,7 +32,8 @@ import java.lang.annotation.Target;
 				}
 		),
 		@ApiResponse(code = 400, message = "* Ugyldig input. JournalpostId og dokumentInfoId må være tall og variantFormat må være en gyldig kodeverk-verdi.\n* Journalposten tilhører et ustøttet arkivsaksystem. Arkivsaksystem må være GSAK, PSAK eller NULL (midlertidig journalpost)."),
-		@ApiResponse(code = 401, message = "* Bruker mangler tilgang for å vise dokumentet.\n* Ugyldig OIDC token. Denne feilen gis dersom tokenet ikke har riktig format eller er utgått."),
+		@ApiResponse(code = 401, message = "* Vi vet ikke hvem bruker er og token kan ikke valideres.\n* F.eks ugyldig, utgått eller manglende OIDC token."),
+		@ApiResponse(code = 403, message = "* Vi vet hvem bruker er og bruker får ikke tilgang.\n* F.eks dokumentet tilhører egen ansatt, har hemmelig adresse eller ikke har tilgang til tema og bruker har ikke tilgang til dette."),
 		@ApiResponse(code = 404, message = "Dokument eller journalpost ble ikke funnet.")}
 )
 public @interface SwaggerRestHentDokument {

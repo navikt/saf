@@ -62,6 +62,7 @@ public class DokumentoversiktWiring {
 					try {
 						DokumentoversiktBrukerArguments arguments = DokumentoversiktBrukerArguments.create(environment);
 						SafRequestContext safRequestContext = environment.getContext();
+						safRequestContext.getSecurityContext().getOidcTokenBody();
 						safRequestContext.setCorrelationId(environment.getExecutionId());
 						log.info("dokumentoversiktBruker hentes for bruker med {}", arguments.getBrukerIdInput());
 						Dokumentoversikt dokumentoversikt = dokumentoversiktBrukerCoordinator.hentDokumentoversikt(arguments, safRequestContext);
@@ -79,6 +80,7 @@ public class DokumentoversiktWiring {
 					try {
 						DokumentoversiktFagsakArguments arguments = DokumentoversiktFagsakArguments.create(environment);
 						SafRequestContext safRequestContext = environment.getContext();
+						safRequestContext.getSecurityContext().getOidcTokenBody();
 						safRequestContext.setCorrelationId(environment.getExecutionId());
 						log.info("dokumentoversiktFagsak hentes for fagsakIdInput={}", arguments.getFagsakInput());
 						Dokumentoversikt dokumentoversikt = dokumentoversiktFagsakCoordinator.hentDokumentoversikt(arguments, safRequestContext);
@@ -96,6 +98,7 @@ public class DokumentoversiktWiring {
 					try {
 						final String journalpostId = environment.getArgument("journalpostId");
 						SafRequestContext safRequestContext = environment.getContext();
+						safRequestContext.getSecurityContext().getOidcTokenBody();
 						safRequestContext.setCorrelationId(environment.getExecutionId());
 						log.info("query journalpost for journalpostId={}", journalpostId);
 						Journalpost journalpost = journalpostCoordinator.hentJournalpost(journalpostId, safRequestContext);
@@ -113,6 +116,7 @@ public class DokumentoversiktWiring {
 						final String dokumentInfoId = environment.getArgument("dokumentInfoId");
 						final Tilknytning tilknytning = environment.getArgument("tilknytning");
 						SafRequestContext safRequestContext = environment.getContext();
+						safRequestContext.getSecurityContext().getOidcTokenBody();
 						safRequestContext.setCorrelationId(environment.getExecutionId());
 						log.info("tilknyttedeJournalposter for dokumentInfoId={}, tilknytning={}", dokumentInfoId, tilknytning);
 						List<Journalpost> tilknyttedeJournalposter = tilknyttedeJournalposterCoordinator.hentTilknyttedeJournalposter(dokumentInfoId, tilknytning, safRequestContext);
