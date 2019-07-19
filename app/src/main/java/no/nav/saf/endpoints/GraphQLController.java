@@ -1,5 +1,9 @@
 package no.nav.saf.endpoints;
 
+import static no.nav.saf.endpoints.SafHeaders.NAV_CALLID;
+import static no.nav.saf.endpoints.SafHeaders.NAV_CONSUMER_ID;
+import static no.nav.saf.endpoints.SafHeaders.X_CORRELATION_ID;
+
 import com.github.benmanes.caffeine.cache.Cache;
 import graphql.ExecutionInput;
 import graphql.ExecutionResult;
@@ -39,8 +43,7 @@ import java.util.Objects;
  */
 @RestController
 @Slf4j
-public class GraphQLController {
-	private static final String X_CORRELATION_ID = "X-Correlation-ID";
+public class GraphQLController extends AbstractSafController {
 	private final GraphQLSchema graphQLSchema;
 	private final Cache<String, PreparsedDocumentEntry> graphQLQueryCache;
 	private final OidcValidatorTool oidcValidatorTool;
@@ -66,9 +69,10 @@ public class GraphQLController {
 	@PostMapping(value = "/graphql", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
 	public Map<String, Object> graphQLRequest(@RequestHeader(value = HttpHeaders.AUTHORIZATION, required = false) String authorizationHeader,
-											  @RequestHeader(value = X_CORRELATION_ID, required = false) String xCorrelationIDHeader,
+											  @RequestHeader(value = X_CORRELATION_ID, required = false) String xCorrelationId,
+											  @RequestHeader(value = NAV_CALLID, required = false) String navCallid,
+											  @RequestHeader(value = NAV_CONSUMER_ID, required = false) String navConsumerId,
 											  @RequestBody GraphQLRequest request) {
-
 		ExecutionResult executionResult =
 				GraphQL.newGraphQL(graphQLSchema)
 						.preparsedDocumentProvider(graphQLQueryCache::get)
@@ -78,7 +82,7 @@ public class GraphQLController {
 						.query(request.getQuery())
 						.operationName(request.getOperationName())
 						.variables(request.getVariables() == null ? Collections.emptyMap() : request.getVariables())
-						.context(new SafRequestContext(authorizationHeader, xCorrelationIDHeader, oidcValidatorTool))
+						.context(new SafRequestContext(authorizationHeader, createNavCallid(navCallid, xCorrelationId), navConsumerId, oidcValidatorTool))
 						.build());
 
 		return executionResult.toSpecification();

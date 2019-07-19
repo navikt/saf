@@ -15,7 +15,6 @@ import static org.mockito.Mockito.when;
 import no.nav.saf.cache.RedisCacheConfig;
 import no.nav.saf.domain.kode.Tema;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
-import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlAttribute;
 import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlRequest;
 import no.nav.saf.tilgangskontroll.abac.dto.response.Decision;
@@ -51,7 +50,7 @@ class Pep2dImplTest extends AbstractPepTest {
 		boolean hasAccess = pep2d.hasAccess(TilgangSak.builder()
 				.aktoerId(AKTOER_ID)
 				.tema(TEMA_BID)
-				.build(), new SafRequestContext(OIDC_TOKEN_PERSON_USER_TEST, xCorrelationID, oidcValidatorTool));
+				.build(), createSafRequestContext());
 
 		verify(abacService).evaluate(request.capture());
 		XacmlRequest capturedRequest = request.getValue();
@@ -68,7 +67,7 @@ class Pep2dImplTest extends AbstractPepTest {
 		boolean hasAccess = pep2d.hasAccess(TilgangSak.builder()
 				.aktoerId(AKTOER_ID)
 				.tema(null)
-				.build(), new SafRequestContext(OIDC_TOKEN_PERSON_USER_TEST, xCorrelationID, oidcValidatorTool));
+				.build(), createSafRequestContext());
 
 		verify(abacService, never()).evaluate(any());
 		assertTrue(hasAccess);
@@ -85,7 +84,7 @@ class Pep2dImplTest extends AbstractPepTest {
 		when(oidcValidatorTool.validate(OIDC_TOKEN_PERSON_USER_TEST)).thenReturn(true);
 		boolean hasAccess = pep2d.hasAccess(TilgangSak.builder()
 				.tema(Tema.FAR)
-				.build(), new SafRequestContext(OIDC_TOKEN_PERSON_USER_TEST, xCorrelationID, oidcValidatorTool));
+				.build(), createSafRequestContext());
 
 		assertFalse(hasAccess);
 	}
