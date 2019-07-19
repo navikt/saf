@@ -14,7 +14,6 @@ import static org.mockito.Mockito.when;
 import no.nav.saf.cache.RedisCacheConfig;
 import no.nav.saf.domain.kode.Variantformat;
 import no.nav.saf.domain.tilgangsmodell.TilgangDokumentvariant;
-import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlAttribute;
 import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlRequest;
 import no.nav.saf.tilgangskontroll.abac.dto.response.Decision;
@@ -47,7 +46,7 @@ public class Pep6dImplTest extends AbstractPepTest {
 
 		boolean hasAccess = pep6d.hasAccess(TilgangDokumentvariant.builder()
 				.skjerming(null)
-				.build(), new SafRequestContext(OIDC_TOKEN_PERSON_USER_TEST, xCorrelationID, oidcValidatorTool));
+				.build(), createSafRequestContext());
 
 		assertTrue(hasAccess);
 	}
@@ -62,7 +61,7 @@ public class Pep6dImplTest extends AbstractPepTest {
 		boolean hasAccess = pep6d.hasAccess(TilgangDokumentvariant.builder()
 				.skjerming(SKJERMING_POL)
 				.variantformat(Variantformat.ARKIV)
-				.build(), new SafRequestContext(OIDC_TOKEN_PERSON_USER_TEST, xCorrelationID, oidcValidatorTool));
+				.build(), createSafRequestContext());
 
 		verify(abacService).evaluate(request.capture());
 		XacmlRequest capturedRequest = request.getValue();
@@ -82,7 +81,7 @@ public class Pep6dImplTest extends AbstractPepTest {
 		boolean hasAccess = pep6d.hasAccess(TilgangDokumentvariant.builder()
 				.skjerming(SKJERMING_POL)
 				.variantformat(Variantformat.ARKIV)
-				.build(), new SafRequestContext(OIDC_TOKEN_PERSON_USER_TEST, xCorrelationID, oidcValidatorTool));
+				.build(), createSafRequestContext());
 
 		verify(abacService).evaluate(request.capture());
 		XacmlRequest capturedRequest = request.getValue();

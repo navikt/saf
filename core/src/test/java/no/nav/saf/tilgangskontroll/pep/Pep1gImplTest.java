@@ -14,7 +14,6 @@ import static org.mockito.Mockito.when;
 
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.domain.tilgangsmodell.TilgangIdent;
-import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlAttribute;
 import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlRequest;
 import no.nav.saf.tilgangskontroll.abac.dto.response.Decision;
@@ -44,7 +43,7 @@ public class Pep1gImplTest extends AbstractPepTest {
 				.aktoerId(AKTOER_ID)
 				.foedselsnr(FNR)
 				.historiskeIdenter(Collections.singletonList(TilgangIdent.builder().identifikator(FNR).build()))
-				.build(), new SafRequestContext(OIDC_TOKEN_PERSON_USER_TEST, xCorrelationID, oidcValidatorTool));
+				.build(), createSafRequestContext());
 
 		verify(abacService).evaluate(request.capture());
 		XacmlRequest capturedRequest = request.getValue();
@@ -64,7 +63,7 @@ public class Pep1gImplTest extends AbstractPepTest {
 		boolean hasAccess = pep1g.hasAccess(TilgangBruker.builder()
 				.foedselsnr(FNR)
 				.historiskeIdenter(Collections.singletonList(TilgangIdent.builder().identifikator(FNR).build()))
-				.build(), new SafRequestContext(OIDC_TOKEN_PERSON_USER_TEST, xCorrelationID, oidcValidatorTool));
+				.build(), createSafRequestContext());
 
 		verify(abacService).evaluate(request.capture());
 		XacmlRequest capturedRequest = request.getValue();
@@ -86,7 +85,7 @@ public class Pep1gImplTest extends AbstractPepTest {
 				.aktoerId(AKTOER_ID)
 				.foedselsnr(FNR)
 				.historiskeIdenter(Collections.singletonList(TilgangIdent.builder().identifikator(FNR).build()))
-				.build(), new SafRequestContext(OIDC_TOKEN_PERSON_USER_TEST, xCorrelationID, oidcValidatorTool));
+				.build(), createSafRequestContext());
 
 		assertFalse(hasAccess);
 	}

@@ -1,5 +1,9 @@
 package no.nav.saf.endpoints;
 
+import static no.nav.saf.endpoints.SafHeaders.NAV_CALLID;
+import static no.nav.saf.endpoints.SafHeaders.NAV_CONSUMER_ID;
+import static no.nav.saf.endpoints.SafHeaders.X_CORRELATION_ID;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -23,7 +27,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.inject.Inject;
-import java.util.UUID;
 
 /**
  * Endepunktet til hentDokument, som returnerer et dokument fra joark basert på journalpostId, dokumentInfoId og variantFormat.
@@ -35,8 +38,7 @@ import java.util.UUID;
 @RequestMapping("rest/")
 @Api(tags = "hentdokument API", description = "Tilbyr henting av fysiske dokumenter")
 @Slf4j
-public class HentDokumentController {
-	private static final String X_CORRELATION_ID = "X-Correlation-ID";
+public class HentDokumentController extends AbstractSafController {
 	private final HentDokumentDomainCoordinator hentDokumentDomainCoordinator;
 	private final OidcValidatorTool oidcValidatorTool;
 
@@ -51,12 +53,15 @@ public class HentDokumentController {
 	@SwaggerRestHentDokument
 	@GetMapping(value = "hentdokument/{journalpostId}/{dokumentInfoId}/{variantFormat}")
 	@Monitor(value = "dok_request", extraTags = {"process", "hentDokument", "requestType", "hentDokument"}, histogram = true)
-	public ResponseEntity<byte[]> hentDokument(@ApiParam(name = "journalpostId", value = "Id for aktuell journalpost", required = true) @PathVariable String journalpostId,
-											   @ApiParam(name = "dokumentInfoId", value = "Id for aktuelt dokument", required = true) @PathVariable String dokumentInfoId,
-											   @ApiParam(name = "variantFormat", value = "Varianten til dokumentet som skal hentes. [Følg lenken for gyldige verdier](https://confluence.adeo.no/display/BOA/Enum%3A+Variantformat).", required = true) @PathVariable String variantFormat,
-											   @ApiParam(name = X_CORRELATION_ID, value = "(Optional) ID til logging og sporing på tvers av verdikjeder.") @RequestHeader(value = X_CORRELATION_ID, required = false) String xCorrelationId,
-											   @ApiParam(hidden = true) @RequestHeader(value = HttpHeaders.AUTHORIZATION, required = false) String authorizationHeader) {
-		SafRequestContext safRequestContext = new SafRequestContext(authorizationHeader, generateCorrelationIdIfNull(xCorrelationId), oidcValidatorTool);
+	public ResponseEntity<byte[]> hentDokument(
+			@ApiParam(name = "journalpostId", value = "Id for aktuell journalpost", required = true) @PathVariable String journalpostId,
+			@ApiParam(name = "dokumentInfoId", value = "Id for aktuelt dokument", required = true) @PathVariable String dokumentInfoId,
+			@ApiParam(name = "variantFormat", value = "Varianten til dokumentet som skal hentes. [Følg lenken for gyldige verdier](https://confluence.adeo.no/display/BOA/Enum%3A+Variantformat).", required = true) @PathVariable String variantFormat,
+			@ApiParam(name = NAV_CALLID, value = "(Valgfri) ID for logging og sporing på tvers av verdikjeder. Eksempel: UUID") @RequestHeader(value = NAV_CALLID, required = false) String navCallid,
+			@ApiParam(name = X_CORRELATION_ID, value = "@Deprecated. Bruk " + NAV_CALLID) @RequestHeader(value = X_CORRELATION_ID, required = false) String xCorrelationId,
+			@ApiParam(name = NAV_CONSUMER_ID, value = "(Valgfri) ID for å identifisere komponent, modul eller system som kaller tjenesten hvis dette ikke utgår fra subjektet i tokenet. Eksempel: myapp") @RequestHeader(value = NAV_CONSUMER_ID, required = false) String navConsumerId,
+			@ApiParam(hidden = true) @RequestHeader(value = HttpHeaders.AUTHORIZATION, required = false) String authorizationHeader) {
+		SafRequestContext safRequestContext = new SafRequestContext(authorizationHeader, createNavCallid(navCallid, xCorrelationId), navConsumerId, oidcValidatorTool);
 		log.info("hentDokument har mottatt kall. journalpostId={}, dokumentInfoId={}, variantFormat={}", journalpostId, dokumentInfoId, variantFormat);
 		try {
 			safRequestContext.getSecurityContext().getOidcTokenBody();
@@ -74,14 +79,6 @@ public class HentDokumentController {
 		}
 	}
 
-	private String generateCorrelationIdIfNull(String xCorrelationId) {
-		if (xCorrelationId == null || xCorrelationId.trim().isEmpty()) {
-			return UUID.randomUUID().toString();
-		} else {
-			return xCorrelationId;
-		}
-	}
-
 	private void validateServiceUserAccess(SafRequestContext safRequestContext, String variantFormat) {
 		SafSecurityContext securityContext = safRequestContext.getSecurityContext();
 		if (securityContext.isPrivilegiedServiceUser()) {
@@ -91,7 +88,7 @@ public class HentDokumentController {
 			if (!Variantformat.ORIGINAL.name().equals(variantFormat)) {
 				throw new HentdokumentTilgangskontrollException(
 						"Servicebruker forsøker hente dokument med variantFormat=" +
-						variantFormat + ". HentDokument tjenesten tillater kun at servicebrukere uten spesiell avtale kun får tilgang til variantFormat=" + Variantformat.ORIGINAL + ".");
+								variantFormat + ". HentDokument tjenesten tillater kun at servicebrukere uten spesiell avtale kun får tilgang til variantFormat=" + Variantformat.ORIGINAL + ".");
 			}
 		}
 	}

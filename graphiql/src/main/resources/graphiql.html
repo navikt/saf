@@ -99,7 +99,8 @@
             headers: {
                 'Authorization': 'Bearer ' + document.getElementById('jwt-token').value,
                 'Accept': 'application/json',
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Nav-Consumer-Id': 'graphiql'
             },
             body: JSON.stringify(graphQLParams),
             credentials: 'include'

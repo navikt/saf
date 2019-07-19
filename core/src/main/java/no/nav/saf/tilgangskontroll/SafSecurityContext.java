@@ -6,7 +6,6 @@ import static org.apache.commons.lang3.StringUtils.trim;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.exceptions.JWTDecodeException;
-import graphql.execution.ExecutionId;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.exceptions.OidcAuthorizationException;
 import no.nav.saf.tilgangskontroll.validation.OidcValidatorTool;
@@ -26,7 +25,8 @@ public class SafSecurityContext {
 	private static final Map<String, Boolean> PRIVILEGIED_SERVICEUSERS = new HashMap<>();
 	private final String oidcTokenBody;
 	private final String subjectId;
-	private String xCorrelationID;
+	private String navCallid;
+	private final String navConsumerId;
 	private final OidcValidatorTool oidcValidatorTool;
 
 	static {
@@ -37,16 +37,22 @@ public class SafSecurityContext {
 	}
 
 	SafSecurityContext(String authorizationHeader,
-					   String xCorrelationIDHeader,
+					   String navCallid,
+					   String navConsumerId,
 					   OidcValidatorTool oidcValidatorTool) {
 
 		this.subjectId = getSubjectFromToken(authorizationHeader);
 		this.oidcValidatorTool = oidcValidatorTool;
 		this.oidcTokenBody = getOidcTokenBody(authorizationHeader);
 		// if zero, then executionId from graphQl is used.
-		this.xCorrelationID = trim(xCorrelationIDHeader);
+		this.navCallid = trim(navCallid);
+		if (isBlank(navConsumerId)) {
+			this.navConsumerId = getSubjectId();
+		} else {
+			this.navConsumerId = trim(navConsumerId);
+		}
 
-		addMdcData(this.subjectId, this.xCorrelationID);
+		addMdcData(this.subjectId, this.navCallid, this.navConsumerId);
 	}
 
 	private String getOidcTokenBody(String authorizationHeader) {
@@ -74,15 +80,12 @@ public class SafSecurityContext {
 		}
 	}
 
-	public void useExecutionIDIfXCorrelationIDNull(ExecutionId executionId) {
-		if (isBlank(xCorrelationID)) {
-			this.xCorrelationID = executionId.toString();
-			addMdcData(this.subjectId, this.xCorrelationID);
-		}
+	public String getNavCallid() {
+		return navCallid;
 	}
 
-	public String getXCorrelationID() {
-		return xCorrelationID;
+	public String getNavConsumerId() {
+		return navConsumerId;
 	}
 
 	public String getOidcTokenBody() {
@@ -102,7 +105,7 @@ public class SafSecurityContext {
 	}
 
 	public boolean isServiceUser() {
-		if(subjectId == null) {
+		if (subjectId == null) {
 			throw new OidcAuthorizationException(AUTH_ERRORMESSAGE);
 		} else {
 			return subjectId.toLowerCase().startsWith(SERVICEUSER_PREFIX);

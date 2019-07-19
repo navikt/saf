@@ -16,7 +16,6 @@ import no.nav.saf.domain.kode.Tema;
 import no.nav.saf.domain.tilgangsmodell.TilgangIdent;
 import no.nav.saf.domain.tilgangsmodell.TilgangRelevantTredjepart;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
-import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlAttribute;
 import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlRequest;
 import no.nav.saf.tilgangskontroll.abac.dto.response.Decision;
@@ -44,7 +43,7 @@ class Pep3ImplTest extends AbstractPepTest {
 
 		boolean hasAccess = pep3.hasAccess(createTilgangSakBuilderWithTemaBidAndRelevanteTredjeparter().tema(Tema.FAR)
 						.build(),
-				new SafRequestContext(OIDC_TOKEN_PERSON_USER_TEST, xCorrelationID, oidcValidatorTool));
+				createSafRequestContext());
 
 		verify(abacService).evaluate(request.capture());
 		XacmlRequest capturedRequest = request.getValue();
@@ -63,7 +62,7 @@ class Pep3ImplTest extends AbstractPepTest {
 		ArgumentCaptor<XacmlRequest> request = ArgumentCaptor.forClass(XacmlRequest.class);
 
 		boolean hasAccess = pep3.hasAccess(createTilgangSakBuilderWithTemaBidAndRelevanteTredjeparter().build(),
-				new SafRequestContext(OIDC_TOKEN_PERSON_USER_TEST, xCorrelationID, oidcValidatorTool));
+				createSafRequestContext());
 
 		verify(abacService).evaluate(request.capture());
 		XacmlRequest capturedRequest = request.getValue();
@@ -82,7 +81,7 @@ class Pep3ImplTest extends AbstractPepTest {
 
 		boolean hasAccess = pep3.hasAccess(createTilgangSakBuilderWithTemaBidAndRelevanteTredjeparter().tema(Tema.PEN)
 						.build(),
-				new SafRequestContext(OIDC_TOKEN_PERSON_USER_TEST, xCorrelationID, oidcValidatorTool));
+				createSafRequestContext());
 
 		verify(abacService, never()).evaluate(any());
 		assertTrue(hasAccess);
@@ -96,7 +95,7 @@ class Pep3ImplTest extends AbstractPepTest {
 						.tema(Tema.PEN)
 						.relevanteTredjeparter(null)
 						.build(),
-				new SafRequestContext(OIDC_TOKEN_PERSON_USER_TEST, xCorrelationID, oidcValidatorTool));
+				createSafRequestContext());
 
 		verify(abacService, never()).evaluate(any());
 		assertTrue(hasAccess);
@@ -108,7 +107,7 @@ class Pep3ImplTest extends AbstractPepTest {
 
 		boolean hasAccess = pep3.hasAccess(createTilgangSakBuilderWithTemaBidAndRelevanteTredjeparter().relevanteTredjeparter(new ArrayList<>())
 						.build(),
-				new SafRequestContext(OIDC_TOKEN_PERSON_USER_TEST, xCorrelationID, oidcValidatorTool));
+				createSafRequestContext());
 
 		verify(abacService, never()).evaluate(any());
 		assertTrue(hasAccess);
@@ -119,7 +118,7 @@ class Pep3ImplTest extends AbstractPepTest {
 		when(abacService.evaluate(any(XacmlRequest.class))).thenReturn(new XacmlResponse(Decision.DENY, null, null, null));
 		when(oidcValidatorTool.validate(OIDC_TOKEN_PERSON_USER_TEST)).thenReturn(true);
 		boolean hasAccess = pep3.hasAccess(createTilgangSakBuilderWithTemaBidAndRelevanteTredjeparter().build(),
-				new SafRequestContext(OIDC_TOKEN_PERSON_USER_TEST, xCorrelationID, oidcValidatorTool));
+				createSafRequestContext());
 		verify(abacService).evaluate(any());
 		assertFalse(hasAccess);
 	}
