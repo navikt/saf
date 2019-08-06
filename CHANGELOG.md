@@ -10,6 +10,11 @@ Denne malen er basert på [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ## [6.1.1] - 2019-07-10
 ### Endret
+* `GraphQL: ` Type `Journalpost`. Deprekert felt `journalforendeEnhet`.
+* `GraphQL: ` Type `Journalpost`. Lagt til ny felt `journalfoerendeEnhet`.
+
+## [6.1.1] - 2019-07-10
+### Endret
 * `GraphQL: ` Enum `Kanal`. Ny verdi `NAV_NO_UINNLOGGET`.
 
 ## [6.1.0] - 2019-06-27
