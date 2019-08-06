@@ -35,7 +35,9 @@ public class Journalpost {
 	private final String avsenderMottakerNavn;
 	@Deprecated
 	private final String avsenderMottakerLand;
+	@Deprecated
 	private final String journalforendeEnhet;
+	private final String journalfoerendeEnhet;
 	private final String journalfortAvNavn;
 	private final String opprettetAvNavn;
 	private final Kanal kanal;

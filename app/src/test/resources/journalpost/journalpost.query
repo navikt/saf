@@ -18,6 +18,7 @@
         avsenderMottakerNavn
         avsenderMottakerLand
         journalforendeEnhet
+        journalfoerendeEnhet
         journalfortAvNavn
         opprettetAvNavn
         kanal
