@@ -78,6 +78,7 @@ public class JournalpostDtoMapper {
 				.avsenderMottakerNavn(journalpostDto.getAvsenderMottakerNavn())
 				.avsenderMottakerLand(journalpostDto.getAvsenderMottakerLand())
 				.journalforendeEnhet(journalpostDto.getJournalforendeEnhet())
+				.journalfoerendeEnhet(journalpostDto.getJournalforendeEnhet())
 				.journalfortAvNavn(journalpostDto.getJournalfortAvNavn())
 				.opprettetAvNavn(journalpostDto.getOpprettetAvNavn())
 				.kanal(kanal)

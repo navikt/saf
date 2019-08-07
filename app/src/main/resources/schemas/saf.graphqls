@@ -204,7 +204,10 @@ type Journalpost {
     avsenderMottakerLand: String @deprecated(reason: "Feltet er deprekert og vil bli fjernet i fremtiden. Bruk avsenderMottaker.land i stedet.")
 
     # NAV-enheten som har journalført forsendelsen. I noen tilfeller brukes journalfEnhet til å rute journalføringsoppgaven til korrekt enhet i NAV. I slike tilfeller vil journalfEnhet være satt også for ikke-journalførte dokumenter.
-    journalforendeEnhet: String
+    journalforendeEnhet: String  @deprecated(reason: "Feltet er deprekert og vil bli fjernet i fremtiden. Bruk journalfoerendeEnhet i stedet.")
+
+    # NAV-enheten som har journalført forsendelsen. I noen tilfeller brukes journalfEnhet til å rute journalføringsoppgaven til korrekt enhet i NAV. I slike tilfeller vil journalfEnhet være satt også for ikke-journalførte dokumenter.
+    journalfoerendeEnhet: String
 
     # Personen eller systembrukeren i NAV som har journalført forsendelsen.
     # * Bruken av feltet varierer, og kan inneholde den ansattes navn eller NAV-ident. Dersom forsendelsen er automatisk journalført, kan innholdet være f.eks. en servicebruker eller et batchnavn.

@@ -98,6 +98,7 @@ class JournalpostIT extends AbstractItest {
 		assertThat(journalpost.getAvsenderMottakerNavn(), is("Bjarne Betjent"));
 		assertThat(journalpost.getAvsenderMottakerLand(), is("NO"));
 		assertThat(journalpost.getJournalforendeEnhet(), is("2990"));
+		assertThat(journalpost.getJournalfoerendeEnhet(), is("2990"));
 		assertThat(journalpost.getJournalfortAvNavn(), is("Max Mekker"));
 		assertThat(journalpost.getOpprettetAvNavn(), is("Max Mekker"));
 		assertThat(journalpost.getKanal(), is(Kanal.SDP));
