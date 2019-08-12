@@ -14,6 +14,7 @@ public class Dokumentvariant {
 	private final Variantformat variantformat;
 	private final String filnavn;
 	private final String filuuid;
+	private final String filtype;
 	private final boolean saksbehandlerHarTilgang;
 	private final Skjerming skjerming;
 }

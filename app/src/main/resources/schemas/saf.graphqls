@@ -364,6 +364,11 @@ type Dokumentvariant {
     # * NB: Feltet skal kun brukes etter avtale med Team Dokument.
     filuuid: String @deprecated(reason: "Feltet er deprekert og vil bli fjernet i fremtiden. Feltet skal kun brukes etter avtale med Team Dokument.")
 
+    # Dokumentets filtype, f.eks. PDFA, XML eller JPG. Gyldige verdier finnes på siden Fagarkiv - Filtype.
+    # * NB: Informasjonen er ikke garantert å samsvare med dokumentets faktiske filtype, da dette ikke valideres under arkivering.
+    # * NB: Feltet skal kun brukes etter avtale med Team Dokument.
+    filtype: String @deprecated(reason: "Feltet er deprekert og er kun til internt bruk. Feltet skal kun brukes etter avtale med Team Dokument.")
+
     # Sier hvorvidt saksbehandler som gjør oppslaget vil få tilgang til å åpne denne dokumentvarianten.
     # * Dersom verdien er false, vil tilgang bli avslått dersom saksbehandler forsøker å åpne dokumentet.
     saksbehandlerHarTilgang: Boolean!

@@ -114,6 +114,7 @@ public class JournalpostDtoMapper {
 										.variantformat(variantDto.getVariantf().getSafVariantformat())
 										.filnavn(variantDto.getFilnavn())
 										.filuuid(variantDto.getFiluuid())
+										.filtype(variantDto.getFiltype())
 										.skjerming(variantDto.getSkjerming() == null ? null : variantDto.getSkjerming()
 												.getSafSkjerming())
 										.build())
