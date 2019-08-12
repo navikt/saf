@@ -8,6 +8,10 @@ Alle nevneverdige endringer blir dokumentert her.
 
 Denne malen er basert på [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [6.3.0] - 2019-08-12
+### Endret
+* `GraphQL: ` Type `Dokumentvariant`. Nytt felt `filtype` kun til internt bruk i nytt distribusjonsløp.
+
 ## [6.2.0] - 2019-07-10
 ### Endret
 * `GraphQL: ` Type `Journalpost`. Deprekert felt `journalforendeEnhet`.
