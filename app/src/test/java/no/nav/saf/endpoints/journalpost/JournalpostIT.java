@@ -116,6 +116,9 @@ class JournalpostIT extends AbstractItest {
 		assertThat(dokumentInfo1.getLogiskeVedlegg().get(0).getTittel(), is("Hei"));
 		assertThat(dokumentInfo1.getDokumentvarianter().get(0).getVariantformat(), is(Variantformat.ARKIV));
 		assertTrue(dokumentInfo1.getDokumentvarianter().get(0).isSaksbehandlerHarTilgang());
+		assertThat(dokumentInfo1.getDokumentvarianter().get(0).getFiltype(), is("PDF"));
+		assertThat(dokumentInfo1.getDokumentvarianter().get(0).getFilnavn(), is("filNavn"));
+		assertThat(dokumentInfo1.getDokumentvarianter().get(0).getFiluuid(), is("0c0bacf-c233-4a54-96fc-e205b79862d9"));
 	}
 
 	@Test
