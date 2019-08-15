@@ -13,11 +13,11 @@ import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.interceptor.CacheErrorHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
 import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
-import org.springframework.data.redis.connection.RedisNode;
-import org.springframework.data.redis.connection.RedisSentinelConfiguration;
+import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceClientConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.connection.lettuce.LettucePoolingClientConfiguration;
@@ -33,10 +33,10 @@ import java.util.Collections;
  */
 @Configuration
 @EnableCaching
+@PropertySource("application.properties")
 public class RedisCacheConfig extends CachingConfigurerSupport {
 	public static final String MANAGER_DISTRIBUTED = "distributed";
 	// Ikke endre denne verdien, en del av NAIS redis oppsett
-	private static final String MASTER_NAME = "mymaster";
 	private static final Duration DEFAULT_TTL = Duration.ofHours(1L);
 	public static final String TILGANG_CACHE = "tilgang";
 
@@ -57,11 +57,13 @@ public class RedisCacheConfig extends CachingConfigurerSupport {
 	}
 
 	@Bean
-	public RedisConnectionFactory redisConnectionFactory(@Value("${REDIS_HOST:rfs-saf}") String redisHost,
+	public RedisConnectionFactory redisConnectionFactory(@Value("${redis.host:saf-redis}") String redisHost,
+														 @Value("${redis.port:6379}") int redisPort,
 														 LettuceClientConfiguration clientConfiguration) {
-		LettuceConnectionFactory factory = new LettuceConnectionFactory(
-				new RedisSentinelConfiguration().master(MASTER_NAME).sentinel(new RedisNode(redisHost, 26379)),
-				clientConfiguration);
+		RedisStandaloneConfiguration config = new RedisStandaloneConfiguration();
+		config.setHostName(redisHost);
+		config.setPort(redisPort);
+		LettuceConnectionFactory factory = new LettuceConnectionFactory(config, clientConfiguration);
 		factory.setShareNativeConnection(true);
 		return factory;
 	}
