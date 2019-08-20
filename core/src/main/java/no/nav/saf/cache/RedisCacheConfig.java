@@ -13,7 +13,6 @@ import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.interceptor.CacheErrorHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
 import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -33,10 +32,8 @@ import java.util.Collections;
  */
 @Configuration
 @EnableCaching
-@PropertySource("application.properties")
 public class RedisCacheConfig extends CachingConfigurerSupport {
 	public static final String MANAGER_DISTRIBUTED = "distributed";
-	// Ikke endre denne verdien, en del av NAIS redis oppsett
 	private static final Duration DEFAULT_TTL = Duration.ofHours(1L);
 	public static final String TILGANG_CACHE = "tilgang";
 
