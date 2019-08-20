@@ -4,6 +4,7 @@ import static org.springframework.data.redis.serializer.RedisSerializationContex
 
 import io.lettuce.core.ClientOptions;
 import io.lettuce.core.SocketOptions;
+import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.tilgangskontroll.abac.dto.response.XacmlResponse;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.springframework.beans.factory.annotation.Value;
@@ -32,6 +33,7 @@ import java.util.Collections;
  */
 @Configuration
 @EnableCaching
+@Slf4j
 public class RedisCacheConfig extends CachingConfigurerSupport {
 	public static final String MANAGER_DISTRIBUTED = "distributed";
 	private static final Duration DEFAULT_TTL = Duration.ofHours(1L);
@@ -58,6 +60,7 @@ public class RedisCacheConfig extends CachingConfigurerSupport {
 														 @Value("${redis.port:6379}") int redisPort,
 														 LettuceClientConfiguration clientConfiguration) {
 		RedisStandaloneConfiguration config = new RedisStandaloneConfiguration();
+		log.info("Starting redis connection to {} on port {}", redisHost, redisPort);
 		config.setHostName(redisHost);
 		config.setPort(redisPort);
 		LettuceConnectionFactory factory = new LettuceConnectionFactory(config, clientConfiguration);
