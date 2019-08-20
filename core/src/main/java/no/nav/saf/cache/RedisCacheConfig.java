@@ -56,7 +56,7 @@ public class RedisCacheConfig extends CachingConfigurerSupport {
 	}
 
 	@Bean
-	public RedisConnectionFactory redisConnectionFactory(@Value("${redis.host:saf-redis}") String redisHost,
+	public RedisConnectionFactory redisConnectionFactory(@Value("${redis.hostname:saf-redis}") String redisHost,
 														 @Value("${redis.port:6379}") int redisPort,
 														 LettuceClientConfiguration clientConfiguration) {
 		RedisStandaloneConfiguration config = new RedisStandaloneConfiguration();
