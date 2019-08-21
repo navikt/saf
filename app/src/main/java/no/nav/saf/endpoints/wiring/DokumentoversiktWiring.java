@@ -16,6 +16,8 @@ import no.nav.saf.query.dokumentoversikt.bruker.DokumentoversiktBrukerArguments;
 import no.nav.saf.query.dokumentoversikt.bruker.DokumentoversiktBrukerCoordinator;
 import no.nav.saf.query.dokumentoversikt.fagsak.DokumentoversiktFagsakArguments;
 import no.nav.saf.query.dokumentoversikt.fagsak.DokumentoversiktFagsakCoordinator;
+import no.nav.saf.query.dokumentoversikt.journalstatus.DokumentoversiktJournalstatusArguments;
+import no.nav.saf.query.dokumentoversikt.journalstatus.DokumentoversiktJournalstatusCoordinator;
 import no.nav.saf.query.journalpost.JournalpostCoordinator;
 import no.nav.saf.query.tilknyttedejournalposter.TilknyttedeJournalposterCoordinator;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
@@ -34,6 +36,7 @@ public class DokumentoversiktWiring {
 	private final DokumentoversiktCoordinator dokumentoversiktCoordinator;
 	private final DokumentoversiktBrukerCoordinator dokumentoversiktBrukerCoordinator;
 	private final DokumentoversiktFagsakCoordinator dokumentoversiktFagsakCoordinator;
+	private final DokumentoversiktJournalstatusCoordinator dokumentoversiktJournalstatusCoordinator;
 	private final JournalpostCoordinator journalpostCoordinator;
 	private final TilknyttedeJournalposterCoordinator tilknyttedeJournalposterCoordinator;
 
@@ -41,11 +44,13 @@ public class DokumentoversiktWiring {
 	public DokumentoversiktWiring(DokumentoversiktCoordinator dokumentoversiktCoordinator,
 								  DokumentoversiktBrukerCoordinator dokumentoversiktBrukerCoordinator,
 								  DokumentoversiktFagsakCoordinator dokumentoversiktFagsakCoordinator,
+								  DokumentoversiktJournalstatusCoordinator dokumentoversiktJournalstatusCoordinator,
 								  JournalpostCoordinator journalpostCoordinator,
 								  TilknyttedeJournalposterCoordinator tilknyttedeJournalposterCoordinator) {
 		this.dokumentoversiktCoordinator = dokumentoversiktCoordinator;
 		this.dokumentoversiktBrukerCoordinator = dokumentoversiktBrukerCoordinator;
 		this.dokumentoversiktFagsakCoordinator = dokumentoversiktFagsakCoordinator;
+		this.dokumentoversiktJournalstatusCoordinator = dokumentoversiktJournalstatusCoordinator;
 		this.journalpostCoordinator = journalpostCoordinator;
 		this.tilknyttedeJournalposterCoordinator = tilknyttedeJournalposterCoordinator;
 	}
@@ -84,6 +89,23 @@ public class DokumentoversiktWiring {
 						Dokumentoversikt dokumentoversikt = dokumentoversiktFagsakCoordinator.hentDokumentoversikt(arguments, safRequestContext);
 						log.info("dokumentoversiktFagsak returnerer {} journalposter for fagsakId={}",
 								dokumentoversikt.getJournalposter().size(), arguments.getFagsakInput());
+						return dokumentoversikt;
+					} catch (SafFunctionalException e) {
+						return DataFetcherResult.newResult()
+								.data(Dokumentoversikt.empty())
+								.error(e)
+								.build();
+					}
+				}))
+				.type("Query", typeWiring -> typeWiring.dataFetcher("dokumentoversiktJournalstatus", environment -> {
+					try {
+						DokumentoversiktJournalstatusArguments arguments = DokumentoversiktJournalstatusArguments.create(environment);
+						SafRequestContext safRequestContext = environment.getContext();
+						safRequestContext.getSecurityContext().getOidcTokenBody();
+						log.info("dokumentoversiktJournalstatus hentes for filter={}", arguments.getFilters());
+						Dokumentoversikt dokumentoversikt = dokumentoversiktJournalstatusCoordinator.hentDokumentoversikt(arguments, safRequestContext);
+						log.info("dokumentoversiktJournalstatus returnerer {} journalposter for filter={}",
+								dokumentoversikt.getJournalposter().size(), arguments.getFilters());
 						return dokumentoversikt;
 					} catch (SafFunctionalException e) {
 						return DataFetcherResult.newResult()
