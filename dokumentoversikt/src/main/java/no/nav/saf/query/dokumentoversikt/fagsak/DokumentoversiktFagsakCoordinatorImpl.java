@@ -146,22 +146,24 @@ class DokumentoversiktFagsakCoordinatorImpl implements DokumentoversiktFagsakCoo
 				.blockingGet();
 
 
-		List<Journalpost> journalposter = visningsmodellRepository.findJournalposter(filteredTilgangJournalpostList.stream()
+		List<Journalpost> visningJournalposterSortert = visningsmodellRepository.findJournalposter(filteredTilgangJournalpostList.stream()
 				.map(TilgangJournalpost::getJournalpostId)
 				.sorted(Comparator.reverseOrder())
-				.collect(Collectors.toList()), safRequestContext)
-				.stream()
+				.collect(Collectors.toList()), safRequestContext);
+
+		List<Journalpost> visningJournalposterFiltrert = visningJournalposterSortert.stream()
 				.filter(j -> dokumentoversiktFagsakArguments.getFilters().getTema().contains(j.getTema()))
 				.filter(j -> filterFeilregistrerte(dokumentoversiktFagsakArguments, j))
 				.collect(Collectors.toList());
+
 		return Dokumentoversikt.builder()
-				.journalposter(journalposter)
-				.sideInfo(sideInfoMapper.mapSideInfo(dokumentoversiktFagsakArguments.getPagination(), journalposter, safRequestContext))
+				.journalposter(visningJournalposterFiltrert)
+				.sideInfo(sideInfoMapper.mapSideInfo(dokumentoversiktFagsakArguments.getPagination(), visningJournalposterSortert, safRequestContext))
 				.build();
 	}
 
 	private boolean filterFeilregistrerte(DokumentoversiktFagsakArguments dokumentoversiktFagsakArguments, Journalpost j) {
-		if(Journalstatus.FEILREGISTRERT.equals(j.getJournalstatus())) {
+		if (Journalstatus.FEILREGISTRERT.equals(j.getJournalstatus())) {
 			return dokumentoversiktFagsakArguments.getFilters().isVisFeilregistrerte();
 		} else {
 			return true;
