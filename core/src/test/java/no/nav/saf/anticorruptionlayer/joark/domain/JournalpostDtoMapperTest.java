@@ -113,6 +113,7 @@ class JournalpostDtoMapperTest {
 	private static final String FILUUID_2 = "dcba";
 	private static final String BRUKER_ID_PERSON = "***gammelt_fnr***";
 	private static final String BRUKER_ID_ORGANISASJON = "999999999";
+	private static final String ANTALL_RETUR = "3";
 
 	private final JournalpostDtoMapper mapper = new JournalpostDtoMapper();
 
@@ -131,6 +132,7 @@ class JournalpostDtoMapperTest {
 		assertEquals(JournalpostTypeCode.U.toString(), journalpost.getJournalposttype().toString());
 		assertEquals(JournalStatusCode.E.toSafJournalstatus(), journalpost.getJournalstatus());
 		assertEquals(SENTRAL_UTSKRIFT.getKanalnavn(), journalpost.getKanalnavn());
+		assertEquals(ANTALL_RETUR, journalpost.getAntallRetur());
 
 		assertThat(journalpost.getRelevanteDatoer(), hasItem(new RelevantDato(JOURNAL_DATO, Datotype.DATO_JOURNALFOERT)));
 		assertThat(journalpost.getRelevanteDatoer(), hasItem(new RelevantDato(DOKUMENT_DATO, Datotype.DATO_DOKUMENT)));
@@ -151,6 +153,7 @@ class JournalpostDtoMapperTest {
 		assertEquals(Journalposttype.I, journalpost.getJournalposttype());
 		assertEquals(Journalstatus.JOURNALFOERT, journalpost.getJournalstatus());
 		assertEquals(journalpost.getKanalnavn(), Kanal.UKJENT.getKanalnavn());
+		assertEquals(null, journalpost.getAntallRetur());
 
 		assertThat(journalpost.getRelevanteDatoer(), not(hasItem(new RelevantDato(DOKUMENT_DATO, Datotype.DATO_DOKUMENT))));
 		assertThat(journalpost.getRelevanteDatoer(), not(hasItem(new RelevantDato(AVS_RETUR_DATO, Datotype.DATO_AVS_RETUR))));
@@ -639,6 +642,7 @@ class JournalpostDtoMapperTest {
 				.avsReturDato(AVS_RETUR_DATO)
 				.sendtPrintDato(SENDT_PRINT_DATO)
 				.ekspedertDato(EKSPEDERT_DATO)
+				.antallRetur(ANTALL_RETUR)
 				.build();
 	}
 

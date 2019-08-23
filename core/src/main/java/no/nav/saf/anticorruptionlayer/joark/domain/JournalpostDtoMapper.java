@@ -24,6 +24,7 @@ import no.nav.saf.domain.DomainConstants;
 import no.nav.saf.domain.kode.Arkivsakssystem;
 import no.nav.saf.domain.kode.Datotype;
 import no.nav.saf.domain.kode.Dokumentstatus;
+import no.nav.saf.domain.kode.Journalposttype;
 import no.nav.saf.domain.kode.Journalstatus;
 import no.nav.saf.domain.kode.Kanal;
 import no.nav.saf.domain.kode.Tema;
@@ -90,6 +91,7 @@ public class JournalpostDtoMapper {
 						.atZone(ZoneId.systemDefault())))
 				.relevanteDatoer(mapRelevanteDatoer(journalpostDto))
 				.tilleggsopplysninger(mapTilleggsopplysninger(journalpostDto))
+				.antallRetur(mapAntallRetur(journalpostDto))
 				.build();
 		List<DokumentInfo> dokumenter = journalpostDto.getDokumenter().stream()
 				.filter(dokumentInfoDto -> shouldMapDokumentInfo(journalpostId, dokumentInfoDto.getDokumentInfoId(), requestCache))
@@ -125,6 +127,14 @@ public class JournalpostDtoMapper {
 						.build()).collect(Collectors.toList());
 		journalpost.getDokumenter().addAll(dokumenter);
 		return journalpost;
+	}
+
+	private String mapAntallRetur(JournalpostDto journalpostDto) {
+		if (JournalpostTypeCode.U.equals(journalpostDto.getJournalposttype())) {
+			return journalpostDto.getAntallRetur();
+		} else {
+			return null;
+		}
 	}
 
 	private String mapBrevkode(JournalpostDto journalpostDto, DokumentInfoDto dokumentInfoDto) {
@@ -169,19 +179,19 @@ public class JournalpostDtoMapper {
 	}
 
 	private Bruker mapBrukerDtoToBruker(BrukerDto brukerDto) {
-		if(brukerDto == null) {
+		if (brukerDto == null) {
 			return null;
 		}
 
 		final String brukerId = brukerDto.getBrukerId();
 		final String brukerType = brukerDto.getBrukerIdType();
-		if(isBlank(trim(brukerDto.getBrukerId())) || isBlank(brukerType)) {
+		if (isBlank(trim(brukerDto.getBrukerId())) || isBlank(brukerType)) {
 			return null;
 		}
 
-		if(brukerType.equals(DomainConstants.PERSON)) {
+		if (brukerType.equals(DomainConstants.PERSON)) {
 			return new Bruker(brukerId, BrukerIdType.FNR);
-		} else if(brukerType.equals(DomainConstants.ORGANISASJON)) {
+		} else if (brukerType.equals(DomainConstants.ORGANISASJON)) {
 			return new Bruker(brukerId, BrukerIdType.ORGNR);
 		} else {
 			return null;

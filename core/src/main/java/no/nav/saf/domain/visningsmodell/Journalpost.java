@@ -46,6 +46,7 @@ public class Journalpost {
 	private final LocalDateTime datoOpprettet;
 	@Builder.Default
 	private final List<RelevantDato> relevanteDatoer = new ArrayList<>();
+	private final String antallRetur;
 	@Builder.Default
 	private final List<Tilleggsopplysning> tilleggsopplysninger = new ArrayList<>();
 	@Builder.Default
