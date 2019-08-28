@@ -8,7 +8,23 @@ Alle nevneverdige endringer blir dokumentert her.
 
 Denne malen er basert på [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## [6.3.0] - 2019-08-12
+## [7.0.0] - 2019-08-28
+### Endret
+* Migrert fra Java 8 til Java 11.
+
+## [6.2.4] - 2019-08-27
+### Endret
+* `GraphQL: ` Type `Journalpost`. Nytt felt `antallRetur`.
+
+## [6.2.3] - 2019-08-20
+### Rettet
+* Rettet feil i paginering for resultatsett som innehold feilregistrerte journalposter.
+
+## [6.2.2] - 2019-08-20
+### Endret
+* Oppdatert fra Redis sentinel til standalone config. 
+
+## [6.2.1] - 2019-08-12
 ### Endret
 * `GraphQL: ` Type `Dokumentvariant`. Nytt felt `filtype` kun til internt bruk i nytt distribusjonsløp.
 
