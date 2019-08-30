@@ -4,6 +4,7 @@ import static org.springframework.data.redis.serializer.RedisSerializationContex
 
 import io.lettuce.core.ClientOptions;
 import io.lettuce.core.SocketOptions;
+import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.tilgangskontroll.abac.dto.response.XacmlResponse;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,7 +14,6 @@ import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.interceptor.CacheErrorHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
 import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -33,10 +33,9 @@ import java.util.Collections;
  */
 @Configuration
 @EnableCaching
-@PropertySource("application.properties")
+@Slf4j
 public class RedisCacheConfig extends CachingConfigurerSupport {
 	public static final String MANAGER_DISTRIBUTED = "distributed";
-	// Ikke endre denne verdien, en del av NAIS redis oppsett
 	private static final Duration DEFAULT_TTL = Duration.ofHours(1L);
 	public static final String TILGANG_CACHE = "tilgang";
 
@@ -57,10 +56,11 @@ public class RedisCacheConfig extends CachingConfigurerSupport {
 	}
 
 	@Bean
-	public RedisConnectionFactory redisConnectionFactory(@Value("${redis.host:saf-redis}") String redisHost,
+	public RedisConnectionFactory redisConnectionFactory(@Value("${redis.hostname:saf-redis}") String redisHost,
 														 @Value("${redis.port:6379}") int redisPort,
 														 LettuceClientConfiguration clientConfiguration) {
 		RedisStandaloneConfiguration config = new RedisStandaloneConfiguration();
+		log.info("Starting redis connection to {} on port {}", redisHost, redisPort);
 		config.setHostName(redisHost);
 		config.setPort(redisPort);
 		LettuceConnectionFactory factory = new LettuceConnectionFactory(config, clientConfiguration);
