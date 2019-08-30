@@ -8,6 +8,7 @@ import no.nav.saf.domain.kode.Tema;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -62,6 +63,10 @@ public class DokumentoversiktFilters {
 	}
 
 	private static List<Journalstatus> getJournalstatusList(DataFetchingEnvironment environment) {
+		if (environment.getArgument("journalstatus") != null) {
+			return Arrays.asList((Journalstatus)environment.getArgument("journalstatus"));
+		}
+
 		List<Object> journalstatuserObjectList = environment.getArgument("journalstatuser");
 		return journalstatuserObjectList.stream()
 				.map(journalstatus -> Journalstatus.valueOf(journalstatus.toString()))

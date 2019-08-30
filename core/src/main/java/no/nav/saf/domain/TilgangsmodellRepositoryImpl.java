@@ -70,6 +70,29 @@ public class TilgangsmodellRepositoryImpl implements TilgangsmodellRepository {
 		}
 	}
 
+	@Override
+	public List<TilgangJournalpost> findTilgangJournalposterStatus(LocalDate fraDato,
+																   List<Journalposttype> inkluderJournalposttyper,
+																   Journalstatus journalstatus,
+																   Integer foerste, String etterPeker,
+																   SafRequestContext safRequestContext) {
+		try {
+			List<JournalpostDto> journalposter = joarkAntiCorruptionLayer.finnJournalposterStatus(fraDato,
+					inkluderJournalposttyper, journalstatus, foerste, etterPeker);
+			return journalposter.stream()
+					.map(journalpostDto -> {
+						safRequestContext.getRequestCache()
+								.putObject(journalpostDto.getJournalpostId().toString(), journalpostDto);
+						return mapTilgangJournalpost(journalpostDto);
+					})
+					.collect(Collectors.toList());
+		} catch (Exception e) {
+			log.warn(String.format("finnJournalposterStatus feilet ved henting av journalposter med fraDato=%s, journalstatus=%s, inkluderJournalposttyper=%s.",
+					fraDato, journalstatus, inkluderJournalposttyper), e);
+			return new ArrayList<>();
+		}
+	}
+
 	private TilgangJournalpost mapTilgangJournalpost(JournalpostDto dto) {
 		return TilgangJournalpost.builder()
 				.journalpostId(dto.getJournalpostId().toString())

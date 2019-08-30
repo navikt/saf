@@ -8,6 +8,8 @@ import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark901.HentTil
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark902.HentJournalpostResponseTo;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark903.TilknytningUriParam;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark903.TilknyttedeJournalposterResponse;
+import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark904.FinnJournalposterStatusRequestTo;
+import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark904.FinnJournalposterStatusResponseTo;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark920.HentDokumentResponseTo;
 import no.nav.saf.exceptions.DokumentIkkeFunnetException;
 import no.nav.saf.exceptions.JournalpostIkkeFunnetException;
@@ -59,6 +61,12 @@ public class HentJournalsakinfo {
 	@Monitor(value = "dok_consumer", extraTags = {"process", "finnJournalposter"}, histogram = true)
 	public FinnJournalposterResponseTo finnJournalposter(FinnJournalposterRequestTo request) {
 		ResponseEntity<FinnJournalposterResponseTo> response = callFinnJournalposter(request);
+		return response.getBody();
+	}
+
+	@Monitor(value = "dok_consumer", extraTags = {"process", "finnJournalposterStatus"}, histogram = true)
+	public FinnJournalposterStatusResponseTo finnJournalposterStatus(FinnJournalposterStatusRequestTo request) {
+		ResponseEntity<FinnJournalposterStatusResponseTo> response = callFinnJournalposterStatus(request);
 		return response.getBody();
 	}
 
@@ -146,6 +154,12 @@ public class HentJournalsakinfo {
 		String uri = hentjournalsakinfoUrl + "/finnjournalposter";
 		HttpEntity<FinnJournalposterRequestTo> requestEntity = new HttpEntity<>(requestTo, createCorrelationIdHeader());
 		return restTemplate.exchange(uri, HttpMethod.POST, requestEntity, FinnJournalposterResponseTo.class);
+	}
+
+	private ResponseEntity<FinnJournalposterStatusResponseTo> callFinnJournalposterStatus(FinnJournalposterStatusRequestTo requestTo) {
+		String uri = hentjournalsakinfoUrl + "/finnjournalposterstatus";
+		HttpEntity<FinnJournalposterStatusRequestTo> requestEntity = new HttpEntity<>(requestTo, createCorrelationIdHeader());
+		return restTemplate.exchange(uri, HttpMethod.POST, requestEntity, FinnJournalposterStatusResponseTo.class);
 	}
 
 	private ResponseEntity<HentTilgangJournalpostResponseTo> callHentTilgangJournalpost(String journalpostId, String dokumentInfoId, String variantFormat) {

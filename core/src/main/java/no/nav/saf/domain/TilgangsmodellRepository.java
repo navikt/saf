@@ -22,4 +22,10 @@ public interface TilgangsmodellRepository {
 													  Integer foerste, String etterPeker, Integer siste, String foerPeker,
 													  SafRequestContext safRequestContext);
 
+	List<TilgangJournalpost> findTilgangJournalposterStatus(LocalDate fraDato,
+															List<Journalposttype> inkluderJournalposttyper,
+															Journalstatus journalstatus,
+															Integer foerste, String etterPeker,
+															SafRequestContext safRequestContext);
+
 }

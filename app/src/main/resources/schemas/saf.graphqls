@@ -123,9 +123,9 @@ type Query {
         journalposttyper: [Journalposttype] = [I, U, N]
 
         # Filter for journalstatus.
-        # Hvis en tom liste er angitt som argument hentes alle journalstatuser.
+        # Per i dag er det kun mulig å søke på statusene UTGAAR og UKJENT_BRUKER.
         # Standardverdi: null
-        journalstatus: Journalstatus
+        journalstatus: Journalstatus!
 
         # Første **n** resultater, brukes til å paginere forover.
         foerste: Int
