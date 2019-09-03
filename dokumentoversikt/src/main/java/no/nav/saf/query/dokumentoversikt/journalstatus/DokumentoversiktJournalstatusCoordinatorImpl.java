@@ -105,6 +105,7 @@ class DokumentoversiktJournalstatusCoordinatorImpl implements DokumentoversiktJo
 				.collect(Collectors.toList()), safRequestContext)
 				.stream()
 				.filter(j -> dokumentoversiktJournalstatusArguments.getFilters().getTema().contains(j.getTema()))
+				.filter(j -> filterFeilregistrerte(dokumentoversiktJournalstatusArguments, j))
 				.collect(Collectors.toList());
 		return Dokumentoversikt.builder()
 				.journalposter(journalposter)
@@ -149,5 +150,13 @@ class DokumentoversiktJournalstatusCoordinatorImpl implements DokumentoversiktJo
 				.build();
 
 		safRequestContext.getRequestCache().putObject(arkivsak.getKey(), arkivsak);
+	}
+
+	private boolean filterFeilregistrerte(DokumentoversiktJournalstatusArguments dokumentoversiktJournalstatusArguments, Journalpost j) {
+		if (Journalstatus.FEILREGISTRERT == j.getJournalstatus()) {
+			return dokumentoversiktJournalstatusArguments.getFilters().isVisFeilregistrerte();
+		} else {
+			return true;
+		}
 	}
 }

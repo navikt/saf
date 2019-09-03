@@ -80,17 +80,11 @@ public class DokumentoversiktJournalstatusIT extends AbstractItest {
 		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
 
 		assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-		assertEquals(5, dokumentoversikt.getJournalposter().size());
+		assertEquals(2, dokumentoversikt.getJournalposter().size()); // 3 feilregistrerte journalposter filterers bort
 		assertEquals("453466679", dokumentoversikt.getJournalposter().get(0).getJournalpostId());
 		assertEquals(Journalstatus.UTGAAR, dokumentoversikt.getJournalposter().get(0).getJournalstatus());
 		assertEquals("453465088", dokumentoversikt.getJournalposter().get(1).getJournalpostId());
 		assertEquals(Journalstatus.UTGAAR, dokumentoversikt.getJournalposter().get(1).getJournalstatus());
-		assertEquals("453438556", dokumentoversikt.getJournalposter().get(2).getJournalpostId());
-		assertEquals(Journalstatus.FEILREGISTRERT, dokumentoversikt.getJournalposter().get(2).getJournalstatus());
-		assertEquals("453414874", dokumentoversikt.getJournalposter().get(3).getJournalpostId());
-		assertEquals(Journalstatus.FEILREGISTRERT, dokumentoversikt.getJournalposter().get(3).getJournalstatus());
-		assertEquals("453375495", dokumentoversikt.getJournalposter().get(4).getJournalpostId());
-		assertEquals(Journalstatus.FEILREGISTRERT, dokumentoversikt.getJournalposter().get(4).getJournalstatus());
 
 		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposterstatus"))
 				.withRequestBody(matchingJsonPath("$.journalstatus", containing("U"))));
