@@ -1,0 +1,320 @@
+{
+  "tilgangJournalposter": [
+    {
+      "journalpostId": 453466679,
+      "prevJournalpostId": null,
+      "nextJournalpostId": 453465088,
+      "totaltAntall": 15889,
+      "innhold": "Ettersendelse til søknad om foreldrepenger",
+      "fagomrade": "FOR",
+      "behandlingstema": "ab0001",
+      "behandlingstemanavn": "Ordinære dagpenger",
+      "journalstatus": "U",
+      "avsenderMottakerId": "999263550",
+      "avsenderMottakerIdType": "ORGNR",
+      "avsenderMottakerNavn": "NAV",
+      "avsenderMottakerLand": null,
+      "journalforendeEnhet": null,
+      "journalfortAvNavn": null,
+      "opprettetAvNavn": "srvjoarkadmin",
+      "mottakskanal": "NAV_NO",
+      "utsendingskanal": null,
+      "journalposttype": "I",
+      "saksrelasjon": {
+        "sakId": "111111111",
+        "feilregistrert": null,
+        "fagsystem": "FS22"
+      },
+      "bruker": {
+        "brukerId": "***gammelt_fnr***",
+        "brukerIdType": "PERSON"
+      },
+      "datoOpprettet": "2019-08-06T07:30:40.868+0000",
+      "mottattDato": "2019-08-05T22:00:00.000+0000",
+      "journalDato": null,
+      "dokumentDato": "2019-08-05T22:00:00.000+0000",
+      "avsReturDato": null,
+      "sendtPrintDato": null,
+      "ekspedertDato": null,
+      "skjerming": null,
+      "antallRetur": null,
+      "tilleggsopplysninger": [
+        {
+          "nokkel": "ForsendelseMottakId",
+          "verdi": "eksempel_unik_verdi"
+        }
+      ],
+      "dokumenter": [
+        {
+          "dokumentInfoId": 470148851,
+          "dokumentstatus": null,
+          "datoFerdigstilt": null,
+          "brevkode": "NAV 14-05.09",
+          "dokumenttypeId": null,
+          "varianter": [
+            {
+              "variantf": "ARKIV",
+              "filnavn": "eksempeldokument.pdf",
+              "filuuid": "250209a8-e78e-4a2a-895c-e1c20bfad5b8",
+              "filtype": "PDFA",
+              "skjerming": null
+            }
+          ],
+          "tittel": "Søknad om foreldrepenger ved fødsel",
+          "skjerming": null,
+          "origJournalpostId": 453466679,
+          "kassert": null,
+          "logiske": []
+        }
+      ]
+    },
+    {
+      "journalpostId": 453465088,
+      "prevJournalpostId": 453466679,
+      "nextJournalpostId": 453438556,
+      "totaltAntall": 15889,
+      "innhold": null,
+      "fagomrade": "FOR",
+      "behandlingstema": null,
+      "behandlingstemanavn": null,
+      "journalstatus": "U",
+      "avsenderMottakerId": null,
+      "avsenderMottakerIdType": null,
+      "avsenderMottakerNavn": null,
+      "avsenderMottakerLand": null,
+      "journalforendeEnhet": null,
+      "journalfortAvNavn": null,
+      "opprettetAvNavn": "BJOARK002",
+      "mottakskanal": "SKAN_NETS",
+      "utsendingskanal": null,
+      "journalposttype": "I",
+      "saksrelasjon": null,
+      "bruker": {
+        "brukerId": "***gammelt_fnr***",
+        "brukerIdType": "PERSON"
+      },
+      "datoOpprettet": "2019-07-16T11:17:02.915+0000",
+      "mottattDato": "2019-07-15T22:00:00.000+0000",
+      "journalDato": null,
+      "dokumentDato": null,
+      "avsReturDato": null,
+      "sendtPrintDato": null,
+      "ekspedertDato": null,
+      "skjerming": null,
+      "antallRetur": null,
+      "tilleggsopplysninger": [],
+      "dokumenter": [
+        {
+          "dokumentInfoId": 470147052,
+          "dokumentstatus": null,
+          "datoFerdigstilt": null,
+          "brevkode": "203403",
+          "dokumenttypeId": null,
+          "varianter": [
+            {
+              "variantf": "ARKIV",
+              "filnavn": "***gammelt_fnr***019.pdf",
+              "filuuid": "eebbfc18-9365-4c10-a6c7-7bbe0403d289",
+              "filtype": "PDF",
+              "skjerming": null
+            }
+          ],
+          "tittel": null,
+          "skjerming": null,
+          "origJournalpostId": 453465088,
+          "kassert": null,
+          "logiske": []
+        }
+      ]
+    },
+    {
+      "journalpostId": 453438556,
+      "prevJournalpostId": 453465088,
+      "nextJournalpostId": 453414874,
+      "totaltAntall": 15889,
+      "innhold": "Uten tittel",
+      "fagomrade": "OPP",
+      "behandlingstema": null,
+      "behandlingstemanavn": null,
+      "journalstatus": "U",
+      "avsenderMottakerId": null,
+      "avsenderMottakerIdType": null,
+      "avsenderMottakerNavn": null,
+      "avsenderMottakerLand": null,
+      "journalforendeEnhet": "2950",
+      "journalfortAvNavn": null,
+      "opprettetAvNavn": "BJOARK002",
+      "mottakskanal": "SKAN_NETS",
+      "utsendingskanal": null,
+      "journalposttype": "I",
+      "saksrelasjon": {
+        "sakId": "104810895",
+        "feilregistrert": true,
+        "fagsystem": "FS22"
+      },
+      "bruker": {
+        "brukerId": "***gammelt_fnr***",
+        "brukerIdType": "PERSON"
+      },
+      "datoOpprettet": "2019-06-28T14:06:08.323+0000",
+      "mottattDato": "2019-06-27T22:00:00.000+0000",
+      "journalDato": null,
+      "dokumentDato": null,
+      "avsReturDato": null,
+      "sendtPrintDato": null,
+      "ekspedertDato": null,
+      "skjerming": null,
+      "antallRetur": null,
+      "tilleggsopplysninger": [],
+      "dokumenter": [
+        {
+          "dokumentInfoId": 470118043,
+          "dokumentstatus": null,
+          "datoFerdigstilt": null,
+          "brevkode": null,
+          "dokumenttypeId": null,
+          "varianter": [
+            {
+              "variantf": "ARKIV",
+              "filnavn": "s2806190003NAV471256.pdf",
+              "filuuid": "783161ee-a528-4790-a317-121f98d5848d",
+              "filtype": "PDF",
+              "skjerming": null
+            }
+          ],
+          "tittel": "Uten tittel",
+          "skjerming": null,
+          "origJournalpostId": 453438556,
+          "kassert": null,
+          "logiske": []
+        }
+      ]
+    },
+    {
+      "journalpostId": 453414874,
+      "prevJournalpostId": 453438556,
+      "nextJournalpostId": 453375495,
+      "totaltAntall": 15889,
+      "innhold": "MASKERT_FELT",
+      "fagomrade": "OPP",
+      "behandlingstema": null,
+      "behandlingstemanavn": null,
+      "journalstatus": "U",
+      "avsenderMottakerId": null,
+      "avsenderMottakerIdType": null,
+      "avsenderMottakerNavn": null,
+      "avsenderMottakerLand": null,
+      "journalforendeEnhet": "2950",
+      "journalfortAvNavn": null,
+      "opprettetAvNavn": "One, Anny",
+      "mottakskanal": null,
+      "utsendingskanal": null,
+      "journalposttype": "I",
+      "saksrelasjon": {
+        "sakId": "102631280",
+        "feilregistrert": true,
+        "fagsystem": "FS22"
+      },
+      "bruker": {
+        "brukerId": "***gammelt_fnr***",
+        "brukerIdType": "PERSON"
+      },
+      "datoOpprettet": "2019-06-28T10:05:58.470+0000",
+      "mottattDato": "2019-06-26T22:00:00.000+0000",
+      "journalDato": null,
+      "dokumentDato": null,
+      "avsReturDato": null,
+      "sendtPrintDato": null,
+      "ekspedertDato": null,
+      "skjerming": null,
+      "antallRetur": null,
+      "tilleggsopplysninger": [],
+      "dokumenter": [
+        {
+          "dokumentInfoId": 470091084,
+          "dokumentstatus": "FERDIGSTILT",
+          "datoFerdigstilt": null,
+          "brevkode": null,
+          "dokumenttypeId": null,
+          "varianter": [
+            {
+              "variantf": "ARKIV",
+              "filnavn": "delt_2019-06-28-12-05-58",
+              "filuuid": "df4d96c7-5c2c-49dc-8169-173e1ace023c",
+              "filtype": "PDF",
+              "skjerming": null
+            }
+          ],
+          "tittel": "MASKERT_FELT",
+          "skjerming": null,
+          "origJournalpostId": 453372038,
+          "kassert": null,
+          "logiske": []
+        }
+      ]
+    },
+    {
+      "journalpostId": 453375495,
+      "prevJournalpostId": 453414874,
+      "nextJournalpostId": 453375349,
+      "totaltAntall": 15889,
+      "innhold": "MASKERT_FELT",
+      "fagomrade": "OMS",
+      "behandlingstema": null,
+      "behandlingstemanavn": null,
+      "journalstatus": "U",
+      "avsenderMottakerId": null,
+      "avsenderMottakerIdType": null,
+      "avsenderMottakerNavn": null,
+      "avsenderMottakerLand": null,
+      "journalforendeEnhet": "2950",
+      "journalfortAvNavn": null,
+      "opprettetAvNavn": "BJOARK002",
+      "mottakskanal": "SKAN_NETS",
+      "utsendingskanal": null,
+      "journalposttype": "I",
+      "saksrelasjon": {
+        "sakId": "140241156",
+        "feilregistrert": true,
+        "fagsystem": "FS22"
+      },
+      "bruker": {
+        "brukerId": "***gammelt_fnr***",
+        "brukerIdType": "PERSON"
+      },
+      "datoOpprettet": "2019-06-27T18:37:31.948+0000",
+      "mottattDato": "2019-06-26T22:00:00.000+0000",
+      "journalDato": null,
+      "dokumentDato": null,
+      "avsReturDato": null,
+      "sendtPrintDato": null,
+      "ekspedertDato": null,
+      "skjerming": null,
+      "antallRetur": null,
+      "tilleggsopplysninger": [],
+      "dokumenter": [
+        {
+          "dokumentInfoId": 470044834,
+          "dokumentstatus": null,
+          "datoFerdigstilt": null,
+          "brevkode": null,
+          "dokumenttypeId": null,
+          "varianter": [
+            {
+              "variantf": "ARKIV",
+              "filnavn": "s2706190002NAV908978.pdf",
+              "filuuid": "737fffb0-6f88-4ba7-91bf-ec1099cb31de",
+              "filtype": "PDF",
+              "skjerming": null
+            }
+          ],
+          "tittel": "MASKERT_FELT",
+          "skjerming": null,
+          "origJournalpostId": 453375495,
+          "kassert": null,
+          "logiske": []
+        }
+      ]
+    }
+  ]
+}

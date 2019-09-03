@@ -255,6 +255,45 @@ public abstract class AbstractItest {
 						.withBodyFile("abac/abac-permit.json")));
 	}
 
+	protected void abacDenyPep5SkipPep1gPep2Pep2dPep3() {
+		stubFor(post(urlEqualTo("/abac"))
+				.inScenario(SCENARIO_ABAC)
+				.whenScenarioStateIs(Scenario.STARTED)
+				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
+						.withHeader(org.apache.http.HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+						.withBodyFile("abac/abac-permit.json"))
+				.willSetStateTo(STATE_PEP5));
+		stubFor(post(urlEqualTo("/abac"))
+				.inScenario(SCENARIO_ABAC)
+				.whenScenarioStateIs(STATE_PEP5)
+				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
+						.withHeader(org.apache.http.HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+						.withBodyFile("abac/abac-deny.json"))
+				.willSetStateTo(STATE_PERMIT));
+		stubFor(post(urlEqualTo("/abac"))
+				.inScenario(SCENARIO_ABAC)
+				.whenScenarioStateIs(STATE_PERMIT)
+				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
+						.withHeader(org.apache.http.HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+						.withBodyFile("abac/abac-permit.json")));
+	}
+
+	protected void abacDenyPep4SkipPep1gPep2Pep2dPep3() {
+		stubFor(post(urlEqualTo("/abac"))
+				.inScenario(SCENARIO_ABAC)
+				.whenScenarioStateIs(Scenario.STARTED)
+				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
+						.withHeader(org.apache.http.HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+						.withBodyFile("abac/abac-deny.json"))
+				.willSetStateTo(STATE_PERMIT));
+		stubFor(post(urlEqualTo("/abac"))
+				.inScenario(SCENARIO_ABAC)
+				.whenScenarioStateIs(STATE_PERMIT)
+				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
+						.withHeader(org.apache.http.HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+						.withBodyFile("abac/abac-permit.json")));
+	}
+
 	protected void abacDenyPep4SkipPep2Pep3() {
 		stubFor(post(urlEqualTo("/abac"))
 				.inScenario(SCENARIO_ABAC)
@@ -505,6 +544,12 @@ public abstract class AbstractItest {
 	protected void verifyEmptyJournalpostListeAndNullSideInfo(Dokumentoversikt dokumentoversikt) {
 		assertEquals(0, dokumentoversikt.getJournalposter().size());
 		assertNull(dokumentoversikt.getSideInfo());
+	}
+
+	protected void verifyEmptyJournalpostListeAndEmptySideInfo(Dokumentoversikt dokumentoversikt) {
+		assertEquals(0, dokumentoversikt.getJournalposter().size());
+		assertNull(dokumentoversikt.getSideInfo().getSluttpeker());
+		assertFalse(dokumentoversikt.getSideInfo().isFinnesNesteSide());
 	}
 
 	protected void assertSaksbehandlerHarTilgang(Dokumentoversikt dokumentoversikt) {
