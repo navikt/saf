@@ -24,6 +24,18 @@ public class SideInfoMapper {
 		);
 	}
 
+	public SideInfo mapFilteredSideInfo(String sluttJournalpostId, SafRequestContext safRequestContext) {
+		if (sluttJournalpostId == null || sluttJournalpostId.isEmpty()) {
+			return SideInfo.empty();
+		}
+		JournalpostDto journalpostDto = safRequestContext.getRequestCache().getObject(sluttJournalpostId);
+		Long nextJournalpostId = journalpostDto.getNextJournalpostId();
+		return new SideInfo(
+				base64(sluttJournalpostId),
+				finnesNesteJournalpostId(journalpostDto, nextJournalpostId)
+		);
+	}
+
 	private String sluttJournalpostId(List<Journalpost> journalposter) {
 		return journalposter.get(journalposter.size() - 1).getJournalpostId();
 	}

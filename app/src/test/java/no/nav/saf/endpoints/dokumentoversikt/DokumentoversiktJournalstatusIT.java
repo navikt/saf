@@ -9,6 +9,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
@@ -62,6 +63,9 @@ public class DokumentoversiktJournalstatusIT extends AbstractItest {
 		assertEquals("452929051", dokumentoversikt.getJournalposter().get(4).getJournalpostId());
 		assertEquals(Journalstatus.UKJENT_BRUKER, dokumentoversikt.getJournalposter().get(4).getJournalstatus());
 
+		assertEquals(base64("452929051"), dokumentoversikt.getSideInfo().getSluttpeker());
+		assertTrue(dokumentoversikt.getSideInfo().isFinnesNesteSide());
+
 		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposterstatus"))
 				.withRequestBody(matchingJsonPath("$.journalstatus", containing("UB"))));
 		verify(3, postRequestedFor(urlEqualTo("/abac"))); // kun journalpost 452929051 med skjerming sjekkes mot abac
@@ -85,6 +89,9 @@ public class DokumentoversiktJournalstatusIT extends AbstractItest {
 		assertEquals(Journalstatus.UTGAAR, dokumentoversikt.getJournalposter().get(0).getJournalstatus());
 		assertEquals("453465088", dokumentoversikt.getJournalposter().get(1).getJournalpostId());
 		assertEquals(Journalstatus.UTGAAR, dokumentoversikt.getJournalposter().get(1).getJournalstatus());
+
+		assertEquals(base64("453375495"), dokumentoversikt.getSideInfo().getSluttpeker());
+		assertTrue(dokumentoversikt.getSideInfo().isFinnesNesteSide());
 
 		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposterstatus"))
 				.withRequestBody(matchingJsonPath("$.journalstatus", containing("U"))));
@@ -156,6 +163,10 @@ public class DokumentoversiktJournalstatusIT extends AbstractItest {
 		assertEquals(1, dokumentoversikt.getJournalposter().size());
 		assertEquals("453466679", dokumentoversikt.getJournalposter().get(0).getJournalpostId());
 		assertEquals(1, dokumentoversikt.getJournalposter().get(0).getDokumenter().size());
+
+		assertEquals(base64("453466679"), dokumentoversikt.getSideInfo().getSluttpeker());
+		assertFalse(dokumentoversikt.getSideInfo().isFinnesNesteSide());
+
 		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposterstatus"))
 				.withRequestBody(containing("{\"journalstatus\":\"U\",\"fraDato\":\"2019-01-01\",\"journalposttyper\":[\"I\",\"U\",\"N\"],\"foerste\":5,\"etterPeker\":null}")));
 		verify(3, postRequestedFor(urlEqualTo("/abac")));
@@ -174,7 +185,9 @@ public class DokumentoversiktJournalstatusIT extends AbstractItest {
 		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversiktJournalstatusUtgaar();
 		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
 
-		verifyEmptyJournalpostListeAndEmptySideInfo(dokumentoversikt);
+		assertEquals(0, dokumentoversikt.getJournalposter().size());
+		assertEquals(base64("453466679"), dokumentoversikt.getSideInfo().getSluttpeker());
+		assertFalse(dokumentoversikt.getSideInfo().isFinnesNesteSide());
 		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposterstatus"))
 				.withRequestBody(containing("{\"journalstatus\":\"U\",\"fraDato\":\"2019-01-01\",\"journalposttyper\":[\"I\",\"U\",\"N\"],\"foerste\":5,\"etterPeker\":null}")));
 		verify(1, postRequestedFor(urlEqualTo("/abac")));

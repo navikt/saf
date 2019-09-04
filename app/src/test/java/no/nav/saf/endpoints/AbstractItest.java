@@ -35,6 +35,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import javax.inject.Inject;
 import java.io.IOException;
+import java.util.Base64;
 
 
 /**
@@ -566,6 +567,13 @@ public abstract class AbstractItest {
 						dokumentInfo -> dokumentInfo.getDokumentvarianter().forEach(
 								dokumentvariant -> assertFalse(dokumentvariant.isSaksbehandlerHarTilgang())))
 		);
+	}
+
+	protected String base64(String journalpostId) {
+		if (journalpostId == null) {
+			return null;
+		}
+		return Base64.getEncoder().encodeToString(journalpostId.getBytes());
 	}
 
 	protected String stringFromClasspath(String resourcename) throws IOException {

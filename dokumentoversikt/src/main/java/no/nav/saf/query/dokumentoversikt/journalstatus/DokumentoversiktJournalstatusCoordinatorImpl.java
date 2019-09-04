@@ -82,6 +82,8 @@ class DokumentoversiktJournalstatusCoordinatorImpl implements DokumentoversiktJo
 				dokumentoversiktJournalstatusArguments.getPagination().getEtterPeker(),
 				safRequestContext);
 
+		String sluttJournalpostId = sluttJournalpostId(tilgangJournalpostList);
+
 		final List<TilgangJournalpost> filteredTilgangJournalpostList = Flowable.fromIterable(tilgangJournalpostList)
 				.parallel(10)
 				.runOn(Schedulers.io())
@@ -107,9 +109,10 @@ class DokumentoversiktJournalstatusCoordinatorImpl implements DokumentoversiktJo
 				.filter(j -> dokumentoversiktJournalstatusArguments.getFilters().getTema().contains(j.getTema()))
 				.filter(j -> filterFeilregistrerte(dokumentoversiktJournalstatusArguments, j))
 				.collect(Collectors.toList());
+
 		return Dokumentoversikt.builder()
 				.journalposter(journalposter)
-				.sideInfo(sideInfoMapper.mapSideInfo(dokumentoversiktJournalstatusArguments.getPagination(), journalposter, safRequestContext))
+				.sideInfo(sideInfoMapper.mapFilteredSideInfo(sluttJournalpostId, safRequestContext))
 				.build();
 	}
 
@@ -120,6 +123,10 @@ class DokumentoversiktJournalstatusCoordinatorImpl implements DokumentoversiktJo
 					journalstatus, GYLDIGE_JOURNALSTATUSER));
 		}
 		return journalstatus;
+	}
+
+	private String sluttJournalpostId(List<TilgangJournalpost> tilgangJournalposter) {
+		return tilgangJournalposter.isEmpty() ? null : tilgangJournalposter.get(tilgangJournalposter.size() - 1).getJournalpostId();
 	}
 
 	private void mapOgCacheArkivsak(String journalpostId, SafRequestContext safRequestContext) {
