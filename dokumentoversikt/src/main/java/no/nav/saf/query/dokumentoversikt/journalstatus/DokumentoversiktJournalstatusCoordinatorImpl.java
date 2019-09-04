@@ -8,11 +8,6 @@ import static no.nav.saf.util.MDCUtility.addMdcData;
 import io.reactivex.Flowable;
 import io.reactivex.schedulers.Schedulers;
 import lombok.extern.slf4j.Slf4j;
-import no.nav.saf.anticorruptionlayer.joark.domain.kode.FagomradeCode;
-import no.nav.saf.anticorruptionlayer.joark.domain.kode.FagsystemCode;
-import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.dto.JournalpostDto;
-import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.dto.SaksrelasjonDto;
-import no.nav.saf.domain.Arkivsak;
 import no.nav.saf.domain.TilgangsmodellRepository;
 import no.nav.saf.domain.kode.Journalstatus;
 import no.nav.saf.domain.tilgangsmodell.TilgangDokumentInfo;
@@ -99,7 +94,7 @@ class DokumentoversiktJournalstatusCoordinatorImpl implements DokumentoversiktJo
 				.blockingGet();
 
 		// cache evt. saksinfo for bruk ved mapping til Journalpost
-		filteredTilgangJournalpostList.forEach(tj -> mapOgCacheArkivsak(tj.getJournalpostId(), safRequestContext));
+		dokumentoversiktJournalstatusTilgangsmodellRepository.mapOgCacheArkivsaker(filteredTilgangJournalpostList, safRequestContext);
 
 		List<Journalpost> journalposter = visningsmodellRepository.findJournalposter(filteredTilgangJournalpostList.stream()
 				.map(TilgangJournalpost::getJournalpostId)
@@ -127,36 +122,6 @@ class DokumentoversiktJournalstatusCoordinatorImpl implements DokumentoversiktJo
 
 	private String sluttJournalpostId(List<TilgangJournalpost> tilgangJournalposter) {
 		return tilgangJournalposter.isEmpty() ? null : tilgangJournalposter.get(tilgangJournalposter.size() - 1).getJournalpostId();
-	}
-
-	private void mapOgCacheArkivsak(String journalpostId, SafRequestContext safRequestContext) {
-		JournalpostDto journalpostDto = safRequestContext.getRequestCache().getObject(journalpostId);
-		if (journalpostDto.getSaksrelasjon() == null) {
-			return;
-		}
-
-		String aktoerId = null;
-		String orgnummer = null;
-		if (journalpostDto.getBruker() != null) {
-			String brukerId = journalpostDto.getBruker().getBrukerId();
-			if (journalpostDto.getBruker().isPerson()) {
-				aktoerId = brukerId;
-			} else {
-				orgnummer = brukerId;
-			}
-		}
-
-		SaksrelasjonDto saksrelasjonDto = journalpostDto.getSaksrelasjon();
-		Arkivsak arkivsak = Arkivsak.builder()
-				.arkivsaksnummer(saksrelasjonDto.getSakId())
-				.fagsaksystem(saksrelasjonDto.getFagsystem().name())
-				.arkivsaksystem(FagsystemCode.toSafArkivsaksystem(saksrelasjonDto.getFagsystem()))
-				.aktoerId(aktoerId)
-				.orgnummer(orgnummer)
-				.tema(FagomradeCode.toSafTema(journalpostDto.getFagomrade()))
-				.build();
-
-		safRequestContext.getRequestCache().putObject(arkivsak.getKey(), arkivsak);
 	}
 
 	private boolean filterFeilregistrerte(DokumentoversiktJournalstatusArguments dokumentoversiktJournalstatusArguments, Journalpost j) {
