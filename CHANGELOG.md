@@ -8,6 +8,10 @@ Alle nevneverdige endringer blir dokumentert her.
 
 Denne malen er basert på [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [7.1.0] - 2019-09-04
+### Lagt til
+* `GraphQL: ` Query `dokumentoversiktJournalstatus` for å kunne spørre etter dokumentoversikten for en journalstatus.
+
 ## [7.0.0] - 2019-08-28
 ### Endret
 * Migrert fra Java 8 til Java 11.
