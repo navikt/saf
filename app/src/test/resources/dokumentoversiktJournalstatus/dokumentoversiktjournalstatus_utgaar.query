@@ -1,0 +1,57 @@
+{
+  dokumentoversiktJournalstatus(fraDato: "2019-01-01", journalposttyper: [I,U,N], journalstatus: UTGAAR, foerste: 5) {
+    journalposter {
+      journalpostId
+      journalposttype
+      journalstatus
+      journalfortAvNavn
+      journalfoerendeEnhet
+      opprettetAvNavn
+      relevanteDatoer {
+        datotype
+      }
+      tilleggsopplysninger {
+        nokkel
+        verdi
+      }
+      tittel
+      skjerming
+      behandlingstema
+      behandlingstemanavn
+      tema
+      temanavn
+      kanal
+      kanalnavn
+      bruker {
+        id
+        type
+      }
+      avsenderMottaker {
+        id
+        navn
+        land
+        erLikBruker
+      }
+      antallRetur
+      sak {
+        arkivsaksnummer
+      }
+      dokumenter {
+        dokumentInfoId
+        tittel
+        brevkode
+        dokumentstatus
+        dokumentvarianter {
+          saksbehandlerHarTilgang
+          variantformat
+          filnavn
+          filtype
+        }
+      }
+    }
+    sideInfo {
+      sluttpeker
+      finnesNesteSide
+    }
+  }
+}

@@ -105,6 +105,35 @@ type Query {
         etter: String
      ): Dokumentoversikt!
 
+    # * dokumentoversiktJournalstatus returnerer en liste som matcher søkeparameterene.
+    # * Det er kun metadata om journalposter med tilhørende dokumenter som returneres. Det fysiske dokumentet kan hentes i saf - REST hentdokument.
+    dokumentoversiktJournalstatus(
+        # Dato for eldste journalpost.
+        # Hvis angitt returneres alle journalposter fra denne datoen.
+        # Hvis null er angitt så hentes alle journalposter.
+        fraDato: Date
+
+        # Filter for tema.
+        # Hvis en tom liste er angitt som argument hentes journalposter på alle tema.
+        tema: [Tema] = []
+
+        # Filter for journalposttype.
+        # Hvis en tom liste er angitt som argument hentes alle journalposttyper.
+        # Standardverdi: `I, U, N`
+        journalposttyper: [Journalposttype] = [I, U, N]
+
+        # Filter for journalstatus.
+        # Per i dag er det kun mulig å søke på statusene UTGAAR og UKJENT_BRUKER.
+        # Standardverdi: null
+        journalstatus: Journalstatus!
+
+        # Første **n** resultater, brukes til å paginere forover.
+        foerste: Int
+
+        # Peker til resultat etter foerste, brukes til å paginere forover.
+        etter: String
+     ): Dokumentoversikt!
+
     # * Query returnerer metadata for en journalpost.
     # * Fysiske dokumentet tilknyttet journalposten kan hentes i saf - REST hentdokument
     journalpost(

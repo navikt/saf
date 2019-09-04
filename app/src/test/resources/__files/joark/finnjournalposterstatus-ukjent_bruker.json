@@ -1,0 +1,304 @@
+{
+  "tilgangJournalposter": [
+    {
+      "journalpostId": 453221424,
+      "prevJournalpostId": null,
+      "nextJournalpostId": 453211096,
+      "totaltAntall": 187,
+      "innhold": "MASKERT_FELT",
+      "fagomrade": "SYM",
+      "behandlingstema": null,
+      "behandlingstemanavn": null,
+      "journalstatus": "UB",
+      "avsenderMottakerId": null,
+      "avsenderMottakerIdType": null,
+      "avsenderMottakerNavn": "MASKERT_FELT",
+      "avsenderMottakerLand": null,
+      "journalforendeEnhet": "2950",
+      "journalfortAvNavn": null,
+      "opprettetAvNavn": "BJOARK002",
+      "mottakskanal": "SKAN_NETS",
+      "utsendingskanal": null,
+      "journalposttype": "I",
+      "saksrelasjon": null,
+      "bruker": {
+        "brukerId": null,
+        "brukerIdType": null
+      },
+      "datoOpprettet": "2019-06-25T14:12:42.714+0000",
+      "mottattDato": "2019-06-24T22:00:00.000+0000",
+      "journalDato": null,
+      "dokumentDato": null,
+      "avsReturDato": null,
+      "sendtPrintDato": null,
+      "ekspedertDato": null,
+      "skjerming": null,
+      "antallRetur": null,
+      "tilleggsopplysninger": [],
+      "dokumenter": [
+        {
+          "dokumentInfoId": 469858516,
+          "dokumentstatus": null,
+          "datoFerdigstilt": null,
+          "brevkode": null,
+          "dokumenttypeId": null,
+          "varianter": [
+            {
+              "variantf": "ARKIV",
+              "filnavn": "s-SYK-2506190003NAV413497.pdf",
+              "filuuid": "99a28f5c-3e65-4cc9-a5df-4cb18d471f52",
+              "filtype": "PDF",
+              "skjerming": null
+            }
+          ],
+          "tittel": "MASKERT_FELT",
+          "skjerming": null,
+          "origJournalpostId": 453221424,
+          "kassert": null,
+          "logiske": [
+            {
+              "vedleggId": "319190704",
+              "tittel": "MASKERT_FELT"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "journalpostId": 453211096,
+      "prevJournalpostId": 453221424,
+      "nextJournalpostId": 452943905,
+      "totaltAntall": 187,
+      "innhold": "MASKERT_FELT",
+      "fagomrade": "GEN",
+      "behandlingstema": null,
+      "behandlingstemanavn": null,
+      "journalstatus": "UB",
+      "avsenderMottakerId": null,
+      "avsenderMottakerIdType": null,
+      "avsenderMottakerNavn": null,
+      "avsenderMottakerLand": null,
+      "journalforendeEnhet": "2950",
+      "journalfortAvNavn": null,
+      "opprettetAvNavn": "BJOARK002",
+      "mottakskanal": "SKAN_NETS",
+      "utsendingskanal": null,
+      "journalposttype": "I",
+      "saksrelasjon": null,
+      "bruker": {
+        "brukerId": null,
+        "brukerIdType": null
+      },
+      "datoOpprettet": "2019-06-25T14:05:28.363+0000",
+      "mottattDato": "2019-06-24T22:00:00.000+0000",
+      "journalDato": null,
+      "dokumentDato": null,
+      "avsReturDato": null,
+      "sendtPrintDato": null,
+      "ekspedertDato": null,
+      "skjerming": null,
+      "antallRetur": null,
+      "tilleggsopplysninger": [],
+      "dokumenter": [
+        {
+          "dokumentInfoId": 469848080,
+          "dokumentstatus": null,
+          "datoFerdigstilt": null,
+          "brevkode": null,
+          "dokumenttypeId": null,
+          "varianter": [
+            {
+              "variantf": "ARKIV",
+              "filnavn": "s2506190003NAV419190.pdf",
+              "filuuid": "d8f6ad2e-f3ec-42b7-88b1-39672f9a59b8",
+              "filtype": "PDF",
+              "skjerming": null
+            }
+          ],
+          "tittel": "MASKERT_FELT",
+          "skjerming": null,
+          "origJournalpostId": 453211096,
+          "kassert": null,
+          "logiske": []
+        }
+      ]
+    },
+    {
+      "journalpostId": 452943905,
+      "prevJournalpostId": 453211096,
+      "nextJournalpostId": 452937829,
+      "totaltAntall": 187,
+      "innhold": "MASKERT_FELT",
+      "fagomrade": "UKJ",
+      "behandlingstema": null,
+      "behandlingstemanavn": null,
+      "journalstatus": "UB",
+      "avsenderMottakerId": null,
+      "avsenderMottakerIdType": null,
+      "avsenderMottakerNavn": null,
+      "avsenderMottakerLand": null,
+      "journalforendeEnhet": "2950",
+      "journalfortAvNavn": null,
+      "opprettetAvNavn": "BJOARK002",
+      "mottakskanal": "SKAN_NETS",
+      "utsendingskanal": null,
+      "journalposttype": "I",
+      "saksrelasjon": null,
+      "bruker": {
+        "brukerId": null,
+        "brukerIdType": null
+      },
+      "datoOpprettet": "2019-06-20T18:36:06.499+0000",
+      "mottattDato": "2019-06-19T22:00:00.000+0000",
+      "journalDato": null,
+      "dokumentDato": null,
+      "avsReturDato": null,
+      "sendtPrintDato": null,
+      "ekspedertDato": null,
+      "skjerming": null,
+      "antallRetur": null,
+      "tilleggsopplysninger": [],
+      "dokumenter": [
+        {
+          "dokumentInfoId": 469527972,
+          "dokumentstatus": null,
+          "datoFerdigstilt": null,
+          "brevkode": null,
+          "dokumenttypeId": null,
+          "varianter": [
+            {
+              "variantf": "ARKIV",
+              "filnavn": "s2006190002NAV702862.pdf",
+              "filuuid": "c459b689-897b-4ae7-98b0-86bbf48162f1",
+              "filtype": "PDF",
+              "skjerming": null
+            }
+          ],
+          "tittel": "MASKERT_FELT",
+          "skjerming": null,
+          "origJournalpostId": 452943905,
+          "kassert": null,
+          "logiske": []
+        }
+      ]
+    },
+    {
+      "journalpostId": 452937829,
+      "prevJournalpostId": 452943905,
+      "nextJournalpostId": 452929051,
+      "totaltAntall": 187,
+      "innhold": "MASKERT_FELT",
+      "fagomrade": "SYK",
+      "behandlingstema": null,
+      "behandlingstemanavn": null,
+      "journalstatus": "UB",
+      "avsenderMottakerId": null,
+      "avsenderMottakerIdType": null,
+      "avsenderMottakerNavn": "MASKERT_FELT",
+      "avsenderMottakerLand": null,
+      "journalforendeEnhet": "2950",
+      "journalfortAvNavn": null,
+      "opprettetAvNavn": "BJOARK002",
+      "mottakskanal": "SKAN_NETS",
+      "utsendingskanal": null,
+      "journalposttype": "I",
+      "saksrelasjon": null,
+      "bruker": {
+        "brukerId": null,
+        "brukerIdType": null
+      },
+      "datoOpprettet": "2019-06-20T14:13:15.398+0000",
+      "mottattDato": "2019-06-19T22:00:00.000+0000",
+      "journalDato": null,
+      "dokumentDato": null,
+      "avsReturDato": null,
+      "sendtPrintDato": null,
+      "ekspedertDato": null,
+      "skjerming": null,
+      "antallRetur": null,
+      "tilleggsopplysninger": [],
+      "dokumenter": [
+        {
+          "dokumentInfoId": 469520424,
+          "dokumentstatus": null,
+          "datoFerdigstilt": null,
+          "brevkode": null,
+          "dokumenttypeId": null,
+          "varianter": [
+            {
+              "variantf": "ARKIV",
+              "filnavn": "g-SYK-2006190002NAV671769.pdf",
+              "filuuid": "12db9ecd-461c-48e7-8d5a-1d7a62dcbba1",
+              "filtype": "PDF",
+              "skjerming": null
+            }
+          ],
+          "tittel": "MASKERT_FELT",
+          "skjerming": null,
+          "origJournalpostId": 452937829,
+          "kassert": null,
+          "logiske": []
+        }
+      ]
+    },
+    {
+      "journalpostId": 452929051,
+      "prevJournalpostId": 452937829,
+      "nextJournalpostId": 452774436,
+      "totaltAntall": 187,
+      "innhold": "MASKERT_FELT",
+      "fagomrade": "GEN",
+      "behandlingstema": null,
+      "behandlingstemanavn": null,
+      "journalstatus": "UB",
+      "avsenderMottakerId": null,
+      "avsenderMottakerIdType": null,
+      "avsenderMottakerNavn": null,
+      "avsenderMottakerLand": null,
+      "journalforendeEnhet": "2950",
+      "journalfortAvNavn": null,
+      "opprettetAvNavn": "BJOARK002",
+      "mottakskanal": "SKAN_NETS",
+      "utsendingskanal": null,
+      "journalposttype": "I",
+      "saksrelasjon": null,
+      "bruker": {
+        "brukerId": null,
+        "brukerIdType": null
+      },
+      "datoOpprettet": "2019-06-20T14:06:18.581+0000",
+      "mottattDato": "2019-06-18T22:00:00.000+0000",
+      "journalDato": null,
+      "dokumentDato": null,
+      "avsReturDato": null,
+      "sendtPrintDato": null,
+      "ekspedertDato": null,
+      "skjerming": "POL",
+      "antallRetur": null,
+      "tilleggsopplysninger": [],
+      "dokumenter": [
+        {
+          "dokumentInfoId": 469511594,
+          "dokumentstatus": null,
+          "datoFerdigstilt": null,
+          "brevkode": null,
+          "dokumenttypeId": null,
+          "varianter": [
+            {
+              "variantf": "ARKIV",
+              "filnavn": "s1906190002NAV660837.pdf",
+              "filuuid": "6a01c07c-e2eb-49f8-92d1-90e60f087613",
+              "filtype": "PDF",
+              "skjerming": "POL"
+            }
+          ],
+          "tittel": "MASKERT_FELT",
+          "skjerming": "POL",
+          "origJournalpostId": 452929051,
+          "kassert": null,
+          "logiske": []
+        }
+      ]
+    }
+  ]
+}

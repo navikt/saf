@@ -1,0 +1,7 @@
+{
+  "timestamp": "2019-09-03T10:26:37.215+0000",
+  "status": 500,
+  "error": "Internal Server Error",
+  "message": "Text '2019-31-01' could not be parsed: Invalid value for MonthOfYear (valid values 1 - 12): 31",
+  "path": "/hentjournalsakinfo/finnjournalposterstatus"
+}

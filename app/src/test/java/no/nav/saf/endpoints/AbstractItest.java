@@ -35,6 +35,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import javax.inject.Inject;
 import java.io.IOException;
+import java.util.Base64;
 
 
 /**
@@ -243,6 +244,45 @@ public abstract class AbstractItest {
 		stubFor(post(urlEqualTo("/abac"))
 				.inScenario(SCENARIO_ABAC)
 				.whenScenarioStateIs(STATE_PEP5)
+				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
+						.withHeader(org.apache.http.HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+						.withBodyFile("abac/abac-deny.json"))
+				.willSetStateTo(STATE_PERMIT));
+		stubFor(post(urlEqualTo("/abac"))
+				.inScenario(SCENARIO_ABAC)
+				.whenScenarioStateIs(STATE_PERMIT)
+				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
+						.withHeader(org.apache.http.HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+						.withBodyFile("abac/abac-permit.json")));
+	}
+
+	protected void abacDenyPep5SkipPep1gPep2Pep2dPep3() {
+		stubFor(post(urlEqualTo("/abac"))
+				.inScenario(SCENARIO_ABAC)
+				.whenScenarioStateIs(Scenario.STARTED)
+				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
+						.withHeader(org.apache.http.HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+						.withBodyFile("abac/abac-permit.json"))
+				.willSetStateTo(STATE_PEP5));
+		stubFor(post(urlEqualTo("/abac"))
+				.inScenario(SCENARIO_ABAC)
+				.whenScenarioStateIs(STATE_PEP5)
+				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
+						.withHeader(org.apache.http.HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+						.withBodyFile("abac/abac-deny.json"))
+				.willSetStateTo(STATE_PERMIT));
+		stubFor(post(urlEqualTo("/abac"))
+				.inScenario(SCENARIO_ABAC)
+				.whenScenarioStateIs(STATE_PERMIT)
+				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
+						.withHeader(org.apache.http.HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+						.withBodyFile("abac/abac-permit.json")));
+	}
+
+	protected void abacDenyPep4SkipPep1gPep2Pep2dPep3() {
+		stubFor(post(urlEqualTo("/abac"))
+				.inScenario(SCENARIO_ABAC)
+				.whenScenarioStateIs(Scenario.STARTED)
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(org.apache.http.HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
 						.withBodyFile("abac/abac-deny.json"))
@@ -507,6 +547,12 @@ public abstract class AbstractItest {
 		assertNull(dokumentoversikt.getSideInfo());
 	}
 
+	protected void verifyEmptyJournalpostListeAndEmptySideInfo(Dokumentoversikt dokumentoversikt) {
+		assertEquals(0, dokumentoversikt.getJournalposter().size());
+		assertNull(dokumentoversikt.getSideInfo().getSluttpeker());
+		assertFalse(dokumentoversikt.getSideInfo().isFinnesNesteSide());
+	}
+
 	protected void assertSaksbehandlerHarTilgang(Dokumentoversikt dokumentoversikt) {
 		dokumentoversikt.getJournalposter().forEach(
 				journalpost -> journalpost.getDokumenter().forEach(
@@ -521,6 +567,13 @@ public abstract class AbstractItest {
 						dokumentInfo -> dokumentInfo.getDokumentvarianter().forEach(
 								dokumentvariant -> assertFalse(dokumentvariant.isSaksbehandlerHarTilgang())))
 		);
+	}
+
+	protected String base64(String journalpostId) {
+		if (journalpostId == null) {
+			return null;
+		}
+		return Base64.getEncoder().encodeToString(journalpostId.getBytes());
 	}
 
 	protected String stringFromClasspath(String resourcename) throws IOException {
