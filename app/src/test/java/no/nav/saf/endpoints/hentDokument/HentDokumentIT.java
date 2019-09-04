@@ -102,7 +102,7 @@ class HentDokumentIT extends AbstractItest {
 		stubFor(get("/pensjonsakrs").willReturn(aResponse().withStatus(HttpStatus.OK.value())
 				.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
 				.withBodyFile("psak/psak-hentBrukerForSak-happy.json")));
-		stubFor(post("/servicegw")
+		stubFor(post("/pensjonsakv1")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withBodyFile("psak/psak-hentSakSammendragListe-hentdokument-happy.xml")));
 

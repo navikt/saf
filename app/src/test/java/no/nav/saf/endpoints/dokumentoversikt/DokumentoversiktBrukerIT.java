@@ -63,7 +63,7 @@ public class DokumentoversiktBrukerIT extends AbstractItest {
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType())
 						.withBodyFile("joark/finnjournalposter-happy.json")));
-		stubFor(post("/servicegw")
+		stubFor(post("/pensjonsakv1")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withBodyFile("psak/psak-hentSakSammendragListe-happy.xml")));
 
@@ -78,7 +78,7 @@ public class DokumentoversiktBrukerIT extends AbstractItest {
 		verify(postRequestedFor(urlEqualTo("/aktoerv2")).withRequestBody(matchingXPath("//aktoerId/text()", equalTo(AKTOER_ID))));
 		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter"))
 				.withRequestBody(containing("{\"gsakSakIds\":[\"135695442\"],\"psakSakIds\":[\"21998969\"],\"fraDato\":\"0001-01-01\",\"inkluderJournalStatus\":[\"FL\",\"FS\",\"J\",\"E\"],\"inkluderJournalpostType\":[\"I\",\"U\",\"N\"],\"visFeilregistrerte\":false,\"alleIdenter\":[\"***gammelt_fnr***\"],\"foerste\":3,\"etterPeker\":null,\"siste\":null,\"foerPeker\":null}")));
-		verify(postRequestedFor(urlEqualTo("/servicegw")).withRequestBody(matchingXPath("//personident/text()", equalTo("***gammelt_fnr***"))));
+		verify(postRequestedFor(urlEqualTo("/pensjonsakv1")).withRequestBody(matchingXPath("//personident/text()", equalTo("***gammelt_fnr***"))));
 	}
 
 
@@ -99,7 +99,7 @@ public class DokumentoversiktBrukerIT extends AbstractItest {
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType())
 						.withBodyFile("joark/finnjournalposter-happy.json")));
-		stubFor(post("/servicegw")
+		stubFor(post("/pensjonsakv1")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withBodyFile("psak/psak-hentSakSammendragListe-happy.xml")));
 
@@ -114,7 +114,7 @@ public class DokumentoversiktBrukerIT extends AbstractItest {
 		verify(postRequestedFor(urlEqualTo("/aktoerv2")).withRequestBody(matchingXPath("//ident/text()", equalTo(FNR))));
 		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter"))
 				.withRequestBody(containing("{\"gsakSakIds\":[\"135695442\"],\"psakSakIds\":[\"21998969\"],\"fraDato\":\"0001-01-01\",\"inkluderJournalStatus\":[\"FL\",\"FS\",\"J\",\"E\"],\"inkluderJournalpostType\":[\"I\",\"U\",\"N\"],\"visFeilregistrerte\":false,\"alleIdenter\":[\"***gammelt_fnr***\"],\"foerste\":3,\"etterPeker\":null,\"siste\":null,\"foerPeker\":null}")));
-		verify(postRequestedFor(urlEqualTo("/servicegw")).withRequestBody(matchingXPath("//personident/text()", equalTo("***gammelt_fnr***"))));
+		verify(postRequestedFor(urlEqualTo("/pensjonsakv1")).withRequestBody(matchingXPath("//personident/text()", equalTo("***gammelt_fnr***"))));
 	}
 
 
@@ -141,7 +141,7 @@ public class DokumentoversiktBrukerIT extends AbstractItest {
 		assertSaksbehandlerHarTilgang(dokumentoversikt);
 		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter")).withRequestBody(matchingJsonPath("$.gsakSakIds", containing("135695442"))));
 		verify(0, postRequestedFor(urlEqualTo("/aktoerv2")));
-		verify(0, postRequestedFor(urlEqualTo("/servicegw")));
+		verify(0, postRequestedFor(urlEqualTo("/pensjonsakv1")));
 	}
 
 	@Test
@@ -161,7 +161,7 @@ public class DokumentoversiktBrukerIT extends AbstractItest {
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType())
 						.withBodyFile("joark/finnjournalposter-midlertidig-happy.json")));
-		stubFor(post("/servicegw")
+		stubFor(post("/pensjonsakv1")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withBodyFile("psak/psak-hentSakSammendragListe-happy-empty.xml")));
 
@@ -175,7 +175,7 @@ public class DokumentoversiktBrukerIT extends AbstractItest {
 		verify(postRequestedFor(urlEqualTo("/aktoerv2")).withRequestBody(matchingXPath("//aktoerId/text()", equalTo(AKTOER_ID))));
 		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter"))
 				.withRequestBody(containing("{\"gsakSakIds\":[],\"psakSakIds\":[],\"fraDato\":\"0001-01-01\",\"inkluderJournalStatus\":[\"FL\",\"FS\",\"J\",\"E\"],\"inkluderJournalpostType\":[\"I\",\"U\",\"N\"],\"visFeilregistrerte\":false,\"alleIdenter\":[\"***gammelt_fnr***\"],\"foerste\":3,\"etterPeker\":null,\"siste\":null,\"foerPeker\":null}")));
-		verify(postRequestedFor(urlEqualTo("/servicegw")).withRequestBody(matchingXPath("//personident/text()", equalTo("***gammelt_fnr***"))));
+		verify(postRequestedFor(urlEqualTo("/pensjonsakv1")).withRequestBody(matchingXPath("//personident/text()", equalTo("***gammelt_fnr***"))));
 	}
 
 	@Test
@@ -195,7 +195,7 @@ public class DokumentoversiktBrukerIT extends AbstractItest {
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType())
 						.withBodyFile("joark/finnjournalposter_single_sladdet-happy.json")));
-		stubFor(post("/servicegw")
+		stubFor(post("/pensjonsakv1")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withBodyFile("psak/psak-hentSakSammendragListe-happy.xml")));
 
@@ -208,7 +208,7 @@ public class DokumentoversiktBrukerIT extends AbstractItest {
 		verify(postRequestedFor(urlEqualTo("/aktoerv2")).withRequestBody(matchingXPath("//aktoerId/text()", equalTo(AKTOER_ID))));
 		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter"))
 				.withRequestBody(containing("{\"gsakSakIds\":[\"135695442\"],\"psakSakIds\":[\"21998969\"],\"fraDato\":\"0001-01-01\",\"inkluderJournalStatus\":[\"FL\",\"FS\",\"J\",\"E\"],\"inkluderJournalpostType\":[\"I\",\"U\",\"N\"],\"visFeilregistrerte\":false,\"alleIdenter\":[\"***gammelt_fnr***\"],\"foerste\":3,\"etterPeker\":null,\"siste\":null,\"foerPeker\":null}")));
-		verify(postRequestedFor(urlEqualTo("/servicegw")).withRequestBody(matchingXPath("//personident/text()", equalTo("***gammelt_fnr***"))));
+		verify(postRequestedFor(urlEqualTo("/pensjonsakv1")).withRequestBody(matchingXPath("//personident/text()", equalTo("***gammelt_fnr***"))));
 	}
 
 	@Test
@@ -224,7 +224,7 @@ public class DokumentoversiktBrukerIT extends AbstractItest {
 		verifyEmptyJournalpostListeAndNullSideInfo(dokumentoversikt);
 		verify(postRequestedFor(urlEqualTo("/aktoerv2")).withRequestBody(matchingXPath("//aktoerId/text()", equalTo(AKTOER_ID))));
 		verify(0, postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter")));
-		verify(0, postRequestedFor(urlEqualTo("/servicegw")));
+		verify(0, postRequestedFor(urlEqualTo("/pensjonsakv1")));
 	}
 
 	@Test
@@ -240,7 +240,7 @@ public class DokumentoversiktBrukerIT extends AbstractItest {
 		verifyEmptyJournalpostListeAndNullSideInfo(dokumentoversikt);
 		verify(postRequestedFor(urlEqualTo("/aktoerv2")).withRequestBody(matchingXPath("//aktoerId/text()", equalTo(AKTOER_ID))));
 		verify(0, postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter")));
-		verify(0, postRequestedFor(urlEqualTo("/servicegw")));
+		verify(0, postRequestedFor(urlEqualTo("/pensjonsakv1")));
 	}
 
 	@Test
@@ -258,7 +258,7 @@ public class DokumentoversiktBrukerIT extends AbstractItest {
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType())
 						.withBodyFile("joark/finnjournalposter-empty.json")));
-		stubFor(post("/servicegw")
+		stubFor(post("/pensjonsakv1")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withBodyFile("psak/psak-hentSakSammendragListe-happy.xml")));
 
@@ -269,7 +269,7 @@ public class DokumentoversiktBrukerIT extends AbstractItest {
 		assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
 		verify(postRequestedFor(urlEqualTo("/aktoerv2")).withRequestBody(matchingXPath("//aktoerId/text()", equalTo(AKTOER_ID))));
 		verify(1, postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter")));
-		verify(postRequestedFor(urlEqualTo("/servicegw")).withRequestBody(matchingXPath("//personident/text()", equalTo("***gammelt_fnr***"))));
+		verify(postRequestedFor(urlEqualTo("/pensjonsakv1")).withRequestBody(matchingXPath("//personident/text()", equalTo("***gammelt_fnr***"))));
 	}
 
 	@Test
@@ -287,7 +287,7 @@ public class DokumentoversiktBrukerIT extends AbstractItest {
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType())
 						.withBodyFile("joark/finnjournalposter-empty.json")));
-		stubFor(post("/servicegw")
+		stubFor(post("/pensjonsakv1")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withBodyFile("psak/psak-hentSakSammendragListe-happy.xml")));
 		stubFor(get("/bidrag/*").willReturn(aResponse()
@@ -301,7 +301,7 @@ public class DokumentoversiktBrukerIT extends AbstractItest {
 		assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
 		verify(postRequestedFor(urlEqualTo("/aktoerv2")).withRequestBody(matchingXPath("//aktoerId/text()", equalTo(AKTOER_ID))));
 		verify(1, postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter")));
-		verify(postRequestedFor(urlEqualTo("/servicegw")).withRequestBody(matchingXPath("//personident/text()", equalTo("***gammelt_fnr***"))));
+		verify(postRequestedFor(urlEqualTo("/pensjonsakv1")).withRequestBody(matchingXPath("//personident/text()", equalTo("***gammelt_fnr***"))));
 	}
 
 	@Test
@@ -321,7 +321,7 @@ public class DokumentoversiktBrukerIT extends AbstractItest {
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType())
 						.withBodyFile("joark/finnjournalposter-empty.json")));
-		stubFor(post("/servicegw")
+		stubFor(post("/pensjonsakv1")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withBodyFile("psak/psak-hentSakSammendragListe-happy-empty.xml")));
 		stubFor(get("/bidrag/654321").willReturn(aResponse()
@@ -336,7 +336,7 @@ public class DokumentoversiktBrukerIT extends AbstractItest {
 		verify(postRequestedFor(urlEqualTo("/aktoerv2")).withRequestBody(matchingXPath("//aktoerId/text()", equalTo(AKTOER_ID))));
 		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter")).withRequestBody(matchingJsonPath("$.gsakSakIds", containing(""))));
 		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter")).withRequestBody(matchingJsonPath("$.psakSakIds", containing(""))));
-		verify(postRequestedFor(urlEqualTo("/servicegw")).withRequestBody(matchingXPath("//personident/text()", equalTo("***gammelt_fnr***"))));
+		verify(postRequestedFor(urlEqualTo("/pensjonsakv1")).withRequestBody(matchingXPath("//personident/text()", equalTo("***gammelt_fnr***"))));
 		verify(getRequestedFor(urlEqualTo("/bidrag/654321")));
 	}
 
@@ -357,7 +357,7 @@ public class DokumentoversiktBrukerIT extends AbstractItest {
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("joark/finnjournalposter-empty.json")));
-		stubFor(post("/servicegw")
+		stubFor(post("/pensjonsakv1")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withBodyFile("psak/psak-hentSakSammendragListe-happy.xml")));
 		stubFor(get("/bidrag/654321").willReturn(aResponse().withStatus(HttpStatus.OK.value())
@@ -372,7 +372,7 @@ public class DokumentoversiktBrukerIT extends AbstractItest {
 		verify(postRequestedFor(urlEqualTo("/aktoerv2")).withRequestBody(matchingXPath("//aktoerId/text()", equalTo(AKTOER_ID))));
 		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter"))
 				.withRequestBody(containing("{\"gsakSakIds\":[\"135695442\"],\"psakSakIds\":[\"21998969\"],\"fraDato\":\"0001-01-01\",\"inkluderJournalStatus\":[\"FL\",\"FS\",\"J\",\"E\"],\"inkluderJournalpostType\":[\"I\",\"U\",\"N\"],\"visFeilregistrerte\":false,\"alleIdenter\":[\"***gammelt_fnr***\"],\"foerste\":3,\"etterPeker\":null,\"siste\":null,\"foerPeker\":null}")));
-		verify(postRequestedFor(urlEqualTo("/servicegw")).withRequestBody(matchingXPath("//personident/text()", equalTo("***gammelt_fnr***"))));
+		verify(postRequestedFor(urlEqualTo("/pensjonsakv1")).withRequestBody(matchingXPath("//personident/text()", equalTo("***gammelt_fnr***"))));
 	}
 
 	@Test
@@ -392,7 +392,7 @@ public class DokumentoversiktBrukerIT extends AbstractItest {
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType())
 						.withBodyFile("joark/finnjournalposter-happy.json")));
-		stubFor(post("/servicegw")
+		stubFor(post("/pensjonsakv1")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withBodyFile("psak/psak-hentSakSammendragListe-happy.xml")));
 		stubFor(get("/bidrag/654321").willReturn(aResponse().withStatus(HttpStatus.OK.value())
@@ -423,7 +423,7 @@ public class DokumentoversiktBrukerIT extends AbstractItest {
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType())
 						.withBodyFile("joark/finnjournalposter-empty.json")));
-		stubFor(post("/servicegw")
+		stubFor(post("/pensjonsakv1")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withBodyFile("psak/psak-hentSakSammendragListe-happy-empty.xml")));
 		stubFor(get("/bidrag/654321").willReturn(aResponse().withStatus(HttpStatus.OK.value())
@@ -456,7 +456,7 @@ public class DokumentoversiktBrukerIT extends AbstractItest {
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType())
 						.withBodyFile("joark/finnjournalposter_single_bidragAndSkjerming-happy.json")));
-		stubFor(post("/servicegw")
+		stubFor(post("/pensjonsakv1")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withBodyFile("psak/psak-hentSakSammendragListe-happy-empty.xml")));
 		stubFor(get("/bidrag/654321").willReturn(aResponse().withStatus(HttpStatus.OK.value())
@@ -491,7 +491,7 @@ public class DokumentoversiktBrukerIT extends AbstractItest {
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType())
 						.withBodyFile("joark/finnjournalposter-empty.json")));
-		stubFor(post("/servicegw")
+		stubFor(post("/pensjonsakv1")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withBodyFile("psak/psak-hentSakSammendragListe-happy-empty.xml")));
 		stubFor(get("/bidrag/654321").willReturn(aResponse().withStatus(HttpStatus.OK.value())
@@ -524,7 +524,7 @@ public class DokumentoversiktBrukerIT extends AbstractItest {
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType())
 						.withBodyFile("joark/finnjournalposter_single_bidragAndSkjerming-happy.json")));
-		stubFor(post("/servicegw")
+		stubFor(post("/pensjonsakv1")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withBodyFile("psak/psak-hentSakSammendragListe-happy-empty.xml")));
 		stubFor(get("/bidrag/654321").willReturn(aResponse().withStatus(HttpStatus.OK.value())
@@ -558,7 +558,7 @@ public class DokumentoversiktBrukerIT extends AbstractItest {
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType())
 						.withBodyFile("joark/finnjournalposter_single_bidragAndSkjerming-happy.json")));
-		stubFor(post("/servicegw")
+		stubFor(post("/pensjonsakv1")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withBodyFile("psak/psak-hentSakSammendragListe-happy-empty.xml")));
 		stubFor(get("/bidrag/654321").willReturn(aResponse().withStatus(HttpStatus.OK.value())
@@ -593,7 +593,7 @@ public class DokumentoversiktBrukerIT extends AbstractItest {
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType())
 						.withBodyFile("joark/finnjournalposter_single_bidragAndSkjerming-happy.json")));
-		stubFor(post("/servicegw")
+		stubFor(post("/pensjonsakv1")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withBodyFile("psak/psak-hentSakSammendragListe-happy-empty.xml")));
 		stubFor(get("/bidrag/654321").willReturn(aResponse().withStatus(HttpStatus.OK.value())
