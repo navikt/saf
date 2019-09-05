@@ -51,17 +51,15 @@ public class DokumentoversiktJournalstatusIT extends AbstractItest {
 		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
 
 		assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-		assertEquals(5, dokumentoversikt.getJournalposter().size());
+		assertEquals(4, dokumentoversikt.getJournalposter().size()); // 1 feilregistrert journalpost filterers bort
 		assertEquals("453221424", dokumentoversikt.getJournalposter().get(0).getJournalpostId());
 		assertEquals(Journalstatus.UKJENT_BRUKER, dokumentoversikt.getJournalposter().get(0).getJournalstatus());
 		assertEquals("453211096", dokumentoversikt.getJournalposter().get(1).getJournalpostId());
 		assertEquals(Journalstatus.UKJENT_BRUKER, dokumentoversikt.getJournalposter().get(1).getJournalstatus());
 		assertEquals("452943905", dokumentoversikt.getJournalposter().get(2).getJournalpostId());
 		assertEquals(Journalstatus.UKJENT_BRUKER, dokumentoversikt.getJournalposter().get(2).getJournalstatus());
-		assertEquals("452937829", dokumentoversikt.getJournalposter().get(3).getJournalpostId());
+		assertEquals("452929051", dokumentoversikt.getJournalposter().get(3).getJournalpostId());
 		assertEquals(Journalstatus.UKJENT_BRUKER, dokumentoversikt.getJournalposter().get(3).getJournalstatus());
-		assertEquals("452929051", dokumentoversikt.getJournalposter().get(4).getJournalpostId());
-		assertEquals(Journalstatus.UKJENT_BRUKER, dokumentoversikt.getJournalposter().get(4).getJournalstatus());
 
 		assertEquals(base64("452929051"), dokumentoversikt.getSideInfo().getSluttpeker());
 		assertTrue(dokumentoversikt.getSideInfo().isFinnesNesteSide());
@@ -84,11 +82,17 @@ public class DokumentoversiktJournalstatusIT extends AbstractItest {
 		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
 
 		assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-		assertEquals(2, dokumentoversikt.getJournalposter().size()); // 3 feilregistrerte journalposter filterers bort
+		assertEquals(5, dokumentoversikt.getJournalposter().size());
 		assertEquals("453466679", dokumentoversikt.getJournalposter().get(0).getJournalpostId());
 		assertEquals(Journalstatus.UTGAAR, dokumentoversikt.getJournalposter().get(0).getJournalstatus());
 		assertEquals("453465088", dokumentoversikt.getJournalposter().get(1).getJournalpostId());
 		assertEquals(Journalstatus.UTGAAR, dokumentoversikt.getJournalposter().get(1).getJournalstatus());
+		assertEquals("453438556", dokumentoversikt.getJournalposter().get(2).getJournalpostId());
+		assertEquals(Journalstatus.UTGAAR, dokumentoversikt.getJournalposter().get(2).getJournalstatus());
+		assertEquals("453414874", dokumentoversikt.getJournalposter().get(3).getJournalpostId());
+		assertEquals(Journalstatus.UTGAAR, dokumentoversikt.getJournalposter().get(3).getJournalstatus());
+		assertEquals("453375495", dokumentoversikt.getJournalposter().get(4).getJournalpostId());
+		assertEquals(Journalstatus.UTGAAR, dokumentoversikt.getJournalposter().get(4).getJournalstatus());
 
 		assertEquals(base64("453375495"), dokumentoversikt.getSideInfo().getSluttpeker());
 		assertTrue(dokumentoversikt.getSideInfo().isFinnesNesteSide());

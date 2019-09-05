@@ -12,6 +12,7 @@ import static org.hamcrest.core.IsCollectionContaining.hasItem;
 import static org.hamcrest.core.IsNot.not;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.AvsenderMottakerIdTypeCode;
@@ -153,7 +154,7 @@ class JournalpostDtoMapperTest {
 		assertEquals(Journalposttype.I, journalpost.getJournalposttype());
 		assertEquals(Journalstatus.JOURNALFOERT, journalpost.getJournalstatus());
 		assertEquals(journalpost.getKanalnavn(), Kanal.UKJENT.getKanalnavn());
-		assertEquals(null, journalpost.getAntallRetur());
+		assertNull(journalpost.getAntallRetur());
 
 		assertThat(journalpost.getRelevanteDatoer(), not(hasItem(new RelevantDato(DOKUMENT_DATO, Datotype.DATO_DOKUMENT))));
 		assertThat(journalpost.getRelevanteDatoer(), not(hasItem(new RelevantDato(AVS_RETUR_DATO, Datotype.DATO_AVS_RETUR))));
@@ -278,7 +279,7 @@ class JournalpostDtoMapperTest {
 
 		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, requestCache);
 
-		assertEquals(null, journalpost.getDokumenter().get(0).getDokumentstatus());
+		assertNull(journalpost.getDokumenter().get(0).getDokumentstatus());
 	}
 
 
@@ -499,6 +500,28 @@ class JournalpostDtoMapperTest {
 
 		assertThat(journalpost.getBruker().getId(), is(BRUKER_ID_ORGANISASJON));
 		assertThat(journalpost.getBruker().getType(), is(BrukerIdType.ORGNR));
+	}
+
+	@Test
+	void shouldMapJournalstatusFeilregistrertWhenJournalfoertAndIsFeilregistrert() {
+		JournalpostDto journalpostDto = buildJournalpostDtoUtgaaendeType(JournalStatusCode.J);
+		journalpostDto.getSaksrelasjon().setFeilregistrert(true);
+		RequestCache requestCache = createTilgangBrukerRequestCache();
+
+		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, requestCache);
+
+		assertEquals(Journalstatus.FEILREGISTRERT, journalpost.getJournalstatus());
+	}
+
+	@Test
+	void shouldMapJournalstatusUtgaarWhenUtgaarAndIsFeilregistrert() {
+		JournalpostDto journalpostDto = buildJournalpostDtoUtgaaendeType(JournalStatusCode.U);
+		journalpostDto.getSaksrelasjon().setFeilregistrert(true);
+		RequestCache requestCache = createTilgangBrukerRequestCache();
+
+		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, requestCache);
+
+		assertEquals(Journalstatus.UTGAAR, journalpost.getJournalstatus());
 	}
 
 	private RequestCache pep5RequestCache() {
