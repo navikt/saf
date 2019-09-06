@@ -12,7 +12,6 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import no.nav.saf.cache.RedisCacheConfig;
 import no.nav.saf.domain.kode.Tema;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
@@ -39,7 +38,7 @@ class Pep2dImplTest extends AbstractPepTest {
 		SimpleCacheManager cacheManager = new SimpleCacheManager();
 		cacheManager.setCaches(Collections.singletonList(new NoOpCache(RedisCacheConfig.TILGANG_CACHE)));
 		cacheManager.afterPropertiesSet();
-		this.pep2d = new Pep2dImpl(cacheManager, abacService, new SimpleMeterRegistry());
+		this.pep2d = new Pep2dImpl(cacheManager, abacService);
 	}
 
 	@Test
