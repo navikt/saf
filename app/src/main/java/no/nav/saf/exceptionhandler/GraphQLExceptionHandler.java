@@ -23,7 +23,7 @@ public class GraphQLExceptionHandler implements DataFetcherExceptionHandler {
 		ExecutionPath path = dataFetcherExceptionHandlerParameters.getPath();
 
 		CustomExceptionWhileDataFetching error = new CustomExceptionWhileDataFetching(path, exception, sourceLocation);
-		log.warn(error.getMessage(), exception);
+		log.error("Kall til graphql feilet teknisk. path={}, errormsg={}", path, exception.getMessage(), exception);
 
 		return DataFetcherExceptionHandlerResult.newResult()
 				.error(error)

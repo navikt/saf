@@ -24,7 +24,6 @@ import no.nav.saf.domain.DomainConstants;
 import no.nav.saf.domain.kode.Arkivsakssystem;
 import no.nav.saf.domain.kode.Datotype;
 import no.nav.saf.domain.kode.Dokumentstatus;
-import no.nav.saf.domain.kode.Journalposttype;
 import no.nav.saf.domain.kode.Journalstatus;
 import no.nav.saf.domain.kode.Kanal;
 import no.nav.saf.domain.kode.Tema;
@@ -374,7 +373,7 @@ public class JournalpostDtoMapper {
 			case FS22:
 				return Arkivsakssystem.GSAK.name();
 			default:
-				log.warn("Forventet joarkFagsystem er (FS22) GSAK eller (PEN) PSAK, ");
+				log.warn("Forventet joarkFagsystem er (FS22) GSAK eller (PEN) PSAK");
 				return null;
 		}
 	}
