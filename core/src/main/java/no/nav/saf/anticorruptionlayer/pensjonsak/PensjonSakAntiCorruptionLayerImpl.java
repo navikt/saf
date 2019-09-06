@@ -47,7 +47,7 @@ public class PensjonSakAntiCorruptionLayerImpl implements PensjonSakAntiCorrupti
 						.collect(Collectors.toList());
 			}
 		} catch (Exception e) {
-			log.warn("Klarte ikke hente pensjonssaker for foedelsnummer={}", "*****", e);
+			log.warn("Klarte ikke hente pensjonssaker for fødselsnummer={}", "*****", e);
 			return new ArrayList<>();
 		}
 	}

@@ -39,7 +39,7 @@ public class Pep1gImpl implements Pep<TilgangBruker> {
 	@Override
 	public XacmlResponse verifyAccessXacmlResponse(TilgangBruker ressurs, SafRequestContext safRequestContext) {
 		if (ressurs == null) {
-			log.warn("Pep1g mangler data om bruker. Tilgang gis for å kunne identifisere bruker.");
+			log.info("Pep1g mangler data om bruker. Tilgang gis for å kunne identifisere bruker.");
 			return XacmlResponse.permit();
 		} else if (ressurs.getOrgnummer() != null) {
 			return XacmlResponse.permit();
