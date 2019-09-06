@@ -5,8 +5,10 @@ import static no.nav.abac.saf.xacml.SafAttributter.RESOURCE_SAF_DOKUMENT_FIL;
 import static no.nav.abac.saf.xacml.SafAttributter.RESOURCE_SAF_SKJERMING;
 import static no.nav.saf.cache.RedisCacheConfig.TILGANG_CACHE;
 import static no.nav.saf.domain.DomainConstants.PEP6D;
+import static no.nav.saf.metrics.MicrometerMetrics.CACHE_GETS_BUILDER;
 
 import io.lettuce.core.RedisException;
+import io.micrometer.core.instrument.MeterRegistry;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.cache.KeyGeneratorDistributedCaching;
 import no.nav.saf.cache.KeyGeneratorLocalCaching;
@@ -38,11 +40,13 @@ public class Pep6dImpl implements Pep<TilgangDokumentvariant> {
 
 	private final Cache tilgangCache;
 	private final AbacService abacService;
+	private final MeterRegistry meterRegistry;
 
 	@Inject
-	public Pep6dImpl(@Named(RedisCacheConfig.MANAGER_DISTRIBUTED) CacheManager redisCacheManager, AbacService abacService) {
+	public Pep6dImpl(@Named(RedisCacheConfig.MANAGER_DISTRIBUTED) CacheManager redisCacheManager, AbacService abacService, MeterRegistry meterRegistry) {
 		this.tilgangCache = redisCacheManager.getCache(TILGANG_CACHE);
 		this.abacService = abacService;
+		this.meterRegistry = meterRegistry;
 	}
 
 	@Override
@@ -75,8 +79,7 @@ public class Pep6dImpl implements Pep<TilgangDokumentvariant> {
 					ressurs.getSkjerming().name());
 
 			try {
-				XacmlResponse response = tilgangCache.get(tilgangKeyDistributedCaching,
-						() -> hasDokumentFilAccess(ressurs, safRequestContext));
+				XacmlResponse response = fetchXacmlResponse(ressurs, safRequestContext, tilgangKeyDistributedCaching);
 				if(response == null) {
 					return XacmlResponse.deny();
 				}
@@ -97,6 +100,28 @@ public class Pep6dImpl implements Pep<TilgangDokumentvariant> {
 					null);
 			safRequestContext.getRequestCache().putObject(tilgangKeyLocalCaching, true);
 			return XacmlResponse.permit();
+		}
+	}
+
+	private XacmlResponse fetchXacmlResponse(TilgangDokumentvariant ressurs, SafRequestContext safRequestContext, String tilgangKeyDistributedCaching) {
+		XacmlResponse cachedResponse = tilgangCache.get(tilgangKeyDistributedCaching, XacmlResponse.class);
+		if(cachedResponse == null) {
+			XacmlResponse abacResponse = hasDokumentFilAccess(ressurs, safRequestContext);
+			if(abacResponse == null) {
+				return XacmlResponse.deny();
+			}
+			if(decide(abacResponse.getDecision())) {
+				tilgangCache.put(tilgangKeyDistributedCaching, abacResponse);
+			}
+			CACHE_GETS_BUILDER.tags("cache", "tilgang_pep6d")
+					.tags("result", "miss")
+					.register(meterRegistry).increment();
+			return abacResponse;
+		} else {
+			CACHE_GETS_BUILDER.tags("cache", "tilgang_pep6d")
+					.tags("result", "hit")
+					.register(meterRegistry).increment();
+			return cachedResponse;
 		}
 	}
 

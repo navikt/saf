@@ -5,8 +5,10 @@ import static no.nav.abac.saf.xacml.SafAttributter.RESOURCE_SAF_SAK_DOKUMENT;
 import static no.nav.abac.saf.xacml.SafAttributter.RESOURCE_SAF_TEMA;
 import static no.nav.saf.cache.RedisCacheConfig.TILGANG_CACHE;
 import static no.nav.saf.domain.DomainConstants.PEP2D;
+import static no.nav.saf.metrics.MicrometerMetrics.CACHE_GETS_BUILDER;
 
 import io.lettuce.core.RedisException;
+import io.micrometer.core.instrument.MeterRegistry;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.cache.KeyGeneratorDistributedCaching;
 import no.nav.saf.cache.KeyGeneratorLocalCaching;
@@ -40,17 +42,19 @@ public class Pep2dImpl implements Pep<TilgangSak> {
 
 	private final Cache tilgangCache;
 	private final AbacService abacService;
+	private final MeterRegistry meterRegistry;
 
 	@Inject
-	public Pep2dImpl(@Named(RedisCacheConfig.MANAGER_DISTRIBUTED) CacheManager redisCacheManager, AbacService abacService) {
+	public Pep2dImpl(@Named(RedisCacheConfig.MANAGER_DISTRIBUTED) CacheManager redisCacheManager, AbacService abacService, MeterRegistry meterRegistry) {
 		this.tilgangCache = redisCacheManager.getCache(TILGANG_CACHE);
 		this.abacService = abacService;
+		this.meterRegistry = meterRegistry;
 	}
 
 	@Override
 	public XacmlResponse verifyAccessXacmlResponse(TilgangSak ressurs, SafRequestContext safRequestContext) {
 		if (ressurs == null || ressurs.getTema() == null) {
-			log.warn("Pep2d mangler data om sak. Tilgang gis likevel for at saksbehandler skal kunne knytte dokument til sak og bruker.");
+			log.info("Pep2d mangler data om sak. Tilgang gis likevel for at saksbehandler skal kunne knytte dokument til sak og bruker.");
 			return XacmlResponse.permit();
 		}
 
@@ -60,9 +64,8 @@ public class Pep2dImpl implements Pep<TilgangSak> {
 		String tilgangKeyLocalCaching = KeyGeneratorLocalCaching.getKeyForPep2d(ressurs.getTema().name());
 		// Ty-catch er fordi redis ikke fungerer lokalt
 		try {
-			XacmlResponse response = tilgangCache.get(tilgangKeyDistributedCaching,
-					() -> hasDokumentAccess(ressurs, safRequestContext));
-			if(response == null) {
+			XacmlResponse response = fetchXacmlResponse(ressurs, safRequestContext, tilgangKeyDistributedCaching);
+			if (response == null) {
 				return XacmlResponse.deny();
 			}
 			safRequestContext.getRequestCache().putObject(tilgangKeyLocalCaching, decide(response.getDecision()));
@@ -73,6 +76,28 @@ public class Pep2dImpl implements Pep<TilgangSak> {
 			return response;
 		} finally {
 			Pep.traceLogPepFinished(PEP2D, ressurs);
+		}
+	}
+
+	private XacmlResponse fetchXacmlResponse(TilgangSak ressurs, SafRequestContext safRequestContext, String tilgangKeyDistributedCaching) {
+		XacmlResponse cachedResponse = tilgangCache.get(tilgangKeyDistributedCaching, XacmlResponse.class);
+		if (cachedResponse == null) {
+			XacmlResponse abacResponse = hasDokumentAccess(ressurs, safRequestContext);
+			if (abacResponse == null) {
+				return XacmlResponse.deny();
+			}
+			if (decide(abacResponse.getDecision())) {
+				tilgangCache.put(tilgangKeyDistributedCaching, abacResponse);
+			}
+			CACHE_GETS_BUILDER.tags("cache", "tilgang_pep2d")
+					.tags("result", "miss")
+					.register(meterRegistry).increment();
+			return abacResponse;
+		} else {
+			CACHE_GETS_BUILDER.tags("cache", "tilgang_pep2d")
+					.tags("result", "hit")
+					.register(meterRegistry).increment();
+			return cachedResponse;
 		}
 	}
 

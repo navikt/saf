@@ -11,6 +11,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import no.nav.saf.cache.RedisCacheConfig;
 import no.nav.saf.domain.kode.Variantformat;
 import no.nav.saf.domain.tilgangsmodell.TilgangDokumentvariant;
@@ -37,7 +38,7 @@ public class Pep6dImplTest extends AbstractPepTest {
 		SimpleCacheManager cacheManager = new SimpleCacheManager();
 		cacheManager.setCaches(Collections.singletonList(new NoOpCache(RedisCacheConfig.TILGANG_CACHE)));
 		cacheManager.afterPropertiesSet();
-		this.pep6d = new Pep6dImpl(cacheManager, abacService);
+		this.pep6d = new Pep6dImpl(cacheManager, abacService, new SimpleMeterRegistry());
 	}
 
 	@Test
