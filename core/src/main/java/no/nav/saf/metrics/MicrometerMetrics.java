@@ -8,7 +8,7 @@ import lombok.experimental.UtilityClass;
  */
 @UtilityClass
 public final class MicrometerMetrics {
-	public static final Counter.Builder CACHE_GETS_BUILDER = Counter.builder("cache_gets")
+	public static final Counter.Builder CACHE_GETS_BUILDER = Counter.builder("pep_cache_gets")
 			.description("Cache gets for policy enforcement points")
 			.tags("cacheManager", "redis");
 }

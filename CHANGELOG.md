@@ -8,6 +8,11 @@ Alle nevneverdige endringer blir dokumentert her.
 
 Denne malen er basert på [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [7.1.1] - 2019-09-06
+### Endret
+* Cacher ikke negative svar fra ABAC.
+* Pep avgjørelser som gir permit blir logget som info og ikke warn.
+
 ## [7.1.0] - 2019-09-04
 ### Lagt til
 * `GraphQL: ` Query `dokumentoversiktJournalstatus` for å kunne spørre etter dokumentoversikten for en journalstatus.
