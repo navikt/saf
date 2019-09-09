@@ -50,7 +50,7 @@ public class Pep2dImpl implements Pep<TilgangSak> {
 	@Override
 	public XacmlResponse verifyAccessXacmlResponse(TilgangSak ressurs, SafRequestContext safRequestContext) {
 		if (ressurs == null || ressurs.getTema() == null) {
-			log.warn("Pep2d mangler data om sak. Tilgang gis likevel for at saksbehandler skal kunne knytte dokument til sak og bruker.");
+			log.info("Pep2d mangler data om sak. Tilgang gis likevel for at saksbehandler skal kunne knytte dokument til sak og bruker.");
 			return XacmlResponse.permit();
 		}
 
@@ -60,9 +60,8 @@ public class Pep2dImpl implements Pep<TilgangSak> {
 		String tilgangKeyLocalCaching = KeyGeneratorLocalCaching.getKeyForPep2d(ressurs.getTema().name());
 		// Ty-catch er fordi redis ikke fungerer lokalt
 		try {
-			XacmlResponse response = tilgangCache.get(tilgangKeyDistributedCaching,
-					() -> hasDokumentAccess(ressurs, safRequestContext));
-			if(response == null) {
+			XacmlResponse response = fetchXacmlResponse(ressurs, safRequestContext, tilgangKeyDistributedCaching);
+			if (response == null) {
 				return XacmlResponse.deny();
 			}
 			safRequestContext.getRequestCache().putObject(tilgangKeyLocalCaching, decide(response.getDecision()));
@@ -73,6 +72,22 @@ public class Pep2dImpl implements Pep<TilgangSak> {
 			return response;
 		} finally {
 			Pep.traceLogPepFinished(PEP2D, ressurs);
+		}
+	}
+
+	private XacmlResponse fetchXacmlResponse(TilgangSak ressurs, SafRequestContext safRequestContext, String tilgangKeyDistributedCaching) {
+		XacmlResponse cachedResponse = tilgangCache.get(tilgangKeyDistributedCaching, XacmlResponse.class);
+		if (cachedResponse == null) {
+			XacmlResponse abacResponse = hasDokumentAccess(ressurs, safRequestContext);
+			if (abacResponse == null) {
+				return XacmlResponse.deny();
+			}
+			if (decide(abacResponse.getDecision())) {
+				tilgangCache.put(tilgangKeyDistributedCaching, abacResponse);
+			}
+			return abacResponse;
+		} else {
+			return cachedResponse;
 		}
 	}
 

@@ -75,8 +75,7 @@ public class Pep6dImpl implements Pep<TilgangDokumentvariant> {
 					ressurs.getSkjerming().name());
 
 			try {
-				XacmlResponse response = tilgangCache.get(tilgangKeyDistributedCaching,
-						() -> hasDokumentFilAccess(ressurs, safRequestContext));
+				XacmlResponse response = fetchXacmlResponse(ressurs, safRequestContext, tilgangKeyDistributedCaching);
 				if(response == null) {
 					return XacmlResponse.deny();
 				}
@@ -97,6 +96,22 @@ public class Pep6dImpl implements Pep<TilgangDokumentvariant> {
 					null);
 			safRequestContext.getRequestCache().putObject(tilgangKeyLocalCaching, true);
 			return XacmlResponse.permit();
+		}
+	}
+
+	private XacmlResponse fetchXacmlResponse(TilgangDokumentvariant ressurs, SafRequestContext safRequestContext, String tilgangKeyDistributedCaching) {
+		XacmlResponse cachedResponse = tilgangCache.get(tilgangKeyDistributedCaching, XacmlResponse.class);
+		if(cachedResponse == null) {
+			XacmlResponse abacResponse = hasDokumentFilAccess(ressurs, safRequestContext);
+			if(abacResponse == null) {
+				return XacmlResponse.deny();
+			}
+			if(decide(abacResponse.getDecision())) {
+				tilgangCache.put(tilgangKeyDistributedCaching, abacResponse);
+			}
+			return abacResponse;
+		} else {
+			return cachedResponse;
 		}
 	}
 
