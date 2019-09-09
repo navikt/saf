@@ -202,7 +202,11 @@
       "mottakskanal": "SKAN_NETS",
       "utsendingskanal": null,
       "journalposttype": "I",
-      "saksrelasjon": null,
+      "saksrelasjon": {
+        "sakId": "123456789",
+        "feilregistrert": true,
+        "fagsystem": "FS22"
+      },
       "bruker": {
         "brukerId": null,
         "brukerIdType": null
