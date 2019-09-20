@@ -46,10 +46,14 @@ fasitResources:
     resourceType: restservice
   - alias: securityTokenService
     resourceType: baseurl
-  - alias: Aktoer_v2
-    resourceType: webserviceendpoint
-  - alias: serviceGateway
-    resourceType: webservicegateway
+  - alias: "virksomhet:Aktoer_v2"
+    resourceType: soapservice
+    propertyMap:
+      endpointUrl: aktoer.v2.endpointurl
+  - alias: "pensjon::PensjonSak_v1"
+    resourceType: soapservice
+    propertyMap:
+      endpointUrl: pensjon.v1.endpointurl
   - alias: safproperties
     resourceType: applicationproperties
   - alias: freg-security-oidc

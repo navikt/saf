@@ -92,7 +92,7 @@ public class DokumentoversiktFagsakIT extends AbstractItest {
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withBodyFile("aktoerV2/hentAktoerIdForIdent-happy.xml")));
 
-		stubFor(post("/servicegw")
+		stubFor(post("/pensjonsakv1")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withBodyFile("psak/psak-hentSakSammendragListe-happy.xml")));
 
@@ -208,7 +208,7 @@ public class DokumentoversiktFagsakIT extends AbstractItest {
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withBodyFile("aktoerV2/hentAktoerIdForIdent-happy.xml")));
 
-		stubFor(post("/servicegw")
+		stubFor(post("/pensjonsakv1")
 				.willReturn(aResponse().withStatus(HttpStatus.INTERNAL_SERVER_ERROR.value())
 						.withBodyFile("psak-hentSakSammendragListe-technical.xml")));
 
@@ -237,7 +237,7 @@ public class DokumentoversiktFagsakIT extends AbstractItest {
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withBodyFile("aktoerV2/hentAktoerIdForIdent-happy.xml")));
 
-		stubFor(post("/servicegw")
+		stubFor(post("/pensjonsakv1")
 				.willReturn(aResponse().withStatus(HttpStatus.BAD_REQUEST.value())
 						.withBodyFile("psak-hentSakSammendragListe-technical.xml")));
 
