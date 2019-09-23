@@ -1,11 +1,7 @@
 package no.nav.saf.query.tilknyttedejournalposter;
 
-import static no.nav.saf.anticorruptionlayer.joark.domain.kode.FagsystemCode.FS22;
-import static no.nav.saf.anticorruptionlayer.joark.domain.kode.FagsystemCode.PEN;
-
 import no.nav.saf.anticorruptionlayer.aktoer.AktoerAntiCorruptionLayer;
 import no.nav.saf.anticorruptionlayer.bisys.BisysAntiCorruptionLayer;
-import no.nav.saf.anticorruptionlayer.gsak.GsakAntiCorruptionLayer;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.FagsystemCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.SkjermingTypeCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.VariantFormatCode;
@@ -29,13 +25,18 @@ import no.nav.saf.tilgangskontroll.SafRequestContext;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import static no.nav.saf.anticorruptionlayer.joark.domain.kode.FagsystemCode.FS22;
+import static no.nav.saf.anticorruptionlayer.joark.domain.kode.FagsystemCode.PEN;
 
 /**
  * @author Joakim Bjørnstad, Jbit AS
@@ -43,19 +44,16 @@ import java.util.stream.Stream;
 @Component
 class TilknyttedeJournalposterTilgangRepository {
 	private final HentJournalsakinfo hentJournalsakinfo;
-	private final GsakAntiCorruptionLayer gsakAntiCorruptionLayer;
 	private final PensjonSakAntiCorruptionLayer pensjonSakAntiCorruptionLayer;
 	private final AktoerAntiCorruptionLayer aktoerAntiCorruptionLayer;
 	private final BisysAntiCorruptionLayer bisysAntiCorruptionLayer;
 
 	@Inject
 	TilknyttedeJournalposterTilgangRepository(HentJournalsakinfo hentJournalsakinfo,
-											  GsakAntiCorruptionLayer gsakAntiCorruptionLayer,
 											  PensjonSakAntiCorruptionLayer pensjonSakAntiCorruptionLayer,
 											  AktoerAntiCorruptionLayer aktoerAntiCorruptionLayer,
 											  BisysAntiCorruptionLayer bisysAntiCorruptionLayer) {
 		this.hentJournalsakinfo = hentJournalsakinfo;
-		this.gsakAntiCorruptionLayer = gsakAntiCorruptionLayer;
 		this.pensjonSakAntiCorruptionLayer = pensjonSakAntiCorruptionLayer;
 		this.aktoerAntiCorruptionLayer = aktoerAntiCorruptionLayer;
 		this.bisysAntiCorruptionLayer = bisysAntiCorruptionLayer;
@@ -75,6 +73,14 @@ class TilknyttedeJournalposterTilgangRepository {
 						return Arkivsak.builder()
 								.arkivsaksnummer(saksrelasjon.getSakId())
 								.arkivsaksystem(mapJoarkFagsystemToArkivsakssystem(saksrelasjon.getFagsystem()))
+								.fagsaksystem(Optional.ofNullable(saksrelasjon.getFagsystem()).map(Object::toString).orElse(null))
+								.fagsakId(saksrelasjon.getFagsakNr())
+								.orgnummer(saksrelasjon.getOrgnr())
+								.aktoerId(saksrelasjon.getAktoerId())
+								.tema(Arkivsak.mapTema(saksrelasjon.getTema()))
+								.datoOpprettet(Optional.ofNullable(saksrelasjon.getOpprettetTidspunkt())
+										.map(ZonedDateTime::toLocalDateTime)
+										.orElse(null))
 								.build();
 					}
 					return null;
@@ -117,7 +123,10 @@ class TilknyttedeJournalposterTilgangRepository {
 		// For å finne den ekte brukeren på saken så må vi slå opp andre steder
 		if (arkivsak.getArkivsaksystem() == Arkivsakssystem.GSAK) {
 			// GSAK
-			TilgangBruker tilgangBruker = gsakAntiCorruptionLayer.findTilgangBrukerBySakId(arkivsak.getArkivsaksnummer());
+			TilgangBruker tilgangBruker = TilgangBruker.builder()
+					.aktoerId(arkivsak.getAktoerId())
+					.orgnummer(arkivsak.getAktoerId() == null ? arkivsak.getOrgnummer() : null)
+					.build();
 			if(!tilgangBruker.isBrukerPerson()) {
 				return tilgangBruker;
 			} else {
@@ -160,16 +169,15 @@ class TilknyttedeJournalposterTilgangRepository {
 				.collect(Collectors.toSet());
 	}
 
-	private TilgangSak tilgangSakGsak(final Arkivsak arkivsak, SafRequestContext safRequestContext) {
-		Arkivsak gsakArkivsak = gsakAntiCorruptionLayer.findArkivsakBySakId(arkivsak.getArkivsaksnummer());
-		safRequestContext.getRequestCache().putObject(gsakArkivsak.getKey(), gsakArkivsak);
-		final BidragSak bidragSak = getBidragSakIfTemaIsBidOrFar(gsakArkivsak);
+	private TilgangSak tilgangSakGsak(final Arkivsak arkivsak, final SafRequestContext safRequestContext) {
+		final BidragSak bidragSak = getBidragSakIfTemaIsBidOrFar(arkivsak);
+		safRequestContext.getRequestCache().putObject(arkivsak.getKey(), arkivsak);
 		return TilgangSak.builder()
-				.aktoerId(gsakArkivsak.getAktoerId())
-				.orgnummer(gsakArkivsak.getOrgnummer())
-				.arkivsaksnummer(gsakArkivsak.getArkivsaksnummer())
-				.arkivsaksystem(gsakArkivsak.getArkivsaksystem())
-				.tema(gsakArkivsak.getTema())
+				.aktoerId(arkivsak.getAktoerId())
+				.orgnummer(arkivsak.getOrgnummer())
+				.arkivsaksnummer(arkivsak.getArkivsaksnummer())
+				.arkivsaksystem(arkivsak.getArkivsaksystem())
+				.tema(arkivsak.getTema())
 				.relevanteTredjeparter(bidragSak == null ? null : new ArrayList<>(bidragSak.getRelevanteTredjeparter()))
 				.paragraf19(bidragSak == null ? null : bidragSak.isParagraf19())
 				.build();

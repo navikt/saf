@@ -16,11 +16,7 @@ public interface GsakAntiCorruptionLayer {
 
 	List<Arkivsak> findArkivsakerByOrgnr(String orgnr, List<Tema> tema);
 
-	Arkivsak findArkivsakBySakId(String sakId);
-
 	List<Arkivsak> findTilgangSakListByFagsakIdAndFagsaksystem(String fagsakId, String fagsaksystem, List<Tema> tema);
 
 	Map<String, List<String>> findIdListsByFagsakIdAndFagsaksystem(String fagsakId, String fagsaksystem);
-
-	TilgangBruker findTilgangBrukerBySakId(String sakId);
 }

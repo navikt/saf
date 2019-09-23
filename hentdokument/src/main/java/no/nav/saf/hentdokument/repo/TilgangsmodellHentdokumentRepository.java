@@ -16,7 +16,7 @@ public interface TilgangsmodellHentdokumentRepository {
 
 	TilgangBruker findTilgangBruker(Arkivsak arkivsak, SafRequestContext safRequestContext);
 
-	TilgangBruker findTilgangBrukerBySakId(String sakId, Arkivsakssystem arkivsaksystem, SafRequestContext safRequestContext);
+	TilgangBruker findTilgangBrukerByArkivsak(Arkivsak arkivsak, SafRequestContext safRequestContext);
 
 	Arkivsak findArkivsakAndCacheJournalpostDto(String journalpostId, String dokumentInfoId, String variantFormat, SafRequestContext safRequestContext);
 

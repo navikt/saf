@@ -86,8 +86,7 @@ public class JournalpostCoordinatorImpl implements JournalpostCoordinator {
 			throw new JournalpostTilgangskontrollException(PEP1G_ERRORMESSAGE);
 		}
 
-		final TilgangSak tilgangSak = journalpostTilgangRepository.findTilgangSak(arkivsak.getArkivsaksnummer(), arkivsak
-				.getArkivsaksystem() == null ? null : arkivsak.getArkivsaksystem().name(), tilgangBruker, safRequestContext);
+		final TilgangSak tilgangSak = journalpostTilgangRepository.findTilgangSak(arkivsak, tilgangBruker, safRequestContext);
 
 		boolean pep2Access = pep2.hasAccess(tilgangSak, safRequestContext);
 		if (!pep2Access) {

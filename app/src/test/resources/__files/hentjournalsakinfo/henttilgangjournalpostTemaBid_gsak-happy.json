@@ -14,7 +14,14 @@
     },
     "sak": {
       "sakId": "55555555",
-      "fagsystem": "FS22"
+      "fagsystem": "FS22",
+      "tema": "BID",
+      "applikasjon": "FS36",
+      "aktoerId": "***gammelt_fnr***21",
+      "orgnr": null,
+      "fagsakNr": "765432",
+      "opprettetAv": "srvfpfordel",
+      "opprettetTidspunkt": "2018-09-24T21:05:05.428+02:00"
     },
     "dokument": {
       "dokumentinfoId": "123",

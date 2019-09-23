@@ -67,10 +67,6 @@ class JournalpostIT extends AbstractItest {
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("hentjournalsakinfo/hentjournalpost_not_bid-happy.json")));
-		stubFor(get("/gsak/" + GSAK_ID)
-				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
-						.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("gsak/gsak-sakBySaksId_not_bid-happy.json")));
 
 		Journalpost journalpost = parseJournalpost(journalpostQuery());
 
@@ -128,10 +124,6 @@ class JournalpostIT extends AbstractItest {
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("hentjournalsakinfo/hentjournalpost_not_bid-happy.json")));
-		stubFor(get("/gsak/" + GSAK_ID)
-				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
-						.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("gsak/gsak-sakBySaksId_not_bid-happy.json")));
 
 		ResponseEntity<LinkedHashMap> responseEntity = journalpostQuery();
 		assertErrorWithMessage(responseEntity, PEP1G_ERRORMESSAGE);
@@ -181,10 +173,6 @@ class JournalpostIT extends AbstractItest {
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("hentjournalsakinfo/hentjournalpost_far-happy.json")));
-		stubFor(get("/gsak/" + GSAK_ID)
-				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
-						.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("gsak/gsak-sakBySaksId_far-happy.json")));
 		stubFor(get("/bidrag/" + BIDRAG_SAK_ID)
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
@@ -217,10 +205,6 @@ class JournalpostIT extends AbstractItest {
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("hentjournalsakinfo/hentjournalpost_dokumentinfo_pol_skjerming-happy.json")));
-		stubFor(get("/gsak/" + GSAK_ID)
-				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
-						.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("gsak/gsak-sakBySaksId_not_bid-happy.json")));
 
 		Journalpost journalpost = parseJournalpost(journalpostQuery());
 		assertThat(journalpost.getDokumenter(), hasSize(1));
@@ -233,10 +217,6 @@ class JournalpostIT extends AbstractItest {
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("hentjournalsakinfo/hentjournalpost_variant_pol_skjerming-happy.json")));
-		stubFor(get("/gsak/" + GSAK_ID)
-				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
-						.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("gsak/gsak-sakBySaksId_not_bid-happy.json")));
 
 		Journalpost journalpost = parseJournalpost(journalpostQuery());
 		DokumentInfo dokumentInfo1 = journalpost.getDokumenter().get(0);

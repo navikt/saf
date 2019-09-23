@@ -2,10 +2,12 @@ package no.nav.saf.domain;
 
 import lombok.Builder;
 import lombok.Value;
+import no.nav.saf.anticorruptionlayer.joark.domain.kode.FagomradeCode;
 import no.nav.saf.domain.kode.Arkivsakssystem;
 import no.nav.saf.domain.kode.Tema;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 /**
  * @author Joakim Bjørnstad, Jbit AS
@@ -32,5 +34,21 @@ public class Arkivsak {
 
 	public boolean isBrukerPerson() {
 		return orgnummer == null;
+	}
+
+	public static Tema mapTema(String temaString) {
+
+		Optional<String> tema = Optional.ofNullable(temaString)
+				.map(String::trim);
+
+		return tema.filter(t -> FagomradeCode.OKO.name().equals(t))
+				.map(t -> Tema.STO)
+				.orElseGet(() -> {
+					try {
+						return tema.map(Tema::valueOf).orElse(null);
+					} catch (Exception e) {
+						return null;
+					}
+				});
 	}
 }

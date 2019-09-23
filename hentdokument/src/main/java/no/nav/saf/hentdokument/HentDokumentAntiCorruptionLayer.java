@@ -16,24 +16,29 @@ import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark901.HentTil
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark901.TilgangBrukerDto;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark901.TilgangDokumentInfoDto;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark901.TilgangJournalpostDto;
+import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark901.TilgangSakDto;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark920.HentDokumentResponseTo;
 import no.nav.saf.domain.Arkivsak;
 import no.nav.saf.domain.HentDokument;
 import no.nav.saf.domain.kode.Arkivsakssystem;
+import no.nav.saf.domain.kode.Tema;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.domain.tilgangsmodell.TilgangDokumentInfo;
 import no.nav.saf.domain.tilgangsmodell.TilgangDokumentvariant;
 import no.nav.saf.domain.tilgangsmodell.TilgangJournalpost;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
+import no.nav.saf.domain.visningsmodell.Sak;
 import no.nav.saf.exceptions.SafTechnicalException;
 import no.nav.saf.exceptions.UgyldigArkivsaksystemException;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Collections;
+import java.util.Optional;
 
 /**
  * @author Joakim Bjørnstad, Jbit AS
@@ -130,11 +135,20 @@ public class HentDokumentAntiCorruptionLayer {
 		}
 		safRequestContex.getRequestCache()
 				.putObject(RJOARK901_TILGANG_JOURNALPOST_DTO, hentTilgangJournalpostResponseTo.getTilgangJournalpostDto());
+		TilgangSakDto journalpostSak = hentTilgangJournalpostResponseTo.getTilgangJournalpostDto().getSak();
 		return Arkivsak.builder()
 				.arkivsaksnummer(hentTilgangJournalpostResponseTo.getTilgangJournalpostDto().getSak().getSakId())
 				.arkivsaksystem(mapJoarkFagsystemToArkivsakssystemCode(hentTilgangJournalpostResponseTo.getTilgangJournalpostDto()
 						.getSak().getFagsystem(), hentTilgangJournalpostResponseTo.getTilgangJournalpostDto()
 						.getJournalpostId()))
+				.fagsaksystem(Optional.ofNullable(journalpostSak.getFagsystem()).map(Object::toString).orElse(null))
+				.fagsakId(journalpostSak.getFagsakNr())
+				.orgnummer(journalpostSak.getOrgnr())
+				.aktoerId(journalpostSak.getAktoerId())
+				.tema(Arkivsak.mapTema(journalpostSak.getTema()))
+				.datoOpprettet(Optional.ofNullable(journalpostSak.getOpprettetTidspunkt())
+						.map(ZonedDateTime::toLocalDateTime)
+						.orElse(null))
 				.build();
 	}
 
