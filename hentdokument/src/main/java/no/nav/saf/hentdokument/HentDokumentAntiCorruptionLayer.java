@@ -62,7 +62,7 @@ public class HentDokumentAntiCorruptionLayer {
 				.getObject(RJOARK901_TILGANG_JOURNALPOST_DTO);
 		if (tilgangJournalpostDto == null || tilgangJournalpostDto.getSak() == null || tilgangJournalpostDto.getBruker() == null
 				|| tilgangJournalpostDto.getBruker().getBrukerId() == null) {
-			log.warn("hentTilgangSakFromSafRequestContext feilet, da påkrevde felter for TilgangSak mangler på det cachede TilgangJournalpostDto-objektet. JournalpostId={}",
+			log.info("hentTilgangSakFromSafRequestContext feilet, da påkrevde felter for TilgangSak mangler på det cachede TilgangJournalpostDto-objektet. JournalpostId={}",
 					tilgangJournalpostDto == null ? null : tilgangJournalpostDto.getJournalpostId());
 			return null;
 		} else {

@@ -60,7 +60,7 @@ class JournalpostAntiCorruptionLayer {
 		final JournalpostDto journalpostDto = safRequestContext.getRequestCache().getObject(RJOARK902_JOURNALPOST_DTO);
 		if (journalpostDto == null || journalpostDto.getSaksrelasjon() == null || journalpostDto.getBruker() == null
 				|| journalpostDto.getBruker().getBrukerId() == null) {
-			log.warn("hentTilgangSakFromSafRequestContext feilet, da påkrevde felter for TilgangSak mangler på det cachede TilgangJournalpostDto-objektet. JournalpostId={}",
+			log.info("hentTilgangSakFromSafRequestContext feilet, da påkrevde felter for TilgangSak mangler på det cachede TilgangJournalpostDto-objektet. JournalpostId={}",
 					journalpostDto == null ? null : journalpostDto.getJournalpostId());
 			return null;
 		} else {
