@@ -10,6 +10,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -61,6 +62,7 @@ public class DokumentoversiktFilters {
 			return new ArrayList<>();
 		}
 		return journalstatuserObjectList.stream()
+				.filter(Objects::nonNull)
 				.map(journalstatus -> Journalposttype.valueOf(journalstatus.toString()))
 				.collect(Collectors.toList());
 	}
@@ -75,6 +77,7 @@ public class DokumentoversiktFilters {
 			return new ArrayList<>();
 		}
 		return journalstatuserObjectList.stream()
+				.filter(Objects::nonNull)
 				.map(journalstatus -> Journalstatus.valueOf(journalstatus.toString()))
 				.collect(Collectors.toList());
 	}
