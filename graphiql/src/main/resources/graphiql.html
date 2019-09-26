@@ -126,7 +126,7 @@
     newUri += "//" + loc.host;
     newUri += "/subscriptions";
 
-    var subscriptionsClient = new window.SubscriptionsTransportWs.SubscriptionClient(newUri, { reconnect: true });
+    var subscriptionsClient = new window.SubscriptionsTransportWs.SubscriptionClient(newUri, { reconnect: false });
     var subscriptionsFetcher = window.GraphiQLSubscriptionsFetcher.graphQLFetcher(subscriptionsClient, graphQLFetcher);
 
     // Render <GraphiQL /> into the body.

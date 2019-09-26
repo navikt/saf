@@ -4,19 +4,16 @@ import static no.nav.saf.endpoints.SafHeaders.NAV_CALLID;
 import static no.nav.saf.endpoints.SafHeaders.NAV_CONSUMER_ID;
 import static no.nav.saf.endpoints.SafHeaders.X_CORRELATION_ID;
 
-import com.github.benmanes.caffeine.cache.Cache;
 import graphql.ExecutionInput;
 import graphql.ExecutionResult;
 import graphql.GraphQL;
 import graphql.execution.AsyncExecutionStrategy;
 import graphql.execution.AsyncSerialExecutionStrategy;
-import graphql.execution.preparsed.PreparsedDocumentEntry;
 import graphql.schema.GraphQLSchema;
 import graphql.schema.idl.SchemaGenerator;
 import graphql.schema.idl.SchemaParser;
 import graphql.schema.idl.TypeDefinitionRegistry;
 import lombok.extern.slf4j.Slf4j;
-import no.nav.saf.cache.LokalCacheConfig;
 import no.nav.saf.endpoints.wiring.DokumentoversiktWiring;
 import no.nav.saf.exceptionhandler.GraphQLExceptionHandler;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
@@ -45,7 +42,6 @@ import java.util.Objects;
 @Slf4j
 public class GraphQLController extends AbstractSafController {
 	private final GraphQLSchema graphQLSchema;
-	private final Cache<String, PreparsedDocumentEntry> graphQLQueryCache;
 	private final OidcValidatorTool oidcValidatorTool;
 	private GraphQLExceptionHandler graphQLExceptionHandler;
 
@@ -62,7 +58,6 @@ public class GraphQLController extends AbstractSafController {
 		TypeDefinitionRegistry typeRegistry = schemaParser.parse(schema);
 		SchemaGenerator schemaGenerator = new SchemaGenerator();
 		this.graphQLSchema = schemaGenerator.makeExecutableSchema(typeRegistry, dokumentoversiktWiring.createRuntimeWiring());
-		this.graphQLQueryCache = (Cache<String, PreparsedDocumentEntry>) Objects.requireNonNull(cacheManager.getCache(LokalCacheConfig.GRAPHQL_QUERY_CACHE)).getNativeCache();
 		this.oidcValidatorTool = oidcValidatorTool;
 	}
 
@@ -75,7 +70,6 @@ public class GraphQLController extends AbstractSafController {
 											  @RequestBody GraphQLRequest request) {
 		ExecutionResult executionResult =
 				GraphQL.newGraphQL(graphQLSchema)
-						.preparsedDocumentProvider(graphQLQueryCache::get)
 						.mutationExecutionStrategy(new AsyncSerialExecutionStrategy(graphQLExceptionHandler))
 						.queryExecutionStrategy(new AsyncExecutionStrategy(graphQLExceptionHandler))
 						.build().execute(ExecutionInput.newExecutionInput()

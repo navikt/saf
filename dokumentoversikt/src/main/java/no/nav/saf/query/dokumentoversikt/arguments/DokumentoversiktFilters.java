@@ -29,17 +29,17 @@ public class DokumentoversiktFilters {
 		} else {
 			this.fraDato = fraDato;
 		}
-		if (tema.isEmpty()) {
+		if (tema == null || tema.isEmpty()) {
 			this.tema = Tema.asList();
 		} else {
 			this.tema = new ArrayList<>(tema);
 		}
-		if (journalposttyper.isEmpty()) {
+		if (journalposttyper == null || journalposttyper.isEmpty()) {
 			this.journalposttyper = Journalposttype.asList();
 		} else {
 			this.journalposttyper = new ArrayList<>(journalposttyper);
 		}
-		if (journalstatuser.isEmpty()) {
+		if (journalstatuser == null || journalstatuser.isEmpty()) {
 			this.journalstatuser = Journalstatus.asList();
 		} else {
 			this.journalstatuser =  new ArrayList<>(journalstatuser);
@@ -57,6 +57,9 @@ public class DokumentoversiktFilters {
 
 	private static List<Journalposttype> getJournalposttypeList(DataFetchingEnvironment environment) {
 		List<Object> journalstatuserObjectList = environment.getArgument("journalposttyper");
+		if(journalstatuserObjectList == null || journalstatuserObjectList.isEmpty()) {
+			return new ArrayList<>();
+		}
 		return journalstatuserObjectList.stream()
 				.map(journalstatus -> Journalposttype.valueOf(journalstatus.toString()))
 				.collect(Collectors.toList());
@@ -68,6 +71,9 @@ public class DokumentoversiktFilters {
 		}
 
 		List<Object> journalstatuserObjectList = environment.getArgument("journalstatuser");
+		if(journalstatuserObjectList == null || journalstatuserObjectList.isEmpty()) {
+			return new ArrayList<>();
+		}
 		return journalstatuserObjectList.stream()
 				.map(journalstatus -> Journalstatus.valueOf(journalstatus.toString()))
 				.collect(Collectors.toList());

@@ -88,7 +88,8 @@ public class HentDokumentController extends AbstractSafController {
 			if (!Variantformat.ORIGINAL.name().equals(variantFormat)) {
 				throw new HentdokumentTilgangskontrollException(
 						"Servicebruker forsøker hente dokument med variantFormat=" +
-								variantFormat + ". HentDokument tjenesten tillater kun at servicebrukere uten spesiell avtale kun får tilgang til variantFormat=" + Variantformat.ORIGINAL + ".");
+								variantFormat + ". HentDokument tjenesten tillater kun at som har en spesiell avtale med Team Dokumentløsninger kan få tilgang til variantFormat=" + Variantformat.ORIGINAL +
+								". Snakk med oss om behov.");
 			}
 		}
 	}
