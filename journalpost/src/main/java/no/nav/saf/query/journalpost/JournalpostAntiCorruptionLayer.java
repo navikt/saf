@@ -20,6 +20,7 @@ import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.dto.VariantDto;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark902.HentJournalpostResponseTo;
 import no.nav.saf.domain.Arkivsak;
 import no.nav.saf.domain.kode.Arkivsakssystem;
+import no.nav.saf.domain.kode.Tema;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.domain.tilgangsmodell.TilgangDokumentInfo;
 import no.nav.saf.domain.tilgangsmodell.TilgangDokumentvariant;
@@ -30,7 +31,9 @@ import no.nav.saf.tilgangskontroll.SafRequestContext;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -100,9 +103,7 @@ class JournalpostAntiCorruptionLayer {
 				return null;
 		}
 	}
-
-	public Arkivsak hentArkivsakAndCacheJournalpostDto(String journalpostId, SafRequestContext safRequestContex) {
-		HentJournalpostResponseTo hentJournalpostResponseTo;
+public Arkivsak hentArkivsakAndCacheJournalpostDto(String journalpostId, SafRequestContext safRequestContex) { HentJournalpostResponseTo hentJournalpostResponseTo;
 		try {
 			hentJournalpostResponseTo = hentJournalsakinfo.hentJournalpost(journalpostId);
 		} catch (Exception e) {
@@ -118,6 +119,14 @@ class JournalpostAntiCorruptionLayer {
 					.arkivsaksnummer(saksrelasjon.getSakId())
 					.arkivsaksystem(mapJoarkFagsystemToArkivsakssystemCode(saksrelasjon.getFagsystem(), hentJournalpostDto
 							.getJournalpostId()))
+					.fagsaksystem(Optional.ofNullable(saksrelasjon.getFagsystem()).map(Object::toString).orElse(null))
+					.fagsakId(saksrelasjon.getFagsakNr())
+					.orgnummer(saksrelasjon.getOrgnr())
+					.aktoerId(saksrelasjon.getAktoerId())
+					.tema(Arkivsak.mapTema(saksrelasjon.getTema()))
+					.datoOpprettet(Optional.ofNullable(saksrelasjon.getOpprettetTidspunkt())
+							.map(ZonedDateTime::toLocalDateTime)
+							.orElse(null))
 					.build();
 		} else {
 			return Arkivsak.builder()

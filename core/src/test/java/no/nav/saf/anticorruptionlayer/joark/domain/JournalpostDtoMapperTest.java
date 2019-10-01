@@ -346,7 +346,8 @@ class JournalpostDtoMapperTest {
 	void shouldUseArkivsakTemaWhenSakstilknyttetJournalpost() {
 		JournalpostDto journalpostDto = baseJournalpostDto()
 				.journalposttype(JournalpostTypeCode.I)
-				.saksrelasjon(new SaksrelasjonDto(SAKS_ID, false, FAKSYSTEM_CODE))
+				.saksrelasjon(new SaksrelasjonDto(SAKS_ID, false, FAKSYSTEM_CODE, null,
+						null, null, null, null, null, null))
 				.fagomrade(FagomradeCode.AAP).build();
 
 		RequestCache arkivsakCacheRequestCache = createArkivsakCacheRequestCache();
@@ -374,7 +375,8 @@ class JournalpostDtoMapperTest {
 	void shouldUseJournalpostTemaWhenIkkeSakstilknyttetJournalpostIngenSakId() {
 		JournalpostDto journalpostDto = baseJournalpostDto()
 				.journalposttype(JournalpostTypeCode.I)
-				.saksrelasjon(new SaksrelasjonDto(null, false, FAKSYSTEM_CODE))
+				.saksrelasjon(new SaksrelasjonDto(null, false, FAKSYSTEM_CODE, null, null,
+						null, null, null, null, null))
 				.fagomrade(FagomradeCode.AAP).build();
 
 		RequestCache arkivsakCacheRequestCache = createArkivsakCacheRequestCache();
@@ -658,7 +660,8 @@ class JournalpostDtoMapperTest {
 	private JournalpostDto buildJournalpostDtoUtgaaendeType(JournalStatusCode journalStatusCode) {
 		return baseJournalpostDto()
 				.journalposttype(JournalpostTypeCode.U)
-				.saksrelasjon(new SaksrelasjonDto(SAKS_ID, false, FAKSYSTEM_CODE))
+				.saksrelasjon(new SaksrelasjonDto(SAKS_ID, false, FAKSYSTEM_CODE,  null, null,
+						null, null, null, null, null))
 				.journalstatus(journalStatusCode)
 				.journalDato(JOURNAL_DATO)
 				.dokumentDato(DOKUMENT_DATO)
@@ -672,7 +675,8 @@ class JournalpostDtoMapperTest {
 	private JournalpostDto buildJournalpostDtoInngaaendeType() {
 		return baseJournalpostDto()
 				.journalposttype(JournalpostTypeCode.I)
-				.saksrelasjon(new SaksrelasjonDto(SAKS_ID, false, FAKSYSTEM_CODE))
+				.saksrelasjon(new SaksrelasjonDto(SAKS_ID, false, FAKSYSTEM_CODE,  null, null,
+						null, null, null, null, null))
 				.mottattDato(MOTTAT_DATO)
 				.journalDato(JOURNAL_DATO)
 				.build();
@@ -681,7 +685,8 @@ class JournalpostDtoMapperTest {
 	private JournalpostDto buildJournalpostDtoInternNotatType() {
 		return baseJournalpostDto()
 				.journalposttype(JournalpostTypeCode.N)
-				.saksrelasjon(new SaksrelasjonDto(SAKS_ID, false, FAKSYSTEM_CODE))
+				.saksrelasjon(new SaksrelasjonDto(SAKS_ID, false, FAKSYSTEM_CODE,  null, null,
+						null, null, null, null, null))
 				.journalDato(JOURNAL_DATO)
 				.build();
 	}
@@ -689,7 +694,8 @@ class JournalpostDtoMapperTest {
 	private JournalpostDto buildJournalpostDtoPenSaksrelasjonDto() {
 		return baseJournalpostDto()
 				.journalposttype(JournalpostTypeCode.N)
-				.saksrelasjon(new SaksrelasjonDto(SAKS_ID, false, FagsystemCode.PEN))
+				.saksrelasjon(new SaksrelasjonDto(SAKS_ID, false, FagsystemCode.PEN, null, null,
+						null, null, null, null, null))
 				.build();
 	}
 

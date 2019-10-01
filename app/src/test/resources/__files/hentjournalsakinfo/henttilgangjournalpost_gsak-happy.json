@@ -14,7 +14,14 @@
     },
     "sak": {
       "sakId": "10672720",
-      "fagsystem": "FS22"
+      "fagsystem": "FS22",
+      "tema": "FOR",
+      "applikasjon": "FS36",
+      "aktoerId": null,
+      "orgnr": 12345678,
+      "fagsakNr": null,
+      "opprettetAv": "srvfpfordel",
+      "opprettetTidspunkt": "2018-09-24T21:05:05.428+02:00"
     },
     "dokument": {
       "skjerming": null,

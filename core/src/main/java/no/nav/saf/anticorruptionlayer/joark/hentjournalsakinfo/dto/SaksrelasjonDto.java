@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.FagsystemCode;
 
+import java.time.ZonedDateTime;
+
 /**
  * @author Joakim Bjørnstad, Jbit AS
  */
@@ -15,4 +17,11 @@ public class SaksrelasjonDto {
 	private String sakId;
 	private Boolean feilregistrert;
 	private FagsystemCode fagsystem;
+	private final String aktoerId;
+	private final String tema;
+	private final String fagsakNr;
+	private final String applikasjon;
+	private final String orgnr;
+	private final String opprettetAv;
+	private final ZonedDateTime opprettetTidspunkt;
 }

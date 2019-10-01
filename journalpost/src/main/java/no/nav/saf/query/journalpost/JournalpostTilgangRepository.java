@@ -15,9 +15,9 @@ interface JournalpostTilgangRepository {
 
 	TilgangBruker findTilgangBruker(Arkivsak arkivsak, SafRequestContext safRequestContext);
 
-	TilgangBruker findTilgangBrukerBySakId(String sakId, Arkivsakssystem arkivsaksystem);
+	TilgangBruker findTilgangBrukerByArkivsak(Arkivsak arkivsak);
 
 	Arkivsak findArkivsakAndCacheJournalpostDto(String journalpostId, SafRequestContext safRequestContext);
 
-	TilgangSak findTilgangSak(String sakId, String arkivsaksystem, TilgangBruker tilgangBruker, SafRequestContext safRequestContext);
+	TilgangSak findTilgangSak(Arkivsak arkivsak, TilgangBruker tilgangBruker, SafRequestContext safRequestContext);
 }
