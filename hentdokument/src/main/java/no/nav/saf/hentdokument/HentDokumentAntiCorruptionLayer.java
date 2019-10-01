@@ -135,21 +135,22 @@ public class HentDokumentAntiCorruptionLayer {
 		}
 		safRequestContex.getRequestCache()
 				.putObject(RJOARK901_TILGANG_JOURNALPOST_DTO, hentTilgangJournalpostResponseTo.getTilgangJournalpostDto());
-		TilgangSakDto journalpostSak = hentTilgangJournalpostResponseTo.getTilgangJournalpostDto().getSak();
-		return Arkivsak.builder()
-				.arkivsaksnummer(hentTilgangJournalpostResponseTo.getTilgangJournalpostDto().getSak().getSakId())
-				.arkivsaksystem(mapJoarkFagsystemToArkivsakssystemCode(hentTilgangJournalpostResponseTo.getTilgangJournalpostDto()
-						.getSak().getFagsystem(), hentTilgangJournalpostResponseTo.getTilgangJournalpostDto()
-						.getJournalpostId()))
-				.fagsaksystem(Optional.ofNullable(journalpostSak.getFagsystem()).map(Object::toString).orElse(null))
-				.fagsakId(journalpostSak.getFagsakNr())
-				.orgnummer(journalpostSak.getOrgnr())
-				.aktoerId(journalpostSak.getAktoerId())
-				.tema(Arkivsak.mapTema(journalpostSak.getTema()))
-				.datoOpprettet(Optional.ofNullable(journalpostSak.getOpprettetTidspunkt())
-						.map(ZonedDateTime::toLocalDateTime)
-						.orElse(null))
-				.build();
+		return Optional.ofNullable(hentTilgangJournalpostResponseTo.getTilgangJournalpostDto().getSak())
+				.map(sak -> Arkivsak.builder()
+						.arkivsaksnummer(sak.getSakId())
+						.arkivsaksystem(mapJoarkFagsystemToArkivsakssystemCode(
+								sak.getFagsystem(),
+								hentTilgangJournalpostResponseTo.getTilgangJournalpostDto().getJournalpostId()))
+						.fagsaksystem(Optional.ofNullable(sak.getFagsystem()).map(Object::toString).orElse(null))
+						.fagsakId(sak.getFagsakNr())
+						.orgnummer(sak.getOrgnr())
+						.aktoerId(sak.getAktoerId())
+						.tema(Arkivsak.mapTema(sak.getTema()))
+						.datoOpprettet(Optional.ofNullable(sak.getOpprettetTidspunkt())
+								.map(ZonedDateTime::toLocalDateTime)
+								.orElse(null))
+						.build())
+				.orElse(null);
 	}
 
 	private TilgangJournalpost mapTilgangJournalpost(TilgangJournalpostDto dto) {
