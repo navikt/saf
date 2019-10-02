@@ -85,7 +85,7 @@ public class JournalpostTilgangRepositoryImpl implements JournalpostTilgangRepos
 			if (Arkivsakssystem.GSAK.equals(arkivsak.getArkivsaksystem())) {
 				return TilgangBruker.builder()
 						.aktoerId(arkivsak.getAktoerId())
-						.orgnummer(arkivsak.getAktoerId() != null ? arkivsak.getOrgnummer() : null)
+						.orgnummer(arkivsak.getAktoerId() == null ? arkivsak.getOrgnummer() : null)
 						.build();
 			} else if (Arkivsakssystem.PSAK.equals(arkivsak.getArkivsaksystem())) {
 				// Slår opp i PSAK for å finne fnr på bruker. Deretter opp i aktoerregister for fnr -> aktørId

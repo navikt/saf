@@ -81,7 +81,7 @@ public class TilgangsmodellHentdokumentRepositoryImpl implements TilgangsmodellH
 			if (Arkivsakssystem.GSAK.equals(arkivsak.getArkivsaksystem())) {
 				TilgangBruker gsakTilgangBruker = TilgangBruker.builder()
 						.aktoerId(arkivsak.getAktoerId())
-						.orgnummer(arkivsak.getAktoerId() != null ? arkivsak.getOrgnummer() : null)
+						.orgnummer(arkivsak.getAktoerId() == null ? arkivsak.getOrgnummer() : null)
 						.build();
 				// GSAK har ikke aktørId så vi har bruker på journalposten for sporing
 				TilgangBruker journalpostTilgangBruker = hentDokumentAntiCorruptionLayer.hentTilgangBruker(safRequestContext);

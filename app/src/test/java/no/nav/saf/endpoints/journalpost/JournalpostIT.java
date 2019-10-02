@@ -118,6 +118,19 @@ class JournalpostIT extends AbstractItest {
 	}
 
 	@Test
+	void shouldQueryJournalpostByJournalpostIdWhenAllExceptPep1AccessPermitWithSakOrgnr() throws Exception {
+		abacPermitExceptPep1();
+
+		stubFor(get("/hentjournalsakinfo/hentjournalpost/" + JOURNALPOST_ID)
+				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
+						.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("hentjournalsakinfo/hentjournalpost_orgnr-happy.json")));
+
+		Journalpost journalpost = parseJournalpost(journalpostQuery());
+		assertThat(journalpost, notNullValue());
+	}
+
+	@Test
 	void shouldReturnNullJournalpostWhenDenyOnPep1g() throws Exception {
 		abacDenyPep1g();
 		stubFor(get("/hentjournalsakinfo/hentjournalpost/" + JOURNALPOST_ID)
