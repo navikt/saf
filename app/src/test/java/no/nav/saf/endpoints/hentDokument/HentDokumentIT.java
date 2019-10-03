@@ -58,7 +58,7 @@ class HentDokumentIT extends AbstractItest {
 
 	@Test
 	void hentGsakDokumentHappyPathBrukerOrganisasjon() {
-		abacPermit();
+		abacPermitExceptPep1();
 		stubFor(get("/hentjournalsakinfo/hentdokument/" + DOKUMENT_ID + "/" + VARIANTFORMAT).willReturn(aResponse().withStatus(HttpStatus.OK
 				.value())
 				.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_PDF_VALUE)

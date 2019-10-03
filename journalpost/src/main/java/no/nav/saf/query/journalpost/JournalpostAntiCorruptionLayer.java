@@ -103,7 +103,7 @@ class JournalpostAntiCorruptionLayer {
 				return null;
 		}
 	}
-public Arkivsak hentArkivsakAndCacheJournalpostDto(String journalpostId, SafRequestContext safRequestContex) { HentJournalpostResponseTo hentJournalpostResponseTo;
+	public Arkivsak hentArkivsakAndCacheJournalpostDto(String journalpostId, SafRequestContext safRequestContex) { HentJournalpostResponseTo hentJournalpostResponseTo;
 		try {
 			hentJournalpostResponseTo = hentJournalsakinfo.hentJournalpost(journalpostId);
 		} catch (Exception e) {
