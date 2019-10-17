@@ -392,8 +392,10 @@ public class JournalpostDtoMapper {
 		}
 		if (arkivsak.isBrukerPerson()) {
 			return new Bruker(arkivsak.getAktoerId(), BrukerIdType.AKTOERID);
-		} else {
+		} else if(arkivsak.isBrukerOrganisasjon()) {
 			return new Bruker(arkivsak.getOrgnummer(), BrukerIdType.ORGNR);
+		} else {
+			return null;
 		}
 	}
 
@@ -405,8 +407,10 @@ public class JournalpostDtoMapper {
 		}
 		if (tilgangBruker.isPerson()) {
 			return new Bruker(tilgangBruker.getAktoerId(), BrukerIdType.AKTOERID);
-		} else {
+		} else if(tilgangBruker.isOrganisasjon()) {
 			return new Bruker(tilgangBruker.getOrgnummer(), BrukerIdType.ORGNR);
+		} else {
+			return null;
 		}
 	}
 

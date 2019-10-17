@@ -131,7 +131,7 @@ class JournalpostIT extends AbstractItest {
 		assertThat(journalpost.getSak().getArkivsaksnummer(), is("100000000"));
 		assertThat(journalpost.getSak().getFagsakId(), nullValue());
 		assertThat(journalpost.getSak().getFagsaksystem(), is("FS22"));
-		assertThat(journalpost.getBruker().getId(), nullValue());
+		assertThat(journalpost.getBruker(), nullValue());
 	}
 
 	@Test

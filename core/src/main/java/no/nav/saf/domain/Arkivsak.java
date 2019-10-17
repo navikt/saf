@@ -1,5 +1,7 @@
 package no.nav.saf.domain;
 
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+
 import lombok.Builder;
 import lombok.Value;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.FagomradeCode;
@@ -33,7 +35,11 @@ public class Arkivsak {
 	}
 
 	public boolean isBrukerPerson() {
-		return orgnummer == null;
+		return isNotBlank(aktoerId);
+	}
+
+	public boolean isBrukerOrganisasjon() {
+		return isNotBlank(orgnummer);
 	}
 
 	public static Tema mapTema(String temaString) {
