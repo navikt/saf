@@ -13,7 +13,6 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.http.MediaType.APPLICATION_PDF_VALUE;
 
 import com.github.tomakehurst.wiremock.client.BasicCredentials;
-import com.github.tomakehurst.wiremock.stubbing.Scenario;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.VariantFormatCode;
 import no.nav.saf.endpoints.AbstractItest;
 import org.junit.jupiter.api.Test;
@@ -155,7 +154,7 @@ class HentDokumentIT extends AbstractItest {
 
 		ResponseEntity<String> responseEntity = callHentDokument();
 
-		assertEquals(HttpStatus.FORBIDDEN, responseEntity.getStatusCode());
+		assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
 	}
 
 	@Test
@@ -172,7 +171,7 @@ class HentDokumentIT extends AbstractItest {
 
 		ResponseEntity<String> responseEntity = callHentDokument();
 
-		assertEquals(HttpStatus.FORBIDDEN, responseEntity.getStatusCode());
+		assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
 	}
 
 	@Test
@@ -189,7 +188,7 @@ class HentDokumentIT extends AbstractItest {
 
 		ResponseEntity<String> responseEntity = callHentDokument();
 
-		assertEquals(HttpStatus.FORBIDDEN, responseEntity.getStatusCode());
+		assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
 	}
 
 	@Test

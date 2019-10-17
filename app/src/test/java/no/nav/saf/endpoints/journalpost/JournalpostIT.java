@@ -118,6 +118,36 @@ class JournalpostIT extends AbstractItest {
 	}
 
 	@Test
+	void shouldQueryJournalpostWhenSakNotFound() throws Exception {
+		abacPermit();
+
+		stubFor(get("/hentjournalsakinfo/hentjournalpost/" + JOURNALPOST_ID)
+				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
+						.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("hentjournalsakinfo/hentjournalpost_not_bid-null-user-and-sak-happy.json")));
+
+		Journalpost journalpost = parseJournalpost(journalpostQuery());
+		assertThat(journalpost.getTema(), is(Tema.PEN));
+		assertThat(journalpost.getSak().getArkivsaksnummer(), is("100000000"));
+		assertThat(journalpost.getSak().getFagsakId(), nullValue());
+		assertThat(journalpost.getSak().getFagsaksystem(), is("FS22"));
+		assertThat(journalpost.getBruker().getId(), nullValue());
+	}
+
+	@Test
+	void shouldQueryJournalpostAndFallbackToUkjentTemaWhenNoSakOrJournalpostTemaFound() throws Exception {
+		abacPermit();
+
+		stubFor(get("/hentjournalsakinfo/hentjournalpost/" + JOURNALPOST_ID)
+				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
+						.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("hentjournalsakinfo/hentjournalpost_not_bid-null-temas.json")));
+
+		Journalpost journalpost = parseJournalpost(journalpostQuery());
+		assertThat(journalpost.getTema(), is(Tema.UKJ));
+	}
+
+	@Test
 	void shouldQueryJournalpostByJournalpostIdWhenAllExceptPep1AccessPermitWithSakOrgnr() throws Exception {
 		abacPermitExceptPep1();
 
