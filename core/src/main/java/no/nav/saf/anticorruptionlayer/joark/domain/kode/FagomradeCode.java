@@ -264,7 +264,8 @@ public enum FagomradeCode {
 		if(joarkFagomradeCode == OKO) {
 			return Tema.STO;
 		}
-		return joarkFagomradeCode == null ? null : Tema.valueOf(joarkFagomradeCode.name());
+		// Hvis tema er null så faller man tilbake til UKJ
+		return joarkFagomradeCode == null ? Tema.UKJ : Tema.valueOf(joarkFagomradeCode.name());
 	}
 
 	public static FagomradeCode fromTema(Tema tema) {

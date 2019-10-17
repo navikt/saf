@@ -90,9 +90,13 @@ public class TilgangsmodellHentdokumentRepositoryImpl implements TilgangsmodellH
 						.build();
 			} else if (Arkivsakssystem.PSAK.equals(arkivsak.getArkivsaksystem())) {
 				String fnr = pensjonSakAntiCorruptionLayer.findFoedselsnummerBySakId(arkivsak.getArkivsaksnummer());
-				return TilgangBruker.builder()
-						.foedselsnr(fnr)
-						.build();
+				if(fnr == null) {
+					return null;
+				} else {
+					return TilgangBruker.builder()
+							.foedselsnr(fnr)
+							.build();
+				}
 			} else {
 				return null;
 			}

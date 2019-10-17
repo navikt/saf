@@ -38,10 +38,11 @@ public class Pep1gImpl implements Pep<TilgangBruker> {
 
 	@Override
 	public XacmlResponse verifyAccessXacmlResponse(TilgangBruker ressurs, SafRequestContext safRequestContext) {
-		if (ressurs == null) {
+		if (ressurs == null || ressurs.isUkjent()) {
 			log.info("Pep1g mangler data om bruker. Tilgang gis for å kunne identifisere bruker.");
 			return XacmlResponse.permit();
-		} else if (ressurs.getOrgnummer() != null) {
+		} else if (ressurs.isOrganisasjon()) {
+			log.info("Pep1g validerer organisasjon. Tilgang gis siden bruker er en organisasjon.");
 			return XacmlResponse.permit();
 		}
 
@@ -53,6 +54,7 @@ public class Pep1gImpl implements Pep<TilgangBruker> {
 		} else if (ressurs.getFoedselsnr() != null) {
 			request.resource(RESOURCE_FELLES_PERSON_FNR, ressurs.getFoedselsnr());
 		} else {
+			log.error("Pep1g kunne ikke validere bruker fordi bruker ikke er en person. Denne tilstanden indikerer en teknisk feil.");
 			return XacmlResponse.deny();
 		}
 		Pep.traceLogPepStarted(PEP1G, ressurs);

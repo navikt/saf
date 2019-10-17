@@ -105,7 +105,7 @@ public class DokumentoversiktFagsakTilgangsmodellRepository {
 
 	private List<TilgangSak> findTilgangSakForGsaker(List<TilgangBruker> filteredTilgangBrukerList, FagsakInput fagsakInput, List<Tema> tema, SafRequestContext safRequestContext) {
 		try {
-//			For å unngå å gjøre ett kall for hver bruker hentes alle saker assosiert med det aktuelle fagsaknummeret og fagsaksystemet fra Gsak i én spørring
+			// For å unngå å gjøre ett kall for hver bruker hentes alle saker assosiert med det aktuelle fagsaknummeret og fagsaksystemet fra Gsak i én spørring
 			List<Arkivsak> arkivsaker = gsakAntiCorruptionLayer.findTilgangSakListByFagsakIdAndFagsaksystem(fagsakInput.getFagsakId(), fagsakInput
 					.getFagsaksystem(), tema);
 
@@ -113,7 +113,7 @@ public class DokumentoversiktFagsakTilgangsmodellRepository {
 			List<String> orgnrList = extractOrgnrListFromFilteredTilgangBrukerList(filteredTilgangBrukerList);
 
 			return arkivsaker.stream()
-//					Vi er kun interesserte i saker tilhørende brukere som ikke ble filtrert bort i pep1
+					// Vi er kun interesserte i saker tilhørende brukere som ikke ble filtrert bort i pep1
 					.filter(arkivsak -> aktoerIdList.contains(arkivsak.getAktoerId()) || orgnrList.contains(arkivsak.getOrgnummer()))
 					.map(arkivsak -> {
 						safRequestContext.getRequestCache().putObject(arkivsak.getKey(), arkivsak);
@@ -136,14 +136,14 @@ public class DokumentoversiktFagsakTilgangsmodellRepository {
 
 	private List<String> extractAktoerIdListFromFilteredTilgangBrukerList(List<TilgangBruker> filteredTilgangBrukerList) {
 		return filteredTilgangBrukerList.stream()
-				.filter(TilgangBruker::isBrukerPerson)
+				.filter(TilgangBruker::isPerson)
 				.map(TilgangBruker::getAktoerId)
 				.collect(Collectors.toList());
 	}
 
 	private List<String> extractOrgnrListFromFilteredTilgangBrukerList(List<TilgangBruker> filteredTilgangBrukerList) {
 		return filteredTilgangBrukerList.stream()
-				.filter(tilgangBruker -> !tilgangBruker.isBrukerPerson())
+				.filter(tilgangBruker -> !tilgangBruker.isPerson())
 				.map(TilgangBruker::getOrgnummer)
 				.collect(Collectors.toList());
 	}

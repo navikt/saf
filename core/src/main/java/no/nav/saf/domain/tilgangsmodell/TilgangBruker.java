@@ -1,5 +1,7 @@
 package no.nav.saf.domain.tilgangsmodell;
 
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -33,7 +35,15 @@ public class TilgangBruker {
 		return tmpAlleIdenter;
 	}
 
-	public boolean isBrukerPerson() {
-		return orgnummer == null;
+	public boolean isPerson() {
+		return isNotBlank(foedselsnr) || isNotBlank(aktoerId);
+	}
+
+	public boolean isOrganisasjon() {
+		return !isPerson() && isNotBlank(orgnummer);
+	}
+
+	public boolean isUkjent() {
+		return !isPerson() && !isOrganisasjon();
 	}
 }

@@ -62,7 +62,7 @@ class HentDokumentSporbarhetslogger {
 		if(tilgangBruker == null) {
 			return UKJENT_BRUKERID;
 		}
-		if(tilgangBruker.isBrukerPerson()) {
+		if(tilgangBruker.isPerson()) {
 			return tilgangBruker.getFoedselsnr();
 		} else {
 			return tilgangBruker.getOrgnummer();

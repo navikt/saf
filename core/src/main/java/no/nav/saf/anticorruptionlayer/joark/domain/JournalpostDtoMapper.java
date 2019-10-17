@@ -155,8 +155,13 @@ public class JournalpostDtoMapper {
 				// For journalposter som mangler saksrelasjon, er gjeldende tema lik Journalpost.fagomrade.
 				return FagomradeCode.toSafTema(journalpostDto.getFagomrade());
 			}
-			// For sakstilknyttede journalposter hentes tema fra arkivsaken (GSAK eller PSAK sak), altså ikke fra joark.
-			return arkivsak.getTema();
+			if(arkivsak.getTema() == null) {
+				// For journalposter som ikke har tema på sak (f.eks ugyldig sakId), så er gjeldende tema lik Journalpost.fagomrade.
+				return FagomradeCode.toSafTema(journalpostDto.getFagomrade());
+			} else {
+				// For sakstilknyttede journalposter hentes tema fra arkivsaken (GSAK eller PSAK sak), altså ikke fra joark.
+				return arkivsak.getTema();
+			}
 		} else {
 			// For journalposter som mangler saksrelasjon, er gjeldende tema lik Journalpost.fagomrade.
 			return FagomradeCode.toSafTema(journalpostDto.getFagomrade());
@@ -398,7 +403,7 @@ public class JournalpostDtoMapper {
 		if (tilgangBruker == null) {
 			return null;
 		}
-		if (tilgangBruker.isBrukerPerson()) {
+		if (tilgangBruker.isPerson()) {
 			return new Bruker(tilgangBruker.getAktoerId(), BrukerIdType.AKTOERID);
 		} else {
 			return new Bruker(tilgangBruker.getOrgnummer(), BrukerIdType.ORGNR);
