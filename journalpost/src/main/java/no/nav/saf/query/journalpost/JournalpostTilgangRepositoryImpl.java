@@ -108,8 +108,11 @@ public class JournalpostTilgangRepositoryImpl implements JournalpostTilgangRepos
 
 	@Override
 	public TilgangSak findTilgangSak(Arkivsak arkivsak, TilgangBruker tilgangBruker, SafRequestContext safRequestContext) {
-		String arkivSystem = Optional.ofNullable(arkivsak.getArkivsaksystem()).map(Object::toString).orElse(null);
+		if(arkivsak == null) {
+			return null;
+		}
 		try {
+			String arkivSystem = Optional.ofNullable(arkivsak.getArkivsaksystem()).map(Object::toString).orElse(null);
 			if (Arkivsakssystem.GSAK.name().equals(arkivSystem)) {
 				safRequestContext.getRequestCache().putObject(arkivsak.getKey(), arkivsak);
 				BidragSak bidragSak = getBidragSakIfTemaIsBidOrFar(arkivsak);
@@ -142,7 +145,7 @@ public class JournalpostTilgangRepositoryImpl implements JournalpostTilgangRepos
 			// fallback
 			return journalpostAntiCorruptionLayer.hentTilgangSakFromSafRequestContext(safRequestContext, tilgangBruker);
 		} catch (Exception e) {
-			log.warn("findTilgangBrukerBySakId feilet ved oppslag på sakId={} og arkivsaksystem={}. Feilmelding={}", arkivsak.getArkivsaksnummer(), arkivSystem, e);
+			log.warn("findTilgangBrukerBySakId feilet ved oppslag på sakId={} og arkivsaksystem={}. Feilmelding={}", arkivsak.getArkivsaksnummer(), arkivsak.getArkivsaksystem(), e);
 			return null;
 		}
 	}
