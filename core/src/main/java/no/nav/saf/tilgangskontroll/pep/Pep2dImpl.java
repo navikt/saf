@@ -1,8 +1,8 @@
 package no.nav.saf.tilgangskontroll.pep;
 
 import static no.nav.abac.common.xacml.CommonAttributter.RESOURCE_FELLES_RESOURCE_TYPE;
+import static no.nav.abac.common.xacml.CommonAttributter.RESOURCE_FELLES_TEMA;
 import static no.nav.abac.saf.xacml.SafAttributter.RESOURCE_SAF_SAK_DOKUMENT;
-import static no.nav.abac.saf.xacml.SafAttributter.RESOURCE_SAF_TEMA;
 import static no.nav.saf.cache.RedisCacheConfig.TILGANG_CACHE;
 import static no.nav.saf.domain.DomainConstants.PEP2D;
 
@@ -98,7 +98,7 @@ public class Pep2dImpl implements Pep<TilgangSak> {
 	private XacmlResponse hasDokumentAccess(TilgangSak ressurs, SafRequestContext safRequestContext) {
 		XacmlRequest request = SafXacmlRequestFactory.create(safRequestContext.getSecurityContext().getOidcTokenBody());
 		request.resource(RESOURCE_FELLES_RESOURCE_TYPE, RESOURCE_SAF_SAK_DOKUMENT);
-		request.resource(RESOURCE_SAF_TEMA, ressurs.getTema().name());
+		request.resource(RESOURCE_FELLES_TEMA, ressurs.getTema().name());
 		return abacService.evaluate(request);
 	}
 }

@@ -1,9 +1,9 @@
 package no.nav.saf.tilgangskontroll.pep;
 
 import static no.nav.abac.common.xacml.CommonAttributter.RESOURCE_FELLES_RESOURCE_TYPE;
+import static no.nav.abac.common.xacml.CommonAttributter.RESOURCE_FELLES_TEMA;
 import static no.nav.abac.saf.xacml.SafAttributter.RESOURCE_SAF_PARAGRAF19;
 import static no.nav.abac.saf.xacml.SafAttributter.RESOURCE_SAF_SAK_JP_METADATA;
-import static no.nav.abac.saf.xacml.SafAttributter.RESOURCE_SAF_TEMA;
 import static no.nav.saf.domain.DomainConstants.PEP2;
 
 import lombok.extern.slf4j.Slf4j;
@@ -46,7 +46,7 @@ public class Pep2Impl implements Pep<TilgangSak> {
 			XacmlRequest request = SafXacmlRequestFactory.create(safRequestContext.getSecurityContext().getOidcTokenBody());
 			request.resource(RESOURCE_FELLES_RESOURCE_TYPE, RESOURCE_SAF_SAK_JP_METADATA);
 			if (isFarskapSak(ressurs)) {
-				request.resource(RESOURCE_SAF_TEMA, Tema.FAR.name());
+				request.resource(RESOURCE_FELLES_TEMA, Tema.FAR.name());
 			}
 			if (isForvaltningslovensParagraf19(ressurs)) {
 				request.resource(RESOURCE_SAF_PARAGRAF19, true);

@@ -38,7 +38,7 @@
 		<graphql-java.version>12.0</graphql-java.version>
 		<abac-attribute-constants.version>3.4.4</abac-attribute-constants.version>
 		<abac-common-attributes-alfa.version>4.0.5</abac-common-attributes-alfa.version>
-		<abac-saf-policies-alfa.version>4.3.0</abac-saf-policies-alfa.version>
+		<abac-saf-policies-alfa.version>4.5.3</abac-saf-policies-alfa.version>
 		<rxjava.version>2.2.9</rxjava.version>
 		<java-jwt.version>3.4.1</java-jwt.version>
 		<logstash-logback-encoder.version>5.3</logstash-logback-encoder.version>
