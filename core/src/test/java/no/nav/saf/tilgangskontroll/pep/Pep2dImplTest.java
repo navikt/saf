@@ -1,8 +1,8 @@
 package no.nav.saf.tilgangskontroll.pep;
 
 import static no.nav.abac.common.xacml.CommonAttributter.RESOURCE_FELLES_RESOURCE_TYPE;
+import static no.nav.abac.common.xacml.CommonAttributter.RESOURCE_FELLES_TEMA;
 import static no.nav.abac.saf.xacml.SafAttributter.RESOURCE_SAF_SAK_DOKUMENT;
-import static no.nav.abac.saf.xacml.SafAttributter.RESOURCE_SAF_TEMA;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -75,7 +75,7 @@ class Pep2dImplTest extends AbstractPepTest {
 
 	private void assertCommonXacmlRequestResources(XacmlRequest capturedRequest) {
 		assertThat(capturedRequest.getResources(), hasItem(new XacmlAttribute(RESOURCE_FELLES_RESOURCE_TYPE, RESOURCE_SAF_SAK_DOKUMENT)));
-		assertThat(capturedRequest.getResources(), hasItem(new XacmlAttribute(RESOURCE_SAF_TEMA, TEMA_BID.name())));
+		assertThat(capturedRequest.getResources(), hasItem(new XacmlAttribute(RESOURCE_FELLES_TEMA, TEMA_BID.name())));
 	}
 
 	@Test
