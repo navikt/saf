@@ -34,6 +34,7 @@ public class SafSecurityContext {
 		PRIVILEGIED_SERVICEUSERS.put("srvdokdistfordeling", true);
 		PRIVILEGIED_SERVICEUSERS.put("srvdokdisteformidling", true);
 		PRIVILEGIED_SERVICEUSERS.put("srvdokarkivproxy", true);
+		PRIVILEGIED_SERVICEUSERS.put("srvtilbakemeldings", true);
 	}
 
 	SafSecurityContext(String authorizationHeader,
