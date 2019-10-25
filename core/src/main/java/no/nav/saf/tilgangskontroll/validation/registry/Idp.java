@@ -9,4 +9,5 @@ import lombok.Data;
 public class Idp {
 	private String issuerUrl;
 	private String jwksUrl;
+	private String proxyAddress;
 }
