@@ -37,7 +37,7 @@ public class Jose4jValidationConfig {
 					if (uri.getHost() == null || uri.getPort() == -1) {
 						throw new IdpException("proxyAddress must have both host and port");
 					}
-					simpleGet.setHttpProxy(new Proxy(Proxy.Type.HTTP, new InetSocketAddress(uri.getHost(), uri.getPort()));
+					simpleGet.setHttpProxy(new Proxy(Proxy.Type.HTTP, new InetSocketAddress(uri.getHost(), uri.getPort())));
 				} catch (URISyntaxException e) {
 					throw new IdpException(e.getMessage());
 				}
