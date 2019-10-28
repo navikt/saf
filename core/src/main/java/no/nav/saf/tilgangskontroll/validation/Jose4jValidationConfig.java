@@ -29,11 +29,11 @@ public class Jose4jValidationConfig {
 
 	@Bean
 	SimpleGetResolver simpleGetResolver(SimpleGet defaultGet) {
-		return (issuerUrl, proxyAddress) -> {
-			if (proxyAddress != null) {
+		return (issuerUrl, proxyUrl) -> {
+			if (proxyUrl != null) {
 				Get simpleGet = new Get();
 				try {
-					URI uri = new URI("proxy://" + proxyAddress);
+					URI uri = new URI(proxyUrl);
 					if (uri.getHost() == null || uri.getPort() == -1) {
 						throw new IdpException("proxyAddress must have both host and port");
 					}

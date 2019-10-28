@@ -28,7 +28,7 @@ public class Jose4jConsumerFactory {
 
 			httpsJwks = new HttpsJwks(jwks);
 
-			httpsJwks.setSimpleHttpGet(simpleGetResolver.resolve(idp.getIssuerUrl(), idp.getProxyAddress()));
+			httpsJwks.setSimpleHttpGet(simpleGetResolver.resolve(idp.getIssuerUrl(), idp.getProxyUrl()));
 			keyResolverMap.put(idp.getIssuerUrl(), new HttpsJwksVerificationKeyResolver(httpsJwks));
 		}
 	}
