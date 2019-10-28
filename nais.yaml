@@ -5,6 +5,7 @@ replicas:
   max: 8
   cpuThresholdPercentage: 50
 port: 8080
+webproxy: true
 healthcheck:
   liveness:
     path: /isAlive
@@ -61,6 +62,11 @@ fasitResources:
     propertyMap:
       issuerUrl: security.oidc.idp.openAm.issuerUrl
       jwksUrl: security.oidc.idp.openAm.jwksUrl
+  - alias: azure-oidc
+    resourceType: OpenIdConnect
+    propertyMap:
+      issuerUrl: security.oidc.idp.azure.issuerUrl
+      jwksUrl: security.oidc.idp.azure.jwksUrl
   - alias: security-token-service-issuer
     resourceType: BaseUrl
     propertyMap:

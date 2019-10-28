@@ -19,11 +19,8 @@ public class Jose4jConsumerFactory {
 	static final String MISSING_VERIFICATION_KEY_RESOLVER = "Failed to find verification key resolver for issuer: %s";
 
 	private final Map<String, VerificationKeyResolver> keyResolverMap = new ConcurrentHashMap<>();
-	private final SimpleGet httpGet;
 
-	public Jose4jConsumerFactory(SimpleGet simpleGet, List<Idp> idps) {
-
-		this.httpGet = simpleGet;
+	public Jose4jConsumerFactory(SimpleGetResolver simpleGetResolver, List<Idp> idps) {
 
 		for (Idp idp : idps) {
 			String jwks = idp.getJwksUrl();
@@ -31,7 +28,7 @@ public class Jose4jConsumerFactory {
 
 			httpsJwks = new HttpsJwks(jwks);
 
-			httpsJwks.setSimpleHttpGet(httpGet);
+			httpsJwks.setSimpleHttpGet(simpleGetResolver.resolve(idp.getIssuerUrl(), idp.getProxyUrl()));
 			keyResolverMap.put(idp.getIssuerUrl(), new HttpsJwksVerificationKeyResolver(httpsJwks));
 		}
 	}
