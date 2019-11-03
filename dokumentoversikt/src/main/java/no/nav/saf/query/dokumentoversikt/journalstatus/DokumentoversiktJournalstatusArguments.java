@@ -14,8 +14,8 @@ import no.nav.saf.query.dokumentoversikt.arguments.DokumentoversiktPagination;
 @EqualsAndHashCode(callSuper = true)
 public class DokumentoversiktJournalstatusArguments extends AbstractDokumentoversiktArguments {
 
-	public DokumentoversiktJournalstatusArguments(DokumentoversiktFilters filters,
-												  DokumentoversiktPagination.SeekPagination pagination) {
+	private DokumentoversiktJournalstatusArguments(DokumentoversiktFilters filters,
+												   DokumentoversiktPagination.SeekPagination pagination) {
 		super(filters, pagination);
 	}
 
