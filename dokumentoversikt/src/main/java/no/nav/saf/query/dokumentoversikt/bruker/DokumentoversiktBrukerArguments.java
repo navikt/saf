@@ -19,9 +19,9 @@ import java.util.Map;
 public class DokumentoversiktBrukerArguments extends AbstractDokumentoversiktArguments {
 	private final BrukerIdInput brukerIdInput;
 
-	public DokumentoversiktBrukerArguments(BrukerIdInput brukerIdInput,
-										   DokumentoversiktFilters filters,
-										   DokumentoversiktPagination.SeekPagination pagination) {
+	private DokumentoversiktBrukerArguments(BrukerIdInput brukerIdInput,
+											DokumentoversiktFilters filters,
+											DokumentoversiktPagination.SeekPagination pagination) {
 		super(filters, pagination);
 		this.brukerIdInput = brukerIdInput;
 	}

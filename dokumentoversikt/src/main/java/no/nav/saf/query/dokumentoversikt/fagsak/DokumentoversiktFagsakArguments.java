@@ -16,13 +16,22 @@ import java.util.Map;
 @Value
 @EqualsAndHashCode(callSuper = true)
 public class DokumentoversiktFagsakArguments extends AbstractDokumentoversiktArguments {
+	static final String INFOTRYGD_FAGSAKSYSTEM = "IT01";
 	private final FagsakInput fagsakInput;
 
-	public DokumentoversiktFagsakArguments(FagsakInput fagsakInput,
-										   DokumentoversiktFilters filters,
-										   DokumentoversiktPagination.SeekPagination pagination) {
+	private DokumentoversiktFagsakArguments(FagsakInput fagsakInput,
+											DokumentoversiktFilters filters,
+											DokumentoversiktPagination.SeekPagination pagination) {
 		super(filters, pagination);
+		validate(fagsakInput);
 		this.fagsakInput = fagsakInput;
+	}
+
+	private void validate(FagsakInput fagsakInput) {
+		if (INFOTRYGD_FAGSAKSYSTEM.equals(fagsakInput.getFagsaksystem())) {
+			throw new UnsupportedFagsakSystemException("fagsakId.fagsaksystem IT01 (Infotrygd) støttes ikke i query dokumentoversiktFagsak. " +
+					"Dette er fordi en fagsak ikke er unik for en bruker i Infotrygd.");
+		}
 	}
 
 	public static DokumentoversiktFagsakArguments create(DataFetchingEnvironment environment) {
