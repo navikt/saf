@@ -38,22 +38,30 @@ public class SafSecurityContext {
 	}
 
 	SafSecurityContext(String authorizationHeader,
-					   String navCallid,
-					   String navConsumerId,
+					   String navCallidHeader,
+					   String navConsumerIdHeader,
 					   OidcValidatorTool oidcValidatorTool) {
-
-		this.subjectId = getSubjectFromToken(authorizationHeader);
 		this.oidcValidatorTool = oidcValidatorTool;
+		this.subjectId = getSubjectFromToken(authorizationHeader);
 		this.oidcTokenBody = getOidcTokenBody(authorizationHeader);
+		final String audience = getAudienceFromToken(authorizationHeader);
 		// if zero, then executionId from graphQl is used.
-		this.navCallid = trim(navCallid);
-		if (isBlank(navConsumerId)) {
-			this.navConsumerId = getSubjectId();
-		} else {
-			this.navConsumerId = trim(navConsumerId);
-		}
+		this.navCallid = trim(navCallidHeader);
+		this.navConsumerId = determineNavConsumerId(trim(navConsumerIdHeader), audience);
 
 		addMdcData(this.subjectId, this.navCallid, this.navConsumerId);
+	}
+
+	private String determineNavConsumerId(final String navConsumerIdHeader, final String audience) {
+		if (isBlank(navConsumerIdHeader)) {
+			if(isBlank(audience)) {
+				return getSubjectId();
+			} else {
+				return audience;
+			}
+		} else {
+			return navConsumerIdHeader;
+		}
 	}
 
 	private String getOidcTokenBody(String authorizationHeader) {
@@ -77,6 +85,18 @@ public class SafSecurityContext {
 			return JWT.decode(authorizationHeader.split(OIDC_TOKEN_PREFIX)[1]).getSubject();
 		} catch (JWTDecodeException e) {
 			log.error("Kunne ikke utlede subject fra OIDC-Token i header.", e);
+			return null;
+		}
+	}
+
+	private String getAudienceFromToken(String authorizationHeader) {
+		if (isNotValidAuthorizationHeader(authorizationHeader)) {
+			return null;
+		}
+		try {
+			return JWT.decode(authorizationHeader.split(OIDC_TOKEN_PREFIX)[1]).getAudience().stream().findFirst().orElse("unknownAudience");
+		} catch (JWTDecodeException e) {
+			log.error("Kunne ikke utlede audience fra OIDC-Token i header.", e);
 			return null;
 		}
 	}
