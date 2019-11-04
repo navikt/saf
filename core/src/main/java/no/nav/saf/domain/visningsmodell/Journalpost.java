@@ -29,13 +29,29 @@ public class Journalpost {
 	private final Sak sak;
 	private final Bruker bruker;
 	private final AvsenderMottaker avsenderMottaker;
-	@Deprecated
+	/**
+	 * @deprecated Konsumenter bes bruke {@code AvsenderMottaker.id} i stedet. Feltet overvåkes for bruk og vil bli fjernet i fremtiden.
+	 * @since 4.5.0
+	 */
+	@Deprecated(since = "4.5.0", forRemoval = true)
 	private final String avsenderMottakerId;
-	@Deprecated
+	/**
+	 * @deprecated Konsumenter bes bruke {@code AvsenderMottaker.navn} i stedet. Feltet overvåkes for bruk og vil bli fjernet i fremtiden.
+	 * @since 4.5.0
+	 */
+	@Deprecated(since = "4.5.0", forRemoval = true)
 	private final String avsenderMottakerNavn;
-	@Deprecated
+	/**
+	 * @deprecated Konsumenter bes bruke {@code AvsenderMottaker.land} i stedet. Feltet overvåkes for bruk og vil bli fjernet i fremtiden.
+	 * @since 4.5.0
+	 */
+	@Deprecated(since = "4.5.0", forRemoval = true)
 	private final String avsenderMottakerLand;
-	@Deprecated
+	/**
+	 * @deprecated Konsumenter bes bruke {@code journalfoerendeEnhet} i stedet. Feltet overvåkes for bruk og vil bli fjernet i fremtiden.
+	 * @since 6.2.0
+	 */
+	@Deprecated(since = "6.2.0", forRemoval = true)
 	private final String journalforendeEnhet;
 	private final String journalfoerendeEnhet;
 	private final String journalfortAvNavn;

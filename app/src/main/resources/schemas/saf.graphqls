@@ -200,8 +200,8 @@ type Journalpost {
     journalstatus: Journalstatus
 
     # Temaet/Fagområdet som journalposten og tilhørende sak tilhører, f.eks. "FOR".
-    # * For sakstilknyttede journalposter, er det tema på GSAK- eller PSAK-saken som er gjeldende tema.
-    # * For journalposter som enda ikke har fått sakstilknytning, inneholder joark informasjon om antatt tema for journalposten.
+    # * For sakstilknyttede journalposter, er det tema på SAK- eller PSAK-saken som er gjeldende tema.
+    # * For journalposter som enda ikke har fått sakstilknytning, returneres tema på journalposten.inneholder Joark informasjon om antatt tema for journalposten.
     tema: Tema
 
     # Dekode av `Tema`, f.eks. "Foreldrepenger"
@@ -284,28 +284,29 @@ type RelevantDato {
     datotype: Datotype!
 }
 
-#  Peker på både en arkivsak og  en fagsak. Arkivsaken er saksnummeret som journalposten journalføres mot i Joark, og identifiseres ved arkivsaksnummer + arkivsaksystem (GSAK eller PSAK). Fagsaken viser til saken slik denne er definert i fagsystemene,, og identifiseres ved fagsakId + fagsaksystem.
-# * En GSAK-arkivsak som har fagsaksystem **FS22** men ikke noen fagsakId er en *"generell sak"*. Generelle saker brukes for å journalføre informasjon som ikke passer inn på brukerens øvrige fagsaker.
-# * Dersom arkivsaksystemet er PSAK, returneres den samme verdien som både arkivsaksnummer og fagsakId.
+# En sak i NAV har flere saksnumre (fagsaksnummer og arkivsaksnummer).
+# * Fagsaken viser til saken slik denne er definert i et fagsystem. Saken identifiseres ved fagsakId + fagsaksystem.
+# * Arkivsaksnummer er "skyggesaken" som man tradisjonelt har journalført mot i Joark. Denne skal nå anses som en intern nøkkel i Joark.
+##
+# I tilfeller der informasjonen skal journalføres, men ikke passer inn på en fagsak, er det mulig å journalføre mot "generell sak". Generell sak kan anses som brukerens mappe på et tema.
+# Dersom arkivsaksystemet er PSAK, returneres den samme verdien som både arkivsaksnummer og fagsakId.
 type Sak {
-    # Saksnummer i enten GSAK eller PSAK
-    arkivsaksnummer: String
+    # Saksnummeret i PSAK eller SAK-tabellen i Joark (tidligere GSAK).
+    # * NB: Arkivsak skal anses som Joark-internt. Fagsystemene skal kun bruke denne etter avtale.
+    arkivsaksnummer: String @deprecated(reason: "NB: Arkivsak skal anses som Joark-internt. Fagsystemene skal kun bruke denne etter avtale.")
 
-    # * Indikerer hvor man kan finne saksparten som dokumentene er journalført mot, samt en peker til selve fagsaken.
-    # * For pensjons- og uføresaker vil arkivsaksystemet være PSAK. For alle andre sakstyper er arkivsaksystem GSAK.
-    arkivsaksystem: Arkivsaksystem
+    # Sier hvorvidt arkivsaksnummeret peker på en sak i PSAK eller i SAK-tabellen i Joark (tidligere GSAK). For pensjons- og uføresaker vil arkivsaksystemet være PSAK. For alle andre sakstyper er arkivsaksystem GSAK.
+    # * NB: Arkivsak skal anses som Joark-internt. Fagsystemene skal kun bruke denne etter avtale.
+    arkivsaksystem: Arkivsaksystem @deprecated(reason: "NB: Arkivsak skal anses som Joark-internt. Fagsystemene skal kun bruke denne etter avtale.")
 
-    # Tidspunktet saken i GSAK eller PSAK ble opprettet
+    # Tidspunktet saken først ble opprettet/brukt i arkivet. Fagsaken kan være opprettet i fagsystemet på et annet tidspunkt.
     datoOpprettet: DateTime
 
-    # * Saksnummer i fagsystemet (altså ikke GSAK).
-    # * Generelle saker i GSAK har ikke fagsakId.
+    # Saksnummeret i fagsystemet
     fagsakId: String
 
-    # * Verdien indikerer hvilket fagsystem (evt nummerserie for fagsaker) som fagsaken befinner seg i.
-    # * Lovlige verdier finnes i GSAK sitt kodeverk. Generelle saker i GSAK vil ha fagsaksystem **FS22**.
+    # Kode som indikerer hvilket fagsystem, eventuelt nummerserie for fagsaker, som fagsaken befinner seg i.
     fagsaksystem: String
-
 }
 
 # Person eller organisasjon som har et forhold til NAV, f.eks. som mottaker av tjenester eller ytelser.
