@@ -12,7 +12,17 @@ import java.time.LocalDateTime;
 @Value
 @Builder
 public class Sak {
+	/**
+	 * @deprecated NB: Arkivsak skal anses som Joark-internt. Fagsystemene skal kun bruke denne etter avtale.
+	 * @since 7.3.8
+	 */
+	@Deprecated(since = "7.3.8")
 	private final String arkivsaksnummer;
+	/**
+	 * @deprecated NB: Arkivsak skal anses som Joark-internt. Fagsystemene skal kun bruke denne etter avtale.
+	 * @since 7.3.8
+	 */
+	@Deprecated(since = "7.3.8")
 	private final Arkivsakssystem arkivsaksystem;
 	private final String fagsakId;
 	private final String fagsaksystem;
