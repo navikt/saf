@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 public abstract class AbacLogger {
 
 	private static final String SEPARATOR = ".";
+	private static final String FNR_REGEX = "fnr=\\d{11}";
 
 	public abstract void logAbacDeny(final XacmlRequest xacmlRequest, final XacmlResponse xacmlResponse);
 
@@ -40,5 +41,9 @@ public abstract class AbacLogger {
 										.map(as -> substringAfterLast(as.getAttributeId(), SEPARATOR) + "=" + as.getValue())
 										.collect(Collectors.joining(", ")))
 				);
+	}
+
+	String sanitizeFnr(final String message) {
+		return message.replaceAll(FNR_REGEX, "fnr=****");
 	}
 }
