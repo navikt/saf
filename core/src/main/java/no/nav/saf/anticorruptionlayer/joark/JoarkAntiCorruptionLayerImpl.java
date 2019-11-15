@@ -42,6 +42,7 @@ class JoarkAntiCorruptionLayerImpl implements JoarkAntiCorruptionLayer {
 	public List<JournalpostDto> finnJournalposter(List<String> alleIdenter,
 												  List<TilgangSak> tilgangSakList,
 												  LocalDate fraDato,
+												  LocalDate tilDato,
 												  List<Journalposttype> inkluderJournalposttyper,
 												  List<Journalstatus> inkluderJournalstatuses,
 												  Integer foerste, String etterPeker, Integer siste, String foerPeker) {
@@ -53,6 +54,7 @@ class JoarkAntiCorruptionLayerImpl implements JoarkAntiCorruptionLayer {
 				.inkluderJournalStatus(safToJoarkJournalstatusMapper.map(inkluderJournalstatuses))
 				.visFeilregistrerte(inkluderJournalstatuses.contains(Journalstatus.FEILREGISTRERT))
 				.fraDato(fraDato.toString())
+				.tilDato(tilDato == null ? null : tilDato.toString())
 				.gsakSakIds(tilgangSakList.stream()
 						.filter(tilgangSak -> Arkivsakssystem.GSAK.equals(tilgangSak.getArkivsaksystem()))
 						.map(TilgangSak::getArkivsaksnummer).collect(Collectors.toList()))

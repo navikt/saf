@@ -117,6 +117,7 @@ class DokumentoversiktBrukerCoordinatorImpl implements DokumentoversiktBrukerCoo
 				Collections.singletonList(tilgangBruker),
 				filteredTilgangSakList,
 				dokumentoversiktBrukerArguments.getFilters().getFraDato(),
+				dokumentoversiktBrukerArguments.getFilters().getTilDato(),
 				dokumentoversiktBrukerArguments.getFilters().getJournalposttyper(),
 				dokumentoversiktBrukerArguments.getFilters().getJournalstatuser(),
 				dokumentoversiktBrukerArguments.getPagination().getFoerste(),

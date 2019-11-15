@@ -19,17 +19,19 @@ import java.util.stream.Collectors;
 @Value
 public class DokumentoversiktFilters {
 	private final LocalDate fraDato;
+	private final LocalDate tilDato;
 	private final List<Tema> tema;
 	private final List<Journalposttype> journalposttyper;
 	private final List<Journalstatus> journalstatuser;
 	private final boolean visFeilregistrerte;
 
-	DokumentoversiktFilters(LocalDate fraDato, List<Tema> tema, List<Journalposttype> journalposttyper, List<Journalstatus> journalstatuser) {
+	DokumentoversiktFilters(LocalDate fraDato, LocalDate tilDato, List<Tema> tema, List<Journalposttype> journalposttyper, List<Journalstatus> journalstatuser) {
 		if (fraDato == null) {
 			this.fraDato = LocalDate.of(1, 1, 1);
 		} else {
 			this.fraDato = fraDato;
 		}
+		this.tilDato = tilDato;
 		if (tema == null || tema.isEmpty()) {
 			this.tema = Tema.asList();
 		} else {
@@ -50,10 +52,11 @@ public class DokumentoversiktFilters {
 
 	public static DokumentoversiktFilters create(DataFetchingEnvironment environment) {
 		LocalDate fraDato = environment.getArgument("fraDato");
+		LocalDate tilDato = environment.getArgument("tilDato");
 		List<Tema> tema = environment.getArgument("tema");
 		List<Journalposttype> journalposttyper = getJournalposttypeList(environment);
 		List<Journalstatus> journalstatuser = getJournalstatusList(environment);
-		return new DokumentoversiktFilters(fraDato, tema, journalposttyper, journalstatuser);
+		return new DokumentoversiktFilters(fraDato, tilDato, tema, journalposttyper, journalstatuser);
 	}
 
 	private static List<Journalposttype> getJournalposttypeList(DataFetchingEnvironment environment) {

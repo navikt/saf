@@ -16,6 +16,7 @@ public class FinnJournalposterRequestTo {
 	private final List<String> gsakSakIds;
 	private final List<String> psakSakIds;
 	private final String fraDato;
+	private final String tilDato;
 	private final List<JournalStatusCode> inkluderJournalStatus;
 	private final List<JournalpostTypeCode> inkluderJournalpostType;
 	private final boolean visFeilregistrerte;

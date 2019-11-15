@@ -16,6 +16,7 @@ public interface JoarkAntiCorruptionLayer {
 	List<JournalpostDto> finnJournalposter(List<String> identer,
 										   List<TilgangSak> tilgangSakList,
 										   LocalDate fraDato,
+										   LocalDate tilDato,
 										   List<Journalposttype> inkluderJournalposttyper,
 										   List<Journalstatus> inkluderJournalstatuses,
 										   Integer foerste, String etterPeker, Integer siste, String foerPeker);

@@ -17,6 +17,7 @@ public interface TilgangsmodellRepository {
 	List<TilgangJournalpost> findTilgangJournalposter(List<TilgangBruker> tilgangBrukere,
 													  List<TilgangSak> tilgangSakList,
 													  LocalDate fraDato,
+													  LocalDate tilDato,
 													  List<Journalposttype> inkluderJournalposttyper,
 													  List<Journalstatus> inkluderJournalstatuses,
 													  Integer foerste, String etterPeker, Integer siste, String foerPeker,
