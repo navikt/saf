@@ -23,6 +23,4 @@ public class FinnJournalposterRequestTo {
 	private final List<String> alleIdenter;
 	private final Integer foerste;
 	private final String etterPeker;
-	private final Integer siste;
-	private final String foerPeker;
 }

@@ -117,8 +117,6 @@ class DokumentoversiktFagsakCoordinatorImpl implements DokumentoversiktFagsakCoo
 				dokumentoversiktFagsakArguments.getFilters().getJournalstatuser(),
 				dokumentoversiktFagsakArguments.getPagination().getFoerste(),
 				dokumentoversiktFagsakArguments.getPagination().getEtterPeker(),
-				dokumentoversiktFagsakArguments.getPagination().getSiste(),
-				dokumentoversiktFagsakArguments.getPagination().getFoerPeker(),
 				safRequestContext);
 
 		final List<TilgangJournalpost> filteredTilgangJournalpostList = Flowable.fromIterable(tilgangJournalpostList)

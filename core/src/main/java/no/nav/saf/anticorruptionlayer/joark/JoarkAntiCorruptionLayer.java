@@ -19,7 +19,7 @@ public interface JoarkAntiCorruptionLayer {
 										   LocalDate tilDato,
 										   List<Journalposttype> inkluderJournalposttyper,
 										   List<Journalstatus> inkluderJournalstatuses,
-										   Integer foerste, String etterPeker, Integer siste, String foerPeker);
+										   Integer foerste, String etterPeker);
 
 	List<JournalpostDto> finnJournalposterStatus(LocalDate fraDato,
 												 List<Journalposttype> inkluderJournalposttyper,

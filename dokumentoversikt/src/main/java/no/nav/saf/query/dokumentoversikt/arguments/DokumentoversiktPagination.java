@@ -15,12 +15,6 @@ public final class DokumentoversiktPagination {
 	public static class SeekPagination {
 		private final Integer foerste;
 		private final String etterPeker;
-		// det er ikke noe behov for å paginere bakover
-		@Deprecated
-		private final Integer siste;
-		// det er ikke noe behov for å paginere bakover
-		@Deprecated
-		private final String foerPeker;
 	}
 
 	public static SeekPagination create(DataFetchingEnvironment environment) {
@@ -32,6 +26,6 @@ public final class DokumentoversiktPagination {
 			throw new IllegalArgumentException("`foerste` kan ikke være 0 eller negativ.");
 		}
 		String etterPeker = environment.getArgument("etter");
-		return new SeekPagination(foerste, etterPeker, null, null);
+		return new SeekPagination(foerste, etterPeker);
 	}
 }

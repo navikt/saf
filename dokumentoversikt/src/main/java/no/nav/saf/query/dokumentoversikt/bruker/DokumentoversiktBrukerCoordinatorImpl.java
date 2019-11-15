@@ -122,8 +122,6 @@ class DokumentoversiktBrukerCoordinatorImpl implements DokumentoversiktBrukerCoo
 				dokumentoversiktBrukerArguments.getFilters().getJournalstatuser(),
 				dokumentoversiktBrukerArguments.getPagination().getFoerste(),
 				dokumentoversiktBrukerArguments.getPagination().getEtterPeker(),
-				dokumentoversiktBrukerArguments.getPagination().getSiste(),
-				dokumentoversiktBrukerArguments.getPagination().getFoerPeker(),
 				safRequestContext
 		);
 

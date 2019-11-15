@@ -45,7 +45,7 @@ class JoarkAntiCorruptionLayerImpl implements JoarkAntiCorruptionLayer {
 												  LocalDate tilDato,
 												  List<Journalposttype> inkluderJournalposttyper,
 												  List<Journalstatus> inkluderJournalstatuses,
-												  Integer foerste, String etterPeker, Integer siste, String foerPeker) {
+												  Integer foerste, String etterPeker) {
 		FinnJournalposterResponseTo responseTo = hentJournalsakinfo.finnJournalposter(FinnJournalposterRequestTo.builder()
 				.alleIdenter(alleIdenter)
 				.inkluderJournalpostType(inkluderJournalposttyper.stream()
@@ -63,8 +63,6 @@ class JoarkAntiCorruptionLayerImpl implements JoarkAntiCorruptionLayer {
 						.map(TilgangSak::getArkivsaksnummer).collect(Collectors.toList()))
 				.foerste(foerste)
 				.etterPeker(etterPeker)
-				.siste(siste)
-				.foerPeker(foerPeker)
 				.build());
 
 		return responseTo.getTilgangJournalposter().stream()

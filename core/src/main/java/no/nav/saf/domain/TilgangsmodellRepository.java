@@ -20,7 +20,7 @@ public interface TilgangsmodellRepository {
 													  LocalDate tilDato,
 													  List<Journalposttype> inkluderJournalposttyper,
 													  List<Journalstatus> inkluderJournalstatuses,
-													  Integer foerste, String etterPeker, Integer siste, String foerPeker,
+													  Integer foerste, String etterPeker,
 													  SafRequestContext safRequestContext);
 
 	List<TilgangJournalpost> findTilgangJournalposterStatus(LocalDate fraDato,
