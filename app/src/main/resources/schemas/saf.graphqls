@@ -49,9 +49,14 @@ type Query {
         brukerId: BrukerIdInput!
 
         # Dato for eldste journalpost.
-        # Hvis angitt returneres alle journalposter fra denne datoen.
+        # Hvis angitt returneres alle journalposter fra og med denne datoen.
         # Hvis null er angitt så hentes alle journalposter.
         fraDato: Date
+
+        # Dato for nyeste journalpost.
+        # Hvis angitt returneres alle journalposter til og med denne datoen.
+        # Hvis null er angitt så hentes alle journalposter.
+        tilDato: Date
 
         # Filter for tema.
         # Hvis en tom liste er angitt som argument hentes journalposter på alle tema.
