@@ -44,7 +44,7 @@ class Pep2dImplTest extends AbstractPepTest {
 	@Test
 	void shouldPermitWhenTemaIsAllowed() {
 		when(abacService.evaluate(any(XacmlRequest.class))).thenReturn(new XacmlResponse(Decision.PERMIT, null, null, null));
-		when(oidcValidatorTool.validate(OIDC_TOKEN_PERSON_USER_TEST)).thenReturn(true);
+		when(oidcValidatorTool.validate(AUTHORIZATION_HEADER)).thenReturn(true);
 		ArgumentCaptor<XacmlRequest> request = ArgumentCaptor.forClass(XacmlRequest.class);
 
 		boolean hasAccess = pep2d.hasAccess(TilgangSak.builder()
@@ -62,7 +62,7 @@ class Pep2dImplTest extends AbstractPepTest {
 
 	@Test
 	void shouldDenyIfTemaIsNull() {
-		when(oidcValidatorTool.validate(OIDC_TOKEN_PERSON_USER_TEST)).thenReturn(true);
+		when(oidcValidatorTool.validate(AUTHORIZATION_HEADER)).thenReturn(true);
 
 		boolean hasAccess = pep2d.hasAccess(TilgangSak.builder()
 				.aktoerId(AKTOER_ID)
@@ -81,7 +81,7 @@ class Pep2dImplTest extends AbstractPepTest {
 	@Test
 	void shouldDenyWhenAbacDenies() {
 		when(abacService.evaluate(any(XacmlRequest.class))).thenReturn(new XacmlResponse(Decision.DENY, null, null, null));
-		when(oidcValidatorTool.validate(OIDC_TOKEN_PERSON_USER_TEST)).thenReturn(true);
+		when(oidcValidatorTool.validate(AUTHORIZATION_HEADER)).thenReturn(true);
 		boolean hasAccess = pep2d.hasAccess(TilgangSak.builder()
 				.tema(Tema.FAR)
 				.build(), createSafRequestContext());

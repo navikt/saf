@@ -96,7 +96,7 @@ public class Pep2dImpl implements Pep<TilgangSak> {
 	}
 
 	private XacmlResponse hasDokumentAccess(TilgangSak ressurs, SafRequestContext safRequestContext) {
-		XacmlRequest request = SafXacmlRequestFactory.create(safRequestContext.getSecurityContext().getOidcTokenBody());
+		XacmlRequest request = SafXacmlRequestFactory.create(safRequestContext.getSecurityContext());
 		request.resource(RESOURCE_FELLES_RESOURCE_TYPE, RESOURCE_SAF_SAK_DOKUMENT);
 		request.resource(RESOURCE_FELLES_TEMA, ressurs.getTema().name());
 		return abacService.evaluate(request);

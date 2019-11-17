@@ -18,7 +18,6 @@ import no.nav.saf.endpoints.wiring.DokumentoversiktWiring;
 import no.nav.saf.exceptionhandler.GraphQLExceptionHandler;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.validation.OidcValidatorTool;
-import org.springframework.cache.CacheManager;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -45,11 +44,9 @@ public class GraphQLController extends AbstractSafController {
 	private final OidcValidatorTool oidcValidatorTool;
 	private GraphQLExceptionHandler graphQLExceptionHandler;
 
-	@SuppressWarnings("unchecked")
 	@Inject
 	public GraphQLController(DokumentoversiktWiring dokumentoversiktWiring,
 							 GraphQLExceptionHandler graphQLExceptionHandler,
-							 CacheManager cacheManager,
 							 OidcValidatorTool oidcValidatorTool) {
 		this.graphQLExceptionHandler = graphQLExceptionHandler;
 		SchemaParser schemaParser = new SchemaParser();

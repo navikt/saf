@@ -6,28 +6,38 @@ import static org.apache.commons.lang3.StringUtils.trim;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.exceptions.JWTDecodeException;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.exceptions.OidcAuthorizationException;
 import no.nav.saf.tilgangskontroll.validation.OidcValidatorTool;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author Joakim Bjørnstad, Jbit AS
  */
 @Slf4j
 public class SafSecurityContext {
+	private static final Set<String> AZURE_ISSUERS = Set.of(
+			"https://sts.windows.net/966ac572-f5b7-4bbe-aa88-c76419c0f851/", // Azure preprod
+			"https://sts.windows.net/62366534-1ec3-4962-8869-9b5535279d0b/" // Azure prod
+	);
 	public static final String SERVICEUSER_PREFIX = "srv";
 	private static final String OIDC_TOKEN_PREFIX = "Bearer ";
 	public static final String AUTH_ERRORMESSAGE = "Autentiseringsmekanisme er ikke støttet. " +
 			"Kun OIDC-token (JWT via OAuth 2.0) med header \"Authorization\" : \"Bearer {token}\" er tillatt.";
 	private static final Map<String, Boolean> PRIVILEGIED_SERVICEUSERS = new HashMap<>();
+	public static final String UNKNOWN_AUDIENCE = "unknownAudience";
 	private final String oidcTokenBody;
 	private final String subjectId;
 	private String navCallid;
 	private final String navConsumerId;
+	private final boolean azureToken;
 	private final OidcValidatorTool oidcValidatorTool;
+	private final DecodedJWT decodedJWT;
+
 
 	static {
 		// Disse servicebrukerene får tilgang til å hente dokumentvarianter
@@ -42,9 +52,11 @@ public class SafSecurityContext {
 					   String navConsumerIdHeader,
 					   OidcValidatorTool oidcValidatorTool) {
 		this.oidcValidatorTool = oidcValidatorTool;
-		this.subjectId = getSubjectFromToken(authorizationHeader);
+		this.decodedJWT = getDecodedJWT(authorizationHeader);
 		this.oidcTokenBody = getOidcTokenBody(authorizationHeader);
-		final String audience = getAudienceFromToken(authorizationHeader);
+		this.subjectId = getSubjectFromToken(decodedJWT);
+		this.azureToken = getIsAzureToken(decodedJWT);
+		final String audience = getAudienceFromToken(decodedJWT);
 		// if zero, then executionId from graphQl is used.
 		this.navCallid = trim(navCallidHeader);
 		this.navConsumerId = determineNavConsumerId(trim(navConsumerIdHeader), audience);
@@ -52,9 +64,21 @@ public class SafSecurityContext {
 		addMdcData(this.subjectId, this.navCallid, this.navConsumerId);
 	}
 
+	private DecodedJWT getDecodedJWT(final String authorizationHeader) {
+		if (isNotValidAuthorizationHeader(authorizationHeader)) {
+			return null;
+		}
+
+		try {
+			return JWT.decode(authorizationHeader.split(OIDC_TOKEN_PREFIX)[1]);
+		} catch(JWTDecodeException e) {
+			return null;
+		}
+	}
+
 	private String determineNavConsumerId(final String navConsumerIdHeader, final String audience) {
 		if (isBlank(navConsumerIdHeader)) {
-			if(isBlank(audience)) {
+			if (isBlank(audience)) {
 				return getSubjectId();
 			} else {
 				return audience;
@@ -64,7 +88,7 @@ public class SafSecurityContext {
 		}
 	}
 
-	private String getOidcTokenBody(String authorizationHeader) {
+	private String getOidcTokenBody(final String authorizationHeader) {
 		if (isNotValidAuthorizationHeader(authorizationHeader)) {
 			return null;
 		}
@@ -74,27 +98,35 @@ public class SafSecurityContext {
 		} else {
 			return null;
 		}
-
 	}
 
-	private String getSubjectFromToken(String authorizationHeader) {
-		if (isNotValidAuthorizationHeader(authorizationHeader)) {
+	private String getSubjectFromToken(final DecodedJWT decodedJWT) {
+		if(decodedJWT == null) {
 			return null;
 		}
+
 		try {
-			return JWT.decode(authorizationHeader.split(OIDC_TOKEN_PREFIX)[1]).getSubject();
+			return decodedJWT.getSubject();
 		} catch (JWTDecodeException e) {
 			log.error("Kunne ikke utlede subject fra OIDC-Token i header.", e);
 			return null;
 		}
 	}
 
-	private String getAudienceFromToken(String authorizationHeader) {
-		if (isNotValidAuthorizationHeader(authorizationHeader)) {
-			return null;
+	private boolean getIsAzureToken(final DecodedJWT decodedJWT) {
+		if(decodedJWT == null) {
+			return false;
+		} else {
+			return AZURE_ISSUERS.contains(decodedJWT.getIssuer());
+		}
+	}
+
+	private String getAudienceFromToken(final DecodedJWT decodedJWT) {
+		if(decodedJWT == null) {
+			return UNKNOWN_AUDIENCE;
 		}
 		try {
-			return JWT.decode(authorizationHeader.split(OIDC_TOKEN_PREFIX)[1]).getAudience().stream().findFirst().orElse("unknownAudience");
+			return decodedJWT.getAudience().stream().findFirst().orElse(UNKNOWN_AUDIENCE);
 		} catch (JWTDecodeException e) {
 			log.error("Kunne ikke utlede audience fra OIDC-Token i header.", e);
 			return null;
@@ -139,5 +171,9 @@ public class SafSecurityContext {
 
 	private boolean isNotValidAuthorizationHeader(String authorizationHeader) {
 		return authorizationHeader == null || !authorizationHeader.startsWith(OIDC_TOKEN_PREFIX);
+	}
+
+	public boolean isAzureToken() {
+		return azureToken;
 	}
 }

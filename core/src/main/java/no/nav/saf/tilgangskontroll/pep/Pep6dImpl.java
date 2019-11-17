@@ -120,7 +120,7 @@ public class Pep6dImpl implements Pep<TilgangDokumentvariant> {
 	}
 
 	private XacmlResponse hasDokumentFilAccess(TilgangDokumentvariant ressurs, SafRequestContext safRequestContext) {
-		XacmlRequest request = SafXacmlRequestFactory.create(safRequestContext.getSecurityContext().getOidcTokenBody());
+		XacmlRequest request = SafXacmlRequestFactory.create(safRequestContext.getSecurityContext());
 		request.resource(RESOURCE_FELLES_RESOURCE_TYPE, RESOURCE_SAF_DOKUMENT_FIL);
 		request.resource(RESOURCE_SAF_SKJERMING, ressurs.getSkjerming().name());
 		return abacService.evaluate(request);
