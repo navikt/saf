@@ -38,7 +38,7 @@ import java.util.Map;
 /**
  * @author Sigurd Midttun, Visma Consulting.
  */
-public class DokumentoversiktFagsakIT extends AbstractItest {
+class DokumentoversiktFagsakIT extends AbstractItest {
 
 	private static final String FAGSAK_ID = "***gammelt_fnr***59";
 	private static final String FAGSAK_SYSTEM = "AO01";
@@ -46,7 +46,7 @@ public class DokumentoversiktFagsakIT extends AbstractItest {
 	private ObjectMapper objectMapper = new ObjectMapper();
 
 	@Test
-	public void shouldHentDokumentoversiktFagsakWithFagsakIdGSAK() throws IOException, URISyntaxException {
+	void shouldHentDokumentoversiktFagsakWithFagsakIdGSAK() throws IOException, URISyntaxException {
 		abacPermit();
 
 		stubFor(get("/gsak?fagsakNr=" + FAGSAK_ID + "&applikasjon=" + FAGSAK_SYSTEM)
@@ -75,7 +75,7 @@ public class DokumentoversiktFagsakIT extends AbstractItest {
 	}
 
 	@Test
-	public void shouldHentDokumentoversiktFagsakWithFagsakIdPSAK() throws IOException, URISyntaxException {
+	void shouldHentDokumentoversiktFagsakWithFagsakIdPSAK() throws IOException, URISyntaxException {
 		abacPermit();
 
 		stubFor(get("/pensjonsakrs")
@@ -108,7 +108,7 @@ public class DokumentoversiktFagsakIT extends AbstractItest {
 	}
 
 	@Test
-	public void shouldHentDokumentoversiktFagsakWithFagsakIDSladdet() throws IOException, URISyntaxException {
+	void shouldHentDokumentoversiktFagsakWithFagsakIDSladdet() throws IOException, URISyntaxException {
 		abacPermit();
 
 		stubFor(get("/gsak?fagsakNr=" + FAGSAK_ID + "&applikasjon=" + FAGSAK_SYSTEM)
@@ -133,7 +133,7 @@ public class DokumentoversiktFagsakIT extends AbstractItest {
 	}
 
 	@Test
-	public void hentSakerTechnicalFail() throws IOException, URISyntaxException {
+	void hentSakerTechnicalFail() throws IOException, URISyntaxException {
 		abacDenyPep1g();
 		stubFor(get("/gsak?fagsakNr=***gammelt_fnr***59&applikasjon=AO01")
 				.willReturn(aResponse().withStatus(HttpStatus.INTERNAL_SERVER_ERROR.value())));
@@ -146,7 +146,7 @@ public class DokumentoversiktFagsakIT extends AbstractItest {
 	}
 
 	@Test
-	public void hentSakerFunctionalFail() throws IOException, URISyntaxException {
+	void hentSakerFunctionalFail() throws IOException, URISyntaxException {
 		abacDenyPep1g();
 		stubFor(get("/gsak?fagsakNr=***gammelt_fnr***59&applikasjon=AO01")
 				.willReturn(aResponse().withStatus(HttpStatus.BAD_REQUEST.value())));
@@ -160,7 +160,7 @@ public class DokumentoversiktFagsakIT extends AbstractItest {
 
 
 	@Test
-	public void shouldHentDokumentoversiktFagsakAktoerTechnicalFail() throws IOException, URISyntaxException {
+	void shouldHentDokumentoversiktFagsakAktoerTechnicalFail() throws IOException, URISyntaxException {
 		abacPermit();
 
 		stubFor(get("/pensjonsakrs")
@@ -191,7 +191,7 @@ public class DokumentoversiktFagsakIT extends AbstractItest {
 	}
 
 	@Test
-	public void shouldHentDokumentoversikHentSakSammendragListeTechnicalFail() throws IOException, URISyntaxException {
+	void shouldHentDokumentoversikHentSakSammendragListeTechnicalFail() throws IOException, URISyntaxException {
 		abacPermit();
 
 		stubFor(get("/pensjonsakrs")
@@ -220,7 +220,7 @@ public class DokumentoversiktFagsakIT extends AbstractItest {
 	}
 
 	@Test
-	public void shouldHentDokumentoversikHentSakSammendragListeFunctionalFail() throws IOException, URISyntaxException {
+	void shouldHentDokumentoversikHentSakSammendragListeFunctionalFail() throws IOException, URISyntaxException {
 		abacPermit();
 
 		stubFor(get("/pensjonsakrs")
@@ -249,7 +249,7 @@ public class DokumentoversiktFagsakIT extends AbstractItest {
 	}
 
 	@Test
-	public void FinnJournalposterEmptyResponse() throws IOException, URISyntaxException {
+	void FinnJournalposterEmptyResponse() throws IOException, URISyntaxException {
 		abacPermit();
 
 		stubFor(get("/gsak?fagsakNr=" + FAGSAK_ID + "&applikasjon=" + FAGSAK_SYSTEM)
@@ -271,12 +271,11 @@ public class DokumentoversiktFagsakIT extends AbstractItest {
 		verifyEmptyJournalpostListeAndNullSideInfo(dokumentoversikt);
 		verify(postRequestedFor(urlEqualTo("/aktoerv2")).withRequestBody(matchingXPath("//aktoerIdListe/text()", equalTo(FAGSAK_ID))));
 		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter"))
-				.withRequestBody(containing("{\"gsakSakIds\":[\"119185782\"],\"psakSakIds\":[],\"fraDato\":\"0001-01-01\",\"inkluderJournalStatus\":[\"FL\",\"FS\",\"J\",\"E\"],\"inkluderJournalpostType\":[\"I\",\"U\",\"N\"],\"visFeilregistrerte\":false,\"alleIdenter\":[],\"foerste\":5,\"etterPeker\":null,\"siste\":null,\"foerPeker\":null}")));
+				.withRequestBody(containing("{\"gsakSakIds\":[\"119185782\"],\"psakSakIds\":[],\"fraDato\":\"0001-01-01\",\"tilDato\":null,\"inkluderJournalStatus\":[\"FL\",\"FS\",\"J\",\"E\"],\"inkluderJournalpostType\":[\"I\",\"U\",\"N\"],\"visFeilregistrerte\":false,\"alleIdenter\":[],\"foerste\":5,\"etterPeker\":null}")));
 	}
 
-
 	@Test
-	public void shouldGetUnauthorizedFromPep1g() throws IOException, URISyntaxException {
+	void shouldGetUnauthorizedFromPep1g() throws IOException, URISyntaxException {
 		abacDenyPep1g();
 
 		stubFor(get("/gsak?fagsakNr=" + FAGSAK_ID + "&applikasjon=" + FAGSAK_SYSTEM)
@@ -300,7 +299,7 @@ public class DokumentoversiktFagsakIT extends AbstractItest {
 	}
 
 	@Test
-	public void shouldGetUnauthorizedFromPep2() throws IOException, URISyntaxException {
+	void shouldGetUnauthorizedFromPep2() throws IOException, URISyntaxException {
 		abacDenyPep2();
 		stubFor(get("/gsak?fagsakNr=" + FAGSAK_ID + "&applikasjon=" + FAGSAK_SYSTEM)
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
@@ -322,13 +321,13 @@ public class DokumentoversiktFagsakIT extends AbstractItest {
 		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
 
 		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter"))
-				.withRequestBody(containing("{\"gsakSakIds\":[],\"psakSakIds\":[],\"fraDato\":\"0001-01-01\",\"inkluderJournalStatus\":[\"FL\",\"FS\",\"J\",\"E\"],\"inkluderJournalpostType\":[\"I\",\"U\",\"N\"],\"visFeilregistrerte\":false,\"alleIdenter\":[],\"foerste\":5,\"etterPeker\":null,\"siste\":null,\"foerPeker\":null}")));
+				.withRequestBody(containing("{\"gsakSakIds\":[],\"psakSakIds\":[],\"fraDato\":\"0001-01-01\",\"tilDato\":null,\"inkluderJournalStatus\":[\"FL\",\"FS\",\"J\",\"E\"],\"inkluderJournalpostType\":[\"I\",\"U\",\"N\"],\"visFeilregistrerte\":false,\"alleIdenter\":[],\"foerste\":5,\"etterPeker\":null}")));
 		verifyEmptyJournalpostListeAndNullSideInfo(dokumentoversikt);
 		verifyabacDenyPep2AndHttpStatusCode(HttpStatus.OK, responseEntity.getStatusCode());
 	}
 
 	@Test
-	public void shouldGetUnauthorizedFromPep2d() throws IOException, URISyntaxException {
+	void shouldGetUnauthorizedFromPep2d() throws IOException, URISyntaxException {
 		abacDenyPep2d();
 		stubFor(get("/gsak?fagsakNr=" + FAGSAK_ID + "&applikasjon=" + FAGSAK_SYSTEM)
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
@@ -350,12 +349,12 @@ public class DokumentoversiktFagsakIT extends AbstractItest {
 		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
 
 		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter"))
-				.withRequestBody(containing("{\"gsakSakIds\":[\"112233445\"],\"psakSakIds\":[],\"fraDato\":\"0001-01-01\",\"inkluderJournalStatus\":[\"FL\",\"FS\",\"J\",\"E\"],\"inkluderJournalpostType\":[\"I\",\"U\",\"N\"],\"visFeilregistrerte\":false,\"alleIdenter\":[],\"foerste\":5,\"etterPeker\":null,\"siste\":null,\"foerPeker\":null}")));
+				.withRequestBody(containing("{\"gsakSakIds\":[\"112233445\"],\"psakSakIds\":[],\"fraDato\":\"0001-01-01\",\"tilDato\":null,\"inkluderJournalStatus\":[\"FL\",\"FS\",\"J\",\"E\"],\"inkluderJournalpostType\":[\"I\",\"U\",\"N\"],\"visFeilregistrerte\":false,\"alleIdenter\":[],\"foerste\":5,\"etterPeker\":null}")));
 		verifyabacDenyPep2dAndHttpStatusCode(true, HttpStatus.OK, responseEntity.getStatusCode());
 	}
 
 	@Test
-	public void shouldGetUnauthorizedFromPep3() throws IOException, URISyntaxException {
+	void shouldGetUnauthorizedFromPep3() throws IOException, URISyntaxException {
 		abacDenyPep3();
 		stubFor(get("/gsak?fagsakNr=" + FAGSAK_ID + "&applikasjon=" + FAGSAK_SYSTEM)
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
@@ -377,13 +376,13 @@ public class DokumentoversiktFagsakIT extends AbstractItest {
 		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
 
 		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter"))
-				.withRequestBody(containing("{\"gsakSakIds\":[],\"psakSakIds\":[],\"fraDato\":\"0001-01-01\",\"inkluderJournalStatus\":[\"FL\",\"FS\",\"J\",\"E\"],\"inkluderJournalpostType\":[\"I\",\"U\",\"N\"],\"visFeilregistrerte\":false,\"alleIdenter\":[],\"foerste\":5,\"etterPeker\":null,\"siste\":null,\"foerPeker\":null}")));
+				.withRequestBody(containing("{\"gsakSakIds\":[],\"psakSakIds\":[],\"fraDato\":\"0001-01-01\",\"tilDato\":null,\"inkluderJournalStatus\":[\"FL\",\"FS\",\"J\",\"E\"],\"inkluderJournalpostType\":[\"I\",\"U\",\"N\"],\"visFeilregistrerte\":false,\"alleIdenter\":[],\"foerste\":5,\"etterPeker\":null}")));
 		verifyEmptyJournalpostListeAndNullSideInfo(dokumentoversikt);
 		verifyabacDenyPep3AndHttpStatusCode(HttpStatus.OK, responseEntity.getStatusCode());
 	}
 
 	@Test
-	public void shouldGetUnauthorizedFromPep4() throws IOException, URISyntaxException {
+	void shouldGetUnauthorizedFromPep4() throws IOException, URISyntaxException {
 		abacDenyPep4();
 		stubFor(get("/gsak?fagsakNr=" + FAGSAK_ID + "&applikasjon=" + FAGSAK_SYSTEM)
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
@@ -406,12 +405,12 @@ public class DokumentoversiktFagsakIT extends AbstractItest {
 
 		verifyEmptyJournalpostListeAndNullSideInfo(dokumentoversikt);
 		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter"))
-				.withRequestBody(containing("{\"gsakSakIds\":[\"112233445\"],\"psakSakIds\":[],\"fraDato\":\"0001-01-01\",\"inkluderJournalStatus\":[\"FL\",\"FS\",\"J\",\"E\"],\"inkluderJournalpostType\":[\"I\",\"U\",\"N\"],\"visFeilregistrerte\":false,\"alleIdenter\":[],\"foerste\":5,\"etterPeker\":null,\"siste\":null,\"foerPeker\":null}")));
+				.withRequestBody(containing("{\"gsakSakIds\":[\"112233445\"],\"psakSakIds\":[],\"fraDato\":\"0001-01-01\",\"tilDato\":null,\"inkluderJournalStatus\":[\"FL\",\"FS\",\"J\",\"E\"],\"inkluderJournalpostType\":[\"I\",\"U\",\"N\"],\"visFeilregistrerte\":false,\"alleIdenter\":[],\"foerste\":5,\"etterPeker\":null}")));
 		verifyabacDenyPep4AndHttpStatusCode(HttpStatus.OK, responseEntity.getStatusCode());
 	}
 
 	@Test
-	public void shouldGetUnauthorizedFromPep5() throws IOException, URISyntaxException {
+	void shouldGetUnauthorizedFromPep5() throws IOException, URISyntaxException {
 		abacDenyPep5();
 		stubFor(get("/gsak?fagsakNr=" + FAGSAK_ID + "&applikasjon=" + FAGSAK_SYSTEM)
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
@@ -436,12 +435,12 @@ public class DokumentoversiktFagsakIT extends AbstractItest {
 		assertEquals("429837417", dokumentoversikt.getJournalposter().get(0).getJournalpostId());
 		assertTrue(dokumentoversikt.getJournalposter().get(0).getDokumenter().isEmpty());
 		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter"))
-				.withRequestBody(containing("{\"gsakSakIds\":[\"112233445\"],\"psakSakIds\":[],\"fraDato\":\"0001-01-01\",\"inkluderJournalStatus\":[\"FL\",\"FS\",\"J\",\"E\"],\"inkluderJournalpostType\":[\"I\",\"U\",\"N\"],\"visFeilregistrerte\":false,\"alleIdenter\":[],\"foerste\":5,\"etterPeker\":null,\"siste\":null,\"foerPeker\":null}")));
+				.withRequestBody(containing("{\"gsakSakIds\":[\"112233445\"],\"psakSakIds\":[],\"fraDato\":\"0001-01-01\",\"tilDato\":null,\"inkluderJournalStatus\":[\"FL\",\"FS\",\"J\",\"E\"],\"inkluderJournalpostType\":[\"I\",\"U\",\"N\"],\"visFeilregistrerte\":false,\"alleIdenter\":[],\"foerste\":5,\"etterPeker\":null}")));
 		verifyabacDenyPep5AndHttpStatusCode(true, HttpStatus.OK, responseEntity.getStatusCode());
 	}
 
 	@Test
-	public void shouldGetUnauthorizedFromPep6d() throws IOException, URISyntaxException {
+	void shouldGetUnauthorizedFromPep6d() throws IOException, URISyntaxException {
 		abacDenyPep6d();
 
 		stubFor(get("/gsak?fagsakNr=" + FAGSAK_ID + "&applikasjon=" + FAGSAK_SYSTEM)
@@ -466,7 +465,7 @@ public class DokumentoversiktFagsakIT extends AbstractItest {
 		assertEquals("429837417", dokumentoversikt.getJournalposter().get(0).getJournalpostId());
 		assertSaksbehandlerHarIkkeTilgang(dokumentoversikt);
 		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter"))
-				.withRequestBody(containing("{\"gsakSakIds\":[\"112233445\"],\"psakSakIds\":[],\"fraDato\":\"0001-01-01\",\"inkluderJournalStatus\":[\"FL\",\"FS\",\"J\",\"E\"],\"inkluderJournalpostType\":[\"I\",\"U\",\"N\"],\"visFeilregistrerte\":false,\"alleIdenter\":[],\"foerste\":5,\"etterPeker\":null,\"siste\":null,\"foerPeker\":null}")));
+				.withRequestBody(containing("{\"gsakSakIds\":[\"112233445\"],\"psakSakIds\":[],\"fraDato\":\"0001-01-01\",\"tilDato\":null,\"inkluderJournalStatus\":[\"FL\",\"FS\",\"J\",\"E\"],\"inkluderJournalpostType\":[\"I\",\"U\",\"N\"],\"visFeilregistrerte\":false,\"alleIdenter\":[],\"foerste\":5,\"etterPeker\":null}")));
 		verifyabacDenyPep6dAndHttpStatusCode(HttpStatus.OK, responseEntity.getStatusCode());
 	}
 
