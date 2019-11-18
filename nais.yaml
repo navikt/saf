@@ -62,11 +62,16 @@ fasitResources:
     propertyMap:
       issuerUrl: security.oidc.idp.openAm.issuerUrl
       jwksUrl: security.oidc.idp.openAm.jwksUrl
-  - alias: azure-oidc
+  - alias: azure_v1_oidc
     resourceType: OpenIdConnect
     propertyMap:
-      issuerUrl: security.oidc.idp.azure.issuerUrl
-      jwksUrl: security.oidc.idp.azure.jwksUrl
+      issuerUrl: security.oidc.idp.azurev1.issuerUrl
+      jwksUrl: security.oidc.idp.azurev1.jwksUrl
+  - alias: azure_v2_oidc
+      resourceType: OpenIdConnect
+      propertyMap:
+        issuerUrl: security.oidc.idp.azurev2.issuerUrl
+        jwksUrl: security.oidc.idp.azurev2.jwksUrl
   - alias: security-token-service-issuer
     resourceType: BaseUrl
     propertyMap:

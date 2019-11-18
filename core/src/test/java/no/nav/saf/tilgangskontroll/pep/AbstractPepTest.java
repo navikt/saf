@@ -9,6 +9,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.HashSet;
+
 /**
  * @author Sigurd Midttun, Visma Consulting.
  */
@@ -34,6 +36,6 @@ public abstract class AbstractPepTest {
 	}
 
 	protected SafRequestContext createSafRequestContext() {
-		return new SafRequestContext(AUTHORIZATION_HEADER, NAV_CALLID, NAV_CONSUMERID, oidcValidatorTool);
+		return new SafRequestContext(AUTHORIZATION_HEADER, new HashSet<>(), NAV_CALLID, NAV_CONSUMERID, oidcValidatorTool);
 	}
 }

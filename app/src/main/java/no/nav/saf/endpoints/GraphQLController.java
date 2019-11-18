@@ -27,10 +27,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import java.io.InputStreamReader;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * GraphQL endepunktet til applikasjonen.
@@ -43,12 +45,15 @@ public class GraphQLController extends AbstractSafController {
 	private final GraphQLSchema graphQLSchema;
 	private final OidcValidatorTool oidcValidatorTool;
 	private GraphQLExceptionHandler graphQLExceptionHandler;
+	private final Set<String> azureIssuers;
 
 	@Inject
-	public GraphQLController(DokumentoversiktWiring dokumentoversiktWiring,
+	public GraphQLController(@Named("azureIssuers") Set<String> azureIssuers,
+							 DokumentoversiktWiring dokumentoversiktWiring,
 							 GraphQLExceptionHandler graphQLExceptionHandler,
 							 OidcValidatorTool oidcValidatorTool) {
 		this.graphQLExceptionHandler = graphQLExceptionHandler;
+		this.azureIssuers = azureIssuers;
 		SchemaParser schemaParser = new SchemaParser();
 		InputStreamReader schema = new InputStreamReader(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream("schemas/saf.graphqls")));
 
@@ -73,7 +78,7 @@ public class GraphQLController extends AbstractSafController {
 						.query(request.getQuery())
 						.operationName(request.getOperationName())
 						.variables(request.getVariables() == null ? Collections.emptyMap() : request.getVariables())
-						.context(new SafRequestContext(authorizationHeader, createNavCallid(navCallid, xCorrelationId), navConsumerId, oidcValidatorTool))
+						.context(new SafRequestContext(authorizationHeader, this.azureIssuers, createNavCallid(navCallid, xCorrelationId), navConsumerId, oidcValidatorTool))
 						.build());
 
 		return executionResult.toSpecification();

@@ -20,10 +20,6 @@ import java.util.Set;
  */
 @Slf4j
 public class SafSecurityContext {
-	private static final Set<String> AZURE_ISSUERS = Set.of(
-			"https://sts.windows.net/966ac572-f5b7-4bbe-aa88-c76419c0f851/", // Azure preprod
-			"https://sts.windows.net/62366534-1ec3-4962-8869-9b5535279d0b/" // Azure prod
-	);
 	public static final String SERVICEUSER_PREFIX = "srv";
 	private static final String OIDC_TOKEN_PREFIX = "Bearer ";
 	public static final String AUTH_ERRORMESSAGE = "Autentiseringsmekanisme er ikke støttet. " +
@@ -37,7 +33,7 @@ public class SafSecurityContext {
 	private final boolean azureToken;
 	private final OidcValidatorTool oidcValidatorTool;
 	private final DecodedJWT decodedJWT;
-
+	private final Set<String> azureIssuers;
 
 	static {
 		// Disse servicebrukerene får tilgang til å hente dokumentvarianter
@@ -48,10 +44,12 @@ public class SafSecurityContext {
 	}
 
 	SafSecurityContext(String authorizationHeader,
+					   Set<String> azureIssuers,
 					   String navCallidHeader,
 					   String navConsumerIdHeader,
 					   OidcValidatorTool oidcValidatorTool) {
 		this.oidcValidatorTool = oidcValidatorTool;
+		this.azureIssuers = azureIssuers;
 		this.decodedJWT = getDecodedJWT(authorizationHeader);
 		this.oidcTokenBody = getOidcTokenBody(authorizationHeader);
 		this.subjectId = getSubjectFromToken(decodedJWT);
@@ -117,7 +115,7 @@ public class SafSecurityContext {
 		if(decodedJWT == null) {
 			return false;
 		} else {
-			return AZURE_ISSUERS.contains(decodedJWT.getIssuer());
+			return this.azureIssuers.contains(decodedJWT.getIssuer());
 		}
 	}
 

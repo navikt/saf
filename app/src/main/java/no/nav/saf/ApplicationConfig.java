@@ -8,6 +8,7 @@ import no.nav.saf.platform.TomcatConfig;
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -18,6 +19,9 @@ import org.springframework.context.annotation.Import;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.retry.annotation.EnableRetry;
+
+import javax.inject.Named;
+import java.util.Set;
 
 @EnableAspectJAutoProxy
 @ComponentScan
@@ -47,5 +51,12 @@ public class ApplicationConfig {
 	@Bean
 	DokMonitoringAspect timedAspect(MeterRegistry meterRegistry) {
 		return new DokMonitoringAspect(meterRegistry);
+	}
+
+	@Bean
+	@Named("azureIssuers")
+	Set<String> azureIssuers(@Value("${security.oidc.idp.azurev1.issuerUrl}") String azurev1IssuerUrl,
+							 @Value("${security.oidc.idp.azurev2.issuerUrl}") String azurev2IssuerUrl) {
+		return Set.of(azurev1IssuerUrl, azurev2IssuerUrl);
 	}
 }
