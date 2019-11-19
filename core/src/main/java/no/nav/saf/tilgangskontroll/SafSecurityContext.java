@@ -20,12 +20,12 @@ import java.util.Set;
  */
 @Slf4j
 public class SafSecurityContext {
-	public static final String SERVICEUSER_PREFIX = "srv";
+	private static final String SERVICEUSER_PREFIX = "srv";
 	private static final String OIDC_TOKEN_PREFIX = "Bearer ";
-	public static final String AUTH_ERRORMESSAGE = "Autentiseringsmekanisme er ikke støttet. " +
+	private static final String AUTH_ERRORMESSAGE = "Autentiseringsmekanisme er ikke støttet. " +
 			"Kun OIDC-token (JWT via OAuth 2.0) med header \"Authorization\" : \"Bearer {token}\" er tillatt.";
 	private static final Map<String, Boolean> PRIVILEGIED_SERVICEUSERS = new HashMap<>();
-	public static final String UNKNOWN_AUDIENCE = "unknownAudience";
+	private static final String UNKNOWN_AUDIENCE = "unknownAudience";
 	private final String oidcTokenBody;
 	private final String subjectId;
 	private String navCallid;

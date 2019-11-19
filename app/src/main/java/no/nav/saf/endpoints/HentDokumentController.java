@@ -51,7 +51,7 @@ public class HentDokumentController extends AbstractSafController {
 								  OidcValidatorTool oidcValidatorTool) {
 		this.hentDokumentDomainCoordinator = hentDokumentDomainCoordinator;
 		this.oidcValidatorTool = oidcValidatorTool;
-		this.azureIssuers = azureIssuers;;
+		this.azureIssuers = azureIssuers;
 	}
 
 	@ApiOperation(value = "Henter fysiske dokumenter fra NAV sitt arkiv og gjør nødvendig tilgangskontroll.", authorizations = {@Authorization(value = "apiKey")})
