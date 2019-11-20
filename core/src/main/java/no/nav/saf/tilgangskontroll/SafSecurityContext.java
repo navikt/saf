@@ -9,7 +9,8 @@ import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.exceptions.OidcAuthorizationException;
-import no.nav.saf.tilgangskontroll.validation.OidcValidatorTool;
+import no.nav.security.token.support.core.context.TokenValidationContext;
+import no.nav.security.token.support.core.jwt.JwtToken;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -21,7 +22,6 @@ import java.util.Set;
 @Slf4j
 public class SafSecurityContext {
 	private static final String SERVICEUSER_PREFIX = "srv";
-	private static final String OIDC_TOKEN_PREFIX = "Bearer ";
 	private static final String AUTH_ERRORMESSAGE = "Autentiseringsmekanisme er ikke støttet. " +
 			"Kun OIDC-token (JWT via OAuth 2.0) med header \"Authorization\" : \"Bearer {token}\" er tillatt.";
 	private static final Map<String, Boolean> PRIVILEGIED_SERVICEUSERS = new HashMap<>();
@@ -32,7 +32,6 @@ public class SafSecurityContext {
 	private String navCallid;
 	private final String navConsumerId;
 	private final boolean azureToken;
-	private final OidcValidatorTool oidcValidatorTool;
 	private final DecodedJWT decodedJWT;
 	private final Set<String> azureIssuers;
 	private final String audience;
@@ -46,15 +45,13 @@ public class SafSecurityContext {
 		PRIVILEGIED_SERVICEUSERS.put("srvtilbakemeldings", true);
 	}
 
-	SafSecurityContext(String authorizationHeader,
-					   Set<String> azureIssuers,
+	SafSecurityContext(Set<String> azureIssuers,
 					   String navCallidHeader,
 					   String navConsumerIdHeader,
-					   OidcValidatorTool oidcValidatorTool) {
-		this.oidcValidatorTool = oidcValidatorTool;
+					   TokenValidationContext tokenValidationContext) {
+		this.oidcTokenBody = getFirstValidJwt(tokenValidationContext);
+		this.decodedJWT = getDecodedJWT(this.oidcTokenBody);
 		this.azureIssuers = azureIssuers;
-		this.decodedJWT = getDecodedJWT(authorizationHeader);
-		this.oidcTokenBody = getOidcTokenBody(authorizationHeader);
 		this.subjectId = getSubjectFromToken(decodedJWT);
 		this.azureToken = getIsAzureToken(decodedJWT);
 		this.audience = getAudienceFromToken(decodedJWT);
@@ -66,13 +63,17 @@ public class SafSecurityContext {
 		addMdcData(this.subjectId, this.navCallid, this.navConsumerId);
 	}
 
-	private DecodedJWT getDecodedJWT(final String authorizationHeader) {
-		if (isNotValidAuthorizationHeader(authorizationHeader)) {
+	private String getFirstValidJwt(TokenValidationContext tokenValidationContext){
+			 return tokenValidationContext.getFirstValidToken().map(JwtToken::getTokenAsString).orElse(null);
+	}
+
+	private DecodedJWT getDecodedJWT(final String oidcTokenBody) {
+		if (oidcTokenBody == null) {
 			return null;
 		}
 
 		try {
-			return JWT.decode(authorizationHeader.split(OIDC_TOKEN_PREFIX)[1]);
+			return JWT.decode(oidcTokenBody);
 		} catch(JWTDecodeException e) {
 			return null;
 		}
@@ -87,18 +88,6 @@ public class SafSecurityContext {
 			}
 		} else {
 			return navConsumerIdHeader;
-		}
-	}
-
-	private String getOidcTokenBody(final String authorizationHeader) {
-		if (isNotValidAuthorizationHeader(authorizationHeader)) {
-			return null;
-		}
-
-		if (oidcValidatorTool.validate(authorizationHeader)) {
-			return JWT.decode(authorizationHeader.split(OIDC_TOKEN_PREFIX)[1]).getPayload();
-		} else {
-			return null;
 		}
 	}
 
@@ -189,10 +178,6 @@ public class SafSecurityContext {
 
 	public boolean isPrivilegiedServiceUser() {
 		return isServiceUser() && PRIVILEGIED_SERVICEUSERS.containsKey(subjectId.toLowerCase());
-	}
-
-	private boolean isNotValidAuthorizationHeader(String authorizationHeader) {
-		return authorizationHeader == null || !authorizationHeader.startsWith(OIDC_TOKEN_PREFIX);
 	}
 
 	public boolean isAzureToken() {

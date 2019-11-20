@@ -35,7 +35,6 @@ class Pep1gImplTest extends AbstractPepTest {
 	@Test
 	void shouldPermitWhenAktoerIdIsEvaluated() {
 		when(abacService.evaluate(any(XacmlRequest.class))).thenReturn(new XacmlResponse(Decision.PERMIT, null, null, null));
-		when(oidcValidatorTool.validate(AUTHORIZATION_HEADER)).thenReturn(true);
 
 		ArgumentCaptor<XacmlRequest> request = ArgumentCaptor.forClass(XacmlRequest.class);
 
@@ -57,7 +56,6 @@ class Pep1gImplTest extends AbstractPepTest {
 	@Test
 	void shouldPermitWhenFnrIsEvaluated() {
 		when(abacService.evaluate(any(XacmlRequest.class))).thenReturn(new XacmlResponse(Decision.PERMIT, null, null, null));
-		when(oidcValidatorTool.validate(AUTHORIZATION_HEADER)).thenReturn(true);
 		ArgumentCaptor<XacmlRequest> request = ArgumentCaptor.forClass(XacmlRequest.class);
 
 		boolean hasAccess = pep1g.hasAccess(TilgangBruker.builder()
@@ -79,7 +77,6 @@ class Pep1gImplTest extends AbstractPepTest {
 	@Test
 	void shouldDeny() {
 		when(abacService.evaluate(any(XacmlRequest.class))).thenReturn(new XacmlResponse(Decision.DENY, null, null, null));
-		when(oidcValidatorTool.validate(AUTHORIZATION_HEADER)).thenReturn(true);
 
 		boolean hasAccess = pep1g.hasAccess(TilgangBruker.builder()
 				.aktoerId(AKTOER_ID)

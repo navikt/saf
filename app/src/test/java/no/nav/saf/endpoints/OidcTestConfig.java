@@ -1,14 +1,12 @@
 package no.nav.saf.endpoints;
 
 import com.nimbusds.jose.util.IOUtils;
-import no.nav.security.oidc.test.support.JwkGenerator;
+import no.nav.security.token.support.test.JwkGenerator;
+import no.nav.security.token.support.test.spring.TokenGeneratorConfiguration;
 import org.jose4j.http.Response;
 import org.jose4j.http.SimpleGet;
 import org.jose4j.http.SimpleResponse;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
-import org.springframework.context.annotation.Profile;
+import org.springframework.context.annotation.*;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -16,6 +14,7 @@ import java.util.HashMap;
 
 @Configuration
 @Profile("itest")
+@Import(TokenGeneratorConfiguration.class)
 public class OidcTestConfig {
 	@Bean
 	@Primary

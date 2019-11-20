@@ -49,11 +49,9 @@ import no.nav.saf.domain.visningsmodell.Dokumentvariant;
 import no.nav.saf.domain.visningsmodell.Journalpost;
 import no.nav.saf.domain.visningsmodell.RelevantDato;
 import no.nav.saf.tilgangskontroll.RequestCache;
-import no.nav.saf.tilgangskontroll.validation.OidcValidatorTool;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
@@ -117,9 +115,6 @@ class JournalpostDtoMapperTest {
 	private static final String ANTALL_RETUR = "3";
 
 	private final JournalpostDtoMapper mapper = new JournalpostDtoMapper();
-
-	@Mock
-	private OidcValidatorTool oidcValidatorTool;
 
 	@Test
 	void shouldMapJournalpostDtoWithUtgaaendeJournalpost() {

@@ -23,14 +23,13 @@ import org.mockito.InjectMocks;
 /**
  * @author Sigurd Midttun, Visma Consulting.
  */
-public class Pep5ImplTest extends AbstractPepTest {
+class Pep5ImplTest extends AbstractPepTest {
 
 	@InjectMocks
 	private Pep5Impl pep5;
 
 	@Test
 	void shouldPermitWhenSkjermingIsNotPresent() {
-		when(oidcValidatorTool.validate(AUTHORIZATION_HEADER)).thenReturn(true);
 
 		boolean hasAccess = pep5.hasAccess(TilgangDokumentInfo.builder()
 				.skjerming(null)
@@ -42,7 +41,6 @@ public class Pep5ImplTest extends AbstractPepTest {
 	@Test
 	void shouldPermitWhenSkjermingIsPresentAndSaksbehandlerHasAccess() {
 		when(abacService.evaluate(any(XacmlRequest.class))).thenReturn(new XacmlResponse(Decision.PERMIT, null, null, null));
-		when(oidcValidatorTool.validate(AUTHORIZATION_HEADER)).thenReturn(true);
 
 		ArgumentCaptor<XacmlRequest> request = ArgumentCaptor.forClass(XacmlRequest.class);
 
@@ -61,7 +59,6 @@ public class Pep5ImplTest extends AbstractPepTest {
 	@Test
 	void shouldDenyWhenSkjermingIsPresentAndSaksbehandlerHasNotAccess() {
 		when(abacService.evaluate(any(XacmlRequest.class))).thenReturn(new XacmlResponse(Decision.DENY, null, null, null));
-		when(oidcValidatorTool.validate(AUTHORIZATION_HEADER)).thenReturn(true);
 
 		ArgumentCaptor<XacmlRequest> request = ArgumentCaptor.forClass(XacmlRequest.class);
 

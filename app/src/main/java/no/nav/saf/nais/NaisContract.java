@@ -4,6 +4,7 @@ package no.nav.saf.nais;
 import io.micrometer.core.instrument.Gauge;
 import io.micrometer.core.instrument.MeterRegistry;
 import lombok.extern.slf4j.Slf4j;
+import no.nav.security.token.support.core.api.Unprotected;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -32,12 +33,14 @@ public final class NaisContract {
 	}
 
 	@GetMapping("/isAlive")
+	@Unprotected
 	public String isAlive() {
 		return APPLICATION_ALIVE;
 	}
 
 	@ResponseBody
 	@RequestMapping(value = "/isReady", produces = MediaType.TEXT_HTML_VALUE)
+	@Unprotected
 	public ResponseEntity<String> isReady() {
 		return new ResponseEntity<>(APPLICATION_READY, HttpStatus.OK);
 	}

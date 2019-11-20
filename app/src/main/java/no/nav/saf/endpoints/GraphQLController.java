@@ -18,8 +18,8 @@ import no.nav.saf.endpoints.wiring.DokumentoversiktWiring;
 import no.nav.saf.exceptionhandler.GraphQLExceptionHandler;
 import no.nav.saf.metrics.AudienceCounter;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
-import no.nav.saf.tilgangskontroll.validation.OidcValidatorTool;
-import org.springframework.http.HttpHeaders;
+import no.nav.security.token.support.core.api.Protected;
+import no.nav.security.token.support.core.context.TokenValidationContextHolder;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -44,17 +44,18 @@ import java.util.Set;
 @Slf4j
 public class GraphQLController extends AbstractSafController {
 	private final GraphQLSchema graphQLSchema;
-	private final OidcValidatorTool oidcValidatorTool;
 	private GraphQLExceptionHandler graphQLExceptionHandler;
 	private final Set<String> azureIssuers;
+	private TokenValidationContextHolder tokenValidationContextHolder;
 	private final AudienceCounter audienceCounter;
 
 	@Inject
 	public GraphQLController(@Named("azureIssuers") Set<String> azureIssuers,
 							 DokumentoversiktWiring dokumentoversiktWiring,
 							 GraphQLExceptionHandler graphQLExceptionHandler,
-							 OidcValidatorTool oidcValidatorTool,
-							 AudienceCounter audienceCounter) {
+							 AudienceCounter audienceCounter,
+							 TokenValidationContextHolder tokenValidationContextHolder) {
+		this.tokenValidationContextHolder = tokenValidationContextHolder;
 		this.graphQLExceptionHandler = graphQLExceptionHandler;
 		this.azureIssuers = azureIssuers;
 		SchemaParser schemaParser = new SchemaParser();
@@ -63,22 +64,29 @@ public class GraphQLController extends AbstractSafController {
 		TypeDefinitionRegistry typeRegistry = schemaParser.parse(schema);
 		SchemaGenerator schemaGenerator = new SchemaGenerator();
 		this.graphQLSchema = schemaGenerator.makeExecutableSchema(typeRegistry, dokumentoversiktWiring.createRuntimeWiring());
-		this.oidcValidatorTool = oidcValidatorTool;
 		this.audienceCounter = audienceCounter;
-	}
+    }
 
 	@PostMapping(value = "/graphql", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@Protected
 	@ResponseBody
-	public Map<String, Object> graphQLRequest(@RequestHeader(value = HttpHeaders.AUTHORIZATION, required = false) String authorizationHeader,
-											  @RequestHeader(value = X_CORRELATION_ID, required = false) String xCorrelationId,
+	public Map<String, Object> graphQLRequest(@RequestHeader(value = X_CORRELATION_ID, required = false) String xCorrelationId,
 											  @RequestHeader(value = NAV_CALLID, required = false) String navCallid,
 											  @RequestHeader(value = NAV_CONSUMER_ID, required = false) String navConsumerId,
 											  @RequestBody GraphQLRequest request) {
-		SafRequestContext safRequestContext = new SafRequestContext(authorizationHeader, this.azureIssuers, createNavCallid(navCallid, xCorrelationId), navConsumerId, oidcValidatorTool);
+
+		SafRequestContext safRequestContext = new SafRequestContext(
+				this.azureIssuers,
+				createNavCallid(navCallid, xCorrelationId),
+				navConsumerId,
+				tokenValidationContextHolder.getTokenValidationContext()
+		);
+
 		audienceCounter.increment(
 				safRequestContext.getSecurityContext().getIssuer(),
 				safRequestContext.getSecurityContext().getAudience()
 		);
+
 		ExecutionResult executionResult =
 				GraphQL.newGraphQL(graphQLSchema)
 						.mutationExecutionStrategy(new AsyncSerialExecutionStrategy(graphQLExceptionHandler))

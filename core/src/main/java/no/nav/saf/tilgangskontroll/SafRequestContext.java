@@ -2,7 +2,7 @@ package no.nav.saf.tilgangskontroll;
 
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import no.nav.saf.tilgangskontroll.validation.OidcValidatorTool;
+import no.nav.security.token.support.core.context.TokenValidationContext;
 
 import java.util.Set;
 
@@ -14,11 +14,9 @@ import java.util.Set;
 public class SafRequestContext {
 	private final SafSecurityContext securityContext;
 	private final RequestCache requestCache;
-	private final OidcValidatorTool oidcValidatorTool;
 
-	public SafRequestContext(String authorizationHeader, Set<String> azureIssuers, String navCallid, String navConsumerId, OidcValidatorTool oidcValidatorTool) {
+	public SafRequestContext(Set<String> azureIssuers, String navCallid, String navConsumerId, TokenValidationContext tokenValidationContext) {
 		this.requestCache = new RequestCache();
-		this.oidcValidatorTool = oidcValidatorTool;
-		this.securityContext = new SafSecurityContext(authorizationHeader, azureIssuers, navCallid, navConsumerId, oidcValidatorTool);
+		this.securityContext = new SafSecurityContext(azureIssuers, navCallid, navConsumerId, tokenValidationContext);
 	}
 }

@@ -38,7 +38,6 @@ class Pep3ImplTest extends AbstractPepTest {
 	@Test
 	void shouldPermitWhenTemaIsFarAndRelevanteTredjeparterSupplied() {
 		when(abacService.evaluate(any(XacmlRequest.class))).thenReturn(new XacmlResponse(Decision.PERMIT, null, null, null));
-		when(oidcValidatorTool.validate(AUTHORIZATION_HEADER)).thenReturn(true);
 		ArgumentCaptor<XacmlRequest> request = ArgumentCaptor.forClass(XacmlRequest.class);
 
 		boolean hasAccess = pep3.hasAccess(createTilgangSakBuilderWithTemaBidAndRelevanteTredjeparter().tema(Tema.FAR)
@@ -58,7 +57,6 @@ class Pep3ImplTest extends AbstractPepTest {
 	@Test
 	void shouldPermitWhenTemaIsBidAndRelevanteTredjeparterSupplied() {
 		when(abacService.evaluate(any(XacmlRequest.class))).thenReturn(new XacmlResponse(Decision.PERMIT, null, null, null));
-		when(oidcValidatorTool.validate(AUTHORIZATION_HEADER)).thenReturn(true);
 		ArgumentCaptor<XacmlRequest> request = ArgumentCaptor.forClass(XacmlRequest.class);
 
 		boolean hasAccess = pep3.hasAccess(createTilgangSakBuilderWithTemaBidAndRelevanteTredjeparter().build(),
@@ -77,7 +75,6 @@ class Pep3ImplTest extends AbstractPepTest {
 
 	@Test
 	void shouldPermitWhenTemaIsNotFarOrBidAndRelevanteTredjeparterSupplied() {
-		when(oidcValidatorTool.validate(AUTHORIZATION_HEADER)).thenReturn(true);
 
 		boolean hasAccess = pep3.hasAccess(createTilgangSakBuilderWithTemaBidAndRelevanteTredjeparter().tema(Tema.PEN)
 						.build(),
@@ -89,7 +86,6 @@ class Pep3ImplTest extends AbstractPepTest {
 
 	@Test
 	void shouldPermitWhenTemaIsNotFarOrBidAndRelevanteTredjeparterIsNull() {
-		when(oidcValidatorTool.validate(AUTHORIZATION_HEADER)).thenReturn(true);
 
 		boolean hasAccess = pep3.hasAccess(TilgangSak.builder()
 						.tema(Tema.PEN)
@@ -103,7 +99,6 @@ class Pep3ImplTest extends AbstractPepTest {
 
 	@Test
 	void shouldPermitWhenTemaIsBidOrFarButRelevanteTredjeparterIsNotSupplied() {
-		when(oidcValidatorTool.validate(AUTHORIZATION_HEADER)).thenReturn(true);
 
 		boolean hasAccess = pep3.hasAccess(createTilgangSakBuilderWithTemaBidAndRelevanteTredjeparter().relevanteTredjeparter(new ArrayList<>())
 						.build(),
@@ -116,7 +111,6 @@ class Pep3ImplTest extends AbstractPepTest {
 	@Test
 	void shouldDenyWhenAbacDenies() {
 		when(abacService.evaluate(any(XacmlRequest.class))).thenReturn(new XacmlResponse(Decision.DENY, null, null, null));
-		when(oidcValidatorTool.validate(AUTHORIZATION_HEADER)).thenReturn(true);
 		boolean hasAccess = pep3.hasAccess(createTilgangSakBuilderWithTemaBidAndRelevanteTredjeparter().build(),
 				createSafRequestContext());
 		verify(abacService).evaluate(any());
