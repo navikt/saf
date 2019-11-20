@@ -8,6 +8,82 @@ Alle nevneverdige endringer blir dokumentert her.
 
 Denne malen er basert på [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [7.5.0] - 2019-11-20
+### Endret
+* La til støtte for azure tokens til ABAC.
+* La til støtte for Azure v1 og Azure v2 tokens.
+
+## [7.4.0] - 2019-11-14
+### Endret
+* Endret Query `dokumentoversiktBruker`. Nytt argument `tilDato`. Konsument kan nå avgrense spørringer mellom `fraDato` og `tilDato` i f.eks et kalenderoppslag.
+
+## [7.3.9] - 2019-11-06
+### Rettet
+* Rensker fnr fra Abac deny / permit kall.
+
+## [7.3.8] - 2019-11-04
+### Endret
+* Endret Type `Sak`. Feltet `arkivsaksnummer` er deprekert.
+* Endret Type `Sak`. Feltet `arkivsaksystem` er deprekert.
+* La til metrikker på oppslag på deprekerte felt.
+
+## [7.3.7] - 2019-11-03
+### Endret
+* Lagt til sperre for å spørre på Infotrygd IT01 fagsak i Query `dokumentoversiktFagsak`.
+
+## [7.3.6] - 2019-10-28
+### Endret
+* La til azure token støtte gjennom webproxy.
+
+## [7.3.5] - 2019-10-24
+### Endret
+* App tilbakemeldingsmottak gitt tilgang til å hente variantformat `ARKIV` fra REST `hentdokument`.
+
+## [7.3.4] - 2019-10-22
+### Endret
+* Endret saf til å bruke fellesressurs for ABAC tema i stedet for saf spesifikk tema ressurs.
+
+## [7.3.3] - 2019-10-17
+### Rettet
+* Rettet feil der Enum `BrukerIdType` `ORGNR` ble fallback hvis journalpost ikke hadde aktørid/fødselsnummer.
+
+## [7.3.2] - 2019-10-17
+### Rettet
+* Rettet NPE feil.
+* Rettet feil der ukjent bruker på journalpost ga ABAC deny i Query `journalpost` og REST `hentdokument`.
+
+## [7.3.1] - 2019-10-03
+### Rettet
+* Rettet feil der orgnr ikke ble satt riktig under henting av dokumenter / journalposter.
+
+## [7.3.0] - 2019-10-01
+### Endret
+* Query `journalpost` og REST `hentdokument` endret til å bruke sak inn i joark funksjonalitet.
+
+## [7.2.2] - 2019-09-26
+### Rettet
+* Tekniske forbedringer. Bedre håndtering av dirty input i argumenter.
+
+## [7.2.1] - 2019-09-26
+### Rettet
+* La til deny info logging fra ABAC igjen.
+
+## [7.2.0] - 2019-09-20
+### Endret
+* Datapower migrering (teknisk)
+
+## [7.1.4] - 2019-09-09
+### Endret
+* Feltet `journalstatus` på Type `Journalpost` endret til å gi ut `UTGAAR` fremfor `FEILREGISTRERT` hvis journalpost både utgår og er feilregistrert. 
+
+## [7.1.3] - 2019-09-06
+### Rettet
+* Hotfix for metrikker som skapte feil i produksjon.
+
+## [7.1.2] - 2019-09-06
+### Rettet
+* Rettet feil der tags ikke matchet cache navn.
+
 ## [7.1.1] - 2019-09-06
 ### Endret
 * Cacher ikke negative svar fra ABAC.

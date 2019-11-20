@@ -58,7 +58,7 @@ public class Pep4Impl implements Pep<TilgangJournalpost> {
 	}
 
 	private XacmlResponse hasJournalpostAccess(SafRequestContext safRequestContext, TilgangJournalpost ressurs) {
-		XacmlRequest request = SafXacmlRequestFactory.create(safRequestContext.getSecurityContext().getOidcTokenBody());
+		XacmlRequest request = SafXacmlRequestFactory.create(safRequestContext.getSecurityContext());
 		request.resource(RESOURCE_FELLES_RESOURCE_TYPE, RESOURCE_SAF_JOURNAL_METADATA);
 
 		if (isJournalpoststatusUtgaar(ressurs)) {

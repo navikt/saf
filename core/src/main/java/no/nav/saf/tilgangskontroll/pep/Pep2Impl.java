@@ -43,7 +43,7 @@ public class Pep2Impl implements Pep<TilgangSak> {
 		}
 
 		if (hasMetadataAccess(ressurs)) {
-			XacmlRequest request = SafXacmlRequestFactory.create(safRequestContext.getSecurityContext().getOidcTokenBody());
+			XacmlRequest request = SafXacmlRequestFactory.create(safRequestContext.getSecurityContext());
 			request.resource(RESOURCE_FELLES_RESOURCE_TYPE, RESOURCE_SAF_SAK_JP_METADATA);
 			if (isFarskapSak(ressurs)) {
 				request.resource(RESOURCE_FELLES_TEMA, Tema.FAR.name());

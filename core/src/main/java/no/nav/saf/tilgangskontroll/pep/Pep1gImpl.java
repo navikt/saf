@@ -46,7 +46,7 @@ public class Pep1gImpl implements Pep<TilgangBruker> {
 			return XacmlResponse.permit();
 		}
 
-		XacmlRequest request = SafXacmlRequestFactory.create(safRequestContext.getSecurityContext().getOidcTokenBody());
+		XacmlRequest request = SafXacmlRequestFactory.create(safRequestContext.getSecurityContext());
 		request.resource(RESOURCE_FELLES_RESOURCE_TYPE, RESOURCE_SAF_PERSON);
 
 		if (ressurs.getAktoerId() != null) {

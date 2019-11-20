@@ -59,7 +59,7 @@ public class Pep5Impl implements Pep<TilgangDokumentInfo> {
 	}
 
 	private XacmlResponse hasDokumentAccess(TilgangDokumentInfo ressurs, SafRequestContext safRequestContext) {
-		XacmlRequest request = SafXacmlRequestFactory.create(safRequestContext.getSecurityContext().getOidcTokenBody());
+		XacmlRequest request = SafXacmlRequestFactory.create(safRequestContext.getSecurityContext());
 		request.resource(RESOURCE_FELLES_RESOURCE_TYPE, RESOURCE_SAF_DOKUMENT_METADATA);
 		request.resource(RESOURCE_SAF_SKJERMING, ressurs.getSkjerming().name());
 

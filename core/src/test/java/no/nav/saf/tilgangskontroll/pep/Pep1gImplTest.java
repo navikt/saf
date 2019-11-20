@@ -27,15 +27,15 @@ import java.util.Collections;
 /**
  * @author Sigurd Midttun, Visma Consulting.
  */
-public class Pep1gImplTest extends AbstractPepTest {
+class Pep1gImplTest extends AbstractPepTest {
 
 	@InjectMocks
 	private Pep1gImpl pep1g;
 
 	@Test
-	public void shouldPermitWhenAktoerIdIsEvaluated() {
+	void shouldPermitWhenAktoerIdIsEvaluated() {
 		when(abacService.evaluate(any(XacmlRequest.class))).thenReturn(new XacmlResponse(Decision.PERMIT, null, null, null));
-		when(oidcValidatorTool.validate(OIDC_TOKEN_PERSON_USER_TEST)).thenReturn(true);
+		when(oidcValidatorTool.validate(AUTHORIZATION_HEADER)).thenReturn(true);
 
 		ArgumentCaptor<XacmlRequest> request = ArgumentCaptor.forClass(XacmlRequest.class);
 
@@ -55,9 +55,9 @@ public class Pep1gImplTest extends AbstractPepTest {
 	}
 
 	@Test
-	public void shouldPermitWhenFnrIsEvaluated() {
+	void shouldPermitWhenFnrIsEvaluated() {
 		when(abacService.evaluate(any(XacmlRequest.class))).thenReturn(new XacmlResponse(Decision.PERMIT, null, null, null));
-		when(oidcValidatorTool.validate(OIDC_TOKEN_PERSON_USER_TEST)).thenReturn(true);
+		when(oidcValidatorTool.validate(AUTHORIZATION_HEADER)).thenReturn(true);
 		ArgumentCaptor<XacmlRequest> request = ArgumentCaptor.forClass(XacmlRequest.class);
 
 		boolean hasAccess = pep1g.hasAccess(TilgangBruker.builder()
@@ -77,9 +77,9 @@ public class Pep1gImplTest extends AbstractPepTest {
 	}
 
 	@Test
-	public void shouldDeny() {
+	void shouldDeny() {
 		when(abacService.evaluate(any(XacmlRequest.class))).thenReturn(new XacmlResponse(Decision.DENY, null, null, null));
-		when(oidcValidatorTool.validate(OIDC_TOKEN_PERSON_USER_TEST)).thenReturn(true);
+		when(oidcValidatorTool.validate(AUTHORIZATION_HEADER)).thenReturn(true);
 
 		boolean hasAccess = pep1g.hasAccess(TilgangBruker.builder()
 				.aktoerId(AKTOER_ID)

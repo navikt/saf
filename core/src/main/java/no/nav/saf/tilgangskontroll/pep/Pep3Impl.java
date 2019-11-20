@@ -45,7 +45,7 @@ public class Pep3Impl implements Pep<TilgangSak> {
 			if (hasNotRelevanteTredjeparter(ressurs)) {
 				return XacmlResponse.permit();
 			}
-			XacmlRequest request = SafXacmlRequestFactory.create(safRequestContext.getSecurityContext().getOidcTokenBody());
+			XacmlRequest request = SafXacmlRequestFactory.create(safRequestContext.getSecurityContext());
 			request.resource(RESOURCE_FELLES_RESOURCE_TYPE, RESOURCE_SAF_TREDJEPART);
 			ressurs.getRelevanteTredjeparter()
 					.forEach(tilgangRelevantTredjepart -> request.resource(RESOURCE_FELLES_PERSON_FNR, tilgangRelevantTredjepart

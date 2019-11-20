@@ -42,7 +42,6 @@ public class OidcValidatorTool {
 			return true;
 
 		} catch (InvalidJwtException | MalformedClaimException e) {
-			log.error(VALIDATION_FAILED, e);
 			throw new OidcAuthorizationException(VALIDATION_FAILED, e);
 		}
 	}

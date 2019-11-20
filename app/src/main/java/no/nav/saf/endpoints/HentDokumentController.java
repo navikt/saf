@@ -27,6 +27,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.inject.Inject;
+import javax.inject.Named;
+import java.util.Set;
 
 /**
  * Endepunktet til hentDokument, som returnerer et dokument fra joark basert på journalpostId, dokumentInfoId og variantFormat.
@@ -41,12 +43,15 @@ import javax.inject.Inject;
 public class HentDokumentController extends AbstractSafController {
 	private final HentDokumentDomainCoordinator hentDokumentDomainCoordinator;
 	private final OidcValidatorTool oidcValidatorTool;
+	private final Set<String> azureIssuers;
 
 	@Inject
-	public HentDokumentController(HentDokumentDomainCoordinator hentDokumentDomainCoordinator,
+	public HentDokumentController(@Named("azureIssuers") Set<String> azureIssuers,
+								  HentDokumentDomainCoordinator hentDokumentDomainCoordinator,
 								  OidcValidatorTool oidcValidatorTool) {
 		this.hentDokumentDomainCoordinator = hentDokumentDomainCoordinator;
 		this.oidcValidatorTool = oidcValidatorTool;
+		this.azureIssuers = azureIssuers;
 	}
 
 	@ApiOperation(value = "Henter fysiske dokumenter fra NAV sitt arkiv og gjør nødvendig tilgangskontroll.", authorizations = {@Authorization(value = "apiKey")})
@@ -61,7 +66,7 @@ public class HentDokumentController extends AbstractSafController {
 			@ApiParam(name = X_CORRELATION_ID, value = "@Deprecated. Bruk " + NAV_CALLID) @RequestHeader(value = X_CORRELATION_ID, required = false) String xCorrelationId,
 			@ApiParam(name = NAV_CONSUMER_ID, value = "(Valgfri) ID for å identifisere komponent, modul eller system som kaller tjenesten hvis dette ikke utgår fra subjektet i tokenet. Eksempel: myapp") @RequestHeader(value = NAV_CONSUMER_ID, required = false) String navConsumerId,
 			@ApiParam(hidden = true) @RequestHeader(value = HttpHeaders.AUTHORIZATION, required = false) String authorizationHeader) {
-		SafRequestContext safRequestContext = new SafRequestContext(authorizationHeader, createNavCallid(navCallid, xCorrelationId), navConsumerId, oidcValidatorTool);
+		SafRequestContext safRequestContext = new SafRequestContext(authorizationHeader, this.azureIssuers, createNavCallid(navCallid, xCorrelationId), navConsumerId, oidcValidatorTool);
 		log.info("hentDokument har mottatt kall. journalpostId={}, dokumentInfoId={}, variantFormat={}", journalpostId, dokumentInfoId, variantFormat);
 		try {
 			safRequestContext.getSecurityContext().getOidcTokenBody();
