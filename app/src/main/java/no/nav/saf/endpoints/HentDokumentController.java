@@ -74,7 +74,6 @@ public class HentDokumentController extends AbstractSafController {
 		log.info("hentDokument har mottatt kall. journalpostId={}, dokumentInfoId={}, variantFormat={}", journalpostId, dokumentInfoId, variantFormat);
 		try {
 			audienceCounter.increment(
-					this.getClass().getName(),
 					safRequestContext.getSecurityContext().getIssuer(),
 					safRequestContext.getSecurityContext().getAudience()
 			);

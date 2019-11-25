@@ -76,7 +76,6 @@ public class GraphQLController extends AbstractSafController {
 											  @RequestBody GraphQLRequest request) {
 		SafRequestContext safRequestContext = new SafRequestContext(authorizationHeader, this.azureIssuers, createNavCallid(navCallid, xCorrelationId), navConsumerId, oidcValidatorTool);
 		audienceCounter.increment(
-				this.getClass().getName(),
 				safRequestContext.getSecurityContext().getIssuer(),
 				safRequestContext.getSecurityContext().getAudience()
 		);

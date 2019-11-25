@@ -13,9 +13,8 @@ public class AudienceCounter {
     public AudienceCounter(MeterRegistry meterRegistry){
         this.meterRegistry = meterRegistry;
     }
-    public void increment(String className, String issuer, String audience){
+    public void increment(String issuer, String audience){
         Counter.builder("dok_saf_audience")
-                .tags("classname", className)
                 .tags("issuer", issuer)
                 .tags("audience", audience)
                 .register(meterRegistry)
