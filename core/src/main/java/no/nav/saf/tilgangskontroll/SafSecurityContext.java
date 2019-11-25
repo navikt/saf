@@ -26,6 +26,7 @@ public class SafSecurityContext {
 			"Kun OIDC-token (JWT via OAuth 2.0) med header \"Authorization\" : \"Bearer {token}\" er tillatt.";
 	private static final Map<String, Boolean> PRIVILEGIED_SERVICEUSERS = new HashMap<>();
 	private static final String UNKNOWN_AUDIENCE = "unknownAudience";
+	private static final String UNKNOWN_ISSUER = "unknownIssuer";
 	private final String oidcTokenBody;
 	private final String subjectId;
 	private String navCallid;
@@ -136,7 +137,7 @@ public class SafSecurityContext {
 
 	private String getIssuerFromToken(final DecodedJWT decodedJWT) {
 		if(decodedJWT == null) {
-			return UNKNOWN_AUDIENCE;
+			return UNKNOWN_ISSUER;
 		}
 		try {
 			return decodedJWT.getIssuer();

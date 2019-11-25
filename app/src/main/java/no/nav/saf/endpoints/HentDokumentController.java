@@ -14,7 +14,7 @@ import no.nav.saf.domain.kode.Variantformat;
 import no.nav.saf.exceptions.HentdokumentTilgangskontrollException;
 import no.nav.saf.hentdokument.HentDokumentDomainCoordinator;
 import no.nav.saf.metrics.Monitor;
-import no.nav.saf.metrics.SimpleAudienceCounter;
+import no.nav.saf.metrics.AudienceCounter;
 import no.nav.saf.swagger.SwaggerRestHentDokument;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.SafSecurityContext;
@@ -45,16 +45,17 @@ public class HentDokumentController extends AbstractSafController {
 	private final HentDokumentDomainCoordinator hentDokumentDomainCoordinator;
 	private final OidcValidatorTool oidcValidatorTool;
 	private final Set<String> azureIssuers;
-	private final SimpleAudienceCounter simpleAudienceCounter;
+	private final AudienceCounter audienceCounter;
 
 	@Inject
 	public HentDokumentController(@Named("azureIssuers") Set<String> azureIssuers,
 								  HentDokumentDomainCoordinator hentDokumentDomainCoordinator,
-								  OidcValidatorTool oidcValidatorTool) {
+								  OidcValidatorTool oidcValidatorTool,
+								  AudienceCounter audienceCounter) {
 		this.hentDokumentDomainCoordinator = hentDokumentDomainCoordinator;
 		this.oidcValidatorTool = oidcValidatorTool;
 		this.azureIssuers = azureIssuers;
-		this.simpleAudienceCounter = new SimpleAudienceCounter(this.getClass().getName());
+		this.audienceCounter = audienceCounter;
 	}
 
 	@ApiOperation(value = "Henter fysiske dokumenter fra NAV sitt arkiv og gjør nødvendig tilgangskontroll.", authorizations = {@Authorization(value = "apiKey")})
@@ -72,7 +73,11 @@ public class HentDokumentController extends AbstractSafController {
 		SafRequestContext safRequestContext = new SafRequestContext(authorizationHeader, this.azureIssuers, createNavCallid(navCallid, xCorrelationId), navConsumerId, oidcValidatorTool);
 		log.info("hentDokument har mottatt kall. journalpostId={}, dokumentInfoId={}, variantFormat={}", journalpostId, dokumentInfoId, variantFormat);
 		try {
-			simpleAudienceCounter.increment(safRequestContext.getSecurityContext().getIssuer(), safRequestContext.getSecurityContext().getAudience());
+			audienceCounter.increment(
+					this.getClass().getName(),
+					safRequestContext.getSecurityContext().getIssuer(),
+					safRequestContext.getSecurityContext().getAudience()
+			);
 			safRequestContext.getSecurityContext().getOidcTokenBody();
 			validateServiceUserAccess(safRequestContext, variantFormat);
 			HentDokument response = hentDokumentDomainCoordinator.hentDokument(journalpostId, dokumentInfoId, variantFormat, safRequestContext);
