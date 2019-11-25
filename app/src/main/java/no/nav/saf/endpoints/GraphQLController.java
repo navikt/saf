@@ -16,6 +16,7 @@ import graphql.schema.idl.TypeDefinitionRegistry;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.endpoints.wiring.DokumentoversiktWiring;
 import no.nav.saf.exceptionhandler.GraphQLExceptionHandler;
+import no.nav.saf.metrics.SimpleAudienceCounter;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.validation.OidcValidatorTool;
 import org.springframework.http.HttpHeaders;
@@ -46,6 +47,7 @@ public class GraphQLController extends AbstractSafController {
 	private final OidcValidatorTool oidcValidatorTool;
 	private GraphQLExceptionHandler graphQLExceptionHandler;
 	private final Set<String> azureIssuers;
+	private final SimpleAudienceCounter simpleAudienceCounter;
 
 	@Inject
 	public GraphQLController(@Named("azureIssuers") Set<String> azureIssuers,
@@ -61,6 +63,7 @@ public class GraphQLController extends AbstractSafController {
 		SchemaGenerator schemaGenerator = new SchemaGenerator();
 		this.graphQLSchema = schemaGenerator.makeExecutableSchema(typeRegistry, dokumentoversiktWiring.createRuntimeWiring());
 		this.oidcValidatorTool = oidcValidatorTool;
+		this.simpleAudienceCounter = new SimpleAudienceCounter(this.getClass().getName());
 	}
 
 	@PostMapping(value = "/graphql", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -70,6 +73,8 @@ public class GraphQLController extends AbstractSafController {
 											  @RequestHeader(value = NAV_CALLID, required = false) String navCallid,
 											  @RequestHeader(value = NAV_CONSUMER_ID, required = false) String navConsumerId,
 											  @RequestBody GraphQLRequest request) {
+		SafRequestContext safRequestContext = new SafRequestContext(authorizationHeader, this.azureIssuers, createNavCallid(navCallid, xCorrelationId), navConsumerId, oidcValidatorTool);
+		simpleAudienceCounter.increment(safRequestContext.getSecurityContext().getIssuer(), safRequestContext.getSecurityContext().getAudience());
 		ExecutionResult executionResult =
 				GraphQL.newGraphQL(graphQLSchema)
 						.mutationExecutionStrategy(new AsyncSerialExecutionStrategy(graphQLExceptionHandler))
@@ -78,7 +83,7 @@ public class GraphQLController extends AbstractSafController {
 						.query(request.getQuery())
 						.operationName(request.getOperationName())
 						.variables(request.getVariables() == null ? Collections.emptyMap() : request.getVariables())
-						.context(new SafRequestContext(authorizationHeader, this.azureIssuers, createNavCallid(navCallid, xCorrelationId), navConsumerId, oidcValidatorTool))
+						.context(safRequestContext)
 						.build());
 
 		return executionResult.toSpecification();
