@@ -26,6 +26,7 @@ public class SafSecurityContext {
 			"Kun OIDC-token (JWT via OAuth 2.0) med header \"Authorization\" : \"Bearer {token}\" er tillatt.";
 	private static final Map<String, Boolean> PRIVILEGIED_SERVICEUSERS = new HashMap<>();
 	private static final String UNKNOWN_AUDIENCE = "unknownAudience";
+	private static final String UNKNOWN_ISSUER = "unknownIssuer";
 	private final String oidcTokenBody;
 	private final String subjectId;
 	private String navCallid;
@@ -34,6 +35,8 @@ public class SafSecurityContext {
 	private final OidcValidatorTool oidcValidatorTool;
 	private final DecodedJWT decodedJWT;
 	private final Set<String> azureIssuers;
+	private final String audience;
+	private final String issuer;
 
 	static {
 		// Disse servicebrukerene får tilgang til å hente dokumentvarianter
@@ -54,7 +57,8 @@ public class SafSecurityContext {
 		this.oidcTokenBody = getOidcTokenBody(authorizationHeader);
 		this.subjectId = getSubjectFromToken(decodedJWT);
 		this.azureToken = getIsAzureToken(decodedJWT);
-		final String audience = getAudienceFromToken(decodedJWT);
+		this.audience = getAudienceFromToken(decodedJWT);
+		this.issuer = getIssuerFromToken(decodedJWT);
 		// if zero, then executionId from graphQl is used.
 		this.navCallid = trim(navCallidHeader);
 		this.navConsumerId = determineNavConsumerId(trim(navConsumerIdHeader), audience);
@@ -131,6 +135,18 @@ public class SafSecurityContext {
 		}
 	}
 
+	private String getIssuerFromToken(final DecodedJWT decodedJWT) {
+		if(decodedJWT == null) {
+			return UNKNOWN_ISSUER;
+		}
+		try {
+			return decodedJWT.getIssuer();
+		} catch (JWTDecodeException e) {
+			log.error("Kunne ikke utlede issuer fra OIDC-Token i header.", e);
+			return null;
+		}
+	}
+
 	public String getNavCallid() {
 		return navCallid;
 	}
@@ -153,6 +169,14 @@ public class SafSecurityContext {
 		} else {
 			return subjectId;
 		}
+	}
+
+	public String getAudience() {
+		return audience;
+	}
+
+	public String getIssuer() {
+		return issuer;
 	}
 
 	public boolean isServiceUser() {
