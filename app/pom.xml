@@ -106,6 +106,14 @@
 			<scope>test</scope>
 			<version>1.2.5</version>
 		</dependency>
+		<dependency>
+			<groupId>no.nav.security</groupId>
+			<artifactId>token-validation-test-support</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>no.nav.security</groupId>
+			<artifactId>token-validation-spring</artifactId>
+		</dependency>
 	</dependencies>
 
 	<build>
