@@ -6,7 +6,11 @@ import no.nav.security.token.support.test.spring.TokenGeneratorConfiguration;
 import org.jose4j.http.Response;
 import org.jose4j.http.SimpleGet;
 import org.jose4j.http.SimpleResponse;
-import org.springframework.context.annotation.*;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.Primary;
+import org.springframework.context.annotation.Profile;
 
 import java.io.IOException;
 import java.nio.charset.Charset;

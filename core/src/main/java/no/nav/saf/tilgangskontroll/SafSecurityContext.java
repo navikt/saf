@@ -27,6 +27,7 @@ public class SafSecurityContext {
 	private static final Map<String, Boolean> PRIVILEGIED_SERVICEUSERS = new HashMap<>();
 	private static final String UNKNOWN_AUDIENCE = "unknownAudience";
 	private static final String UNKNOWN_ISSUER = "unknownIssuer";
+	private final String jwtToken;
 	private final String oidcTokenBody;
 	private final String subjectId;
 	private String navCallid;
@@ -49,9 +50,10 @@ public class SafSecurityContext {
 					   String navCallidHeader,
 					   String navConsumerIdHeader,
 					   TokenValidationContext tokenValidationContext) {
-		this.oidcTokenBody = getFirstValidJwt(tokenValidationContext);
-		this.decodedJWT = getDecodedJWT(this.oidcTokenBody);
 		this.azureIssuers = azureIssuers;
+		this.jwtToken = getFirstValidJwt(tokenValidationContext);
+		this.decodedJWT = getDecodedJWT(jwtToken);
+		this.oidcTokenBody = getPayloadFromToken(decodedJWT);
 		this.subjectId = getSubjectFromToken(decodedJWT);
 		this.azureToken = getIsAzureToken(decodedJWT);
 		this.audience = getAudienceFromToken(decodedJWT);
@@ -61,6 +63,10 @@ public class SafSecurityContext {
 		this.navConsumerId = determineNavConsumerId(trim(navConsumerIdHeader), audience);
 
 		addMdcData(this.subjectId, this.navCallid, this.navConsumerId);
+	}
+
+	private String getPayloadFromToken(DecodedJWT decodedJWT){
+		return decodedJWT.getPayload();
 	}
 
 	private String getFirstValidJwt(TokenValidationContext tokenValidationContext){
