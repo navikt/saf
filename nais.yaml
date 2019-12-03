@@ -57,20 +57,6 @@ fasitResources:
       endpointUrl: pensjon.v1.endpointurl
   - alias: safproperties
     resourceType: applicationproperties
-  - alias: freg-security-oidc
-    resourceType: OpenIdConnect
-    propertyMap:
-      issuerUrl: security.oidc.idp.openAm.issuerUrl
-      jwksUrl: security.oidc.idp.openAm.jwksUrl
-  - alias: azure_v1_oidc
-    resourceType: OpenIdConnect
-    propertyMap:
-      issuerUrl: security.oidc.idp.azurev1.issuerUrl
-  - alias: azure_v2_oidc
-    resourceType: OpenIdConnect
-    propertyMap:
-      issuerUrl: security.oidc.idp.azurev2.issuerUrl
-
   - alias: azure_v1_discovery
     resourceType: BaseUrl
     propertyMap:
@@ -87,9 +73,6 @@ fasitResources:
     resourceType: BaseUrl
     propertyMap:
       url: no.nav.security.jwt.issuer.openam.discoveryUrl
-
-  - alias: OpenIdConnect
-    resourceType: BaseUrl
   exposed:
     - alias: "saf.graphql"
       resourceType: restservice

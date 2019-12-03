@@ -1,5 +1,6 @@
 package no.nav.saf.graphiql;
 
+import no.nav.security.token.support.core.api.Unprotected;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringSubstitutor;
 import org.springframework.beans.factory.annotation.Value;
@@ -52,6 +53,7 @@ public class GraphiQLController {
 		}
 	}
 
+	@Unprotected
 	@ConditionalOnProperty("graphiql.enabled")
 	@RequestMapping(value = "${graphiql.mapping:/graphiql}")
 	public void graphiql(HttpServletRequest request, HttpServletResponse response, @PathVariable Map<String, String> params) throws IOException {

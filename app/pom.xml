@@ -70,6 +70,10 @@
 			<artifactId>httpclient</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>no.nav.security</groupId>
+			<artifactId>token-validation-spring</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
 			<scope>provided</scope>
@@ -109,10 +113,7 @@
 		<dependency>
 			<groupId>no.nav.security</groupId>
 			<artifactId>token-validation-test-support</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>no.nav.security</groupId>
-			<artifactId>token-validation-spring</artifactId>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 
