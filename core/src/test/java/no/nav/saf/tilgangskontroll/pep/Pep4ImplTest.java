@@ -34,8 +34,6 @@ class Pep4ImplTest extends AbstractPepTest {
 
 	@Test
 	void shouldPermitWhenJournalstatusNotUtgaarAndSkjermingIsNotPresent() {
-		when(oidcValidatorTool.validate(AUTHORIZATION_HEADER)).thenReturn(true);
-
 		boolean hasAccess = pep4.hasAccess(TilgangJournalpost.builder()
 				.journalstatus(FERDIGSTILT)
 				.skjerming(null)
@@ -47,7 +45,6 @@ class Pep4ImplTest extends AbstractPepTest {
 	@Test
 	void shouldPermitWhenJournalstatusUtgaarAndSaksbehandlerHasAccess() {
 		when(abacService.evaluate(any(XacmlRequest.class))).thenReturn(new XacmlResponse(Decision.PERMIT, null, null, null));
-		when(oidcValidatorTool.validate(AUTHORIZATION_HEADER)).thenReturn(true);
 
 		ArgumentCaptor<XacmlRequest> request = ArgumentCaptor.forClass(XacmlRequest.class);
 
@@ -66,7 +63,6 @@ class Pep4ImplTest extends AbstractPepTest {
 	@Test
 	void shouldPermitWhenSkjermingIsPresentAndSaksbehandlerHasAccess() {
 		when(abacService.evaluate(any(XacmlRequest.class))).thenReturn(new XacmlResponse(Decision.PERMIT, null, null, null));
-		when(oidcValidatorTool.validate(AUTHORIZATION_HEADER)).thenReturn(true);
 
 		ArgumentCaptor<XacmlRequest> request = ArgumentCaptor.forClass(XacmlRequest.class);
 
@@ -86,7 +82,6 @@ class Pep4ImplTest extends AbstractPepTest {
 	@Test
 	void shouldPermitWhenJournalstatusUtgaarAndSkjermingIsPresentAndSaksbehandlerHasAccess() {
 		when(abacService.evaluate(any(XacmlRequest.class))).thenReturn(new XacmlResponse(Decision.PERMIT, null, null, null));
-		when(oidcValidatorTool.validate(AUTHORIZATION_HEADER)).thenReturn(true);
 
 		ArgumentCaptor<XacmlRequest> request = ArgumentCaptor.forClass(XacmlRequest.class);
 
@@ -107,7 +102,6 @@ class Pep4ImplTest extends AbstractPepTest {
 	@Test
 	void shouldDenyWhenJournalstatusUtgaarAndSkjermingIsPresentAndSaksbehandlerHasNotAccess() {
 		when(abacService.evaluate(any(XacmlRequest.class))).thenReturn(new XacmlResponse(Decision.DENY, null, null, null));
-		when(oidcValidatorTool.validate(AUTHORIZATION_HEADER)).thenReturn(true);
 
 		ArgumentCaptor<XacmlRequest> request = ArgumentCaptor.forClass(XacmlRequest.class);
 

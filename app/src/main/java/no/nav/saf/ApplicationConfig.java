@@ -5,10 +5,10 @@ import no.nav.saf.graphiql.GraphiQLController;
 import no.nav.saf.integration.fasit.ServiceuserAlias;
 import no.nav.saf.metrics.DokMonitoringAspect;
 import no.nav.saf.platform.TomcatConfig;
+import no.nav.security.token.support.core.configuration.MultiIssuerConfiguration;
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -21,6 +21,7 @@ import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.retry.annotation.EnableRetry;
 
 import javax.inject.Named;
+import java.util.HashSet;
 import java.util.Set;
 
 @EnableAspectJAutoProxy
@@ -55,8 +56,10 @@ public class ApplicationConfig {
 
 	@Bean
 	@Named("azureIssuers")
-	Set<String> azureIssuers(@Value("${security.oidc.idp.azurev1.issuerUrl}") String azurev1IssuerUrl,
-							 @Value("${security.oidc.idp.azurev2.issuerUrl}") String azurev2IssuerUrl) {
-		return Set.of(azurev1IssuerUrl, azurev2IssuerUrl);
+	Set<String> azureIssuers(MultiIssuerConfiguration multiIssuerConfiguration) {
+		Set<String> issuers = new HashSet<>();
+		multiIssuerConfiguration.getIssuer("azurev1").ifPresent(issuerConfiguration -> issuers.add(issuerConfiguration.getMetaData().getIssuer().getValue()));
+		multiIssuerConfiguration.getIssuer("azurev2").ifPresent(issuerConfiguration -> issuers.add(issuerConfiguration.getMetaData().getIssuer().getValue()));
+		return issuers;
 	}
 }

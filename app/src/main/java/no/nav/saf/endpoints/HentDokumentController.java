@@ -18,7 +18,8 @@ import no.nav.saf.metrics.AudienceCounter;
 import no.nav.saf.swagger.SwaggerRestHentDokument;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.SafSecurityContext;
-import no.nav.saf.tilgangskontroll.validation.OidcValidatorTool;
+import no.nav.security.token.support.core.api.Protected;
+import no.nav.security.token.support.core.context.TokenValidationContextHolder;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -43,17 +44,17 @@ import java.util.Set;
 @Slf4j
 public class HentDokumentController extends AbstractSafController {
 	private final HentDokumentDomainCoordinator hentDokumentDomainCoordinator;
-	private final OidcValidatorTool oidcValidatorTool;
 	private final Set<String> azureIssuers;
+	private TokenValidationContextHolder tokenValidationContextHolder;
 	private final AudienceCounter audienceCounter;
 
 	@Inject
 	public HentDokumentController(@Named("azureIssuers") Set<String> azureIssuers,
 								  HentDokumentDomainCoordinator hentDokumentDomainCoordinator,
-								  OidcValidatorTool oidcValidatorTool,
-								  AudienceCounter audienceCounter) {
+								  AudienceCounter audienceCounter,
+								  TokenValidationContextHolder tokenValidationContextHolder) {
+		this.tokenValidationContextHolder = tokenValidationContextHolder;
 		this.hentDokumentDomainCoordinator = hentDokumentDomainCoordinator;
-		this.oidcValidatorTool = oidcValidatorTool;
 		this.azureIssuers = azureIssuers;
 		this.audienceCounter = audienceCounter;
 	}
@@ -61,6 +62,7 @@ public class HentDokumentController extends AbstractSafController {
 	@ApiOperation(value = "Henter fysiske dokumenter fra NAV sitt arkiv og gjør nødvendig tilgangskontroll.", authorizations = {@Authorization(value = "apiKey")})
 	@SwaggerRestHentDokument
 	@GetMapping(value = "hentdokument/{journalpostId}/{dokumentInfoId}/{variantFormat}")
+	@Protected
 	@Monitor(value = "dok_request", extraTags = {"process", "hentDokument", "requestType", "hentDokument"}, histogram = true)
 	public ResponseEntity<byte[]> hentDokument(
 			@ApiParam(name = "journalpostId", value = "Id for aktuell journalpost", required = true) @PathVariable String journalpostId,
@@ -68,16 +70,16 @@ public class HentDokumentController extends AbstractSafController {
 			@ApiParam(name = "variantFormat", value = "Varianten til dokumentet som skal hentes. [Følg lenken for gyldige verdier](https://confluence.adeo.no/display/BOA/Enum%3A+Variantformat).", required = true) @PathVariable String variantFormat,
 			@ApiParam(name = NAV_CALLID, value = "(Valgfri) ID for logging og sporing på tvers av verdikjeder. Eksempel: UUID") @RequestHeader(value = NAV_CALLID, required = false) String navCallid,
 			@ApiParam(name = X_CORRELATION_ID, value = "@Deprecated. Bruk " + NAV_CALLID) @RequestHeader(value = X_CORRELATION_ID, required = false) String xCorrelationId,
-			@ApiParam(name = NAV_CONSUMER_ID, value = "(Valgfri) ID for å identifisere komponent, modul eller system som kaller tjenesten hvis dette ikke utgår fra subjektet i tokenet. Eksempel: myapp") @RequestHeader(value = NAV_CONSUMER_ID, required = false) String navConsumerId,
-			@ApiParam(hidden = true) @RequestHeader(value = HttpHeaders.AUTHORIZATION, required = false) String authorizationHeader) {
-		SafRequestContext safRequestContext = new SafRequestContext(authorizationHeader, this.azureIssuers, createNavCallid(navCallid, xCorrelationId), navConsumerId, oidcValidatorTool);
+			@ApiParam(name = NAV_CONSUMER_ID, value = "(Valgfri) ID for å identifisere komponent, modul eller system som kaller tjenesten hvis dette ikke utgår fra subjektet i tokenet. Eksempel: myapp") @RequestHeader(value = NAV_CONSUMER_ID, required = false) String navConsumerId
+	){
+		SafRequestContext safRequestContext = new SafRequestContext(this.azureIssuers, createNavCallid(navCallid, xCorrelationId), navConsumerId, tokenValidationContextHolder.getTokenValidationContext());
 		log.info("hentDokument har mottatt kall. journalpostId={}, dokumentInfoId={}, variantFormat={}", journalpostId, dokumentInfoId, variantFormat);
 		try {
 			audienceCounter.increment(
 					safRequestContext.getSecurityContext().getIssuer(),
 					safRequestContext.getSecurityContext().getAudience()
 			);
-			safRequestContext.getSecurityContext().getOidcTokenBody();
+
 			validateServiceUserAccess(safRequestContext, variantFormat);
 			HentDokument response = hentDokumentDomainCoordinator.hentDokument(journalpostId, dokumentInfoId, variantFormat, safRequestContext);
 			log.info("hentDokument hentet dokument. journalpostId={}, dokumentInfoId={}, variantFormat={}", journalpostId, dokumentInfoId, variantFormat);

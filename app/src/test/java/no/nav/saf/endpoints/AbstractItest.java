@@ -17,7 +17,7 @@ import no.nav.modig.testcertificates.TestCertificates;
 import no.nav.saf.ApplicationConfig;
 import no.nav.saf.domain.visningsmodell.Dokumentoversikt;
 import no.nav.saf.endpoints.testconfig.STSTestConfig;
-import no.nav.security.oidc.test.support.spring.TokenGeneratorConfiguration;
+import no.nav.security.token.support.test.spring.TokenGeneratorConfiguration;
 import org.apache.cxf.helpers.IOUtils;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;

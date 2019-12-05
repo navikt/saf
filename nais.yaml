@@ -57,29 +57,22 @@ fasitResources:
       endpointUrl: pensjon.v1.endpointurl
   - alias: safproperties
     resourceType: applicationproperties
-  - alias: freg-security-oidc
-    resourceType: OpenIdConnect
-    propertyMap:
-      issuerUrl: security.oidc.idp.openAm.issuerUrl
-      jwksUrl: security.oidc.idp.openAm.jwksUrl
-  - alias: azure_v1_oidc
-    resourceType: OpenIdConnect
-    propertyMap:
-      issuerUrl: security.oidc.idp.azurev1.issuerUrl
-      jwksUrl: security.oidc.idp.azurev1.jwksUrl
-  - alias: azure_v2_oidc
-    resourceType: OpenIdConnect
-    propertyMap:
-      issuerUrl: security.oidc.idp.azurev2.issuerUrl
-      jwksUrl: security.oidc.idp.azurev2.jwksUrl
-  - alias: security-token-service-issuer
+  - alias: azure_v1_discovery
     resourceType: BaseUrl
     propertyMap:
-      url: security.oidc.idp.sts.issuerUrl
-  - alias: security-token-service-jwks
-    resourceType: RestService
+      url: no.nav.security.jwt.issuer.azurev1.discoveryUrl
+  - alias: azure_v2_discovery
+    resourceType: BaseUrl
     propertyMap:
-      url: security.oidc.idp.sts.jwksUrl
+      url: no.nav.security.jwt.issuer.azurev2.discoveryUrl
+  - alias: security-token-service-openid-configuration
+    resourceType: restservice
+    propertyMap:
+      url: no.nav.security.jwt.issuer.reststs.discoveryUrl
+  - alias: opam_oidc_discovery
+    resourceType: BaseUrl
+    propertyMap:
+      url: no.nav.security.jwt.issuer.openam.discoveryUrl
   exposed:
     - alias: "saf.graphql"
       resourceType: restservice
