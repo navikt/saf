@@ -8,7 +8,7 @@ import no.nav.security.token.support.spring.api.EnableJwtTokenValidation;
 
 @Import(value = {ApplicationConfig.class})
 @SpringBootApplication
-@EnableJwtTokenValidation(ignore="org.springframework")
+@EnableJwtTokenValidation(ignore={"org.springframework", "springfox.documentation"})
 public class Application {
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
