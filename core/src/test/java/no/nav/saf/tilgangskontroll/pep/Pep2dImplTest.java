@@ -10,6 +10,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 import no.nav.saf.cache.RedisCacheConfig;
@@ -68,6 +69,19 @@ class Pep2dImplTest extends AbstractPepTest {
 				.build(), createSafRequestContext());
 
 		verify(abacService, never()).evaluate(any());
+		assertTrue(hasAccess);
+	}
+
+	@Test
+	void shouldAllowIfTemaIsUkjent() {
+		when(abacService.evaluate(any(XacmlRequest.class))).thenReturn(new XacmlResponse(Decision.DENY, null, null, null));
+
+		boolean hasAccess = pep2d.hasAccess(TilgangSak.builder()
+				.aktoerId(AKTOER_ID)
+				.tema(Tema.UKJ)
+				.build(), createSafRequestContext());
+
+		verifyZeroInteractions(abacService);
 		assertTrue(hasAccess);
 	}
 

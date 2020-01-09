@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.cache.KeyGeneratorDistributedCaching;
 import no.nav.saf.cache.KeyGeneratorLocalCaching;
 import no.nav.saf.cache.RedisCacheConfig;
+import no.nav.saf.domain.kode.Tema;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlRequest;
@@ -26,6 +27,7 @@ import org.springframework.stereotype.Component;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+//Todo: Fiks død lenke til ABAC
 /**
  * Dekker følgende policies i saf:
  * <p>
@@ -54,12 +56,15 @@ public class Pep2dImpl implements Pep<TilgangSak> {
 			log.info("Pep2d mangler data om sak. Tilgang gis likevel for at saksbehandler skal kunne knytte dokument til sak og bruker.");
 			return XacmlResponse.permit();
 		}
+		if (ressurs.getTema() == Tema.UKJ){
+			return XacmlResponse.permit();
+		}
 
 		Pep.traceLogPepStarted(PEP2D, ressurs);
 		String tilgangKeyDistributedCaching = KeyGeneratorDistributedCaching.getKeyForPep2d(safRequestContext.getSecurityContext()
 				.getSubjectId(), ressurs.getTema().name());
 		String tilgangKeyLocalCaching = KeyGeneratorLocalCaching.getKeyForPep2d(ressurs.getTema().name());
-		// Ty-catch er fordi redis ikke fungerer lokalt
+		// Try-catch er fordi redis ikke fungerer lokalt
 		try {
 			XacmlResponse response = fetchXacmlResponse(ressurs, safRequestContext, tilgangKeyDistributedCaching);
 			if (response == null) {
