@@ -27,11 +27,10 @@ import org.springframework.stereotype.Component;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-//Todo: Fiks død lenke til ABAC
 /**
  * Dekker følgende policies i saf:
  * <p>
- * https://confluence.adeo.no/pages/viewpage.action?pageId=305352853
+ * https://confluence.adeo.no/pages/viewpage.action?pageId=313329243
  * <p>
  * Lokal caching er kun relevant for dokumentoversiktene og brukes i journalpostMapperDto.java
  *
