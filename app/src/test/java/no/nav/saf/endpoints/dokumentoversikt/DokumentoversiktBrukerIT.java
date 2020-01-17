@@ -475,38 +475,6 @@ public class DokumentoversiktBrukerIT extends AbstractItest {
 	}
 
 	@Test
-	public void shouldGetAuthorizedFromPep2dWithTemaUkjentWhenSaksbehandlerIkkeHarTilgang() throws IOException, URISyntaxException {
-		abacPermit();
-		stubFor(post("/aktoerv2")
-				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
-						.withBodyFile("aktoerV2/hentIdentForAktoerId-happy.xml")));
-		stubFor(post("/sts")
-				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
-						.withBodyFile("sts/sts-happy.xml")));
-		stubFor(get("/gsak?aktoerId=" + AKTOER_ID)
-				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
-						.withHeader(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType())
-						.withBodyFile("gsak/gsak-temaUkjent-happy.json")));
-		stubFor(post("/hentjournalsakinfo/finnjournalposter")
-				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
-						.withHeader(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType())
-						.withBodyFile("joark/finnjournalposter_single_bidragAndSkjerming-happy.json")));
-		stubFor(post("/pensjonsakv1")
-				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
-						.withBodyFile("psak/psak-hentSakSammendragListe-happy-empty.xml")));
-		stubFor(get("/bidrag/654321").willReturn(aResponse().withStatus(HttpStatus.OK.value())
-				.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
-				.withBodyFile("bidrag/bidragsak-happy.json")));
-
-
-		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikBrukerWithAktoerId();
-		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
-
-		assertEquals("429837417", dokumentoversikt.getJournalposter().get(0).getJournalpostId());
-		assertSaksbehandlerHarIkkeTilgang(dokumentoversikt);
-	}
-
-	@Test
 	public void shouldGetUnauthorizedFromPep3() throws IOException, URISyntaxException {
 		abacDenyPep3();
 		stubFor(post("/aktoerv2")
