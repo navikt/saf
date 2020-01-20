@@ -338,6 +338,33 @@ class JournalpostDtoMapperTest {
 	}
 
 	@Test
+	void shouldHaveSaksbehandlerHaveTilgangTrueWhenTemaUkjent() {
+		JournalpostDto journalpostDto = buildJournalpostDtoInngaaendeType();
+		journalpostDto.setFagomrade(FagomradeCode.UKJ);
+
+		String tilgangKeyPep5LocalCaching = KeyGeneratorLocalCaching.getKeyForPep5(String.valueOf(JOURNALPOST_ID), DOKUMENT_INFO_ID);
+		String tilgangKeyPep6dLocalCachingVariantArkiv = KeyGeneratorLocalCaching.getKeyForPep6d(
+				String.valueOf(JOURNALPOST_ID), DOKUMENT_INFO_ID, VARIANT_FORMAT_CODE_ARKIV.getSafVariantformat()
+						.name(), SKJERMING_TYPE_CODE_POL.getSafSkjerming().name());
+		String tilgangKeyPep6dLocalCachingVariantSladdet = KeyGeneratorLocalCaching.getKeyForPep6d(
+				String.valueOf(JOURNALPOST_ID), DOKUMENT_INFO_ID, VARIANT_FORMAT_CODE_SLADDET.getSafVariantformat()
+						.name(), null);
+
+		RequestCache requestCache = new RequestCache();
+		requestCache.putObject(tilgangKeyPep5LocalCaching, Boolean.TRUE);
+		requestCache.putObject(tilgangKeyPep6dLocalCachingVariantArkiv, Boolean.TRUE);
+		requestCache.putObject(tilgangKeyPep6dLocalCachingVariantSladdet, Boolean.TRUE);
+
+		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, requestCache);
+
+		assertThat(journalpost.getDokumenter(), hasSize(1));
+		journalpost.getDokumenter().forEach(dokumentInfo ->
+				dokumentInfo.getDokumentvarianter().forEach(dokumentvariant -> {
+					assertTrue(dokumentvariant.isSaksbehandlerHarTilgang());
+				}));
+	}
+
+	@Test
 	void shouldUseArkivsakTemaWhenSakstilknyttetJournalpost() {
 		JournalpostDto journalpostDto = baseJournalpostDto()
 				.journalposttype(JournalpostTypeCode.I)

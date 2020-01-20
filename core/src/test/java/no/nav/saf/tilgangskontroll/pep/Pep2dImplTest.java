@@ -72,19 +72,6 @@ class Pep2dImplTest extends AbstractPepTest {
 		assertTrue(hasAccess);
 	}
 
-	@Test
-	void shouldAllowIfTemaIsUkjent() {
-		when(abacService.evaluate(any(XacmlRequest.class))).thenReturn(new XacmlResponse(Decision.DENY, null, null, null));
-
-		boolean hasAccess = pep2d.hasAccess(TilgangSak.builder()
-				.aktoerId(AKTOER_ID)
-				.tema(Tema.UKJ)
-				.build(), createSafRequestContext());
-
-		verifyZeroInteractions(abacService);
-		assertTrue(hasAccess);
-	}
-
 	private void assertCommonXacmlRequestResources(XacmlRequest capturedRequest) {
 		assertThat(capturedRequest.getResources(), hasItem(new XacmlAttribute(RESOURCE_FELLES_RESOURCE_TYPE, RESOURCE_SAF_SAK_DOKUMENT)));
 		assertThat(capturedRequest.getResources(), hasItem(new XacmlAttribute(RESOURCE_FELLES_TEMA, TEMA_BID.name())));
