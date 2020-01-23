@@ -1,0 +1,20 @@
+{
+  "NAMESPACE": "default",
+  "ABAC_PDP_ENDPOINT_URL": "https://wasapp.adeo.no/asm-pdp/authorize",
+  "PENSJONSAKRS_V1_URL": "https://wasapp.adeo.no/pensjon-ws/api/pip/hentBrukerOgEnhetstilgangerForSak/v1",
+  "SAK_SAKER_URL": "https://sak.nais.adeo.no/api/v1/saker",
+  "SECURITYTOKENSERVICE_URL": "https://sts.adeo.no/SecurityTokenServiceProvider/",
+  "AKTOER_V2_ENDPOINTURL": "https://app.adeo.no/aktoerregister/ws/Aktoer/v2",
+  "VIRKSOMHET_AKTOER_V2_WSDLURL": "http://maven.adeo.no/nexus/content/groups/public/no/nav/tjenester/fim/nav-fim-aktoer-v2-tjenestespesifikasjon/2.0.1/nav-fim-aktoer-v2-tjenestespesifikasjon-2.0.1.zip",
+  "PENSJON_V1_ENDPOINTURL": "https://wasapp.adeo.no/pensjon-ws/PensjonSak_v1",
+  "PENSJON__PENSJONSAK_V1_WSDLURL": "http://maven.adeo.no/nexus/content/groups/public/no/nav/tjenester/fim/nav-pensjonSak-v1-tjenestespesifikasjon/1.0.0/nav-pensjonSak-v1-tjenestespesifikasjon-1.0.0.zip",
+  "GRAPHIQL_ENABLED": "false",
+  "SWAGGER_ENABLED": "false",
+  "NO_NAV_SECURITY_JWT_ISSUER_AZUREV1_DISCOVERYURL": "https://login.microsoftonline.com/62366534-1ec3-4962-8869-9b5535279d0b/.well-known/openid-configuration",
+  "NO_NAV_SECURITY_JWT_ISSUER_AZUREV2_DISCOVERYURL": "https://login.microsoftonline.com/62366534-1ec3-4962-8869-9b5535279d0b/v2.0/.well-known/openid-configuration",
+  "NO_NAV_SECURITY_JWT_ISSUER_RESTSTS_DISCOVERYURL": "https://security-token-service.nais.adeo.no/rest/v1/sts/.well-known/openid-configuration",
+  "NO_NAV_SECURITY_JWT_ISSUER_OPENAM_DISCOVERYURL": "https://isso.adeo.no:443/isso/oauth2/.well-known/openid-configuration",
+  "INGRESSES": "https://saf.nais.adeo.no",
+  "SRVSAF": "/serviceuser/data/prod/srvsaf",
+  "VAULT_SAF": "/kv/prod/fss/saf/default"
+}

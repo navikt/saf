@@ -1,0 +1,88 @@
+kind: Application
+apiVersion: nais.io/v1alpha1
+metadata:
+  name: saf
+  namespace: {{ NAMESPACE }}
+  labels:
+    team: teamdokumenthandtering
+spec:
+  env:
+    - name: SERVICEUSER_USERNAME
+      value: {{ SERVICEUSER_USERNAME }}
+    - name: ABAC_PDP_ENDPOINT_URL
+      value: {{ ABAC_PDP_ENDPOINT_URL }}
+    - name: PENSJONSAKRS_V1_URL
+      value: {{ PENSJONSAKRS_V1_URL }}
+    - name: SAK_SAKER_URL
+      value: {{ SAK_SAKER_URL }}
+    - name: SECURITYTOKENSERVICE_URL
+      value: {{ SECURITYTOKENSERVICE_URL }}
+    - name: VIRKSOMHET_AKTOER_V2_SECURITYTOKEN
+      value: "SAML"
+    - name: AKTOER_V2_ENDPOINTURL
+      value: {{ AKTOER_V2_ENDPOINTURL }}
+    - name: VIRKSOMHET_AKTOER_V2_WSDLURL
+      value: {{ VIRKSOMHET_AKTOER_V2_WSDLURL }}
+    - name: PENSJON__PENSJONSAK_V1_SECURITYTOKEN
+      value: "SAML"
+    - name: PENSJON_V1_ENDPOINTURL
+      value: {{ PENSJON_V1_ENDPOINTURL }}
+    - name: PENSJON__PENSJONSAK_V1_WSDLURL
+      value: {{ PENSJON__PENSJONSAK_V1_WSDLURL }}
+    - name: NO_NAV_SECURITY_JWT_ISSUER_AZUREV1_ACCEPTED_AUDIENCE
+      value: {{ NO_NAV_SECURITY_JWT_ISSUER_AZUREV1_ACCEPTED_AUDIENCE }}
+    - name: NO_NAV_SECURITY_JWT_ISSUER_AZUREV2_ACCEPTED_AUDIENCE
+      value: {{ NO_NAV_SECURITY_JWT_ISSUER_AZUREV2_ACCEPTED_AUDIENCE }}
+    - name: NO_NAV_SECURITY_JWT_ISSUER_OPENAM_ACCEPTED_AUDIENCE
+      value: {{ NO_NAV_SECURITY_JWT_ISSUER_OPENAM_ACCEPTED_AUDIENCE }}
+    - name: NO_NAV_SECURITY_JWT_ISSUER_RESTSTS_ACCEPTED_AUDIENCE
+      value: {{ NO_NAV_SECURITY_JWT_ISSUER_RESTSTS_ACCEPTED_AUDIENCE }}
+    - name: GRAPHIQL_ENABLED
+      value: "{{ GRAPHIQL_ENABLED }}"
+    - name: SWAGGER_ENABLED
+      value: "{{ SWAGGER_ENABLED }}"
+    - name: NO_NAV_SECURITY_JWT_ISSUER_AZUREV1_DISCOVERYURL
+      value: {{ NO_NAV_SECURITY_JWT_ISSUER_AZUREV1_DISCOVERYURL }}
+    - name: NO_NAV_SECURITY_JWT_ISSUER_AZUREV2_DISCOVERYURL
+      value: {{ NO_NAV_SECURITY_JWT_ISSUER_AZUREV2_DISCOVERYURL }}
+    - name: NO_NAV_SECURITY_JWT_ISSUER_RESTSTS_DISCOVERYURL
+      value: {{ NO_NAV_SECURITY_JWT_ISSUER_RESTSTS_DISCOVERYURL }}
+    - name: NO_NAV_SECURITY_JWT_ISSUER_OPENAM_DISCOVERYURL
+      value: {{ NO_NAV_SECURITY_JWT_ISSUER_OPENAM_DISCOVERYURL }}
+  image: {{ image }}
+  ingresses:
+    {{#each INGRESSES}}
+      - {{this }}
+    {{/each}}
+  liveness:
+    path: /isAlive
+    port: 8080
+    initialDelay: 30
+    failureThreshold: 10
+  port: 8080
+  prometheus:
+    enabled: true
+    path: /actuator/prometheus
+  readiness:
+    path: /isReady
+    port: 8080
+    initialDelay: 30
+    timeout: 3
+  replicas:
+    min: 2
+    max: 8
+    cpuThresholdPercentage: 50
+  resources:
+    limits:
+      cpu: 2000m
+      memory: 2048Mi
+    requests:
+      memory: 1280Mi
+  vault:
+    enabled: true
+    paths:
+      - kvPath: {{ SRVSAF }}
+        mountPath: /var/run/secrets/nais.io/srvsaf
+      - kvPath: {{ VAULT_SAF }}
+        mountPath: /var/run/secrets/nais.io/vault
+  webproxy: true
