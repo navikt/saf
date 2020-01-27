@@ -74,7 +74,7 @@ spec:
     enabled: true
     paths:
       - kvPath: {{ SRVSAF }}
-        mountPath: /var/run/secrets/nais.io/srvsaf
+        mountPath: "/secrets/serviceuser/srvsaf"
       - kvPath: {{ VAULT_SAF }}
-        mountPath: /var/run/secrets/nais.io/vault
+        mountPath: "/var/run/secrets/nais.io/vault"
   webproxy: true
