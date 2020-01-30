@@ -1,6 +1,6 @@
 naisPipeline {
     applicationName = "saf"
     javaVersion = "11"
-    dockerfileDir = "./app"
+    dockerfileDir = "."
     deployEnvironmentQ = "q1"
 }
