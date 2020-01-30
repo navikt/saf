@@ -49,9 +49,9 @@ spec:
       value: {{ NO_NAV_SECURITY_JWT_ISSUER_RESTSTS_ACCEPTED_AUDIENCE }}
   image: {{ image }}
   ingresses:
-    {{#each INGRESSES}}
-      - {{this }}
-    {{/each}}
+   {{#each INGRESSES}}
+    - {{ this }}
+   {{/each}}
   liveness:
     path: /isAlive
     port: 8080
