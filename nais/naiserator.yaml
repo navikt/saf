@@ -7,8 +7,6 @@ metadata:
     team: teamdokumenthandtering
 spec:
   env:
-    - name: SERVICEUSER_USERNAME
-      value: {{ SERVICEUSER_USERNAME }}
     - name: ABAC_PDP_ENDPOINT_URL
       value: {{ ABAC_PDP_ENDPOINT_URL }}
     - name: PENSJONSAKRS_V1_URL
