@@ -1,0 +1,23 @@
+{
+  "NAMESPACE": "q2",
+  "ABAC_PDP_ENDPOINT_URL": "https://wasapp-q2.adeo.no/asm-pdp/authorize",
+  "PENSJONSAKRS_V1_URL": "https://wasapp-q2.adeo.no/pensjon-ws/api/pip/hentBrukerOgEnhetstilgangerForSak/v1",
+  "SAK_SAKER_URL": "https://sak-q2.nais.preprod.local/api/v1/saker",
+  "SECURITYTOKENSERVICE_URL": "https://sts-q2.preprod.local/SecurityTokenServiceProvider/",
+  "AKTOER_V2_ENDPOINTURL": "https://app-q2.adeo.no/aktoerregister/ws/Aktoer/v2",
+  "PENSJON_V1_ENDPOINTURL": "https://wasapp-q2.adeo.no/pensjon-ws/PensjonSak_v1",
+  "GRAPHIQL_ENABLED": "true",
+  "SWAGGER_ENABLED": "true",
+  "NO_NAV_SECURITY_JWT_ISSUER_AZUREV1_DISCOVERYURL": "https://login.microsoftonline.com/966ac572-f5b7-4bbe-aa88-c76419c0f851/.well-known/openid-configuration",
+  "NO_NAV_SECURITY_JWT_ISSUER_AZUREV2_DISCOVERYURL": "https://login.microsoftonline.com/966ac572-f5b7-4bbe-aa88-c76419c0f851/v2.0/.well-known/openid-configuration",
+  "NO_NAV_SECURITY_JWT_ISSUER_RESTSTS_DISCOVERYURL": "https://security-token-service.nais.preprod.local/rest/v1/sts/.well-known/openid-configuration",
+  "NO_NAV_SECURITY_JWT_ISSUER_OPENAM_DISCOVERYURL": "https://isso-q.adeo.no:443/isso/oauth2/.well-known/openid-configuration",
+  "INGRESSES": ["https://saf-q2.nais.preprod.local"],
+  "SRVSAF": "/serviceuser/data/dev/srvsaf",
+  "NO_NAV_SECURITY_JWT_ISSUER_AZUREV1_ACCEPTED_AUDIENCE": "38e07d31-659d-4595-939a-f18dce3446c5",
+  "NO_NAV_SECURITY_JWT_ISSUER_AZUREV2_ACCEPTED_AUDIENCE": "c7adbfbb-1b1e-41f6-9b7a-af9627c04998,c91c511f-311f-4d56-b7f0-7eda352ce4ae",
+  "NO_NAV_SECURITY_JWT_ISSUER_OPENAM_ACCEPTED_AUDIENCE": "gosys-dokument-auth-proxy-q2,gosys-localhost,gosys-nais-q2,joarkadmin-localhost,joarkadmin-q2,modiabrukerdialog-q2,veilarblogin-q2,ida-q,eessi-pensjon-frontend-api-fss-q2,gosys-dokument-auth-proxy-q2,eux-helloeu-app-q2",
+  "NO_NAV_SECURITY_JWT_ISSUER_RESTSTS_ACCEPTED_AUDIENCE": "srvPensjon,srvdagpenger-joark,srvdp-graphql,srvinfotrygd-joark,srvjfr-manuell-opp,srvsyfosmpapirmottak,srveux-app,srvdokdisteformidl,srvdokdistfordeling,srvmelosys,srvfamilie-ks-opps",
+  "BIDRAG_SAK_URL": "https://bidrag-sak.nais.preprod.local/bidrag-sak/pip/sak/",
+  "HENTJOURNALSAKINFO_URL": "https://dokarkiv-q2.nais.preprod.local/hentjournalsakinfo"
+}
