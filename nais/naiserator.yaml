@@ -17,12 +17,8 @@ spec:
       value: {{ SECURITYTOKENSERVICE_URL }}
     - name: AKTOER_V2_ENDPOINTURL
       value: {{ AKTOER_V2_ENDPOINTURL }}
-    - name: VIRKSOMHET_AKTOER_V2_WSDLURL
-      value: {{ VIRKSOMHET_AKTOER_V2_WSDLURL }}
     - name: PENSJON_V1_ENDPOINTURL
       value: {{ PENSJON_V1_ENDPOINTURL }}
-    - name: PENSJON__PENSJONSAK_V1_WSDLURL
-      value: {{ PENSJON__PENSJONSAK_V1_WSDLURL }}
     - name: GRAPHIQL_ENABLED
       value: "{{ GRAPHIQL_ENABLED }}"
     - name: SWAGGER_ENABLED
