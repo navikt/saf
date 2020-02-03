@@ -17,5 +17,7 @@
   "NO_NAV_SECURITY_JWT_ISSUER_AZUREV1_ACCEPTED_AUDIENCE": "9b4e07a3-4f4c-4bab-b866-87f62dff480d",
   "NO_NAV_SECURITY_JWT_ISSUER_AZUREV2_ACCEPTED_AUDIENCE": "dummy",
   "NO_NAV_SECURITY_JWT_ISSUER_OPENAM_ACCEPTED_AUDIENCE": "veilarblogin-p,modiabrukerdialog-p,eessi-pensjon-frontend-api-fss-p,fplos-p,fpsak-frontend-p,gosys-nais-p,joarkadmin-p,eux-helloeu-app-p",
-  "NO_NAV_SECURITY_JWT_ISSUER_RESTSTS_ACCEPTED_AUDIENCE": "srvdagpenger-joark,srvdokdisteformidl,srvdokdistfordeling,srveux-app,srvfamilie-ks-opps,srvfamilie-ks-mottak,srvjfr-manuell-opp,srvpensr,srvsyfosmpapirmottak,srvmelosys"
+  "NO_NAV_SECURITY_JWT_ISSUER_RESTSTS_ACCEPTED_AUDIENCE": "srvdagpenger-joark,srvdokdisteformidl,srvdokdistfordeling,srveux-app,srvfamilie-ks-opps,srvfamilie-ks-mottak,srvjfr-manuell-opp,srvpensr,srvsyfosmpapirmottak,srvmelosys",
+  "BIDRAG_SAK_URL": "https://bidrag-sak.nais.adeo.no/bidrag-sak/pip/sak/",
+  "HENTJOURNALSAKINFO_URL": "https://dokarkiv.nais.adeo.no/hentjournalsakinfo"
 }
