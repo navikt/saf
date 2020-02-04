@@ -1,4 +1,4 @@
-naisPipeline {
+naiseratorPipeline {
     applicationName = "saf"
     javaVersion = "11"
     dockerfileDir = "."
