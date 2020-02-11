@@ -415,12 +415,12 @@ public class JournalpostDtoMapper {
 	}
 
 	private boolean determineSaksbehandlerTilgang(Journalpost journalpost, DokumentInfoDto dokumentInfoDto, VariantDto variantDto, RequestCache requestCache) {
-		if (journalpost.getJournalstatus() == Journalstatus.MOTTATT) {
+		if (journalpost.getJournalstatus() == Journalstatus.MOTTATT || journalpost.getSak() == null) {
 			// Midlertidige journalposter skal ikke ha tilgangskontroll på tema. Her skal saksbehandler ha tilgang uansett.
 			// https://jira.adeo.no/browse/MMA-2494
 			return getDecisionFromPep6d(journalpost.getJournalpostId(), dokumentInfoDto.getDokumentInfoId(), variantDto, requestCache);
 		} else if (journalpost.getTema() == Tema.UKJ) {
-			// Når tema=UKJ skal saksbehandler har tilgang, dvs. Pep2d skal bestemme noe for saksbehandlerTilgang.
+			// Når tema=UKJ skal saksbehandler ha tilgang. Kun Pep6d skal bestemme saksbehandlerHarTilgang.
 			// https://jira.adeo.no/browse/MMA-3992
 			return getDecisionFromPep6d(journalpost.getJournalpostId(), dokumentInfoDto.getDokumentInfoId(), variantDto, requestCache);
 		} else {
