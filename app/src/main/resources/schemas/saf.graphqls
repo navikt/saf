@@ -270,6 +270,10 @@ type Journalpost {
     # Antall ganger brevet har vært forsøkt sendt til bruker og deretter kommet i retur til NAV. Vil kun være satt for utgående forsendelser.
     antallRetur: String
 
+    # Brukes for sporing og feilsøking på tvers av systemer.
+    # Eksempler på eksternReferanseId kan være sykmeldingsId for sykmeldinger, Altinn ArchiveReference for Altinn-skjema eller SEDid for SED.
+    eksternReferanseId: String
+
     # Liste over fagspesifikke metadata som er tilknyttet journalpost.
     tilleggsopplysninger: [Tilleggsopplysning]
 
