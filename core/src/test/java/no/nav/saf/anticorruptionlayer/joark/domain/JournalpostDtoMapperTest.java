@@ -113,6 +113,7 @@ class JournalpostDtoMapperTest {
 	private static final String BRUKER_ID_PERSON = "***gammelt_fnr***";
 	private static final String BRUKER_ID_ORGANISASJON = "999999999";
 	private static final String ANTALL_RETUR = "3";
+	private static final String KANAL_REFERANSE_ID = "KANAL REFERANSE ID";
 
 	private final JournalpostDtoMapper mapper = new JournalpostDtoMapper();
 
@@ -627,6 +628,7 @@ class JournalpostDtoMapperTest {
 
 		assertEquals(Dokumentstatus.FERDIGSTILT, dokumentInfo1.getDokumentstatus());
 		assertEquals(AKTOER_ID, journalpost.getBruker().getId());
+		assertEquals(KANAL_REFERANSE_ID, journalpost.getEksternReferanseId());
 	}
 
 	private RequestCache createArkivsakCacheRequestCache() {
@@ -768,6 +770,7 @@ class JournalpostDtoMapperTest {
 				.datoOpprettet(DATO_OPPRETTET)
 				.journalstatus(JournalStatusCode.J)
 				.skjerming(SKJERMING_TYPE_CODE_POL)
+				.kanalReferanseId(KANAL_REFERANSE_ID)
 				.tilleggsopplysninger(Collections.singletonList(TilleggsopplysningDto.builder()
 						.nokkel(TILLEGGSOPPLYSNING_NOKKEL)
 						.verdi(TILLEGGSOPPLYSNING_VERDI)

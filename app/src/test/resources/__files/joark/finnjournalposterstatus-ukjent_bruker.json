@@ -34,6 +34,7 @@
       "ekspedertDato": null,
       "skjerming": null,
       "antallRetur": null,
+      "kanalReferanseId": "KANAL REFERANSE ID",
       "tilleggsopplysninger": [],
       "dokumenter": [
         {
@@ -98,6 +99,7 @@
       "ekspedertDato": null,
       "skjerming": null,
       "antallRetur": null,
+      "kanalReferanseId": "KANAL REFERANSE ID",
       "tilleggsopplysninger": [],
       "dokumenter": [
         {
@@ -157,6 +159,7 @@
       "ekspedertDato": null,
       "skjerming": null,
       "antallRetur": null,
+      "kanalReferanseId": "KANAL REFERANSE ID",
       "tilleggsopplysninger": [],
       "dokumenter": [
         {
@@ -220,6 +223,7 @@
       "ekspedertDato": null,
       "skjerming": null,
       "antallRetur": null,
+      "kanalReferanseId": "KANAL REFERANSE ID",
       "tilleggsopplysninger": [],
       "dokumenter": [
         {
@@ -279,6 +283,7 @@
       "ekspedertDato": null,
       "skjerming": "POL",
       "antallRetur": null,
+      "kanalReferanseId": "KANAL REFERANSE ID",
       "tilleggsopplysninger": [],
       "dokumenter": [
         {

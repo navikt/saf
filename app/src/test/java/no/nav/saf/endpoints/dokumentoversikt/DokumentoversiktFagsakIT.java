@@ -42,6 +42,7 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 
 	private static final String FAGSAK_ID = "***gammelt_fnr***59";
 	private static final String FAGSAK_SYSTEM = "AO01";
+	private static final String KANAL_REFERANSE_ID = "KANAL REFERANSE ID";
 
 	private ObjectMapper objectMapper = new ObjectMapper();
 
@@ -70,6 +71,9 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 		assertEquals("429837417", dokumentoversikt.getJournalposter().get(0).getJournalpostId());
 		assertEquals("429837329", dokumentoversikt.getJournalposter().get(1).getJournalpostId());
 		assertEquals("429812815", dokumentoversikt.getJournalposter().get(2).getJournalpostId());
+		assertEquals(KANAL_REFERANSE_ID, dokumentoversikt.getJournalposter().get(0).getEksternReferanseId());
+		assertEquals(KANAL_REFERANSE_ID, dokumentoversikt.getJournalposter().get(1).getEksternReferanseId());
+		assertEquals(KANAL_REFERANSE_ID, dokumentoversikt.getJournalposter().get(2).getEksternReferanseId());
 
 		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter")).withRequestBody(matchingJsonPath("$.gsakSakIds", containing("119185782"))));
 	}
@@ -103,6 +107,9 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 		assertEquals("429837417", dokumentoversikt.getJournalposter().get(0).getJournalpostId());
 		assertEquals("429837329", dokumentoversikt.getJournalposter().get(1).getJournalpostId());
 		assertEquals("429812815", dokumentoversikt.getJournalposter().get(2).getJournalpostId());
+		assertEquals(KANAL_REFERANSE_ID, dokumentoversikt.getJournalposter().get(0).getEksternReferanseId());
+		assertEquals(KANAL_REFERANSE_ID, dokumentoversikt.getJournalposter().get(1).getEksternReferanseId());
+		assertEquals(KANAL_REFERANSE_ID, dokumentoversikt.getJournalposter().get(2).getEksternReferanseId());
 
 		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter")).withRequestBody(matchingJsonPath("$.psakSakIds", containing("21998969"))));
 	}
@@ -130,6 +137,7 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 
 		assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
 		assertEquals("429837417", dokumentoversikt.getJournalposter().get(0).getJournalpostId());
+		assertEquals(KANAL_REFERANSE_ID, dokumentoversikt.getJournalposter().get(0).getEksternReferanseId());
 	}
 
 	@Test
