@@ -103,6 +103,7 @@ class JournalpostIT extends AbstractItest {
 		assertThat(journalpost.getRelevanteDatoer().get(0).getDatotype(), is(Datotype.DATO_EKSPEDERT));
 		assertThat(journalpost.getTilleggsopplysninger().get(0).getNokkel(), is("min_nokkel"));
 		assertThat(journalpost.getTilleggsopplysninger().get(0).getVerdi(), is("min_verdi"));
+		assertThat(journalpost.getEksternReferanseId(), is("KANAL REFERANSE ID"));
 		DokumentInfo dokumentInfo1 = journalpost.getDokumenter().get(0);
 		assertThat(dokumentInfo1.getDokumentInfoId(), is("500000000"));
 		assertThat(dokumentInfo1.getTittel(), is("Dokument1"));

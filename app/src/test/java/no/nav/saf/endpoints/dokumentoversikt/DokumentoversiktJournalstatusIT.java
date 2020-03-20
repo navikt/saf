@@ -36,6 +36,8 @@ import java.util.Map;
  */
 public class DokumentoversiktJournalstatusIT extends AbstractItest {
 
+	private static final String KANAL_REFERANSE_ID = "KANAL REFERANSE ID";
+
 	private ObjectMapper objectMapper = new ObjectMapper();
 
 	@Test
@@ -60,6 +62,10 @@ public class DokumentoversiktJournalstatusIT extends AbstractItest {
 		assertEquals(Journalstatus.UKJENT_BRUKER, dokumentoversikt.getJournalposter().get(2).getJournalstatus());
 		assertEquals("452929051", dokumentoversikt.getJournalposter().get(3).getJournalpostId());
 		assertEquals(Journalstatus.UKJENT_BRUKER, dokumentoversikt.getJournalposter().get(3).getJournalstatus());
+		assertEquals(KANAL_REFERANSE_ID, dokumentoversikt.getJournalposter().get(0).getEksternReferanseId());
+		assertEquals(KANAL_REFERANSE_ID, dokumentoversikt.getJournalposter().get(1).getEksternReferanseId());
+		assertEquals(KANAL_REFERANSE_ID, dokumentoversikt.getJournalposter().get(2).getEksternReferanseId());
+		assertEquals(KANAL_REFERANSE_ID, dokumentoversikt.getJournalposter().get(3).getEksternReferanseId());
 
 		assertEquals(base64("452929051"), dokumentoversikt.getSideInfo().getSluttpeker());
 		assertTrue(dokumentoversikt.getSideInfo().isFinnesNesteSide());
@@ -93,6 +99,11 @@ public class DokumentoversiktJournalstatusIT extends AbstractItest {
 		assertEquals(Journalstatus.UTGAAR, dokumentoversikt.getJournalposter().get(3).getJournalstatus());
 		assertEquals("453375495", dokumentoversikt.getJournalposter().get(4).getJournalpostId());
 		assertEquals(Journalstatus.UTGAAR, dokumentoversikt.getJournalposter().get(4).getJournalstatus());
+		assertEquals(KANAL_REFERANSE_ID, dokumentoversikt.getJournalposter().get(0).getEksternReferanseId());
+		assertEquals(KANAL_REFERANSE_ID, dokumentoversikt.getJournalposter().get(1).getEksternReferanseId());
+		assertEquals(KANAL_REFERANSE_ID, dokumentoversikt.getJournalposter().get(2).getEksternReferanseId());
+		assertEquals(KANAL_REFERANSE_ID, dokumentoversikt.getJournalposter().get(3).getEksternReferanseId());
+		assertEquals(KANAL_REFERANSE_ID, dokumentoversikt.getJournalposter().get(4).getEksternReferanseId());
 
 		assertEquals(base64("453375495"), dokumentoversikt.getSideInfo().getSluttpeker());
 		assertTrue(dokumentoversikt.getSideInfo().isFinnesNesteSide());

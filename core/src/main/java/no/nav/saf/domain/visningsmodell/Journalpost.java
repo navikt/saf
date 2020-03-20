@@ -63,6 +63,7 @@ public class Journalpost {
 	@Builder.Default
 	private final List<RelevantDato> relevanteDatoer = new ArrayList<>();
 	private final String antallRetur;
+	private final String eksternReferanseId;
 	@Builder.Default
 	private final List<Tilleggsopplysning> tilleggsopplysninger = new ArrayList<>();
 	@Builder.Default

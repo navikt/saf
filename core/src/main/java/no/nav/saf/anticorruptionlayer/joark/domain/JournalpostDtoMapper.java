@@ -91,6 +91,7 @@ public class JournalpostDtoMapper {
 				.relevanteDatoer(mapRelevanteDatoer(journalpostDto))
 				.tilleggsopplysninger(mapTilleggsopplysninger(journalpostDto))
 				.antallRetur(mapAntallRetur(journalpostDto))
+				.eksternReferanseId(journalpostDto.getKanalReferanseId())
 				.build();
 		List<DokumentInfo> dokumenter = journalpostDto.getDokumenter().stream()
 				.filter(dokumentInfoDto -> shouldMapDokumentInfo(journalpostId, dokumentInfoDto.getDokumentInfoId(), requestCache))

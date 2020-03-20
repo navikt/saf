@@ -43,6 +43,7 @@ public class DokumentoversiktBrukerIT extends AbstractItest {
 	private static final String AKTOER_ID = "***gammelt_fnr***59";
 	private static final String FNR = "***gammelt_fnr***";
 	private static final String ORG_NR = "201545004";
+	private static final String KANAL_REFERANSE_ID = "KANAL REFERANSE ID";
 
 	private ObjectMapper objectMapper = new ObjectMapper();
 
@@ -74,6 +75,9 @@ public class DokumentoversiktBrukerIT extends AbstractItest {
 		assertEquals("429837417", dokumentoversikt.getJournalposter().get(0).getJournalpostId());
 		assertEquals("429837329", dokumentoversikt.getJournalposter().get(1).getJournalpostId());
 		assertEquals("429812815", dokumentoversikt.getJournalposter().get(2).getJournalpostId());
+		assertEquals(KANAL_REFERANSE_ID, dokumentoversikt.getJournalposter().get(0).getEksternReferanseId());
+		assertEquals(KANAL_REFERANSE_ID, dokumentoversikt.getJournalposter().get(1).getEksternReferanseId());
+		assertEquals(KANAL_REFERANSE_ID, dokumentoversikt.getJournalposter().get(2).getEksternReferanseId());
 		assertSaksbehandlerHarTilgang(dokumentoversikt);
 		verify(postRequestedFor(urlEqualTo("/aktoerv2")).withRequestBody(matchingXPath("//aktoerId/text()", equalTo(AKTOER_ID))));
 		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter"))
@@ -110,6 +114,9 @@ public class DokumentoversiktBrukerIT extends AbstractItest {
 		assertEquals("429837417", dokumentoversikt.getJournalposter().get(0).getJournalpostId());
 		assertEquals("429837329", dokumentoversikt.getJournalposter().get(1).getJournalpostId());
 		assertEquals("429812815", dokumentoversikt.getJournalposter().get(2).getJournalpostId());
+		assertEquals(KANAL_REFERANSE_ID, dokumentoversikt.getJournalposter().get(0).getEksternReferanseId());
+		assertEquals(KANAL_REFERANSE_ID, dokumentoversikt.getJournalposter().get(1).getEksternReferanseId());
+		assertEquals(KANAL_REFERANSE_ID, dokumentoversikt.getJournalposter().get(2).getEksternReferanseId());
 		assertSaksbehandlerHarTilgang(dokumentoversikt);
 		verify(postRequestedFor(urlEqualTo("/aktoerv2")).withRequestBody(matchingXPath("//ident/text()", equalTo(FNR))));
 		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter"))
@@ -138,6 +145,7 @@ public class DokumentoversiktBrukerIT extends AbstractItest {
 
 		assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
 		assertEquals("429837417", dokumentoversikt.getJournalposter().get(0).getJournalpostId());
+		assertEquals(KANAL_REFERANSE_ID, dokumentoversikt.getJournalposter().get(0).getEksternReferanseId());
 		assertSaksbehandlerHarTilgang(dokumentoversikt);
 		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter")).withRequestBody(matchingJsonPath("$.gsakSakIds", containing("135695442"))));
 		verify(0, postRequestedFor(urlEqualTo("/aktoerv2")));

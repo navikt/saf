@@ -38,6 +38,7 @@
       "ekspedertDato": null,
       "skjerming": null,
       "antallRetur": null,
+      "kanalReferanseId": "KANAL REFERANSE ID",
       "tilleggsopplysninger": [
         {
           "nokkel": "ForsendelseMottakId",
@@ -102,6 +103,7 @@
       "ekspedertDato": null,
       "skjerming": null,
       "antallRetur": null,
+      "kanalReferanseId": "KANAL REFERANSE ID",
       "tilleggsopplysninger": [],
       "dokumenter": [
         {
@@ -165,6 +167,7 @@
       "ekspedertDato": null,
       "skjerming": null,
       "antallRetur": null,
+      "kanalReferanseId": "KANAL REFERANSE ID",
       "tilleggsopplysninger": [],
       "dokumenter": [
         {
@@ -228,6 +231,7 @@
       "ekspedertDato": null,
       "skjerming": null,
       "antallRetur": null,
+      "kanalReferanseId": "KANAL REFERANSE ID",
       "tilleggsopplysninger": [],
       "dokumenter": [
         {
@@ -291,6 +295,7 @@
       "ekspedertDato": null,
       "skjerming": null,
       "antallRetur": null,
+      "kanalReferanseId": "KANAL REFERANSE ID",
       "tilleggsopplysninger": [],
       "dokumenter": [
         {

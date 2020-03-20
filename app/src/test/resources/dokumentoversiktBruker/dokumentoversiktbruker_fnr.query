@@ -2,6 +2,7 @@
   dokumentoversiktBruker(brukerId: {id: "***gammelt_fnr***", type: FNR}, foerste: 3) {
     journalposter {
       journalpostId
+      eksternReferanseId
       dokumenter {
         dokumentvarianter {
           saksbehandlerHarTilgang

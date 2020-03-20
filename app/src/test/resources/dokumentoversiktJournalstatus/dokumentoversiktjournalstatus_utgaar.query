@@ -33,6 +33,7 @@
         erLikBruker
       }
       antallRetur
+      eksternReferanseId
       sak {
         arkivsaksnummer
       }
