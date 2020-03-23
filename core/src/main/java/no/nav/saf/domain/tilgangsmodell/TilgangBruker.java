@@ -1,7 +1,5 @@
 package no.nav.saf.domain.tilgangsmodell;
 
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
-
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -11,6 +9,8 @@ import lombok.Value;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 /**
  * @author Joakim Bjørnstad, Jbit AS
@@ -31,7 +31,12 @@ public class TilgangBruker {
 		List<String> tmpAlleIdenter = historiskeIdenter.stream()
 				.map(TilgangIdent::getIdentifikator)
 				.collect(Collectors.toList());
-		tmpAlleIdenter.add(foedselsnr);
+		if(foedselsnr != null) {
+			tmpAlleIdenter.add(foedselsnr);
+		}
+		if(orgnummer != null) {
+			tmpAlleIdenter.add(orgnummer);
+		}
 		return tmpAlleIdenter;
 	}
 
