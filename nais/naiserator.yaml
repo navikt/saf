@@ -64,14 +64,14 @@ spec:
     timeout: 3
   replicas:
     min: 2
-    max: 8
+    max: 10
     cpuThresholdPercentage: 50
   resources:
     limits:
       cpu: 2000m
-      memory: 2048Mi
+      memory: 2560Mi
     requests:
-      memory: 1280Mi
+      memory: 1792Mi
   vault:
     enabled: true
     paths:
