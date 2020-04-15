@@ -578,6 +578,10 @@ enum Kanal {
     # * Brukes for inngående journalposter.
 	SKAN_PEN
 
+    # Forsendelsen er sendt inn på papir og skannet hos Iron Moutain.
+    # * Brukes for inngående, utgående journalposter og notater.
+    SKAN_IM
+
     # Forsendelen er distribuert via integrasjonspunkt for eFormidling til Trygderetten.
     # * Brukes for utgående journalposter.
     TRYGDERETTEN
