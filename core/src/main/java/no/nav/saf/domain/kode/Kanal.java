@@ -14,6 +14,7 @@ public enum Kanal {
 	SDP("Digital postkasse til innbyggere"),
 	SKAN_NETS("Skanning Nets"),
 	SKAN_PEN("Skanning Pensjon"),
+	SKAN_IM("Skanning Iron Mountain"),
 	TRYGDERETTEN("Trygderetten"),
 	HELSENETTET("Helsenettet"),
 	INGEN_DISTRIBUSJON("Ingen distribusjon"),
