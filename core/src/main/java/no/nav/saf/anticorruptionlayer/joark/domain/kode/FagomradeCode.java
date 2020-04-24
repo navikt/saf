@@ -245,7 +245,11 @@ public enum FagomradeCode {
 	/**
 	 * Farskap
 	 */
-	FAR;
+	FAR,
+	/**
+	 * Midlertidig kompensasjonsordning for selvstendig næringsdrivende og frilansere
+	 */
+	FRI;
 
 	// Vennligst se https://jira.adeo.no/browse/MMA-3142
 	// Tema CON har data i joark men temaet skal ikke vises.
