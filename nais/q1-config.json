@@ -16,7 +16,7 @@
   "SRVSAF": "/serviceuser/data/dev/srvsaf",
   "NO_NAV_SECURITY_JWT_ISSUER_AZUREV1_ACCEPTED_AUDIENCE": "38e07d31-659d-4595-939a-f18dce3446c5",
   "NO_NAV_SECURITY_JWT_ISSUER_AZUREV2_ACCEPTED_AUDIENCE": "c7adbfbb-1b1e-41f6-9b7a-af9627c04998,c91c511f-311f-4d56-b7f0-7eda352ce4ae,ebf77c2b-1779-4364-be7a-5e7abc725746,6e2c2c7d-9bc1-45f9-a76c-9d32b489268a",
-  "NO_NAV_SECURITY_JWT_ISSUER_OPENAM_ACCEPTED_AUDIENCE": "gosys-dokument-auth-proxy-q1,gosys-localhost,gosys-nais-q1,gosys-q1,joarkadmin-localhost,joarkadmin-q1,modiabrukerdialog-q1,veilarblogin-q1,ida-q,eessi-pensjon-frontend-api-fss-q1,gosys-dokument-auth-proxy-q1,eux-helloeu-app-q1,k9-fordel-q1,fpfordel-q1",
+  "NO_NAV_SECURITY_JWT_ISSUER_OPENAM_ACCEPTED_AUDIENCE": "gosys-dokument-auth-proxy-q1,gosys-localhost,gosys-nais-q1,gosys-q1,joarkadmin-localhost,joarkadmin-q1,modiabrukerdialog-q1,veilarblogin-q1,ida-q,eessi-pensjon-frontend-api-fss-q1,gosys-dokument-auth-proxy-q1,eux-helloeu-app-q1,k9-fordel-q1,fpfordel-q1,k9-sak-q1",
   "NO_NAV_SECURITY_JWT_ISSUER_RESTSTS_ACCEPTED_AUDIENCE": "srvPensjon,srvdagpenger-joark,srvdp-graphql,srvinfotrygd-joark,srvjfr-manuell-opp,srvjfr-filter,srvsyfosmpapirmottak,srveux-app,srvdokdisteformidl,srvdokdistfordeling,srvmelosys,srvfamilie-ks-opps,srvmedlemskap,srvpensr,srvjfr-automatisk,srvk9formidling,srvk9sak,srvk9klage",
   "BIDRAG_SAK_URL": "https://bidrag-sak-q1.nais.preprod.local/bidrag-sak/pip/sak/",
   "HENTJOURNALSAKINFO_URL": "https://dokarkiv-q1.nais.preprod.local/hentjournalsakinfo"
