@@ -55,6 +55,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.opensaml.xmlsec.signature.J;
 
@@ -545,7 +547,14 @@ class JournalpostDtoMapperTest {
 			assertThat(journalpost.getAvsenderMottaker().getType(), is(AvsenderMottakerIdType.NULL));
 		}
 
+		@Test
+		void shouldMapAvsenderMottakerIdTypeORGNRWhenAvsenderMottakerIdIsOfLength9() {
+			journalpostDto.setAvsenderMottakerId("123456789");
 
+			Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, pep5RequestCache());
+
+			assertThat(journalpost.getAvsenderMottaker().getType(), is(AvsenderMottakerIdType.ORGNR));
+		}
 	}
 
 	@Test
