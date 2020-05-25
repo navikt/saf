@@ -50,9 +50,13 @@ import no.nav.saf.domain.visningsmodell.Journalpost;
 import no.nav.saf.domain.visningsmodell.RelevantDato;
 import no.nav.saf.tilgangskontroll.RequestCache;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.opensaml.xmlsec.signature.J;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -114,6 +118,7 @@ class JournalpostDtoMapperTest {
 	private static final String BRUKER_ID_ORGANISASJON = "999999999";
 	private static final String ANTALL_RETUR = "3";
 	private static final String KANAL_REFERANSE_ID = "KANAL REFERANSE ID";
+	private static final String AVSENDER_MOTTAKER_ID_TSS_ID = "***gammelt_fnr***";
 
 	private final JournalpostDtoMapper mapper = new JournalpostDtoMapper();
 
@@ -508,7 +513,6 @@ class JournalpostDtoMapperTest {
 		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, pep5RequestCache());
 
 		assertThat(journalpost.getAvsenderMottaker().getType(), is(AvsenderMottakerIdType.NULL));
-
 	}
 
 	@Test
@@ -519,6 +523,28 @@ class JournalpostDtoMapperTest {
 		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, pep5RequestCache());
 
 		assertThat(journalpost.getAvsenderMottaker().getType(), is(AvsenderMottakerIdType.FNR));
+	}
+
+	// MMA-4481
+	@Nested
+	@DisplayName("Test mapping når AvsenderMottakerIdType ikke er satt")
+	class AvsenderMottakerIdTypeIsNull {
+		JournalpostDto journalpostDto;
+		@BeforeEach
+		void beforeEach() {
+			journalpostDto = buildJournalpostDtoInngaaendeType();
+			journalpostDto.setAvsenderMottakerIdType(null);
+		}
+
+		@Test
+		void shouldMapAvsenderMottakerIdTypeNullWhenAvsenderMottakerIdIsNull() {
+			journalpostDto.setAvsenderMottakerId(null);
+
+			Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, pep5RequestCache());
+
+			assertThat(journalpost.getAvsenderMottaker().getType(), is(AvsenderMottakerIdType.NULL));
+		}
+
 
 	}
 
