@@ -527,7 +527,6 @@ class JournalpostDtoMapperTest {
 		assertThat(journalpost.getAvsenderMottaker().getType(), is(AvsenderMottakerIdType.FNR));
 	}
 
-	// MMA-4481
 	@Nested
 	@DisplayName("Test mapping når AvsenderMottakerIdType ikke er satt")
 	class AvsenderMottakerIdTypeIsNull {
@@ -554,6 +553,17 @@ class JournalpostDtoMapperTest {
 			Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, pep5RequestCache());
 
 			assertThat(journalpost.getAvsenderMottaker().getType(), is(AvsenderMottakerIdType.ORGNR));
+		}
+
+		@ParameterizedTest
+		@ValueSource(strings = {"0","1","2","3","4","5","6","7"})
+		void shouldMapAvsenderMottakerIdTypeFNRWhenAvsenderMottakerIdIs11DigitsLongAnd1DigitInRange0To7(String input) {
+			String idTailOf10Zeroes = "0000000000";
+			journalpostDto.setAvsenderMottakerId(input + idTailOf10Zeroes);
+
+			Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, pep5RequestCache());
+
+			assertThat(journalpost.getAvsenderMottaker().getType(), is(AvsenderMottakerIdType.FNR));
 		}
 	}
 
