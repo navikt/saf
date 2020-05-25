@@ -579,6 +579,16 @@ class JournalpostDtoMapperTest {
 			assertThat(journalpost.getAvsenderMottaker().getType(), is(AvsenderMottakerIdType.UKJENT));
 		}
 
+		@ParameterizedTest
+		@ValueSource(strings = {"12345", "***gammelt_fnr***23", ""})
+		void shouldMapAvsenderMottakerIdTypeUKJENT(String input) {
+			journalpostDto.setAvsenderMottakerId(input);
+
+			Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, pep5RequestCache());
+
+			assertThat(journalpost.getAvsenderMottaker().getType(), is(AvsenderMottakerIdType.UKJENT));
+		}
+
 	}
 
 	@Test
