@@ -565,6 +565,20 @@ class JournalpostDtoMapperTest {
 
 			assertThat(journalpost.getAvsenderMottaker().getType(), is(AvsenderMottakerIdType.FNR));
 		}
+
+		// https://jira.adeo.no/browse/MMA-4481
+		@ParameterizedTest
+		@ValueSource(strings = {"8","9"})
+		@DisplayName("Test mapping av TSS-id")
+		void shouldMapAvsenderMottakerIdTypeUKJENTWhenAvsenderMottakerIdIs11DigitsLongAndFirstDigitIs8Or9(String input) {
+			String idTailOf10Zeroes = "0000000000";
+			journalpostDto.setAvsenderMottakerId(input + idTailOf10Zeroes);
+
+			Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, pep5RequestCache());
+
+			assertThat(journalpost.getAvsenderMottaker().getType(), is(AvsenderMottakerIdType.UKJENT));
+		}
+
 	}
 
 	@Test
