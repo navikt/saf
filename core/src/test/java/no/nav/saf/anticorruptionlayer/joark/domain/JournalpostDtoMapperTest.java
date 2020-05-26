@@ -120,7 +120,6 @@ class JournalpostDtoMapperTest {
 	private static final String BRUKER_ID_ORGANISASJON = "999999999";
 	private static final String ANTALL_RETUR = "3";
 	private static final String KANAL_REFERANSE_ID = "KANAL REFERANSE ID";
-	private static final String AVSENDER_MOTTAKER_ID_TSS_ID = "***gammelt_fnr***";
 
 	private final JournalpostDtoMapper mapper = new JournalpostDtoMapper();
 
@@ -566,7 +565,7 @@ class JournalpostDtoMapperTest {
 			assertThat(journalpost.getAvsenderMottaker().getType(), is(AvsenderMottakerIdType.FNR));
 		}
 
-		// https://jira.adeo.no/browse/MMA-4481
+		// se https://jira.adeo.no/browse/MMA-4481
 		@ParameterizedTest
 		@ValueSource(strings = {"8","9"})
 		@DisplayName("Test mapping av TSS-id")
