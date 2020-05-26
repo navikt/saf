@@ -565,7 +565,7 @@ class JournalpostDtoMapperTest {
 			assertThat(journalpost.getAvsenderMottaker().getType(), is(AvsenderMottakerIdType.FNR));
 		}
 
-		// se https://jira.adeo.no/browse/MMA-4481
+		// Se https://jira.adeo.no/browse/MMA-4481
 		@ParameterizedTest
 		@ValueSource(strings = {"8","9"})
 		@DisplayName("Test mapping av TSS-id")
