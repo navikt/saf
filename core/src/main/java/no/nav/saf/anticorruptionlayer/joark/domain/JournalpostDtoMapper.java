@@ -40,6 +40,7 @@ import no.nav.saf.domain.visningsmodell.RelevantDato;
 import no.nav.saf.domain.visningsmodell.Sak;
 import no.nav.saf.domain.visningsmodell.Tilleggsopplysning;
 import no.nav.saf.tilgangskontroll.RequestCache;
+import org.apache.commons.lang3.Range;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -240,7 +241,12 @@ public class JournalpostDtoMapper {
 			} else {
 				switch (avsenderMottakerId.length()) {
 					case 11:
-						avsenderMottakerIdType = AvsenderMottakerIdType.FNR;
+						if (validFNR(avsenderMottakerId)) {
+							avsenderMottakerIdType = AvsenderMottakerIdType.FNR;
+						}
+						else {
+							avsenderMottakerIdType = AvsenderMottakerIdType.UKJENT;
+						}
 						break;
 					case 9:
 						avsenderMottakerIdType = AvsenderMottakerIdType.ORGNR;
@@ -253,6 +259,11 @@ public class JournalpostDtoMapper {
 		}
 		return avsenderMottakerIdType;
 
+	}
+
+	private boolean validFNR(String avsenderMottakerId) {
+		int firstDigit = Integer.parseInt(avsenderMottakerId.substring(0, 1));
+		return Range.between(0,7).contains(firstDigit);
 	}
 
 	private boolean mapErLikBruker(String avsenderMottakerId, BrukerDto brukerDto) {
