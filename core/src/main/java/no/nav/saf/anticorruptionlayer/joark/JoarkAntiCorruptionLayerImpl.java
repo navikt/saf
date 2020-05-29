@@ -19,7 +19,7 @@ import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
 import java.time.LocalDate;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -77,7 +77,7 @@ class JoarkAntiCorruptionLayerImpl implements JoarkAntiCorruptionLayer {
 														Integer foerste, String etterPeker) {
 
 		// tidligere validering skal sikre at dette er trygt
-		JournalStatusCode journalStatusCode = safToJoarkJournalstatusMapper.map(Arrays.asList(journalstatus)).get(0);
+		JournalStatusCode journalStatusCode = safToJoarkJournalstatusMapper.map(Collections.singletonList(journalstatus)).get(0);
 
 		FinnJournalposterStatusResponseTo responseTo = hentJournalsakinfo.finnJournalposterStatus(FinnJournalposterStatusRequestTo
 				.builder()

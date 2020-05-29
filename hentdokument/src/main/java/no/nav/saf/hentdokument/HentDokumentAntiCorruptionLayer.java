@@ -1,12 +1,5 @@
 package no.nav.saf.hentdokument;
 
-import static no.nav.saf.anticorruptionlayer.joark.domain.kode.FagsystemCode.FS22;
-import static no.nav.saf.anticorruptionlayer.joark.domain.kode.FagsystemCode.PEN;
-import static no.nav.saf.domain.DomainConstants.ORGANISASJON;
-import static no.nav.saf.domain.DomainConstants.PERSON;
-import static no.nav.saf.domain.DomainConstants.RJOARK901_TILGANG_JOURNALPOST_DTO;
-import static no.nav.saf.util.MimetypeFileextensionMapper.toFileextension;
-
 import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.FagomradeCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.SkjermingTypeCode;
@@ -16,18 +9,15 @@ import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark901.HentTil
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark901.TilgangBrukerDto;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark901.TilgangDokumentInfoDto;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark901.TilgangJournalpostDto;
-import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark901.TilgangSakDto;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark920.HentDokumentResponseTo;
 import no.nav.saf.domain.Arkivsak;
 import no.nav.saf.domain.HentDokument;
 import no.nav.saf.domain.kode.Arkivsakssystem;
-import no.nav.saf.domain.kode.Tema;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.domain.tilgangsmodell.TilgangDokumentInfo;
 import no.nav.saf.domain.tilgangsmodell.TilgangDokumentvariant;
 import no.nav.saf.domain.tilgangsmodell.TilgangJournalpost;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
-import no.nav.saf.domain.visningsmodell.Sak;
 import no.nav.saf.exceptions.SafTechnicalException;
 import no.nav.saf.exceptions.UgyldigArkivsaksystemException;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
@@ -39,6 +29,13 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Collections;
 import java.util.Optional;
+
+import static no.nav.saf.anticorruptionlayer.joark.domain.kode.FagsystemCode.FS22;
+import static no.nav.saf.anticorruptionlayer.joark.domain.kode.FagsystemCode.PEN;
+import static no.nav.saf.domain.DomainConstants.ORGANISASJON;
+import static no.nav.saf.domain.DomainConstants.PERSON;
+import static no.nav.saf.domain.DomainConstants.RJOARK901_TILGANG_JOURNALPOST_DTO;
+import static no.nav.saf.util.MimetypeFileextensionMapper.toFileextension;
 
 /**
  * @author Joakim Bjørnstad, Jbit AS

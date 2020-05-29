@@ -1,17 +1,7 @@
 package no.nav.saf.endpoints;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
-import static com.github.tomakehurst.wiremock.client.WireMock.post;
-import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
-import static com.github.tomakehurst.wiremock.client.WireMock.verify;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import com.github.tomakehurst.wiremock.client.WireMock;
+import com.github.tomakehurst.wiremock.core.Options;
 import com.github.tomakehurst.wiremock.stubbing.Scenario;
 import no.nav.modig.testcertificates.TestCertificates;
 import no.nav.saf.ApplicationConfig;
@@ -37,6 +27,17 @@ import javax.inject.Inject;
 import java.io.IOException;
 import java.util.Base64;
 
+import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.post;
+import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.verify;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 
 /**
  * @author Sigurd Midttun, Visma Consulting.
@@ -44,9 +45,9 @@ import java.util.Base64;
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = {ApplicationConfig.class, TokenGeneratorConfiguration.class, STSTestConfig.class},
 		webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@ActiveProfiles("itest,wiremock")
+@ActiveProfiles(value = {"itest", "wiremock"})
 @ImportAutoConfiguration
-@AutoConfigureWireMock(port = 0)
+@AutoConfigureWireMock(port = Options.DYNAMIC_PORT)
 public abstract class AbstractItest {
 	private static String SCENARIO_ABAC = "state_abac";
 	private static String STATE_PERMIT = "state_permit";
@@ -70,15 +71,16 @@ public abstract class AbstractItest {
 		WireMock.reset();
 		WireMock.resetAllRequests();
 		WireMock.removeAllMappings();
+		WireMock.resetAllScenarios();
 	}
 
-	protected HttpEntity createHttpEntity() {
-		return new HttpEntity(createHeaders());
+	protected HttpEntity<?> createHttpEntity() {
+		return new HttpEntity<>(createHeaders());
 	}
 
 	protected HttpHeaders createHeaders() {
 		HttpHeaders headers = new HttpHeaders();
-		headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+		headers.setContentType(MediaType.APPLICATION_JSON);
 		headers.add(HttpHeaders.AUTHORIZATION, getHeaderToken());
 		return headers;
 	}

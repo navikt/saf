@@ -1,7 +1,5 @@
 package no.nav.saf.swagger;
 
-import static springfox.documentation.builders.PathSelectors.regex;
-
 import com.google.common.collect.Lists;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -22,7 +20,9 @@ import springfox.documentation.swagger.web.UiConfiguration;
 import springfox.documentation.swagger.web.UiConfigurationBuilder;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
-import java.util.Collections;
+import java.util.ArrayList;
+
+import static springfox.documentation.builders.PathSelectors.regex;
 
 /**
  * @author Ugur Alpay Cenar, Visma Consulting.
@@ -78,7 +78,7 @@ public class SwaggerConfig {
 				version,
 				"",
 				new Contact("Team Dokument", "", ""),
-				"", "", Collections.EMPTY_LIST);
+				"", "", new ArrayList<>());
 	}
 
 	private ApiKey apiKey() {

@@ -10,11 +10,9 @@ public enum TilknytningUriParam {
 	SPLITT;
 
 	public static TilknytningUriParam toUriParam(Tilknytning tilknytning) {
-		switch (tilknytning) {
-			case GJENBRUK:
-				return GJENBRUK;
-			default:
-				return GJENBRUK;
+		if (tilknytning == Tilknytning.GJENBRUK) {
+			return GJENBRUK;
 		}
+		return GJENBRUK;
 	}
 }

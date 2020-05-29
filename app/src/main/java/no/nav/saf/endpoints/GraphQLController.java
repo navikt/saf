@@ -1,9 +1,5 @@
 package no.nav.saf.endpoints;
 
-import static no.nav.saf.endpoints.SafHeaders.NAV_CALLID;
-import static no.nav.saf.endpoints.SafHeaders.NAV_CONSUMER_ID;
-import static no.nav.saf.endpoints.SafHeaders.X_CORRELATION_ID;
-
 import graphql.ExecutionInput;
 import graphql.ExecutionResult;
 import graphql.GraphQL;
@@ -34,6 +30,10 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+
+import static no.nav.saf.endpoints.SafHeaders.NAV_CALLID;
+import static no.nav.saf.endpoints.SafHeaders.NAV_CONSUMER_ID;
+import static no.nav.saf.endpoints.SafHeaders.X_CORRELATION_ID;
 
 /**
  * GraphQL endepunktet til applikasjonen.
@@ -67,7 +67,7 @@ public class GraphQLController extends AbstractSafController {
 		this.audienceCounter = audienceCounter;
     }
 
-	@PostMapping(value = "/graphql", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@PostMapping(value = "/graphql", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	@Protected
 	@ResponseBody
 	public Map<String, Object> graphQLRequest(@RequestHeader(value = X_CORRELATION_ID, required = false) String xCorrelationId,

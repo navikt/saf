@@ -20,5 +20,5 @@ public enum Dokumentstatus {
 	/**
 	 * Dokumentet er kassert
 	 */
-	KASSERT;
+	KASSERT
 }
