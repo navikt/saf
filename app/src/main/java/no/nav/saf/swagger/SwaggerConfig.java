@@ -28,61 +28,62 @@ import static springfox.documentation.builders.PathSelectors.regex;
  * @author Ugur Alpay Cenar, Visma Consulting.
  */
 @ConditionalOnProperty(
-		value = {"swagger.enabled"},
-		havingValue = "true"
+        value = {"swagger.enabled"},
+        havingValue = "true"
 )
 @Configuration
 @EnableSwagger2
 public class SwaggerConfig {
 
-	@Value("${APP_VERSION:0.0.0}")
-	private String version;
+    @Value("${APP_VERSION:0.0.0}")
+    private String version;
 
-	@Bean
-	public Docket api() {
-		return new Docket(DocumentationType.SWAGGER_2)
-				.select()
-				.apis(RequestHandlerSelectors.any())
-				.paths(regex("/rest.*"))
-				.build()
-				.useDefaultResponseMessages(false)
-				.apiInfo(apiInfo())
-				.securitySchemes(Lists.newArrayList(apiKey()));
-	}
+    @Bean
+    public Docket api() {
+        return new Docket(DocumentationType.SWAGGER_2)
+                .select()
+                .apis(RequestHandlerSelectors.any())
+                .paths(regex("/rest.*"))
+                .build()
+                .useDefaultResponseMessages(false)
+                .apiInfo(apiInfo())
+                .securitySchemes(Lists.newArrayList(apiKey()));
+    }
 
-	@Bean
-	UiConfiguration uiConfig() {
-		return UiConfigurationBuilder.builder()
-				.deepLinking(true)
-				.displayOperationId(false)
-				.defaultModelsExpandDepth(1)
-				.defaultModelExpandDepth(1)
-				.defaultModelRendering(ModelRendering.EXAMPLE)
-				.displayRequestDuration(false)
-				.docExpansion(DocExpansion.NONE)
-				.filter(false)
-				.maxDisplayedTags(null)
-				.operationsSorter(OperationsSorter.ALPHA)
-				.showExtensions(false)
-				.tagsSorter(TagsSorter.ALPHA)
-				.validatorUrl(null)
-				.build();
-	}
+    @Bean
+    UiConfiguration uiConfig() {
+        return UiConfigurationBuilder.builder()
+                .deepLinking(true)
+                .displayOperationId(false)
+                .defaultModelsExpandDepth(1)
+                .defaultModelExpandDepth(1)
+                .defaultModelRendering(ModelRendering.EXAMPLE)
+                .displayRequestDuration(false)
+                .docExpansion(DocExpansion.NONE)
+                .filter(false)
+                .maxDisplayedTags(null)
+                .operationsSorter(OperationsSorter.ALPHA)
+                .showExtensions(false)
+                .tagsSorter(TagsSorter.ALPHA)
+                .validatorUrl(null)
+                .build();
+    }
 
-	private ApiInfo apiInfo() {
-		return new ApiInfo(
-				"SAF API",
-				"Her dokumenteres tjenestegrensesnittet til sak og arkivfasade (SAF). Til autentisering brukes OIDC-token (JWT via OAuth2.0). " +
-				"Følgende format må brukes i Authorize sitt input-felt \"Value\": <strong> Bearer {token} </strong>. " +
-				"Eksempel på verdi i input-feltet: <strong> Bearer eYdmifml0ejugm </strong>. Et gyldig token kommer til å ha mange flere karakterer enn i eksempelet.",
-				version,
-				"",
-				new Contact("Team Dokument", "", ""),
-				"", "", new ArrayList<>());
-	}
+    private ApiInfo apiInfo() {
+        return new ApiInfo(
+                "SAF REST API",
+                "Her dokumenteres REST tjenestegrensesnittet til sak og arkivfasade (SAF). <br/><br/>" +
+                        "Til autentisering brukes OIDC-token (JWT via OAuth2.0). " + "Følgende format må brukes i Authorize sitt input-felt \"Value\": <strong> Bearer {token} </strong>. " +
+                        "Eksempel på verdi i input-feltet: <strong> Bearer eYdmifml0ejugm </strong>. Et gyldig token kommer til å ha mange flere karakterer enn i eksempelet.<br/><br/>" +
+						"Tokens for manuell test kan hentes fra <a href=\"https://ida.adeo.no/\">IDA</a>. For maskinell test og produksjon kan tokens komme fra Azure V2, NAV REST-STS eller OpenAM.",
+                version,
+                "",
+                new Contact("Team Dokumentløsninger", "https://nav-it.slack.com/archives/C6W9E5GPJ", "teamdokumenthandtering@nav.no"),
+                "", "", new ArrayList<>());
+    }
 
-	private ApiKey apiKey() {
+    private ApiKey apiKey() {
 
-		return new ApiKey("apiKey", HttpHeaders.AUTHORIZATION, "header");
-	}
+        return new ApiKey("apiKey", HttpHeaders.AUTHORIZATION, "header");
+    }
 }
