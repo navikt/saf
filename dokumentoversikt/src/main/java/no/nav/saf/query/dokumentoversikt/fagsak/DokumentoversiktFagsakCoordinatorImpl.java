@@ -1,14 +1,5 @@
 package no.nav.saf.query.dokumentoversikt.fagsak;
 
-import static no.nav.saf.domain.DomainConstants.PEP1G;
-import static no.nav.saf.domain.DomainConstants.PEP2;
-import static no.nav.saf.domain.DomainConstants.PEP2D;
-import static no.nav.saf.domain.DomainConstants.PEP3;
-import static no.nav.saf.domain.DomainConstants.PEP4;
-import static no.nav.saf.domain.DomainConstants.PEP5;
-import static no.nav.saf.domain.DomainConstants.PEP6D;
-import static no.nav.saf.util.MDCUtility.addMdcData;
-
 import io.reactivex.Flowable;
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
@@ -36,6 +27,15 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static no.nav.saf.domain.DomainConstants.PEP1G;
+import static no.nav.saf.domain.DomainConstants.PEP2;
+import static no.nav.saf.domain.DomainConstants.PEP2D;
+import static no.nav.saf.domain.DomainConstants.PEP3;
+import static no.nav.saf.domain.DomainConstants.PEP4;
+import static no.nav.saf.domain.DomainConstants.PEP5;
+import static no.nav.saf.domain.DomainConstants.PEP6D;
+import static no.nav.saf.util.MDCUtility.addMdcData;
 
 /**
  * @author Joakim Bjørnstad, Jbit AS
@@ -128,10 +128,8 @@ class DokumentoversiktFagsakCoordinatorImpl implements DokumentoversiktFagsakCoo
 				.blockingGet();
 
 
-		/**
-		 * Resultat fra pep5 caches lokalt og brukes i JournalpostDtoMapper.java for å filtrere på dokumentinfo-metadata som skal gis til saksbehandler.
-		 * Resultat fra pep6d caches også lokalt og brukes i JournalpostDtoMapper.java. Med bakgrunn i resultat fra pep2d og pep6d settes feltet saksbehandlerHarTilgang=true/false.
-		 **/
+		// Resultat fra pep5 caches lokalt og brukes i JournalpostDtoMapper.java for å filtrere på dokumentinfo-metadata som skal gis til saksbehandler.
+		// Resultat fra pep6d caches også lokalt og brukes i JournalpostDtoMapper.java. Med bakgrunn i resultat fra pep2d og pep6d settes feltet saksbehandlerHarTilgang=true/false.
 		Flowable.fromIterable(filteredTilgangJournalpostList)
 				.parallel(10)
 				.runOn(Schedulers.io())

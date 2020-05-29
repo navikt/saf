@@ -1,9 +1,5 @@
 package no.nav.saf.query.dokumentoversikt.fagsak;
 
-import static no.nav.saf.anticorruptionlayer.pensjonsak.PensjonSakAntiCorruptionLayerImpl.PSAK_FAGSYSTEM;
-import static no.nav.saf.domain.DomainConstants.AKTOER_ID_LIST;
-import static no.nav.saf.domain.DomainConstants.ORGNR_LIST;
-
 import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.anticorruptionlayer.aktoer.AktoerAntiCorruptionLayer;
 import no.nav.saf.anticorruptionlayer.bisys.BisysAntiCorruptionLayer;
@@ -21,11 +17,15 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import static no.nav.saf.anticorruptionlayer.pensjonsak.PensjonSakAntiCorruptionLayerImpl.PSAK_FAGSYSTEM;
+import static no.nav.saf.domain.DomainConstants.AKTOER_ID_LIST;
+import static no.nav.saf.domain.DomainConstants.ORGNR_LIST;
 
 /**
  * @author Joakim Bjørnstad, Jbit AS
@@ -87,7 +87,7 @@ public class DokumentoversiktFagsakTilgangsmodellRepository {
 	private List<TilgangBruker> findTilgangBrukerListForPensjonsakerByFagsakId(FagsakInput fagsakInput) {
 		try {
 			String fnr = pensjonSakAntiCorruptionLayer.findFoedselsnummerBySakId(fagsakInput.getFagsakId());
-			return Arrays.asList(aktoerAntiCorruptionLayer.hentTilgangBrukerByFoedselsnummer(fnr));
+			return Collections.singletonList(aktoerAntiCorruptionLayer.hentTilgangBrukerByFoedselsnummer(fnr));
 		} catch (Exception e) {
 			log.warn("findTilgangBrukerListForPensjonsakerByFagsakId feilet ved oppslag. fagsakInput={}", fagsakInput, e);
 			return new ArrayList<>();

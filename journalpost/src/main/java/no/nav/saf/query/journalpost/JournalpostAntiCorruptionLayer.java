@@ -1,11 +1,5 @@
 package no.nav.saf.query.journalpost;
 
-import static no.nav.saf.anticorruptionlayer.joark.domain.kode.FagsystemCode.FS22;
-import static no.nav.saf.anticorruptionlayer.joark.domain.kode.FagsystemCode.PEN;
-import static no.nav.saf.domain.DomainConstants.ORGANISASJON;
-import static no.nav.saf.domain.DomainConstants.PERSON;
-import static no.nav.saf.domain.DomainConstants.RJOARK902_JOURNALPOST_DTO;
-
 import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.FagomradeCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.FagsystemCode;
@@ -20,7 +14,6 @@ import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.dto.VariantDto;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark902.HentJournalpostResponseTo;
 import no.nav.saf.domain.Arkivsak;
 import no.nav.saf.domain.kode.Arkivsakssystem;
-import no.nav.saf.domain.kode.Tema;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.domain.tilgangsmodell.TilgangDokumentInfo;
 import no.nav.saf.domain.tilgangsmodell.TilgangDokumentvariant;
@@ -35,6 +28,12 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static no.nav.saf.anticorruptionlayer.joark.domain.kode.FagsystemCode.FS22;
+import static no.nav.saf.anticorruptionlayer.joark.domain.kode.FagsystemCode.PEN;
+import static no.nav.saf.domain.DomainConstants.ORGANISASJON;
+import static no.nav.saf.domain.DomainConstants.PERSON;
+import static no.nav.saf.domain.DomainConstants.RJOARK902_JOURNALPOST_DTO;
 
 /**
  * @author Joakim Bjørnstad, Jbit AS
@@ -99,7 +98,7 @@ class JournalpostAntiCorruptionLayer {
 						.build();
 			default:
 				log.warn("Forventet brukerType=(PERSON, ORGANISASJON) for midlertidig journalpost med journalpostId={}. Fikk brukerType={}", tilgangJournalpostDto
-						.getJournalpostId());
+						.getJournalpostId(), tilgangBruker.getBrukerIdType());
 				return null;
 		}
 	}

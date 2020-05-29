@@ -45,7 +45,7 @@
 		<logstash-logback-encoder.version>6.3</logstash-logback-encoder.version>
 		<logback-syslog4j.version>1.0.0</logback-syslog4j.version>
 		<io.springfox.version>2.9.2</io.springfox.version>
-		<commons-text.version>1.6</commons-text.version>
+		<commons-text.version>1.8</commons-text.version>
 		<!-- provided -->
 		<lombok.version>1.18.12</lombok.version>
 		<!-- test -->

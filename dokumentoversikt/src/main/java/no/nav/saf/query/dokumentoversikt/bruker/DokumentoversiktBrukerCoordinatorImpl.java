@@ -1,15 +1,5 @@
 package no.nav.saf.query.dokumentoversikt.bruker;
 
-import static no.nav.saf.domain.DomainConstants.PEP1G;
-import static no.nav.saf.domain.DomainConstants.PEP2;
-import static no.nav.saf.domain.DomainConstants.PEP2D;
-import static no.nav.saf.domain.DomainConstants.PEP3;
-import static no.nav.saf.domain.DomainConstants.PEP4;
-import static no.nav.saf.domain.DomainConstants.PEP5;
-import static no.nav.saf.domain.DomainConstants.PEP6D;
-import static no.nav.saf.domain.DomainConstants.TILGANG_BRUKER;
-import static no.nav.saf.util.MDCUtility.addMdcData;
-
 import io.reactivex.Flowable;
 import io.reactivex.schedulers.Schedulers;
 import lombok.extern.slf4j.Slf4j;
@@ -38,6 +28,16 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static no.nav.saf.domain.DomainConstants.PEP1G;
+import static no.nav.saf.domain.DomainConstants.PEP2;
+import static no.nav.saf.domain.DomainConstants.PEP2D;
+import static no.nav.saf.domain.DomainConstants.PEP3;
+import static no.nav.saf.domain.DomainConstants.PEP4;
+import static no.nav.saf.domain.DomainConstants.PEP5;
+import static no.nav.saf.domain.DomainConstants.PEP6D;
+import static no.nav.saf.domain.DomainConstants.TILGANG_BRUKER;
+import static no.nav.saf.util.MDCUtility.addMdcData;
 
 /**
  * @author Joakim Bjørnstad, Jbit AS
@@ -95,9 +95,7 @@ class DokumentoversiktBrukerCoordinatorImpl implements DokumentoversiktBrukerCoo
 			return Dokumentoversikt.empty();
 		}
 
-		/**
-		 * Resultat fra pep2d caches lokalt og brukes i JournalpostDtoMapper.java. Med bakgrunn i resultat fra pep2d og pep6d settes feltet saksbehandlerHarTilgang=true/false.
-		 **/
+		//  Resultat fra pep2d caches lokalt og brukes i JournalpostDtoMapper.java. Med bakgrunn i resultat fra pep2d og pep6d settes feltet saksbehandlerHarTilgang=true/false.
 		final Flowable<TilgangSak> tilgangSakFlow = dokumentoversiktBrukerTilgangsmodellRepository.findTilgangSaker(tilgangBruker, dokumentoversiktBrukerArguments
 				.getFilters().getTema(), safRequestContext);
 		List<TilgangSak> filteredTilgangSakList = tilgangSakFlow
@@ -125,9 +123,7 @@ class DokumentoversiktBrukerCoordinatorImpl implements DokumentoversiktBrukerCoo
 				safRequestContext
 		);
 
-		/**
-		 * Pep2 og pep2d må utføres på midlertidige journalposter, da disse først dukker opp på bruker-søk i joark i forrige steg.
-		 **/
+		 // Pep2 og pep2d må utføres på midlertidige journalposter, da disse først dukker opp på bruker-søk i joark i forrige steg.
 		final List<TilgangJournalpost> filteredTilgangJournalpostList = Flowable.fromIterable(tilgangJournalposter)
 				.parallel(10)
 				.runOn(Schedulers.io())
@@ -138,10 +134,8 @@ class DokumentoversiktBrukerCoordinatorImpl implements DokumentoversiktBrukerCoo
 				.toList()
 				.blockingGet();
 
-		/**
-		 * Resultat fra pep5 caches lokalt og brukes i JournalpostDtoMapper.java for å filtrere på dokumentinfo-metadata som skal gis til saksbehandler.
-		 * Resultat fra pep6d caches også lokalt og brukes i JournalpostDtoMapper.java. Med bakgrunn i resultat fra pep2d og pep6d settes feltet saksbehandlerHarTilgang=true/false.
-		 **/
+		// Resultat fra pep5 caches lokalt og brukes i JournalpostDtoMapper.java for å filtrere på dokumentinfo-metadata som skal gis til saksbehandler.
+		// Resultat fra pep6d caches også lokalt og brukes i JournalpostDtoMapper.java. Med bakgrunn i resultat fra pep2d og pep6d settes feltet saksbehandlerHarTilgang=true/false.
 		Flowable.fromIterable(filteredTilgangJournalpostList)
 				.parallel(10)
 				.runOn(Schedulers.io())

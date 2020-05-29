@@ -1,21 +1,5 @@
 package no.nav.saf.endpoints.journalpost;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
-import static com.github.tomakehurst.wiremock.client.WireMock.get;
-import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
-import static no.nav.saf.query.journalpost.JournalpostCoordinatorImpl.PEP1G_ERRORMESSAGE;
-import static no.nav.saf.query.journalpost.JournalpostCoordinatorImpl.PEP2_ERRORMESSAGE;
-import static no.nav.saf.query.journalpost.JournalpostCoordinatorImpl.PEP3_ERRORMESSAGE;
-import static no.nav.saf.query.journalpost.JournalpostCoordinatorImpl.PEP4_ERRORMESSAGE;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.CoreMatchers.nullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.hasSize;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import no.nav.saf.domain.kode.Arkivsakssystem;
@@ -44,6 +28,22 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
+
+import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.get;
+import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
+import static no.nav.saf.query.journalpost.JournalpostCoordinatorImpl.PEP1G_ERRORMESSAGE;
+import static no.nav.saf.query.journalpost.JournalpostCoordinatorImpl.PEP2_ERRORMESSAGE;
+import static no.nav.saf.query.journalpost.JournalpostCoordinatorImpl.PEP3_ERRORMESSAGE;
+import static no.nav.saf.query.journalpost.JournalpostCoordinatorImpl.PEP4_ERRORMESSAGE;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.hasSize;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 /**
  * @author Joakim Bjørnstad, Jbit AS
@@ -267,7 +267,7 @@ class JournalpostIT extends AbstractItest {
 		assertFalse(dokumentInfo1.getDokumentvarianter().get(0).isSaksbehandlerHarTilgang());
 	}
 
-	private void assertErrorWithMessage(ResponseEntity<LinkedHashMap> responseEntity, String expectedErrorMessage) throws Exception {
+	private void assertErrorWithMessage(ResponseEntity<LinkedHashMap> responseEntity, String expectedErrorMessage) {
 		Map<String, Object> data = (Map<String, Object>) responseEntity.getBody().get("data");
 		assertThat(data.get("journalpost"), nullValue());
 		assertErrorMessage(responseEntity, expectedErrorMessage);

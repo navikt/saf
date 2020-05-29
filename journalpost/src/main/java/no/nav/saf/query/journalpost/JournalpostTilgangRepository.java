@@ -1,7 +1,6 @@
 package no.nav.saf.query.journalpost;
 
 import no.nav.saf.domain.Arkivsak;
-import no.nav.saf.domain.kode.Arkivsakssystem;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.domain.tilgangsmodell.TilgangJournalpost;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
