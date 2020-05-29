@@ -1,13 +1,5 @@
 package no.nav.saf.hentdokument;
 
-import static no.nav.saf.domain.DomainConstants.PEP1G;
-import static no.nav.saf.domain.DomainConstants.PEP2;
-import static no.nav.saf.domain.DomainConstants.PEP2D;
-import static no.nav.saf.domain.DomainConstants.PEP3;
-import static no.nav.saf.domain.DomainConstants.PEP4;
-import static no.nav.saf.domain.DomainConstants.PEP5;
-import static no.nav.saf.domain.DomainConstants.PEP6D;
-
 import no.nav.saf.domain.Arkivsak;
 import no.nav.saf.domain.HentDokument;
 import no.nav.saf.domain.kode.Journalstatus;
@@ -28,12 +20,35 @@ import org.springframework.stereotype.Component;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import static no.nav.saf.domain.DomainConstants.PEP1G;
+import static no.nav.saf.domain.DomainConstants.PEP2;
+import static no.nav.saf.domain.DomainConstants.PEP2D;
+import static no.nav.saf.domain.DomainConstants.PEP3;
+import static no.nav.saf.domain.DomainConstants.PEP4;
+import static no.nav.saf.domain.DomainConstants.PEP5;
+import static no.nav.saf.domain.DomainConstants.PEP6D;
+
 /**
  * @author Sigurd Midttun, Visma Consulting.
  */
 
 @Component
 public class HentDokumentDomainCoordinatorImpl implements HentDokumentDomainCoordinator {
+	public static final String AARSAK_AVVIST = "Tilgang til dokument ble avvist. ";
+	private static final String PEP1G_DENY_AARSAK = AARSAK_AVVIST +
+			"Saksbehandler eller system har ikke tilgang til dokument tilhørende bruker som har kode 6/7, egen ansatt eller utenfor tillatt geografisk område.";
+	private static final String PEP2_DENY_AARSAK = AARSAK_AVVIST +
+			"Saksbehandler eller system har ikke tilgang til tema dokumentet tilhører eller på grunn av Forvaltningsloven § 19.";
+	private static final String PEP2D_DENY_AARSAK = AARSAK_AVVIST +
+			"Saksbehandler eller system har ikke tilgang til tema dokumentet tilhører eller geografisk område.";
+	private static final String PEP3_DENY_AARSAK = AARSAK_AVVIST +
+			"Saksbehandler eller system har ikke tilgang til dokument der en av partene i bidragssaken har kode6/7 eller egen ansatt.";
+	private static final String PEP4_DENY_AARSAK = AARSAK_AVVIST +
+			"Saksbehandler eller system har ikke tilgang til dokument på grunn av journalposten sin status.";
+	private static final String PEP5_DENY_AARSAK = AARSAK_AVVIST +
+			"Saksbehandler eller system har ikke tilgang til dokument som er skjermet eller begrenset.";
+	private static final String PEP6D_DENY_AARSAK = AARSAK_AVVIST +
+			"Saksbehandler eller system har ikke tilgang til dokument som er skjermet, begrenset eller logisk kassert.";
 
 	private final DokumentRepository dokumentRepository;
 	private final TilgangsmodellHentdokumentRepository tilgangsmodellHentdokumentRepository;
@@ -87,17 +102,17 @@ public class HentDokumentDomainCoordinatorImpl implements HentDokumentDomainCoor
 	private void doTilgangskontroll(String journalpostId, String dokumentInfoId, String variantFormat, TilgangSak tilgangSak, TilgangBruker tilgangBruker, SafRequestContext safRequestContext) {
 		XacmlResponse pep1gResponse = pep1g.verifyAccessXacmlResponse(tilgangBruker, safRequestContext);
 		if (pep1gResponse.isDeny()) {
-			throw new HentdokumentTilgangskontrollException("pep1g", pep1gResponse);
+			throw new HentdokumentTilgangskontrollException(PEP1G_DENY_AARSAK, pep1gResponse);
 		}
 
 		XacmlResponse pep2Response = pep2.verifyAccessXacmlResponse(tilgangSak, safRequestContext);
 		if (pep2Response.isDeny()) {
-			throw new HentdokumentTilgangskontrollException("pep2", pep2Response);
+			throw new HentdokumentTilgangskontrollException(PEP2_DENY_AARSAK, pep2Response);
 		}
 
 		XacmlResponse pep3Response = pep3.verifyAccessXacmlResponse(tilgangSak, safRequestContext);
 		if (pep3Response.isDeny()) {
-			throw new HentdokumentTilgangskontrollException("pep3", pep3Response);
+			throw new HentdokumentTilgangskontrollException(PEP3_DENY_AARSAK, pep3Response);
 		}
 
 		final TilgangJournalpost tilgangJournalpost = tilgangsmodellHentdokumentRepository.findTilgangJournalpostFromSafRequestContext(safRequestContext);
@@ -107,25 +122,25 @@ public class HentDokumentDomainCoordinatorImpl implements HentDokumentDomainCoor
 		if (tilgangJournalpost.getJournalstatus() != Journalstatus.MOTTATT) {
 			XacmlResponse pep2dResponse = pep2d.verifyAccessXacmlResponse(tilgangSak, safRequestContext);
 			if (pep2dResponse.isDeny()) {
-				throw new HentdokumentTilgangskontrollException("pep2d", pep2dResponse);
+				throw new HentdokumentTilgangskontrollException(PEP2D_DENY_AARSAK, pep2dResponse);
 			}
 		}
 
 		XacmlResponse pep4Response = pep4.verifyAccessXacmlResponse(tilgangJournalpost, safRequestContext);
 		if (pep4Response.isDeny()) {
-			throw new HentdokumentTilgangskontrollException("pep4", pep4Response);
+			throw new HentdokumentTilgangskontrollException(PEP4_DENY_AARSAK, pep4Response);
 		}
 
 		XacmlResponse pep5Response = pep5.verifyAccessXacmlResponse(tilgangJournalpost.getDokumenter().get(0), safRequestContext);
 		if (pep5Response.isDeny()) {
-			throw new HentdokumentTilgangskontrollException("pep5", pep5Response);
+			throw new HentdokumentTilgangskontrollException(PEP5_DENY_AARSAK, pep5Response);
 		}
 
 		XacmlResponse pep6dResponse = pep6d.verifyAccessXacmlResponse(tilgangJournalpost.getDokumenter()
 				.get(0).getTilgangDokumentvarianter().get(0), safRequestContext);
 
 		if (pep6dResponse.isDeny()) {
-			throw new HentdokumentTilgangskontrollException("pep6d", pep6dResponse);
+			throw new HentdokumentTilgangskontrollException(PEP6D_DENY_AARSAK, pep6dResponse);
 		}
 	}
 
