@@ -103,12 +103,7 @@ class JournalpostAntiCorruptionLayer {
 		}
 	}
 	public Arkivsak hentArkivsakAndCacheJournalpostDto(String journalpostId, SafRequestContext safRequestContex) { HentJournalpostResponseTo hentJournalpostResponseTo;
-		try {
-			hentJournalpostResponseTo = hentJournalsakinfo.hentJournalpost(journalpostId);
-		} catch (Exception e) {
-			log.warn("Kunne ikke hente journalpost. journalpostId={}", journalpostId, e);
-			return null;
-		}
+		hentJournalpostResponseTo = hentJournalsakinfo.hentJournalpost(journalpostId);
 		JournalpostDto hentJournalpostDto = hentJournalpostResponseTo.getHentJournalpostDto();
 		safRequestContex.getRequestCache().putObject(RJOARK902_JOURNALPOST_DTO, hentJournalpostDto);
 		SaksrelasjonDto saksrelasjon = hentJournalpostDto.getSaksrelasjon();

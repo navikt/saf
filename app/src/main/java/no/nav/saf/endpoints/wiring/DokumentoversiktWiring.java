@@ -13,6 +13,7 @@ import no.nav.saf.domain.kode.Tilknytning;
 import no.nav.saf.domain.visningsmodell.Dokumentoversikt;
 import no.nav.saf.domain.visningsmodell.Journalpost;
 import no.nav.saf.domain.visningsmodell.Sak;
+import no.nav.saf.exceptions.JournalpostIkkeFunnetException;
 import no.nav.saf.exceptions.SafFunctionalException;
 import no.nav.saf.query.dokumentoversikt.DokumentoversiktCoordinator;
 import no.nav.saf.query.dokumentoversikt.bruker.DokumentoversiktBrukerArguments;
@@ -121,15 +122,22 @@ public class DokumentoversiktWiring {
 					}
 				}))
 				.type("Query", typeWiring -> typeWiring.dataFetcher("journalpost", environment -> {
+					final String journalpostId = environment.getArgument("journalpostId");
 					try {
-						final String journalpostId = environment.getArgument("journalpostId");
 						SafRequestContext safRequestContext = environment.getContext();
 						safRequestContext.getSecurityContext().getOidcTokenBody();
 						log.info("query journalpost for journalpostId={}", journalpostId);
 						Journalpost journalpost = journalpostCoordinator.hentJournalpost(journalpostId, safRequestContext);
 						log.info("journalpost hentet for journalpostId={}", journalpostId);
 						return journalpost;
+					} catch (JournalpostIkkeFunnetException e) {
+						log.warn("Fant ikke journalpost i fagarkivet. journalpostId={}", journalpostId, e);
+						return DataFetcherResult.newResult()
+								.data(null)
+								.error(e)
+								.build();
 					} catch (SafFunctionalException e) {
+						log.warn("Kunne ikke hente journalpost. journalpostId={}", journalpostId, e);
 						return DataFetcherResult.newResult()
 								.data(null)
 								.error(e)

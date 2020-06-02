@@ -1,9 +1,5 @@
 package no.nav.saf.exceptionhandler;
 
-import static graphql.Assert.assertNotNull;
-import static java.lang.String.format;
-import static no.nav.saf.exceptionhandler.GraphQLExceptionHandler.isFunctionalException;
-
 import graphql.ErrorType;
 import graphql.GraphQLError;
 import graphql.GraphqlErrorHelper;
@@ -15,6 +11,10 @@ import lombok.ToString;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+
+import static graphql.Assert.assertNotNull;
+import static java.lang.String.format;
+import static no.nav.saf.exceptionhandler.GraphQLExceptionHandler.isFunctionalException;
 
 /**
  * Copy of @ExceptionWhileDataFetching
@@ -49,8 +49,6 @@ public class CustomExceptionWhileDataFetching implements GraphQLError {
         }
         return ExceptionType.TECHNICAL;
     }
-
-
 
     private String mkMessage(ExecutionPath path, Throwable exception) {
         return format("Feilet ved henting av data (%s) : %s", path, exception.getMessage());
