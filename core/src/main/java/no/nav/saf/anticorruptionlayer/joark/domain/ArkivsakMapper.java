@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
  * @author Erik Bråten, Visma Consulting
  */
 @Component
-public class JournalpostDtoToArkivSakMapper {
+public class ArkivsakMapper {
 
 	public Arkivsak map(final JournalpostDto journalpostDto) {
 		if (journalpostDto == null || journalpostDto.getSaksrelasjon() == null) {

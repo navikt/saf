@@ -1,7 +1,7 @@
 package no.nav.saf.query.dokumentoversikt.journalstatus;
 
 import lombok.extern.slf4j.Slf4j;
-import no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoToArkivSakMapper;
+import no.nav.saf.anticorruptionlayer.joark.domain.ArkivsakMapper;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.dto.JournalpostDto;
 import no.nav.saf.domain.tilgangsmodell.TilgangJournalpost;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
@@ -16,10 +16,10 @@ import java.util.stream.Collectors;
 @Slf4j
 @Component
 public class DokumentoversiktJournalstatusTilgangsmodellRepository {
-	private final JournalpostDtoToArkivSakMapper journalpostDtoToArkivSakMapper;
+	private final ArkivsakMapper arkivsakMapper;
 
-	public DokumentoversiktJournalstatusTilgangsmodellRepository(JournalpostDtoToArkivSakMapper journalpostDtoToArkivSakMapper) {
-		this.journalpostDtoToArkivSakMapper = journalpostDtoToArkivSakMapper;
+	public DokumentoversiktJournalstatusTilgangsmodellRepository(ArkivsakMapper arkivsakMapper) {
+		this.arkivsakMapper = arkivsakMapper;
 	}
 
 	public void mapOgCacheArkivsaker(final List<TilgangJournalpost> filteredTilgangJournalpostList, final SafRequestContext safRequestContext) {
@@ -29,7 +29,7 @@ public class DokumentoversiktJournalstatusTilgangsmodellRepository {
 				.collect(Collectors.toList());
 
 		journalposterMedSaksrelasjon.stream()
-				.map(journalpostDtoToArkivSakMapper::map)
+				.map(arkivsakMapper::map)
 				.forEach(arkivsak -> safRequestContext.getRequestCache().putObject(arkivsak.getKey(), arkivsak));
 	}
 }
