@@ -35,7 +35,6 @@ import no.nav.saf.domain.visningsmodell.Journalpost;
 import no.nav.saf.domain.visningsmodell.RelevantDato;
 import no.nav.saf.tilgangskontroll.RequestCache;
 import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -525,69 +524,83 @@ class JournalpostDtoMapperTest {
 		assertThat(journalpost.getAvsenderMottaker().getType(), is(AvsenderMottakerIdType.FNR));
 	}
 
-	@Nested
-	@DisplayName("Test mapping når AvsenderMottakerIdType ikke er satt")
-	class AvsenderMottakerIdTypeIsNull {
-		JournalpostDto journalpostDto;
-		@BeforeEach
-		void beforeEach() {
-			journalpostDto = buildJournalpostDtoInngaaendeType();
-			journalpostDto.setAvsenderMottakerIdType(null);
-		}
+    @Nested
+    @DisplayName("Test mapping når AvsenderMottakerIdType ikke er satt")
+    class AvsenderMottakerIdTypeIsNull {
 
-		@Test
-		void shouldMapAvsenderMottakerIdTypeNullWhenAvsenderMottakerIdIsNull() {
-			journalpostDto.setAvsenderMottakerId(null);
+        @Test
+        void shouldMapAvsenderMottakerIdTypeNullWhenAvsenderMottakerIdIsNull() {
+            JournalpostDto journalpostDto = buildJournalpostDtoAvsenderMottakerIdTypeNull();
+            journalpostDto.setAvsenderMottakerId(null);
 
-			Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, pep5RequestCache());
+            Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, pep5RequestCache());
 
-			assertThat(journalpost.getAvsenderMottaker().getType(), is(AvsenderMottakerIdType.NULL));
-		}
+            assertThat(journalpost.getAvsenderMottaker().getType(), is(AvsenderMottakerIdType.NULL));
+        }
 
-		@Test
-		void shouldMapAvsenderMottakerIdTypeORGNRWhenAvsenderMottakerIdIsOfLength9() {
-			journalpostDto.setAvsenderMottakerId("123456789");
+        @Test
+        void shouldMapAvsenderMottakerIdTypeORGNRWhenAvsenderMottakerIdIsOfLength9() {
+            JournalpostDto journalpostDto = buildJournalpostDtoAvsenderMottakerIdTypeNull();
+            journalpostDto.setAvsenderMottakerId("123456789");
 
-			Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, pep5RequestCache());
+            Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, pep5RequestCache());
 
-			assertThat(journalpost.getAvsenderMottaker().getType(), is(AvsenderMottakerIdType.ORGNR));
-		}
+            assertThat(journalpost.getAvsenderMottaker().getType(), is(AvsenderMottakerIdType.ORGNR));
+        }
 
-		@ParameterizedTest
-		@ValueSource(strings = {"0","1","2","3","4","5","6","7"})
-		void shouldMapAvsenderMottakerIdTypeFNRWhenAvsenderMottakerIdIs11DigitsLongAnd1DigitInRange0To7(String input) {
-			String idTailOf10Zeroes = "0000000000";
-			journalpostDto.setAvsenderMottakerId(input + idTailOf10Zeroes);
+        @ParameterizedTest
+        @ValueSource(strings = {"***gammelt_fnr***", "***gammelt_fnr***", "***gammelt_fnr***", "***gammelt_fnr***",
+                "***gammelt_fnr***", "***gammelt_fnr***", "***gammelt_fnr***", "***gammelt_fnr***"})
+        void shouldMapAvsenderMottakerIdTypeFNRWhenAvsenderMottakerIdIs11DigitsLongAnd1DigitInRange0To7(String input) {
+            JournalpostDto journalpostDto = buildJournalpostDtoAvsenderMottakerIdTypeNull();
+            journalpostDto.setAvsenderMottakerId(input);
 
-			Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, pep5RequestCache());
+            Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, pep5RequestCache());
 
-			assertThat(journalpost.getAvsenderMottaker().getType(), is(AvsenderMottakerIdType.FNR));
-		}
+            assertThat(journalpost.getAvsenderMottaker().getType(), is(AvsenderMottakerIdType.FNR));
+        }
 
-		// Se https://jira.adeo.no/browse/MMA-4481
-		@ParameterizedTest
-		@ValueSource(strings = {"8","9"})
-		@DisplayName("Test mapping av TSS-id")
-		void shouldMapAvsenderMottakerIdTypeUKJENTWhenAvsenderMottakerIdIs11DigitsLongAndFirstDigitIs8Or9(String input) {
-			String idTailOf10Zeroes = "0000000000";
-			journalpostDto.setAvsenderMottakerId(input + idTailOf10Zeroes);
+        @ParameterizedTest
+        @ValueSource(strings = {"***gammelt_fnr***", "***gammelt_fnr***"})
+        @DisplayName("Test mapping av TSS-id")
+        void shouldMapAvsenderMottakerIdTypeUKJENTWhenAvsenderMottakerIdIs11DigitsLongAndFirstDigitIs8Or9(String input) {
+            JournalpostDto journalpostDto = buildJournalpostDtoAvsenderMottakerIdTypeNull();
+            journalpostDto.setAvsenderMottakerId(input);
 
-			Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, pep5RequestCache());
+            Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, pep5RequestCache());
 
-			assertThat(journalpost.getAvsenderMottaker().getType(), is(AvsenderMottakerIdType.UKJENT));
-		}
+            assertThat(journalpost.getAvsenderMottaker().getType(), is(AvsenderMottakerIdType.UKJENT));
+        }
 
-		@ParameterizedTest
-		@ValueSource(strings = {"12345", "***gammelt_fnr***23", ""})
-		void shouldMapAvsenderMottakerIdTypeUKJENT(String input) {
-			journalpostDto.setAvsenderMottakerId(input);
+        @ParameterizedTest
+        @ValueSource(strings = {"EE:70000000"})
+        @DisplayName("Test mapping av referanse til estiske trygdemyndigheter.")
+        void shouldMapAvsenderMottakerIdTypeUKJENTWhenAvsenderMottakerIdIsLength11AndNonNumeric(String input) {
+            JournalpostDto journalpostDto = buildJournalpostDtoAvsenderMottakerIdTypeNull();
+            journalpostDto.setAvsenderMottakerId(input);
 
-			Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, pep5RequestCache());
+            Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, pep5RequestCache());
 
-			assertThat(journalpost.getAvsenderMottaker().getType(), is(AvsenderMottakerIdType.UKJENT));
-		}
+            assertThat(journalpost.getAvsenderMottaker().getType(), is(AvsenderMottakerIdType.UKJENT));
+        }
 
-	}
+        @ParameterizedTest
+        @ValueSource(strings = {"12345", "***gammelt_fnr***23", ""})
+        void shouldMapAvsenderMottakerIdTypeUKJENT(String input) {
+            JournalpostDto journalpostDto = buildJournalpostDtoAvsenderMottakerIdTypeNull();
+            journalpostDto.setAvsenderMottakerId(input);
+
+            Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, pep5RequestCache());
+
+            assertThat(journalpost.getAvsenderMottaker().getType(), is(AvsenderMottakerIdType.UKJENT));
+        }
+
+        private JournalpostDto buildJournalpostDtoAvsenderMottakerIdTypeNull() {
+            JournalpostDto journalpostDto = buildJournalpostDtoInngaaendeType();
+            journalpostDto.setAvsenderMottakerIdType(null);
+            return journalpostDto;
+        }
+    }
 
 	@Test
 	void shouldMapToBrukerInJournalpostWhenNoSakstilknytningForPerson() {

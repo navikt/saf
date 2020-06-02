@@ -1,14 +1,5 @@
 package no.nav.saf.anticorruptionlayer.joark.domain;
 
-import static no.nav.saf.cache.KeyGeneratorLocalCaching.getKeyForPep2d;
-import static no.nav.saf.cache.KeyGeneratorLocalCaching.getKeyForPep5;
-import static no.nav.saf.cache.KeyGeneratorLocalCaching.getKeyForPep6d;
-import static no.nav.saf.domain.DomainConstants.TILGANG_BRUKER;
-import static no.nav.saf.domain.visningsmodell.RelevantDato.INVALID_DATE;
-import static org.apache.commons.lang3.BooleanUtils.isTrue;
-import static org.apache.commons.lang3.StringUtils.isBlank;
-import static org.apache.commons.lang3.StringUtils.trim;
-
 import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.AvsenderMottakerIdTypeCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.FagomradeCode;
@@ -40,14 +31,23 @@ import no.nav.saf.domain.visningsmodell.RelevantDato;
 import no.nav.saf.domain.visningsmodell.Sak;
 import no.nav.saf.domain.visningsmodell.Tilleggsopplysning;
 import no.nav.saf.tilgangskontroll.RequestCache;
-import org.apache.commons.lang3.Range;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+
+import static no.nav.saf.cache.KeyGeneratorLocalCaching.getKeyForPep2d;
+import static no.nav.saf.cache.KeyGeneratorLocalCaching.getKeyForPep5;
+import static no.nav.saf.cache.KeyGeneratorLocalCaching.getKeyForPep6d;
+import static no.nav.saf.domain.DomainConstants.TILGANG_BRUKER;
+import static no.nav.saf.domain.visningsmodell.RelevantDato.INVALID_DATE;
+import static org.apache.commons.lang3.BooleanUtils.isTrue;
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.trim;
 
 /**
  * @author Joakim Bjørnstad, Jbit AS
@@ -55,6 +55,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @Component
 public class JournalpostDtoMapper {
+	private static final Pattern FNR_SIMPLE_REGEX = Pattern.compile("[0-7]\\d{10}");
 
 	public Journalpost mapJournalpostDto(final JournalpostDto journalpostDto, final RequestCache requestCache) {
 		if (journalpostDto == null) {
@@ -219,20 +220,15 @@ public class JournalpostDtoMapper {
 		if (avsenderMottakerIdTypeCode != null) {
 			switch (avsenderMottakerIdTypeCode) {
 				case FNR:
-					avsenderMottakerIdType = AvsenderMottakerIdType.FNR;
-					break;
+					return AvsenderMottakerIdType.FNR;
 				case ORGNR:
-					avsenderMottakerIdType = AvsenderMottakerIdType.ORGNR;
-					break;
+					return AvsenderMottakerIdType.ORGNR;
 				case HPRNR:
-					avsenderMottakerIdType = AvsenderMottakerIdType.HPRNR;
-					break;
+					return AvsenderMottakerIdType.HPRNR;
 				case UTL_ORG:
-					avsenderMottakerIdType = AvsenderMottakerIdType.UTL_ORG;
-					break;
+					return AvsenderMottakerIdType.UTL_ORG;
 				default:
-					avsenderMottakerIdType = AvsenderMottakerIdType.UKJENT;
-					break;
+					return AvsenderMottakerIdType.UKJENT;
 			}
 
 		} else {
@@ -241,29 +237,18 @@ public class JournalpostDtoMapper {
 			} else {
 				switch (avsenderMottakerId.length()) {
 					case 11:
-						if (validFNR(avsenderMottakerId)) {
-							avsenderMottakerIdType = AvsenderMottakerIdType.FNR;
+						if(FNR_SIMPLE_REGEX.matcher(avsenderMottakerId).matches()) {
+							return AvsenderMottakerIdType.FNR;
+						} else {
+							return AvsenderMottakerIdType.UKJENT;
 						}
-						else {
-							avsenderMottakerIdType = AvsenderMottakerIdType.UKJENT;
-						}
-						break;
 					case 9:
-						avsenderMottakerIdType = AvsenderMottakerIdType.ORGNR;
-						break;
+						return AvsenderMottakerIdType.ORGNR;
 					default:
-						avsenderMottakerIdType = AvsenderMottakerIdType.UKJENT;
-						break;
+						return AvsenderMottakerIdType.UKJENT;
 				}
 			}
 		}
-		return avsenderMottakerIdType;
-
-	}
-
-	private boolean validFNR(String avsenderMottakerId) {
-		int firstDigit = Integer.parseInt(avsenderMottakerId.substring(0, 1));
-		return Range.between(0,7).contains(firstDigit);
 	}
 
 	private boolean mapErLikBruker(String avsenderMottakerId, BrukerDto brukerDto) {
