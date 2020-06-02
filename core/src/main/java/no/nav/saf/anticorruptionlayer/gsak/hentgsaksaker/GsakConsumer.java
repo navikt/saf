@@ -1,14 +1,10 @@
 package no.nav.saf.anticorruptionlayer.gsak.hentgsaksaker;
 
-import static no.nav.saf.util.MDCConstants.CORRELATION_ID;
-import static org.apache.commons.lang3.StringUtils.isBlank;
-import static org.apache.commons.lang3.StringUtils.trim;
-
 import lombok.extern.slf4j.Slf4j;
+import no.nav.saf.config.ServiceuserAlias;
 import no.nav.saf.domain.kode.Tema;
 import no.nav.saf.exceptions.SafFunctionalException;
 import no.nav.saf.exceptions.SafTechnicalException;
-import no.nav.saf.integration.fasit.ServiceuserAlias;
 import no.nav.saf.metrics.Monitor;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,9 +24,14 @@ import java.time.Duration;
 import java.util.List;
 import java.util.UUID;
 
+import static no.nav.saf.util.MDCConstants.CORRELATION_ID;
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.trim;
+
 @Slf4j
 @Component
 public class GsakConsumer {
+	private static final String HEADER_CORRELATION_ID = "X-Correlation-ID";
 
 	private final RestTemplate restTemplate;
 	private final String gsakApiUrl;
@@ -89,28 +90,13 @@ public class GsakConsumer {
 		}
 		try {
 			HttpHeaders headers = new HttpHeaders();
-			headers.set("X-Correlation-ID", getOrGenerateCorrelationId());
+			headers.set(HEADER_CORRELATION_ID, getOrGenerateCorrelationId());
 			ResponseEntity<List<GsakSakerTo>> response = restTemplate.exchange(uri, HttpMethod.GET, new HttpEntity<>(headers), new ParameterizedTypeReference<List<GsakSakerTo>>() {
 			});
 			if (log.isDebugEnabled()) {
 				log.debug("Hentet ferdig gsaker uri={}", uri);
 			}
 			return response.getBody();
-		} catch (HttpServerErrorException e) {
-			throw new SafTechnicalException(String.format("getGsaksaker feilet teknisk med statusKode=%s. Feilmelding=%s", e
-					.getStatusCode(), e.getMessage()), e, e.getStatusCode());
-		} catch (HttpClientErrorException e) {
-			throw new SafFunctionalException(String.format("getGsaksaker feilet funksjonelt med statusKode=%s. Feilmelding=%s", e
-					.getStatusCode(), e.getMessage()), e, e.getStatusCode());
-		}
-	}
-
-	public GsakSakerTo hentSakBySakId(final String sakId) {
-		try {
-			HttpHeaders headers = new HttpHeaders();
-			headers.set("X-Correlation-ID", getOrGenerateCorrelationId());
-			return restTemplate.exchange(gsakApiUrl + "/{sakId}", HttpMethod.GET, new HttpEntity<>(headers), GsakSakerTo.class, sakId)
-					.getBody();
 		} catch (HttpServerErrorException e) {
 			throw new SafTechnicalException(String.format("getGsaksaker feilet teknisk med statusKode=%s. Feilmelding=%s", e
 					.getStatusCode(), e.getMessage()), e, e.getStatusCode());

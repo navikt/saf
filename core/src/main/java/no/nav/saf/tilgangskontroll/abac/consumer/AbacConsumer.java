@@ -1,9 +1,7 @@
 package no.nav.saf.tilgangskontroll.abac.consumer;
 
-import static java.util.Collections.singletonList;
-
+import no.nav.saf.config.ServiceuserAlias;
 import no.nav.saf.exceptions.AbacException;
-import no.nav.saf.integration.fasit.ServiceuserAlias;
 import no.nav.saf.metrics.Monitor;
 import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlRequest;
 import no.nav.saf.tilgangskontroll.abac.dto.response.XacmlResponse;
@@ -18,6 +16,8 @@ import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.Duration;
+
+import static java.util.Collections.singletonList;
 
 @Component
 public class AbacConsumer {

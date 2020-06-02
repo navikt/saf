@@ -1,4 +1,4 @@
-package no.nav.saf.integration.fasit;
+package no.nav.saf.config;
 
 import lombok.Getter;
 import lombok.Setter;

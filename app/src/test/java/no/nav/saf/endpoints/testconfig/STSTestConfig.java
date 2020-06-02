@@ -1,6 +1,6 @@
 package no.nav.saf.endpoints.testconfig;
 
-import no.nav.saf.integration.fasit.ServiceuserAlias;
+import no.nav.saf.config.ServiceuserAlias;
 import no.nav.saf.integration.sts.STSConfig;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;

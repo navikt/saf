@@ -1,6 +1,6 @@
 package no.nav.saf.integration.sts;
 
-import no.nav.saf.integration.fasit.ServiceuserAlias;
+import no.nav.saf.config.ServiceuserAlias;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.frontend.ClientProxy;
 import org.springframework.beans.factory.annotation.Value;
