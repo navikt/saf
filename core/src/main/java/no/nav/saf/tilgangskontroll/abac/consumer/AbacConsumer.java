@@ -11,6 +11,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
@@ -43,6 +44,7 @@ public class AbacConsumer {
 	}
 
 	@Monitor(value = "dok_consumer", extraTags = {"process", "abacEvaluate"}, histogram = true)
+	@Retryable(include = AbacException.class)
 	public XacmlResponse evaluate(XacmlRequest requestBody) {
 		try {
 			HttpEntity<String> httpRequest = prepareHttpRequest(requestBody);
