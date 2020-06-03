@@ -35,7 +35,7 @@
 		<pensjonsakv1.version>1.0.3</pensjonsakv1.version>
 		<cxf.version>3.3.6</cxf.version>
 		<saaj-impl.version>1.5.1</saaj-impl.version>
-		<graphql-java.version>14.0</graphql-java.version>
+		<graphql-java.version>14.1</graphql-java.version>
 		<abac-attribute-constants.version>3.4.4</abac-attribute-constants.version>
 		<abac-common-attributes-alfa.version>4.1.0</abac-common-attributes-alfa.version>
 		<abac-saf-policies-alfa.version>5.0.0</abac-saf-policies-alfa.version>

@@ -14,7 +14,7 @@ public class HentdokumentTilgangskontrollException extends SafFunctionalExceptio
 	}
 
 	public HentdokumentTilgangskontrollException(String message, XacmlResponse xacmlResponse) {
-		super("Avvist av SAF ABAC policy " + message);
+		super("Avvist av SAF tilgangskontroll: " + message);
 		this.xacmlResponse = xacmlResponse;
 	}
 

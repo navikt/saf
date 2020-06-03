@@ -1,9 +1,9 @@
 package no.nav.saf.anticorruptionlayer.pensjonsak.hentbrukerforsak;
 
 import lombok.extern.slf4j.Slf4j;
+import no.nav.saf.config.ServiceuserAlias;
 import no.nav.saf.exceptions.SafFunctionalException;
 import no.nav.saf.exceptions.SafTechnicalException;
-import no.nav.saf.integration.fasit.ServiceuserAlias;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpEntity;

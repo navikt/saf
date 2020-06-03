@@ -1,5 +1,7 @@
 package no.nav.saf.tilgangskontroll.abac.service;
 
+import lombok.extern.slf4j.Slf4j;
+import no.nav.saf.exceptions.AbacException;
 import no.nav.saf.tilgangskontroll.abac.consumer.AbacConsumer;
 import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlRequest;
 import no.nav.saf.tilgangskontroll.abac.dto.response.Advice;
@@ -13,53 +15,59 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @Service
 public class AbacServiceImpl implements AbacService {
 
-	private final AbacConsumer abacConsumer;
-	private final List<AdviceStrategy> adviceStrategies;
+    private final AbacConsumer abacConsumer;
+    private final List<AdviceStrategy> adviceStrategies;
 
-	public AbacServiceImpl(AbacConsumer abacConsumer,
-						   List<AdviceStrategy> adviceStrategies) {
-		this.abacConsumer = abacConsumer;
-		this.adviceStrategies = new ArrayList<>(adviceStrategies);
-	}
+    public AbacServiceImpl(AbacConsumer abacConsumer,
+                           List<AdviceStrategy> adviceStrategies) {
+        this.abacConsumer = abacConsumer;
+        this.adviceStrategies = new ArrayList<>(adviceStrategies);
+    }
 
-	@Override
-	public XacmlResponse evaluate(XacmlRequest request) {
-		XacmlResponse response = abacConsumer.evaluate(request);
-		response = assignResultBasedOnBias(request, response);
+    @Override
+    public XacmlResponse evaluate(XacmlRequest request) {
+        try {
+            XacmlResponse response = abacConsumer.evaluate(request);
+            response = assignResultBasedOnBias(request, response);
 
-		handleAdvice(request, response);
+            handleAdvice(request, response);
 
-		return response;
-	}
+            return response;
+        } catch (AbacException e) {
+            log.warn("Kall mot abac feilet. Avviser tilgang til ressurs.", e);
+            return XacmlResponse.deny();
+        }
+    }
 
-	private XacmlResponse assignResultBasedOnBias(XacmlRequest request, XacmlResponse response) {
-		if (response.getOriginalDecision() == Decision.INDETERMINATE && request.isFailOnIndeterminate()) {
-			throw new IndeterminateDecisionException();
-		} else if (response.getOriginalDecision() != Decision.PERMIT && response.getOriginalDecision() != Decision.DENY) {
-			return new XacmlResponse(request.getBias(), response.getOriginalDecision(), response.getObligations(), response.getAdvices());
-		}
-		return response;
-	}
+    private XacmlResponse assignResultBasedOnBias(XacmlRequest request, XacmlResponse response) {
+        if (response.getOriginalDecision() == Decision.INDETERMINATE && request.isFailOnIndeterminate()) {
+            throw new IndeterminateDecisionException();
+        } else if (response.getOriginalDecision() != Decision.PERMIT && response.getOriginalDecision() != Decision.DENY) {
+            return new XacmlResponse(request.getBias(), response.getOriginalDecision(), response.getObligations(), response.getAdvices());
+        }
+        return response;
+    }
 
-	private void handleAdvice(XacmlRequest request, XacmlResponse response) {
-		for (Advice advice : response.getAdvices()) {
-			AdviceStrategy strategy = findSupportedStrategy(advice.getId(), adviceStrategies);
-			if (strategy != null) {
-				strategy.perform(advice, request, response);
-			}
-		}
-	}
+    private void handleAdvice(XacmlRequest request, XacmlResponse response) {
+        for (Advice advice : response.getAdvices()) {
+            AdviceStrategy strategy = findSupportedStrategy(advice.getId(), adviceStrategies);
+            if (strategy != null) {
+                strategy.perform(advice, request, response);
+            }
+        }
+    }
 
-	private <T extends AttributeStrategy<?>> T findSupportedStrategy(String id, List<T> strategies) {
-		for (T strategy : strategies) {
-			if (strategy.isSupported(id)) {
-				return strategy;
-			}
-		}
-		return null;
-	}
+    private <T extends AttributeStrategy<?>> T findSupportedStrategy(String id, List<T> strategies) {
+        for (T strategy : strategies) {
+            if (strategy.isSupported(id)) {
+                return strategy;
+            }
+        }
+        return null;
+    }
 
 }

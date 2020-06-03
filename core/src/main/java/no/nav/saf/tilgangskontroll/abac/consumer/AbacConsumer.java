@@ -1,9 +1,7 @@
 package no.nav.saf.tilgangskontroll.abac.consumer;
 
-import static java.util.Collections.singletonList;
-
+import no.nav.saf.config.ServiceuserAlias;
 import no.nav.saf.exceptions.AbacException;
-import no.nav.saf.integration.fasit.ServiceuserAlias;
 import no.nav.saf.metrics.Monitor;
 import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlRequest;
 import no.nav.saf.tilgangskontroll.abac.dto.response.XacmlResponse;
@@ -13,11 +11,14 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.Duration;
+
+import static java.util.Collections.singletonList;
 
 @Component
 public class AbacConsumer {
@@ -43,6 +44,7 @@ public class AbacConsumer {
 	}
 
 	@Monitor(value = "dok_consumer", extraTags = {"process", "abacEvaluate"}, histogram = true)
+	@Retryable(include = AbacException.class)
 	public XacmlResponse evaluate(XacmlRequest requestBody) {
 		try {
 			HttpEntity<String> httpRequest = prepareHttpRequest(requestBody);

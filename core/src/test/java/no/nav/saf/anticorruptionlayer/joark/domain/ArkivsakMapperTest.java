@@ -1,8 +1,5 @@
 package no.nav.saf.anticorruptionlayer.joark.domain;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.FagomradeCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.FagsystemCode;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.dto.BrukerDto;
@@ -12,10 +9,13 @@ import no.nav.saf.domain.Arkivsak;
 import no.nav.saf.domain.DomainConstants;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+
 /**
  * @author Erik Bråten, Visma Consulting
  */
-class JournalpostDtoToArkivSakMapperTest {
+class ArkivsakMapperTest {
 
 	private static final long JOURNALPOST_ID = 123456789L;
 	private static final FagomradeCode FAGOMRADE = FagomradeCode.STO;
@@ -27,7 +27,7 @@ class JournalpostDtoToArkivSakMapperTest {
 	private static final String ORGNR = "123123123";
 	private static final String BRUKER_ID_TYPE = DomainConstants.PERSON;
 
-	private final JournalpostDtoToArkivSakMapper mapper = new JournalpostDtoToArkivSakMapper();
+	private final ArkivsakMapper mapper = new ArkivsakMapper();
 
 	@Test
 	void shouldMapNull() {

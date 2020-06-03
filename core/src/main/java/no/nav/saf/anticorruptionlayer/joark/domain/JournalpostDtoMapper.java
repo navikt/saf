@@ -1,7 +1,6 @@
 package no.nav.saf.anticorruptionlayer.joark.domain;
 
 import lombok.extern.slf4j.Slf4j;
-import no.nav.saf.anticorruptionlayer.joark.domain.kode.AvsenderMottakerIdTypeCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.FagomradeCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.FagsystemCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.JournalpostTypeCode;
@@ -19,8 +18,6 @@ import no.nav.saf.domain.kode.Journalstatus;
 import no.nav.saf.domain.kode.Kanal;
 import no.nav.saf.domain.kode.Tema;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
-import no.nav.saf.domain.visningsmodell.AvsenderMottaker;
-import no.nav.saf.domain.visningsmodell.AvsenderMottakerIdType;
 import no.nav.saf.domain.visningsmodell.Bruker;
 import no.nav.saf.domain.visningsmodell.BrukerIdType;
 import no.nav.saf.domain.visningsmodell.DokumentInfo;
@@ -55,7 +52,7 @@ import static org.apache.commons.lang3.StringUtils.trim;
 @Slf4j
 @Component
 public class JournalpostDtoMapper {
-	private static final Pattern FNR_SIMPLE_REGEX = Pattern.compile("[0-7]\\d{10}");
+	private final AvsenderMottakerMapper avsenderMottakerMapper = new AvsenderMottakerMapper();
 
 	public Journalpost mapJournalpostDto(final JournalpostDto journalpostDto, final RequestCache requestCache) {
 		if (journalpostDto == null) {
@@ -75,7 +72,7 @@ public class JournalpostDtoMapper {
 				.behandlingstemanavn(journalpostDto.getBehandlingstemanavn())
 				.sak(mapSak(journalpostDto.getSaksrelasjon(), requestCache))
 				.bruker(mapBruker(journalpostDto.getBruker(), journalpostDto.getSaksrelasjon(), requestCache))
-				.avsenderMottaker(mapAvsenderMottaker(journalpostDto))
+				.avsenderMottaker(avsenderMottakerMapper.map(journalpostDto))
 				.avsenderMottakerId(journalpostDto.getAvsenderMottakerId())
 				.avsenderMottakerNavn(journalpostDto.getAvsenderMottakerNavn())
 				.avsenderMottakerLand(journalpostDto.getAvsenderMottakerLand())
@@ -203,59 +200,6 @@ public class JournalpostDtoMapper {
 		} else {
 			return null;
 		}
-	}
-
-	private AvsenderMottaker mapAvsenderMottaker(JournalpostDto journalpostDto) {
-		return AvsenderMottaker.builder()
-				.id(journalpostDto.getAvsenderMottakerId())
-				.type(mapAvsenderMottakerIdType(journalpostDto.getAvsenderMottakerId(), journalpostDto.getAvsenderMottakerIdType()))
-				.navn(journalpostDto.getAvsenderMottakerNavn())
-				.land(journalpostDto.getAvsenderMottakerLand())
-				.erLikBruker(mapErLikBruker(journalpostDto.getAvsenderMottakerId(), journalpostDto.getBruker()))
-				.build();
-	}
-
-	private AvsenderMottakerIdType mapAvsenderMottakerIdType(String avsenderMottakerId, AvsenderMottakerIdTypeCode avsenderMottakerIdTypeCode) {
-		AvsenderMottakerIdType avsenderMottakerIdType;
-		if (avsenderMottakerIdTypeCode != null) {
-			switch (avsenderMottakerIdTypeCode) {
-				case FNR:
-					return AvsenderMottakerIdType.FNR;
-				case ORGNR:
-					return AvsenderMottakerIdType.ORGNR;
-				case HPRNR:
-					return AvsenderMottakerIdType.HPRNR;
-				case UTL_ORG:
-					return AvsenderMottakerIdType.UTL_ORG;
-				default:
-					return AvsenderMottakerIdType.UKJENT;
-			}
-
-		} else {
-			if (avsenderMottakerId == null) {
-				return AvsenderMottakerIdType.NULL;
-			} else {
-				switch (avsenderMottakerId.length()) {
-					case 11:
-						if(FNR_SIMPLE_REGEX.matcher(avsenderMottakerId).matches()) {
-							return AvsenderMottakerIdType.FNR;
-						} else {
-							return AvsenderMottakerIdType.UKJENT;
-						}
-					case 9:
-						return AvsenderMottakerIdType.ORGNR;
-					default:
-						return AvsenderMottakerIdType.UKJENT;
-				}
-			}
-		}
-	}
-
-	private boolean mapErLikBruker(String avsenderMottakerId, BrukerDto brukerDto) {
-		if (avsenderMottakerId == null || brukerDto == null) {
-			return false;
-		}
-		return avsenderMottakerId.equals(brukerDto.getBrukerId());
 	}
 
 	private Sak mapSak(SaksrelasjonDto saksrelasjon, RequestCache requestCache) {

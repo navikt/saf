@@ -1,8 +1,8 @@
 package no.nav.saf;
 
 import io.micrometer.core.instrument.MeterRegistry;
+import no.nav.saf.config.ServiceuserAlias;
 import no.nav.saf.graphiql.GraphiQLController;
-import no.nav.saf.integration.fasit.ServiceuserAlias;
 import no.nav.saf.metrics.DokMonitoringAspect;
 import no.nav.security.token.support.core.configuration.MultiIssuerConfiguration;
 import org.apache.http.client.HttpClient;

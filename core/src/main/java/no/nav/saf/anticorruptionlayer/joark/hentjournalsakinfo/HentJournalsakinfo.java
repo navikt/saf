@@ -1,7 +1,5 @@
 package no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo;
 
-import static no.nav.saf.util.MDCConstants.CORRELATION_ID;
-
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.FinnJournalposterRequestTo;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.FinnJournalposterResponseTo;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark901.HentTilgangJournalpostResponseTo;
@@ -11,12 +9,12 @@ import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark903.Tilknyt
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark904.FinnJournalposterStatusRequestTo;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark904.FinnJournalposterStatusResponseTo;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark920.HentDokumentResponseTo;
+import no.nav.saf.config.ServiceuserAlias;
 import no.nav.saf.exceptions.DokumentIkkeFunnetException;
 import no.nav.saf.exceptions.JournalpostIkkeFunnetException;
 import no.nav.saf.exceptions.SafFunctionalException;
 import no.nav.saf.exceptions.SafTechnicalException;
 import no.nav.saf.exceptions.UgyldigInputException;
-import no.nav.saf.integration.fasit.ServiceuserAlias;
 import no.nav.saf.metrics.Monitor;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Value;
@@ -30,10 +28,13 @@ import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import javax.inject.Inject;
 import java.time.Duration;
+
+import static no.nav.saf.util.MDCConstants.CORRELATION_ID;
 
 /**
  * @author Joakim Bjørnstad, Jbit AS
@@ -102,8 +103,8 @@ public class HentJournalsakinfo {
 					.mediaType(response.getHeaders().getContentType())
 					.build();
 		} catch (HttpServerErrorException e) {
-			throw new SafTechnicalException(String.format("hentDokument feilet teknisk med statusKode=%s. Feilmelding=%s", e
-					.getStatusCode(), e.getMessage()), e, e.getStatusCode());
+			throw new SafTechnicalException(String.format("Henting av dokument fra fagarkivet feilet teknisk. Status=%s. Feilmelding=%s",
+					e.getStatusCode(), e.getMessage()), e, e.getStatusCode());
 		} catch (HttpClientErrorException e) {
 			throw new DokumentIkkeFunnetException(String.format("Dokument med dokumentInfoId=%s og variantFormat=%s ikke funnet. Feilmelding=%s",
 					dokumentInfoId, variantFormat, e.getMessage()));
@@ -116,13 +117,16 @@ public class HentJournalsakinfo {
 			String uri = hentjournalsakinfoUrl + "/hentjournalpost/{journalpostId}";
 			return restTemplate.exchange(uri, HttpMethod.GET, new HttpEntity<>(createCorrelationIdHeader()), HentJournalpostResponseTo.class, journalpostId).getBody();
 		} catch (HttpServerErrorException e) {
-			throw new SafTechnicalException(String.format("hentDokument feilet teknisk med statusKode=%s. Feilmelding=%s", e
-					.getStatusCode(), e.getMessage()), e, e.getStatusCode());
+			throw new SafTechnicalException(String.format("Henting av journalpostId=%s feilet teknisk. Status=%s. Feilmelding=%s",
+					journalpostId, e.getStatusCode(), e.getMessage()), e, e.getStatusCode());
 		} catch (HttpClientErrorException e) {
 			if (e.getStatusCode() == HttpStatus.NOT_FOUND) {
 				throw new JournalpostIkkeFunnetException("Journalpost med journalpostId=" + journalpostId + " ikke funnet.");
 			}
-			throw new SafFunctionalException(String.format("hentTilgangJournalpost feilet funksjonelt. journalpostId=%s, feilmelding=%s", journalpostId, e.getMessage()));
+			throw new SafFunctionalException(String.format("Henting av journalpostId=%s feilet funksjonelt. Status=%s. Feilmelding=%s",
+					journalpostId, e.getStatusCode(), e.getMessage()), e, e.getStatusCode());
+		} catch (RestClientException e) {
+			throw new SafTechnicalException(String.format("Henting av journalpostId=%s feilet med ukjent teknisk feil.", journalpostId), e);
 		}
 	}
 

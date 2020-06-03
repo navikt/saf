@@ -1,20 +1,9 @@
 package no.nav.saf.query.journalpost;
 
-import static no.nav.saf.domain.DomainConstants.PEP1G;
-import static no.nav.saf.domain.DomainConstants.PEP2;
-import static no.nav.saf.domain.DomainConstants.PEP2D;
-import static no.nav.saf.domain.DomainConstants.PEP3;
-import static no.nav.saf.domain.DomainConstants.PEP4;
-import static no.nav.saf.domain.DomainConstants.PEP5;
-import static no.nav.saf.domain.DomainConstants.PEP6D;
-import static no.nav.saf.domain.DomainConstants.RJOARK902_JOURNALPOST_DTO;
-import static no.nav.saf.domain.DomainConstants.TILGANG_BRUKER;
-
 import no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoMapper;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.dto.JournalpostDto;
 import no.nav.saf.domain.Arkivsak;
 import no.nav.saf.domain.kode.Journalstatus;
-import no.nav.saf.domain.kode.Tema;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.domain.tilgangsmodell.TilgangDokumentInfo;
 import no.nav.saf.domain.tilgangsmodell.TilgangDokumentvariant;
@@ -28,18 +17,25 @@ import org.springframework.stereotype.Component;
 
 import javax.inject.Named;
 
+import static no.nav.saf.domain.DomainConstants.PEP1G;
+import static no.nav.saf.domain.DomainConstants.PEP2;
+import static no.nav.saf.domain.DomainConstants.PEP2D;
+import static no.nav.saf.domain.DomainConstants.PEP3;
+import static no.nav.saf.domain.DomainConstants.PEP4;
+import static no.nav.saf.domain.DomainConstants.PEP5;
+import static no.nav.saf.domain.DomainConstants.PEP6D;
+import static no.nav.saf.domain.DomainConstants.RJOARK902_JOURNALPOST_DTO;
+import static no.nav.saf.domain.DomainConstants.TILGANG_BRUKER;
+import static no.nav.saf.tilgangskontroll.pep.DenyReasons.PEP1G_DENY_REASON;
+import static no.nav.saf.tilgangskontroll.pep.DenyReasons.PEP2_DENY_REASON;
+import static no.nav.saf.tilgangskontroll.pep.DenyReasons.PEP3_DENY_REASON;
+import static no.nav.saf.tilgangskontroll.pep.DenyReasons.PEP4_DENY_REASON;
+
 /**
  * @author Joakim Bjørnstad, Jbit AS
  */
 @Component
 public class JournalpostCoordinatorImpl implements JournalpostCoordinator {
-
-	// PEP errormessage
-	public static final String PEP1G_ERRORMESSAGE = "Tilgang til journalposten er avvist.";
-	public static final String PEP2_ERRORMESSAGE = "Tilgang til journalposten er avvist. " +
-			"Ingen tilgang til saker tilknyttet tema " + Tema.FAR.getTemanavn() + " eller forvaltningslovens §19.";
-	public static final String PEP3_ERRORMESSAGE = "Tilgang til journalposten er avvist. Ingen tilgang til relevante tredjeparter på sak tilknyttet journalpost.";
-	public static final String PEP4_ERRORMESSAGE = "Tilgang til journalpost er avvist. Journalposten er skjermet ihht personopplysningsloven.";
 
 	private final JournalpostTilgangRepository journalpostTilgangRepository;
 	private final JournalpostDtoMapper journalpostDtoMapper;
@@ -82,15 +78,14 @@ public class JournalpostCoordinatorImpl implements JournalpostCoordinator {
 
 		boolean pep1Access = pep1.hasAccess(tilgangBruker, safRequestContext);
 		if (!pep1Access) {
-			// Vi informerer ikke om hvorfor pga kode6/7/egen ansatt
-			throw new JournalpostTilgangskontrollException(PEP1G_ERRORMESSAGE);
+			throw new JournalpostTilgangskontrollException(PEP1G_DENY_REASON);
 		}
 
 		final TilgangSak tilgangSak = journalpostTilgangRepository.findTilgangSak(arkivsak, tilgangBruker, safRequestContext);
 
 		boolean pep2Access = pep2.hasAccess(tilgangSak, safRequestContext);
 		if (!pep2Access) {
-			throw new JournalpostTilgangskontrollException(PEP2_ERRORMESSAGE);
+			throw new JournalpostTilgangskontrollException(PEP2_DENY_REASON);
 		}
 
 		final TilgangJournalpost tilgangJournalpost = journalpostTilgangRepository.findTilgangJournalpostFromSafRequestContext(safRequestContext, tilgangSak);
@@ -100,12 +95,12 @@ public class JournalpostCoordinatorImpl implements JournalpostCoordinator {
 
 		boolean pep3Access = pep3.hasAccess(tilgangSak, safRequestContext);
 		if (!pep3Access) {
-			throw new JournalpostTilgangskontrollException(PEP3_ERRORMESSAGE);
+			throw new JournalpostTilgangskontrollException(PEP3_DENY_REASON);
 		}
 
 		boolean pep4Access = pep4.hasAccess(tilgangJournalpost, safRequestContext);
 		if (!pep4Access) {
-			throw new JournalpostTilgangskontrollException(PEP4_ERRORMESSAGE);
+			throw new JournalpostTilgangskontrollException(PEP4_DENY_REASON);
 		}
 
 		tilgangJournalpost.getDokumenter().forEach(tilgangDokumentInfo -> {

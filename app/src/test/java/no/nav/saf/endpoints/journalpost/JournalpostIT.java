@@ -32,10 +32,10 @@ import java.util.Map;
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
-import static no.nav.saf.query.journalpost.JournalpostCoordinatorImpl.PEP1G_ERRORMESSAGE;
-import static no.nav.saf.query.journalpost.JournalpostCoordinatorImpl.PEP2_ERRORMESSAGE;
-import static no.nav.saf.query.journalpost.JournalpostCoordinatorImpl.PEP3_ERRORMESSAGE;
-import static no.nav.saf.query.journalpost.JournalpostCoordinatorImpl.PEP4_ERRORMESSAGE;
+import static no.nav.saf.tilgangskontroll.pep.DenyReasons.PEP1G_DENY_REASON;
+import static no.nav.saf.tilgangskontroll.pep.DenyReasons.PEP2_DENY_REASON;
+import static no.nav.saf.tilgangskontroll.pep.DenyReasons.PEP3_DENY_REASON;
+import static no.nav.saf.tilgangskontroll.pep.DenyReasons.PEP4_DENY_REASON;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
@@ -170,7 +170,7 @@ class JournalpostIT extends AbstractItest {
 						.withBodyFile("hentjournalsakinfo/hentjournalpost_not_bid-happy.json")));
 
 		ResponseEntity<LinkedHashMap> responseEntity = journalpostQuery();
-		assertErrorWithMessage(responseEntity, PEP1G_ERRORMESSAGE);
+		assertErrorWithMessage(responseEntity, PEP1G_DENY_REASON);
 	}
 
 	@Test
@@ -190,7 +190,7 @@ class JournalpostIT extends AbstractItest {
 						.withBodyFile("bidrag/bidragsak-happy.json")));
 
 		ResponseEntity<LinkedHashMap> responseEntity = journalpostQuery();
-		assertErrorWithMessage(responseEntity, PEP2_ERRORMESSAGE);
+		assertErrorWithMessage(responseEntity, PEP2_DENY_REASON);
 	}
 
 	@Test
@@ -223,7 +223,7 @@ class JournalpostIT extends AbstractItest {
 						.withBodyFile("bidrag/bidragsak-happy.json")));
 
 		ResponseEntity<LinkedHashMap> responseEntity = journalpostQuery();
-		assertErrorWithMessage(responseEntity, PEP3_ERRORMESSAGE);
+		assertErrorWithMessage(responseEntity, PEP3_DENY_REASON);
 	}
 
 	@Test
@@ -239,7 +239,7 @@ class JournalpostIT extends AbstractItest {
 						.withBodyFile("gsak/gsak-sakBySaksId_not_bid-happy.json")));
 
 		ResponseEntity<LinkedHashMap> responseEntity = journalpostQuery();
-		assertErrorWithMessage(responseEntity, PEP4_ERRORMESSAGE);
+		assertErrorWithMessage(responseEntity, PEP4_DENY_REASON);
 	}
 
 	@Test
