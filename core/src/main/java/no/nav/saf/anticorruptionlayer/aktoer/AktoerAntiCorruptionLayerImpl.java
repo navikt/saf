@@ -29,7 +29,6 @@ class AktoerAntiCorruptionLayerImpl implements AktoerAntiCorruptionLayer {
 	public TilgangBruker hentTilgangBrukerByAktoerId(String aktoerId) {
 		if(isBlank(aktoerId)) {
 			return TilgangBruker.builder()
-					.aktoerId(aktoerId)
 					.build();
 		}
 
@@ -47,7 +46,6 @@ class AktoerAntiCorruptionLayerImpl implements AktoerAntiCorruptionLayer {
 	public TilgangBruker hentTilgangBrukerByFoedselsnummer(String foedselsnummer) {
 		if(isBlank(foedselsnummer)) {
 			return TilgangBruker.builder()
-					.foedselsnr(foedselsnummer)
 					.build();
 		}
 

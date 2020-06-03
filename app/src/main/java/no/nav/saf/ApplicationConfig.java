@@ -17,7 +17,6 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
-import org.springframework.retry.annotation.EnableRetry;
 
 import javax.inject.Named;
 import java.util.HashSet;
@@ -30,7 +29,6 @@ import java.util.Set;
 @Import({CoreConfig.class,
 		GraphiQLController.class})
 @EnableConfigurationProperties(ServiceuserAlias.class)
-@EnableRetry
 public class ApplicationConfig {
 	@Bean
 	ClientHttpRequestFactory requestFactory(HttpClient httpClient) {
