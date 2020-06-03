@@ -7,32 +7,45 @@ import lombok.Getter;
 import java.util.Collections;
 import java.util.List;
 
+import static no.nav.saf.tilgangskontroll.abac.service.advice.AdviceTypes.DENY_INFO;
+
 @Getter
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class XacmlResponse {
-	private static final XacmlResponse PERMIT = new XacmlResponse(Decision.PERMIT, Decision.PERMIT, Collections.emptyList(), Collections.emptyList());
-	private static final XacmlResponse DENY = new XacmlResponse(Decision.DENY, Decision.DENY, Collections.emptyList(), Collections.emptyList());
+    private static final XacmlResponse PERMIT = new XacmlResponse(Decision.PERMIT, Decision.PERMIT, Collections.emptyList(), Collections.emptyList());
+    private static final XacmlResponse DENY = new XacmlResponse(Decision.DENY, Decision.DENY, Collections.emptyList(), Collections.emptyList());
 
-	private final Decision decision;
-	private final Decision originalDecision;
-	private final List<Obligation> obligations;
-	private final List<Advice> advices;
+    private final Decision decision;
+    private final Decision originalDecision;
+    private final List<Obligation> obligations;
+    private final List<Advice> advices;
 
-	public boolean isPermit() {
-		return Decision.PERMIT.equals(decision);
-	}
+    public boolean isPermit() {
+        return Decision.PERMIT.equals(decision);
+    }
 
 
-	public boolean isDeny() {
-		return Decision.DENY.equals(decision);
-	}
+    public boolean isDeny() {
+        return Decision.DENY.equals(decision);
+    }
 
-	public static XacmlResponse permit() {
-		return PERMIT;
-	}
+    public static XacmlResponse permit() {
+        return PERMIT;
+    }
 
-	public static XacmlResponse deny() {
-		return DENY;
-	}
+    public static XacmlResponse deny() {
+        return DENY;
+    }
+
+    public static XacmlResponse denyWithInfo(final String info) {
+        final Advice adviceInfo = Advice.builder()
+				.id(DENY_INFO)
+				.attributeAssignments(Collections.singletonList(AttributeAssignment.builder()
+						.attributeId("no.nav.saf_info")
+						.value(info)
+						.build()))
+				.build();
+        return new XacmlResponse(Decision.DENY, Decision.DENY, Collections.emptyList(), Collections.singletonList(adviceInfo));
+    }
 }

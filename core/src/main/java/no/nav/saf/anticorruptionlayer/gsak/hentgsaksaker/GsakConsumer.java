@@ -1,5 +1,7 @@
 package no.nav.saf.anticorruptionlayer.gsak.hentgsaksaker;
 
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.retry.annotation.Retry;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.config.ServiceuserAlias;
 import no.nav.saf.domain.kode.Tema;
@@ -31,6 +33,8 @@ import static org.apache.commons.lang3.StringUtils.trim;
 @Slf4j
 @Component
 public class GsakConsumer {
+	private static final String SAK_INSTANCE = "sak";
+
 	private static final String HEADER_CORRELATION_ID = "X-Correlation-ID";
 
 	private final RestTemplate restTemplate;
@@ -46,6 +50,8 @@ public class GsakConsumer {
 				.basicAuthentication(serviceuserAlias.getUsername(), serviceuserAlias.getPassword()).build();
 	}
 
+	@CircuitBreaker(name = SAK_INSTANCE)
+	@Retry(name = SAK_INSTANCE)
 	@Monitor(value = "dok_consumer", extraTags = {"process", "hentSakerByAktoerId"}, histogram = true)
 	public List<GsakSakerTo> hentSakerByAktoerId(final String aktoerId) {
 		UriComponentsBuilder uri = UriComponentsBuilder.fromHttpUrl(gsakApiUrl)
@@ -53,6 +59,8 @@ public class GsakConsumer {
 		return hentSaker(uri.toUriString());
 	}
 
+	@CircuitBreaker(name = SAK_INSTANCE)
+	@Retry(name = SAK_INSTANCE)
 	@Monitor(value = "dok_consumer", extraTags = {"process", "hentSakerByAktoerId"}, histogram = true)
 	public List<GsakSakerTo> hentSakerByAktoerId(final String aktoerId, final Tema tema) {
 		UriComponentsBuilder uri = UriComponentsBuilder.fromHttpUrl(gsakApiUrl)
@@ -61,6 +69,8 @@ public class GsakConsumer {
 		return hentSaker(uri.toUriString());
 	}
 
+	@CircuitBreaker(name = SAK_INSTANCE)
+	@Retry(name = SAK_INSTANCE)
 	@Monitor(value = "dok_consumer", extraTags = {"process", "hentSakerByOrgNr"}, histogram = true)
 	public List<GsakSakerTo> hentSakerByOrgNr(final String orgNr) {
 		UriComponentsBuilder uri = UriComponentsBuilder.fromHttpUrl(gsakApiUrl)
@@ -68,6 +78,8 @@ public class GsakConsumer {
 		return hentSaker(uri.toUriString());
 	}
 
+	@CircuitBreaker(name = SAK_INSTANCE)
+	@Retry(name = SAK_INSTANCE)
 	@Monitor(value = "dok_consumer", extraTags = {"process", "hentSakerByOrgNr"}, histogram = true)
 	public List<GsakSakerTo> hentSakerByOrgNr(final String orgNr, final Tema tema) {
 		UriComponentsBuilder uri = UriComponentsBuilder.fromHttpUrl(gsakApiUrl)
@@ -76,6 +88,8 @@ public class GsakConsumer {
 		return hentSaker(uri.toUriString());
 	}
 
+	@CircuitBreaker(name = SAK_INSTANCE)
+	@Retry(name = SAK_INSTANCE)
 	@Monitor(value = "dok_consumer", extraTags = {"process", "hentSakerByFagsakIdAndFagsaksystem"}, histogram = true)
 	public List<GsakSakerTo> hentSakerByFagsakIdAndFagsaksystem(final String fagsakId, final String fagsaksystem) {
 		UriComponentsBuilder uri = UriComponentsBuilder.fromHttpUrl(gsakApiUrl)

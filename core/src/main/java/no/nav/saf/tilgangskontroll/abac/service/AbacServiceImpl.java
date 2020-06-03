@@ -1,7 +1,6 @@
 package no.nav.saf.tilgangskontroll.abac.service;
 
 import lombok.extern.slf4j.Slf4j;
-import no.nav.saf.exceptions.AbacException;
 import no.nav.saf.tilgangskontroll.abac.consumer.AbacConsumer;
 import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlRequest;
 import no.nav.saf.tilgangskontroll.abac.dto.response.Advice;
@@ -30,17 +29,12 @@ public class AbacServiceImpl implements AbacService {
 
     @Override
     public XacmlResponse evaluate(XacmlRequest request) {
-        try {
-            XacmlResponse response = abacConsumer.evaluate(request);
-            response = assignResultBasedOnBias(request, response);
+        XacmlResponse response = abacConsumer.evaluate(request);
+        response = assignResultBasedOnBias(request, response);
 
-            handleAdvice(request, response);
+        handleAdvice(request, response);
 
-            return response;
-        } catch (AbacException e) {
-            log.warn("Kall mot abac feilet. Avviser tilgang til ressurs.", e);
-            return XacmlResponse.deny();
-        }
+        return response;
     }
 
     private XacmlResponse assignResultBasedOnBias(XacmlRequest request, XacmlResponse response) {

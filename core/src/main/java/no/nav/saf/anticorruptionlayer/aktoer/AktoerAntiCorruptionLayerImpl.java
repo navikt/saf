@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static org.apache.commons.lang3.StringUtils.isBlank;
+
 /**
  * @author Joakim Bjørnstad, Jbit AS
  */
@@ -25,6 +27,11 @@ class AktoerAntiCorruptionLayerImpl implements AktoerAntiCorruptionLayer {
 
 	@Override
 	public TilgangBruker hentTilgangBrukerByAktoerId(String aktoerId) {
+		if(isBlank(aktoerId)) {
+			return TilgangBruker.builder()
+					.build();
+		}
+
 		HentIdentForAktoerIdResponseTo responseTo = aktoerV2Consumer.hentIdentForAktoerId(aktoerId);
 
 		return TilgangBruker.builder()
@@ -37,6 +44,11 @@ class AktoerAntiCorruptionLayerImpl implements AktoerAntiCorruptionLayer {
 
 	@Override
 	public TilgangBruker hentTilgangBrukerByFoedselsnummer(String foedselsnummer) {
+		if(isBlank(foedselsnummer)) {
+			return TilgangBruker.builder()
+					.build();
+		}
+
 		HentAktoerIdForIdentResponseTo responseTo = aktoerV2Consumer.hentAktoerIdForIdent(foedselsnummer);
 
 		return TilgangBruker.builder()
