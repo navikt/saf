@@ -19,10 +19,10 @@ class ArkivsakMapperTest {
 
 	private static final long JOURNALPOST_ID = 123456789L;
 	private static final FagomradeCode FAGOMRADE = FagomradeCode.STO;
-
-	private static final String SAK_ID = "11223344";
-	private static final FagsystemCode FAGSYSTEM = FagsystemCode.FS22;
-
+	private static final String ARKIVSAKID = "11223344";
+	private static final FagsystemCode ARKIVSAKSYSTEM = FagsystemCode.FS22;
+	private static final String FAGSAKID = "A1234";
+	private static final String FAGSAKSYSTEM = "K9";
 	private static final String AKTOER_ID = "***gammelt_fnr***";
 	private static final String ORGNR = "123123123";
 	private static final String BRUKER_ID_TYPE = DomainConstants.PERSON;
@@ -40,13 +40,13 @@ class ArkivsakMapperTest {
 		JournalpostDto journalpostDto = buildJournalpost();
 		Arkivsak arkivsak = mapper.map(journalpostDto);
 
-		assertEquals(SAK_ID, arkivsak.getArkivsaksnummer());
-		assertEquals(FAGSYSTEM.name(), arkivsak.getFagsaksystem());
-		assertEquals(FagsystemCode.toSafArkivsaksystem(FAGSYSTEM), arkivsak.getArkivsaksystem());
+		assertEquals(ARKIVSAKID, arkivsak.getArkivsaksnummer());
+		assertEquals(FagsystemCode.toSafArkivsaksystem(ARKIVSAKSYSTEM), arkivsak.getArkivsaksystem());
+		assertEquals(FAGSAKID, arkivsak.getFagsakId());
+		assertEquals(FAGSAKSYSTEM, arkivsak.getFagsaksystem());
 		assertEquals(AKTOER_ID, arkivsak.getAktoerId());
 		assertNull(arkivsak.getOrgnummer());
 		assertEquals(FagomradeCode.toSafTema(FAGOMRADE), arkivsak.getTema());
-		assertNull(arkivsak.getFagsakId());
 	}
 
 	@Test
@@ -63,7 +63,7 @@ class ArkivsakMapperTest {
 
 		assertNull(arkivsak.getAktoerId());
 		assertNull(arkivsak.getOrgnummer());
-		assertEquals(SAK_ID, arkivsak.getArkivsaksnummer());
+		assertEquals(ARKIVSAKID, arkivsak.getArkivsaksnummer());
 	}
 
 	@Test
@@ -75,7 +75,7 @@ class ArkivsakMapperTest {
 
 		assertNull(arkivsak.getAktoerId());
 		assertEquals(ORGNR, arkivsak.getOrgnummer());
-		assertEquals(SAK_ID, arkivsak.getArkivsaksnummer());
+		assertEquals(ARKIVSAKID, arkivsak.getArkivsaksnummer());
 	}
 
 	private JournalpostDto buildJournalpost() {
@@ -89,8 +89,10 @@ class ArkivsakMapperTest {
 
 	private SaksrelasjonDto buildSaksrelasjon() {
 		return SaksrelasjonDto.builder()
-				.sakId(SAK_ID)
-				.fagsystem(FAGSYSTEM)
+				.sakId(ARKIVSAKID)
+				.fagsystem(ARKIVSAKSYSTEM)
+				.fagsakNr(FAGSAKID)
+				.applikasjon(FAGSAKSYSTEM)
 				.build();
 	}
 

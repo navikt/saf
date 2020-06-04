@@ -138,8 +138,8 @@ public class HentDokumentAntiCorruptionLayer {
 						.arkivsaksystem(mapJoarkFagsystemToArkivsakssystemCode(
 								sak.getFagsystem(),
 								hentTilgangJournalpostResponseTo.getTilgangJournalpostDto().getJournalpostId()))
-						.fagsaksystem(Optional.ofNullable(sak.getFagsystem()).map(Object::toString).orElse(null))
 						.fagsakId(sak.getFagsakNr())
+						.fagsaksystem(sak.getApplikasjon())
 						.orgnummer(sak.getOrgnr())
 						.aktoerId(sak.getAktoerId())
 						.tema(Arkivsak.mapTema(sak.getTema()))

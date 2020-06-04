@@ -32,8 +32,9 @@ public class ArkivsakMapper {
 		SaksrelasjonDto saksrelasjonDto = journalpostDto.getSaksrelasjon();
 		return Arkivsak.builder()
 				.arkivsaksnummer(saksrelasjonDto.getSakId())
-				.fagsaksystem(saksrelasjonDto.getFagsystem().name())
 				.arkivsaksystem(FagsystemCode.toSafArkivsaksystem(saksrelasjonDto.getFagsystem()))
+				.fagsakId(saksrelasjonDto.getFagsakNr())
+				.fagsaksystem(saksrelasjonDto.getApplikasjon())
 				.aktoerId(aktoerId)
 				.orgnummer(orgnummer)
 				.tema(FagomradeCode.toSafTema(journalpostDto.getFagomrade()))

@@ -1,8 +1,5 @@
 package no.nav.saf.query.tilknyttedejournalposter;
 
-import static no.nav.saf.anticorruptionlayer.joark.domain.kode.FagsystemCode.FS22;
-import static no.nav.saf.anticorruptionlayer.joark.domain.kode.FagsystemCode.PEN;
-
 import no.nav.saf.anticorruptionlayer.aktoer.AktoerAntiCorruptionLayer;
 import no.nav.saf.anticorruptionlayer.bisys.BisysAntiCorruptionLayer;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.FagsystemCode;
@@ -37,6 +34,9 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import static no.nav.saf.anticorruptionlayer.joark.domain.kode.FagsystemCode.FS22;
+import static no.nav.saf.anticorruptionlayer.joark.domain.kode.FagsystemCode.PEN;
 
 /**
  * @author Joakim Bjørnstad, Jbit AS
@@ -73,7 +73,7 @@ class TilknyttedeJournalposterTilgangRepository {
 						return Arkivsak.builder()
 								.arkivsaksnummer(saksrelasjon.getSakId())
 								.arkivsaksystem(mapJoarkFagsystemToArkivsakssystem(saksrelasjon.getFagsystem()))
-								.fagsaksystem(Optional.ofNullable(saksrelasjon.getFagsystem()).map(Object::toString).orElse(null))
+								.fagsaksystem(saksrelasjon.getApplikasjon())
 								.fagsakId(saksrelasjon.getFagsakNr())
 								.orgnummer(saksrelasjon.getOrgnr())
 								.aktoerId(saksrelasjon.getAktoerId())
