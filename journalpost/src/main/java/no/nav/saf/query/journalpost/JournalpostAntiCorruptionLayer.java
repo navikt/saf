@@ -113,7 +113,7 @@ class JournalpostAntiCorruptionLayer {
 					.arkivsaksnummer(saksrelasjon.getSakId())
 					.arkivsaksystem(mapJoarkFagsystemToArkivsakssystemCode(saksrelasjon.getFagsystem(), hentJournalpostDto
 							.getJournalpostId()))
-					.fagsaksystem(Optional.ofNullable(saksrelasjon.getFagsystem()).map(Object::toString).orElse(null))
+					.fagsaksystem(saksrelasjon.getApplikasjon())
 					.fagsakId(saksrelasjon.getFagsakNr())
 					.orgnummer(saksrelasjon.getOrgnr())
 					.aktoerId(saksrelasjon.getAktoerId())
