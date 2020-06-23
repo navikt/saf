@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -148,6 +149,36 @@ public class DokumentoversiktBrukerIT extends AbstractItest {
 		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter")).withRequestBody(matchingJsonPath("$.gsakSakIds", containing("135695442"))));
 		verify(0, postRequestedFor(urlEqualTo("/aktoerv2")));
 		verify(0, postRequestedFor(urlEqualTo("/pensjonsakv1")));
+	}
+
+	@Test
+	public void shouldHentDokumentoversiktBrukerWithFraDato() throws IOException, URISyntaxException {
+		abacPermit();
+		stubFor(post("/aktoerv2")
+				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
+						.withBodyFile("aktoerV2/hentIdentForFNR-happy.xml")));
+		stubFor(post("/sts")
+				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
+						.withBodyFile("sts/sts-happy.xml")));
+		stubFor(get("/gsak?aktoerId=" + AKTOER_ID)
+				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
+						.withHeader(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType())
+						.withBodyFile("gsak/gsak-sakerBySaksId_not_bid-happy.json")));
+		stubFor(post("/hentjournalsakinfo/finnjournalposter")
+				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
+						.withHeader(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType())
+						.withBodyFile("joark/finnjournalposter-happy.json")));
+
+
+		Map<String, Object> variables = new HashMap<>();
+		variables.put("fnr", "***gammelt_fnr***");
+		variables.put("fraDato", "2020-06-23");
+
+		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikBrukerWithFraDato(variables);
+		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
+
+		assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+		assertFalse(dokumentoversikt.getJournalposter().isEmpty());
 	}
 
 	@Test
@@ -637,5 +668,11 @@ public class DokumentoversiktBrukerIT extends AbstractItest {
 	private Dokumentoversikt getDokumentoversikt(ResponseEntity<LinkedHashMap> responseEntity) {
 		Map<String, Object> responseEntityData = (Map<String, Object>) responseEntity.getBody().get("data");
 		return objectMapper.convertValue(responseEntityData.get("dokumentoversiktBruker"), Dokumentoversikt.class);
+	}
+
+	private ResponseEntity<LinkedHashMap> callDokumentOversikBrukerWithFraDato(Map<String, Object> variables) throws IOException, URISyntaxException {
+		GraphQLRequest request = new GraphQLRequest(stringFromClasspath("dokumentoversiktBruker/dokumentoversiktbruker_literals.query"), null, variables);
+		RequestEntity<GraphQLRequest> requestEntity = new RequestEntity<>(request, createHeaders(), HttpMethod.POST, new URI("/graphql"));
+		return restTemplate.exchange(requestEntity, LinkedHashMap.class);
 	}
 }
