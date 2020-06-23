@@ -1,0 +1,21 @@
+query hentDokument($fnr: String!, $fraDato: Date!)
+{
+    dokumentoversiktBruker(
+        brukerId: {
+            id: $fnr,
+            type: FNR
+        }
+        fraDato: $fraDato,
+        foerste: 1
+    ) {
+        journalposter {
+              journalpostId
+              eksternReferanseId
+              dokumenter {
+                dokumentvarianter {
+                  saksbehandlerHarTilgang
+                }
+              }
+         }
+    }
+}

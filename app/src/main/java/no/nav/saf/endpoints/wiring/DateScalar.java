@@ -28,22 +28,27 @@ final class DateScalar {
 
 				@Override
 				public Object parseValue(Object input) throws CoercingParseValueException {
-					throw new CoercingParseValueException("Parsing av query variabel " + input.getClass() + " til " + DATE.getName() + " er ikke implementert.");
+					return createLocalDateFromString(input.toString());
 				}
 
 				@Override
 				public Object parseLiteral(Object input) throws CoercingParseLiteralException {
 					if (input instanceof StringValue) {
-						try {
-							return LocalDate.parse(((StringValue) input).getValue());
-						} catch (DateTimeParseException e) {
-							throw new CoercingParseLiteralException("Verdi er ikke en gyldig Date: " + input.toString());
-						}
+						return createLocalDateFromString(((StringValue) input).getValue());
 					}
 					throw new CoercingParseLiteralException("Verdi er ikke en gyldig Date: " + input.toString());
 				}
 			})
 			.build();
+
+	private static LocalDate createLocalDateFromString(String value) {
+		try {
+			return LocalDate.parse(value);
+		} catch (DateTimeParseException e) {
+			throw new CoercingParseLiteralException("Verdi er ikke en gyldig Date: " + value);
+		}
+
+	}
 
 	private DateScalar() {
 		// ingen instansiering
