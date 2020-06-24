@@ -1,9 +1,5 @@
 package no.nav.saf.tilgangskontroll;
 
-import static no.nav.saf.util.MDCUtility.addMdcData;
-import static org.apache.commons.lang3.StringUtils.isBlank;
-import static org.apache.commons.lang3.StringUtils.trim;
-
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.interfaces.DecodedJWT;
@@ -15,6 +11,10 @@ import no.nav.security.token.support.core.jwt.JwtToken;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+
+import static no.nav.saf.util.MDCUtility.addMdcData;
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.trim;
 
 /**
  * @author Joakim Bjørnstad, Jbit AS
@@ -39,11 +39,12 @@ public class SafSecurityContext {
 	private final String issuer;
 
 	static {
-		// Disse servicebrukerene får tilgang til å hente dokumentvarianter
+		// Disse servicebrukerene får tilgang til å hente dokumentvarianter som ARKIV
 		PRIVILEGIED_SERVICEUSERS.put("srvdokdistfordeling", true);
 		PRIVILEGIED_SERVICEUSERS.put("srvdokdisteformidling", true);
 		PRIVILEGIED_SERVICEUSERS.put("srvdokarkivproxy", true);
 		PRIVILEGIED_SERVICEUSERS.put("srvtilbakemeldings", true);
+		PRIVILEGIED_SERVICEUSERS.put("srvomsitramme", true);
 	}
 
 	SafSecurityContext(Set<String> azureIssuers,
