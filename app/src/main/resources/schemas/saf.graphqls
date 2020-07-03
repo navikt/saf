@@ -598,6 +598,9 @@ enum Kanal {
     # * Brukes for inngående journalposter
     NAV_NO_UINNLOGGET
 
+    # Bruker har fylt ut og sendt inn dokumentet sammen med en NAV-ansatt. Det er den NAV-ansatte som var pålogget innsendingsløsningen.
+    INNSENDT_NAV_ANSATT
+
 	# Forsendelsen har ingen kjent kanal.
 	UKJENT
 }
