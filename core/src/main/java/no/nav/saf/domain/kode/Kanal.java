@@ -19,7 +19,8 @@ public enum Kanal {
 	HELSENETTET("Helsenettet"),
 	INGEN_DISTRIBUSJON("Ingen distribusjon"),
 	UKJENT("Ukjent"),
-	NAV_NO_UINNLOGGET("Ditt NAV uten ID-porten-pålogging");
+	NAV_NO_UINNLOGGET("Ditt NAV uten ID-porten-pålogging"),
+	INNSENDT_NAV_ANSATT("Innsendt av Nav-ansatt");
 
 	private final String kanalnavn;
 
