@@ -45,7 +45,6 @@ public class SafSecurityContext {
 		PRIVILEGIED_SERVICEUSERS.put("srvdokarkivproxy", true);
 		PRIVILEGIED_SERVICEUSERS.put("srvtilbakemeldings", true);
 		PRIVILEGIED_SERVICEUSERS.put("srvomsitramme", true);
-		PRIVILEGIED_SERVICEUSERS.put("srvcoronapenger", true);
 	}
 
 	SafSecurityContext(Set<String> azureIssuers,
