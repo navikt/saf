@@ -29,21 +29,22 @@
 		<java.version>11</java.version>
 		<sonar.exclusions>no.nav.saf.graphiql/**/*</sonar.exclusions>
 		<javax.inject.version>1</javax.inject.version>
-		<jakarta.jaxws-api.version>2.3.2</jakarta.jaxws-api.version>
+		<jakarta.jaxws-api.version>2.3.3</jakarta.jaxws-api.version>
 		<jakarta.activation.version>1.2.2</jakarta.activation.version>
 		<aktoer.version>2.0.1</aktoer.version>
 		<pensjonsakv1.version>1.0.3</pensjonsakv1.version>
-		<cxf.version>3.3.6</cxf.version>
-		<saaj-impl.version>1.5.1</saaj-impl.version>
-		<graphql-java.version>14.1</graphql-java.version>
+		<cxf-jaxws.version>3.3.6</cxf-jaxws.version>
+		<cxf-ws-security.version>3.3.7</cxf-ws-security.version>
+		<saaj-impl.version>1.5.2</saaj-impl.version>
+		<graphql-java.version>15.0</graphql-java.version>
 		<abac-attribute-constants.version>3.4.4</abac-attribute-constants.version>
-		<abac-common-attributes-alfa.version>4.1.0</abac-common-attributes-alfa.version>
-		<abac-saf-policies-alfa.version>5.0.0</abac-saf-policies-alfa.version>
+		<abac-common-attributes-alfa.version>4.2.2</abac-common-attributes-alfa.version>
+		<abac-saf-policies-alfa.version>5.0.3</abac-saf-policies-alfa.version>
 		<rxjava.version>2.2.19</rxjava.version>
 		<resilience4j.version>1.4.0</resilience4j.version>
-		<java-jwt.version>3.10.2</java-jwt.version>
-		<token-support.version>1.1.5</token-support.version>
-		<logstash-logback-encoder.version>6.3</logstash-logback-encoder.version>
+		<java-jwt.version>3.10.3</java-jwt.version>
+		<token-support.version>1.2.0</token-support.version>
+		<logstash-logback-encoder.version>6.4</logstash-logback-encoder.version>
 		<logback-syslog4j.version>1.0.0</logback-syslog4j.version>
 		<io.springfox.version>2.9.2</io.springfox.version>
 		<commons-text.version>1.8</commons-text.version>
@@ -126,12 +127,12 @@
 			<dependency>
 				<groupId>org.apache.cxf</groupId>
 				<artifactId>cxf-spring-boot-starter-jaxws</artifactId>
-				<version>${cxf.version}</version>
+				<version>${cxf-jaxws.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.cxf</groupId>
 				<artifactId>cxf-rt-ws-security</artifactId>
-				<version>${cxf.version}</version>
+				<version>${cxf-ws-security.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.sun.xml.messaging.saaj</groupId>
@@ -215,12 +216,6 @@
 			</dependency>
 			<dependency>
 				<groupId>no.nav.security</groupId>
-				<artifactId>oidc-test-support</artifactId>
-				<version>${token-support.version}</version>
-				<scope>test</scope>
-			</dependency>
-			<dependency>
-				<groupId>no.nav.security</groupId>
 				<artifactId>token-validation-test-support</artifactId>
 				<version>${token-support.version}</version>
 				<scope>test</scope>
@@ -264,19 +259,19 @@
 			<extension>
 				<groupId>org.apache.maven.wagon</groupId>
 				<artifactId>wagon-webdav-jackrabbit</artifactId>
-				<version>1.0</version>
+				<version>3.3.4</version>
 			</extension>
 		</extensions>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
-				<version>3.0.0-M3</version>
+				<version>3.0.0-M5</version>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-failsafe-plugin</artifactId>
-				<version>3.0.0-M3</version>
+				<version>3.0.0-M5</version>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
