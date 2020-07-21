@@ -33,8 +33,7 @@
 		<jakarta.activation.version>1.2.2</jakarta.activation.version>
 		<aktoer.version>2.0.1</aktoer.version>
 		<pensjonsakv1.version>1.0.3</pensjonsakv1.version>
-		<cxf-jaxws.version>3.3.6</cxf-jaxws.version>
-		<cxf-ws-security.version>3.3.7</cxf-ws-security.version>
+		<cxf.version>3.3.7</cxf.version>
 		<saaj-impl.version>1.5.2</saaj-impl.version>
 		<graphql-java.version>15.0</graphql-java.version>
 		<abac-attribute-constants.version>3.4.4</abac-attribute-constants.version>
@@ -127,12 +126,12 @@
 			<dependency>
 				<groupId>org.apache.cxf</groupId>
 				<artifactId>cxf-spring-boot-starter-jaxws</artifactId>
-				<version>${cxf-jaxws.version}</version>
+				<version>${cxf.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.cxf</groupId>
 				<artifactId>cxf-rt-ws-security</artifactId>
-				<version>${cxf-ws-security.version}</version>
+				<version>${cxf.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.sun.xml.messaging.saaj</groupId>
