@@ -25,7 +25,7 @@ class AbacLoggerTest {
 
 	@Test
 	void shouldSanitizeFnr() {
-		final String scrubbed = abacLogger.sanitizeFnr("Authorization Request: domene=saf, resource_type=no.nav.abac.attributter.resource.saf.person, fnr=***gammelt_fnr***.  Authorization Response: decision=Deny, cause=cause-0002-ikketilgangtilNAVbrukersenhet, deny_policy=fp4_geografi, deny_rule=ingen_tilgang_enhet;");
+		final String scrubbed = abacLogger.sanitizeFnr("Authorization Request: domene=saf, resource_type=no.nav.abac.attributter.resource.saf.person, fnr=11111111111.  Authorization Response: decision=Deny, cause=cause-0002-ikketilgangtilNAVbrukersenhet, deny_policy=fp4_geografi, deny_rule=ingen_tilgang_enhet;");
 		assertEquals("Authorization Request: domene=saf, resource_type=no.nav.abac.attributter.resource.saf.person, fnr=****.  Authorization Response: decision=Deny, cause=cause-0002-ikketilgangtilNAVbrukersenhet, deny_policy=fp4_geografi, deny_rule=ingen_tilgang_enhet;", scrubbed);
 	}
 

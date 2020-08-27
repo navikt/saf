@@ -2,9 +2,9 @@
 	<soap:Body>
 		<ns2:hentAktoerIdForIdentResponse xmlns:ns2="http://nav.no/tjeneste/virksomhet/aktoer/v2">
 			<hentAktoerIdForIdentResponse>
-				<aktoerId>***gammelt_fnr***59</aktoerId>
+				<aktoerId>1912374211459</aktoerId>
 				<identHistorikk>
-					<tpsId>***gammelt_fnr***</tpsId>
+					<tpsId>11111111111</tpsId>
 					<datoFom>2016-10-20</datoFom>
 				</identHistorikk>
 			</hentAktoerIdForIdentResponse>

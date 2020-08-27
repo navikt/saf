@@ -82,8 +82,8 @@ class AvsenderMottakerMapperTest {
         }
 
         @ParameterizedTest
-        @ValueSource(strings = {"***gammelt_fnr***", "***gammelt_fnr***", "***gammelt_fnr***", "***gammelt_fnr***",
-                "***gammelt_fnr***", "***gammelt_fnr***", "***gammelt_fnr***", "***gammelt_fnr***"})
+        @ValueSource(strings = {"00000000000", "10000000000", "20000000000", "30000000000",
+                "40000000000", "50000000000", "60000000000", "70000000000"})
         void shouldMapAvsenderMottakerIdTypeFNRWhenAvsenderMottakerIdIs11DigitsLongAnd1DigitInRange0To7(String input) {
             JournalpostDto journalpostDto = buildJournalpostDtoAvsenderMottakerIdTypeNull();
             journalpostDto.setAvsenderMottakerId(input);
@@ -94,7 +94,7 @@ class AvsenderMottakerMapperTest {
         }
 
         @ParameterizedTest
-        @ValueSource(strings = {"***gammelt_fnr***", "***gammelt_fnr***"})
+        @ValueSource(strings = {"80000000000", "90000000000"})
         @DisplayName("Test mapping av TSS-id")
         void shouldMapAvsenderMottakerIdTypeUKJENTWhenAvsenderMottakerIdIs11DigitsLongAndFirstDigitIs8Or9(String input) {
             JournalpostDto journalpostDto = buildJournalpostDtoAvsenderMottakerIdTypeNull();
@@ -118,7 +118,7 @@ class AvsenderMottakerMapperTest {
         }
 
         @ParameterizedTest
-        @ValueSource(strings = {"12345", "***gammelt_fnr***23", ""})
+        @ValueSource(strings = {"12345", "1234567890123", ""})
         void shouldMapAvsenderMottakerIdTypeUKJENT(String input) {
             JournalpostDto journalpostDto = buildJournalpostDtoAvsenderMottakerIdTypeNull();
             journalpostDto.setAvsenderMottakerId(input);

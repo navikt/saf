@@ -8,5 +8,5 @@ fi
 if test -f /secrets/serviceuser/srvsaf/password;
 then
     echo "Setting serviceuser_password"
-    export  serviceuser_***passord=gammelt_passord***)
+    export  serviceuser_password=$(cat /secrets/serviceuser/srvsaf/password)
 fi

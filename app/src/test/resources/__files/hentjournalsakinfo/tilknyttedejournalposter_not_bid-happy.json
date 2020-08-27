@@ -7,7 +7,7 @@
       "behandlingstema": "sok1",
       "behandlingstemanavn": "En viktig søknad",
       "journalstatus": "FS",
-      "avsenderMottakerId": "***gammelt_fnr***",
+      "avsenderMottakerId": "11111111111",
       "avsenderMottakerNavn": "Bjarne Betjent",
       "avsenderMottakerLand": "NO",
       "journalforendeEnhet": "2990",
@@ -22,14 +22,14 @@
         "fagsystem": "FS22",
         "tema": "FOR",
         "applikasjon": "FS22",
-        "aktoerId": "***gammelt_fnr***00",
+        "aktoerId": "1900000000000",
         "orgnr": null,
         "fagsakNr": "abc123",
         "opprettetAv": "srvsyfoservice",
         "opprettetTidspunkt": "2018-07-17T13:49:01.839+02:00"
       },
       "bruker": {
-        "brukerId": "***gammelt_fnr***",
+        "brukerId": "11111111111",
         "brukerIdType": "PERSON"
       },
       "datoOpprettet": "2018-06-27T02:02:13.174+0000",

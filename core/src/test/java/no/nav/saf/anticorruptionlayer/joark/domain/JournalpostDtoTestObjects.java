@@ -40,8 +40,8 @@ public class JournalpostDtoTestObjects {
     static final Date JOURNAL_DATO = new Date(6000L);
     static final Date MOTTAT_DATO = new Date(7000L);
     static final Date DATO_FERDIGSTILT = new Date(8000L);
-    static final String FNR = "***gammelt_fnr***";
-    static final String AKTOER_ID = "***gammelt_fnr***31";
+    static final String FNR = "12345678901";
+    static final String AKTOER_ID = "4321098765431";
     static final String SAKS_ID = "12345";
     static final String ORG_NR = "54321";
     static final String ARKIVSAK_NR = "1337";
@@ -59,14 +59,14 @@ public class JournalpostDtoTestObjects {
     static final String TILLEGGSOPPLYSNING_VERDI = "21521";
     static final String FILNAVN_1 = "filnavn1";
     static final String FILNAVN_2 = "filnavn2";
-    static final String AVSENDER_MOTTAKER_ID = "***gammelt_fnr***";
+    static final String AVSENDER_MOTTAKER_ID = "00000000000";
     static final AvsenderMottakerIdType AVSENDER_MOTTAKER_ID_TYPE = AvsenderMottakerIdType.FNR;
     static final String LOGISK_VEDLEGG_ID = "logisk1";
     static final String LOGISK_VEDLEGG_TITTEL = "logisktittel";
     static final String DOKUMENTTYPE_ID = "00000001";
     static final String FILUUID_1 = "abcd";
     static final String FILUUID_2 = "dcba";
-    static final String BRUKER_ID_PERSON = "***gammelt_fnr***";
+    static final String BRUKER_ID_PERSON = "11111111111";
     static final String BRUKER_ID_ORGANISASJON = "999999999";
     static final String ANTALL_RETUR = "3";
     static final String KANAL_REFERANSE_ID = "KANAL REFERANSE ID";

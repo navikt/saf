@@ -1,5 +1,5 @@
 {
-  dokumentoversiktBruker(brukerId: {id: "***gammelt_fnr***59", type: AKTOERID}, foerste: 3) {
+  dokumentoversiktBruker(brukerId: {id: "1912374211459", type: AKTOERID}, foerste: 3) {
     journalposter {
       journalpostId
       eksternReferanseId

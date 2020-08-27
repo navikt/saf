@@ -26,7 +26,7 @@
         "fagsystem": "FS22"
       },
       "bruker": {
-        "brukerId": "***gammelt_fnr***",
+        "brukerId": "12345678910",
         "brukerIdType": "PERSON"
       },
       "datoOpprettet": "2019-08-06T07:30:40.868+0000",
@@ -91,7 +91,7 @@
       "journalposttype": "I",
       "saksrelasjon": null,
       "bruker": {
-        "brukerId": "***gammelt_fnr***",
+        "brukerId": "27058000530",
         "brukerIdType": "PERSON"
       },
       "datoOpprettet": "2019-07-16T11:17:02.915+0000",
@@ -115,7 +115,7 @@
           "varianter": [
             {
               "variantf": "ARKIV",
-              "filnavn": "***gammelt_fnr***019.pdf",
+              "filnavn": "20190716131019.pdf",
               "filuuid": "eebbfc18-9365-4c10-a6c7-7bbe0403d289",
               "filtype": "PDF",
               "skjerming": null
@@ -155,7 +155,7 @@
         "fagsystem": "FS22"
       },
       "bruker": {
-        "brukerId": "***gammelt_fnr***",
+        "brukerId": "11126737893",
         "brukerIdType": "PERSON"
       },
       "datoOpprettet": "2019-06-28T14:06:08.323+0000",
@@ -219,7 +219,7 @@
         "fagsystem": "FS22"
       },
       "bruker": {
-        "brukerId": "***gammelt_fnr***",
+        "brukerId": "21067937265",
         "brukerIdType": "PERSON"
       },
       "datoOpprettet": "2019-06-28T10:05:58.470+0000",
@@ -283,7 +283,7 @@
         "fagsystem": "FS22"
       },
       "bruker": {
-        "brukerId": "***gammelt_fnr***",
+        "brukerId": "07106536058",
         "brukerIdType": "PERSON"
       },
       "datoOpprettet": "2019-06-27T18:37:31.948+0000",

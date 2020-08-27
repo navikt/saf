@@ -2367,7 +2367,7 @@ exports.addGraphQLSubscriptions = addGraphQLSubscriptions;
  */
 
 /** Used as references for various `Number` constants. */
-var MAX_SAFE_INTEGER = ***gammelt_fnr***40991;
+var MAX_SAFE_INTEGER = 9007199254740991;
 
 /** `Object#toString` result references. */
 var argsTag = '[object Arguments]',

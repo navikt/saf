@@ -40,7 +40,7 @@ import java.util.Map;
  */
 class DokumentoversiktFagsakIT extends AbstractItest {
 
-	private static final String FAGSAK_ID = "***gammelt_fnr***59";
+	private static final String FAGSAK_ID = "1912374211459";
 	private static final String FAGSAK_SYSTEM = "AO01";
 	private static final String KANAL_REFERANSE_ID = "KANAL REFERANSE ID";
 
@@ -143,7 +143,7 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 	@Test
 	void hentSakerTechnicalFail() throws IOException, URISyntaxException {
 		abacDenyPep1g();
-		stubFor(get("/gsak?fagsakNr=***gammelt_fnr***59&applikasjon=AO01")
+		stubFor(get("/gsak?fagsakNr=1912374211459&applikasjon=AO01")
 				.willReturn(aResponse().withStatus(HttpStatus.INTERNAL_SERVER_ERROR.value())));
 
 		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikFagsakGsak();
@@ -156,7 +156,7 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 	@Test
 	void hentSakerFunctionalFail() throws IOException, URISyntaxException {
 		abacDenyPep1g();
-		stubFor(get("/gsak?fagsakNr=***gammelt_fnr***59&applikasjon=AO01")
+		stubFor(get("/gsak?fagsakNr=1912374211459&applikasjon=AO01")
 				.willReturn(aResponse().withStatus(HttpStatus.BAD_REQUEST.value())));
 
 		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikFagsakGsak();

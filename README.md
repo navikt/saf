@@ -59,11 +59,11 @@ hvor options inneholder instillingene nevnt i forrige steg.
 For å kjøre saf lokalt er det nødvendig å hente en truststore, og tilføre en servicebruker. Begge disse kan bli funnet på [fasit.adeo.no](fasit.adeo.no), eller via vaultløsningen.
 ```bash
 -DserviceGate-Djavax.net.ssl.trustStore=<pathToTrustStore.jts>
--Djavax.net.ssl.trustStore***passord=gammelt_passord***>
+-Djavax.net.ssl.trustStorePassword=<trustStorePassword>
 -Dhentjournalsakinfo.url=https://dokarkiv-q1.nais.preprod.local/hentjournalsakinfo/
 -Dsak.saker.url=https://sak.nais.preprod.local/api/v1/saker
 -Dserviceuser.username=<safServiceUser>
--Dserviceuser.***passord=gammelt_passord***>
+-Dserviceuser.password=<safServiceUserPassword>
 -DsecurityTokenService.url=https://sts-q1.preprod.local/SecurityTokenServiceProvider/
 -Daktoer.v2.endpointurl=https://app-q1.adeo.no/aktoerregister/ws/Aktoer/v2
 -Dabac.pdp.endpoint.url=https://wasapp-q1.adeo.no/asm-pdp/authorize

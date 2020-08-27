@@ -21,14 +21,14 @@
       "id": 100000000,
       "tema": "FOR",
       "applikasjon": "FS22",
-      "aktoerId": "***gammelt_fnr***00",
+      "aktoerId": "1900000000000",
       "orgnr": null,
       "fagsakNr": "abc123",
       "opprettetAv": "srvsyfoservice",
       "opprettetTidspunkt": "2018-07-17T13:49:01.839+02:00"
     },
     "bruker": {
-      "brukerId": "***gammelt_fnr***",
+      "brukerId": "12345678910",
       "brukerIdType": "PERSON"
     },
     "datoOpprettet": "2018-06-27T02:02:13.174+0000",
