@@ -6,6 +6,9 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.service.ApiInfo;
 import springfox.documentation.service.ApiKey;
@@ -18,7 +21,7 @@ import springfox.documentation.swagger.web.OperationsSorter;
 import springfox.documentation.swagger.web.TagsSorter;
 import springfox.documentation.swagger.web.UiConfiguration;
 import springfox.documentation.swagger.web.UiConfigurationBuilder;
-import springfox.documentation.swagger2.annotations.EnableSwagger2WebMvc;
+import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 import java.util.ArrayList;
 
@@ -32,8 +35,8 @@ import static springfox.documentation.builders.PathSelectors.regex;
         havingValue = "true"
 )
 @Configuration
-@EnableSwagger2WebMvc
-public class SwaggerConfig {
+@EnableSwagger2
+public class SwaggerConfig implements WebMvcConfigurer {
 
     @Value("${APP_VERSION:0.0.0}")
     private String version;
@@ -75,7 +78,7 @@ public class SwaggerConfig {
                 "Her dokumenteres REST tjenestegrensesnittet til sak og arkivfasade (SAF). <br/><br/>" +
                         "Til autentisering brukes OIDC-token (JWT via OAuth2.0). " + "Følgende format må brukes i Authorize sitt input-felt \"Value\": <strong> Bearer {token} </strong>. " +
                         "Eksempel på verdi i input-feltet: <strong> Bearer eYdmifml0ejugm </strong>. Et gyldig token kommer til å ha mange flere karakterer enn i eksempelet.<br/><br/>" +
-						"Tokens for manuell test kan hentes fra <a href=\"https://ida.adeo.no/\">IDA</a>. For maskinell test og produksjon kan tokens komme fra Azure V2, NAV REST-STS eller OpenAM.",
+                        "Tokens for manuell test kan hentes fra <a href=\"https://ida.adeo.no/\">IDA</a>. For maskinell test og produksjon kan tokens komme fra Azure V2, NAV REST-STS eller OpenAM.",
                 version,
                 "",
                 new Contact("Team Dokumentløsninger", "https://nav-it.slack.com/archives/C6W9E5GPJ", "teamdokumenthandtering@nav.no"),
@@ -85,5 +88,19 @@ public class SwaggerConfig {
     private ApiKey apiKey() {
 
         return new ApiKey("apiKey", HttpHeaders.AUTHORIZATION, "header");
+    }
+
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry.
+                addResourceHandler("/swagger-ui/**")
+                .addResourceLocations("classpath:/META-INF/resources/webjars/springfox-swagger-ui/")
+                .resourceChain(false);
+    }
+
+    @Override
+    public void addViewControllers(ViewControllerRegistry registry) {
+        registry.addViewController("/swagger-ui/")
+                .setViewName("forward:" + "/swagger-ui/index.html");
     }
 }
