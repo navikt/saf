@@ -19,6 +19,7 @@ import no.nav.saf.tilgangskontroll.abac.dto.response.XacmlResponse;
 import no.nav.saf.tilgangskontroll.abac.service.AbacService;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
+import org.springframework.data.redis.RedisConnectionFailureException;
 import org.springframework.data.redis.RedisSystemException;
 import org.springframework.data.redis.connection.PoolException;
 import org.springframework.stereotype.Component;
@@ -82,7 +83,7 @@ public class Pep6dImpl implements Pep<TilgangDokumentvariant> {
 				}
 				safRequestContext.getRequestCache().putObject(tilgangKeyLocalCaching, decide(response.getDecision()));
 				return response;
-			} catch (RedisSystemException | RedisException | PoolException | Cache.ValueRetrievalException e) {
+			} catch (RedisSystemException | RedisException | PoolException | Cache.ValueRetrievalException | RedisConnectionFailureException e) {
 				// Ting skal fremdeles snurre selv om man ikke får kontakt med redis
 				XacmlResponse response = hasDokumentFilAccess(ressurs, safRequestContext);
 				safRequestContext.getRequestCache().putObject(tilgangKeyLocalCaching, decide(response.getDecision()));
