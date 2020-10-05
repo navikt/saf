@@ -12,7 +12,7 @@
   "NO_NAV_SECURITY_JWT_ISSUER_AZUREV2_DISCOVERYURL": "https://login.microsoftonline.com/966ac572-f5b7-4bbe-aa88-c76419c0f851/v2.0/.well-known/openid-configuration",
   "NO_NAV_SECURITY_JWT_ISSUER_RESTSTS_DISCOVERYURL": "https://security-token-service-t4.nais.preprod.local/rest/v1/sts/.well-known/openid-configuration",
   "NO_NAV_SECURITY_JWT_ISSUER_OPENAM_DISCOVERYURL": "https://isso-t.adeo.no:443/isso/oauth2/.well-known/openid-configuration",
-  "INGRESSES": ["https://saf-t3.nais.preprod.local"],
+  "INGRESSES": ["https://saf-t3.nais.preprod.local", "https://saf-t3.dev.adeo.no"],
   "SRVSAF": "/serviceuser/data/test/srvsaf",
   "NO_NAV_SECURITY_JWT_ISSUER_AZUREV1_ACCEPTED_AUDIENCE": "38e07d31-659d-4595-939a-f18dce3446c5",
   "NO_NAV_SECURITY_JWT_ISSUER_AZUREV2_ACCEPTED_AUDIENCE": "c7adbfbb-1b1e-41f6-9b7a-af9627c04998,c91c511f-311f-4d56-b7f0-7eda352ce4ae",
