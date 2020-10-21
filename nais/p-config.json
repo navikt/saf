@@ -5,7 +5,7 @@
   "SAK_SAKER_URL": "https://sak.nais.adeo.no/api/v1/saker",
   "SECURITYTOKENSERVICE_URL": "https://sts.adeo.no/SecurityTokenServiceProvider/",
   "AKTOER_V2_ENDPOINTURL": "https://app.adeo.no/aktoerregister/ws/Aktoer/v2",
-  "PENSJON_V1_ENDPOINTURL": "https://wasapp.adeo.no/pensjon-ws/PensjonSak_v1",
+  "PENSJON_V1_ENDPOINTURL": "https://pensjon-pen.nais.adeo.no/pen/services/PensjonSak_v1",
   "GRAPHIQL_ENABLED": "false",
   "SWAGGER_ENABLED": "false",
   "NO_NAV_SECURITY_JWT_ISSUER_AZUREV1_DISCOVERYURL": "https://login.microsoftonline.com/62366534-1ec3-4962-8869-9b5535279d0b/.well-known/openid-configuration",
