@@ -647,7 +647,7 @@ enum Tema {
     # Forsikring
     FOS
 
-    # Midlertidig kompensasjonsordning for selvstendig næringsdrivende og frilansere
+    # Kompensasjon for selvstendig næringsdrivende/frilansere
     FRI
 
     # Fullmakt

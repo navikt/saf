@@ -171,7 +171,7 @@ public enum FagomradeCode {
 	 */
 	TIL,
 	/**
-	 * Rekruttering og Stilling
+	 * Rekruttering og stilling
 	 */
 	REK,
 	/**
@@ -247,7 +247,7 @@ public enum FagomradeCode {
 	 */
 	FAR,
 	/**
-	 * Midlertidig kompensasjonsordning for selvstendig næringsdrivende og frilansere
+	 * Kompensasjon for selvstendig næringsdrivende/frilansere
 	 */
 	FRI;
 

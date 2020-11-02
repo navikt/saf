@@ -20,7 +20,7 @@ public enum Tema {
 	FEI("Feilutbetaling"),
 	FOR("Foreldre- og svangerskapspenger"),
 	FOS("Forsikring"),
-	FRI("Midlertidig kompensasjonsordning for selvstendig næringsdrivende og frilansere"),
+	FRI("Kompensasjon for selvstendig næringsdrivende/frilansere"),
 	FUL("Fullmakt"),
 	GEN("Generell"),
 	GRA("Gravferdsstønad"),
