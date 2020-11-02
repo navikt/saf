@@ -34,7 +34,6 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static no.nav.saf.cache.KeyGeneratorLocalCaching.getKeyForPep2d;
@@ -196,7 +195,7 @@ public class JournalpostDtoMapper {
 		if (brukerType.equals(DomainConstants.PERSON)) {
 			return new Bruker(brukerId, BrukerIdType.FNR);
 		} else if (brukerType.equals(DomainConstants.ORGANISASJON)) {
-			return new Bruker(brukerId, BrukerIdType.ORGNR);
+			return new Bruker(trim(brukerId), BrukerIdType.ORGNR);
 		} else {
 			return null;
 		}

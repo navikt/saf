@@ -462,6 +462,23 @@ class JournalpostDtoMapperTest {
 	}
 
 	@Test
+	void shouldMapToBrukerInJournalpostWhenNoSakstilknytningForOrganisasjonAndTrailingBlanks() {
+		JournalpostDto journalpostDto = JournalpostDtoTestObjects.baseJournalpostDto()
+				.journalposttype(JournalpostTypeCode.I)
+				.saksrelasjon(null)
+				.bruker(BrukerDto.builder()
+						.brukerId(JournalpostDtoTestObjects.BRUKER_ID_ORGANISASJON + "   ")
+						.brukerIdType(DomainConstants.ORGANISASJON)
+						.build())
+				.fagomrade(FagomradeCode.AAP).build();
+
+		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, new RequestCache());
+
+		assertThat(journalpost.getBruker().getId(), is(JournalpostDtoTestObjects.BRUKER_ID_ORGANISASJON));
+		assertThat(journalpost.getBruker().getType(), is(BrukerIdType.ORGNR));
+	}
+
+	@Test
 	void shouldMapJournalstatusFeilregistrertWhenJournalfoertAndIsFeilregistrert() {
 		JournalpostDto journalpostDto = JournalpostDtoTestObjects.buildJournalpostDtoUtgaaendeType(JournalStatusCode.J);
 		journalpostDto.getSaksrelasjon().setFeilregistrert(true);
