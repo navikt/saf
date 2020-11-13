@@ -84,3 +84,5 @@ Deploy av saf-koden til miljø gjøres lettest ved hjelp av jenkins.
 ## For NAV-ansatte
 
 Interne henvendelser kan sendes via Slack i kanalen #team_dokument.
+
+TESTER PR
