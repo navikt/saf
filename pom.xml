@@ -39,14 +39,16 @@
         <abac-saf-policies-alfa.version>5.0.5</abac-saf-policies-alfa.version>
         <rxjava.version>2.2.19</rxjava.version>
         <resilience4j.version>1.5.0</resilience4j.version>
-        <java-jwt.version>3.10.3</java-jwt.version>
+        <java-jwt.version>3.11.0</java-jwt.version>
         <token-support.version>1.3.1</token-support.version>
         <logstash-logback-encoder.version>6.5</logstash-logback-encoder.version>
         <logback-syslog4j.version>1.0.0</logback-syslog4j.version>
         <io.springfox.version>3.0.0</io.springfox.version>
         <commons-text.version>1.8</commons-text.version>
+        <!-- Oppdaterer versjon inkludert som transitiv avhengighet gjennom cxf-rt-ws-security -->
+        <bcprov-jdk15on.version>1.67</bcprov-jdk15on.version>
         <!-- provided -->
-        <lombok.version>1.18.12</lombok.version>
+        <lombok.version>1.18.16</lombok.version>
         <!-- test -->
         <mockito.version>3.3.3</mockito.version>
         <spring-cloud-contract-wiremock.version>2.1.5.RELEASE</spring-cloud-contract-wiremock.version>
@@ -190,6 +192,11 @@
                 <groupId>no.nav.security</groupId>
                 <artifactId>token-validation-spring</artifactId>
                 <version>${token-support.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.bouncycastle</groupId>
+                <artifactId>bcprov-jdk15on</artifactId>
+                <version>${bcprov-jdk15on.version}</version>
             </dependency>
             <dependency>
                 <groupId>no.nav.security</groupId>
