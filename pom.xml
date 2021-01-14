@@ -44,7 +44,7 @@
         <logstash-logback-encoder.version>6.5</logstash-logback-encoder.version>
         <logback-syslog4j.version>1.0.0</logback-syslog4j.version>
         <io.springfox.version>3.0.0</io.springfox.version>
-        <commons-text.version>1.8</commons-text.version>
+        <commons-text.version>1.9</commons-text.version>
         <!-- Oppdaterer versjon inkludert som transitiv avhengighet gjennom cxf-rt-ws-security -->
         <bcprov-jdk15on.version>1.67</bcprov-jdk15on.version>
         <!-- provided -->
