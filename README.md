@@ -56,28 +56,17 @@ hvor options inneholder instillingene nevnt i forrige steg.
 
 ## Lokal utvikling
 
-For å kjøre saf lokalt er det nødvendig å hente en truststore, og tilføre en servicebruker. Begge disse kan bli funnet på [fasit.adeo.no](fasit.adeo.no), eller via vaultløsningen.
-```bash
--DserviceGate-Djavax.net.ssl.trustStore=<pathToTrustStore.jts>
--Djavax.net.ssl.trustStorePassword=<trustStorePassword>
--Dhentjournalsakinfo.url=https://dokarkiv-q1.nais.preprod.local/hentjournalsakinfo/
--Dsak.saker.url=https://sak.nais.preprod.local/api/v1/saker
--Dserviceuser.username=<safServiceUser>
--Dserviceuser.password=<safServiceUserPassword>
--DsecurityTokenService.url=https://sts-q1.preprod.local/SecurityTokenServiceProvider/
--Daktoer.v2.endpointurl=https://app-q1.adeo.no/aktoerregister/ws/Aktoer/v2
--Dabac.pdp.endpoint.url=https://wasapp-q1.adeo.no/asm-pdp/authorize
--DserviceGateway.url=https://service-gw-q1.preprod.local/way.url=https://service-gw-q1.preprod.local/
--Dgraphiql.enabled=true
--Dswagger.enabled=true
--Dpensjonsakrs.v1.url=placeholder
-```
+For å kjøre saf lokalt er det nødvendig å hente en truststore, sette profil til nais, tilføre en servicebruker og sette miljøvariabler.
 
+ 1. [truststore](fasit.adeo.no)
+ 2. [servicebruker](https://vault.adeo.no/ui/vault/secrets/serviceuser/show/dev/srvsaf)
+ 3. [miljøvariabler](https://vault.adeo.no/ui/vault/secrets/secret/show/dokument/saf)
 ----------
 
 ## Deploy
 
 Deploy av saf-koden til miljø gjøres lettest ved hjelp av jenkins. 
+
 
 ----------
 
