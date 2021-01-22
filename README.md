@@ -56,7 +56,7 @@ hvor options inneholder instillingene nevnt i forrige steg.
 
 ## Lokal utvikling
 
-For å kjøre saf lokalt er det nødvendig å hente en truststore, sette profil til naise, tilføre en servicebruker og sette miljøvariabler.
+For å kjøre saf lokalt er det nødvendig å hente en truststore, sette profil til nais, tilføre en servicebruker og sette miljøvariabler.
 
  1. [truststore](fasit.adeo.no)
  2. [servicebruker](https://vault.adeo.no/ui/vault/secrets/serviceuser/show/dev/srvsaf)
@@ -66,6 +66,7 @@ For å kjøre saf lokalt er det nødvendig å hente en truststore, sette profil 
 ## Deploy
 
 Deploy av saf-koden til miljø gjøres lettest ved hjelp av jenkins. 
+
 
 ----------
 
