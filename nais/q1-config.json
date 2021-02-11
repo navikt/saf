@@ -1,6 +1,6 @@
 {
   "NAMESPACE": "q1",
-  "ABAC_PDP_ENDPOINT_URL": "https://wasapp-q1.adeo.no/asm-pdp/authorize",
+  "ABAC_PDP_ENDPOINT_URL": "https://abac-saf.dev.intern.nav.no/asm-pdp/authorize",
   "PENSJONSAKRS_V1_URL": "https://wasapp-q1.adeo.no/pensjon-ws/api/pip/hentBrukerOgEnhetstilgangerForSak/v1",
   "SAK_SAKER_URL": "https://sak-q1.nais.preprod.local/api/v1/saker",
   "SECURITYTOKENSERVICE_URL": "https://sts-q1.preprod.local/SecurityTokenServiceProvider/",
