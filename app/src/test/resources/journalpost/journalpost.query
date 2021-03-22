@@ -39,6 +39,7 @@
             datoOpprettet
             fagsakId
             fagsaksystem
+            sakstype
         }
         bruker {
             id

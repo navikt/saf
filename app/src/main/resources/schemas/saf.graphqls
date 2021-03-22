@@ -159,6 +159,13 @@ type Query {
         # Typen tilknyttet Journalpost.
         tilknytning: Tilknytning!
     ): [Journalpost]!
+
+     # * Query returnerer alle saker for bruker med angitt fnr / aktoerID. Konverterer ikke mellom de to.
+        saker(
+            # ID til bruker man ønsker å hente saker for.
+            # * Hvis argumentet ikke er angitt så returneres en feil.
+        brukerId: BrukerIdInput!
+        ): [Sak]!
 }
 
 # Dokumentoversikt er en liste av journalposter som tilfredstiller query kriteriene.
@@ -316,6 +323,9 @@ type Sak {
 
     # Kode som indikerer hvilket fagsystem, eventuelt nummerserie for fagsaker, som fagsaken befinner seg i.
     fagsaksystem: String
+
+    # Sier hvorvidt en sak er en fagsak eller en generell sak
+    sakstype: Sakstype
 }
 
 # Person eller organisasjon som har et forhold til NAV, f.eks. som mottaker av tjenester eller ytelser.
@@ -845,4 +855,12 @@ enum AvsenderMottakerIdType {
 
     # Ukjent IdType
     UKJENT
+}
+
+#
+enum Sakstype {
+
+    GENERELL_SAK
+
+    FAGSAK
 }

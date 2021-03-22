@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.FagomradeCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.FagsystemCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.JournalpostTypeCode;
+import no.nav.saf.anticorruptionlayer.joark.domain.kode.Sakstype;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.dto.BrukerDto;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.dto.DokumentInfoDto;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.dto.JournalpostDto;
@@ -215,6 +216,7 @@ public class JournalpostDtoMapper {
 					.fagsakId(arkivsak.getFagsakId())
 					.fagsaksystem(arkivsak.getFagsaksystem())
 					.datoOpprettet(arkivsak.getDatoOpprettet())
+					.sakstype(Sakstype.fromFagsaksystem(arkivsak.getFagsaksystem()))
 					.build();
 		}
 	}

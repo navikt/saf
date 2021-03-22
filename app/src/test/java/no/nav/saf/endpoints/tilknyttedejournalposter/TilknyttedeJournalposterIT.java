@@ -16,6 +16,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.github.tomakehurst.wiremock.stubbing.Scenario;
+import no.nav.saf.anticorruptionlayer.joark.domain.kode.Sakstype;
 import no.nav.saf.domain.kode.Arkivsakssystem;
 import no.nav.saf.domain.kode.Datotype;
 import no.nav.saf.domain.kode.Dokumentstatus;
@@ -97,6 +98,7 @@ class TilknyttedeJournalposterIT extends AbstractItest {
 		assertThat(journalpost.getSak().getFagsaksystem(), is("FS22"));
 		assertThat(journalpost.getSak().getDatoOpprettet(), notNullValue());
 		assertThat(journalpost.getSak().getArkivsaksnummer(), is("100000000"));
+		assertThat(journalpost.getSak().getSakstype(), is(Sakstype.GENERELL_SAK));
 		assertThat(journalpost.getBruker().getId(), is("1900000000000"));
 		assertThat(journalpost.getBruker().getType(), is(BrukerIdType.AKTOERID));
 		assertThat(journalpost.getAvsenderMottaker().getId(), is("11111111111"));

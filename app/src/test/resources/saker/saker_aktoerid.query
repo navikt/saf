@@ -1,0 +1,13 @@
+{
+  saker(brukerId: {id: "1912374211459", type: AKTOERID}) {
+      arkivsaksnummer
+      arkivsaksystem
+      datoOpprettet
+      fagsakId
+      fagsaksystem
+      sakstype
+  }
+}
+
+
+

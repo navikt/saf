@@ -2,6 +2,7 @@ package no.nav.saf.domain.visningsmodell;
 
 import lombok.Builder;
 import lombok.Value;
+import no.nav.saf.anticorruptionlayer.joark.domain.kode.Sakstype;
 import no.nav.saf.domain.kode.Arkivsakssystem;
 
 import java.time.LocalDateTime;
@@ -27,4 +28,5 @@ public class Sak {
 	private final String fagsakId;
 	private final String fagsaksystem;
 	private final LocalDateTime datoOpprettet;
+	private final Sakstype sakstype;
 }

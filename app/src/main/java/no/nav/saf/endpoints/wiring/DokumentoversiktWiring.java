@@ -10,6 +10,7 @@ import no.nav.saf.domain.kode.Journalposttype;
 import no.nav.saf.domain.kode.Journalstatus;
 import no.nav.saf.domain.kode.Tema;
 import no.nav.saf.domain.kode.Tilknytning;
+import no.nav.saf.domain.visningsmodell.BrukerIdType;
 import no.nav.saf.domain.visningsmodell.Dokumentoversikt;
 import no.nav.saf.domain.visningsmodell.Journalpost;
 import no.nav.saf.domain.visningsmodell.Sak;
@@ -23,13 +24,16 @@ import no.nav.saf.query.dokumentoversikt.fagsak.DokumentoversiktFagsakCoordinato
 import no.nav.saf.query.dokumentoversikt.journalstatus.DokumentoversiktJournalstatusArguments;
 import no.nav.saf.query.dokumentoversikt.journalstatus.DokumentoversiktJournalstatusCoordinator;
 import no.nav.saf.query.journalpost.JournalpostCoordinator;
+import no.nav.saf.query.sak.SakBrukerCoordinatorImpl;
 import no.nav.saf.query.tilknyttedejournalposter.TilknyttedeJournalposterCoordinator;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
+import no.nav.saf.tjeneste.argumenter.BrukerIdInput;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Joakim Bjørnstad, Jbit AS
@@ -43,6 +47,7 @@ public class DokumentoversiktWiring {
 	private final DokumentoversiktJournalstatusCoordinator dokumentoversiktJournalstatusCoordinator;
 	private final JournalpostCoordinator journalpostCoordinator;
 	private final TilknyttedeJournalposterCoordinator tilknyttedeJournalposterCoordinator;
+	private final SakBrukerCoordinatorImpl saksoversiktBrukerCoordinatorImpl;
 	private final MeterRegistry meterRegistry;
 
 	@Inject
@@ -52,6 +57,7 @@ public class DokumentoversiktWiring {
 								  DokumentoversiktJournalstatusCoordinator dokumentoversiktJournalstatusCoordinator,
 								  JournalpostCoordinator journalpostCoordinator,
 								  TilknyttedeJournalposterCoordinator tilknyttedeJournalposterCoordinator,
+								  SakBrukerCoordinatorImpl saksoversiktBrukerCoordinatorImpl,
 								  MeterRegistry meterRegistry) {
 		this.dokumentoversiktCoordinator = dokumentoversiktCoordinator;
 		this.dokumentoversiktBrukerCoordinator = dokumentoversiktBrukerCoordinator;
@@ -59,6 +65,7 @@ public class DokumentoversiktWiring {
 		this.dokumentoversiktJournalstatusCoordinator = dokumentoversiktJournalstatusCoordinator;
 		this.journalpostCoordinator = journalpostCoordinator;
 		this.tilknyttedeJournalposterCoordinator = tilknyttedeJournalposterCoordinator;
+		this.saksoversiktBrukerCoordinatorImpl = saksoversiktBrukerCoordinatorImpl;
 		this.meterRegistry = meterRegistry;
 	}
 
@@ -154,6 +161,23 @@ public class DokumentoversiktWiring {
 						List<Journalpost> tilknyttedeJournalposter = tilknyttedeJournalposterCoordinator.hentTilknyttedeJournalposter(dokumentInfoId, tilknytning, safRequestContext);
 						log.info("tilknyttedeJournalposter hentet for dokumentInfoId={}, tilknytning={}", dokumentInfoId, tilknytning);
 						return tilknyttedeJournalposter;
+					} catch (SafFunctionalException e) {
+						return DataFetcherResult.newResult()
+								.data(new ArrayList<>())
+								.error(e)
+								.build();
+					}
+				}))
+				.type("Query", typeWiring -> typeWiring.dataFetcher("saker", environment -> {
+					try {
+						Map<String, Object> brukerId = environment.getArgument("brukerId");
+						final BrukerIdInput brukerIdInput = new BrukerIdInput((String) brukerId.get("id"), BrukerIdType.valueOf((String) brukerId.get("type")));
+						SafRequestContext safRequestContext = environment.getContext();
+						safRequestContext.getSecurityContext().getOidcTokenBody();
+						log.info("Saker har mottatt kall for å hente saker for bruker ***");
+						List<Sak> tilknyttedeSaker = saksoversiktBrukerCoordinatorImpl.hentSaker(brukerIdInput, safRequestContext);
+						log.info("Saker hentet for bruker ***");
+						return tilknyttedeSaker;
 					} catch (SafFunctionalException e) {
 						return DataFetcherResult.newResult()
 								.data(new ArrayList<>())

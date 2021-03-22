@@ -9,5 +9,7 @@ import java.util.List;
 public interface PensjonSakAntiCorruptionLayer {
 	List<Arkivsak> findArkivsaker(TilgangBruker tilgangBruker, List<Tema> tema);
 
+	List<Arkivsak> findArkivsaker(TilgangBruker tilgangBruker);
+
 	String findFoedselsnummerBySakId(String sakId);
 }
