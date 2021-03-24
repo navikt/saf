@@ -19,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.LinkedHashMap;
@@ -29,6 +30,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
+import static org.awaitility.Awaitility.await;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
@@ -44,6 +46,36 @@ public class SakIT extends AbstractItest {
 	}
 
 	@Test
+	public void shouldRemoveSakDuplicates() throws Exception{
+		abacPermit();
+		stubFor(post("/aktoerv2")
+				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
+						.withBodyFile("aktoerV2/hentIdentForAktoerId-happy.xml")));
+		stubFor(get("/gsak?aktoerId=" + AKTOER_ID)
+				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
+						.withHeader(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType())
+						.withBodyFile("gsak/gsak-sakerBySaksId-happy-duplicates.json")));
+		stubFor(post("/pensjonsakv1")
+				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
+						.withBodyFile("psak/psak-hentSakSammendragListe-happy-duplicates.xml")));
+
+		await().atMost(Duration.ofSeconds(5)).untilAsserted(() -> {
+			ResponseEntity<LinkedHashMap> responseEntity = callSakerWithAktoerId();
+			List<Sak> saker = parseSaker(responseEntity);
+			assertThat(HttpStatus.OK, is(responseEntity.getStatusCode()));
+			assertThat(saker.size(), is(2));
+			if (saker.get(0).getArkivsaksystem() == Arkivsakssystem.GSAK) {
+				assertGsak(saker.get(0));
+				assertPsak(saker.get(1));
+			} else {
+				assertGsak(saker.get(1));
+				assertPsak(saker.get(0));
+			}
+		});
+	}
+
+
+	@Test
 	public void shouldGetSakerForAktoerID() throws IOException, URISyntaxException {
 		abacPermit();
 		stubFor(post("/aktoerv2")
@@ -57,20 +89,20 @@ public class SakIT extends AbstractItest {
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withBodyFile("psak/psak-hentSakSammendragListe-happy.xml")));
 
-
-		ResponseEntity<LinkedHashMap> responseEntity = callSakerWithAktoerId();
-		List<Sak> saker = parseSaker(responseEntity);
-		assertThat(HttpStatus.OK, is(responseEntity.getStatusCode()));
-		assertThat(saker.size(), is(2));
-		if(saker.get(0).getArkivsaksystem() == Arkivsakssystem.GSAK) {
-			assertGsak(saker.get(0));
-			assertPsak(saker.get(1));
-		}
-		else {
-			assertGsak(saker.get(1));
-			assertPsak(saker.get(0));
-		}
-}
+		await().atMost(Duration.ofSeconds(5)).untilAsserted(() -> {
+			ResponseEntity<LinkedHashMap> responseEntity = callSakerWithAktoerId();
+			List<Sak> saker = parseSaker(responseEntity);
+			assertThat(HttpStatus.OK, is(responseEntity.getStatusCode()));
+			assertThat(saker.size(), is(2));
+			if (saker.get(0).getArkivsaksystem() == Arkivsakssystem.GSAK) {
+				assertGsak(saker.get(0));
+				assertPsak(saker.get(1));
+			} else {
+				assertGsak(saker.get(1));
+				assertPsak(saker.get(0));
+			}
+		});
+	}
 
 	@Test
 	void shouldReturnNoSakerWhenDenyOnPep1g() throws Exception {
@@ -133,7 +165,7 @@ public class SakIT extends AbstractItest {
 		verifyabacDenyPep3NoPep2dAndHttpStatusCode(HttpStatus.OK, responseEntity.getStatusCode());
 	}
 
-	private void assertGsak(Sak gsak){
+	private void assertGsak(Sak gsak) {
 		assertThat(gsak.getArkivsaksnummer(), is("135695442"));
 		assertThat(gsak.getArkivsaksystem(), is(Arkivsakssystem.GSAK));
 		assertThat(gsak.getDatoOpprettet(), is(LocalDateTime.parse("2018-07-17T11:49:01", DateTimeFormatter.ISO_LOCAL_DATE_TIME)));
@@ -143,7 +175,7 @@ public class SakIT extends AbstractItest {
 
 	}
 
-	private void assertPsak(Sak psak){
+	private void assertPsak(Sak psak) {
 		assertThat(psak.getArkivsaksnummer(), is("21998969"));
 		assertThat(psak.getArkivsaksystem(), is(Arkivsakssystem.PSAK));
 		assertThat(psak.getDatoOpprettet(), is(LocalDateTime.parse("2015-06-01T00:00", DateTimeFormatter.ISO_LOCAL_DATE_TIME)));

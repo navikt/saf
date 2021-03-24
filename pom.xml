@@ -54,6 +54,7 @@
         <mockito.version>3.3.3</mockito.version>
         <spring-cloud-contract-wiremock.version>2.1.5.RELEASE</spring-cloud-contract-wiremock.version>
         <modig-testcertificates.version>1.2.5</modig-testcertificates.version>
+        <awaitility.version>4.0.3</awaitility.version>
     </properties>
 
     <dependencyManagement>
@@ -239,6 +240,12 @@
                 <groupId>no.nav.modig</groupId>
                 <artifactId>modig-testcertificates</artifactId>
                 <version>${modig-testcertificates.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.awaitility</groupId>
+                <artifactId>awaitility</artifactId>
+                <version>${awaitility.version}</version>
                 <scope>test</scope>
             </dependency>
         </dependencies>

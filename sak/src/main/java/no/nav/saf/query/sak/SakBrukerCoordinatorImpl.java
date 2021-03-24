@@ -13,9 +13,12 @@ import no.nav.saf.tjeneste.argumenter.BrukerIdInput;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static no.nav.saf.domain.DomainConstants.TILGANG_BRUKER;
@@ -71,8 +74,13 @@ public class SakBrukerCoordinatorImpl implements SakBrukerCoordinator {
 				.sequential()
 				.toList().blockingGet();
 
-		return filteredTilgangSakList.stream().map(tilgangSak ->
-				sakMapper.mapSak(tilgangSak, safRequestContext.getRequestCache())).filter(Objects::nonNull)
-				.collect(Collectors.toList());
+		List<Sak> saker = filteredTilgangSakList.stream()
+				.map(tilgangSak ->
+				sakMapper.mapSak(tilgangSak, safRequestContext.getRequestCache()))
+				.filter(Objects::nonNull)
+				.collect(Collectors.toSet())
+				.stream().collect(Collectors.toList());
+
+		return saker;
 	}
 }

@@ -160,10 +160,10 @@ type Query {
         tilknytning: Tilknytning!
     ): [Journalpost]!
 
-     # * Query returnerer alle saker for bruker med angitt fnr / aktoerID. Konverterer ikke mellom de to.
+     # * Query returnerer alle saker for bruker med angitt fnr / aktoerID.
         saker(
-            # ID til bruker man ønsker å hente saker for.
-            # * Hvis argumentet ikke er angitt så returneres en feil.
+        # ID til bruker man ønsker å hente saker for.
+        # * Hvis argumentet ikke er angitt så returneres en feil.
         brukerId: BrukerIdInput!
         ): [Sak]!
 }
@@ -860,7 +860,9 @@ enum AvsenderMottakerIdType {
 #
 enum Sakstype {
 
+    # Saken hører til FS22 eller ukjent fagsystem
     GENERELL_SAK
 
+    # Saken har et kjent fagsystem != FS22
     FAGSAK
 }
