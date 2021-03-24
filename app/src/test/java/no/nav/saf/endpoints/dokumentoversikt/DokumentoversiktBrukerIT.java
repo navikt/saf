@@ -11,6 +11,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.annotation.DirtiesContext;
 
 import java.io.IOException;
 import java.net.URI;
@@ -19,6 +20,7 @@ import java.time.Duration;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.containing;
@@ -41,6 +43,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 /**
  * @author Sigurd Midttun, Visma Consulting.
  */
+@DirtiesContext
 public class DokumentoversiktBrukerIT extends AbstractItest {
 
 	private static final String AKTOER_ID = "1912374211459";
@@ -51,7 +54,8 @@ public class DokumentoversiktBrukerIT extends AbstractItest {
 	private ObjectMapper objectMapper = new ObjectMapper();
 
 	@Test
-	public void shouldHentDokumentoversiktBrukerWithAktoerID() throws IOException, URISyntaxException {
+	public void shouldHentDokumentoversiktBrukerWithAktoerID() throws Exception {
+		//
 		abacPermit();
 		stubFor(post("/aktoerv2")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
@@ -393,7 +397,7 @@ public class DokumentoversiktBrukerIT extends AbstractItest {
 	}
 
 	@Test
-	public void FinnJournalposterEmptyResponse() throws IOException, URISyntaxException {
+	public void FinnJournalposterEmptyResponse() {
 		abacPermit();
 		stubFor(post("/aktoerv2")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
@@ -416,7 +420,9 @@ public class DokumentoversiktBrukerIT extends AbstractItest {
 				.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
 				.withBodyFile("bidrag/bidragsak-happy.json")));
 
-		await().atMost(Duration.ofSeconds(15)).untilAsserted(() -> {
+		//Denne testen er for some reason veldig brittle.
+		//At some point funka den uten await, nå trenger den ~31s for å fullføre
+		await().atMost(Duration.ofSeconds(60)).untilAsserted(() -> {
 			ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikBrukerWithAktoerId();
 			Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
 			assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
