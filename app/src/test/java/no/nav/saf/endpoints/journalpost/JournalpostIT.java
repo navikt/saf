@@ -86,6 +86,7 @@ class JournalpostIT extends AbstractItest {
 		assertThat(journalpost.getSak().getDatoOpprettet(), notNullValue());
 		assertThat(journalpost.getSak().getArkivsaksnummer(), is("100000000"));
 		assertThat(journalpost.getSak().getSakstype(), is(Sakstype.FAGSAK));
+		assertThat(journalpost.getSak().getTema(), is(Tema.FOR));
 		assertThat(journalpost.getBruker().getId(), is("1900000000000"));
 		assertThat(journalpost.getBruker().getType(), is(BrukerIdType.AKTOERID));
 		assertThat(journalpost.getAvsenderMottaker().getId(), is("11111111111"));
@@ -135,6 +136,7 @@ class JournalpostIT extends AbstractItest {
 		assertThat(journalpost.getSak().getFagsakId(), nullValue());
 		assertThat(journalpost.getSak().getFagsaksystem(), is("FS22"));
 		assertThat(journalpost.getSak().getSakstype(), is(Sakstype.GENERELL_SAK));
+		assertThat(journalpost.getSak().getTema(), is(Tema.PEN));
 		assertThat(journalpost.getBruker(), nullValue());
 	}
 

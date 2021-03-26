@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.Sakstype;
 import no.nav.saf.domain.kode.Arkivsakssystem;
+import no.nav.saf.domain.kode.Tema;
 import no.nav.saf.domain.visningsmodell.Sak;
 import no.nav.saf.endpoints.AbstractItest;
 import no.nav.saf.endpoints.GraphQLRequest;
@@ -172,6 +173,7 @@ public class SakIT extends AbstractItest {
 		assertThat(gsak.getFagsaksystem(), is("FS22"));
 		assertThat(gsak.getFagsakId(), is("654321"));
 		assertThat(gsak.getSakstype(), is(Sakstype.GENERELL_SAK));
+		assertThat(gsak.getTema(), is(Tema.BID));
 
 	}
 
@@ -182,6 +184,7 @@ public class SakIT extends AbstractItest {
 		assertThat(psak.getFagsaksystem(), is("PP01"));
 		assertThat(psak.getFagsakId(), is("21998969"));
 		assertThat(psak.getSakstype(), is(Sakstype.FAGSAK));
+		assertThat(psak.getTema(), is(Tema.UFO));
 	}
 
 

@@ -217,6 +217,7 @@ public class JournalpostDtoMapper {
 					.fagsaksystem(arkivsak.getFagsaksystem())
 					.datoOpprettet(arkivsak.getDatoOpprettet())
 					.sakstype(Sakstype.fromFagsaksystem(arkivsak.getFagsaksystem()))
+					.tema(arkivsak.getTema())
 					.build();
 		}
 	}

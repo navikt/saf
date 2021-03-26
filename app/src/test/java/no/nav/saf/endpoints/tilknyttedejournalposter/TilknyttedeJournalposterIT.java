@@ -94,6 +94,7 @@ class TilknyttedeJournalposterIT extends AbstractItest {
 		assertThat(journalpost.getBehandlingstemanavn(), is("En viktig søknad"));
 		assertThat(journalpost.getSak().getArkivsaksnummer(), is("100000000"));
 		assertThat(journalpost.getSak().getArkivsaksystem(), is(Arkivsakssystem.GSAK));
+		assertThat(journalpost.getSak().getTema(), is(Tema.FOR));
 		assertThat(journalpost.getSak().getFagsakId(), is("abc123"));
 		assertThat(journalpost.getSak().getFagsaksystem(), is("FS22"));
 		assertThat(journalpost.getSak().getDatoOpprettet(), notNullValue());
