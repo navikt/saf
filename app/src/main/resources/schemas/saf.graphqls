@@ -860,12 +860,12 @@ enum AvsenderMottakerIdType {
     UKJENT
 }
 
-#
+# Sier hvorvidt saken inngår i et fagsystem (FAGSAK) eller ikke (GENERELL_SAK).
 enum Sakstype {
 
-    # Saken hører til FS22 eller ukjent fagsystem
+    # Benyttes normalt for dokumenter som ikke saksbehandles i et fagsystem. Generell sak har ikke saksnummer, men kan ses på som brukerens "mappe" av dokumenter på et gitt tema.
     GENERELL_SAK
 
-    # Saken har et kjent fagsystem != FS22
+    # Vil si at saken tilhører et fagsystem. Hvilket fagsystem saken tilhører, finnes i feltet fagsaksystem.
     FAGSAK
 }
