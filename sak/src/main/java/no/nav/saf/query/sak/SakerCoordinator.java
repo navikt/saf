@@ -6,6 +6,6 @@ import no.nav.saf.tjeneste.argumenter.BrukerIdInput;
 
 import java.util.List;
 
-public interface SakBrukerCoordinator {
-	public List<Sak> hentSaker(BrukerIdInput brukerIdInput, SafRequestContext safRequestContext);
+public interface SakerCoordinator {
+	List<Sak> hentSaker(BrukerIdInput brukerIdInput, SafRequestContext safRequestContext);
 }

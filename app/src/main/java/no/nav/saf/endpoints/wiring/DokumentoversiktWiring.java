@@ -24,7 +24,7 @@ import no.nav.saf.query.dokumentoversikt.fagsak.DokumentoversiktFagsakCoordinato
 import no.nav.saf.query.dokumentoversikt.journalstatus.DokumentoversiktJournalstatusArguments;
 import no.nav.saf.query.dokumentoversikt.journalstatus.DokumentoversiktJournalstatusCoordinator;
 import no.nav.saf.query.journalpost.JournalpostCoordinator;
-import no.nav.saf.query.sak.SakBrukerCoordinatorImpl;
+import no.nav.saf.query.sak.SakerCoordinatorImpl;
 import no.nav.saf.query.tilknyttedejournalposter.TilknyttedeJournalposterCoordinator;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tjeneste.argumenter.BrukerIdInput;
@@ -47,7 +47,7 @@ public class DokumentoversiktWiring {
 	private final DokumentoversiktJournalstatusCoordinator dokumentoversiktJournalstatusCoordinator;
 	private final JournalpostCoordinator journalpostCoordinator;
 	private final TilknyttedeJournalposterCoordinator tilknyttedeJournalposterCoordinator;
-	private final SakBrukerCoordinatorImpl saksoversiktBrukerCoordinatorImpl;
+	private final SakerCoordinatorImpl sakerCoordinatorImpl;
 	private final MeterRegistry meterRegistry;
 
 	@Inject
@@ -57,7 +57,7 @@ public class DokumentoversiktWiring {
 								  DokumentoversiktJournalstatusCoordinator dokumentoversiktJournalstatusCoordinator,
 								  JournalpostCoordinator journalpostCoordinator,
 								  TilknyttedeJournalposterCoordinator tilknyttedeJournalposterCoordinator,
-								  SakBrukerCoordinatorImpl saksoversiktBrukerCoordinatorImpl,
+								  SakerCoordinatorImpl sakerCoordinatorImpl,
 								  MeterRegistry meterRegistry) {
 		this.dokumentoversiktCoordinator = dokumentoversiktCoordinator;
 		this.dokumentoversiktBrukerCoordinator = dokumentoversiktBrukerCoordinator;
@@ -65,7 +65,7 @@ public class DokumentoversiktWiring {
 		this.dokumentoversiktJournalstatusCoordinator = dokumentoversiktJournalstatusCoordinator;
 		this.journalpostCoordinator = journalpostCoordinator;
 		this.tilknyttedeJournalposterCoordinator = tilknyttedeJournalposterCoordinator;
-		this.saksoversiktBrukerCoordinatorImpl = saksoversiktBrukerCoordinatorImpl;
+		this.sakerCoordinatorImpl = sakerCoordinatorImpl;
 		this.meterRegistry = meterRegistry;
 	}
 
@@ -174,9 +174,8 @@ public class DokumentoversiktWiring {
 						final BrukerIdInput brukerIdInput = new BrukerIdInput((String) brukerId.get("id"), BrukerIdType.valueOf((String) brukerId.get("type")));
 						SafRequestContext safRequestContext = environment.getContext();
 						safRequestContext.getSecurityContext().getOidcTokenBody();
-						log.info("Saker har mottatt kall for å hente saker for bruker ***");
-						List<Sak> tilknyttedeSaker = saksoversiktBrukerCoordinatorImpl.hentSaker(brukerIdInput, safRequestContext);
-						log.info("Saker hentet for bruker ***");
+						List<Sak> tilknyttedeSaker = sakerCoordinatorImpl.hentSaker(brukerIdInput, safRequestContext);
+						log.info("Saker hentet {} saker for bruker",  tilknyttedeSaker.size() );
 						return tilknyttedeSaker;
 					} catch (SafFunctionalException e) {
 						return DataFetcherResult.newResult()

@@ -13,19 +13,16 @@ import no.nav.saf.tjeneste.argumenter.BrukerIdInput;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import static no.nav.saf.domain.DomainConstants.TILGANG_BRUKER;
 import static no.nav.saf.util.MDCUtility.addMdcData;
 
 @Component
-public class SakBrukerCoordinatorImpl implements SakBrukerCoordinator {
+public class SakerCoordinatorImpl implements SakerCoordinator {
 
 	private final Pep<TilgangBruker> pep1g;
 	private final Pep<TilgangSak> pep2;
@@ -35,11 +32,11 @@ public class SakBrukerCoordinatorImpl implements SakBrukerCoordinator {
 
 
 	@Inject
-	public SakBrukerCoordinatorImpl(Pep<TilgangBruker> pep1g,
-									Pep<TilgangSak> pep2,
-									Pep<TilgangSak> pep3,
-									SakBrukerTilgangsmodellRepositoryImpl saksoversiktBrukerTilgangsmodellRepository,
-									SakMapper sakermapper) {
+	public SakerCoordinatorImpl(Pep<TilgangBruker> pep1g,
+								Pep<TilgangSak> pep2,
+								Pep<TilgangSak> pep3,
+								SakBrukerTilgangsmodellRepositoryImpl saksoversiktBrukerTilgangsmodellRepository,
+								SakMapper sakermapper) {
 		this.saksoversiktBrukerTilgangsmodellRepository = saksoversiktBrukerTilgangsmodellRepository;
 		this.sakMapper = sakermapper;
 		this.pep1g = pep1g;
@@ -74,13 +71,12 @@ public class SakBrukerCoordinatorImpl implements SakBrukerCoordinator {
 				.sequential()
 				.toList().blockingGet();
 
-		List<Sak> saker = filteredTilgangSakList.stream()
+		return filteredTilgangSakList.stream()
 				.map(tilgangSak ->
 				sakMapper.mapSak(tilgangSak, safRequestContext.getRequestCache()))
 				.filter(Objects::nonNull)
 				.collect(Collectors.toSet())
 				.stream().collect(Collectors.toList());
 
-		return saker;
 	}
 }
