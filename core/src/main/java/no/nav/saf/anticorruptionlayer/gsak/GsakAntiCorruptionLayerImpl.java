@@ -81,6 +81,35 @@ class GsakAntiCorruptionLayerImpl implements GsakAntiCorruptionLayer {
 	}
 
 	@Override
+	public List<Arkivsak> findArkivsakerByAktoerId(String aktoerId) {
+		try {
+			if (aktoerId == null) {
+				return new ArrayList<>();
+			}
+
+			return mapToArkivsak(gsakConsumer.hentSakerByAktoerId(aktoerId));
+		} catch (Exception e) {
+			log.warn("Klarte ikke hente gsaker for aktoerId={}", aktoerId, e);
+			return new ArrayList<>();
+		}
+	}
+
+	@Override
+	public List<Arkivsak> findArkivsakerByOrgnr(String orgnr) {
+		try {
+			if (orgnr == null) {
+				return new ArrayList<>();
+			}
+
+			return mapToArkivsak(gsakConsumer.hentSakerByOrgNr(orgnr));
+
+		} catch (Exception e) {
+			log.warn("Klarte ikke hente gsaker for orgnr={}", orgnr, e);
+			return new ArrayList<>();
+		}
+	}
+
+	@Override
 	public List<Arkivsak> findTilgangSakListByFagsakIdAndFagsaksystem(final String fagsakId, final String fagsaksystem, final List<Tema> tema) {
 		try {
 			List<GsakSakerTo> gsakSakerToFiltered;
@@ -141,12 +170,12 @@ class GsakAntiCorruptionLayerImpl implements GsakAntiCorruptionLayer {
 	}
 
 	private Tema mapTema(String tema) {
-		if(tema == null) {
+		if (tema == null) {
 			return null;
 		}
 
 		// Vennligst se https://jira.adeo.no/browse/MMA-3076 . Tema OKO korrigeres til Tema STO
-		if(FagomradeCode.OKO.name().equals(tema.trim())) {
+		if (FagomradeCode.OKO.name().equals(tema.trim())) {
 			return Tema.STO;
 		}
 		try {

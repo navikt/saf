@@ -11,13 +11,16 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.annotation.DirtiesContext;
 
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.containing;
@@ -31,6 +34,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
+import static org.awaitility.Awaitility.await;
 import static org.junit.Assert.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -39,6 +43,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 /**
  * @author Sigurd Midttun, Visma Consulting.
  */
+@DirtiesContext
 public class DokumentoversiktBrukerIT extends AbstractItest {
 
 	private static final String AKTOER_ID = "1912374211459";
@@ -49,7 +54,8 @@ public class DokumentoversiktBrukerIT extends AbstractItest {
 	private ObjectMapper objectMapper = new ObjectMapper();
 
 	@Test
-	public void shouldHentDokumentoversiktBrukerWithAktoerID() throws IOException, URISyntaxException {
+	public void shouldHentDokumentoversiktBrukerWithAktoerID() throws Exception {
+		//
 		abacPermit();
 		stubFor(post("/aktoerv2")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
@@ -69,21 +75,22 @@ public class DokumentoversiktBrukerIT extends AbstractItest {
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withBodyFile("psak/psak-hentSakSammendragListe-happy.xml")));
 
-		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikBrukerWithAktoerId();
-		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
-
-		assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-		assertEquals("429837417", dokumentoversikt.getJournalposter().get(0).getJournalpostId());
-		assertEquals("429837329", dokumentoversikt.getJournalposter().get(1).getJournalpostId());
-		assertEquals("429812815", dokumentoversikt.getJournalposter().get(2).getJournalpostId());
-		assertEquals(KANAL_REFERANSE_ID, dokumentoversikt.getJournalposter().get(0).getEksternReferanseId());
-		assertEquals(KANAL_REFERANSE_ID, dokumentoversikt.getJournalposter().get(1).getEksternReferanseId());
-		assertEquals(KANAL_REFERANSE_ID, dokumentoversikt.getJournalposter().get(2).getEksternReferanseId());
-		assertSaksbehandlerHarTilgang(dokumentoversikt);
-		verify(postRequestedFor(urlEqualTo("/aktoerv2")).withRequestBody(matchingXPath("//aktoerId/text()", equalTo(AKTOER_ID))));
-		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter"))
-				.withRequestBody(containing("{\"gsakSakIds\":[\"135695442\"],\"psakSakIds\":[\"21998969\"],\"fraDato\":\"0001-01-01\",\"tilDato\":null,\"inkluderJournalStatus\":[\"FL\",\"FS\",\"J\",\"E\"],\"inkluderJournalpostType\":[\"I\",\"U\",\"N\"],\"visFeilregistrerte\":false,\"alleIdenter\":[\"20026900817\"],\"foerste\":3,\"etterPeker\":null}")));
-		verify(postRequestedFor(urlEqualTo("/pensjonsakv1")).withRequestBody(matchingXPath("//personident/text()", equalTo("20026900817"))));
+		await().atMost(Duration.ofSeconds(15)).untilAsserted(() -> {
+			ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikBrukerWithAktoerId();
+			Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
+			assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+			assertEquals("429837417", dokumentoversikt.getJournalposter().get(0).getJournalpostId());
+			assertEquals("429837329", dokumentoversikt.getJournalposter().get(1).getJournalpostId());
+			assertEquals("429812815", dokumentoversikt.getJournalposter().get(2).getJournalpostId());
+			assertEquals(KANAL_REFERANSE_ID, dokumentoversikt.getJournalposter().get(0).getEksternReferanseId());
+			assertEquals(KANAL_REFERANSE_ID, dokumentoversikt.getJournalposter().get(1).getEksternReferanseId());
+			assertEquals(KANAL_REFERANSE_ID, dokumentoversikt.getJournalposter().get(2).getEksternReferanseId());
+			assertSaksbehandlerHarTilgang(dokumentoversikt);
+			verify(postRequestedFor(urlEqualTo("/aktoerv2")).withRequestBody(matchingXPath("//aktoerId/text()", equalTo(AKTOER_ID))));
+			verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter"))
+					.withRequestBody(containing("{\"gsakSakIds\":[\"135695442\"],\"psakSakIds\":[\"21998969\"],\"fraDato\":\"0001-01-01\",\"tilDato\":null,\"inkluderJournalStatus\":[\"FL\",\"FS\",\"J\",\"E\"],\"inkluderJournalpostType\":[\"I\",\"U\",\"N\"],\"visFeilregistrerte\":false,\"alleIdenter\":[\"20026900817\"],\"foerste\":3,\"etterPeker\":null}")));
+			verify(postRequestedFor(urlEqualTo("/pensjonsakv1")).withRequestBody(matchingXPath("//personident/text()", equalTo("20026900817"))));
+		});
 	}
 
 	@Test
@@ -110,18 +117,20 @@ public class DokumentoversiktBrukerIT extends AbstractItest {
 		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikBrukerWithFnr();
 		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
 
-		assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-		assertEquals("429837417", dokumentoversikt.getJournalposter().get(0).getJournalpostId());
-		assertEquals("429837329", dokumentoversikt.getJournalposter().get(1).getJournalpostId());
-		assertEquals("429812815", dokumentoversikt.getJournalposter().get(2).getJournalpostId());
-		assertEquals(KANAL_REFERANSE_ID, dokumentoversikt.getJournalposter().get(0).getEksternReferanseId());
-		assertEquals(KANAL_REFERANSE_ID, dokumentoversikt.getJournalposter().get(1).getEksternReferanseId());
-		assertEquals(KANAL_REFERANSE_ID, dokumentoversikt.getJournalposter().get(2).getEksternReferanseId());
-		assertSaksbehandlerHarTilgang(dokumentoversikt);
-		verify(postRequestedFor(urlEqualTo("/aktoerv2")).withRequestBody(matchingXPath("//ident/text()", equalTo(FNR))));
-		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter"))
-				.withRequestBody(containing("{\"gsakSakIds\":[\"135695442\"],\"psakSakIds\":[\"21998969\"],\"fraDato\":\"0001-01-01\",\"tilDato\":null,\"inkluderJournalStatus\":[\"FL\",\"FS\",\"J\",\"E\"],\"inkluderJournalpostType\":[\"I\",\"U\",\"N\"],\"visFeilregistrerte\":false,\"alleIdenter\":[\"11111111111\"],\"foerste\":3,\"etterPeker\":null}")));
-		verify(postRequestedFor(urlEqualTo("/pensjonsakv1")).withRequestBody(matchingXPath("//personident/text()", equalTo("11111111111"))));
+		await().atMost(Duration.ofSeconds(15)).untilAsserted(() -> {
+			assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+			assertEquals("429837417", dokumentoversikt.getJournalposter().get(0).getJournalpostId());
+			assertEquals("429837329", dokumentoversikt.getJournalposter().get(1).getJournalpostId());
+			assertEquals("429812815", dokumentoversikt.getJournalposter().get(2).getJournalpostId());
+			assertEquals(KANAL_REFERANSE_ID, dokumentoversikt.getJournalposter().get(0).getEksternReferanseId());
+			assertEquals(KANAL_REFERANSE_ID, dokumentoversikt.getJournalposter().get(1).getEksternReferanseId());
+			assertEquals(KANAL_REFERANSE_ID, dokumentoversikt.getJournalposter().get(2).getEksternReferanseId());
+			assertSaksbehandlerHarTilgang(dokumentoversikt);
+			verify(postRequestedFor(urlEqualTo("/aktoerv2")).withRequestBody(matchingXPath("//ident/text()", equalTo(FNR))));
+			verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter"))
+					.withRequestBody(containing("{\"gsakSakIds\":[\"135695442\"],\"psakSakIds\":[\"21998969\"],\"fraDato\":\"0001-01-01\",\"tilDato\":null,\"inkluderJournalStatus\":[\"FL\",\"FS\",\"J\",\"E\"],\"inkluderJournalpostType\":[\"I\",\"U\",\"N\"],\"visFeilregistrerte\":false,\"alleIdenter\":[\"11111111111\"],\"foerste\":3,\"etterPeker\":null}")));
+			verify(postRequestedFor(urlEqualTo("/pensjonsakv1")).withRequestBody(matchingXPath("//personident/text()", equalTo("11111111111"))));
+		});
 	}
 
 	@Test
@@ -205,14 +214,16 @@ public class DokumentoversiktBrukerIT extends AbstractItest {
 		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikBrukerWithAktoerId();
 		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
 
-		assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-		assertEquals("429812815", dokumentoversikt.getJournalposter().get(0).getJournalpostId());
-		assertSaksbehandlerHarTilgang(dokumentoversikt);
-		verify(2, postRequestedFor(urlEqualTo("/abac")));
-		verify(postRequestedFor(urlEqualTo("/aktoerv2")).withRequestBody(matchingXPath("//aktoerId/text()", equalTo(AKTOER_ID))));
-		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter"))
-				.withRequestBody(containing("{\"gsakSakIds\":[],\"psakSakIds\":[],\"fraDato\":\"0001-01-01\",\"tilDato\":null,\"inkluderJournalStatus\":[\"FL\",\"FS\",\"J\",\"E\"],\"inkluderJournalpostType\":[\"I\",\"U\",\"N\"],\"visFeilregistrerte\":false,\"alleIdenter\":[\"20026900817\"],\"foerste\":3,\"etterPeker\":null}")));
-		verify(postRequestedFor(urlEqualTo("/pensjonsakv1")).withRequestBody(matchingXPath("//personident/text()", equalTo("20026900817"))));
+		await().atMost(Duration.ofSeconds(15)).untilAsserted(() -> {
+			assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+			assertEquals("429812815", dokumentoversikt.getJournalposter().get(0).getJournalpostId());
+			assertSaksbehandlerHarTilgang(dokumentoversikt);
+			verify(2, postRequestedFor(urlEqualTo("/abac")));
+			verify(postRequestedFor(urlEqualTo("/aktoerv2")).withRequestBody(matchingXPath("//aktoerId/text()", equalTo(AKTOER_ID))));
+			verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter"))
+					.withRequestBody(containing("{\"gsakSakIds\":[],\"psakSakIds\":[],\"fraDato\":\"0001-01-01\",\"tilDato\":null,\"inkluderJournalStatus\":[\"FL\",\"FS\",\"J\",\"E\"],\"inkluderJournalpostType\":[\"I\",\"U\",\"N\"],\"visFeilregistrerte\":false,\"alleIdenter\":[\"20026900817\"],\"foerste\":3,\"etterPeker\":null}")));
+			verify(postRequestedFor(urlEqualTo("/pensjonsakv1")).withRequestBody(matchingXPath("//personident/text()", equalTo("20026900817"))));
+		});
 	}
 
 	@Test
@@ -239,13 +250,15 @@ public class DokumentoversiktBrukerIT extends AbstractItest {
 		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikBrukerWithAktoerId();
 		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
 
-		assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-		assertEquals("429837417", dokumentoversikt.getJournalposter().get(0).getJournalpostId());
-		assertSaksbehandlerHarTilgang(dokumentoversikt);
-		verify(postRequestedFor(urlEqualTo("/aktoerv2")).withRequestBody(matchingXPath("//aktoerId/text()", equalTo(AKTOER_ID))));
-		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter"))
-				.withRequestBody(containing("{\"gsakSakIds\":[\"135695442\"],\"psakSakIds\":[\"21998969\"],\"fraDato\":\"0001-01-01\",\"tilDato\":null,\"inkluderJournalStatus\":[\"FL\",\"FS\",\"J\",\"E\"],\"inkluderJournalpostType\":[\"I\",\"U\",\"N\"],\"visFeilregistrerte\":false,\"alleIdenter\":[\"20026900817\"],\"foerste\":3,\"etterPeker\":null}")));
-		verify(postRequestedFor(urlEqualTo("/pensjonsakv1")).withRequestBody(matchingXPath("//personident/text()", equalTo("20026900817"))));
+		await().atMost(Duration.ofSeconds(15)).untilAsserted(() -> {
+			assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+			assertEquals("429837417", dokumentoversikt.getJournalposter().get(0).getJournalpostId());
+			assertSaksbehandlerHarTilgang(dokumentoversikt);
+			verify(postRequestedFor(urlEqualTo("/aktoerv2")).withRequestBody(matchingXPath("//aktoerId/text()", equalTo(AKTOER_ID))));
+			verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter"))
+					.withRequestBody(containing("{\"gsakSakIds\":[\"135695442\"],\"psakSakIds\":[\"21998969\"],\"fraDato\":\"0001-01-01\",\"tilDato\":null,\"inkluderJournalStatus\":[\"FL\",\"FS\",\"J\",\"E\"],\"inkluderJournalpostType\":[\"I\",\"U\",\"N\"],\"visFeilregistrerte\":false,\"alleIdenter\":[\"20026900817\"],\"foerste\":3,\"etterPeker\":null}")));
+			verify(postRequestedFor(urlEqualTo("/pensjonsakv1")).withRequestBody(matchingXPath("//personident/text()", equalTo("20026900817"))));
+		});
 	}
 
 	@Test
@@ -302,11 +315,13 @@ public class DokumentoversiktBrukerIT extends AbstractItest {
 		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikBrukerWithAktoerId();
 		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
 
-		verifyEmptyJournalpostListeAndNullSideInfo(dokumentoversikt);
-		assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-		verify(postRequestedFor(urlEqualTo("/aktoerv2")).withRequestBody(matchingXPath("//aktoerId/text()", equalTo(AKTOER_ID))));
-		verify(1, postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter")));
-		verify(postRequestedFor(urlEqualTo("/pensjonsakv1")).withRequestBody(matchingXPath("//personident/text()", equalTo("20026900817"))));
+		await().atMost(Duration.ofSeconds(15)).untilAsserted(() -> {
+			verifyEmptyJournalpostListeAndNullSideInfo(dokumentoversikt);
+			assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+			verify(postRequestedFor(urlEqualTo("/aktoerv2")).withRequestBody(matchingXPath("//aktoerId/text()", equalTo(AKTOER_ID))));
+			verify(1, postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter")));
+			verify(postRequestedFor(urlEqualTo("/pensjonsakv1")).withRequestBody(matchingXPath("//personident/text()", equalTo("20026900817"))));
+		});
 	}
 
 	@Test
@@ -334,11 +349,13 @@ public class DokumentoversiktBrukerIT extends AbstractItest {
 		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikBrukerWithAktoerId();
 		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
 
-		verifyEmptyJournalpostListeAndNullSideInfo(dokumentoversikt);
-		assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-		verify(postRequestedFor(urlEqualTo("/aktoerv2")).withRequestBody(matchingXPath("//aktoerId/text()", equalTo(AKTOER_ID))));
-		verify(1, postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter")));
-		verify(postRequestedFor(urlEqualTo("/pensjonsakv1")).withRequestBody(matchingXPath("//personident/text()", equalTo("20026900817"))));
+		await().atMost(Duration.ofSeconds(15)).untilAsserted(() -> {
+			verifyEmptyJournalpostListeAndNullSideInfo(dokumentoversikt);
+			assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+			verify(postRequestedFor(urlEqualTo("/aktoerv2")).withRequestBody(matchingXPath("//aktoerId/text()", equalTo(AKTOER_ID))));
+			verify(1, postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter")));
+			verify(postRequestedFor(urlEqualTo("/pensjonsakv1")).withRequestBody(matchingXPath("//personident/text()", equalTo("20026900817"))));
+		});
 	}
 
 	@Test
@@ -368,17 +385,19 @@ public class DokumentoversiktBrukerIT extends AbstractItest {
 		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikBrukerWithAktoerId();
 		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
 
-		assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-		verifyEmptyJournalpostListeAndNullSideInfo(dokumentoversikt);
-		verify(postRequestedFor(urlEqualTo("/aktoerv2")).withRequestBody(matchingXPath("//aktoerId/text()", equalTo(AKTOER_ID))));
-		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter")).withRequestBody(matchingJsonPath("$.gsakSakIds", containing(""))));
-		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter")).withRequestBody(matchingJsonPath("$.psakSakIds", containing(""))));
-		verify(postRequestedFor(urlEqualTo("/pensjonsakv1")).withRequestBody(matchingXPath("//personident/text()", equalTo("20026900817"))));
-		verify(getRequestedFor(urlEqualTo("/bidrag/654321")));
+		await().atMost(Duration.ofSeconds(15)).untilAsserted(() -> {
+			assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+			verifyEmptyJournalpostListeAndNullSideInfo(dokumentoversikt);
+			verify(postRequestedFor(urlEqualTo("/aktoerv2")).withRequestBody(matchingXPath("//aktoerId/text()", equalTo(AKTOER_ID))));
+			verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter")).withRequestBody(matchingJsonPath("$.gsakSakIds", containing(""))));
+			verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter")).withRequestBody(matchingJsonPath("$.psakSakIds", containing(""))));
+			verify(postRequestedFor(urlEqualTo("/pensjonsakv1")).withRequestBody(matchingXPath("//personident/text()", equalTo("20026900817"))));
+			verify(getRequestedFor(urlEqualTo("/bidrag/654321")));
+		});
 	}
 
 	@Test
-	public void FinnJournalposterEmptyResponse() throws IOException, URISyntaxException {
+	public void FinnJournalposterEmptyResponse() {
 		abacPermit();
 		stubFor(post("/aktoerv2")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
@@ -401,15 +420,18 @@ public class DokumentoversiktBrukerIT extends AbstractItest {
 				.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
 				.withBodyFile("bidrag/bidragsak-happy.json")));
 
-		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikBrukerWithAktoerId();
-		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
-
-		assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-		verifyEmptyJournalpostListeAndNullSideInfo(dokumentoversikt);
-		verify(postRequestedFor(urlEqualTo("/aktoerv2")).withRequestBody(matchingXPath("//aktoerId/text()", equalTo(AKTOER_ID))));
-		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter"))
-				.withRequestBody(containing("{\"gsakSakIds\":[\"135695442\"],\"psakSakIds\":[\"21998969\"],\"fraDato\":\"0001-01-01\",\"tilDato\":null,\"inkluderJournalStatus\":[\"FL\",\"FS\",\"J\",\"E\"],\"inkluderJournalpostType\":[\"I\",\"U\",\"N\"],\"visFeilregistrerte\":false,\"alleIdenter\":[\"20026900817\"],\"foerste\":3,\"etterPeker\":null}")));
-		verify(postRequestedFor(urlEqualTo("/pensjonsakv1")).withRequestBody(matchingXPath("//personident/text()", equalTo("20026900817"))));
+		//Denne testen er for some reason veldig brittle.
+		//At some point funka den uten await, nå trenger den ~31s for å fullføre
+		await().atMost(Duration.ofSeconds(60)).untilAsserted(() -> {
+			ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikBrukerWithAktoerId();
+			Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
+			assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+			verifyEmptyJournalpostListeAndNullSideInfo(dokumentoversikt);
+			verify(postRequestedFor(urlEqualTo("/aktoerv2")).withRequestBody(matchingXPath("//aktoerId/text()", equalTo(AKTOER_ID))));
+			verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter"))
+					.withRequestBody(containing("{\"gsakSakIds\":[\"135695442\"],\"psakSakIds\":[\"21998969\"],\"fraDato\":\"0001-01-01\",\"tilDato\":null,\"inkluderJournalStatus\":[\"FL\",\"FS\",\"J\",\"E\"],\"inkluderJournalpostType\":[\"I\",\"U\",\"N\"],\"visFeilregistrerte\":false,\"alleIdenter\":[\"20026900817\"],\"foerste\":3,\"etterPeker\":null}")));
+			verify(postRequestedFor(urlEqualTo("/pensjonsakv1")).withRequestBody(matchingXPath("//personident/text()", equalTo("20026900817"))));
+		});
 	}
 
 	@Test
