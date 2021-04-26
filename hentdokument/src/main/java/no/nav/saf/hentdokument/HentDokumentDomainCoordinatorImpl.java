@@ -138,18 +138,10 @@ public class HentDokumentDomainCoordinatorImpl implements HentDokumentDomainCoor
 		List<String> aktoerIds = tilgangsmodellHentdokumentRepository.findRelevanteParterSak(tilgangSak);
 
 		if (!aktoerIds.isEmpty()) {
-			XacmlResponse pep1gResponse_2 = pepX.verifyAccessXacmlResponse(aktoerIds, safRequestContext);
-			if (pep1gResponse_2.isDeny()) {
-				throw new HentdokumentTilgangskontrollException(DenyReasons.PEP1G_DENY_REASON, pep1gResponse);
+			XacmlResponse pepXResponse = pepX.verifyAccessXacmlResponse(aktoerIds, safRequestContext);
+			if (pepXResponse.isDeny()) {
+				throw new HentdokumentTilgangskontrollException(DenyReasons.PEPX_DENY_REASON, pepXResponse);
 			}
-
-			//hente relevante saksparter fra tjenesten som foreldrepengeteamet har utviklet: https://jira.adeo.no/browse/PFP-2113
-			//Send disse partene til ABAC for sjekk av kode6/7
-
-			/*XacmlResponse pep1gResponse = pep1g.verifyAccessXacmlResponse(tilgangBruker, safRequestContext);
-			if (pep1gResponse.isDeny()) {
-				throw new HentdokumentTilgangskontrollException(DenyReasons.PEP1G_DENY_REASON, pep1gResponse);
-			}*/
 		}
 	}
 
