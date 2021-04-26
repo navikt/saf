@@ -5,6 +5,7 @@ import no.nav.saf.anticorruptionlayer.joark.JoarkAntiCorruptionLayer;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.SkjermingTypeCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.VariantFormatCode;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.dto.JournalpostDto;
+import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.dto.SaksrelasjonDto;
 import no.nav.saf.domain.kode.Journalposttype;
 import no.nav.saf.domain.kode.Journalstatus;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
@@ -99,6 +100,7 @@ public class TilgangsmodellRepositoryImpl implements TilgangsmodellRepository {
 				.journalpostId(dto.getJournalpostId().toString())
 				.journalstatus(dto.getJournalstatus().toSafJournalstatus())
 				.skjerming(SkjermingTypeCode.toSafSkjerming(dto.getSkjerming()))
+				.tilgangSak(mapSak(dto.getSaksrelasjon()))
 				.dokumenter(dto.getDokumenter().stream().map(dokdto -> TilgangDokumentInfo.builder()
 						.journalpostId(dto.getJournalpostId().toString())
 						.dokumentInfoId(dokdto.getDokumentInfoId())
@@ -113,6 +115,13 @@ public class TilgangsmodellRepositoryImpl implements TilgangsmodellRepository {
 								.collect(Collectors.toList())
 						)
 						.build()).collect(Collectors.toList()))
+				.build();
+	}
+
+	private TilgangSak mapSak(SaksrelasjonDto saksrelasjonDto) {
+		return TilgangSak.builder()
+				.applikasjon(saksrelasjonDto.getApplikasjon())
+				.sakId(saksrelasjonDto.getSakId())
 				.build();
 	}
 

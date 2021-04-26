@@ -20,7 +20,9 @@ import java.util.concurrent.TimeUnit;
 @EnableCaching
 public class LokalCacheConfig {
 	public static final String GRAPHQL_QUERY_CACHE = "graphQLQuery";
-	public static final String BIDRAG_SAK_BY_SAKID_CACHE = "bidrakSakerBySakId";
+	public static final String STS_REST_CACHE = "stsRest";
+	public static final String BIDRAG_SAK_BY_SAKID_CACHE = "bidragSakerBySakId";
+	public static final String FPSAK_RELEVANTE_PARTER_BY_SAKID_CACHE = "hentRelevanteParter";
 	public static final String HENT_JOURNALPOSTBULK_CACHE = "hentTilgangJournalposterBulk";
 	public static final String TILGANGSMODELL_REPO_BRUKER_CACHE = "tilgangsmodellRepoBruker";
 	public static final String PENSJON_SAK_SAMMENDRAG_LISTE_CACHE = "pensjonSakSammendragListe";
@@ -42,6 +44,14 @@ public class LokalCacheConfig {
 						.build()),
 				new CaffeineCache(BIDRAG_SAK_BY_SAKID_CACHE, Caffeine.newBuilder()
 						.expireAfterWrite(10, TimeUnit.MINUTES)
+						.maximumSize(500)
+						.build()),
+				new CaffeineCache(FPSAK_RELEVANTE_PARTER_BY_SAKID_CACHE, Caffeine.newBuilder()
+						.expireAfterWrite(10, TimeUnit.MINUTES)
+						.maximumSize(500)
+						.build()),
+				new CaffeineCache(STS_REST_CACHE, Caffeine.newBuilder()
+						.expireAfterWrite(55, TimeUnit.MINUTES)
 						.maximumSize(500)
 						.build())
 		));

@@ -18,6 +18,8 @@ public class TilgangSak {
 	private final String foedselsnummer;
 	private final String orgnummer;
 	private final Tema tema;
+	private final String sakId;
+	private final String applikasjon;
 	/**
 	 * Forvaltningslovens § 19 "innskrenkret adgang til visse slags opplysninger"
 	 */

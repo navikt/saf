@@ -21,6 +21,8 @@ import org.springframework.stereotype.Component;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import java.util.List;
+
 import static no.nav.saf.domain.DomainConstants.PEP1G;
 import static no.nav.saf.domain.DomainConstants.PEP2;
 import static no.nav.saf.domain.DomainConstants.PEP2D;
@@ -28,6 +30,7 @@ import static no.nav.saf.domain.DomainConstants.PEP3;
 import static no.nav.saf.domain.DomainConstants.PEP4;
 import static no.nav.saf.domain.DomainConstants.PEP5;
 import static no.nav.saf.domain.DomainConstants.PEP6D;
+import static no.nav.saf.domain.DomainConstants.PEPX;
 
 /**
  * @author Sigurd Midttun, Visma Consulting.
@@ -45,6 +48,7 @@ public class HentDokumentDomainCoordinatorImpl implements HentDokumentDomainCoor
 	private final Pep<TilgangJournalpost> pep4;
 	private final Pep<TilgangDokumentInfo> pep5;
 	private final Pep<TilgangDokumentvariant> pep6d;
+	private final Pep<List<String>> pepX;
 	private final HentDokumentSporbarhetslogger hentDokumentSporbarhetslogger;
 
 	@Inject
@@ -56,7 +60,8 @@ public class HentDokumentDomainCoordinatorImpl implements HentDokumentDomainCoor
 											 @Named(PEP3) Pep<TilgangSak> pep3,
 											 @Named(PEP4) Pep<TilgangJournalpost> pep4,
 											 @Named(PEP5) Pep<TilgangDokumentInfo> pep5,
-											 @Named(PEP6D) Pep<TilgangDokumentvariant> pep6d) {
+											 @Named(PEP6D) Pep<TilgangDokumentvariant> pep6d,
+											 @Named(PEPX) Pep<List<String>> pepX) {
 		this.dokumentRepository = dokumentRepository;
 		this.tilgangsmodellHentdokumentRepository = tilgangsmodellHentdokumentRepository;
 		this.pep1g = pep1g;
@@ -66,6 +71,7 @@ public class HentDokumentDomainCoordinatorImpl implements HentDokumentDomainCoor
 		this.pep4 = pep4;
 		this.pep5 = pep5;
 		this.pep6d = pep6d;
+		this.pepX = pepX;
 		this.hentDokumentSporbarhetslogger = new HentDokumentSporbarhetslogger();
 	}
 
@@ -79,7 +85,7 @@ public class HentDokumentDomainCoordinatorImpl implements HentDokumentDomainCoor
 			doTilgangskontroll(journalpostId, dokumentInfoId, variantFormat, tilgangSak, tilgangBruker, safRequestContext);
 			hentDokumentSporbarhetslogger.logPermit(journalpostId, dokumentInfoId, variantFormat, tilgangSak, tilgangBruker, safRequestContext);
 			return dokumentRepository.findDokument(dokumentInfoId, variantFormat);
-		} catch(HentdokumentTilgangskontrollException e) {
+		} catch (HentdokumentTilgangskontrollException e) {
 			hentDokumentSporbarhetslogger.logDeny(journalpostId, dokumentInfoId, variantFormat, tilgangSak, tilgangBruker, safRequestContext, e);
 			throw e;
 		}
@@ -127,6 +133,23 @@ public class HentDokumentDomainCoordinatorImpl implements HentDokumentDomainCoor
 
 		if (pep6dResponse.isDeny()) {
 			throw new HentdokumentTilgangskontrollException(DenyReasons.PEP6D_DENY_REASON, pep6dResponse);
+		}
+
+		List<String> aktoerIds = tilgangsmodellHentdokumentRepository.findRelevanteParterSak(tilgangSak);
+
+		if (!aktoerIds.isEmpty()) {
+			XacmlResponse pep1gResponse_2 = pepX.verifyAccessXacmlResponse(aktoerIds, safRequestContext);
+			if (pep1gResponse_2.isDeny()) {
+				throw new HentdokumentTilgangskontrollException(DenyReasons.PEP1G_DENY_REASON, pep1gResponse);
+			}
+
+			//hente relevante saksparter fra tjenesten som foreldrepengeteamet har utviklet: https://jira.adeo.no/browse/PFP-2113
+			//Send disse partene til ABAC for sjekk av kode6/7
+
+			/*XacmlResponse pep1gResponse = pep1g.verifyAccessXacmlResponse(tilgangBruker, safRequestContext);
+			if (pep1gResponse.isDeny()) {
+				throw new HentdokumentTilgangskontrollException(DenyReasons.PEP1G_DENY_REASON, pep1gResponse);
+			}*/
 		}
 	}
 
