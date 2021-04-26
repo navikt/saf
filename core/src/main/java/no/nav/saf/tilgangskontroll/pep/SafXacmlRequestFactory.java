@@ -1,11 +1,11 @@
 package no.nav.saf.tilgangskontroll.pep;
 
-import static no.nav.abac.common.xacml.CommonAttributter.ENVIRONMENT_FELLES_AZURE_JWT_TOKEN_BODY;
-import static no.nav.abac.common.xacml.CommonAttributter.ENVIRONMENT_FELLES_OIDC_TOKEN_BODY;
-import static no.nav.abac.common.xacml.CommonAttributter.ENVIRONMENT_FELLES_PEP_ID;
-import static no.nav.abac.common.xacml.CommonAttributter.RESOURCE_FELLES_DOMENE;
-import static no.nav.abac.common.xacml.CommonAttributter.XACML_1_0_ACTION_ACTION_ID;
 import static no.nav.saf.domain.DomainConstants.SAF;
+import static no.nav.saf.tilgangskontroll.SafAttributter.ENVIRONMENT_FELLES_AZURE_JWT_TOKEN_BODY;
+import static no.nav.saf.tilgangskontroll.SafAttributter.ENVIRONMENT_FELLES_OIDC_TOKEN_BODY;
+import static no.nav.saf.tilgangskontroll.SafAttributter.ENVIRONMENT_FELLES_PEP_ID;
+import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_DOMENE;
+import static no.nav.saf.tilgangskontroll.SafAttributter.XACML_1_0_ACTION_ACTION_ID;
 
 import no.nav.saf.tilgangskontroll.SafSecurityContext;
 import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlRequest;
