@@ -4,6 +4,8 @@ import no.nav.saf.anticorruptionlayer.aktoer.aktoerv2.AktoerV2Consumer;
 import no.nav.saf.anticorruptionlayer.aktoer.domain.HentAktoerIdForIdentResponseTo;
 import no.nav.saf.anticorruptionlayer.aktoer.domain.HentIdentForAktoerIdListeResponseTo;
 import no.nav.saf.anticorruptionlayer.aktoer.domain.HentIdentForAktoerIdResponseTo;
+import no.nav.saf.anticorruptionlayer.pdl.IdentConsumer;
+import no.nav.saf.anticorruptionlayer.pdl.PdlResponse;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.domain.tilgangsmodell.TilgangIdent;
 import org.springframework.stereotype.Component;
@@ -19,10 +21,11 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
  */
 @Component
 class AktoerAntiCorruptionLayerImpl implements AktoerAntiCorruptionLayer {
-	private final AktoerV2Consumer aktoerV2Consumer;
 
-	public AktoerAntiCorruptionLayerImpl(AktoerV2Consumer aktoerV2Consumer) {
-		this.aktoerV2Consumer = aktoerV2Consumer;
+	private final IdentConsumer identConsumer;
+
+	public AktoerAntiCorruptionLayerImpl(IdentConsumer identConsumer) {
+		this.identConsumer = identConsumer;
 	}
 
 	@Override
@@ -32,14 +35,7 @@ class AktoerAntiCorruptionLayerImpl implements AktoerAntiCorruptionLayer {
 					.build();
 		}
 
-		HentIdentForAktoerIdResponseTo responseTo = aktoerV2Consumer.hentIdentForAktoerId(aktoerId);
-
-		return TilgangBruker.builder()
-				.foedselsnr(responseTo.getFoedselsnr())
-				.aktoerId(aktoerId)
-				.historiskeIdenter(responseTo.getHistoriskeIdenter().stream()
-						.map(ident -> TilgangIdent.builder().identifikator(ident).build()).collect(Collectors.toList()))
-				.build();
+		return TilgangsbrukerMapper.map(identConsumer.hentIdenter(aktoerId));
 	}
 
 	@Override
@@ -48,16 +44,7 @@ class AktoerAntiCorruptionLayerImpl implements AktoerAntiCorruptionLayer {
 			return TilgangBruker.builder()
 					.build();
 		}
-
-		HentAktoerIdForIdentResponseTo responseTo = aktoerV2Consumer.hentAktoerIdForIdent(foedselsnummer);
-
-		return TilgangBruker.builder()
-				.foedselsnr(foedselsnummer)
-				.aktoerId(responseTo.getAktoerId())
-				.historiskeIdenter(responseTo.getHistoriskeIdenter().stream()
-						.filter(historiskIdent -> !foedselsnummer.equals(historiskIdent))
-						.map(ident -> TilgangIdent.builder().identifikator(ident).build()).collect(Collectors.toList()))
-				.build();
+		return TilgangsbrukerMapper.map(identConsumer.hentIdenter(foedselsnummer));
 	}
 
 	@Override
@@ -66,17 +53,11 @@ class AktoerAntiCorruptionLayerImpl implements AktoerAntiCorruptionLayer {
 			return new ArrayList<>();
 		}
 
-		List<HentIdentForAktoerIdListeResponseTo> responseTo = aktoerV2Consumer.hentIdentForAktoerIdListe(aktoerIdList);
-
-		return responseTo.stream()
-				.map(to -> TilgangBruker.builder()
-						.foedselsnr(to.getFoedselsnr())
-						.aktoerId(to.getAktoerId())
-						.historiskeIdenter(to.getHistoriskeIdenter().stream()
-								.map(ident -> TilgangIdent.builder().identifikator(ident).build())
-								.collect(Collectors.toList()))
-						.build())
-				.collect(Collectors.toList());
+		List<TilgangBruker> tilgangBrukerList = new ArrayList<>();
+		for(String aktoerId : aktoerIdList) {
+			tilgangBrukerList.add(TilgangsbrukerMapper.map(identConsumer.hentIdenter(aktoerId)));
+		}
+		return tilgangBrukerList;
 	}
 
 
