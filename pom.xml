@@ -30,14 +30,12 @@
         <javax.inject.version>1</javax.inject.version>
         <jakarta.jaxws-api.version>2.3.3</jakarta.jaxws-api.version>
         <jakarta.activation.version>1.2.2</jakarta.activation.version>
-        <aktoer.version>2.0.1</aktoer.version>
-        <pensjonsakv1.version>1.0.3</pensjonsakv1.version>
+        <aktoer.version>1.2019.09.25-00.21-49b69f0625e0</aktoer.version>
+        <pensjon-sak-v1-tjenestespesifikasjon.version>1.2019.09.25-00.21-49b69f0625e0
+        </pensjon-sak-v1-tjenestespesifikasjon.version>
         <cxf.version>3.4.1</cxf.version>
         <saaj-impl.version>1.5.2</saaj-impl.version>
         <graphql-java.version>15.0</graphql-java.version>
-        <abac-attribute-constants.version>3.4.4</abac-attribute-constants.version>
-        <abac-common-attributes-alfa.version>4.2.2</abac-common-attributes-alfa.version>
-        <abac-saf-policies-alfa.version>5.0.5</abac-saf-policies-alfa.version>
         <rxjava.version>2.2.19</rxjava.version>
         <resilience4j.version>1.5.0</resilience4j.version>
         <java-jwt.version>3.11.0</java-jwt.version>
@@ -53,7 +51,6 @@
         <!-- test -->
         <mockito.version>3.3.3</mockito.version>
         <spring-cloud-contract-wiremock.version>2.1.5.RELEASE</spring-cloud-contract-wiremock.version>
-        <modig-testcertificates.version>1.2.5</modig-testcertificates.version>
         <awaitility.version>4.0.3</awaitility.version>
     </properties>
 
@@ -125,10 +122,14 @@
                 <version>${jakarta.activation.version}</version>
             </dependency>
             <dependency>
-                <groupId>no.nav.tjenester.fim</groupId>
+                <groupId>no.nav.tjenestespesifikasjoner</groupId>
                 <artifactId>nav-fim-aktoer-v2-tjenestespesifikasjon</artifactId>
                 <version>${aktoer.version}</version>
-                <classifier>jaxws</classifier>
+            </dependency>
+            <dependency>
+                <groupId>no.nav.tjenestespesifikasjoner</groupId>
+                <artifactId>pensjon-sak-v1-tjenestespesifikasjon</artifactId>
+                <version>${pensjon-sak-v1-tjenestespesifikasjon.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.cxf</groupId>
@@ -149,21 +150,6 @@
                 <groupId>com.auth0</groupId>
                 <artifactId>java-jwt</artifactId>
                 <version>${java-jwt.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>no.nav.sbl</groupId>
-                <artifactId>pensjon-sak-v1-tjenestespesifikasjon</artifactId>
-                <version>${pensjonsakv1.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>no.nav.abac.policies</groupId>
-                <artifactId>abac-common-attributes-alfa</artifactId>
-                <version>${abac-common-attributes-alfa.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>no.nav.abac.policies</groupId>
-                <artifactId>abac-saf-policies-alfa</artifactId>
-                <version>${abac-saf-policies-alfa.version}</version>
             </dependency>
             <dependency>
                 <groupId>net.logstash.logback</groupId>
@@ -234,12 +220,6 @@
                 <groupId>no.nav.security</groupId>
                 <artifactId>token-validation-test-support</artifactId>
                 <version>${token-support.version}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>no.nav.modig</groupId>
-                <artifactId>modig-testcertificates</artifactId>
-                <version>${modig-testcertificates.version}</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
