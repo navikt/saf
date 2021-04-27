@@ -1,11 +1,11 @@
 package no.nav.saf.tilgangskontroll.pep;
 
-import static no.nav.abac.common.xacml.CommonAttributter.RESOURCE_FELLES_RESOURCE_TYPE;
-import static no.nav.abac.saf.xacml.SafAttributter.RESOURCE_SAF_JOURNALSTATUS;
-import static no.nav.abac.saf.xacml.SafAttributter.RESOURCE_SAF_JOURNAL_METADATA;
-import static no.nav.abac.saf.xacml.SafAttributter.RESOURCE_SAF_SKJERMING;
 import static no.nav.saf.domain.DomainConstants.ABAC_JOURNALSTATUS_UTGAAR;
 import static no.nav.saf.domain.DomainConstants.PEP4;
+import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_RESOURCE_TYPE;
+import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_SAF_JOURNALSTATUS;
+import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_SAF_JOURNAL_METADATA;
+import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_SAF_SKJERMING;
 
 import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.domain.kode.Journalstatus;

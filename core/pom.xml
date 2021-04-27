@@ -42,9 +42,8 @@
 			<artifactId>java-jwt</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>no.nav.tjenester.fim</groupId>
+			<groupId>no.nav.tjenestespesifikasjoner</groupId>
 			<artifactId>nav-fim-aktoer-v2-tjenestespesifikasjon</artifactId>
-			<classifier>jaxws</classifier>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.cxf</groupId>
@@ -91,15 +90,7 @@
 			<artifactId>resilience4j-spring-boot2</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>no.nav.abac.policies</groupId>
-			<artifactId>abac-common-attributes-alfa</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>no.nav.abac.policies</groupId>
-			<artifactId>abac-saf-policies-alfa</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>no.nav.sbl</groupId>
+			<groupId>no.nav.tjenestespesifikasjoner</groupId>
 			<artifactId>pensjon-sak-v1-tjenestespesifikasjon</artifactId>
 		</dependency>
 		<dependency>
