@@ -9,9 +9,7 @@ import java.util.List;
 
 public class TilgangsbrukerMapper {
 
-	public static TilgangBruker map(List<PdlResponse.PdlIdent> responseTo) {
-		String foedselsnummer = null;
-		String aktoerId = null;
+	public static TilgangBruker map(List<PdlResponse.PdlIdent> responseTo, String aktoerId, String foedselsnummer) {
 		List<TilgangIdent> tilgangsIdentList = new ArrayList<>();
 		for(PdlResponse.PdlIdent pdlIdent : responseTo){
 			if(pdlIdent.isHistorisk()){

@@ -35,7 +35,7 @@ class AktoerAntiCorruptionLayerImpl implements AktoerAntiCorruptionLayer {
 					.build();
 		}
 
-		return TilgangsbrukerMapper.map(identConsumer.hentIdenter(aktoerId));
+		return TilgangsbrukerMapper.map(identConsumer.hentIdenter(aktoerId), aktoerId, null);
 	}
 
 	@Override
@@ -44,7 +44,7 @@ class AktoerAntiCorruptionLayerImpl implements AktoerAntiCorruptionLayer {
 			return TilgangBruker.builder()
 					.build();
 		}
-		return TilgangsbrukerMapper.map(identConsumer.hentIdenter(foedselsnummer));
+		return TilgangsbrukerMapper.map(identConsumer.hentIdenter(foedselsnummer), null, foedselsnummer);
 	}
 
 	@Override
@@ -55,7 +55,7 @@ class AktoerAntiCorruptionLayerImpl implements AktoerAntiCorruptionLayer {
 
 		List<TilgangBruker> tilgangBrukerList = new ArrayList<>();
 		for(String aktoerId : aktoerIdList) {
-			tilgangBrukerList.add(TilgangsbrukerMapper.map(identConsumer.hentIdenter(aktoerId)));
+			tilgangBrukerList.add(TilgangsbrukerMapper.map(identConsumer.hentIdenter(aktoerId), aktoerId, null));
 		}
 		return tilgangBrukerList;
 	}
