@@ -101,9 +101,14 @@ public class DokumentoversiktBrukerIT extends AbstractItest {
 	@Test
 	public void shouldHentDokumentoversiktBrukerWithFNR() throws IOException, URISyntaxException {
 		abacPermit();
-		stubFor(post("/aktoerv2")
+		stubFor(post("/azureTokenUrl")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
-						.withBodyFile("aktoerV2/hentIdentForFNR-happy.xml")));
+						.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("azure/token_response.json")));
+		stubFor(post("/pdl")
+				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
+						.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("pdl/hentIdentForFNR-happy.json")));
 		stubFor(post("/sts")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withBodyFile("sts/sts-happy.xml")));
@@ -131,7 +136,7 @@ public class DokumentoversiktBrukerIT extends AbstractItest {
 			assertEquals(KANAL_REFERANSE_ID, dokumentoversikt.getJournalposter().get(1).getEksternReferanseId());
 			assertEquals(KANAL_REFERANSE_ID, dokumentoversikt.getJournalposter().get(2).getEksternReferanseId());
 			assertSaksbehandlerHarTilgang(dokumentoversikt);
-			verify(postRequestedFor(urlEqualTo("/aktoerv2")).withRequestBody(matchingXPath("//ident/text()", equalTo(FNR))));
+			verify(postRequestedFor(urlEqualTo("/pdl")).withRequestBody(matchingJsonPath("$.variables.ident", equalTo(FNR))));
 			verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter"))
 					.withRequestBody(containing("{\"gsakSakIds\":[\"135695442\"],\"psakSakIds\":[\"21998969\"],\"fraDato\":\"0001-01-01\",\"tilDato\":null,\"inkluderJournalStatus\":[\"FL\",\"FS\",\"J\",\"E\"],\"inkluderJournalpostType\":[\"I\",\"U\",\"N\"],\"visFeilregistrerte\":false,\"alleIdenter\":[\"11111111111\"],\"foerste\":3,\"etterPeker\":null}")));
 			verify(postRequestedFor(urlEqualTo("/pensjonsakv1")).withRequestBody(matchingXPath("//personident/text()", equalTo("11111111111"))));
@@ -168,9 +173,14 @@ public class DokumentoversiktBrukerIT extends AbstractItest {
 	@Test
 	public void shouldHentDokumentoversiktBrukerWithFraDato() throws IOException, URISyntaxException {
 		abacPermit();
-		stubFor(post("/aktoerv2")
+		stubFor(post("/azureTokenUrl")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
-						.withBodyFile("aktoerV2/hentIdentForFNR-happy.xml")));
+						.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("azure/token_response.json")));
+		stubFor(post("/pdl")
+				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
+						.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("pdl/hentIdentForFNR-happy.json")));
 		stubFor(post("/sts")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withBodyFile("sts/sts-happy.xml")));
@@ -269,7 +279,7 @@ public class DokumentoversiktBrukerIT extends AbstractItest {
 			assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
 			assertEquals("429837417", dokumentoversikt.getJournalposter().get(0).getJournalpostId());
 			assertSaksbehandlerHarTilgang(dokumentoversikt);
-			verify(postRequestedFor(urlEqualTo("/aktoerv2")).withRequestBody(matchingXPath("//aktoerId/text()", equalTo(AKTOER_ID))));
+			verify(postRequestedFor(urlEqualTo("/pdl")).withRequestBody(matchingJsonPath("$.variables.ident", equalTo(AKTOER_ID))));
 			verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter"))
 					.withRequestBody(containing("{\"gsakSakIds\":[\"135695442\"],\"psakSakIds\":[\"21998969\"],\"fraDato\":\"0001-01-01\",\"tilDato\":null,\"inkluderJournalStatus\":[\"FL\",\"FS\",\"J\",\"E\"],\"inkluderJournalpostType\":[\"I\",\"U\",\"N\"],\"visFeilregistrerte\":false,\"alleIdenter\":[\"20026900817\"],\"foerste\":3,\"etterPeker\":null}")));
 			verify(postRequestedFor(urlEqualTo("/pensjonsakv1")).withRequestBody(matchingXPath("//personident/text()", equalTo("20026900817"))));
@@ -299,16 +309,21 @@ public class DokumentoversiktBrukerIT extends AbstractItest {
 
 	@Test
 	public void hentIdentForAktoerIdFunctionalFail() throws IOException, URISyntaxException {
-		stubFor(post("/aktoerv2")
-				.willReturn(aResponse().withStatus(HttpStatus.NOT_FOUND.value())
-						.withBodyFile("aktoerV2/hentIdentForAktoerId-functional-fail.xml")));
+		stubFor(post("/azureTokenUrl")
+				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
+						.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("azure/token_response.json")));
+		stubFor(post("/pdl")
+				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
+						.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("pdl/badRequest.json")));
 
 		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikBrukerWithAktoerId();
 		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
 
 		assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
 		verifyEmptyJournalpostListeAndNullSideInfo(dokumentoversikt);
-		verify(postRequestedFor(urlEqualTo("/aktoerv2")).withRequestBody(matchingXPath("//aktoerId/text()", equalTo(AKTOER_ID))));
+		verify(postRequestedFor(urlEqualTo("/pdl")).withRequestBody(matchingJsonPath("$.variables.ident", equalTo(AKTOER_ID))));
 		verify(0, postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter")));
 		verify(0, postRequestedFor(urlEqualTo("/pensjonsakv1")));
 	}
@@ -520,7 +535,7 @@ public class DokumentoversiktBrukerIT extends AbstractItest {
 		stubFor(post("/pdl")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("pdl/hentPdlDataForIdent-happy.json")));
+						.withBodyFile("pdl/hentPdlDataForFoedselsnummer.json")));
 		stubFor(post("/sts")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withBodyFile("sts/sts-happy.xml")));
