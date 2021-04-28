@@ -1,7 +1,6 @@
 package no.nav.saf.tilgangskontroll.pep;
 
 import lombok.extern.slf4j.Slf4j;
-import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlRequest;
 import no.nav.saf.tilgangskontroll.abac.dto.response.XacmlResponse;
@@ -13,10 +12,9 @@ import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 
-import static no.nav.common.abac.constants.NavAttributter.RESOURCE_FELLES_PERSON_AKTOERID_RESOURCE;
-import static no.nav.common.abac.constants.NavAttributter.RESOURCE_FELLES_RESOURCE_TYPE;
-import static no.nav.saf.domain.DomainConstants.PEP1G;
 import static no.nav.saf.domain.DomainConstants.PEPX;
+import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_PERSON_AKTOERID_RESOURCE;
+import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_RESOURCE_TYPE;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_SAF_PERSON;
 
 /**

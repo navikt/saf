@@ -28,7 +28,7 @@ public class StsRestConsumer {
 	private final String stsUrl;
 
 	@Inject
-	public StsRestConsumer(@Value("${security-token-service-token.url}") String stsUrl, RestTemplateBuilder restTemplateBuilder,
+	public StsRestConsumer(@Value("${reststs.url}") String stsUrl, RestTemplateBuilder restTemplateBuilder,
 						   final ServiceuserAlias serviceuserAlias) {
 		this.stsUrl = stsUrl;
 		this.restTemplate = restTemplateBuilder

@@ -29,11 +29,11 @@ import static org.springframework.http.MediaType.APPLICATION_PDF_VALUE;
  */
 class HentDokumentIT extends AbstractItest {
 
-	private static String DOKUMENT_ID = "123";
-	private static String JOURNALPOST_ID = "123";
-	private static VariantFormatCode VARIANTFORMAT = VariantFormatCode.ARKIV;
-	private static VariantFormatCode SLADDET_VARIANTFORMAT = VariantFormatCode.SLADDET;
-	private static byte[] TEST_FILE_BYTES = "TestThis".getBytes();
+	private static final String DOKUMENT_ID = "123";
+	private static final String JOURNALPOST_ID = "123";
+	private static final VariantFormatCode VARIANTFORMAT = VariantFormatCode.ARKIV;
+	private static final VariantFormatCode SLADDET_VARIANTFORMAT = VariantFormatCode.SLADDET;
+	private static final byte[] TEST_FILE_BYTES = "TestThis".getBytes();
 
 	@Test
 	void hentGsakDokumentHappyPath() {
@@ -532,6 +532,7 @@ class HentDokumentIT extends AbstractItest {
 	@Test
 	void shouldGetUnauthorizedFromPepX() {
 		abacDenyPepX();
+		stubRestSts();
 		stubFor(get("/hentjournalsakinfo/hentdokument/" + DOKUMENT_ID + "/" + VARIANTFORMAT).willReturn(aResponse().withStatus(HttpStatus.OK
 				.value())
 				.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_PDF_VALUE)

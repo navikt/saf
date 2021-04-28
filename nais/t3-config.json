@@ -20,5 +20,6 @@
   "NO_NAV_SECURITY_JWT_ISSUER_OPENAM_ACCEPTED_AUDIENCE": "gosys-dokument-auth-proxy-t3,gosys-localhost,gosys-nais-t3,joarkadmin-localhost,joarkadmin-t3,modiabrukerdialog-t3,veilarblogin-t3,ida-t,eessi-pensjon-frontend-api-fss-t3,eux-helloeu-app-t3",
   "NO_NAV_SECURITY_JWT_ISSUER_RESTSTS_ACCEPTED_AUDIENCE": "srvPensjon,srvdagpenger-joark,srvdp-graphql,srvinfotrygd-joark,srvjfr-manuell-opp,srvsyfosmpapirmottak,srveux-app,srvdokdisteformidl,srvdokdistfordeling,srvmelosys,srvmedlemskap,srvpensr,srvdolly,srvregpapirsm",
   "BIDRAG_SAK_URL": "https://bidrag-sak.nais.preprod.local/bidrag-sak/pip/sak/",
-  "HENTJOURNALSAKINFO_URL": "https://dokarkiv-t3.nais.preprod.local/hentjournalsakinfo"
+  "HENTJOURNALSAKINFO_URL": "https://dokarkiv-t3.nais.preprod.local/hentjournalsakinfo",
+  "RESTSTS_URL": "https://security-token-service.dev.adeo.no/rest/v1/sts/token"
 }
