@@ -1,6 +1,7 @@
 package no.nav.saf.anticorruptionlayer.aktoer;
 
 import no.nav.saf.anticorruptionlayer.pdl.PdlResponse;
+import no.nav.saf.domain.tilgangsmodell.IdentType;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.domain.tilgangsmodell.TilgangIdent;
 
@@ -15,6 +16,7 @@ public class TilgangsbrukerMapper {
 			if(pdlIdent.isHistorisk()){
 				tilgangsIdentList.add(TilgangIdent.builder()
 						.identifikator(pdlIdent.getIdent())
+						.identType(pdlIdent.getGruppe().equals(PdlResponse.PdlGruppe.AKTORID)? IdentType.AKTOERID:IdentType.FOLKEREGISTERIDENT)
 						.build());
 			}else if (pdlIdent.getGruppe().equals(PdlResponse.PdlGruppe.AKTORID)){
 				aktoerId = pdlIdent.getIdent();

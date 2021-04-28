@@ -33,25 +33,27 @@ class GsakAntiCorruptionLayerImpl implements GsakAntiCorruptionLayer {
 	}
 
 	@Override
-	public List<Arkivsak> findArkivsakerByAktoerId(final String aktoerId, final List<Tema> tema) {
+	public List<Arkivsak> findArkivsakerByAktoerId(final List<String> aktoerIder, final List<Tema> tema) {
 		try {
-			List<GsakSakerTo> gsakSakerToFiltered;
-
-			if (aktoerId == null || tema.isEmpty()) {
+			if(aktoerIder.isEmpty() || tema.isEmpty()){
 				return new ArrayList<>();
-			} else if (tema.size() == 1) {
-				gsakSakerToFiltered = gsakConsumer.hentSakerByAktoerId(aktoerId, tema.get(0));
-			} else {
-				List<GsakSakerTo> gsakSakerTo = gsakConsumer.hentSakerByAktoerId(aktoerId);
-				gsakSakerToFiltered =
-						gsakSakerTo.stream()
-								.filter(gsak -> tema.contains(mapTema(gsak.getTema())))
-								.collect(Collectors.toList());
+			}
+			List<GsakSakerTo> gsakSakerToFiltered = new ArrayList<>();
+			for(String aktoerId : aktoerIder) {
+				if (tema.size() == 1) {
+					gsakSakerToFiltered.addAll(gsakConsumer.hentSakerByAktoerId(aktoerId, tema.get(0)));
+				} else {
+					List<GsakSakerTo> gsakSakerTo = gsakConsumer.hentSakerByAktoerId(aktoerId);
+					gsakSakerToFiltered.addAll(
+							gsakSakerTo.stream()
+									.filter(gsak -> tema.contains(mapTema(gsak.getTema())))
+									.collect(Collectors.toList()));
+				}
 			}
 
 			return mapToArkivsak(gsakSakerToFiltered);
 		} catch (Exception e) {
-			log.warn("Klarte ikke hente gsaker for aktoerId={}", aktoerId, e);
+			log.warn("Klarte ikke hente gsaker for aktoerId={}", aktoerIder, e);
 			return new ArrayList<>();
 		}
 	}
