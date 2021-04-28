@@ -3,7 +3,7 @@ package no.nav.saf.query.sak.repo;
 import io.reactivex.Flowable;
 import io.reactivex.schedulers.Schedulers;
 import lombok.extern.slf4j.Slf4j;
-import no.nav.saf.anticorruptionlayer.aktoer.AktoerAntiCorruptionLayer;
+import no.nav.saf.anticorruptionlayer.aktoer.PdlAntiCorruptionLayer;
 import no.nav.saf.anticorruptionlayer.bisys.BisysAntiCorruptionLayer;
 import no.nav.saf.anticorruptionlayer.gsak.GsakAntiCorruptionLayer;
 import no.nav.saf.anticorruptionlayer.pensjonsak.PensjonSakAntiCorruptionLayer;
@@ -28,13 +28,13 @@ import java.util.List;
 public class SakBrukerTilgangsmodellRepositoryImpl implements SakBrukerTilgangsmodellRepository {
 
 	private final GsakAntiCorruptionLayer gsakAntiCorruptionLayer;
-	private final AktoerAntiCorruptionLayer aktoerAntiCorruptionLayer;
+	private final PdlAntiCorruptionLayer aktoerAntiCorruptionLayer;
 	private final BisysAntiCorruptionLayer bisysAntiCorruptionLayer;
 	private final PensjonSakAntiCorruptionLayer pensjonSakAntiCorruptionLayer;
 
 	@Inject
 	public SakBrukerTilgangsmodellRepositoryImpl(GsakAntiCorruptionLayer gsakAntiCorruptionLayer,
-												 AktoerAntiCorruptionLayer aktoerAntiCorruptionLayer,
+												 PdlAntiCorruptionLayer aktoerAntiCorruptionLayer,
 												 BisysAntiCorruptionLayer bisysAntiCorruptionLayer,
 												 PensjonSakAntiCorruptionLayer pensjonSakAntiCorruptionLayer) {
 		this.gsakAntiCorruptionLayer = gsakAntiCorruptionLayer;

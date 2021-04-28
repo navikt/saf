@@ -1,6 +1,6 @@
 package no.nav.saf.query.tilknyttedejournalposter;
 
-import no.nav.saf.anticorruptionlayer.aktoer.AktoerAntiCorruptionLayer;
+import no.nav.saf.anticorruptionlayer.aktoer.PdlAntiCorruptionLayer;
 import no.nav.saf.anticorruptionlayer.bisys.BisysAntiCorruptionLayer;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.FagsystemCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.SkjermingTypeCode;
@@ -45,13 +45,13 @@ import static no.nav.saf.anticorruptionlayer.joark.domain.kode.FagsystemCode.PEN
 class TilknyttedeJournalposterTilgangRepository {
 	private final HentJournalsakinfo hentJournalsakinfo;
 	private final PensjonSakAntiCorruptionLayer pensjonSakAntiCorruptionLayer;
-	private final AktoerAntiCorruptionLayer aktoerAntiCorruptionLayer;
+	private final PdlAntiCorruptionLayer aktoerAntiCorruptionLayer;
 	private final BisysAntiCorruptionLayer bisysAntiCorruptionLayer;
 
 	@Inject
 	TilknyttedeJournalposterTilgangRepository(HentJournalsakinfo hentJournalsakinfo,
 											  PensjonSakAntiCorruptionLayer pensjonSakAntiCorruptionLayer,
-											  AktoerAntiCorruptionLayer aktoerAntiCorruptionLayer,
+											  PdlAntiCorruptionLayer aktoerAntiCorruptionLayer,
 											  BisysAntiCorruptionLayer bisysAntiCorruptionLayer) {
 		this.hentJournalsakinfo = hentJournalsakinfo;
 		this.pensjonSakAntiCorruptionLayer = pensjonSakAntiCorruptionLayer;

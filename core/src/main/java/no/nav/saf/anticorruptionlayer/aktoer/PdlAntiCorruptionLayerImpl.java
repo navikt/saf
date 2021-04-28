@@ -1,18 +1,11 @@
 package no.nav.saf.anticorruptionlayer.aktoer;
 
-import no.nav.saf.anticorruptionlayer.aktoer.aktoerv2.AktoerV2Consumer;
-import no.nav.saf.anticorruptionlayer.aktoer.domain.HentAktoerIdForIdentResponseTo;
-import no.nav.saf.anticorruptionlayer.aktoer.domain.HentIdentForAktoerIdListeResponseTo;
-import no.nav.saf.anticorruptionlayer.aktoer.domain.HentIdentForAktoerIdResponseTo;
 import no.nav.saf.anticorruptionlayer.pdl.IdentConsumer;
-import no.nav.saf.anticorruptionlayer.pdl.PdlResponse;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
-import no.nav.saf.domain.tilgangsmodell.TilgangIdent;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
@@ -20,11 +13,11 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
  * @author Joakim Bjørnstad, Jbit AS
  */
 @Component
-class AktoerAntiCorruptionLayerImpl implements AktoerAntiCorruptionLayer {
+class PdlAntiCorruptionLayerImpl implements PdlAntiCorruptionLayer {
 
 	private final IdentConsumer identConsumer;
 
-	public AktoerAntiCorruptionLayerImpl(IdentConsumer identConsumer) {
+	public PdlAntiCorruptionLayerImpl(IdentConsumer identConsumer) {
 		this.identConsumer = identConsumer;
 	}
 
