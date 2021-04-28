@@ -6,7 +6,7 @@ import static no.nav.saf.anticorruptionlayer.pdl.MDCUtils.getCallId;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.retry.annotation.Retry;
 import no.nav.saf.anticorruptionlayer.azure.AzureTokenConsumer;
-import no.nav.saf.anticorruptionlayer.azure.SafSelvbetjeningProperties;
+import no.nav.saf.anticorruptionlayer.azure.SafProperties;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.client.ClientHttpRequestFactory;
@@ -41,7 +41,7 @@ class PdlIdentConsumer implements IdentConsumer {
 	private final URI pdlUri;
 	private final AzureTokenConsumer azureTokenConsumer;
 
-	public PdlIdentConsumer(final SafSelvbetjeningProperties safSelvbetjeningProperties,
+	public PdlIdentConsumer(final SafProperties safProperties,
 							final RestTemplateBuilder restTemplateBuilder,
 							final AzureTokenConsumer azureTokenConsumer,
 							final ClientHttpRequestFactory clientHttpRequestFactory) {
@@ -50,7 +50,7 @@ class PdlIdentConsumer implements IdentConsumer {
 				.setReadTimeout(Duration.ofSeconds(20))
 				.requestFactory(() -> clientHttpRequestFactory)
 				.build();
-		this.pdlUri = UriComponentsBuilder.fromHttpUrl(safSelvbetjeningProperties.getEndpoints().getPdl()).build().toUri();
+		this.pdlUri = UriComponentsBuilder.fromHttpUrl(safProperties.getEndpoints().getPdl()).build().toUri();
 		this.azureTokenConsumer = azureTokenConsumer;
 	}
 

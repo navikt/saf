@@ -13,9 +13,9 @@ import java.time.LocalDate;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 @Data
-@ConfigurationProperties("safselvbetjening")
+@ConfigurationProperties("saf")
 @Validated
-public class SafSelvbetjeningProperties {
+public class SafProperties {
 
     private final Endpoints endpoints = new Endpoints();
     private final Serviceuser serviceuser = new Serviceuser();

@@ -31,11 +31,11 @@ public class AzureTokenConsumer {
 	private final RestTemplate restTemplate;
 	private final AzureProperties azureProperties;
 
-	public AzureTokenConsumer(SafSelvbetjeningProperties safSelvbetjeningProperties,
+	public AzureTokenConsumer(SafProperties safProperties,
 							  AzureProperties azureProperties,
 							  RestTemplateBuilder restTemplateBuilder,
 							  HttpClientConnectionManager httpClientConnectionManager) {
-		final CloseableHttpClient httpClient = createHttpClient(safSelvbetjeningProperties.getProxy(), httpClientConnectionManager);
+		final CloseableHttpClient httpClient = createHttpClient(safProperties.getProxy(), httpClientConnectionManager);
 		this.restTemplate = restTemplateBuilder
 				.setConnectTimeout(Duration.ofSeconds(3))
 				.setReadTimeout(Duration.ofSeconds(20))
@@ -44,7 +44,7 @@ public class AzureTokenConsumer {
 		this.azureProperties = azureProperties;
 	}
 
-	private CloseableHttpClient createHttpClient(SafSelvbetjeningProperties.Proxy proxy,
+	private CloseableHttpClient createHttpClient(SafProperties.Proxy proxy,
 												 HttpClientConnectionManager httpClientConnectionManager) {
 		if (proxy.isSet()) {
 			final HttpHost proxyHost = new HttpHost(proxy.getHost(), proxy.getPort());
