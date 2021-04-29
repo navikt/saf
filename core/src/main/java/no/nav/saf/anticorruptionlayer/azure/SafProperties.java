@@ -18,6 +18,7 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 public class SafProperties {
 
     private final Endpoints endpoints = new Endpoints();
+    private final Serviceuser serviceuser = new Serviceuser();
     private final Proxy proxy = new Proxy();
 
     @Data
@@ -31,7 +32,23 @@ public class SafProperties {
         /**
          * URL til sak API.
          */
+    }
 
+    @Data
+    @Validated
+    public static class Serviceuser {
+        /**
+         * Brukernavn til onprem AD servicebruker.
+         */
+        @NotEmpty
+        @ToString.Exclude
+        private String username;
+        /**
+         * Passord til onprem AD servicebruker.
+         */
+        @NotEmpty
+        @ToString.Exclude
+        private String password;
     }
 
     @Data
