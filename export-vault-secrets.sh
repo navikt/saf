@@ -10,3 +10,13 @@ then
     echo "Setting serviceuser_password"
     export  serviceuser_password=$(cat /secrets/serviceuser/srvsaf/password)
 fi
+if test -f /var/run/secrets/nais.io/vault/client_id;
+then
+    echo "Setting Azure ClientId"
+    export  azure_app_clientId=$(cat /var/run/secrets/nais.io/vault/client_id)
+fi
+if test -f /var/run/secrets/nais.io/vault/clientSecret;
+then
+    echo "Setting Azure clientSecret"
+    export  azure_app_clientSecret=$(cat /var/run/secrets/nais.io/vault/clientSecret)
+fi
