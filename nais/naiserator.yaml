@@ -87,6 +87,6 @@ spec:
     paths:
       - kvPath: {{ SRVSAF }}
         mountPath: "/secrets/serviceuser/srvsaf"
-      - kvPath: { { SRV_VAULT } }
+      - kvPath: { { SAF_VAULT } }
         mountPath: "/var/run/secrets/nais.io/vault"
   webproxy: true
