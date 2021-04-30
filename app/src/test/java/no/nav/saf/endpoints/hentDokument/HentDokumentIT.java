@@ -31,6 +31,7 @@ class HentDokumentIT extends AbstractItest {
 
 	private static final String DOKUMENT_ID = "123";
 	private static final String JOURNALPOST_ID = "123";
+	private static final String SAK_ID = "10672720";
 	private static final VariantFormatCode VARIANTFORMAT = VariantFormatCode.ARKIV;
 	private static final VariantFormatCode SLADDET_VARIANTFORMAT = VariantFormatCode.SLADDET;
 	private static final byte[] TEST_FILE_BYTES = "TestThis".getBytes();
@@ -530,13 +531,12 @@ class HentDokumentIT extends AbstractItest {
 	}
 
 	@Test
-	void shouldGetUnauthorizedFromPepX() {
-		abacDenyPepX();
-		stubRestSts();
-		stubFor(get("/hentjournalsakinfo/hentdokument/" + DOKUMENT_ID + "/" + VARIANTFORMAT).willReturn(aResponse().withStatus(HttpStatus.OK
-				.value())
-				.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_PDF_VALUE)
-				.withBody(Base64.getEncoder().encode(TEST_FILE_BYTES))));
+	void shouldGetUnauthorizedFromPep7() {
+		abacDenyPep7skipPep2Pep2DPep4Pep5Pep6();
+		stubFor(get("/hentjournalsakinfo/hentdokument/" + DOKUMENT_ID + "/" + VARIANTFORMAT)
+				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
+						.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_PDF_VALUE)
+						.withBody(Base64.getEncoder().encode(TEST_FILE_BYTES))));
 		stubFor(get("/bidrag/765432").willReturn(aResponse()
 				.withStatus(HttpStatus.OK.value())
 				.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
@@ -544,14 +544,15 @@ class HentDokumentIT extends AbstractItest {
 		stubFor(get("/hentjournalsakinfo/henttilgangjournalpost/" + JOURNALPOST_ID + "/" + DOKUMENT_ID + "/" + VARIANTFORMAT).willReturn(aResponse()
 				.withStatus(HttpStatus.OK.value())
 				.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
-				.withBodyFile("hentjournalsakinfo/henttilgangjournalpostTemaBidWithSkjerming_gsak-happy.json")));
-		stubFor(get("/fpsak").willReturn(aResponse()
+				.withBodyFile("hentjournalsakinfo/henttilgangjournalpost_gsak-happy.json")));
+		stubFor(get("/fpsak?saksnummer=" + SAK_ID).willReturn(aResponse()
 				.withStatus(HttpStatus.OK.value())
 				.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
 				.withBodyFile("fpsak/happy-response.json")));
+
 		ResponseEntity<String> responseEntity = callHentDokument();
 
-		verifyabacDenyPepXAndHttpStatusCode(HttpStatus.FORBIDDEN, responseEntity.getStatusCode());
+		verifyabacDenyPep7AndHttpStatusCode(HttpStatus.FORBIDDEN, responseEntity.getStatusCode());
 	}
 
 	private void assertOkArkivResponse(ResponseEntity<String> responseEntity) {

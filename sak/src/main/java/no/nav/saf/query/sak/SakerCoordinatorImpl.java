@@ -73,7 +73,7 @@ public class SakerCoordinatorImpl implements SakerCoordinator {
 
 		return filteredTilgangSakList.stream()
 				.map(tilgangSak ->
-				sakMapper.mapSak(tilgangSak, safRequestContext.getRequestCache()))
+						sakMapper.mapSak(tilgangSak, safRequestContext.getRequestCache()))
 				.filter(Objects::nonNull)
 				.collect(Collectors.toSet())
 				.stream().collect(Collectors.toList());

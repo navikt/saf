@@ -22,7 +22,7 @@ public class FpsakAntiCorruptionLayerImpl implements FpsakAntiCorruptionLayer {
 	@Override
 	public List<String> hentRelevanteParter(String sakId) {
 		try {
-			return fpsakConsumer.hentAktoerForSak(sakId).getAktoerIds();
+			return fpsakConsumer.hentAktoerForSak(sakId);
 		} catch (Exception e) {
 			log.warn("Kunne ikke hente relevante parter fra fpsak for sakId={}", sakId, e);
 			return Collections.emptyList();

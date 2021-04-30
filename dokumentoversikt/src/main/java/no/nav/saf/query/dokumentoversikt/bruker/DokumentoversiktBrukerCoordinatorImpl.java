@@ -123,7 +123,7 @@ class DokumentoversiktBrukerCoordinatorImpl implements DokumentoversiktBrukerCoo
 				safRequestContext
 		);
 
-		 // Pep2 og pep2d må utføres på midlertidige journalposter, da disse først dukker opp på bruker-søk i joark i forrige steg.
+		// Pep2 og pep2d må utføres på midlertidige journalposter, da disse først dukker opp på bruker-søk i joark i forrige steg.
 		final List<TilgangJournalpost> filteredTilgangJournalpostList = Flowable.fromIterable(tilgangJournalposter)
 				.parallel(10)
 				.runOn(Schedulers.io())

@@ -8,14 +8,12 @@ import no.nav.saf.tilgangskontroll.abac.service.AbacService;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
-
-import java.util.ArrayList;
 import java.util.List;
 
-import static no.nav.saf.domain.DomainConstants.PEPX;
+import static no.nav.saf.domain.DomainConstants.PEP7;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_PERSON_AKTOERID_RESOURCE;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_RESOURCE_TYPE;
-import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_SAF_PERSON;
+import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_SAF_TREDJEPART;
 
 /**
  * Dekker følgende policies i saf:
@@ -23,31 +21,33 @@ import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_SAF_PERSON;
  * https://confluence.adeo.no/display/ABAC/FP1%3A+Behandling+Kode+6+Brukere
  * https://confluence.adeo.no/display/ABAC/FP2%3A+Behandling+Kode+7+Brukere
  */
-@Component(PEPX)
+@Component(PEP7)
 @Slf4j
-public class PepXimpl implements Pep<List<String>>{
+public class Pep7Impl implements Pep<List<String>> {
 
 	private final AbacService abacService;
 
 	@Inject
-	public PepXimpl(AbacService abacService) {
+	public Pep7Impl(AbacService abacService) {
 		this.abacService = abacService;
 	}
 
 	@Override
 	public XacmlResponse verifyAccessXacmlResponse(List<String> ressurs, SafRequestContext safRequestContext) {
 
-		List<XacmlResponse> responseList = new ArrayList<>();
-		Pep.traceLogPepStarted(PEPX, ressurs);
-
-		for(String aktoerId : ressurs){
-			XacmlRequest request = SafXacmlRequestFactory.create(safRequestContext.getSecurityContext());
-			request.resource(RESOURCE_FELLES_RESOURCE_TYPE, RESOURCE_SAF_PERSON); //todo?
-			request.resource(RESOURCE_FELLES_PERSON_AKTOERID_RESOURCE, aktoerId);
-			responseList.add(abacService.evaluate(request));
+		if (ressurs == null || ressurs.isEmpty()) {
+			log.info("PepX har ingen relevante parter. Tilgang gis.");
+			return XacmlResponse.permit();
 		}
-		Pep.traceLogPepFinished(PEPX, ressurs);
 
-		return responseList.contains(XacmlResponse.deny()) ? XacmlResponse.deny() : XacmlResponse.permit();
+		XacmlRequest request = SafXacmlRequestFactory.create(safRequestContext.getSecurityContext());
+		request.resource(RESOURCE_FELLES_RESOURCE_TYPE, RESOURCE_SAF_TREDJEPART);
+		ressurs.forEach(aktoerId -> request.resource(RESOURCE_FELLES_PERSON_AKTOERID_RESOURCE, aktoerId));
+
+		Pep.traceLogPepStarted(PEP7, ressurs);
+		XacmlResponse response = abacService.evaluate(request);
+		Pep.traceLogPepFinished(PEP7, ressurs);
+
+		return response;
 	}
 }

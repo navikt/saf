@@ -20,7 +20,6 @@ import java.time.Duration;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.containing;
@@ -44,17 +43,17 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
  * @author Sigurd Midttun, Visma Consulting.
  */
 @DirtiesContext
-public class DokumentoversiktBrukerIT extends AbstractItest {
+class DokumentoversiktBrukerIT extends AbstractItest {
 
 	private static final String AKTOER_ID = "1912374211459";
 	private static final String FNR = "11111111111";
 	private static final String ORG_NR = "201545004";
 	private static final String KANAL_REFERANSE_ID = "KANAL REFERANSE ID";
 
-	private ObjectMapper objectMapper = new ObjectMapper();
+	private final ObjectMapper objectMapper = new ObjectMapper();
 
 	@Test
-	public void shouldHentDokumentoversiktBrukerWithAktoerID() throws Exception {
+	void shouldHentDokumentoversiktBrukerWithAktoerID() {
 		abacPermit();
 		stubFor(post("/aktoerv2")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
@@ -93,7 +92,7 @@ public class DokumentoversiktBrukerIT extends AbstractItest {
 	}
 
 	@Test
-	public void shouldHentDokumentoversiktBrukerWithFNR() throws IOException, URISyntaxException {
+	void shouldHentDokumentoversiktBrukerWithFNR() throws IOException, URISyntaxException {
 		abacPermit();
 		stubFor(post("/aktoerv2")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
@@ -133,7 +132,7 @@ public class DokumentoversiktBrukerIT extends AbstractItest {
 	}
 
 	@Test
-	public void shouldHentDokumentoversiktBrukerWithOrgNr() throws IOException, URISyntaxException {
+	void shouldHentDokumentoversiktBrukerWithOrgNr() throws IOException, URISyntaxException {
 		abacPermit();
 		stubFor(post("/sts")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
@@ -160,7 +159,7 @@ public class DokumentoversiktBrukerIT extends AbstractItest {
 	}
 
 	@Test
-	public void shouldHentDokumentoversiktBrukerWithFraDato() throws IOException, URISyntaxException {
+	void shouldHentDokumentoversiktBrukerWithFraDato() throws IOException, URISyntaxException {
 		abacPermit();
 		stubFor(post("/aktoerv2")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
@@ -190,7 +189,7 @@ public class DokumentoversiktBrukerIT extends AbstractItest {
 	}
 
 	@Test
-	public void shouldHentDokumentoversiktBrukerWithAktoerIDMidlertidig() throws IOException, URISyntaxException {
+	void shouldHentDokumentoversiktBrukerWithAktoerIDMidlertidig() throws IOException, URISyntaxException {
 		abacPermit();
 		stubFor(post("/aktoerv2")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
@@ -226,7 +225,7 @@ public class DokumentoversiktBrukerIT extends AbstractItest {
 	}
 
 	@Test
-	public void shouldHentDokumentoversiktBrukerWithAktoerIDSladdet() throws IOException, URISyntaxException {
+	void shouldHentDokumentoversiktBrukerWithAktoerIDSladdet() throws IOException, URISyntaxException {
 		abacPermit();
 		stubFor(post("/aktoerv2")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
@@ -261,7 +260,7 @@ public class DokumentoversiktBrukerIT extends AbstractItest {
 	}
 
 	@Test
-	public void hentIdentForAktoerIdTechnicalFail() throws IOException, URISyntaxException {
+	void hentIdentForAktoerIdTechnicalFail() throws IOException, URISyntaxException {
 		stubFor(post("/aktoerv2")
 				.willReturn(aResponse().withStatus(HttpStatus.INTERNAL_SERVER_ERROR.value())
 						.withBodyFile("aktoerV2/hentIdentForAktoerId-technical-fail.xml")));
@@ -277,7 +276,7 @@ public class DokumentoversiktBrukerIT extends AbstractItest {
 	}
 
 	@Test
-	public void hentIdentForAktoerIdFunctionalFail() throws IOException, URISyntaxException {
+	void hentIdentForAktoerIdFunctionalFail() throws IOException, URISyntaxException {
 		stubFor(post("/aktoerv2")
 				.willReturn(aResponse().withStatus(HttpStatus.NOT_FOUND.value())
 						.withBodyFile("aktoerV2/hentIdentForAktoerId-functional-fail.xml")));
@@ -293,7 +292,7 @@ public class DokumentoversiktBrukerIT extends AbstractItest {
 	}
 
 	@Test
-	public void HentSakerByAktoerIdGsakTechnicalFail() throws IOException, URISyntaxException {
+	void HentSakerByAktoerIdGsakTechnicalFail() throws IOException, URISyntaxException {
 		abacPermit();
 		stubFor(post("/aktoerv2")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
@@ -324,7 +323,7 @@ public class DokumentoversiktBrukerIT extends AbstractItest {
 	}
 
 	@Test
-	public void HentSakerByAktoerIdGsakFunctionalFail() throws IOException, URISyntaxException {
+	void HentSakerByAktoerIdGsakFunctionalFail() throws IOException, URISyntaxException {
 		abacPermit();
 		stubFor(post("/aktoerv2")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
@@ -358,7 +357,7 @@ public class DokumentoversiktBrukerIT extends AbstractItest {
 	}
 
 	@Test
-	public void bidragConsumerTechnicalError() throws IOException, URISyntaxException {
+	void bidragConsumerTechnicalError() throws IOException, URISyntaxException {
 		abacPermit();
 		stubFor(post("/aktoerv2")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
@@ -396,7 +395,7 @@ public class DokumentoversiktBrukerIT extends AbstractItest {
 	}
 
 	@Test
-	public void FinnJournalposterEmptyResponse() {
+	void FinnJournalposterEmptyResponse() {
 		abacPermit();
 		stubFor(post("/aktoerv2")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
@@ -434,7 +433,7 @@ public class DokumentoversiktBrukerIT extends AbstractItest {
 	}
 
 	@Test
-	public void shouldGetUnauthorizedFromPep1g() throws IOException, URISyntaxException {
+	void shouldGetUnauthorizedFromPep1g() throws IOException, URISyntaxException {
 		abacDenyPep1g();
 		stubFor(post("/aktoerv2")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
@@ -465,7 +464,7 @@ public class DokumentoversiktBrukerIT extends AbstractItest {
 	}
 
 	@Test
-	public void shouldGetUnauthorizedFromPep2() throws IOException, URISyntaxException {
+	void shouldGetUnauthorizedFromPep2() throws IOException, URISyntaxException {
 		abacDenyPep2();
 		stubFor(post("/aktoerv2")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
@@ -498,7 +497,7 @@ public class DokumentoversiktBrukerIT extends AbstractItest {
 	}
 
 	@Test
-	public void shouldGetUnauthorizedFromPep2d() throws IOException, URISyntaxException {
+	void shouldGetUnauthorizedFromPep2d() throws IOException, URISyntaxException {
 		abacDenyPep2d();
 		stubFor(post("/aktoerv2")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
@@ -533,40 +532,7 @@ public class DokumentoversiktBrukerIT extends AbstractItest {
 	}
 
 	@Test
-	public void shouldGetUnauthorizedFromPep3() throws IOException, URISyntaxException {
-		abacDenyPep3();
-		stubFor(post("/aktoerv2")
-				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
-						.withBodyFile("aktoerV2/hentIdentForAktoerId-happy.xml")));
-		stubFor(post("/sts")
-				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
-						.withBodyFile("sts/sts-happy.xml")));
-		stubFor(get("/gsak?aktoerId=" + AKTOER_ID)
-				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
-						.withHeader(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType())
-						.withBodyFile("gsak/gsak-sakerBySaksId-happy.json")));
-		stubFor(post("/hentjournalsakinfo/finnjournalposter")
-				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
-						.withHeader(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType())
-						.withBodyFile("joark/finnjournalposter-empty.json")));
-		stubFor(post("/pensjonsakv1")
-				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
-						.withBodyFile("psak/psak-hentSakSammendragListe-happy-empty.xml")));
-		stubFor(get("/bidrag/654321").willReturn(aResponse().withStatus(HttpStatus.OK.value())
-				.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
-				.withBodyFile("bidrag/bidragsak-happy.json")));
-
-		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikBrukerWithAktoerId();
-		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
-
-		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter"))
-				.withRequestBody(containing("{\"gsakSakIds\":[],\"psakSakIds\":[],\"fraDato\":\"0001-01-01\",\"tilDato\":null,\"inkluderJournalStatus\":[\"FL\",\"FS\",\"J\",\"E\"],\"inkluderJournalpostType\":[\"I\",\"U\",\"N\"],\"visFeilregistrerte\":false,\"alleIdenter\":[\"20026900817\"],\"foerste\":3,\"etterPeker\":null}")));
-		verifyEmptyJournalpostListeAndNullSideInfo(dokumentoversikt);
-		verifyabacDenyPep3AndHttpStatusCode(HttpStatus.OK, responseEntity.getStatusCode());
-	}
-
-	@Test
-	public void shouldGetUnauthorizedFromPep4() throws IOException, URISyntaxException {
+	void shouldGetUnauthorizedFromPep4() throws IOException, URISyntaxException {
 		abacDenyPep4();
 		stubFor(post("/aktoerv2")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
@@ -600,7 +566,7 @@ public class DokumentoversiktBrukerIT extends AbstractItest {
 	}
 
 	@Test
-	public void shouldGetUnauthorizedFromPep5() throws IOException, URISyntaxException {
+	void shouldGetUnauthorizedFromPep5() throws IOException, URISyntaxException {
 		abacDenyPep5();
 		stubFor(post("/aktoerv2")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
@@ -635,7 +601,7 @@ public class DokumentoversiktBrukerIT extends AbstractItest {
 	}
 
 	@Test
-	public void shouldGetUnauthorizedFromPep6d() throws IOException, URISyntaxException {
+	void shouldGetUnauthorizedFromPep6d() throws IOException, URISyntaxException {
 		abacDenyPep6d();
 		stubFor(post("/aktoerv2")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())

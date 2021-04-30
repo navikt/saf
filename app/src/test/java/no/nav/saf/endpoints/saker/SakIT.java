@@ -37,7 +37,7 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
-public class SakIT extends AbstractItest {
+class SakIT extends AbstractItest {
 
 	private static final String AKTOER_ID = "1912374211459";
 	private static final ObjectMapper objectMapper = new ObjectMapper();
@@ -47,7 +47,7 @@ public class SakIT extends AbstractItest {
 	}
 
 	@Test
-	public void shouldRemoveSakDuplicates() throws Exception{
+	void shouldRemoveSakDuplicates() {
 		abacPermit();
 		stubFor(post("/aktoerv2")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
@@ -77,7 +77,7 @@ public class SakIT extends AbstractItest {
 
 
 	@Test
-	public void shouldGetSakerForAktoerID() throws IOException, URISyntaxException {
+	void shouldGetSakerForAktoerID() {
 		abacPermit();
 		stubFor(post("/aktoerv2")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
@@ -200,6 +200,4 @@ public class SakIT extends AbstractItest {
 		return objectMapper.convertValue(responseEntityData.get("saker"), new TypeReference<List<Sak>>() {
 		});
 	}
-
-
 }

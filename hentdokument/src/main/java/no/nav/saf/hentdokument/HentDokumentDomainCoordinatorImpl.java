@@ -20,7 +20,6 @@ import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-
 import java.util.List;
 
 import static no.nav.saf.domain.DomainConstants.PEP1G;
@@ -30,7 +29,7 @@ import static no.nav.saf.domain.DomainConstants.PEP3;
 import static no.nav.saf.domain.DomainConstants.PEP4;
 import static no.nav.saf.domain.DomainConstants.PEP5;
 import static no.nav.saf.domain.DomainConstants.PEP6D;
-import static no.nav.saf.domain.DomainConstants.PEPX;
+import static no.nav.saf.domain.DomainConstants.PEP7;
 
 /**
  * @author Sigurd Midttun, Visma Consulting.
@@ -48,7 +47,7 @@ public class HentDokumentDomainCoordinatorImpl implements HentDokumentDomainCoor
 	private final Pep<TilgangJournalpost> pep4;
 	private final Pep<TilgangDokumentInfo> pep5;
 	private final Pep<TilgangDokumentvariant> pep6d;
-	private final Pep<List<String>> pepX;
+	private final Pep<List<String>> pep7;
 	private final HentDokumentSporbarhetslogger hentDokumentSporbarhetslogger;
 
 	@Inject
@@ -61,7 +60,7 @@ public class HentDokumentDomainCoordinatorImpl implements HentDokumentDomainCoor
 											 @Named(PEP4) Pep<TilgangJournalpost> pep4,
 											 @Named(PEP5) Pep<TilgangDokumentInfo> pep5,
 											 @Named(PEP6D) Pep<TilgangDokumentvariant> pep6d,
-											 @Named(PEPX) Pep<List<String>> pepX) {
+											 @Named(PEP7) Pep<List<String>> pep7) {
 		this.dokumentRepository = dokumentRepository;
 		this.tilgangsmodellHentdokumentRepository = tilgangsmodellHentdokumentRepository;
 		this.pep1g = pep1g;
@@ -71,7 +70,7 @@ public class HentDokumentDomainCoordinatorImpl implements HentDokumentDomainCoor
 		this.pep4 = pep4;
 		this.pep5 = pep5;
 		this.pep6d = pep6d;
-		this.pepX = pepX;
+		this.pep7 = pep7;
 		this.hentDokumentSporbarhetslogger = new HentDokumentSporbarhetslogger();
 	}
 
@@ -135,14 +134,13 @@ public class HentDokumentDomainCoordinatorImpl implements HentDokumentDomainCoor
 			throw new HentdokumentTilgangskontrollException(DenyReasons.PEP6D_DENY_REASON, pep6dResponse);
 		}
 
-		List<String> aktoerIds = tilgangsmodellHentdokumentRepository.findRelevanteParterSak(tilgangSak);
+		if (tilgangSak != null) {
+			List<String> aktoerIds = tilgangsmodellHentdokumentRepository.findRelevanteParterSak(tilgangSak);
 
-		if (!aktoerIds.isEmpty()) {
-			XacmlResponse pepXResponse = pepX.verifyAccessXacmlResponse(aktoerIds, safRequestContext);
-			if (pepXResponse.isDeny()) {
-				throw new HentdokumentTilgangskontrollException(DenyReasons.PEPX_DENY_REASON, pepXResponse);
+			XacmlResponse pep7Response = pep7.verifyAccessXacmlResponse(aktoerIds, safRequestContext);
+			if (pep7Response.isDeny()) {
+				throw new HentdokumentTilgangskontrollException(DenyReasons.PEP7_DENY_REASON, pep7Response);
 			}
 		}
 	}
-
 }
