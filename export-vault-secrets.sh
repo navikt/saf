@@ -15,8 +15,8 @@ then
     echo "Setting Azure ClientId"
     export  azure_app_clientId=$(cat /var/run/secrets/nais.io/vault/client_id)
 fi
-if test -f /var/run/secrets/nais.io/vault/clientSecret;
+if test -f /var/run/secrets/nais.io/vault/client_secret;
 then
     echo "Setting Azure clientSecret"
-    export  azure_app_clientSecret=$(cat /var/run/secrets/nais.io/vault/clientSecret)
+    export  azure_app_clientSecret=$(cat /var/run/secrets/nais.io/vault/client_secret)
 fi
