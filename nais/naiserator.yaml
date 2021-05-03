@@ -53,6 +53,8 @@ spec:
       value: {{SAF_PROXY_HOST}}
     - name: SAF_PROXY_PORT
       value: "{{SAF_PROXY_PORT}}"
+    - name: RESTSECURITYTOKENSERVICE_URL
+      value: {{ RESTSECURITYTOKENSERVICE_URL }}
   image: {{ image }}
   ingresses:
     {{#each INGRESSES}}
