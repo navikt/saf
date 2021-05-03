@@ -49,6 +49,8 @@ spec:
       value: {{AZURE_APP_SCOPE}}
     - name: SAF_ENDPOINTS_PDL
       value: {{SAF_ENDPOINTS_PDL}}
+    - name: SAF_PROXY_HOST
+      value: {{SAF_PROXY_HOST}}
     - name: SAF_PROXY_PORT
       value: "{{SAF_PROXY_PORT}}"
   image: {{ image }}
