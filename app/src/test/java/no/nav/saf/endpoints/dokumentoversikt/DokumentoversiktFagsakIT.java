@@ -60,10 +60,10 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 						.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("joark/finnjournalposter-happy.json")));
 
-		stubFor(post("/azureTokenUrl")
+		stubFor(post("/reststs")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("azure/token_response.json")));
+						.withBodyFile("sts/sts-token.json")));
 		stubFor(post("/pdl")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
@@ -97,10 +97,10 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 						.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("joark/finnjournalposter-happy.json")));
 
-		stubFor(post("/azureTokenUrl")
+		stubFor(post("/reststs")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("azure/token_response.json")));
+						.withBodyFile("sts/sts-token.json")));
 		stubFor(post("/pdl")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
@@ -277,10 +277,10 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("joark/finnjournalposter-empty.json")));
-		stubFor(post("/azureTokenUrl")
+		stubFor(post("/reststs")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("azure/token_response.json")));
+						.withBodyFile("sts/sts-token.json")));
 		stubFor(post("/pdl")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
@@ -308,10 +308,10 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("joark/finnjournalposter-happy.json")));
-		stubFor(post("/azureTokenUrl")
+		stubFor(post("/reststs")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("azure/token_response.json")));
+						.withBodyFile("sts/sts-token.json")));
 		stubFor(post("/pdl")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
@@ -336,10 +336,10 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("joark/finnjournalposter-empty.json")));
-		stubFor(post("/azureTokenUrl")
+		stubFor(post("/reststs")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("azure/token_response.json")));
+						.withBodyFile("sts/sts-token.json")));
 		stubFor(post("/pdl")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
@@ -369,10 +369,10 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("joark/finnjournalposter_single_bidragAndSkjerming-happy.json")));
-		stubFor(post("/azureTokenUrl")
+		stubFor(post("/reststs")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("azure/token_response.json")));
+						.withBodyFile("sts/sts-token.json")));
 		stubFor(post("/pdl")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
@@ -401,10 +401,10 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("joark/finnjournalposter-empty.json")));
-		stubFor(post("/azureTokenUrl")
+		stubFor(post("/reststs")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("azure/token_response.json")));
+						.withBodyFile("sts/sts-token.json")));
 		stubFor(post("/pdl")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
@@ -434,10 +434,10 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("joark/finnjournalposter_single_bidragAndSkjerming-happy.json")));
-		stubFor(post("/azureTokenUrl")
+		stubFor(post("/reststs")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("azure/token_response.json")));
+						.withBodyFile("sts/sts-token.json")));
 		stubFor(post("/pdl")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
@@ -467,10 +467,10 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("joark/finnjournalposter_single_bidragAndSkjerming-happy.json")));
-		stubFor(post("/azureTokenUrl")
+		stubFor(post("/reststs")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("azure/token_response.json")));
+						.withBodyFile("sts/sts-token.json")));
 		stubFor(post("/pdl")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
@@ -503,10 +503,10 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("joark/finnjournalposter_single_bidragAndSkjerming-happy.json")));
-		stubFor(post("/azureTokenUrl")
+		stubFor(post("/reststs")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("azure/token_response.json")));
+						.withBodyFile("sts/sts-token.json")));
 		stubFor(post("/pdl")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)

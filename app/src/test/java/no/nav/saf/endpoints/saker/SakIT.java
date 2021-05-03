@@ -49,10 +49,10 @@ public class SakIT extends AbstractItest {
 	@Test
 	public void shouldRemoveSakDuplicates() throws Exception{
 		abacPermit();
-		stubFor(post("/azureTokenUrl")
+		stubFor(post("/reststs")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("azure/token_response.json")));
+						.withBodyFile("sts/sts-token.json")));
 		stubFor(post("/pdl")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
@@ -84,10 +84,10 @@ public class SakIT extends AbstractItest {
 	@Test
 	public void shouldGetSakerForAktoerID() throws IOException, URISyntaxException {
 		abacPermit();
-		stubFor(post("/azureTokenUrl")
+		stubFor(post("/reststs")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("azure/token_response.json")));
+						.withBodyFile("sts/sts-token.json")));
 		stubFor(post("/pdl")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
@@ -119,10 +119,10 @@ public class SakIT extends AbstractItest {
 	void shouldReturnNoSakerWhenDenyOnPep1g() throws Exception {
 		abacDenyPep1g();
 
-		stubFor(post("/azureTokenUrl")
+		stubFor(post("/reststs")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("azure/token_response.json")));
+						.withBodyFile("sts/sts-token.json")));
 		stubFor(post("/pdl")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
@@ -136,10 +136,10 @@ public class SakIT extends AbstractItest {
 	@Test
 	void shouldReturnNoSakerWhenDenyOnPep2() throws Exception {
 		abacDenyPep2();
-		stubFor(post("/azureTokenUrl")
+		stubFor(post("/reststs")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("azure/token_response.json")));
+						.withBodyFile("sts/sts-token.json")));
 		stubFor(post("/pdl")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
@@ -165,10 +165,10 @@ public class SakIT extends AbstractItest {
 	@Test
 	void shouldReturnNoSakerWhenDenyOnPep3() throws Exception {
 		abacDenyPep3Withoutpep2d();
-		stubFor(post("/azureTokenUrl")
+		stubFor(post("/reststs")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("azure/token_response.json")));
+						.withBodyFile("sts/sts-token.json")));
 		stubFor(post("/pdl")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)

@@ -1,12 +1,10 @@
 package no.nav.saf.anticorruptionlayer.pdl;
 
-import no.nav.saf.anticorruptionlayer.azure.TokenResponse;
-import static no.nav.saf.anticorruptionlayer.pdl.NavHeaders.NAV_CALLID;
-import static no.nav.saf.anticorruptionlayer.pdl.MDCUtils.getCallId;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.retry.annotation.Retry;
-import no.nav.saf.anticorruptionlayer.azure.AzureTokenConsumer;
 import no.nav.saf.anticorruptionlayer.azure.SafProperties;
+import no.nav.saf.anticorruptionlayer.sts.StsResponse;
+import no.nav.saf.anticorruptionlayer.sts.StsRestConsumer;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.client.ClientHttpRequestFactory;
@@ -21,6 +19,8 @@ import java.util.HashMap;
 import java.util.List;
 
 import static java.util.Objects.requireNonNull;
+import static no.nav.saf.anticorruptionlayer.pdl.MDCUtils.getCallId;
+import static no.nav.saf.anticorruptionlayer.pdl.NavHeaders.NAV_CALLID;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -39,11 +39,13 @@ class PdlIdentConsumer implements IdentConsumer {
 
 	private final RestTemplate restTemplate;
 	private final URI pdlUri;
-	private final AzureTokenConsumer azureTokenConsumer;
+	//private final AzureTokenConsumer azureTokenConsumer;
+	private final StsRestConsumer stsRestConsumer;
 
 	public PdlIdentConsumer(final SafProperties safProperties,
 							final RestTemplateBuilder restTemplateBuilder,
-							final AzureTokenConsumer azureTokenConsumer,
+							//final AzureTokenConsumer azureTokenConsumer,
+							final StsRestConsumer stsRestConsumer,
 							final ClientHttpRequestFactory clientHttpRequestFactory) {
 		this.restTemplate = restTemplateBuilder
 				.setConnectTimeout(Duration.ofSeconds(3))
@@ -51,7 +53,8 @@ class PdlIdentConsumer implements IdentConsumer {
 				.requestFactory(() -> clientHttpRequestFactory)
 				.build();
 		this.pdlUri = UriComponentsBuilder.fromHttpUrl(safProperties.getEndpoints().getPdl()).build().toUri();
-		this.azureTokenConsumer = azureTokenConsumer;
+		//this.azureTokenConsumer = azureTokenConsumer;
+		this.stsRestConsumer = stsRestConsumer;
 	}
 
 	@Retry(name = PDL_INSTANCE)
@@ -86,12 +89,12 @@ class PdlIdentConsumer implements IdentConsumer {
 	}
 
 	private RequestEntity.BodyBuilder baseRequest() {
-		TokenResponse clientCredentialToken = azureTokenConsumer.getClientCredentialToken();
+		StsResponse clientCredentialToken = stsRestConsumer.getStsToken();
 		return RequestEntity.post(pdlUri)
 				.accept(APPLICATION_JSON)
 				.header(NAV_CALLID, getCallId())
 				.header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-				.header(AUTHORIZATION, "Bearer " + clientCredentialToken.getAccess_token());
-				//.header(HEADER_PDL_NAV_CONSUMER_TOKEN, "Bearer " + clientCredentialToken.getAccess_token());
+				.header(AUTHORIZATION, "Bearer " + clientCredentialToken.getAccess_token())
+				.header(HEADER_PDL_NAV_CONSUMER_TOKEN, "Bearer " + clientCredentialToken.getAccess_token());
 	}
 }

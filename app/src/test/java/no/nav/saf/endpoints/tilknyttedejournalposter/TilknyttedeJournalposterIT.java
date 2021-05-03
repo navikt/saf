@@ -68,10 +68,10 @@ class TilknyttedeJournalposterIT extends AbstractItest {
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("hentjournalsakinfo/tilknyttedejournalposter_not_bid-happy.json")));
-		stubFor(post("/azureTokenUrl")
+		stubFor(post("/reststs")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("azure/token_response.json")));
+						.withBodyFile("sts/sts-token.json")));
 		stubFor(post("/pdl")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
@@ -138,10 +138,10 @@ class TilknyttedeJournalposterIT extends AbstractItest {
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("hentjournalsakinfo/tilknyttedejournalposter_not_bid-happy.json")));
-		stubFor(post("/azureTokenUrl")
+		stubFor(post("/reststs")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("azure/token_response.json")));
+						.withBodyFile("sts/sts-token.json")));
 		stubFor(post("/pdl")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
@@ -166,10 +166,10 @@ class TilknyttedeJournalposterIT extends AbstractItest {
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("bidrag/bidragsak-happy.json")));
-		stubFor(post("/azureTokenUrl")
+		stubFor(post("/reststs")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("azure/token_response.json")));
+						.withBodyFile("sts/sts-token.json")));
 		stubFor(post("/pdl")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
@@ -190,10 +190,10 @@ class TilknyttedeJournalposterIT extends AbstractItest {
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("hentjournalsakinfo/tilknyttedejournalposter_not_bid-happy.json")));
-		stubFor(post("/azureTokenUrl")
+		stubFor(post("/reststs")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("azure/token_response.json")));
+						.withBodyFile("sts/sts-token.json")));
 		stubFor(post("/pdl")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
@@ -223,10 +223,10 @@ class TilknyttedeJournalposterIT extends AbstractItest {
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("bidrag/bidragsak-happy.json")));
-		stubFor(post("/azureTokenUrl")
+		stubFor(post("/reststs")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("azure/token_response.json")));
+						.withBodyFile("sts/sts-token.json")));
 		stubFor(post("/pdl")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
@@ -248,10 +248,10 @@ class TilknyttedeJournalposterIT extends AbstractItest {
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("hentjournalsakinfo/tilknyttedejournalposter_jp_pol_skjerming-happy.json")));
-		stubFor(post("/azureTokenUrl")
+		stubFor(post("/reststs")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("azure/token_response.json")));
+						.withBodyFile("sts/sts-token.json")));
 		stubFor(post("/pdl")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
@@ -272,10 +272,10 @@ class TilknyttedeJournalposterIT extends AbstractItest {
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("hentjournalsakinfo/tilknyttedejournalposter_dokumentinfo_pol_skjerming-happy.json")));
-		stubFor(post("/azureTokenUrl")
+		stubFor(post("/reststs")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("azure/token_response.json")));
+						.withBodyFile("sts/sts-token.json")));
 		stubFor(post("/pdl")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
@@ -299,10 +299,10 @@ class TilknyttedeJournalposterIT extends AbstractItest {
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("gsak/gsak-sakBySaksId_not_bid-happy.json")));
-		stubFor(post("/azureTokenUrl")
+		stubFor(post("/reststs")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("azure/token_response.json")));
+						.withBodyFile("sts/sts-token.json")));
 		stubFor(post("/pdl")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)

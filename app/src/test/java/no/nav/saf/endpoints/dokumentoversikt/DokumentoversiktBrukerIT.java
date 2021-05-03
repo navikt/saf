@@ -57,10 +57,10 @@ public class DokumentoversiktBrukerIT extends AbstractItest {
 	public void shouldHentDokumentoversiktBrukerWithAktoerID() throws Exception {
 		//
 		abacPermit();
-		stubFor(post("/azureTokenUrl")
+		stubFor(post("/reststs")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("azure/token_response.json")));
+						.withBodyFile("sts/sts-token.json")));
 		stubFor(post("/pdl")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
@@ -101,10 +101,10 @@ public class DokumentoversiktBrukerIT extends AbstractItest {
 	@Test
 	public void shouldHentDokumentoversiktBrukerWithFNR() throws IOException, URISyntaxException {
 		abacPermit();
-		stubFor(post("/azureTokenUrl")
+		stubFor(post("/reststs")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("azure/token_response.json")));
+						.withBodyFile("sts/sts-token.json")));
 		stubFor(post("/pdl")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
@@ -173,10 +173,10 @@ public class DokumentoversiktBrukerIT extends AbstractItest {
 	@Test
 	public void shouldHentDokumentoversiktBrukerWithFraDato() throws IOException, URISyntaxException {
 		abacPermit();
-		stubFor(post("/azureTokenUrl")
+		stubFor(post("/reststs")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("azure/token_response.json")));
+						.withBodyFile("sts/sts-token.json")));
 		stubFor(post("/pdl")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
@@ -208,10 +208,10 @@ public class DokumentoversiktBrukerIT extends AbstractItest {
 	@Test
 	public void shouldHentDokumentoversiktBrukerWithAktoerIDMidlertidig() throws IOException, URISyntaxException {
 		abacPermit();
-		stubFor(post("/azureTokenUrl")
+		stubFor(post("/reststs")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("azure/token_response.json")));
+						.withBodyFile("sts/sts-token.json")));
 		stubFor(post("/pdl")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
@@ -249,10 +249,10 @@ public class DokumentoversiktBrukerIT extends AbstractItest {
 	@Test
 	public void shouldHentDokumentoversiktBrukerWithAktoerIDSladdet() throws IOException, URISyntaxException {
 		abacPermit();
-		stubFor(post("/azureTokenUrl")
+		stubFor(post("/reststs")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("azure/token_response.json")));
+						.withBodyFile("sts/sts-token.json")));
 		stubFor(post("/pdl")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
@@ -288,10 +288,10 @@ public class DokumentoversiktBrukerIT extends AbstractItest {
 
 	@Test
 	public void hentIdentForAktoerIdTechnicalFail() throws IOException, URISyntaxException {
-		stubFor(post("/azureTokenUrl")
+		stubFor(post("/reststs")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("azure/token_response.json")));
+						.withBodyFile("sts/sts-token.json")));
 		stubFor(post("/pdl")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
@@ -309,10 +309,10 @@ public class DokumentoversiktBrukerIT extends AbstractItest {
 
 	@Test
 	public void hentIdentForAktoerIdFunctionalFail() throws IOException, URISyntaxException {
-		stubFor(post("/azureTokenUrl")
+		stubFor(post("/reststs")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("azure/token_response.json")));
+						.withBodyFile("sts/sts-token.json")));
 		stubFor(post("/pdl")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
@@ -331,10 +331,10 @@ public class DokumentoversiktBrukerIT extends AbstractItest {
 	@Test
 	public void HentSakerByAktoerIdGsakTechnicalFail() throws IOException, URISyntaxException {
 		abacPermit();
-		stubFor(post("/azureTokenUrl")
+		stubFor(post("/reststs")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("azure/token_response.json")));
+						.withBodyFile("sts/sts-token.json")));
 		stubFor(post("/pdl")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
@@ -367,10 +367,10 @@ public class DokumentoversiktBrukerIT extends AbstractItest {
 	@Test
 	public void HentSakerByAktoerIdGsakFunctionalFail() throws IOException, URISyntaxException {
 		abacPermit();
-		stubFor(post("/azureTokenUrl")
+		stubFor(post("/reststs")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("azure/token_response.json")));
+						.withBodyFile("sts/sts-token.json")));
 		stubFor(post("/pdl")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
@@ -406,10 +406,10 @@ public class DokumentoversiktBrukerIT extends AbstractItest {
 	@Test
 	public void bidragConsumerTechnicalError() throws IOException, URISyntaxException {
 		abacPermit();
-		stubFor(post("/azureTokenUrl")
+		stubFor(post("/reststs")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("azure/token_response.json")));
+						.withBodyFile("sts/sts-token.json")));
 		stubFor(post("/pdl")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
@@ -449,10 +449,10 @@ public class DokumentoversiktBrukerIT extends AbstractItest {
 	@Test
 	public void FinnJournalposterEmptyResponse() {
 		abacPermit();
-		stubFor(post("/azureTokenUrl")
+		stubFor(post("/reststs")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("azure/token_response.json")));
+						.withBodyFile("sts/sts-token.json")));
 		stubFor(post("/pdl")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
@@ -492,10 +492,10 @@ public class DokumentoversiktBrukerIT extends AbstractItest {
 	@Test
 	public void shouldGetUnauthorizedFromPep1g() throws IOException, URISyntaxException {
 		abacDenyPep1g();
-		stubFor(post("/azureTokenUrl")
+		stubFor(post("/reststs")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("azure/token_response.json")));
+						.withBodyFile("sts/sts-token.json")));
 		stubFor(post("/pdl")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
@@ -528,10 +528,10 @@ public class DokumentoversiktBrukerIT extends AbstractItest {
 	@Test
 	public void shouldGetUnauthorizedFromPep2() throws IOException, URISyntaxException {
 		abacDenyPep2();
-		stubFor(post("/azureTokenUrl")
+		stubFor(post("/reststs")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("azure/token_response.json")));
+						.withBodyFile("sts/sts-token.json")));
 		stubFor(post("/pdl")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
@@ -566,10 +566,10 @@ public class DokumentoversiktBrukerIT extends AbstractItest {
 	@Test
 	public void shouldGetUnauthorizedFromPep2d() throws IOException, URISyntaxException {
 		abacDenyPep2d();
-		stubFor(post("/azureTokenUrl")
+		stubFor(post("/reststs")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("azure/token_response.json")));
+						.withBodyFile("sts/sts-token.json")));
 		stubFor(post("/pdl")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
@@ -606,10 +606,10 @@ public class DokumentoversiktBrukerIT extends AbstractItest {
 	@Test
 	public void shouldGetUnauthorizedFromPep3() throws IOException, URISyntaxException {
 		abacDenyPep3();
-		stubFor(post("/azureTokenUrl")
+		stubFor(post("/reststs")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("azure/token_response.json")));
+						.withBodyFile("sts/sts-token.json")));
 		stubFor(post("/pdl")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
@@ -644,10 +644,10 @@ public class DokumentoversiktBrukerIT extends AbstractItest {
 	@Test
 	public void shouldGetUnauthorizedFromPep4() throws IOException, URISyntaxException {
 		abacDenyPep4();
-		stubFor(post("/azureTokenUrl")
+		stubFor(post("/reststs")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("azure/token_response.json")));
+						.withBodyFile("sts/sts-token.json")));
 		stubFor(post("/pdl")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
@@ -683,10 +683,10 @@ public class DokumentoversiktBrukerIT extends AbstractItest {
 	@Test
 	public void shouldGetUnauthorizedFromPep5() throws IOException, URISyntaxException {
 		abacDenyPep5();
-		stubFor(post("/azureTokenUrl")
+		stubFor(post("/reststs")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("azure/token_response.json")));
+						.withBodyFile("sts/sts-token.json")));
 		stubFor(post("/pdl")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
@@ -723,10 +723,10 @@ public class DokumentoversiktBrukerIT extends AbstractItest {
 	@Test
 	public void shouldGetUnauthorizedFromPep6d() throws IOException, URISyntaxException {
 		abacDenyPep6d();
-		stubFor(post("/azureTokenUrl")
+		stubFor(post("/reststs")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("azure/token_response.json")));
+						.withBodyFile("sts/sts-token.json")));
 		stubFor(post("/pdl")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
