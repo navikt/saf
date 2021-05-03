@@ -22,7 +22,7 @@
   "HENTJOURNALSAKINFO_URL": "https://dokarkiv-q0.nais.preprod.local/hentjournalsakinfo",
   "AZURE_TENANT": "trygdeetaten.no",
   "AZURE_APP_TOKEN_URL": "https://login.microsoftonline.com/966ac572-f5b7-4bbe-aa88-c76419c0f851/oauth2/v2.0/token",
-  "AZURE_APP_SCOPE": "api://972814f3-8bdf-44f8-a191-c2ed00020b54/.default",
+  "AZURE_APP_SCOPE": "api://c7adbfbb-1b1e-41f6-9b7a-af9627c04998/.default",
   "SAF_ENDPOINTS_PDL": "https://pdl-api.dev.adeo.no/graphql",
   "SAF_PROXY_HOST": "webproxy.nais",
   "SAF_PROXY_PORT": "8088",
