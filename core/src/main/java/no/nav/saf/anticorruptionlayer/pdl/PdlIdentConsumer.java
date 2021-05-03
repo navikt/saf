@@ -91,7 +91,7 @@ class PdlIdentConsumer implements IdentConsumer {
 				.accept(APPLICATION_JSON)
 				.header(NAV_CALLID, getCallId())
 				.header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-				.header(AUTHORIZATION, "Bearer " + clientCredentialToken.getAccess_token())
-				.header(HEADER_PDL_NAV_CONSUMER_TOKEN, "Bearer " + clientCredentialToken.getAccess_token());
+				.header(AUTHORIZATION, "Bearer " + clientCredentialToken.getAccess_token());
+				//.header(HEADER_PDL_NAV_CONSUMER_TOKEN, "Bearer " + clientCredentialToken.getAccess_token());
 	}
 }
