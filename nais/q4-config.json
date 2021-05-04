@@ -19,11 +19,13 @@
   "NO_NAV_SECURITY_JWT_ISSUER_OPENAM_ACCEPTED_AUDIENCE": "gosys-dokument-auth-proxy-q4,gosys-localhost,gosys-nais-q4,gosys-q4,joarkadmin-localhost,joarkadmin-q4,modiabrukerdialog-q4,veilarblogin-q4,ida-q,eessi-pensjon-frontend-api-fss-q4,gosys-dokument-auth-proxy-q4,eux-helloeu-app-q4,k9-fordel-q4,pensjon-dokdist-localhost,pensjon-dokdist-q4,bisys-q4,bidrag-ui-q4,bidrag-q-localhost",
   "NO_NAV_SECURITY_JWT_ISSUER_RESTSTS_ACCEPTED_AUDIENCE": "srvPensjon,srvdagpenger-joark,srvdp-graphql,srvinfotrygd-joark,srvjfr-manuell-opp,srvjfr-filter,srvsyfosmpapirmottak,srveux-app,srvdokdisteformidl,srvdokdistfordeling,srvmelosys,srvfamilie-ks-opps,srvmedlemskap,srvpensr,srvcoronapenger,srvjfr-automatisk,srvpermref-journalf,srvdolly,srvregpapirsm",
   "BIDRAG_SAK_URL": "https://bidrag-sak.nais.preprod.local/bidrag-sak/pip/sak/",
-  "HENTJOURNALSAKINFO_URL": "https://dokarkiv-q4.nais.preprod.local/hentjournalsakinfo",
+  "HENTJOURNALSAKINFO_URL": "https://dokarkiv-q2.nais.preprod.local/hentjournalsakinfo",
   "AZURE_TENANT": "trygdeetaten.no",
   "AZURE_APP_TOKEN_URL": "https://login.microsoftonline.com/966ac572-f5b7-4bbe-aa88-c76419c0f851/oauth2/v2.0/token",
   "AZURE_APP_SCOPE": "api://972814f3-8bdf-44f8-a191-c2ed00020b54/.default",
   "SAF_ENDPOINTS_PDL": "https://pdl-api.dev.adeo.no/graphql",
   "SAF_PROXY_HOST": "webproxy.nais",
-  "SAF_PROXY_PORT": "8088"
+  "SAF_PROXY_PORT": "8088",
+  "SAF_VAULT": "/azuread/data/dev/creds/saf/",
+  "RESTSECURITYTOKENSERVICE_URL": "https://security-token-service.dev.adeo.no/rest/v1/sts/token"
 }
