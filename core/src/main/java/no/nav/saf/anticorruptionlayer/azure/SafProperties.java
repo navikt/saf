@@ -29,9 +29,6 @@ public class SafProperties {
          */
         @NotEmpty
         private String pdl;
-        /**
-         * URL til sak API.
-         */
     }
 
     @Data
