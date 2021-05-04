@@ -12,15 +12,15 @@ public class TilgangsbrukerMapper {
 
 	public static TilgangBruker map(List<PdlResponse.PdlIdent> responseTo, String aktoerId, String foedselsnummer) {
 		List<TilgangIdent> tilgangsIdentList = new ArrayList<>();
-		for(PdlResponse.PdlIdent pdlIdent : responseTo){
-			if(pdlIdent.isHistorisk()){
+		for (PdlResponse.PdlIdent pdlIdent : responseTo) {
+			if (pdlIdent.isHistorisk()) {
 				tilgangsIdentList.add(TilgangIdent.builder()
 						.identifikator(pdlIdent.getIdent())
-						.identType(pdlIdent.getGruppe().equals(PdlResponse.PdlGruppe.AKTORID)? IdentType.AKTOERID:IdentType.FOLKEREGISTERIDENT)
+						.identType(pdlIdent.getGruppe().equals(PdlResponse.PdlGruppe.AKTORID) ? IdentType.AKTOERID : IdentType.FOLKEREGISTERIDENT)
 						.build());
-			}else if (pdlIdent.getGruppe().equals(PdlResponse.PdlGruppe.AKTORID)){
+			} else if (pdlIdent.getGruppe().equals(PdlResponse.PdlGruppe.AKTORID)) {
 				aktoerId = pdlIdent.getIdent();
-			}else if (pdlIdent.getGruppe().equals(PdlResponse.PdlGruppe.FOLKEREGISTERIDENT)){
+			} else if (pdlIdent.getGruppe().equals(PdlResponse.PdlGruppe.FOLKEREGISTERIDENT)) {
 				foedselsnummer = pdlIdent.getIdent();
 			}
 		}
