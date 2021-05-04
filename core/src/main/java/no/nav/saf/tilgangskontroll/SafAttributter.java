@@ -3,7 +3,7 @@ package no.nav.saf.tilgangskontroll;
 /**
  * Attributter brukes for å angi nødvendige parametre i en forespørsel mot ABAC.
  * Mer info på Confluence: https://confluence.adeo.no/display/ABAC/ABAC+Attributtkatalog+Mk2
- *
+ * <p>
  * SAF attributter: https://github.com/navikt/abac-saf/blob/master/abac-policies-alfa/src/main/alfa/saf-attributter.alfa
  * Felles NAV attributter: https://github.com/navikt/abac-attribute-constants/blob/master/src/main/java/no/nav/abac/xacml/NavAttributter.java
  */
@@ -32,6 +32,5 @@ public class SafAttributter {
 	public static final String RESOURCE_SAF_SKJERMING = "no.nav.abac.attributter.resource.saf.skjerming";
 	public static final String RESOURCE_SAF_TREDJEPART = "no.nav.abac.attributter.resource.saf.tredjepart";
 
-	public SafAttributter() {
-	}
+	private SafAttributter() {}
 }

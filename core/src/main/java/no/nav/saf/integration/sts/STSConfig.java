@@ -16,7 +16,7 @@ public class STSConfig {
 
 	@Value("${securityTokenService.url}")
 	private String stsUrl;
-	private ServiceuserAlias serviceuserAlias;
+	private final ServiceuserAlias serviceuserAlias;
 
 	public STSConfig(ServiceuserAlias serviceuserAlias) {
 		this.serviceuserAlias = serviceuserAlias;

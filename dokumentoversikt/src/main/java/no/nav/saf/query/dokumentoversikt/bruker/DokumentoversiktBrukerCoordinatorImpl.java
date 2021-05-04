@@ -99,9 +99,7 @@ class DokumentoversiktBrukerCoordinatorImpl implements DokumentoversiktBrukerCoo
 		final Flowable<TilgangSak> tilgangSakFlow = dokumentoversiktBrukerTilgangsmodellRepository.findTilgangSaker(tilgangBruker, dokumentoversiktBrukerArguments
 				.getFilters().getTema(), safRequestContext);
 		List<TilgangSak> filteredTilgangSakList = tilgangSakFlow
-				.onErrorResumeNext(throwable -> {
-					return Flowable.empty();
-				})
+				.onErrorResumeNext(Flowable.empty())
 				.parallel(10)
 				.runOn(Schedulers.io())
 				.doOnNext(ts -> addMdcData(safRequestContext))

@@ -60,9 +60,7 @@ public class SakerCoordinatorImpl implements SakerCoordinator {
 
 		final Flowable<TilgangSak> tilgangSakFlow = saksoversiktBrukerTilgangsmodellRepository.findTilgangSaker(tilgangBruker, safRequestContext);
 		List<TilgangSak> filteredTilgangSakList = tilgangSakFlow
-				.onErrorResumeNext(throwable -> {
-					return Flowable.empty();
-				})
+				.onErrorResumeNext(Flowable.empty())
 				.parallel(10)
 				.runOn(Schedulers.io())
 				.doOnNext(ts -> addMdcData(safRequestContext))

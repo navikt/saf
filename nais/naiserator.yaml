@@ -45,6 +45,8 @@ spec:
       value: {{ HENTJOURNALSAKINFO_URL }}
     - name: BIDRAG_SAK_URL
       value: {{ BIDRAG_SAK_URL }}
+    - name: RESTSTS_URL
+      value: {{ RESTSTS_URL }}
   image: {{ image }}
   ingresses:
     {{#each INGRESSES}}

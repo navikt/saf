@@ -36,7 +36,7 @@ public class Pep7Impl implements Pep<List<String>> {
 	public XacmlResponse verifyAccessXacmlResponse(List<String> ressurs, SafRequestContext safRequestContext) {
 
 		if (ressurs == null || ressurs.isEmpty()) {
-			log.info("PepX har ingen relevante parter. Tilgang gis.");
+			log.info("Pep7 har ingen relevante parter. Tilgang gis.");
 			return XacmlResponse.permit();
 		}
 

@@ -1,7 +1,7 @@
 package no.nav.saf.anticorruptionlayer.fpsak;
 
 import lombok.extern.slf4j.Slf4j;
-import no.nav.saf.anticorruptionlayer.fpsak.hentRelevanteParter.FpsakConsumer;
+import no.nav.saf.anticorruptionlayer.fpsak.hentrelevanteparter.FpsakConsumer;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;

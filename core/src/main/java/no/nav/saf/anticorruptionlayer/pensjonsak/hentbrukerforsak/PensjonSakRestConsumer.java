@@ -44,7 +44,7 @@ public class PensjonSakRestConsumer {
             headers.add("sakId", sakId);
             HentBrukerForSakResponseTo hentBrukerForSakResponseTo = restTemplate.exchange(pensjonsakApiUrl, HttpMethod.GET, new HttpEntity<>(headers), HentBrukerForSakResponseTo.class)
                     .getBody();
-            if (hentBrukerForSakResponseTo.getFnr() == null || hentBrukerForSakResponseTo.getFnr().isEmpty()) {
+            if (hentBrukerForSakResponseTo == null || hentBrukerForSakResponseTo.getFnr() == null || hentBrukerForSakResponseTo.getFnr().isEmpty()) {
                 throw new SafFunctionalException(String.format("hentBrukerForSak returnerte tomt fødselsnummer for sakId=%s. Dette betyr at saken ikke finnes eller at ingen personer er tilknyttet denne saken", sakId));
             } else {
                 return hentBrukerForSakResponseTo;

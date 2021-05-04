@@ -15,6 +15,7 @@ import java.util.concurrent.TimeUnit;
 import static no.nav.saf.cache.LokalCacheConfig.BIDRAG_SAK_BY_SAKID_CACHE;
 import static no.nav.saf.cache.LokalCacheConfig.FPSAK_RELEVANTE_PARTER_BY_SAKID_CACHE;
 import static no.nav.saf.cache.LokalCacheConfig.PENSJON_SAK_SAMMENDRAG_LISTE_CACHE;
+import static no.nav.saf.cache.LokalCacheConfig.REST_STS_CACHE;
 import static no.nav.saf.cache.LokalCacheConfig.TILGANGSMODELL_REPO_BRUKER_CACHE;
 
 /**
@@ -41,6 +42,10 @@ public class LokalCacheTestConfig {
 						.maximumSize(0)
 						.build()),
 				new CaffeineCache(FPSAK_RELEVANTE_PARTER_BY_SAKID_CACHE, Caffeine.newBuilder()
+						.expireAfterWrite(0, TimeUnit.MINUTES)
+						.maximumSize(0)
+						.build()),
+				new CaffeineCache(REST_STS_CACHE, Caffeine.newBuilder()
 						.expireAfterWrite(0, TimeUnit.MINUTES)
 						.maximumSize(0)
 						.build())

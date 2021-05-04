@@ -1,9 +1,10 @@
-package no.nav.saf.anticorruptionlayer.fpsak.hentRelevanteParter;
+package no.nav.saf.anticorruptionlayer.fpsak.hentrelevanteparter;
 
 import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.cache.LokalCacheConfig;
 import no.nav.saf.exceptions.SafFunctionalException;
 import no.nav.saf.exceptions.SafTechnicalException;
+import no.nav.saf.integration.sts.StsRestConsumer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.cache.annotation.Cacheable;
@@ -25,13 +26,16 @@ import java.util.List;
 public class FpsakConsumer {
 	private final String fpsakUrl;
 	private final RestTemplate restTemplate;
+	private final StsRestConsumer stsRestConsumer;
 
 	public FpsakConsumer(RestTemplateBuilder restTemplateBuilder,
-						 @Value("${fpsak.url}") String fpsakUrl) {
+						 @Value("${fpsak.url}") String fpsakUrl,
+						 StsRestConsumer stsRestConsumer) {
 		this.fpsakUrl = fpsakUrl;
 		this.restTemplate = restTemplateBuilder
 				.setReadTimeout(Duration.ofSeconds(20))
 				.setConnectTimeout(Duration.ofSeconds(5)).build();
+		this.stsRestConsumer = stsRestConsumer;
 	}
 
 	@Cacheable(cacheNames = LokalCacheConfig.FPSAK_RELEVANTE_PARTER_BY_SAKID_CACHE, key = "#sakId")
@@ -54,7 +58,7 @@ public class FpsakConsumer {
 	private HttpHeaders createHeaders() {
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON);
-		headers.set(HttpHeaders.AUTHORIZATION, "Bearer "); // Todo: Legg til azure når Håkon sin PR er merget. //stsRestConsumer.getOidcToken());
+		headers.set(HttpHeaders.AUTHORIZATION, "Bearer " + stsRestConsumer.getStsToken().getAccess_token());
 		return headers;
 	}
 }

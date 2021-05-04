@@ -549,6 +549,11 @@ class HentDokumentIT extends AbstractItest {
 				.withStatus(HttpStatus.OK.value())
 				.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
 				.withBodyFile("fpsak/happy-response.json")));
+		stubFor(post(urlEqualTo("/reststs"))
+				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
+						.withHeader(org.apache.http.HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+						.withBodyFile("sts/reststs-happy.json")));
+
 
 		ResponseEntity<String> responseEntity = callHentDokument();
 

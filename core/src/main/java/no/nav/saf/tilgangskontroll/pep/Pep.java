@@ -25,13 +25,13 @@ public interface Pep<T> {
 
 	static void traceLogPepStarted(String pepName, Object ressurs) {
 		if (logger.isTraceEnabled()) {
-			logger.trace("{} evaluerer ressurs={}", pepName, ressurs.toString());
+			logger.trace("{} evaluerer ressurs={}", pepName, ressurs);
 		}
 	}
 
 	static void traceLogPepFinished(String pepName, Object ressurs) {
 		if (logger.isTraceEnabled()) {
-			logger.trace("{} ferdig evaluert ressurs={}", pepName, ressurs.toString());
+			logger.trace("{} ferdig evaluert ressurs={}", pepName, ressurs);
 		}
 	}
 

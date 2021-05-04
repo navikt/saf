@@ -68,7 +68,7 @@ public class HentDokumentController extends AbstractSafController {
 			@ApiParam(name = NAV_CALLID, value = "(Valgfri) ID for logging og sporing på tvers av verdikjeder. Eksempel: UUID") @RequestHeader(value = NAV_CALLID, required = false) String navCallid,
 			@ApiParam(name = X_CORRELATION_ID, value = "@Deprecated. Bruk " + NAV_CALLID, hidden = true) @RequestHeader(value = X_CORRELATION_ID, required = false) String xCorrelationId,
 			@ApiParam(name = NAV_CONSUMER_ID, value = "(Valgfri) ID for å identifisere komponent, modul eller system som kaller tjenesten hvis dette ikke utgår fra subjektet i tokenet. Eksempel: myapp") @RequestHeader(value = NAV_CONSUMER_ID, required = false) String navConsumerId
-	){
+	) {
 		SafRequestContext safRequestContext = new SafRequestContext(this.azureIssuers, createNavCallid(navCallid, xCorrelationId), navConsumerId, tokenValidationContextHolder.getTokenValidationContext());
 		log.info("hentDokument har mottatt kall. journalpostId={}, dokumentInfoId={}, variantFormat={}", journalpostId, dokumentInfoId, variantFormat);
 		try {
@@ -96,13 +96,11 @@ public class HentDokumentController extends AbstractSafController {
 		if (securityContext.isPrivilegiedServiceUser()) {
 			return;
 		}
-		if (securityContext.isServiceUser()) {
-			if (!Variantformat.ORIGINAL.name().equals(variantFormat)) {
-				throw new HentdokumentTilgangskontrollException(
-						"Servicebruker forsøker å hente dokument med variantFormat=" +
-								variantFormat + ". Servicebrukere har kun tilgang til variantFormat=" + Variantformat.ORIGINAL +
-								" med mindre man har en avtale med Team Dokumentløsninger. Snakk med oss om behov.");
-			}
+		if (securityContext.isServiceUser() && !Variantformat.ORIGINAL.name().equals(variantFormat)) {
+			throw new HentdokumentTilgangskontrollException(
+					"Servicebruker forsøker å hente dokument med variantFormat=" +
+							variantFormat + ". Servicebrukere har kun tilgang til variantFormat=" + Variantformat.ORIGINAL +
+							" med mindre man har en avtale med Team Dokumentløsninger. Snakk med oss om behov.");
 		}
 	}
 }
