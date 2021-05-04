@@ -1,7 +1,16 @@
 {
-  "timestamp": "2021-04-27T07:46:15.517+00:00",
-  "status": 400,
-  "error": "Bad Request",
-  "message": "",
-  "path": "/graphql"
+  "errors": [
+    {
+      "message": "Validation error of type FieldUndefined: Field 'ideasdnter' in type 'Identliste' is undefined @ 'hentIdenter/ideasdnter'",
+      "locations": [
+        {
+          "line": 1,
+          "column": 78
+        }
+      ],
+      "extensions": {
+        "classification": "ValidationError"
+      }
+    }
+  ]
 }
