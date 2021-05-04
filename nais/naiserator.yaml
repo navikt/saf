@@ -43,10 +43,6 @@ spec:
       value: {{ HENTJOURNALSAKINFO_URL }}
     - name: BIDRAG_SAK_URL
       value: {{ BIDRAG_SAK_URL }}
-    - name: AZURE_APP_TOKEN_URL
-      value: {{AZURE_APP_TOKEN_URL}}
-    - name: AZURE_APP_SCOPE
-      value: {{AZURE_APP_SCOPE}}
     - name: SAF_ENDPOINTS_PDL
       value: {{SAF_ENDPOINTS_PDL}}
     - name: SAF_PROXY_HOST
@@ -89,6 +85,4 @@ spec:
     paths:
       - kvPath: {{ SRVSAF }}
         mountPath: "/secrets/serviceuser/srvsaf"
-      - kvPath: {{ SAF_VAULT }}
-        mountPath: "/var/run/secrets/nais.io/vault"
   webproxy: true

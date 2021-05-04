@@ -12,9 +12,9 @@ import org.springframework.context.annotation.Profile;
 import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
-import static no.nav.saf.cache.LokalCacheConfig.AZURE_CLIENT_CREDENTIAL_TOKEN_CACHE;
 import static no.nav.saf.cache.LokalCacheConfig.BIDRAG_SAK_BY_SAKID_CACHE;
 import static no.nav.saf.cache.LokalCacheConfig.PENSJON_SAK_SAMMENDRAG_LISTE_CACHE;
+import static no.nav.saf.cache.LokalCacheConfig.REST_STS_CACHE;
 import static no.nav.saf.cache.LokalCacheConfig.TILGANGSMODELL_REPO_BRUKER_CACHE;
 
 /**
@@ -40,7 +40,7 @@ public class LokalCacheTestConfig {
 						.expireAfterWrite(0, TimeUnit.MINUTES)
 						.maximumSize(0)
 						.build()),
-				new CaffeineCache(AZURE_CLIENT_CREDENTIAL_TOKEN_CACHE, Caffeine.newBuilder()
+				new CaffeineCache(REST_STS_CACHE, Caffeine.newBuilder()
 						.expireAfterWrite(0, TimeUnit.MINUTES)
 						.maximumSize(0)
 						.build())

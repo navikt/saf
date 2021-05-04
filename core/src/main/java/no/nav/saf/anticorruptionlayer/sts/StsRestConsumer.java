@@ -3,6 +3,7 @@ package no.nav.saf.anticorruptionlayer.sts;
 import no.nav.saf.config.ServiceuserAlias;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -15,6 +16,8 @@ import org.springframework.web.client.RestTemplate;
 
 import java.time.Duration;
 import java.util.Collections;
+
+import static no.nav.saf.cache.LokalCacheConfig.REST_STS_CACHE;
 
 
 @Component
@@ -37,6 +40,7 @@ public class StsRestConsumer {
 				.build();
 	}
 
+	@Cacheable(REST_STS_CACHE)
 	public StsResponse getStsToken() {
 		try {
 			HttpHeaders headers = createHeaders();

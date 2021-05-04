@@ -24,7 +24,7 @@ public class LokalCacheConfig {
 	public static final String HENT_JOURNALPOSTBULK_CACHE = "hentTilgangJournalposterBulk";
 	public static final String TILGANGSMODELL_REPO_BRUKER_CACHE = "tilgangsmodellRepoBruker";
 	public static final String PENSJON_SAK_SAMMENDRAG_LISTE_CACHE = "pensjonSakSammendragListe";
-	public static final String AZURE_CLIENT_CREDENTIAL_TOKEN_CACHE = "RESTSTS";
+	public static final String REST_STS_CACHE = "RESTSTS";
 
 	@Bean
 	@Primary
@@ -45,7 +45,7 @@ public class LokalCacheConfig {
 						.expireAfterWrite(10, TimeUnit.MINUTES)
 						.maximumSize(500)
 						.build()),
-				new CaffeineCache(AZURE_CLIENT_CREDENTIAL_TOKEN_CACHE, Caffeine.newBuilder()
+				new CaffeineCache(REST_STS_CACHE, Caffeine.newBuilder()
 						.expireAfterWrite(50, TimeUnit.MINUTES)
 						.maximumSize(1)
 						.build())
