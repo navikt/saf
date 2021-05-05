@@ -43,7 +43,7 @@ import static no.nav.saf.endpoints.SafHeaders.X_CORRELATION_ID;
 public class HentDokumentController extends AbstractSafController {
 	private final HentDokumentDomainCoordinator hentDokumentDomainCoordinator;
 	private final Set<String> azureIssuers;
-	private TokenValidationContextHolder tokenValidationContextHolder;
+	private final TokenValidationContextHolder tokenValidationContextHolder;
 	private final AudienceCounter audienceCounter;
 
 	@Inject
