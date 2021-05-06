@@ -40,9 +40,10 @@ public class FpsakConsumer {
 
 	@Cacheable(cacheNames = LokalCacheConfig.FPSAK_RELEVANTE_PARTER_BY_SAKID_CACHE, key = "#sakId")
 	public List<String> hentAktoerForSak(final String sakId) {
+		log.info("Henter relevante parter for sak med sakId={} fra fpsak", sakId);
+
 		HttpHeaders headers = createHeaders();
-		ResponseEntity<List<String>> response = restTemplate.exchange(fpsakUrl + "?saksnummer=" + sakId, HttpMethod.GET, new HttpEntity<>(headers), new ParameterizedTypeReference<List<String>>() {
-		});
+		ResponseEntity<List<String>> response = restTemplate.exchange(fpsakUrl + "?saksnummer=" + sakId, HttpMethod.GET, new HttpEntity<>(headers), new ParameterizedTypeReference<List<String>>() {});
 
 		if (HttpStatus.OK.equals(response.getStatusCode())) {
 			return response.getBody();

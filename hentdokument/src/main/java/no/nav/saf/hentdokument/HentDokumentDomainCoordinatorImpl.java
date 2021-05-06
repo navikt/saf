@@ -137,9 +137,11 @@ public class HentDokumentDomainCoordinatorImpl implements HentDokumentDomainCoor
 		if (tilgangSak != null) {
 			List<String> aktoerIds = tilgangsmodellHentdokumentRepository.findRelevanteParterSak(tilgangSak);
 
-			XacmlResponse pep7Response = pep7.verifyAccessXacmlResponse(aktoerIds, safRequestContext);
-			if (pep7Response.isDeny()) {
-				throw new HentdokumentTilgangskontrollException(DenyReasons.PEP7_DENY_REASON, pep7Response);
+			if (!aktoerIds.isEmpty()) {
+				XacmlResponse pep7Response = pep7.verifyAccessXacmlResponse(aktoerIds, safRequestContext);
+				if (pep7Response.isDeny()) {
+					throw new HentdokumentTilgangskontrollException(DenyReasons.PEP7_DENY_REASON, pep7Response);
+				}
 			}
 		}
 	}
