@@ -55,7 +55,6 @@ public class DokumentoversiktBrukerIT extends AbstractItest {
 
 	@Test
 	public void shouldHentDokumentoversiktBrukerWithAktoerID() throws Exception {
-		//
 		abacPermit();
 		stubFor(post("/reststs")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())

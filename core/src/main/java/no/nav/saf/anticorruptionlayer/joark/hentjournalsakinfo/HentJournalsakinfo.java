@@ -1,5 +1,6 @@
 package no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo;
 
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.FinnJournalposterRequestTo;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.FinnJournalposterResponseTo;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark901.HentTilgangJournalpostResponseTo;
@@ -41,6 +42,8 @@ import static no.nav.saf.util.MDCConstants.CORRELATION_ID;
  */
 @Service
 public class HentJournalsakinfo {
+	private static final String JOARK_HENTDOKUMENT = "joarkhentdokument";
+
 	private final RestTemplate restTemplate;
 	private final String hentjournalsakinfoUrl;
 
@@ -94,6 +97,7 @@ public class HentJournalsakinfo {
 	}
 
 	@Monitor(value = "dok_consumer", extraTags = {"process", "hentDokument"}, histogram = true)
+	@CircuitBreaker(name = JOARK_HENTDOKUMENT)
 	public HentDokumentResponseTo hentDokument(String dokumentInfoId, String variantFormat) {
 		try {
 			ResponseEntity<String> response = callHentDokument(dokumentInfoId, variantFormat);

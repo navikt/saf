@@ -3,13 +3,11 @@ package no.nav.saf.endpoints;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.core.Options;
 import com.github.tomakehurst.wiremock.stubbing.Scenario;
-import no.nav.modig.testcertificates.TestCertificates;
 import no.nav.saf.ApplicationConfig;
 import no.nav.saf.domain.visningsmodell.Dokumentoversikt;
 import no.nav.saf.endpoints.testconfig.STSTestConfig;
 import no.nav.security.token.support.test.spring.TokenGeneratorConfiguration;
 import org.apache.cxf.helpers.IOUtils;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
@@ -49,22 +47,17 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @ImportAutoConfiguration
 @AutoConfigureWireMock(port = Options.DYNAMIC_PORT)
 public abstract class AbstractItest {
-	private static String SCENARIO_ABAC = "state_abac";
-	private static String STATE_PERMIT = "state_permit";
-	private static String STATE_PEP2 = "state_pep2";
-	private static String STATE_PEP2D = "state_pep2d";
-	private static String STATE_PEP3 = "state_pep3";
-	private static String STATE_PEP4 = "state_pep4";
-	private static String STATE_PEP5 = "state_pep5";
-	private static String STATE_PEP6D = "state_pep6d";
+	private static final String SCENARIO_ABAC = "state_abac";
+	private static final String STATE_PERMIT = "state_permit";
+	private static final String STATE_PEP2 = "state_pep2";
+	private static final String STATE_PEP2D = "state_pep2d";
+	private static final String STATE_PEP3 = "state_pep3";
+	private static final String STATE_PEP4 = "state_pep4";
+	private static final String STATE_PEP5 = "state_pep5";
+	private static final String STATE_PEP6D = "state_pep6d";
 
 	@Inject
 	protected TestRestTemplate restTemplate;
-
-	@BeforeAll
-	public static void setUpBeforeAll() {
-		TestCertificates.setupKeyAndTrustStore();
-	}
 
 	@BeforeEach
 	public void setUp() {

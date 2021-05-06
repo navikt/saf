@@ -1,10 +1,10 @@
 package no.nav.saf.tilgangskontroll.pep;
 
-import static no.nav.abac.common.xacml.CommonAttributter.RESOURCE_FELLES_RESOURCE_TYPE;
-import static no.nav.abac.common.xacml.CommonAttributter.RESOURCE_FELLES_TEMA;
-import static no.nav.abac.saf.xacml.SafAttributter.RESOURCE_SAF_SAK_DOKUMENT;
 import static no.nav.saf.cache.RedisCacheConfig.TILGANG_CACHE;
 import static no.nav.saf.domain.DomainConstants.PEP2D;
+import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_RESOURCE_TYPE;
+import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_TEMA;
+import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_SAF_SAK_DOKUMENT;
 
 import io.lettuce.core.RedisException;
 import lombok.extern.slf4j.Slf4j;
