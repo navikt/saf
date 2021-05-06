@@ -19,7 +19,7 @@
   "NO_NAV_SECURITY_JWT_ISSUER_OPENAM_ACCEPTED_AUDIENCE": "gosys-dokument-auth-proxy-q6,gosys-localhost,gosys-nais-q6,gosys-q6,joarkadmin-localhost,joarkadmin-q6,modiabrukerdialog-q6,veilarblogin-q6,ida-q,eessi-pensjon-frontend-api-fss-q6,gosys-dokument-auth-proxy-q6,eux-helloeu-app-q6",
   "NO_NAV_SECURITY_JWT_ISSUER_RESTSTS_ACCEPTED_AUDIENCE": "srvPensjon,srvdagpenger-joark,srvdp-graphql,srvinfotrygd-joark,srvjfr-manuell-opp,srvsyfosmpapirmottak,srveux-app,srvdokdisteformidl,srvdokdistfordeling,srvmelosys,srvfamilie-ks-opps,srvmedlemskap,srvpensr,srvpermref-journalf,srvdolly,srvregpapirsm",
   "BIDRAG_SAK_URL": "https://bidrag-sak.nais.preprod.local/bidrag-sak/pip/sak/",
-  "HENTJOURNALSAKINFO_URL": "https://dokarkiv-q2.nais.preprod.local/hentjournalsakinfo",
+  "HENTJOURNALSAKINFO_URL": "https://dokarkiv-q6.nais.preprod.local/hentjournalsakinfo",
   "SAF_ENDPOINTS_PDL": "https://pdl-api.dev.adeo.no/graphql",
   "SAF_PROXY_HOST": "webproxy.nais",
   "SAF_PROXY_PORT": "8088",
