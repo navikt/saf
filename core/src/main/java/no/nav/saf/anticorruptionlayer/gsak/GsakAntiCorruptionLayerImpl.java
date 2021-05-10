@@ -39,16 +39,14 @@ class GsakAntiCorruptionLayerImpl implements GsakAntiCorruptionLayer {
 				return new ArrayList<>();
 			}
 			List<GsakSakerTo> gsakSakerToFiltered = new ArrayList<>();
-			for(String aktoerId : aktoerIder) {
-				if (tema.size() == 1) {
-					gsakSakerToFiltered.addAll(gsakConsumer.hentSakerByAktoerId(aktoerId, tema.get(0)));
-				} else {
-					List<GsakSakerTo> gsakSakerTo = gsakConsumer.hentSakerByAktoerId(aktoerId);
-					gsakSakerToFiltered.addAll(
-							gsakSakerTo.stream()
-									.filter(gsak -> tema.contains(mapTema(gsak.getTema())))
-									.collect(Collectors.toList()));
-				}
+			if (tema.size() == 1) {
+				gsakSakerToFiltered.addAll(gsakConsumer.hentSakerByAktoerIder(aktoerIder, tema.get(0)));
+			} else {
+				List<GsakSakerTo> gsakSakerTo = gsakConsumer.hentSakerByAktoerIder(aktoerIder);
+				gsakSakerToFiltered.addAll(
+						gsakSakerTo.stream()
+								.filter(gsak -> tema.contains(mapTema(gsak.getTema())))
+								.collect(Collectors.toList()));
 			}
 
 			return mapToArkivsak(gsakSakerToFiltered);
@@ -74,7 +72,6 @@ class GsakAntiCorruptionLayerImpl implements GsakAntiCorruptionLayer {
 								.filter(gsak -> tema.contains(mapTema(gsak.getTema())))
 								.collect(Collectors.toList());
 			}
-
 			return mapToArkivsak(gsakSakerToFiltered);
 		} catch (Exception e) {
 			log.warn("Klarte ikke hente gsaker for orgnr={}", orgnr, e);
