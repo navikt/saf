@@ -12,6 +12,7 @@ import java.util.List;
 
 import static no.nav.saf.domain.DomainConstants.PEP7;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_PERSON_AKTOERID_RESOURCE;
+import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_PERSON_FNR;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_RESOURCE_TYPE;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_SAF_TREDJEPART;
 
@@ -40,6 +41,8 @@ public class Pep7Impl implements Pep<List<String>> {
 			return XacmlResponse.permit();
 		}
 
+		log.info("Evaluere  Pep7");
+
 		XacmlRequest request = SafXacmlRequestFactory.create(safRequestContext.getSecurityContext());
 		request.resource(RESOURCE_FELLES_RESOURCE_TYPE, RESOURCE_SAF_TREDJEPART);
 		ressurs.forEach(aktoerId -> request.resource(RESOURCE_FELLES_PERSON_AKTOERID_RESOURCE, aktoerId));
@@ -47,6 +50,8 @@ public class Pep7Impl implements Pep<List<String>> {
 		Pep.traceLogPepStarted(PEP7, ressurs);
 		XacmlResponse response = abacService.evaluate(request);
 		Pep.traceLogPepFinished(PEP7, ressurs);
+
+		log.info("Abac returnerte for Pep7: {}", response);
 
 		return response;
 	}

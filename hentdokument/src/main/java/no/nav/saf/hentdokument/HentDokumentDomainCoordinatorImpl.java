@@ -142,6 +142,8 @@ public class HentDokumentDomainCoordinatorImpl implements HentDokumentDomainCoor
 			log.info("Hentet {} aktoerId fra fpsak", aktoerIds.size());
 
 			if (!aktoerIds.isEmpty()) {
+
+				log.info("AktoeIdliste er ikke tom - evaluerer ressurs");
 				XacmlResponse pep7Response = pep7.verifyAccessXacmlResponse(aktoerIds, safRequestContext);
 				if (pep7Response.isDeny()) {
 					throw new HentdokumentTilgangskontrollException(DenyReasons.PEP7_DENY_REASON, pep7Response);
