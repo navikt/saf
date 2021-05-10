@@ -1,6 +1,5 @@
 package no.nav.saf.anticorruptionlayer.fpsak.hentrelevanteparter;
 
-import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.cache.LokalCacheConfig;
 import no.nav.saf.exceptions.SafFunctionalException;
 import no.nav.saf.exceptions.SafTechnicalException;
@@ -21,7 +20,6 @@ import org.springframework.web.client.RestTemplate;
 import java.time.Duration;
 import java.util.List;
 
-@Slf4j
 @Component
 public class FpsakConsumer {
 	private final String fpsakUrl;
@@ -40,10 +38,9 @@ public class FpsakConsumer {
 
 	@Cacheable(cacheNames = LokalCacheConfig.FPSAK_RELEVANTE_PARTER_BY_SAKID_CACHE, key = "#sakId")
 	public List<String> hentAktoerForSak(final String sakId) {
-		log.info("Henter relevante parter for sak med sakId={} fra fpsak", sakId);
-
 		HttpHeaders headers = createHeaders();
-		ResponseEntity<List<String>> response = restTemplate.exchange(fpsakUrl + "?saksnummer=" + sakId, HttpMethod.GET, new HttpEntity<>(headers), new ParameterizedTypeReference<List<String>>() {});
+		ResponseEntity<List<String>> response = restTemplate.exchange(fpsakUrl + "?saksnummer=" + sakId, HttpMethod.GET, new HttpEntity<>(headers), new ParameterizedTypeReference<List<String>>() {
+		});
 
 		if (HttpStatus.OK.equals(response.getStatusCode())) {
 			return response.getBody();

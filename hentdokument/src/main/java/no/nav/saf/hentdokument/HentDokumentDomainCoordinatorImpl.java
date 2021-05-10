@@ -1,6 +1,5 @@
 package no.nav.saf.hentdokument;
 
-import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.domain.Arkivsak;
 import no.nav.saf.domain.HentDokument;
 import no.nav.saf.domain.kode.Journalstatus;
@@ -36,7 +35,6 @@ import static no.nav.saf.domain.DomainConstants.PEP7;
  * @author Sigurd Midttun, Visma Consulting.
  */
 
-@Slf4j
 @Component
 public class HentDokumentDomainCoordinatorImpl implements HentDokumentDomainCoordinator {
 
@@ -139,11 +137,7 @@ public class HentDokumentDomainCoordinatorImpl implements HentDokumentDomainCoor
 		if (tilgangSak != null) {
 			List<String> aktoerIds = tilgangsmodellHentdokumentRepository.findRelevanteParterSak(tilgangSak);
 
-			log.info("Hentet {} aktoerId fra fpsak", aktoerIds.size());
-
 			if (!aktoerIds.isEmpty()) {
-
-				log.info("AktoeIdliste er ikke tom - evaluerer ressurs");
 				XacmlResponse pep7Response = pep7.verifyAccessXacmlResponse(aktoerIds, safRequestContext);
 				if (pep7Response.isDeny()) {
 					throw new HentdokumentTilgangskontrollException(DenyReasons.PEP7_DENY_REASON, pep7Response);
