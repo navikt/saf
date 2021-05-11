@@ -26,9 +26,9 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import java.util.Set;
 
-import static no.nav.saf.endpoints.SafHeaders.NAV_CALLID;
-import static no.nav.saf.endpoints.SafHeaders.NAV_CONSUMER_ID;
-import static no.nav.saf.endpoints.SafHeaders.X_CORRELATION_ID;
+import static no.nav.saf.headers.SafHeaders.NAV_CALLID;
+import static no.nav.saf.headers.SafHeaders.NAV_CONSUMER_ID;
+import static no.nav.saf.headers.SafHeaders.X_CORRELATION_ID;
 
 /**
  * Endepunktet til hentDokument, som returnerer et dokument fra joark basert på journalpostId, dokumentInfoId og variantFormat.

@@ -59,7 +59,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
  */
 class TilknyttedeJournalposterIT extends AbstractItest {
 	public static final String HENT_AKTOER_ID_FOR_IDENT = "hentAktoerIdForIdent";
-	public static final String AKTOERV2_SCENARIO = "aktoerv2";
+	public static final String PDL_SCENARIO = "pdl";
 	private final String JOURNALPOST_ID = "400000000";
 	private final String DOKUMENT_INFO_ID = "500000000";
 	private final String GSAK_ID = "100000000";
@@ -78,17 +78,18 @@ class TilknyttedeJournalposterIT extends AbstractItest {
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("hentjournalsakinfo/tilknyttedejournalposter_not_bid-happy.json")));
-		stubFor(post("/aktoerv2")
-				.inScenario(AKTOERV2_SCENARIO)
-				.whenScenarioStateIs(Scenario.STARTED)
-				.willSetStateTo(HENT_AKTOER_ID_FOR_IDENT)
+		stubFor(post("/reststs")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
-						.withBodyFile("aktoerV2/hentIdentForAktoerId-happy.xml")));
-		stubFor(post("/aktoerv2")
-				.inScenario(AKTOERV2_SCENARIO)
-				.whenScenarioStateIs(HENT_AKTOER_ID_FOR_IDENT)
+						.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("sts/sts-token.json")));
+		stubFor(post("/pdl")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
-						.withBodyFile("aktoerV2/hentAktoerIdForIdent-happy.xml")));
+						.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("pdl/hentPdlDataForIdent-happy.json")));
+		stubFor(post("/pdl")
+				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
+						.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("pdl/hentPdlDataForFoedselsnummer.json")));
 
 		List<Journalpost> tilknyttedeJournalposter = parseJournalpost(tilknyttedeJournalposterGjenbrukQuery());
 		assertThat(tilknyttedeJournalposter, hasSize(1));
@@ -147,17 +148,18 @@ class TilknyttedeJournalposterIT extends AbstractItest {
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("hentjournalsakinfo/tilknyttedejournalposter_not_bid-happy.json")));
-		stubFor(post("/aktoerv2")
-				.inScenario(AKTOERV2_SCENARIO)
-				.whenScenarioStateIs(Scenario.STARTED)
-				.willSetStateTo(HENT_AKTOER_ID_FOR_IDENT)
+		stubFor(post("/reststs")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
-						.withBodyFile("aktoerV2/hentIdentForAktoerId-happy.xml")));
-		stubFor(post("/aktoerv2")
-				.inScenario(AKTOERV2_SCENARIO)
-				.whenScenarioStateIs(HENT_AKTOER_ID_FOR_IDENT)
+						.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("sts/sts-token.json")));
+		stubFor(post("/pdl")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
-						.withBodyFile("aktoerV2/hentAktoerIdForIdent-happy.xml")));
+						.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("pdl/hentPdlDataForIdent-happy.json")));
+		stubFor(post("/pdl")
+				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
+						.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("pdl/hentPdlDataForFoedselsnummer.json")));
 
 		List<Journalpost> tilknyttedeJournalposter = parseJournalpost(tilknyttedeJournalposterGjenbrukQuery());
 		assertThat(tilknyttedeJournalposter, hasSize(0));
@@ -174,17 +176,18 @@ class TilknyttedeJournalposterIT extends AbstractItest {
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("bidrag/bidragsak-happy.json")));
-		stubFor(post("/aktoerv2")
-				.inScenario(AKTOERV2_SCENARIO)
-				.whenScenarioStateIs(Scenario.STARTED)
-				.willSetStateTo(HENT_AKTOER_ID_FOR_IDENT)
+		stubFor(post("/reststs")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
-						.withBodyFile("aktoerV2/hentIdentForAktoerId-happy.xml")));
-		stubFor(post("/aktoerv2")
-				.inScenario(AKTOERV2_SCENARIO)
-				.whenScenarioStateIs(HENT_AKTOER_ID_FOR_IDENT)
+						.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("sts/sts-token.json")));
+		stubFor(post("/pdl")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
-						.withBodyFile("aktoerV2/hentAktoerIdForIdent-happy.xml")));
+						.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("pdl/hentPdlDataForIdent-happy.json")));
+		stubFor(post("/pdl")
+				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
+						.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("pdl/hentPdlDataForFoedselsnummer.json")));
 
 		List<Journalpost> tilknyttedeJournalposter = parseJournalpost(tilknyttedeJournalposterGjenbrukQuery());
 		assertThat(tilknyttedeJournalposter, hasSize(0));
@@ -197,17 +200,18 @@ class TilknyttedeJournalposterIT extends AbstractItest {
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("hentjournalsakinfo/tilknyttedejournalposter_not_bid-happy.json")));
-		stubFor(post("/aktoerv2")
-				.inScenario(AKTOERV2_SCENARIO)
-				.whenScenarioStateIs(Scenario.STARTED)
-				.willSetStateTo(HENT_AKTOER_ID_FOR_IDENT)
+		stubFor(post("/reststs")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
-						.withBodyFile("aktoerV2/hentIdentForAktoerId-happy.xml")));
-		stubFor(post("/aktoerv2")
-				.inScenario(AKTOERV2_SCENARIO)
-				.whenScenarioStateIs(HENT_AKTOER_ID_FOR_IDENT)
+						.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("sts/sts-token.json")));
+		stubFor(post("/pdl")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
-						.withBodyFile("aktoerV2/hentAktoerIdForIdent-happy.xml")));
+						.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("pdl/hentPdlDataForIdent-happy.json")));
+		stubFor(post("/pdl")
+				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
+						.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("pdl/hentPdlDataForFoedselsnummer.json")));
 
 		List<Journalpost> tilknyttedeJournalposter = parseJournalpost(tilknyttedeJournalposterGjenbrukQuery());
 		DokumentInfo dokumentInfo1 = tilknyttedeJournalposter.get(0).getDokumenter().get(0);
@@ -229,17 +233,18 @@ class TilknyttedeJournalposterIT extends AbstractItest {
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("bidrag/bidragsak-happy.json")));
-		stubFor(post("/aktoerv2")
-				.inScenario(AKTOERV2_SCENARIO)
-				.whenScenarioStateIs(Scenario.STARTED)
-				.willSetStateTo(HENT_AKTOER_ID_FOR_IDENT)
+		stubFor(post("/reststs")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
-						.withBodyFile("aktoerV2/hentIdentForAktoerId-happy.xml")));
-		stubFor(post("/aktoerv2")
-				.inScenario(AKTOERV2_SCENARIO)
-				.whenScenarioStateIs(HENT_AKTOER_ID_FOR_IDENT)
+						.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("sts/sts-token.json")));
+		stubFor(post("/pdl")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
-						.withBodyFile("aktoerV2/hentAktoerIdForIdent-happy.xml")));
+						.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("pdl/hentPdlDataForIdent-happy.json")));
+		stubFor(post("/pdl")
+				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
+						.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("pdl/hentPdlDataForFoedselsnummer.json")));
 
 
 		List<Journalpost> tilknyttedeJournalposter = parseJournalpost(tilknyttedeJournalposterGjenbrukQuery());
@@ -253,17 +258,18 @@ class TilknyttedeJournalposterIT extends AbstractItest {
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("hentjournalsakinfo/tilknyttedejournalposter_jp_pol_skjerming-happy.json")));
-		stubFor(post("/aktoerv2")
-				.inScenario(AKTOERV2_SCENARIO)
-				.whenScenarioStateIs(Scenario.STARTED)
-				.willSetStateTo(HENT_AKTOER_ID_FOR_IDENT)
+		stubFor(post("/reststs")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
-						.withBodyFile("aktoerV2/hentIdentForAktoerId-happy.xml")));
-		stubFor(post("/aktoerv2")
-				.inScenario(AKTOERV2_SCENARIO)
-				.whenScenarioStateIs(HENT_AKTOER_ID_FOR_IDENT)
+						.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("sts/sts-token.json")));
+		stubFor(post("/pdl")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
-						.withBodyFile("aktoerV2/hentAktoerIdForIdent-happy.xml")));
+						.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("pdl/hentPdlDataForIdent-happy.json")));
+		stubFor(post("/pdl")
+				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
+						.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("pdl/hentPdlDataForFoedselsnummer.json")));
 
 		List<Journalpost> tilknyttedeJournalposter = parseJournalpost(tilknyttedeJournalposterGjenbrukQuery());
 		assertThat(tilknyttedeJournalposter, hasSize(0));
@@ -276,18 +282,18 @@ class TilknyttedeJournalposterIT extends AbstractItest {
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("hentjournalsakinfo/tilknyttedejournalposter_dokumentinfo_pol_skjerming-happy.json")));
-		stubFor(post("/aktoerv2")
-				.inScenario(AKTOERV2_SCENARIO)
-				.whenScenarioStateIs(Scenario.STARTED)
-				.willSetStateTo(HENT_AKTOER_ID_FOR_IDENT)
+		stubFor(post("/reststs")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
-						.withBodyFile("aktoerV2/hentIdentForAktoerId-happy.xml")));
-		stubFor(post("/aktoerv2")
-				.inScenario(AKTOERV2_SCENARIO)
-				.whenScenarioStateIs(HENT_AKTOER_ID_FOR_IDENT)
+						.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("sts/sts-token.json")));
+		stubFor(post("/pdl")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
-						.withBodyFile("aktoerV2/hentAktoerIdForIdent-happy.xml")));
-
+						.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("pdl/hentPdlDataForIdent-happy.json")));
+		stubFor(post("/pdl")
+				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
+						.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("pdl/hentPdlDataForFoedselsnummer.json")));
 		List<Journalpost> tilknyttedeJournalposter = parseJournalpost(tilknyttedeJournalposterGjenbrukQuery());
 		assertThat(tilknyttedeJournalposter.get(0).getDokumenter(), hasSize(1));
 	}
@@ -303,17 +309,18 @@ class TilknyttedeJournalposterIT extends AbstractItest {
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("gsak/gsak-sakBySaksId_not_bid-happy.json")));
-		stubFor(post("/aktoerv2")
-				.inScenario(AKTOERV2_SCENARIO)
-				.whenScenarioStateIs(Scenario.STARTED)
-				.willSetStateTo(HENT_AKTOER_ID_FOR_IDENT)
+		stubFor(post("/reststs")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
-						.withBodyFile("aktoerV2/hentIdentForAktoerId-happy.xml")));
-		stubFor(post("/aktoerv2")
-				.inScenario(AKTOERV2_SCENARIO)
-				.whenScenarioStateIs(HENT_AKTOER_ID_FOR_IDENT)
+						.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("sts/sts-token.json")));
+		stubFor(post("/pdl")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
-						.withBodyFile("aktoerV2/hentAktoerIdForIdent-happy.xml")));
+						.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("pdl/hentPdlDataForIdent-happy.json")));
+		stubFor(post("/pdl")
+				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
+						.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("pdl/hentPdlDataForFoedselsnummer.json")));
 
 		List<Journalpost> tilknyttedeJournalposter = parseJournalpost(tilknyttedeJournalposterGjenbrukQuery());
 		DokumentInfo dokumentInfo1 = tilknyttedeJournalposter.get(0).getDokumenter().get(0);

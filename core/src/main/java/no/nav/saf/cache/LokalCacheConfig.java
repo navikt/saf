@@ -25,8 +25,7 @@ public class LokalCacheConfig {
 	public static final String HENT_JOURNALPOSTBULK_CACHE = "hentTilgangJournalposterBulk";
 	public static final String TILGANGSMODELL_REPO_BRUKER_CACHE = "tilgangsmodellRepoBruker";
 	public static final String PENSJON_SAK_SAMMENDRAG_LISTE_CACHE = "pensjonSakSammendragListe";
-	public static final String REST_STS_CACHE = "restSts";
-
+	public static final String REST_STS_CACHE = "RESTSTS";
 
 	@Bean
 	@Primary

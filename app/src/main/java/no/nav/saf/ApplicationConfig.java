@@ -1,6 +1,7 @@
 package no.nav.saf;
 
 import io.micrometer.core.instrument.MeterRegistry;
+import no.nav.saf.anticorruptionlayer.azure.SafProperties;
 import no.nav.saf.config.ServiceuserAlias;
 import no.nav.saf.graphiql.GraphiQLController;
 import no.nav.saf.metrics.DokMonitoringAspect;
@@ -26,9 +27,8 @@ import java.util.Set;
 @ComponentScan
 @Configuration
 @EnableAutoConfiguration
-@Import({CoreConfig.class,
-		GraphiQLController.class})
-@EnableConfigurationProperties(ServiceuserAlias.class)
+@Import({GraphiQLController.class})
+@EnableConfigurationProperties(value = {SafProperties.class, ServiceuserAlias.class})
 public class ApplicationConfig {
 	@Bean
 	ClientHttpRequestFactory requestFactory(HttpClient httpClient) {

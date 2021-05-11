@@ -49,9 +49,14 @@ class SakIT extends AbstractItest {
 	@Test
 	void shouldRemoveSakDuplicates() {
 		abacPermit();
-		stubFor(post("/aktoerv2")
+		stubFor(post("/reststs")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
-						.withBodyFile("aktoerV2/hentIdentForAktoerId-happy.xml")));
+						.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("sts/sts-token.json")));
+		stubFor(post("/pdl")
+				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
+						.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("pdl/hentPdlDataForFoedselsnummer.json")));
 		stubFor(get("/gsak?aktoerId=" + AKTOER_ID)
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType())
@@ -60,7 +65,7 @@ class SakIT extends AbstractItest {
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withBodyFile("psak/psak-hentSakSammendragListe-happy-duplicates.xml")));
 
-		await().atMost(Duration.ofSeconds(5)).untilAsserted(() -> {
+		await().atMost(Duration.ofSeconds(10)).untilAsserted(() -> {
 			ResponseEntity<LinkedHashMap> responseEntity = callSakerWithAktoerId();
 			List<Sak> saker = parseSaker(responseEntity);
 			assertThat(HttpStatus.OK, is(responseEntity.getStatusCode()));
@@ -79,9 +84,14 @@ class SakIT extends AbstractItest {
 	@Test
 	void shouldGetSakerForAktoerID() {
 		abacPermit();
-		stubFor(post("/aktoerv2")
+		stubFor(post("/reststs")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
-						.withBodyFile("aktoerV2/hentIdentForAktoerId-happy.xml")));
+						.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("sts/sts-token.json")));
+		stubFor(post("/pdl")
+				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
+						.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("pdl/hentPdlDataForFoedselsnummer.json")));
 		stubFor(get("/gsak?aktoerId=" + AKTOER_ID)
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType())
@@ -109,10 +119,14 @@ class SakIT extends AbstractItest {
 	void shouldReturnNoSakerWhenDenyOnPep1g() throws Exception {
 		abacDenyPep1g();
 
-		stubFor(post("/aktoerv2")
+		stubFor(post("/reststs")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
-						.withBodyFile("aktoerV2/hentIdentForAktoerId-happy.xml")));
-
+						.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("sts/sts-token.json")));
+		stubFor(post("/pdl")
+				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
+						.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("pdl/hhentPdlDataForFoedselsnummer.json")));
 		ResponseEntity<LinkedHashMap> responseEntity = callSakerWithAktoerId();
 		List<Sak> saker = parseSaker(responseEntity);
 
@@ -122,9 +136,14 @@ class SakIT extends AbstractItest {
 	@Test
 	void shouldReturnNoSakerWhenDenyOnPep2() throws Exception {
 		abacDenyPep2();
-		stubFor(post("/aktoerv2")
+		stubFor(post("/reststs")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
-						.withBodyFile("aktoerV2/hentIdentForAktoerId-happy.xml")));
+						.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("sts/sts-token.json")));
+		stubFor(post("/pdl")
+				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
+						.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("pdl/hentPdlDataForFoedselsnummer.json")));
 		stubFor(get("/gsak?aktoerId=" + AKTOER_ID)
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType())
@@ -146,9 +165,14 @@ class SakIT extends AbstractItest {
 	@Test
 	void shouldReturnNoSakerWhenDenyOnPep3() throws Exception {
 		abacDenyPep3Withoutpep2d();
-		stubFor(post("/aktoerv2")
+		stubFor(post("/reststs")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
-						.withBodyFile("aktoerV2/hentIdentForAktoerId-happy.xml")));
+						.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("sts/sts-token.json")));
+		stubFor(post("/pdl")
+				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
+						.withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("pdl/hentPdlDataForFoedselsnummer.json")));
 		stubFor(get("/gsak?aktoerId=" + AKTOER_ID)
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType())

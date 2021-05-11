@@ -1,7 +1,7 @@
 package no.nav.saf.query.dokumentoversikt.fagsak;
 
 import lombok.extern.slf4j.Slf4j;
-import no.nav.saf.anticorruptionlayer.aktoer.AktoerAntiCorruptionLayer;
+import no.nav.saf.anticorruptionlayer.aktoer.PdlAntiCorruptionLayer;
 import no.nav.saf.anticorruptionlayer.bisys.BisysAntiCorruptionLayer;
 import no.nav.saf.anticorruptionlayer.gsak.GsakAntiCorruptionLayer;
 import no.nav.saf.anticorruptionlayer.pensjonsak.PensjonSakAntiCorruptionLayer;
@@ -33,12 +33,12 @@ import static no.nav.saf.domain.DomainConstants.ORGNR_LIST;
 @Slf4j
 @Component
 public class DokumentoversiktFagsakTilgangsmodellRepository {
-	private final AktoerAntiCorruptionLayer aktoerAntiCorruptionLayer;
+	private final PdlAntiCorruptionLayer aktoerAntiCorruptionLayer;
 	private final GsakAntiCorruptionLayer gsakAntiCorruptionLayer;
 	private final PensjonSakAntiCorruptionLayer pensjonSakAntiCorruptionLayer;
 	private final BisysAntiCorruptionLayer bisysAntiCorruptionLayer;
 
-	public DokumentoversiktFagsakTilgangsmodellRepository(AktoerAntiCorruptionLayer aktoerAntiCorruptionLayer,
+	public DokumentoversiktFagsakTilgangsmodellRepository(PdlAntiCorruptionLayer aktoerAntiCorruptionLayer,
 														  GsakAntiCorruptionLayer gsakAntiCorruptionLayer,
 														  PensjonSakAntiCorruptionLayer pensjonSakAntiCorruptionLayer,
 														  BisysAntiCorruptionLayer bisysAntiCorruptionLayer) {
