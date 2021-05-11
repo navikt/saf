@@ -27,8 +27,7 @@ import java.util.Set;
 @ComponentScan
 @Configuration
 @EnableAutoConfiguration
-@Import({CoreConfig.class,
-		GraphiQLController.class})
+@Import({GraphiQLController.class})
 @EnableConfigurationProperties(value = {SafProperties.class, ServiceuserAlias.class})
 public class ApplicationConfig {
 	@Bean
