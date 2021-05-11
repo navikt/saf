@@ -7,8 +7,10 @@ import lombok.Setter;
 import lombok.Value;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
@@ -51,4 +53,23 @@ public class TilgangBruker {
 	public boolean isUkjent() {
 		return !isPerson() && !isOrganisasjon();
 	}
+
+	public List<String> hentAlleFodselsnummer(){
+		if(historiskeIdenter.isEmpty()){
+			return Arrays.asList(foedselsnr);
+		}
+		List<String> idents = historiskeIdenter.stream().filter(h -> h.getIdentType().equals(IdentType.FOLKEREGISTERIDENT)).map(h -> h.getIdentifikator()).collect(Collectors.toList());
+		idents.add(foedselsnr);
+		return idents;
+	}
+
+	public List<String> hentAlleAktoerId(){
+		if(historiskeIdenter.isEmpty()){
+			return Arrays.asList(aktoerId);
+		}
+		List<String> idents  = historiskeIdenter.stream().filter(h -> h.getIdentType().equals(IdentType.AKTOERID)).map(h -> h.getIdentifikator()).collect(Collectors.toList());
+		idents.add(aktoerId);
+		return idents;
+	}
+
 }

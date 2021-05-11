@@ -53,6 +53,16 @@ public class GsakConsumer {
 	@CircuitBreaker(name = SAK_INSTANCE)
 	@Retry(name = SAK_INSTANCE)
 	@Monitor(value = "dok_consumer", extraTags = {"process", "hentSakerByAktoerId"}, histogram = true)
+	public List<GsakSakerTo> hentSakerByAktoerIder(final List<String> aktoerIder) {
+		UriComponentsBuilder uri = UriComponentsBuilder.fromHttpUrl(gsakApiUrl)
+				.queryParam("aktoerId", aktoerIder);
+		return hentSaker(uri.toUriString());
+	}
+
+
+	@CircuitBreaker(name = SAK_INSTANCE)
+	@Retry(name = SAK_INSTANCE)
+	@Monitor(value = "dok_consumer", extraTags = {"process", "hentSakerByAktoerId"}, histogram = true)
 	public List<GsakSakerTo> hentSakerByAktoerId(final String aktoerId) {
 		UriComponentsBuilder uri = UriComponentsBuilder.fromHttpUrl(gsakApiUrl)
 				.queryParam("aktoerId", aktoerId);
@@ -62,10 +72,10 @@ public class GsakConsumer {
 	@CircuitBreaker(name = SAK_INSTANCE)
 	@Retry(name = SAK_INSTANCE)
 	@Monitor(value = "dok_consumer", extraTags = {"process", "hentSakerByAktoerId"}, histogram = true)
-	public List<GsakSakerTo> hentSakerByAktoerId(final String aktoerId, final Tema tema) {
+	public List<GsakSakerTo> hentSakerByAktoerIder(final List<String> aktoerIder, final Tema tema) {
 		UriComponentsBuilder uri = UriComponentsBuilder.fromHttpUrl(gsakApiUrl)
-				.queryParam("aktoerId", aktoerId)
-				.queryParam("tema", tema.toString());
+				.queryParam("tema", tema.toString())
+				.queryParam("aktoerId", aktoerIder);
 		return hentSaker(uri.toUriString());
 	}
 

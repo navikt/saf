@@ -42,10 +42,6 @@
 			<artifactId>java-jwt</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>no.nav.tjenestespesifikasjoner</groupId>
-			<artifactId>nav-fim-aktoer-v2-tjenestespesifikasjon</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>org.apache.cxf</groupId>
 			<artifactId>cxf-spring-boot-starter-jaxws</artifactId>
 		</dependency>
