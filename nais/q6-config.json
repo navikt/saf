@@ -4,7 +4,6 @@
   "PENSJONSAKRS_V1_URL": "https://wasapp-q6.adeo.no/pensjon-ws/api/pip/hentBrukerOgEnhetstilgangerForSak/v1",
   "SAK_SAKER_URL": "https://sak.nais.preprod.local/api/v1/saker",
   "SECURITYTOKENSERVICE_URL": "https://sts-q6.preprod.local/SecurityTokenServiceProvider/",
-  "RESTSTS_URL": "https://security-token-service.dev.adeo.no/rest/v1/sts/token",
   "AKTOER_V2_ENDPOINTURL": "https://app-q6.adeo.no/aktoerregister/ws/Aktoer/v2",
   "PENSJON_V1_ENDPOINTURL": "https://wasapp-q6.adeo.no/pensjon-ws/PensjonSak_v1",
   "FPSAK_URL": "https://fpsak.dev.adeo.no/fpsak/api/pip/aktoer-for-sak",

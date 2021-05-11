@@ -1,9 +1,9 @@
 package no.nav.saf.anticorruptionlayer.fpsak.hentrelevanteparter;
 
+import no.nav.saf.anticorruptionlayer.sts.StsRestConsumer;
 import no.nav.saf.cache.LokalCacheConfig;
 import no.nav.saf.exceptions.SafFunctionalException;
 import no.nav.saf.exceptions.SafTechnicalException;
-import no.nav.saf.integration.sts.StsRestConsumer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.cache.annotation.Cacheable;
