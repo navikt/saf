@@ -19,7 +19,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import static java.util.Objects.requireNonNull;
-import static no.nav.saf.anticorruptionlayer.pdl.MDCUtils.getCallId;
+import static no.nav.saf.util.MDCUtility.getCallId;
 import static no.nav.saf.anticorruptionlayer.pdl.NavHeaders.NAV_CALLID;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
@@ -44,7 +44,6 @@ class PdlIdentConsumer implements IdentConsumer {
 
 	public PdlIdentConsumer(final SafProperties safProperties,
 							final RestTemplateBuilder restTemplateBuilder,
-							//final AzureTokenConsumer azureTokenConsumer,
 							final StsRestConsumer stsRestConsumer,
 							final ClientHttpRequestFactory clientHttpRequestFactory) {
 		this.restTemplate = restTemplateBuilder
@@ -53,7 +52,6 @@ class PdlIdentConsumer implements IdentConsumer {
 				.requestFactory(() -> clientHttpRequestFactory)
 				.build();
 		this.pdlUri = UriComponentsBuilder.fromHttpUrl(safProperties.getEndpoints().getPdl()).build().toUri();
-		//this.azureTokenConsumer = azureTokenConsumer;
 		this.stsRestConsumer = stsRestConsumer;
 	}
 
