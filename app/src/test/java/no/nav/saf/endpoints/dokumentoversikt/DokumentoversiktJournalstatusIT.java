@@ -1,18 +1,5 @@
 package no.nav.saf.endpoints.dokumentoversikt;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
-import static com.github.tomakehurst.wiremock.client.WireMock.containing;
-import static com.github.tomakehurst.wiremock.client.WireMock.matchingJsonPath;
-import static com.github.tomakehurst.wiremock.client.WireMock.post;
-import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
-import static com.github.tomakehurst.wiremock.client.WireMock.verify;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import no.nav.saf.domain.kode.Journalstatus;
 import no.nav.saf.domain.visningsmodell.Dokumentoversikt;
@@ -31,17 +18,30 @@ import java.net.URISyntaxException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.containing;
+import static com.github.tomakehurst.wiremock.client.WireMock.matchingJsonPath;
+import static com.github.tomakehurst.wiremock.client.WireMock.post;
+import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.verify;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+
 /**
  * @author Erik Bråten, Visma Consulting.
  */
-public class DokumentoversiktJournalstatusIT extends AbstractItest {
+class DokumentoversiktJournalstatusIT extends AbstractItest {
 
 	private static final String KANAL_REFERANSE_ID = "KANAL REFERANSE ID";
 
-	private ObjectMapper objectMapper = new ObjectMapper();
+	private final ObjectMapper objectMapper = new ObjectMapper();
 
 	@Test
-	public void shouldHentDokumentoversiktJournalstatusUkjentBruker() throws IOException, URISyntaxException {
+	void shouldHentDokumentoversiktJournalstatusUkjentBruker() throws IOException, URISyntaxException {
 		abacPermit();
 
 		stubFor(post("/hentjournalsakinfo/finnjournalposterstatus")
@@ -76,7 +76,7 @@ public class DokumentoversiktJournalstatusIT extends AbstractItest {
 	}
 
 	@Test
-	public void shouldHentDokumentoversiktJournalstatusUtgaar() throws IOException, URISyntaxException {
+	void shouldHentDokumentoversiktJournalstatusUtgaar() throws IOException, URISyntaxException {
 		abacPermit();
 
 		stubFor(post("/hentjournalsakinfo/finnjournalposterstatus")
@@ -114,7 +114,7 @@ public class DokumentoversiktJournalstatusIT extends AbstractItest {
 	}
 
 	@Test
-	public void finnJournalposterStatusTechnicalException() throws IOException, URISyntaxException {
+	void finnJournalposterStatusTechnicalException() throws IOException, URISyntaxException {
 		abacPermit();
 
 		stubFor(post("/hentjournalsakinfo/finnjournalposterstatus")
@@ -130,7 +130,7 @@ public class DokumentoversiktJournalstatusIT extends AbstractItest {
 	}
 
 	@Test
-	public void finnJournalposterStatusFunctionalException() throws IOException, URISyntaxException {
+	void finnJournalposterStatusFunctionalException() throws IOException, URISyntaxException {
 		abacPermit();
 
 		stubFor(post("/hentjournalsakinfo/finnjournalposterstatus")
@@ -146,7 +146,7 @@ public class DokumentoversiktJournalstatusIT extends AbstractItest {
 	}
 
 	@Test
-	public void finnJournalposterStatusEmptyResponse() throws IOException, URISyntaxException {
+	void finnJournalposterStatusEmptyResponse() throws IOException, URISyntaxException {
 		abacPermit();
 
 		stubFor(post("/hentjournalsakinfo/finnjournalposterstatus")
@@ -164,7 +164,7 @@ public class DokumentoversiktJournalstatusIT extends AbstractItest {
 	}
 
 	@Test
-	public void shouldGetAuthorized() throws IOException, URISyntaxException {
+	void shouldGetAuthorized() throws IOException, URISyntaxException {
 		abacPermit();
 
 		stubFor(post("/hentjournalsakinfo/finnjournalposterstatus")
@@ -189,7 +189,7 @@ public class DokumentoversiktJournalstatusIT extends AbstractItest {
 	}
 
 	@Test
-	public void shouldGetUnauthorizedFromPep4() throws IOException, URISyntaxException {
+	void shouldGetUnauthorizedFromPep4() throws IOException, URISyntaxException {
 		abacDenyPep4SkipPep1gPep2Pep2dPep3();
 
 		stubFor(post("/hentjournalsakinfo/finnjournalposterstatus")
@@ -210,7 +210,7 @@ public class DokumentoversiktJournalstatusIT extends AbstractItest {
 	}
 
 	@Test
-	public void shouldGetUnauthorizedFromPep5() throws IOException, URISyntaxException {
+	void shouldGetUnauthorizedFromPep5() throws IOException, URISyntaxException {
 		abacDenyPep5SkipPep1gPep2Pep2dPep3();
 
 		stubFor(post("/hentjournalsakinfo/finnjournalposterstatus")
@@ -231,7 +231,7 @@ public class DokumentoversiktJournalstatusIT extends AbstractItest {
 	}
 
 	@Test
-	public void shouldGetUnauthorizedFromPep6d() throws IOException, URISyntaxException {
+	void shouldGetUnauthorizedFromPep6d() throws IOException, URISyntaxException {
 		abacDenyPep6d();
 
 		stubFor(post("/hentjournalsakinfo/finnjournalposterstatus")

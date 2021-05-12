@@ -1,17 +1,5 @@
 package no.nav.saf.endpoints.hentDokument;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
-import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
-import static com.github.tomakehurst.wiremock.client.WireMock.get;
-import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.post;
-import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
-import static com.github.tomakehurst.wiremock.client.WireMock.verify;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-import static org.springframework.http.MediaType.APPLICATION_PDF_VALUE;
-
 import com.github.tomakehurst.wiremock.client.BasicCredentials;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.VariantFormatCode;
 import no.nav.saf.endpoints.AbstractItest;
@@ -24,16 +12,29 @@ import org.springframework.http.ResponseEntity;
 
 import java.util.Base64;
 
+import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.get;
+import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.post;
+import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.verify;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.http.MediaType.APPLICATION_PDF_VALUE;
+
 /**
  * @author Sigurd Midttun, Visma Consulting.
  */
 class HentDokumentIT extends AbstractItest {
 
-	private static String DOKUMENT_ID = "123";
-	private static String JOURNALPOST_ID = "123";
-	private static VariantFormatCode VARIANTFORMAT = VariantFormatCode.ARKIV;
-	private static VariantFormatCode SLADDET_VARIANTFORMAT = VariantFormatCode.SLADDET;
-	private static byte[] TEST_FILE_BYTES = "TestThis".getBytes();
+	private static final String DOKUMENT_ID = "123";
+	private static final String JOURNALPOST_ID = "123";
+	private static final String SAK_ID = "10672720";
+	private static final VariantFormatCode VARIANTFORMAT = VariantFormatCode.ARKIV;
+	private static final VariantFormatCode SLADDET_VARIANTFORMAT = VariantFormatCode.SLADDET;
+	private static final byte[] TEST_FILE_BYTES = "TestThis".getBytes();
 
 	@Test
 	void hentGsakDokumentHappyPath() {
@@ -527,6 +528,36 @@ class HentDokumentIT extends AbstractItest {
 		ResponseEntity<String> responseEntity = callHentDokument();
 
 		verifyabacDenyPep6dAndHttpStatusCode(HttpStatus.FORBIDDEN, responseEntity.getStatusCode());
+	}
+
+	@Test
+	void shouldGetUnauthorizedFromPep7() {
+		abacDenyPep7skipPep2Pep2DPep4Pep5Pep6();
+		stubFor(get("/hentjournalsakinfo/hentdokument/" + DOKUMENT_ID + "/" + VARIANTFORMAT)
+				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
+						.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_PDF_VALUE)
+						.withBody(Base64.getEncoder().encode(TEST_FILE_BYTES))));
+		stubFor(get("/bidrag/765432").willReturn(aResponse()
+				.withStatus(HttpStatus.OK.value())
+				.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
+				.withBodyFile("bidrag/bidragsak-happy.json")));
+		stubFor(get("/hentjournalsakinfo/henttilgangjournalpost/" + JOURNALPOST_ID + "/" + DOKUMENT_ID + "/" + VARIANTFORMAT).willReturn(aResponse()
+				.withStatus(HttpStatus.OK.value())
+				.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
+				.withBodyFile("hentjournalsakinfo/henttilgangjournalpost_gsak-happy.json")));
+		stubFor(get("/fpsak?saksnummer=" + SAK_ID).willReturn(aResponse()
+				.withStatus(HttpStatus.OK.value())
+				.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
+				.withBodyFile("fpsak/happy-response.json")));
+		stubFor(post(urlEqualTo("/reststs"))
+				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
+						.withHeader(org.apache.http.HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+						.withBodyFile("sts/reststs-happy.json")));
+
+
+		ResponseEntity<String> responseEntity = callHentDokument();
+
+		verifyabacDenyPep7AndHttpStatusCode(HttpStatus.FORBIDDEN, responseEntity.getStatusCode());
 	}
 
 	private void assertOkArkivResponse(ResponseEntity<String> responseEntity) {

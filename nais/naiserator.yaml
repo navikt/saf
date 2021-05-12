@@ -19,6 +19,8 @@ spec:
       value: {{ AKTOER_V2_ENDPOINTURL }}
     - name: PENSJON_V1_ENDPOINTURL
       value: {{ PENSJON_V1_ENDPOINTURL }}
+    - name: FPSAK_URL
+      value: {{ FPSAK_URL }}
     - name: GRAPHIQL_ENABLED
       value: "{{ GRAPHIQL_ENABLED }}"
     - name: SWAGGER_ENABLED

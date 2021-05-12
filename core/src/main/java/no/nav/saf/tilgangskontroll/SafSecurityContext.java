@@ -30,7 +30,7 @@ public class SafSecurityContext {
 	private final String jwtToken;
 	private final String oidcTokenBody;
 	private final String subjectId;
-	private String navCallid;
+	private final String navCallid;
 	private final String navConsumerId;
 	private final boolean azureToken;
 	private final DecodedJWT decodedJWT;

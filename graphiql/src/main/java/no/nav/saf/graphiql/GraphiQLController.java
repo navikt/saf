@@ -84,8 +84,8 @@ public class GraphiQLController {
 		if (StringUtils.isNotBlank(request.getContextPath())) {
 			String vendorPathWithContext = String.format("%s/vendor", request.getContextPath());
 			populatedTemplate = populatedTemplate
-					.replaceAll("src=\"/vendor", "src=\"" + vendorPathWithContext)
-					.replaceAll("href=\"/vendor", "href=\"" + vendorPathWithContext);
+					.replace("src=\"/vendor", "src=\"" + vendorPathWithContext)
+					.replace("href=\"/vendor", "href=\"" + vendorPathWithContext);
 		}
 
 		response.getOutputStream().write(populatedTemplate.getBytes(Charset.defaultCharset()));

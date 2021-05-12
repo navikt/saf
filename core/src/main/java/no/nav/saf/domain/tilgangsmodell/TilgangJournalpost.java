@@ -20,6 +20,7 @@ public class TilgangJournalpost {
 	 **/
 	private final Journalstatus journalstatus;
 	private final Skjerming skjerming;
+	private final TilgangSak tilgangSak;
 	@Builder.Default
 	private final List<TilgangDokumentInfo> dokumenter = new ArrayList<>();
 

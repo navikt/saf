@@ -71,6 +71,6 @@ public class Pep2Impl implements Pep<TilgangSak> {
 	}
 
 	private boolean isForvaltningslovensParagraf19(TilgangSak ressurs) {
-		return ressurs.getParagraf19() == null ? false : ressurs.getParagraf19();
+		return ressurs.getParagraf19() != null && ressurs.getParagraf19();
 	}
 }

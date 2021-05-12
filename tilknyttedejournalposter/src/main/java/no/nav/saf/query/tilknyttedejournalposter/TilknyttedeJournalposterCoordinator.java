@@ -1,14 +1,5 @@
 package no.nav.saf.query.tilknyttedejournalposter;
 
-import static no.nav.saf.domain.DomainConstants.PEP1G;
-import static no.nav.saf.domain.DomainConstants.PEP2;
-import static no.nav.saf.domain.DomainConstants.PEP2D;
-import static no.nav.saf.domain.DomainConstants.PEP3;
-import static no.nav.saf.domain.DomainConstants.PEP4;
-import static no.nav.saf.domain.DomainConstants.PEP5;
-import static no.nav.saf.domain.DomainConstants.PEP6D;
-import static no.nav.saf.util.MDCUtility.addMdcData;
-
 import no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoMapper;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.dto.JournalpostDto;
 import no.nav.saf.domain.Arkivsak;
@@ -28,6 +19,15 @@ import javax.inject.Named;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import static no.nav.saf.domain.DomainConstants.PEP1G;
+import static no.nav.saf.domain.DomainConstants.PEP2;
+import static no.nav.saf.domain.DomainConstants.PEP2D;
+import static no.nav.saf.domain.DomainConstants.PEP3;
+import static no.nav.saf.domain.DomainConstants.PEP4;
+import static no.nav.saf.domain.DomainConstants.PEP5;
+import static no.nav.saf.domain.DomainConstants.PEP6D;
+import static no.nav.saf.util.MDCUtility.addMdcData;
 
 /**
  * @author Joakim Bjørnstad, Jbit AS
@@ -79,7 +79,7 @@ public class TilknyttedeJournalposterCoordinator {
 		Set<TilgangSak> filteredTilgangSaker = tilknyttedeJournalposterTilgangRepository.tilgangSaker(arkivsaker, safRequestContext)
 				.stream()
 				.filter(tilgangSak -> filteredTilgangBruker.stream().anyMatch(tilgangBruker -> {
-					if(tilgangBruker.isPerson()) {
+					if (tilgangBruker.isPerson()) {
 						return tilgangBruker.getAktoerId().equals(tilgangSak.getAktoerId());
 					} else {
 						return tilgangBruker.getOrgnummer().equals(tilgangSak.getOrgnummer());

@@ -60,9 +60,7 @@ public class SakerCoordinatorImpl implements SakerCoordinator {
 
 		final Flowable<TilgangSak> tilgangSakFlow = saksoversiktBrukerTilgangsmodellRepository.findTilgangSaker(tilgangBruker, safRequestContext);
 		List<TilgangSak> filteredTilgangSakList = tilgangSakFlow
-				.onErrorResumeNext(throwable -> {
-					return Flowable.empty();
-				})
+				.onErrorResumeNext(Flowable.empty())
 				.parallel(10)
 				.runOn(Schedulers.io())
 				.doOnNext(ts -> addMdcData(safRequestContext))
@@ -73,7 +71,7 @@ public class SakerCoordinatorImpl implements SakerCoordinator {
 
 		return filteredTilgangSakList.stream()
 				.map(tilgangSak ->
-				sakMapper.mapSak(tilgangSak, safRequestContext.getRequestCache()))
+						sakMapper.mapSak(tilgangSak, safRequestContext.getRequestCache()))
 				.filter(Objects::nonNull)
 				.collect(Collectors.toSet())
 				.stream().collect(Collectors.toList());

@@ -6,6 +6,7 @@
   "SECURITYTOKENSERVICE_URL": "https://sts-t3.test.local/SecurityTokenServiceProvider/",
   "AKTOER_V2_ENDPOINTURL": "https://app-t3.adeo.no/aktoerregister/ws/Aktoer/v2",
   "PENSJON_V1_ENDPOINTURL": "https://wasapp-t3.adeo.no/pensjon-ws/PensjonSak_v1",
+  "FPSAK_URL": "https://fpsak.dev.adeo.no/fpsak/api/pip/aktoer-for-sak",
   "GRAPHIQL_ENABLED": "true",
   "SWAGGER_ENABLED": "true",
   "NO_NAV_SECURITY_JWT_ISSUER_AZUREV1_DISCOVERYURL": "https://login.microsoftonline.com/966ac572-f5b7-4bbe-aa88-c76419c0f851/.well-known/openid-configuration",
