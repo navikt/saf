@@ -1,5 +1,5 @@
 {
-  dokumentoversiktFagsak(fagsak: {fagsakId: "1912374211459", fagsaksystem: "AO01"}, foerste: 5) {
+  dokumentoversiktFagsak(fagsak: {fagsakId: "ARENA-1", fagsaksystem: "AO01"}, foerste: 5) {
     journalposter {
       journalpostId
       eksternReferanseId

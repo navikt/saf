@@ -30,25 +30,21 @@ public class PensjonSakAntiCorruptionLayerImpl implements PensjonSakAntiCorrupti
 	@Override
 	public List<Arkivsak> findArkivsaker(final TilgangBruker tilgangBruker, final List<Tema> tema) {
 		try {
-			if (tema.isEmpty()) {
+			if (tilgangBruker.getFoedselsnr() == null || tema.isEmpty()) {
 				return new ArrayList<>();
 			} else {
-				List<Arkivsak> arkivsakList = new ArrayList<>();
-					for(String foedselnr : tilgangBruker.hentAlleFodselsnummer()) {
-						arkivsakList.addAll(pensjonSakWsConsumer.hentSakSammendragListe(foedselnr).stream()
-								.filter(psak -> tema.contains(mapToTema(psak.getTema())))
-								.map(psak -> Arkivsak.builder()
-										.aktoerId(tilgangBruker.getAktoerId())
-										.arkivsaksnummer(psak.getSakNr())
-										.arkivsaksystem(Arkivsakssystem.PSAK)
-										.fagsakId(psak.getSakNr())
-										.fagsaksystem(PSAK_FAGSYSTEM)
-										.tema(Tema.valueOf(psak.getTema()))
-										.datoOpprettet(psak.getDatoOpprettet())
-										.build())
-								.collect(Collectors.toList()));
-					}
-				return arkivsakList;
+				return pensjonSakWsConsumer.hentSakSammendragListe(tilgangBruker.getFoedselsnr()).stream()
+						.filter(psak -> tema.contains(mapToTema(psak.getTema())))
+						.map(psak -> Arkivsak.builder()
+								.aktoerId(tilgangBruker.getAktoerId())
+								.arkivsaksnummer(psak.getSakNr())
+								.arkivsaksystem(Arkivsakssystem.PSAK)
+								.fagsakId(psak.getSakNr())
+								.fagsaksystem(PSAK_FAGSYSTEM)
+								.tema(Tema.valueOf(psak.getTema()))
+								.datoOpprettet(psak.getDatoOpprettet())
+								.build())
+						.collect(Collectors.toList());
 			}
 		} catch (Exception e) {
 			log.warn("Klarte ikke hente pensjonssaker for fødselsnummer={}", "*****", e);

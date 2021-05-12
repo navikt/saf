@@ -30,7 +30,6 @@ public class TilgangsbrukerMapperTest {
 		assertThat(tilgangBruker.getFoedselsnr()).isEqualTo(FOLKEREGISTERIDENT);
 		assertThat(tilgangBruker.getHistoriskeIdenter()).isEmpty();
 		assertThat(tilgangBruker.getAlleIdenter()).contains(FOLKEREGISTERIDENT);
-		assertThat(tilgangBruker.hentAlleFodselsnummer()).hasSize(1).contains(FOLKEREGISTERIDENT);
 		assertThat(tilgangBruker.hentAlleAktoerId()).hasSize(1).contains(AKTOERID);
 	}
 
@@ -47,7 +46,6 @@ public class TilgangsbrukerMapperTest {
 		assertThat(tilgangBruker.getFoedselsnr()).isEqualTo(FOLKEREGISTERIDENT);
 		assertThat(tilgangBruker.getHistoriskeIdenter()).hasSize(2);
 		assertThat(tilgangBruker.getAlleIdenter()).contains(FOLKEREGISTERIDENT, HISTORISK_FOLKEREGISTERIDENT);
-		assertThat(tilgangBruker.hentAlleFodselsnummer()).hasSize(2).contains(FOLKEREGISTERIDENT, HISTORISK_FOLKEREGISTERIDENT);
 		assertThat(tilgangBruker.hentAlleAktoerId()).hasSize(2).contains(AKTOERID, HISTORISK_AKTOERID);
 	}
 
@@ -64,7 +62,6 @@ public class TilgangsbrukerMapperTest {
 		assertThat(tilgangBruker.getFoedselsnr()).isEqualTo(FOLKEREGISTERIDENT);
 		assertThat(tilgangBruker.getHistoriskeIdenter()).hasSize(0);
 		assertThat(tilgangBruker.getAlleIdenter()).contains(FOLKEREGISTERIDENT);
-		assertThat(tilgangBruker.hentAlleFodselsnummer()).hasSize(1).contains(FOLKEREGISTERIDENT);
 		assertThat(tilgangBruker.hentAlleAktoerId()).hasSize(1).contains(AKTOERID);
 	}
 

@@ -3,20 +3,10 @@
         "id": 119185782,
         "tema": "TIL",
         "applikasjon": "AO01",
-        "aktoerId": null,
-        "orgnr": "812437992",
-        "fagsakNr": "201545004",
-        "opprettetAv": "T114554",
-        "opprettetTidspunkt": "2015-01-27T16:44:57.826+01:00"
-    },
-    {
-        "id": 135695448,
-        "tema": "SYK",
-        "applikasjon": "FS22",
         "aktoerId": "1912374211459",
         "orgnr": null,
-        "fagsakNr": null,
-        "opprettetAv": "srvsyfoservice",
-        "opprettetTidspunkt": "2018-07-17T14:30:21.248+02:00"
-      }
+        "fagsakNr": "ARENA-1",
+        "opprettetAv": "T114554",
+        "opprettetTidspunkt": "2015-01-27T16:44:57.826+01:00"
+    }
 ]

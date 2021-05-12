@@ -56,17 +56,6 @@ public class TilgangBruker {
 		return !isPerson() && !isOrganisasjon();
 	}
 
-	public List<String> hentAlleFodselsnummer() {
-		if (historiskeIdenter.isEmpty() && foedselsnr != null) {
-			return Collections.singletonList(foedselsnr);
-		} else if (historiskeIdenter.isEmpty()) {
-			return new ArrayList<>();
-		}
-		List<String> idents = historiskeIdenter.stream().filter(h -> h.getIdentType().equals(IdentType.FOLKEREGISTERIDENT)).map(TilgangIdent::getIdentifikator).collect(Collectors.toList());
-		idents.add(foedselsnr);
-		return idents;
-	}
-
 	public List<String> hentAlleAktoerId() {
 		if (historiskeIdenter.isEmpty() && aktoerId != null) {
 			return Collections.singletonList(aktoerId);
