@@ -3,13 +3,12 @@
     "hentIdenter": {
       "identer": [
         {
-          "ident": "01126039367",
+          "ident": "11111111111",
           "gruppe": "FOLKEREGISTERIDENT",
-          "historisk": true
+          "historisk": false
         },
-
         {
-          "ident": "1000012596934",
+          "ident": "1912374211459",
           "gruppe": "AKTORID",
           "historisk": false
         }
