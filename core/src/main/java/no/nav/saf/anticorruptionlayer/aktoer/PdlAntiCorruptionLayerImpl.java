@@ -23,21 +23,21 @@ class PdlAntiCorruptionLayerImpl implements PdlAntiCorruptionLayer {
 
 	@Override
 	public TilgangBruker hentTilgangBrukerByAktoerId(String aktoerId) {
-		if(isBlank(aktoerId)) {
+		if (isBlank(aktoerId)) {
 			return TilgangBruker.builder()
 					.build();
 		}
 
-		return TilgangsbrukerMapper.map(identConsumer.hentIdenter(aktoerId), aktoerId, null);
+		return TilgangsbrukerMapper.map(identConsumer.hentIdenter(aktoerId));
 	}
 
 	@Override
 	public TilgangBruker hentTilgangBrukerByFoedselsnummer(String foedselsnummer) {
-		if(isBlank(foedselsnummer)) {
+		if (isBlank(foedselsnummer)) {
 			return TilgangBruker.builder()
 					.build();
 		}
-		return TilgangsbrukerMapper.map(identConsumer.hentIdenter(foedselsnummer), null, foedselsnummer);
+		return TilgangsbrukerMapper.map(identConsumer.hentIdenter(foedselsnummer));
 	}
 
 	@Override
@@ -47,8 +47,8 @@ class PdlAntiCorruptionLayerImpl implements PdlAntiCorruptionLayer {
 		}
 
 		List<TilgangBruker> tilgangBrukerList = new ArrayList<>();
-		for(String aktoerId : aktoerIdList) {
-			tilgangBrukerList.add(TilgangsbrukerMapper.map(identConsumer.hentIdenter(aktoerId), aktoerId, null));
+		for (String aktoerId : aktoerIdList) {
+			tilgangBrukerList.add(TilgangsbrukerMapper.map(identConsumer.hentIdenter(aktoerId)));
 		}
 		return tilgangBrukerList;
 	}
