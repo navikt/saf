@@ -20,8 +20,11 @@ import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
 import javax.xml.ws.soap.SOAPFaultException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 
 @Slf4j
@@ -38,11 +41,14 @@ public class PensjonSakWsConsumer {
     }
 
 
-    @Cacheable(cacheNames = LokalCacheConfig.PENSJON_SAK_SAMMENDRAG_LISTE_CACHE, key = "#personident")
+    @Cacheable(cacheNames = LokalCacheConfig.PENSJON_SAK_SAMMENDRAG_LISTE_CACHE, key = "#personident", condition = "#p0 != null")
     @CircuitBreaker(name = PENSJON_SAK_SOAP_INSTANCE)
     @Retry(name = PENSJON_SAK_SOAP_INSTANCE)
     @Monitor(value = "dok_consumer", extraTags = {"process", "hentSakSammendragListe"}, histogram = true)
     public List<PsakSakerTo> hentSakSammendragListe(final String personident) {
+        if(isBlank(personident)) {
+            return new ArrayList<>();
+        }
         WSHentSakSammendragListeRequest request = new WSHentSakSammendragListeRequest();
         request.setPersonident(personident);
 

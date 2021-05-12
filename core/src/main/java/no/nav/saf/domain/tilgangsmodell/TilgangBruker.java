@@ -8,6 +8,7 @@ import lombok.Value;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -33,10 +34,10 @@ public class TilgangBruker {
 		List<String> tmpAlleIdenter = historiskeIdenter.stream()
 				.map(TilgangIdent::getIdentifikator)
 				.collect(Collectors.toList());
-		if(foedselsnr != null) {
+		if (foedselsnr != null) {
 			tmpAlleIdenter.add(foedselsnr);
 		}
-		if(orgnummer != null) {
+		if (orgnummer != null) {
 			tmpAlleIdenter.add(orgnummer);
 		}
 		return tmpAlleIdenter;
@@ -54,20 +55,24 @@ public class TilgangBruker {
 		return !isPerson() && !isOrganisasjon();
 	}
 
-	public List<String> hentAlleFodselsnummer(){
-		if(historiskeIdenter.isEmpty()){
-			return Arrays.asList(foedselsnr);
+	public List<String> hentAlleFodselsnummer() {
+		if (historiskeIdenter.isEmpty() && foedselsnr != null) {
+			return Collections.singletonList(foedselsnr);
+		} else if(historiskeIdenter.isEmpty()) {
+			return new ArrayList<>();
 		}
-		List<String> idents = historiskeIdenter.stream().filter(h -> h.getIdentType().equals(IdentType.FOLKEREGISTERIDENT)).map(h -> h.getIdentifikator()).collect(Collectors.toList());
+		List<String> idents = historiskeIdenter.stream().filter(h -> h.getIdentType().equals(IdentType.FOLKEREGISTERIDENT)).map(TilgangIdent::getIdentifikator).collect(Collectors.toList());
 		idents.add(foedselsnr);
 		return idents;
 	}
 
-	public List<String> hentAlleAktoerId(){
-		if(historiskeIdenter.isEmpty()){
-			return Arrays.asList(aktoerId);
+	public List<String> hentAlleAktoerId() {
+		if (historiskeIdenter.isEmpty() && aktoerId != null) {
+			return Collections.singletonList(aktoerId);
+		} else if(historiskeIdenter.isEmpty()) {
+			return new ArrayList<>();
 		}
-		List<String> idents  = historiskeIdenter.stream().filter(h -> h.getIdentType().equals(IdentType.AKTOERID)).map(h -> h.getIdentifikator()).collect(Collectors.toList());
+		List<String> idents = historiskeIdenter.stream().filter(h -> h.getIdentType().equals(IdentType.AKTOERID)).map(TilgangIdent::getIdentifikator).collect(Collectors.toList());
 		idents.add(aktoerId);
 		return idents;
 	}
