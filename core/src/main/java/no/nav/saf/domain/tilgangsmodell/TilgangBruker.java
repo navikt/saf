@@ -32,6 +32,7 @@ public class TilgangBruker {
 
 	public List<String> getAlleIdenter() {
 		List<String> tmpAlleIdenter = historiskeIdenter.stream()
+				.filter(ident -> ident.getIdentType().equals(IdentType.FOLKEREGISTERIDENT))
 				.map(TilgangIdent::getIdentifikator)
 				.collect(Collectors.toList());
 		if (foedselsnr != null) {
@@ -58,7 +59,7 @@ public class TilgangBruker {
 	public List<String> hentAlleFodselsnummer() {
 		if (historiskeIdenter.isEmpty() && foedselsnr != null) {
 			return Collections.singletonList(foedselsnr);
-		} else if(historiskeIdenter.isEmpty()) {
+		} else if (historiskeIdenter.isEmpty()) {
 			return new ArrayList<>();
 		}
 		List<String> idents = historiskeIdenter.stream().filter(h -> h.getIdentType().equals(IdentType.FOLKEREGISTERIDENT)).map(TilgangIdent::getIdentifikator).collect(Collectors.toList());
@@ -69,7 +70,7 @@ public class TilgangBruker {
 	public List<String> hentAlleAktoerId() {
 		if (historiskeIdenter.isEmpty() && aktoerId != null) {
 			return Collections.singletonList(aktoerId);
-		} else if(historiskeIdenter.isEmpty()) {
+		} else if (historiskeIdenter.isEmpty()) {
 			return new ArrayList<>();
 		}
 		List<String> idents = historiskeIdenter.stream().filter(h -> h.getIdentType().equals(IdentType.AKTOERID)).map(TilgangIdent::getIdentifikator).collect(Collectors.toList());
