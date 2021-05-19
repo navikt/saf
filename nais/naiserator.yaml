@@ -43,6 +43,8 @@ spec:
       value: {{ HENTJOURNALSAKINFO_URL }}
     - name: BIDRAG_SAK_URL
       value: {{ BIDRAG_SAK_URL }}
+    - name: APPD_NAME
+      value: {{ APPD_NAME }}
   image: {{ image }}
   ingresses:
     {{#each INGRESSES}}
@@ -77,4 +79,6 @@ spec:
     paths:
       - kvPath: {{ SRVSAF }}
         mountPath: "/secrets/serviceuser/srvsaf"
+      - kvPath: {{ APPDYNAMICS }}
+        mountPath: /var/run/secrets/nais.io/appdynamics
   webproxy: true
