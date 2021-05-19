@@ -39,6 +39,8 @@
             datoOpprettet
             fagsakId
             fagsaksystem
+            sakstype
+            tema
         }
         bruker {
             id

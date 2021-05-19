@@ -53,6 +53,30 @@ public class PensjonSakAntiCorruptionLayerImpl implements PensjonSakAntiCorrupti
 	}
 
 	@Override
+	public List<Arkivsak> findArkivsaker(final TilgangBruker tilgangBruker) {
+		try {
+			if (tilgangBruker.getFoedselsnr() == null) {
+				return new ArrayList<>();
+			} else {
+				return pensjonSakWsConsumer.hentSakSammendragListe(tilgangBruker.getFoedselsnr()).stream()
+						.map(psak -> Arkivsak.builder()
+								.aktoerId(tilgangBruker.getAktoerId())
+								.arkivsaksnummer(psak.getSakNr())
+								.arkivsaksystem(Arkivsakssystem.PSAK)
+								.fagsakId(psak.getSakNr())
+								.fagsaksystem(PSAK_FAGSYSTEM)
+								.tema(Tema.valueOf(psak.getTema()))
+								.datoOpprettet(psak.getDatoOpprettet())
+								.build())
+						.collect(Collectors.toList());
+			}
+		} catch (Exception e) {
+			log.warn("Klarte ikke hente pensjonssaker for fødselsnummer={}", "*****", e);
+			return new ArrayList<>();
+		}
+	}
+
+	@Override
 	public String findFoedselsnummerBySakId(String sakId) {
 		try {
 			return pensjonSakRestConsumer.hentBrukerForSak(sakId).getFnr();

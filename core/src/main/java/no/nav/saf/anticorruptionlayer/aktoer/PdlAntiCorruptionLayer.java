@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * @author Joakim Bjørnstad, Jbit AS
  */
-public interface AktoerAntiCorruptionLayer {
+public interface PdlAntiCorruptionLayer {
 	TilgangBruker hentTilgangBrukerByAktoerId(String aktoerId);
 	TilgangBruker hentTilgangBrukerByFoedselsnummer(String foedselsnummer);
 	List<TilgangBruker> hentTilgangBrukerListByAktoerIdList(List<String> aktoerIdList);

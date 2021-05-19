@@ -11,9 +11,13 @@ import java.util.Map;
  */
 public interface GsakAntiCorruptionLayer {
 
-	List<Arkivsak> findArkivsakerByAktoerId(String aktoerId, List<Tema> tema);
+	List<Arkivsak> findArkivsakerByAktoerId(List<String> aktoerIder, List<Tema> tema);
 
 	List<Arkivsak> findArkivsakerByOrgnr(String orgnr, List<Tema> tema);
+
+	List<Arkivsak> findArkivsakerByAktoerId(String aktoerId);
+
+	List<Arkivsak> findArkivsakerByOrgnr(String orgnr);
 
 	List<Arkivsak> findTilgangSakListByFagsakIdAndFagsaksystem(String fagsakId, String fagsaksystem, List<Tema> tema);
 

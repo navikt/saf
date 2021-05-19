@@ -2,6 +2,7 @@ package no.nav.saf.endpoints.journalpost;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import no.nav.saf.anticorruptionlayer.joark.domain.kode.Sakstype;
 import no.nav.saf.domain.kode.Arkivsakssystem;
 import no.nav.saf.domain.kode.Datotype;
 import no.nav.saf.domain.kode.Dokumentstatus;
@@ -41,8 +42,8 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 /**
@@ -84,6 +85,8 @@ class JournalpostIT extends AbstractItest {
 		assertThat(journalpost.getSak().getFagsaksystem(), is("K9"));
 		assertThat(journalpost.getSak().getDatoOpprettet(), notNullValue());
 		assertThat(journalpost.getSak().getArkivsaksnummer(), is("100000000"));
+		assertThat(journalpost.getSak().getSakstype(), is(Sakstype.FAGSAK));
+		assertThat(journalpost.getSak().getTema(), is(Tema.FOR));
 		assertThat(journalpost.getBruker().getId(), is("1900000000000"));
 		assertThat(journalpost.getBruker().getType(), is(BrukerIdType.AKTOERID));
 		assertThat(journalpost.getAvsenderMottaker().getId(), is("11111111111"));
@@ -132,6 +135,8 @@ class JournalpostIT extends AbstractItest {
 		assertThat(journalpost.getSak().getArkivsaksnummer(), is("100000000"));
 		assertThat(journalpost.getSak().getFagsakId(), nullValue());
 		assertThat(journalpost.getSak().getFagsaksystem(), is("FS22"));
+		assertThat(journalpost.getSak().getSakstype(), is(Sakstype.GENERELL_SAK));
+		assertThat(journalpost.getSak().getTema(), is(Tema.PEN));
 		assertThat(journalpost.getBruker(), nullValue());
 	}
 

@@ -3,7 +3,7 @@ package no.nav.saf.query.dokumentoversikt.bruker;
 import io.reactivex.Flowable;
 import io.reactivex.schedulers.Schedulers;
 import lombok.extern.slf4j.Slf4j;
-import no.nav.saf.anticorruptionlayer.aktoer.AktoerAntiCorruptionLayer;
+import no.nav.saf.anticorruptionlayer.aktoer.PdlAntiCorruptionLayer;
 import no.nav.saf.anticorruptionlayer.bisys.BisysAntiCorruptionLayer;
 import no.nav.saf.anticorruptionlayer.gsak.GsakAntiCorruptionLayer;
 import no.nav.saf.anticorruptionlayer.pensjonsak.PensjonSakAntiCorruptionLayer;
@@ -34,13 +34,13 @@ import java.util.Set;
 public class DokumentoversiktBrukerTilgangsmodellRepository {
 	private static final Set<Tema> TEMA_PENSJON = EnumSet.of(Tema.PEN, Tema.UFO);
 
-	private final AktoerAntiCorruptionLayer aktoerAntiCorruptionLayer;
+	private final PdlAntiCorruptionLayer aktoerAntiCorruptionLayer;
 	private final GsakAntiCorruptionLayer gsakAntiCorruptionLayer;
 	private final PensjonSakAntiCorruptionLayer pensjonSakAntiCorruptionLayer;
 	private final BisysAntiCorruptionLayer bisysAntiCorruptionLayer;
 
 	@Inject
-	public DokumentoversiktBrukerTilgangsmodellRepository(AktoerAntiCorruptionLayer aktoerAntiCorruptionLayer,
+	public DokumentoversiktBrukerTilgangsmodellRepository(PdlAntiCorruptionLayer aktoerAntiCorruptionLayer,
 														  GsakAntiCorruptionLayer gsakAntiCorruptionLayer,
 														  PensjonSakAntiCorruptionLayer pensjonSakAntiCorruptionLayer,
 														  BisysAntiCorruptionLayer bisysAntiCorruptionLayer) {
@@ -80,7 +80,7 @@ public class DokumentoversiktBrukerTilgangsmodellRepository {
 					gsakAntiCorruptionLayer.findArkivsakerByOrgnr(tilgangBruker.getOrgnummer(), tema))
 					.subscribeOn(Schedulers.io());
 			Flowable<List<Arkivsak>> gsakerFromAktoerId = Flowable.fromCallable(() ->
-					gsakAntiCorruptionLayer.findArkivsakerByAktoerId(tilgangBruker.getAktoerId(), tema))
+					gsakAntiCorruptionLayer.findArkivsakerByAktoerId(tilgangBruker.hentAlleAktoerId(), tema))
 					.subscribeOn(Schedulers.io());
 			Flowable<List<Arkivsak>> psaker = Flowable.fromCallable(() -> {
 				if (!Collections.disjoint(tema, TEMA_PENSJON)) {

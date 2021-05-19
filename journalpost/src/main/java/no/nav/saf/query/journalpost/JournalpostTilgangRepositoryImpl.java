@@ -1,7 +1,7 @@
 package no.nav.saf.query.journalpost;
 
 import lombok.extern.slf4j.Slf4j;
-import no.nav.saf.anticorruptionlayer.aktoer.AktoerAntiCorruptionLayer;
+import no.nav.saf.anticorruptionlayer.aktoer.PdlAntiCorruptionLayer;
 import no.nav.saf.anticorruptionlayer.bisys.BisysAntiCorruptionLayer;
 import no.nav.saf.anticorruptionlayer.pensjonsak.PensjonSakAntiCorruptionLayer;
 import no.nav.saf.domain.Arkivsak;
@@ -30,13 +30,13 @@ public class JournalpostTilgangRepositoryImpl implements JournalpostTilgangRepos
 	private final PensjonSakAntiCorruptionLayer pensjonSakAntiCorruptionLayer;
 	private final JournalpostAntiCorruptionLayer journalpostAntiCorruptionLayer;
 	private final BisysAntiCorruptionLayer bisysAntiCorruptionLayer;
-	private final AktoerAntiCorruptionLayer aktoerAntiCorruptionLayer;
+	private final PdlAntiCorruptionLayer aktoerAntiCorruptionLayer;
 
 	@Inject
 	public JournalpostTilgangRepositoryImpl(PensjonSakAntiCorruptionLayer pensjonSakAntiCorruptionLayer,
 											JournalpostAntiCorruptionLayer journalpostAntiCorruptionLayer,
 											BisysAntiCorruptionLayer bisysAntiCorruptionLayer,
-											AktoerAntiCorruptionLayer aktoerAntiCorruptionLayer) {
+											PdlAntiCorruptionLayer aktoerAntiCorruptionLayer) {
 		this.pensjonSakAntiCorruptionLayer = pensjonSakAntiCorruptionLayer;
 		this.journalpostAntiCorruptionLayer = journalpostAntiCorruptionLayer;
 		this.bisysAntiCorruptionLayer = bisysAntiCorruptionLayer;

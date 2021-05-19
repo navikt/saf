@@ -19,7 +19,7 @@
       "applikasjon": "FS36",
       "aktoerId": null,
       "orgnr": 12345678,
-      "fagsakNr": null,
+      "fagsakNr": "10672720",
       "opprettetAv": "srvfpfordel",
       "opprettetTidspunkt": "2018-09-24T21:05:05.428+02:00"
     },
@@ -28,7 +28,6 @@
       "dokumentinfoId": "123",
       "dokumentstatus": "FERDIGSTILT",
       "brevkode": null,
-      "skjerming": null,
       "variant": {
         "variantFormat": "ARKIV",
         "skjerming": null

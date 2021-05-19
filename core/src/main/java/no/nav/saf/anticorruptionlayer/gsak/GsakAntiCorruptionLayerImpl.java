@@ -33,25 +33,25 @@ class GsakAntiCorruptionLayerImpl implements GsakAntiCorruptionLayer {
 	}
 
 	@Override
-	public List<Arkivsak> findArkivsakerByAktoerId(final String aktoerId, final List<Tema> tema) {
+	public List<Arkivsak> findArkivsakerByAktoerId(final List<String> aktoerIder, final List<Tema> tema) {
 		try {
-			List<GsakSakerTo> gsakSakerToFiltered;
-
-			if (aktoerId == null || tema.isEmpty()) {
+			if(aktoerIder.isEmpty() || tema.isEmpty()){
 				return new ArrayList<>();
-			} else if (tema.size() == 1) {
-				gsakSakerToFiltered = gsakConsumer.hentSakerByAktoerId(aktoerId, tema.get(0));
+			}
+			List<GsakSakerTo> gsakSakerToFiltered = new ArrayList<>();
+			if (tema.size() == 1) {
+				gsakSakerToFiltered.addAll(gsakConsumer.hentSakerByAktoerIder(aktoerIder, tema.get(0)));
 			} else {
-				List<GsakSakerTo> gsakSakerTo = gsakConsumer.hentSakerByAktoerId(aktoerId);
-				gsakSakerToFiltered =
+				List<GsakSakerTo> gsakSakerTo = gsakConsumer.hentSakerByAktoerIder(aktoerIder);
+				gsakSakerToFiltered.addAll(
 						gsakSakerTo.stream()
 								.filter(gsak -> tema.contains(mapTema(gsak.getTema())))
-								.collect(Collectors.toList());
+								.collect(Collectors.toList()));
 			}
 
 			return mapToArkivsak(gsakSakerToFiltered);
 		} catch (Exception e) {
-			log.warn("Klarte ikke hente gsaker for aktoerId={}", aktoerId, e);
+			log.warn("Klarte ikke hente gsaker for aktoerId={}", aktoerIder, e);
 			return new ArrayList<>();
 		}
 	}
@@ -72,8 +72,36 @@ class GsakAntiCorruptionLayerImpl implements GsakAntiCorruptionLayer {
 								.filter(gsak -> tema.contains(mapTema(gsak.getTema())))
 								.collect(Collectors.toList());
 			}
-
 			return mapToArkivsak(gsakSakerToFiltered);
+		} catch (Exception e) {
+			log.warn("Klarte ikke hente gsaker for orgnr={}", orgnr, e);
+			return new ArrayList<>();
+		}
+	}
+
+	@Override
+	public List<Arkivsak> findArkivsakerByAktoerId(String aktoerId) {
+		try {
+			if (aktoerId == null) {
+				return new ArrayList<>();
+			}
+
+			return mapToArkivsak(gsakConsumer.hentSakerByAktoerId(aktoerId));
+		} catch (Exception e) {
+			log.warn("Klarte ikke hente gsaker for aktoerId={}", aktoerId, e);
+			return new ArrayList<>();
+		}
+	}
+
+	@Override
+	public List<Arkivsak> findArkivsakerByOrgnr(String orgnr) {
+		try {
+			if (orgnr == null) {
+				return new ArrayList<>();
+			}
+
+			return mapToArkivsak(gsakConsumer.hentSakerByOrgNr(orgnr));
+
 		} catch (Exception e) {
 			log.warn("Klarte ikke hente gsaker for orgnr={}", orgnr, e);
 			return new ArrayList<>();
@@ -141,12 +169,12 @@ class GsakAntiCorruptionLayerImpl implements GsakAntiCorruptionLayer {
 	}
 
 	private Tema mapTema(String tema) {
-		if(tema == null) {
+		if (tema == null) {
 			return null;
 		}
 
 		// Vennligst se https://jira.adeo.no/browse/MMA-3076 . Tema OKO korrigeres til Tema STO
-		if(FagomradeCode.OKO.name().equals(tema.trim())) {
+		if (FagomradeCode.OKO.name().equals(tema.trim())) {
 			return Tema.STO;
 		}
 		try {

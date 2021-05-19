@@ -18,7 +18,5 @@ public class STSTestConfig extends STSConfig {
 
 	@Override
 	public void configureSTS(Object port) {
-
 	}
-
 }

@@ -10,11 +10,15 @@ import org.apache.cxf.ws.policy.PolicyBuilder;
 import org.apache.cxf.ws.policy.PolicyEngine;
 import org.apache.cxf.ws.policy.attachment.reference.ReferenceResolver;
 import org.apache.cxf.ws.policy.attachment.reference.RemoteReferenceResolver;
-import org.apache.cxf.ws.security.SecurityConstants;
 import org.apache.cxf.ws.security.trust.STSClient;
 import org.apache.neethi.Policy;
 
 import java.util.HashMap;
+
+import static org.apache.cxf.rt.security.SecurityConstants.CACHE_ISSUED_TOKEN_IN_ENDPOINT;
+import static org.apache.cxf.rt.security.SecurityConstants.PASSWORD;
+import static org.apache.cxf.rt.security.SecurityConstants.STS_CLIENT;
+import static org.apache.cxf.rt.security.SecurityConstants.USERNAME;
 
 /**
  * @author Ugur Alpay Cenar, Visma Consulting.
@@ -31,11 +35,11 @@ final class STSConfigUtil {
 		STSClient stsClient = new STSClient(client.getBus());
 		configureSTSClient(stsClient, stsUrl, username, password);
 
-		client.getRequestContext().put(SecurityConstants.STS_CLIENT, stsClient);
+		client.getRequestContext().put(STS_CLIENT, stsClient);
 		//Using CXF cache
-		client.getRequestContext().put(SecurityConstants.CACHE_ISSUED_TOKEN_IN_ENDPOINT, true);
+		client.getRequestContext().put(CACHE_ISSUED_TOKEN_IN_ENDPOINT, true);
 
-		setClientEndpointPolicy(client, resolvePolicyReference(client, STS_REQUEST_SAML_POLICY));
+		setClientEndpointPolicy(client, resolvePolicyReference(client));
 	}
 
 	private static void configureSTSClient(STSClient stsClient, String location, String username, String password) {
@@ -45,8 +49,8 @@ final class STSConfigUtil {
 		stsClient.setLocation(location);
 
 		HashMap<String, Object> properties = new HashMap<>();
-		properties.put(SecurityConstants.USERNAME, username);
-		properties.put(SecurityConstants.PASSWORD, password);
+		properties.put(USERNAME, username);
+		properties.put(PASSWORD, password);
 
 		stsClient.setProperties(properties);
 
@@ -54,10 +58,10 @@ final class STSConfigUtil {
 		stsClient.setPolicy(STS_CLIENT_AUTHENTICATION_POLICY);
 	}
 
-	private static Policy resolvePolicyReference(Client client, String uri) {
+	private static Policy resolvePolicyReference(Client client) {
 		PolicyBuilder policyBuilder = client.getBus().getExtension(PolicyBuilder.class);
 		ReferenceResolver resolver = new RemoteReferenceResolver("", policyBuilder);
-		return resolver.resolveReference(uri);
+		return resolver.resolveReference(STS_REQUEST_SAML_POLICY);
 	}
 
 	private static void setClientEndpointPolicy(Client client, Policy policy) {

@@ -115,5 +115,4 @@ public class TilgangsmodellRepositoryImpl implements TilgangsmodellRepository {
 						.build()).collect(Collectors.toList()))
 				.build();
 	}
-
 }

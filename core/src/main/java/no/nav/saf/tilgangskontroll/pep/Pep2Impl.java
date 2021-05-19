@@ -1,10 +1,10 @@
 package no.nav.saf.tilgangskontroll.pep;
 
-import static no.nav.abac.common.xacml.CommonAttributter.RESOURCE_FELLES_RESOURCE_TYPE;
-import static no.nav.abac.common.xacml.CommonAttributter.RESOURCE_FELLES_TEMA;
-import static no.nav.abac.saf.xacml.SafAttributter.RESOURCE_SAF_PARAGRAF19;
-import static no.nav.abac.saf.xacml.SafAttributter.RESOURCE_SAF_SAK_JP_METADATA;
 import static no.nav.saf.domain.DomainConstants.PEP2;
+import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_RESOURCE_TYPE;
+import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_TEMA;
+import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_SAF_PARAGRAF19;
+import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_SAF_SAK_JP_METADATA;
 
 import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.domain.kode.Tema;
@@ -71,6 +71,6 @@ public class Pep2Impl implements Pep<TilgangSak> {
 	}
 
 	private boolean isForvaltningslovensParagraf19(TilgangSak ressurs) {
-		return ressurs.getParagraf19() == null ? false : ressurs.getParagraf19();
+		return ressurs.getParagraf19() != null && ressurs.getParagraf19();
 	}
 }

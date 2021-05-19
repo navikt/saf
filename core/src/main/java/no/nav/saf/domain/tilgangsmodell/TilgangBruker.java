@@ -7,8 +7,11 @@ import lombok.Setter;
 import lombok.Value;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
@@ -29,12 +32,13 @@ public class TilgangBruker {
 
 	public List<String> getAlleIdenter() {
 		List<String> tmpAlleIdenter = historiskeIdenter.stream()
+				.filter(ident -> ident.getIdentType().equals(IdentType.FOLKEREGISTERIDENT))
 				.map(TilgangIdent::getIdentifikator)
 				.collect(Collectors.toList());
-		if(foedselsnr != null) {
+		if (foedselsnr != null) {
 			tmpAlleIdenter.add(foedselsnr);
 		}
-		if(orgnummer != null) {
+		if (orgnummer != null) {
 			tmpAlleIdenter.add(orgnummer);
 		}
 		return tmpAlleIdenter;
@@ -51,4 +55,16 @@ public class TilgangBruker {
 	public boolean isUkjent() {
 		return !isPerson() && !isOrganisasjon();
 	}
+
+	public List<String> hentAlleAktoerId() {
+		if (historiskeIdenter.isEmpty() && aktoerId != null) {
+			return Collections.singletonList(aktoerId);
+		} else if (historiskeIdenter.isEmpty()) {
+			return new ArrayList<>();
+		}
+		List<String> idents = historiskeIdenter.stream().filter(h -> h.getIdentType().equals(IdentType.AKTOERID)).map(TilgangIdent::getIdentifikator).collect(Collectors.toList());
+		idents.add(aktoerId);
+		return idents;
+	}
+
 }
