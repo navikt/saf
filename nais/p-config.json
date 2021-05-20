@@ -22,5 +22,7 @@
   "BIDRAG_SAK_URL": "https://bidrag-sak.nais.adeo.no/bidrag-sak/pip/sak/",
   "HENTJOURNALSAKINFO_URL": "https://dokarkiv.nais.adeo.no/hentjournalsakinfo",
   "SAF_ENDPOINTS_PDL": "https://pdl-api.nais.adeo.no/graphql",
-  "RESTSECURITYTOKENSERVICE_URL": "https://security-token-service.nais.adeo.no/rest/v1/sts/token"
+  "RESTSECURITYTOKENSERVICE_URL": "https://security-token-service.nais.adeo.no/rest/v1/sts/token",
+  "APPDYNAMICS": "/apikey/appdynamics/prod",
+  "APPD_NAME": "saf"
 }
