@@ -26,6 +26,7 @@ public final class DomainConstants {
 	public static final String PEP5 = "pep5";
 	public static final String PEP6D = "pep6d";
 	public static final String PEP7 = "pep7";
+	public static final String PEP8 = "pep8";
 
 	private DomainConstants() {
 	}

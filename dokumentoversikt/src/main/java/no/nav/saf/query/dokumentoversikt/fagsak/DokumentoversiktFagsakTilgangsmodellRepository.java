@@ -33,6 +33,9 @@ import static no.nav.saf.domain.DomainConstants.ORGNR_LIST;
 @Slf4j
 @Component
 public class DokumentoversiktFagsakTilgangsmodellRepository {
+
+	private static final String FAGSAKSYSTEM_BISYS = "BISYS";
+
 	private final PdlAntiCorruptionLayer aktoerAntiCorruptionLayer;
 	private final GsakAntiCorruptionLayer gsakAntiCorruptionLayer;
 	private final PensjonSakAntiCorruptionLayer pensjonSakAntiCorruptionLayer;
@@ -47,7 +50,6 @@ public class DokumentoversiktFagsakTilgangsmodellRepository {
 		this.pensjonSakAntiCorruptionLayer = pensjonSakAntiCorruptionLayer;
 		this.bisysAntiCorruptionLayer = bisysAntiCorruptionLayer;
 	}
-
 
 	@Cacheable(cacheNames = LokalCacheConfig.TILGANGSMODELL_REPO_BRUKER_CACHE)
 	public List<TilgangBruker> findTilgangBrukerList(FagsakInput fagsakInput) {
@@ -117,7 +119,7 @@ public class DokumentoversiktFagsakTilgangsmodellRepository {
 					.filter(arkivsak -> aktoerIdList.contains(arkivsak.getAktoerId()) || orgnrList.contains(arkivsak.getOrgnummer()))
 					.map(arkivsak -> {
 						safRequestContext.getRequestCache().putObject(arkivsak.getKey(), arkivsak);
-						final BidragSak bidragSak = getBidragSakIfTemaIsBidOrFar(arkivsak);
+						final BidragSak bidragSak = getBidragSakIfTemaIsBid(arkivsak);
 						return TilgangSak.builder()
 								.aktoerId(arkivsak.getAktoerId())
 								.orgnummer(arkivsak.getOrgnummer())
@@ -174,8 +176,8 @@ public class DokumentoversiktFagsakTilgangsmodellRepository {
 		return new ArrayList<>();
 	}
 
-	private BidragSak getBidragSakIfTemaIsBidOrFar(Arkivsak arkivsak) {
-		if (Tema.BID.equals(arkivsak.getTema()) || Tema.FAR.equals(arkivsak.getTema())) {
+	private BidragSak getBidragSakIfTemaIsBid(Arkivsak arkivsak) {
+		if (Tema.BID.equals(arkivsak.getTema()) || FAGSAKSYSTEM_BISYS.equals(arkivsak.getFagsaksystem())) {
 			return bisysAntiCorruptionLayer.hentBidragSak(arkivsak.getFagsakId());
 		} else {
 			return new BidragSak();
