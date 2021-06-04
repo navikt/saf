@@ -1,11 +1,5 @@
 package no.nav.saf.tilgangskontroll.pep;
 
-import static no.nav.saf.domain.DomainConstants.PEP2;
-import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_RESOURCE_TYPE;
-import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_TEMA;
-import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_SAF_PARAGRAF19;
-import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_SAF_SAK_JP_METADATA;
-
 import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.domain.kode.Tema;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
@@ -16,6 +10,12 @@ import no.nav.saf.tilgangskontroll.abac.service.AbacService;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
+
+import static no.nav.saf.domain.DomainConstants.PEP2;
+import static no.nav.saf.domain.kode.Tema.FAR;
+import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_RESOURCE_TYPE;
+import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_TEMA;
+import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_SAF_SAK_JP_METADATA;
 
 /**
  * Dekker følgende policies i saf:
@@ -42,15 +42,10 @@ public class Pep2Impl implements Pep<TilgangSak> {
 			return XacmlResponse.permit();
 		}
 
-		if (hasMetadataAccess(ressurs)) {
+		if (isFarskapSak(ressurs)) {
 			XacmlRequest request = SafXacmlRequestFactory.create(safRequestContext.getSecurityContext());
 			request.resource(RESOURCE_FELLES_RESOURCE_TYPE, RESOURCE_SAF_SAK_JP_METADATA);
-			if (isFarskapSak(ressurs)) {
-				request.resource(RESOURCE_FELLES_TEMA, Tema.FAR.name());
-			}
-			if (isForvaltningslovensParagraf19(ressurs)) {
-				request.resource(RESOURCE_SAF_PARAGRAF19, true);
-			}
+			request.resource(RESOURCE_FELLES_TEMA, FAR.name());
 
 			Pep.traceLogPepStarted(PEP2, ressurs);
 			XacmlResponse response = abacService.evaluate(request);
@@ -62,15 +57,8 @@ public class Pep2Impl implements Pep<TilgangSak> {
 		}
 	}
 
-	private boolean hasMetadataAccess(TilgangSak ressurs) {
-		return isFarskapSak(ressurs) || isForvaltningslovensParagraf19(ressurs);
-	}
-
 	private boolean isFarskapSak(TilgangSak ressurs) {
-		return Tema.FAR.equals(ressurs.getTema());
+		return FAR.equals(ressurs.getTema());
 	}
 
-	private boolean isForvaltningslovensParagraf19(TilgangSak ressurs) {
-		return ressurs.getParagraf19() != null && ressurs.getParagraf19();
-	}
 }

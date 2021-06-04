@@ -43,6 +43,7 @@ import static no.nav.saf.anticorruptionlayer.joark.domain.kode.FagsystemCode.PEN
  */
 @Component
 class TilknyttedeJournalposterTilgangRepository {
+
 	private final HentJournalsakinfo hentJournalsakinfo;
 	private final PensjonSakAntiCorruptionLayer pensjonSakAntiCorruptionLayer;
 	private final PdlAntiCorruptionLayer aktoerAntiCorruptionLayer;
@@ -127,7 +128,7 @@ class TilknyttedeJournalposterTilgangRepository {
 					.aktoerId(arkivsak.getAktoerId())
 					.orgnummer(arkivsak.getAktoerId() == null ? arkivsak.getOrgnummer() : null)
 					.build();
-			if(!tilgangBruker.isPerson()) {
+			if (!tilgangBruker.isPerson()) {
 				return tilgangBruker;
 			} else {
 				return aktoerAntiCorruptionLayer.hentTilgangBrukerByAktoerId(tilgangBruker.getAktoerId());
@@ -170,7 +171,7 @@ class TilknyttedeJournalposterTilgangRepository {
 	}
 
 	private TilgangSak tilgangSakGsak(final Arkivsak arkivsak, final SafRequestContext safRequestContext) {
-		final BidragSak bidragSak = getBidragSakIfTemaIsBidOrFar(arkivsak);
+		final BidragSak bidragSak = bisysAntiCorruptionLayer.hentBidragSakByArkivsak(arkivsak);
 		safRequestContext.getRequestCache().putObject(arkivsak.getKey(), arkivsak);
 		return TilgangSak.builder()
 				.aktoerId(arkivsak.getAktoerId())
@@ -179,7 +180,6 @@ class TilknyttedeJournalposterTilgangRepository {
 				.arkivsaksystem(arkivsak.getArkivsaksystem())
 				.tema(arkivsak.getTema())
 				.relevanteTredjeparter(bidragSak == null ? null : new ArrayList<>(bidragSak.getRelevanteTredjeparter()))
-				.paragraf19(bidragSak == null ? null : bidragSak.isParagraf19())
 				.build();
 	}
 
@@ -196,18 +196,9 @@ class TilknyttedeJournalposterTilgangRepository {
 							.arkivsaksnummer(psakArkivsak.getArkivsaksnummer())
 							.arkivsaksystem(psakArkivsak.getArkivsaksystem())
 							.tema(psakArkivsak.getTema())
-							.paragraf19(false)
 							.relevanteTredjeparter(new ArrayList<>())
 							.build();
 				}).findFirst().orElse(null);
-	}
-
-	private BidragSak getBidragSakIfTemaIsBidOrFar(Arkivsak arkivsak) {
-		if (Tema.BID.equals(arkivsak.getTema()) || Tema.FAR.equals(arkivsak.getTema())) {
-			return bisysAntiCorruptionLayer.hentBidragSak(arkivsak.getFagsakId());
-		} else {
-			return new BidragSak();
-		}
 	}
 
 	List<TilgangJournalpost> tilgangJournalposter(Set<TilgangSak> filteredTilgangSaker, List<JournalpostDto> datagrunnlag) {

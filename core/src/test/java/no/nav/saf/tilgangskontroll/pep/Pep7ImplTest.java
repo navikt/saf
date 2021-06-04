@@ -1,5 +1,6 @@
 package no.nav.saf.tilgangskontroll.pep;
 
+import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlAttribute;
 import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlRequest;
 import no.nav.saf.tilgangskontroll.abac.dto.response.Decision;
@@ -11,6 +12,8 @@ import org.mockito.InjectMocks;
 import java.util.ArrayList;
 import java.util.List;
 
+import static no.nav.saf.domain.DomainConstants.FAGSAKSYSTEM_FORELDREPENGELOSNING;
+import static no.nav.saf.domain.kode.Tema.FOR;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_PERSON_AKTOERID_RESOURCE;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_RESOURCE_TYPE;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_SAF_TREDJEPART;
@@ -33,7 +36,7 @@ class Pep7ImplTest extends AbstractPepTest {
 		when(abacService.evaluate(any(XacmlRequest.class))).thenReturn(new XacmlResponse(Decision.PERMIT, null, null, null));
 		ArgumentCaptor<XacmlRequest> request = ArgumentCaptor.forClass(XacmlRequest.class);
 
-		boolean hasAccess = pep7.hasAccess(createAktoerIdList(), createSafRequestContext());
+		boolean hasAccess = pep7.hasAccess(createTilgangSakWithAktoerIdList(), createSafRequestContext());
 
 		verify(abacService).evaluate(request.capture());
 		XacmlRequest capturedRequest = request.getValue();
@@ -47,7 +50,7 @@ class Pep7ImplTest extends AbstractPepTest {
 
 	@Test
 	void shouldPermitWhenNoAktoerId() {
-		boolean hasAccess = pep7.hasAccess(new ArrayList<>(), createSafRequestContext());
+		boolean hasAccess = pep7.hasAccess(TilgangSak.builder().build(), createSafRequestContext());
 		verify(abacService, never()).evaluate(any());
 		assertTrue(hasAccess);
 	}
@@ -55,15 +58,15 @@ class Pep7ImplTest extends AbstractPepTest {
 	@Test
 	void shouldDenyWhenAbacDenies() {
 		when(abacService.evaluate(any(XacmlRequest.class))).thenReturn(new XacmlResponse(Decision.DENY, null, null, null));
-		boolean hasAccess = pep7.hasAccess(createAktoerIdList(), createSafRequestContext());
+		boolean hasAccess = pep7.hasAccess(createTilgangSakWithAktoerIdList(), createSafRequestContext());
 		verify(abacService).evaluate(any());
 		assertFalse(hasAccess);
 	}
 
-	private List<String> createAktoerIdList() {
+	private TilgangSak createTilgangSakWithAktoerIdList() {
 		List<String> aktoerIdList = new ArrayList<>();
 		aktoerIdList.add(FNR);
 		aktoerIdList.add(FNR2);
-		return aktoerIdList;
+		return TilgangSak.builder().fagsaksystem(FAGSAKSYSTEM_FORELDREPENGELOSNING).tema(FOR).fpAktoerIdList(aktoerIdList).build();
 	}
 }

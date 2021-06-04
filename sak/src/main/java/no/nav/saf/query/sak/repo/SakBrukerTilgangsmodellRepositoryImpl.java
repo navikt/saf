@@ -10,7 +10,6 @@ import no.nav.saf.anticorruptionlayer.pensjonsak.PensjonSakAntiCorruptionLayer;
 import no.nav.saf.cache.LokalCacheConfig;
 import no.nav.saf.domain.Arkivsak;
 import no.nav.saf.domain.BidragSak;
-import no.nav.saf.domain.kode.Tema;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
@@ -77,12 +76,12 @@ public class SakBrukerTilgangsmodellRepositoryImpl implements SakBrukerTilgangsm
 					.subscribeOn(Schedulers.io());
 			Flowable<List<Arkivsak>> psaker = Flowable.fromCallable(() ->
 					pensjonSakAntiCorruptionLayer.findArkivsaker(tilgangBruker))
-			.subscribeOn(Schedulers.io());
+					.subscribeOn(Schedulers.io());
 
 			return Flowable.merge(Arrays.asList(gsakerFromOrgnr, gsakerFromAktoerId, psaker), 3)
 					.flatMapIterable(items -> items)
 					.map(arkivsak -> {
-						final BidragSak bidragSak = getBidragSakIfTemaIsBidOrFar(arkivsak);
+						final BidragSak bidragSak = bisysAntiCorruptionLayer.hentBidragSakByArkivsak(arkivsak);
 						safRequestContext.getRequestCache().putObject(arkivsak.getKey(), arkivsak);
 						return TilgangSak.builder()
 								.aktoerId(arkivsak.getAktoerId())
@@ -90,23 +89,12 @@ public class SakBrukerTilgangsmodellRepositoryImpl implements SakBrukerTilgangsm
 								.tema(arkivsak.getTema())
 								.arkivsaksnummer(arkivsak.getArkivsaksnummer())
 								.arkivsaksystem(arkivsak.getArkivsaksystem())
+								.fagsaksystem(arkivsak.getFagsaksystem())
 								.relevanteTredjeparter(bidragSak == null ? null : new ArrayList<>(bidragSak.getRelevanteTredjeparter()))
-								.paragraf19(bidragSak == null ? null : bidragSak.isParagraf19())
 								.build();
 					});
 		} catch (Exception e) {
 			return Flowable.empty();
 		}
 	}
-
-	private BidragSak getBidragSakIfTemaIsBidOrFar(Arkivsak arkivsak) {
-		if (Tema.BID.equals(arkivsak.getTema()) || Tema.FAR.equals(arkivsak.getTema())) {
-			return bisysAntiCorruptionLayer.hentBidragSak(arkivsak.getFagsakId());
-		} else {
-			return new BidragSak();
-		}
-	}
-
-
-
 }

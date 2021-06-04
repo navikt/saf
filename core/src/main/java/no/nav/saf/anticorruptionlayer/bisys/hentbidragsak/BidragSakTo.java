@@ -9,6 +9,5 @@ import java.util.ArrayList;
 @Builder
 public class BidragSakTo {
 	private final String saksnummer;
-	private final boolean erParagraf19;
 	private final ArrayList<String> roller;
 }

@@ -18,7 +18,5 @@ import java.util.List;
 @NoArgsConstructor
 public class BidragSak {
 	@Builder.Default
-	private final boolean paragraf19 = false;
-	@Builder.Default
 	private final List<TilgangRelevantTredjepart> relevanteTredjeparter = new ArrayList<>();
 }

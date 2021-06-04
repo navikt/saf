@@ -1,18 +1,5 @@
 package no.nav.saf.tilgangskontroll.pep;
 
-import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_PERSON_FNR;
-import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_RESOURCE_TYPE;
-import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_SAF_TREDJEPART;
-import static org.hamcrest.CoreMatchers.hasItem;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import no.nav.saf.domain.kode.Tema;
 import no.nav.saf.domain.tilgangsmodell.TilgangIdent;
 import no.nav.saf.domain.tilgangsmodell.TilgangRelevantTredjepart;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
@@ -27,32 +14,27 @@ import org.mockito.InjectMocks;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import static no.nav.saf.domain.DomainConstants.FAGSAKSYSTEM_BISYS;
+import static no.nav.saf.domain.kode.Tema.PEN;
+import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_PERSON_FNR;
+import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_RESOURCE_TYPE;
+import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_SAF_TREDJEPART;
+import static org.hamcrest.CoreMatchers.hasItem;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 /**
  * @author Sigurd Midttun, Visma Consulting.
  */
 class Pep3ImplTest extends AbstractPepTest {
-	
+
 	@InjectMocks
 	private Pep3Impl pep3;
-
-	@Test
-	void shouldPermitWhenTemaIsFarAndRelevanteTredjeparterSupplied() {
-		when(abacService.evaluate(any(XacmlRequest.class))).thenReturn(new XacmlResponse(Decision.PERMIT, null, null, null));
-		ArgumentCaptor<XacmlRequest> request = ArgumentCaptor.forClass(XacmlRequest.class);
-
-		boolean hasAccess = pep3.hasAccess(createTilgangSakBuilderWithTemaBidAndRelevanteTredjeparter().tema(Tema.FAR)
-						.build(),
-				createSafRequestContext());
-
-		verify(abacService).evaluate(request.capture());
-		XacmlRequest capturedRequest = request.getValue();
-
-		assertTrue(hasAccess);
-
-		assertThat(capturedRequest.getResources(), hasItem(new XacmlAttribute(RESOURCE_FELLES_RESOURCE_TYPE, RESOURCE_SAF_TREDJEPART)));
-		assertThat(capturedRequest.getResources(), hasItem(new XacmlAttribute(RESOURCE_FELLES_PERSON_FNR, FNR)));
-		assertThat(capturedRequest.getResources(), hasItem(new XacmlAttribute(RESOURCE_FELLES_PERSON_FNR, FNR2)));
-	}
 
 	@Test
 	void shouldPermitWhenTemaIsBidAndRelevanteTredjeparterSupplied() {
@@ -72,11 +54,16 @@ class Pep3ImplTest extends AbstractPepTest {
 		assertThat(capturedRequest.getResources(), hasItem(new XacmlAttribute(RESOURCE_FELLES_PERSON_FNR, FNR2)));
 	}
 
+	@Test
+	void shouldPermitWhenNoResource() {
+		boolean hasAccess = pep3.hasAccess(TilgangSak.builder().build(), createSafRequestContext());
+		verify(abacService, never()).evaluate(any());
+		assertTrue(hasAccess);
+	}
 
 	@Test
-	void shouldPermitWhenTemaIsNotFarOrBidAndRelevanteTredjeparterSupplied() {
-
-		boolean hasAccess = pep3.hasAccess(createTilgangSakBuilderWithTemaBidAndRelevanteTredjeparter().tema(Tema.PEN)
+	void shouldPermitWhenTemaIsNotBidAndRelevanteTredjeparterSupplied() {
+		boolean hasAccess = pep3.hasAccess(createTilgangSakBuilderWithTemaBidAndRelevanteTredjeparter().tema(PEN)
 						.build(),
 				createSafRequestContext());
 
@@ -85,10 +72,9 @@ class Pep3ImplTest extends AbstractPepTest {
 	}
 
 	@Test
-	void shouldPermitWhenTemaIsNotFarOrBidAndRelevanteTredjeparterIsNull() {
-
+	void shouldPermitWhenTemaIsNotBidAndRelevanteTredjeparterIsNull() {
 		boolean hasAccess = pep3.hasAccess(TilgangSak.builder()
-						.tema(Tema.PEN)
+						.tema(PEN)
 						.relevanteTredjeparter(null)
 						.build(),
 				createSafRequestContext());
@@ -98,8 +84,7 @@ class Pep3ImplTest extends AbstractPepTest {
 	}
 
 	@Test
-	void shouldPermitWhenTemaIsBidOrFarButRelevanteTredjeparterIsNotSupplied() {
-
+	void shouldPermitWhenTemaIsBidButRelevanteTredjeparterIsNotSupplied() {
 		boolean hasAccess = pep3.hasAccess(createTilgangSakBuilderWithTemaBidAndRelevanteTredjeparter().relevanteTredjeparter(new ArrayList<>())
 						.build(),
 				createSafRequestContext());
@@ -119,6 +104,7 @@ class Pep3ImplTest extends AbstractPepTest {
 
 	private TilgangSak.TilgangSakBuilder createTilgangSakBuilderWithTemaBidAndRelevanteTredjeparter() {
 		return TilgangSak.builder()
+				.fagsaksystem(FAGSAKSYSTEM_BISYS)
 				.tema(TEMA_BID)
 				.relevanteTredjeparter(Arrays.asList(new TilgangRelevantTredjepart(TilgangIdent.builder()
 								.identifikator(FNR)

@@ -4,12 +4,10 @@ import io.reactivex.Flowable;
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 import no.nav.saf.domain.TilgangsmodellRepository;
-import no.nav.saf.domain.kode.Journalstatus;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.domain.tilgangsmodell.TilgangDokumentInfo;
 import no.nav.saf.domain.tilgangsmodell.TilgangDokumentvariant;
 import no.nav.saf.domain.tilgangsmodell.TilgangJournalpost;
-import no.nav.saf.domain.tilgangsmodell.TilgangRelevantTredjepart;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 import no.nav.saf.domain.visningsmodell.Dokumentoversikt;
 import no.nav.saf.domain.visningsmodell.Journalpost;
@@ -36,7 +34,7 @@ import static no.nav.saf.domain.DomainConstants.PEP3;
 import static no.nav.saf.domain.DomainConstants.PEP4;
 import static no.nav.saf.domain.DomainConstants.PEP5;
 import static no.nav.saf.domain.DomainConstants.PEP6D;
-import static no.nav.saf.domain.DomainConstants.PEP8;
+import static no.nav.saf.domain.kode.Journalstatus.FEILREGISTRERT;
 import static no.nav.saf.util.MDCUtility.addMdcData;
 
 /**
@@ -56,7 +54,6 @@ class DokumentoversiktFagsakCoordinatorImpl implements DokumentoversiktFagsakCoo
 	private final Pep<TilgangJournalpost> pep4;
 	private final Pep<TilgangDokumentInfo> pep5;
 	private final Pep<TilgangDokumentvariant> pep6d;
-	private final Pep<List<TilgangRelevantTredjepart>> pep8;
 
 	@Inject
 	public DokumentoversiktFagsakCoordinatorImpl(DokumentoversiktFagsakTilgangsmodellRepository dokumentoversiktFagsakTilgangsmodellRepository,
@@ -68,8 +65,7 @@ class DokumentoversiktFagsakCoordinatorImpl implements DokumentoversiktFagsakCoo
 												 @Named(PEP3) Pep<TilgangSak> pep3,
 												 @Named(PEP4) Pep<TilgangJournalpost> pep4,
 												 @Named(PEP5) Pep<TilgangDokumentInfo> pep5,
-												 @Named(PEP6D) Pep<TilgangDokumentvariant> pep6d,
-												 @Named(PEP8) Pep<List<TilgangRelevantTredjepart>> pep8) {
+												 @Named(PEP6D) Pep<TilgangDokumentvariant> pep6d) {
 		this.dokumentoversiktFagsakTilgangsmodellRepository = dokumentoversiktFagsakTilgangsmodellRepository;
 		this.tilgangsmodellRepository = tilgangsmodellRepository;
 		this.visningsmodellRepository = visningsmodellRepository;
@@ -80,7 +76,6 @@ class DokumentoversiktFagsakCoordinatorImpl implements DokumentoversiktFagsakCoo
 		this.pep4 = pep4;
 		this.pep5 = pep5;
 		this.pep6d = pep6d;
-		this.pep8 = pep8;
 	}
 
 	@Override
@@ -109,7 +104,6 @@ class DokumentoversiktFagsakCoordinatorImpl implements DokumentoversiktFagsakCoo
 				.filter(ts -> pep2.hasAccess(ts, safRequestContext))
 				.doOnNext(ts -> pep2d.hasAccess(ts, safRequestContext))
 				.filter(ts -> pep3.hasAccess(ts, safRequestContext))
-				.filter(ts -> pep8.hasAccess(ts.getRelevanteTredjeparter(), safRequestContext))
 				.sequential()
 				.toList()
 				.blockingGet();
@@ -166,7 +160,7 @@ class DokumentoversiktFagsakCoordinatorImpl implements DokumentoversiktFagsakCoo
 	}
 
 	private boolean filterFeilregistrerte(DokumentoversiktFagsakArguments dokumentoversiktFagsakArguments, Journalpost j) {
-		if (Journalstatus.FEILREGISTRERT.equals(j.getJournalstatus())) {
+		if (FEILREGISTRERT.equals(j.getJournalstatus())) {
 			return dokumentoversiktFagsakArguments.getFilters().isVisFeilregistrerte();
 		} else {
 			return true;

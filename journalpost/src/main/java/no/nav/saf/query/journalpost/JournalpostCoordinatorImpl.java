@@ -3,7 +3,6 @@ package no.nav.saf.query.journalpost;
 import no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoMapper;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.dto.JournalpostDto;
 import no.nav.saf.domain.Arkivsak;
-import no.nav.saf.domain.kode.Journalstatus;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.domain.tilgangsmodell.TilgangDokumentInfo;
 import no.nav.saf.domain.tilgangsmodell.TilgangDokumentvariant;
@@ -26,6 +25,7 @@ import static no.nav.saf.domain.DomainConstants.PEP5;
 import static no.nav.saf.domain.DomainConstants.PEP6D;
 import static no.nav.saf.domain.DomainConstants.RJOARK902_JOURNALPOST_DTO;
 import static no.nav.saf.domain.DomainConstants.TILGANG_BRUKER;
+import static no.nav.saf.domain.kode.Journalstatus.MOTTATT;
 import static no.nav.saf.tilgangskontroll.pep.DenyReasons.PEP1G_DENY_REASON;
 import static no.nav.saf.tilgangskontroll.pep.DenyReasons.PEP2_DENY_REASON;
 import static no.nav.saf.tilgangskontroll.pep.DenyReasons.PEP3_DENY_REASON;
@@ -89,7 +89,7 @@ public class JournalpostCoordinatorImpl implements JournalpostCoordinator {
 		}
 
 		final TilgangJournalpost tilgangJournalpost = journalpostTilgangRepository.findTilgangJournalpostFromSafRequestContext(safRequestContext, tilgangSak);
-		if (tilgangJournalpost.getJournalstatus() != Journalstatus.MOTTATT) {
+		if (tilgangJournalpost.getJournalstatus() != MOTTATT) {
 			pep2d.hasAccess(tilgangSak, safRequestContext);
 		}
 

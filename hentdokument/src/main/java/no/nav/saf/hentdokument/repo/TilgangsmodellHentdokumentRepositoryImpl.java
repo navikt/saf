@@ -27,9 +27,6 @@ import java.util.List;
 @Repository
 public class TilgangsmodellHentdokumentRepositoryImpl implements TilgangsmodellHentdokumentRepository {
 
-	private static final String FAGSAKSYSTEM_BISYS = "BISYS";
-	private static final String FAGSYSTEM_FORELDREPENGELOSNING = "FS36";
-
 	private final PensjonSakAntiCorruptionLayer pensjonSakAntiCorruptionLayer;
 	private final HentDokumentAntiCorruptionLayer hentDokumentAntiCorruptionLayer;
 	private final BisysAntiCorruptionLayer bisysAntiCorruptionLayer;
@@ -125,8 +122,8 @@ public class TilgangsmodellHentdokumentRepositoryImpl implements TilgangsmodellH
 				return null;
 			}
 			if (Arkivsakssystem.GSAK == arkivsak.getArkivsaksystem()) {
-				BidragSak bidragSak = getBidragSakIfTemaIsBid(arkivsak);
-				List<String> fpsak = getRelevanteParterIfTemaIsFOR(arkivsak);
+				BidragSak bidragSak = bisysAntiCorruptionLayer.hentBidragSakByArkivsak(arkivsak);
+				List<String> fpsak = fpsakAntiCorruptionLayer.hentRelevanteParter(arkivsak);
 				return TilgangSak.builder()
 						.aktoerId(arkivsak.getAktoerId())
 						.arkivsaksnummer(arkivsak.getArkivsaksnummer())
@@ -134,7 +131,6 @@ public class TilgangsmodellHentdokumentRepositoryImpl implements TilgangsmodellH
 						.tema(arkivsak.getTema())
 						.orgnummer(arkivsak.getOrgnummer())
 						.relevanteTredjeparter(bidragSak == null ? null : new ArrayList<>(bidragSak.getRelevanteTredjeparter()))
-						.paragraf19(bidragSak != null && bidragSak.isParagraf19())
 						.fagsaksystem(arkivsak.getFagsaksystem())
 						.fpAktoerIdList(fpsak)
 						.build();
@@ -149,7 +145,6 @@ public class TilgangsmodellHentdokumentRepositoryImpl implements TilgangsmodellH
 								.tema(psakArkivsak.getTema())
 								.orgnummer(psakArkivsak.getOrgnummer())
 								.relevanteTredjeparter(new ArrayList<>())
-								.paragraf19(false)
 								.fagsaksystem(psakArkivsak.getFagsaksystem())
 								.build();
 					}
@@ -164,21 +159,4 @@ public class TilgangsmodellHentdokumentRepositoryImpl implements TilgangsmodellH
 			return null;
 		}
 	}
-
-	private BidragSak getBidragSakIfTemaIsBid(Arkivsak arkivsak) {
-		if (Tema.BID.equals(arkivsak.getTema()) && FAGSAKSYSTEM_BISYS.equals(arkivsak.getFagsaksystem())) {
-			return bisysAntiCorruptionLayer.hentBidragSak(arkivsak.getFagsakId());
-		} else {
-			return new BidragSak();
-		}
-	}
-
-	private List<String> getRelevanteParterIfTemaIsFOR(Arkivsak arkivsak) {
-		if (Tema.FOR.equals(arkivsak.getTema()) && FAGSYSTEM_FORELDREPENGELOSNING.equals(arkivsak.getFagsaksystem())) {
-			return fpsakAntiCorruptionLayer.hentRelevanteParter(arkivsak.getFagsakId());
-		} else {
-			return new ArrayList<>();
-		}
-	}
-
 }

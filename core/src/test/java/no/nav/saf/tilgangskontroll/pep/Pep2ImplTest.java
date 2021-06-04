@@ -38,7 +38,6 @@ class Pep2ImplTest extends AbstractPepTest {
 
 		boolean hasAccess = pep2.hasAccess(TilgangSak.builder()
 				.tema(Tema.FAR)
-				.paragraf19(true)
 				.build(), createSafRequestContext());
 
 		verify(abacService).evaluate(request.capture());
@@ -48,7 +47,6 @@ class Pep2ImplTest extends AbstractPepTest {
 
 		assertThat(capturedRequest.getResources(), hasItem(new XacmlAttribute(RESOURCE_FELLES_RESOURCE_TYPE, RESOURCE_SAF_SAK_JP_METADATA)));
 		assertThat(capturedRequest.getResources(), hasItem(new XacmlAttribute(RESOURCE_FELLES_TEMA, Tema.FAR.name())));
-		assertThat(capturedRequest.getResources(), hasItem(new XacmlAttribute(RESOURCE_SAF_PARAGRAF19, true)));
 	}
 
 	@Test
@@ -57,7 +55,6 @@ class Pep2ImplTest extends AbstractPepTest {
 
 		boolean hasAccess = pep2.hasAccess(TilgangSak.builder()
 				.tema(Tema.FAR)
-				.paragraf19(null)
 				.build(), createSafRequestContext());
 
 		assertFalse(hasAccess);
@@ -69,7 +66,6 @@ class Pep2ImplTest extends AbstractPepTest {
 
 		boolean hasAccess = pep2.hasAccess(TilgangSak.builder()
 				.tema(Tema.FAR)
-				.paragraf19(false)
 				.build(), createSafRequestContext());
 
 		assertFalse(hasAccess);

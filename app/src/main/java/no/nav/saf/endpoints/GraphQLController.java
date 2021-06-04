@@ -44,9 +44,9 @@ import static no.nav.saf.headers.SafHeaders.X_CORRELATION_ID;
 @Slf4j
 public class GraphQLController extends AbstractSafController {
 	private final GraphQLSchema graphQLSchema;
-	private GraphQLExceptionHandler graphQLExceptionHandler;
+	private final GraphQLExceptionHandler graphQLExceptionHandler;
 	private final Set<String> azureIssuers;
-	private TokenValidationContextHolder tokenValidationContextHolder;
+	private final TokenValidationContextHolder tokenValidationContextHolder;
 	private final AudienceCounter audienceCounter;
 
 	@Inject

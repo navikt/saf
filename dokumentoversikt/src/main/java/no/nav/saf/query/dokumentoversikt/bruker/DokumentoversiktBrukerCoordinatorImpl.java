@@ -185,7 +185,6 @@ class DokumentoversiktBrukerCoordinatorImpl implements DokumentoversiktBrukerCoo
 
 		return TilgangSak.builder()
 				.tema(FagomradeCode.toSafTema(journalpostDto.getFagomrade()))
-				.paragraf19(false)
 				.relevanteTredjeparter(new ArrayList<>())
 				.build();
 	}

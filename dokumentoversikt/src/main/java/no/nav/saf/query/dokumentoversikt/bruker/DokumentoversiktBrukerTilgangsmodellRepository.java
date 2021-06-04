@@ -33,7 +33,6 @@ import java.util.Set;
 @Component
 public class DokumentoversiktBrukerTilgangsmodellRepository {
 	private static final Set<Tema> TEMA_PENSJON = EnumSet.of(Tema.PEN, Tema.UFO);
-	private static final String FAGSAKSYSTEM_BISYS = "BISYS";
 
 	private final PdlAntiCorruptionLayer aktoerAntiCorruptionLayer;
 	private final GsakAntiCorruptionLayer gsakAntiCorruptionLayer;
@@ -93,7 +92,7 @@ public class DokumentoversiktBrukerTilgangsmodellRepository {
 			return Flowable.merge(Arrays.asList(gsakerFromOrgnr, gsakerFromAktoerId, psaker), 3)
 					.flatMapIterable(items -> items)
 					.map(arkivsak -> {
-						final BidragSak bidragSak = getBidragSakIfTemaIsBid(arkivsak);
+						final BidragSak bidragSak = bisysAntiCorruptionLayer.hentBidragSakByArkivsak(arkivsak);
 						safRequestContext.getRequestCache().putObject(arkivsak.getKey(), arkivsak);
 						return TilgangSak.builder()
 								.aktoerId(arkivsak.getAktoerId())
@@ -101,20 +100,12 @@ public class DokumentoversiktBrukerTilgangsmodellRepository {
 								.tema(arkivsak.getTema())
 								.arkivsaksnummer(arkivsak.getArkivsaksnummer())
 								.arkivsaksystem(arkivsak.getArkivsaksystem())
+								.fagsaksystem(arkivsak.getFagsaksystem())
 								.relevanteTredjeparter(bidragSak == null ? null : new ArrayList<>(bidragSak.getRelevanteTredjeparter()))
-								.paragraf19(bidragSak == null ? null : bidragSak.isParagraf19())
 								.build();
 					});
 		} catch (Exception e) {
 			return Flowable.empty();
-		}
-	}
-
-	private BidragSak getBidragSakIfTemaIsBid(Arkivsak arkivsak) {
-		if (Tema.BID.equals(arkivsak.getTema()) || FAGSAKSYSTEM_BISYS.equals(arkivsak.getFagsaksystem())) {
-			return bisysAntiCorruptionLayer.hentBidragSak(arkivsak.getFagsakId());
-		} else {
-			return new BidragSak();
 		}
 	}
 }

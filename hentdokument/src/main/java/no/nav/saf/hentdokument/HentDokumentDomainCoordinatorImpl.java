@@ -3,12 +3,10 @@ package no.nav.saf.hentdokument;
 import no.nav.saf.domain.Arkivsak;
 import no.nav.saf.domain.HentDokument;
 import no.nav.saf.domain.kode.Journalstatus;
-import no.nav.saf.domain.kode.Tema;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.domain.tilgangsmodell.TilgangDokumentInfo;
 import no.nav.saf.domain.tilgangsmodell.TilgangDokumentvariant;
 import no.nav.saf.domain.tilgangsmodell.TilgangJournalpost;
-import no.nav.saf.domain.tilgangsmodell.TilgangRelevantTredjepart;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 import no.nav.saf.exceptions.HentdokumentTilgangskontrollException;
 import no.nav.saf.exceptions.JournalpostIkkeFunnetException;
@@ -21,7 +19,6 @@ import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-import java.util.List;
 
 import static no.nav.saf.domain.DomainConstants.PEP1G;
 import static no.nav.saf.domain.DomainConstants.PEP2;
@@ -31,7 +28,6 @@ import static no.nav.saf.domain.DomainConstants.PEP4;
 import static no.nav.saf.domain.DomainConstants.PEP5;
 import static no.nav.saf.domain.DomainConstants.PEP6D;
 import static no.nav.saf.domain.DomainConstants.PEP7;
-import static no.nav.saf.domain.DomainConstants.PEP8;
 import static no.nav.saf.tilgangskontroll.pep.DenyReasons.PEP1G_DENY_REASON;
 import static no.nav.saf.tilgangskontroll.pep.DenyReasons.PEP2D_DENY_REASON;
 import static no.nav.saf.tilgangskontroll.pep.DenyReasons.PEP2_DENY_REASON;
@@ -40,7 +36,6 @@ import static no.nav.saf.tilgangskontroll.pep.DenyReasons.PEP4_DENY_REASON;
 import static no.nav.saf.tilgangskontroll.pep.DenyReasons.PEP5_DENY_REASON;
 import static no.nav.saf.tilgangskontroll.pep.DenyReasons.PEP6D_DENY_REASON;
 import static no.nav.saf.tilgangskontroll.pep.DenyReasons.PEP7_DENY_REASON;
-import static no.nav.saf.tilgangskontroll.pep.DenyReasons.PEP8_DENY_REASON;
 
 /**
  * @author Sigurd Midttun, Visma Consulting.
@@ -48,9 +43,6 @@ import static no.nav.saf.tilgangskontroll.pep.DenyReasons.PEP8_DENY_REASON;
 
 @Component
 public class HentDokumentDomainCoordinatorImpl implements HentDokumentDomainCoordinator {
-
-	private static final String FAGSAKSYSTEM_FORELDREPENGELOSNING = "FS36";
-	private static final String FAGSAKSYSTEM_BISYS = "BISYS";
 
 	private final DokumentRepository dokumentRepository;
 	private final TilgangsmodellHentdokumentRepository tilgangsmodellHentdokumentRepository;
@@ -61,8 +53,7 @@ public class HentDokumentDomainCoordinatorImpl implements HentDokumentDomainCoor
 	private final Pep<TilgangJournalpost> pep4;
 	private final Pep<TilgangDokumentInfo> pep5;
 	private final Pep<TilgangDokumentvariant> pep6d;
-	private final Pep<List<String>> pep7;
-	private final Pep<List<TilgangRelevantTredjepart>> pep8;
+	private final Pep<TilgangSak> pep7;
 	private final HentDokumentSporbarhetslogger hentDokumentSporbarhetslogger;
 
 	@Inject
@@ -75,8 +66,7 @@ public class HentDokumentDomainCoordinatorImpl implements HentDokumentDomainCoor
 											 @Named(PEP4) Pep<TilgangJournalpost> pep4,
 											 @Named(PEP5) Pep<TilgangDokumentInfo> pep5,
 											 @Named(PEP6D) Pep<TilgangDokumentvariant> pep6d,
-											 @Named(PEP7) Pep<List<String>> pep7,
-											 @Named(PEP8) Pep<List<TilgangRelevantTredjepart>> pep8) {
+											 @Named(PEP7) Pep<TilgangSak> pep7) {
 		this.dokumentRepository = dokumentRepository;
 		this.tilgangsmodellHentdokumentRepository = tilgangsmodellHentdokumentRepository;
 		this.pep1g = pep1g;
@@ -87,7 +77,6 @@ public class HentDokumentDomainCoordinatorImpl implements HentDokumentDomainCoor
 		this.pep5 = pep5;
 		this.pep6d = pep6d;
 		this.pep7 = pep7;
-		this.pep8 = pep8;
 		this.hentDokumentSporbarhetslogger = new HentDokumentSporbarhetslogger();
 	}
 
@@ -118,11 +107,6 @@ public class HentDokumentDomainCoordinatorImpl implements HentDokumentDomainCoor
 			throw new HentdokumentTilgangskontrollException(PEP2_DENY_REASON, pep2Response);
 		}
 
-		XacmlResponse pep3Response = pep3.verifyAccessXacmlResponse(tilgangSak, safRequestContext);
-		if (pep3Response.isDeny()) {
-			throw new HentdokumentTilgangskontrollException(PEP3_DENY_REASON, pep3Response);
-		}
-
 		final TilgangJournalpost tilgangJournalpost = tilgangsmodellHentdokumentRepository.findTilgangJournalpostFromSafRequestContext(safRequestContext);
 		if (tilgangJournalpost == null) {
 			throw new JournalpostIkkeFunnetException("Dokumentet tilnyttet journalpostId=" + journalpostId + ", dokumentInfoId=" + dokumentInfoId + ", variant=" + variantFormat + " ikke funnet.");
@@ -132,6 +116,11 @@ public class HentDokumentDomainCoordinatorImpl implements HentDokumentDomainCoor
 			if (pep2dResponse.isDeny()) {
 				throw new HentdokumentTilgangskontrollException(PEP2D_DENY_REASON, pep2dResponse);
 			}
+		}
+
+		XacmlResponse pep3Response = pep3.verifyAccessXacmlResponse(tilgangSak, safRequestContext);
+		if (pep3Response.isDeny()) {
+			throw new HentdokumentTilgangskontrollException(PEP3_DENY_REASON, pep3Response);
 		}
 
 		XacmlResponse pep4Response = pep4.verifyAccessXacmlResponse(tilgangJournalpost, safRequestContext);
@@ -151,18 +140,9 @@ public class HentDokumentDomainCoordinatorImpl implements HentDokumentDomainCoor
 			throw new HentdokumentTilgangskontrollException(PEP6D_DENY_REASON, pep6dResponse);
 		}
 
-		if (tilgangSak != null) {
-			if (Tema.FOR.equals(tilgangSak.getTema()) && FAGSAKSYSTEM_FORELDREPENGELOSNING.equals(tilgangSak.getFagsaksystem())) {
-				XacmlResponse pep7Response = pep7.verifyAccessXacmlResponse(tilgangSak.getFpAktoerIdList(), safRequestContext);
-				if (pep7Response.isDeny()) {
-					throw new HentdokumentTilgangskontrollException(PEP7_DENY_REASON, pep7Response);
-				}
-			} else if (Tema.BID.equals(tilgangSak.getTema()) && FAGSAKSYSTEM_BISYS.equals(tilgangSak.getFagsaksystem())) {
-				XacmlResponse pep8Response = pep8.verifyAccessXacmlResponse(tilgangSak.getRelevanteTredjeparter(), safRequestContext);
-				if (pep8Response.isDeny()) {
-					throw new HentdokumentTilgangskontrollException(PEP8_DENY_REASON, pep8Response);
-				}
-			}
+		XacmlResponse pep7Response = pep7.verifyAccessXacmlResponse(tilgangSak, safRequestContext);
+		if (pep7Response.isDeny()) {
+			throw new HentdokumentTilgangskontrollException(PEP7_DENY_REASON, pep7Response);
 		}
 	}
 }

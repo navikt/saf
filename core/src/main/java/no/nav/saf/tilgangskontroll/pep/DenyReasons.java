@@ -21,8 +21,6 @@ public final class DenyReasons {
 			"Saksbehandler eller system har ikke tilgang til ressurs som er skjermet, begrenset eller logisk kassert.";
 	public static final String PEP7_DENY_REASON = DENY_PREFIX +
 			"Saksbehandler eller system har ikke tilgang til ressurs relevante parter på sak har kode 6/7.";
-	public static final String PEP8_DENY_REASON = DENY_PREFIX +
-			"Saksbehandler eller system har ikke tilgang til ressurs tilgangRelevanteTredjeparter på sak har kode 6/7.";
 
 	private DenyReasons() {
 		// noop
