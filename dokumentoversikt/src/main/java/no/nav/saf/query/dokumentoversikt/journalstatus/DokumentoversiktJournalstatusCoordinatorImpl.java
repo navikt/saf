@@ -128,8 +128,7 @@ class DokumentoversiktJournalstatusCoordinatorImpl implements DokumentoversiktJo
 	private boolean filterFeilregistrerte(DokumentoversiktJournalstatusArguments dokumentoversiktJournalstatusArguments, Journalpost j) {
 		if (FEILREGISTRERT == j.getJournalstatus()) {
 			return dokumentoversiktJournalstatusArguments.getFilters().isVisFeilregistrerte();
-		} else {
-			return true;
 		}
+		return true;
 	}
 }

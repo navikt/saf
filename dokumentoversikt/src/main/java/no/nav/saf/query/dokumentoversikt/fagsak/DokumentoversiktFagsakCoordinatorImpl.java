@@ -162,8 +162,7 @@ class DokumentoversiktFagsakCoordinatorImpl implements DokumentoversiktFagsakCoo
 	private boolean filterFeilregistrerte(DokumentoversiktFagsakArguments dokumentoversiktFagsakArguments, Journalpost j) {
 		if (FEILREGISTRERT.equals(j.getJournalstatus())) {
 			return dokumentoversiktFagsakArguments.getFilters().isVisFeilregistrerte();
-		} else {
-			return true;
 		}
+		return true;
 	}
 }

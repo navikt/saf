@@ -166,9 +166,8 @@ class DokumentoversiktBrukerCoordinatorImpl implements DokumentoversiktBrukerCoo
 	private boolean filterFeilregistrerte(DokumentoversiktBrukerArguments dokumentoversiktBrukerArguments, Journalpost j) {
 		if (Journalstatus.FEILREGISTRERT == j.getJournalstatus()) {
 			return dokumentoversiktBrukerArguments.getFilters().isVisFeilregistrerte();
-		} else {
-			return true;
 		}
+		return true;
 	}
 
 	private boolean pep2CheckMidlertidigAccess(TilgangJournalpost tj, SafRequestContext safRequestContext) {

@@ -67,6 +67,10 @@ class Pep7ImplTest extends AbstractPepTest {
 		List<String> aktoerIdList = new ArrayList<>();
 		aktoerIdList.add(FNR);
 		aktoerIdList.add(FNR2);
-		return TilgangSak.builder().fagsaksystem(FAGSAKSYSTEM_FORELDREPENGELOSNING).tema(FOR).fpAktoerIdList(aktoerIdList).build();
+		return TilgangSak.builder()
+				.fagsaksystem(FAGSAKSYSTEM_FORELDREPENGELOSNING)
+				.tema(FOR)
+				.fpAktoerIdList(aktoerIdList)
+				.build();
 	}
 }

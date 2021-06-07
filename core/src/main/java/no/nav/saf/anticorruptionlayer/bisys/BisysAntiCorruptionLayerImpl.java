@@ -33,9 +33,8 @@ class BisysAntiCorruptionLayerImpl implements BisysAntiCorruptionLayer {
 	public BidragSak hentBidragSakByArkivsak(Arkivsak arkivsak) {
 		if (BID.equals(arkivsak.getTema()) || FAGSAKSYSTEM_BISYS.equals(arkivsak.getFagsaksystem())) {
 			return hentBidragSak(arkivsak.getFagsakId());
-		} else {
-			return new BidragSak();
 		}
+		return new BidragSak();
 	}
 
 	public BidragSak hentBidragSak(String sakId) {

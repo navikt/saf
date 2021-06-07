@@ -33,8 +33,7 @@ public class FpsakAntiCorruptionLayerImpl implements FpsakAntiCorruptionLayer {
 				log.warn("Kunne ikke hente relevante parter fra fpsak for sakId={}", arkivsak.getFagsakId(), e);
 				return Collections.emptyList();
 			}
-		} else {
-			return new ArrayList<>();
 		}
+		return new ArrayList<>();
 	}
 }
