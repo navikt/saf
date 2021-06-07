@@ -618,7 +618,7 @@ public abstract class AbstractItest {
 	}
 
 	protected void verifyabacDenyPep2AndHttpStatusCode(boolean isDokumentoversikt, HttpStatus expectedHttpStatus, HttpStatus actualHttpStatus) {
-		if (isDokumentoversik) {
+		if (isDokumentoversikt) {
 			verify(2, postRequestedFor(urlEqualTo("/abac")));
 		} else {
 			verify(1, postRequestedFor(urlEqualTo("/abac")));
