@@ -39,12 +39,13 @@ public class Pep3Impl implements Pep<TilgangSak> {
 	@Override
 	public XacmlResponse verifyAccessXacmlResponse(TilgangSak ressurs, SafRequestContext safRequestContext) {
 
-		if (ressurs == null || ressurs.getRelevanteTredjeparter() == null || ressurs.getRelevanteTredjeparter().isEmpty()) {
-			log.info("Pep3 har ingen relevante parter. Tilgang gis.");
-			return XacmlResponse.permit();
-		}
+		if (ressurs != null && BID.equals(ressurs.getTema()) && FAGSAKSYSTEM_BISYS.equals(ressurs.getFagsaksystem())) {
 
-		if (BID.equals(ressurs.getTema()) && FAGSAKSYSTEM_BISYS.equals(ressurs.getFagsaksystem())) {
+			if (ressurs.getRelevanteTredjeparter() == null || ressurs.getRelevanteTredjeparter().isEmpty()) {
+				log.info("Pep3 har ingen relevante parter. Tilgang gis.");
+				return XacmlResponse.permit();
+			}
+
 			List<TilgangRelevantTredjepart> relevantTredjeparter = ressurs.getRelevanteTredjeparter();
 
 			XacmlRequest request = SafXacmlRequestFactory.create(safRequestContext.getSecurityContext());

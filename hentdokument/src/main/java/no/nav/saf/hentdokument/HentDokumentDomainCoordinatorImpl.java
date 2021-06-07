@@ -107,6 +107,11 @@ public class HentDokumentDomainCoordinatorImpl implements HentDokumentDomainCoor
 			throw new HentdokumentTilgangskontrollException(PEP2_DENY_REASON, pep2Response);
 		}
 
+		XacmlResponse pep3Response = pep3.verifyAccessXacmlResponse(tilgangSak, safRequestContext);
+		if (pep3Response.isDeny()) {
+			throw new HentdokumentTilgangskontrollException(PEP3_DENY_REASON, pep3Response);
+		}
+
 		final TilgangJournalpost tilgangJournalpost = tilgangsmodellHentdokumentRepository.findTilgangJournalpostFromSafRequestContext(safRequestContext);
 		if (tilgangJournalpost == null) {
 			throw new JournalpostIkkeFunnetException("Dokumentet tilnyttet journalpostId=" + journalpostId + ", dokumentInfoId=" + dokumentInfoId + ", variant=" + variantFormat + " ikke funnet.");
@@ -116,11 +121,6 @@ public class HentDokumentDomainCoordinatorImpl implements HentDokumentDomainCoor
 			if (pep2dResponse.isDeny()) {
 				throw new HentdokumentTilgangskontrollException(PEP2D_DENY_REASON, pep2dResponse);
 			}
-		}
-
-		XacmlResponse pep3Response = pep3.verifyAccessXacmlResponse(tilgangSak, safRequestContext);
-		if (pep3Response.isDeny()) {
-			throw new HentdokumentTilgangskontrollException(PEP3_DENY_REASON, pep3Response);
 		}
 
 		XacmlResponse pep4Response = pep4.verifyAccessXacmlResponse(tilgangJournalpost, safRequestContext);

@@ -38,12 +38,12 @@ public class Pep7Impl implements Pep<TilgangSak> {
 	@Override
 	public XacmlResponse verifyAccessXacmlResponse(TilgangSak ressurs, SafRequestContext safRequestContext) {
 
-		if (ressurs == null || ressurs.getFpAktoerIdList() == null || ressurs.getFpAktoerIdList().isEmpty()) {
-			log.info("Pep7 har ingen relevante parter. Tilgang gis.");
-			return XacmlResponse.permit();
-		}
+		if (ressurs != null && FOR.equals(ressurs.getTema()) && FAGSAKSYSTEM_FORELDREPENGELOSNING.equals(ressurs.getFagsaksystem())) {
 
-		if (FOR.equals(ressurs.getTema()) && FAGSAKSYSTEM_FORELDREPENGELOSNING.equals(ressurs.getFagsaksystem())) {
+			if (ressurs.getFpAktoerIdList() == null || ressurs.getFpAktoerIdList().isEmpty()) {
+				log.info("Pep7 har ingen relevante parter. Tilgang gis.");
+				return XacmlResponse.permit();
+			}
 
 			List<String> fpAktoerIdList = ressurs.getFpAktoerIdList();
 
