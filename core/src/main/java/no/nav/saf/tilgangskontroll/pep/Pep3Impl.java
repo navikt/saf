@@ -50,9 +50,7 @@ public class Pep3Impl implements Pep<TilgangSak> {
 			XacmlRequest request = SafXacmlRequestFactory.create(safRequestContext.getSecurityContext());
 
 			request.resource(RESOURCE_FELLES_RESOURCE_TYPE, RESOURCE_SAF_TREDJEPART);
-			relevantTredjeparter.forEach(tilgangRelevantTredjepart -> {
-				request.resource(RESOURCE_FELLES_PERSON_FNR, tilgangRelevantTredjepart.getIdent().getIdentifikator());
-			});
+			relevantTredjeparter.forEach(tilgangRelevantTredjepart -> request.resource(RESOURCE_FELLES_PERSON_FNR, tilgangRelevantTredjepart.getIdent().getIdentifikator()));
 
 			Pep.traceLogPepStarted(PEP3, ressurs);
 			XacmlResponse response = abacService.evaluate(request);

@@ -13,6 +13,9 @@ import java.util.List;
 @Slf4j
 public class TilgangsbrukerMapper {
 
+	private TilgangsbrukerMapper() {
+	}
+
 	private static final EnumSet<PdlResponse.PdlGruppe> GYLDIGE_IDENTGRUPPER = EnumSet.of(PdlResponse.PdlGruppe.AKTORID, PdlResponse.PdlGruppe.FOLKEREGISTERIDENT);
 
 	public static TilgangBruker map(List<PdlResponse.PdlIdent> responseTo) {
