@@ -158,7 +158,7 @@ class SakIT extends AbstractItest {
 		ResponseEntity<LinkedHashMap> responseEntity = callSakerWithAktoerId();
 		List<Sak> saker = parseSaker(responseEntity);
 		assertThat(saker.size(), is(0));
-		verifyabacDenyPep2AndHttpStatusCode(OK, responseEntity.getStatusCode());
+		verifyabacDenyPep2AndHttpStatusCode(false, OK, responseEntity.getStatusCode());
 	}
 
 	@Test

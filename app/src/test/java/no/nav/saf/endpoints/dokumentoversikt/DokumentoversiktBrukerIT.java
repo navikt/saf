@@ -190,7 +190,6 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
 						.withBodyFile("joark/finnjournalposter-happy.json")));
 
-
 		Map<String, Object> variables = new HashMap<>();
 		variables.put("fnr", "11111111111");
 		variables.put("fraDato", "2020-06-23");
@@ -504,13 +503,13 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter"))
 				.withRequestBody(containing("{\"gsakSakIds\":[\"135695442\"],\"psakSakIds\":[],\"fraDato\":\"0001-01-01\",\"tilDato\":null,\"inkluderJournalStatus\":[\"FL\",\"FS\",\"J\",\"E\"],\"inkluderJournalpostType\":[\"I\",\"U\",\"N\"],\"visFeilregistrerte\":false,\"alleIdenter\":[\"11111111111\"],\"foerste\":3,\"etterPeker\":null}")));
 		verifyEmptyJournalpostListeAndNullSideInfo(dokumentoversikt);
-		verifyabacDenyPep2AndHttpStatusCodeHentDokument(OK, responseEntity.getStatusCode());
+		verifyabacDenyPep2AndHttpStatusCode(true, OK, responseEntity.getStatusCode());
 	}
-/*
+
 	@Test
 
 	void shouldGetUnauthorizedFromPep2d() throws IOException, URISyntaxException {
-		abacDenyPep2d();
+		abacDenyPep2dSkipPep2();
 		stubFor(post("/reststs")
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
@@ -525,7 +524,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 		stubFor(get("/gsak?aktoerId=" + AKTOER_ID)
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
-						.withBodyFile("gsak/gsak-sakerBySaksId-happy.json")));
+						.withBodyFile("gsak/gsak-sakerBySaksId_bid-happy.json")));
 		stubFor(post("/hentjournalsakinfo/finnjournalposter")
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
@@ -546,7 +545,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 				.withRequestBody(containing("{\"gsakSakIds\":[\"135695442\"],\"psakSakIds\":[],\"fraDato\":\"0001-01-01\",\"tilDato\":null,\"inkluderJournalStatus\":[\"FL\",\"FS\",\"J\",\"E\"],\"inkluderJournalpostType\":[\"I\",\"U\",\"N\"],\"visFeilregistrerte\":false,\"alleIdenter\":[\"11111111111\"],\"foerste\":3,\"etterPeker\":null}")));
 		verifyabacDenyPep2dAndHttpStatusCode(true, OK, responseEntity.getStatusCode());
 	}
-*/
+
 	@Test
 	void shouldGetUnauthorizedFromPep3() throws IOException, URISyntaxException {
 		abacDenyPep3();

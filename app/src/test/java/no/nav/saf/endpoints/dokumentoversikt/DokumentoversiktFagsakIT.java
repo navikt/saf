@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import no.nav.saf.domain.visningsmodell.Dokumentoversikt;
 import no.nav.saf.endpoints.AbstractItest;
 import no.nav.saf.endpoints.GraphQLRequest;
-import org.apache.http.entity.ContentType;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.RequestEntity;
@@ -27,6 +26,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static org.apache.http.HttpHeaders.CONTENT_TYPE;
+import static org.apache.http.entity.ContentType.APPLICATION_JSON;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -133,7 +133,7 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 
 		stubFor(post("/hentjournalsakinfo/finnjournalposter")
 				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType())
+						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
 						.withBodyFile("joark/finnjournalposter_single_sladdet-happy.json")));
 
 		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikFagsakGsak();
@@ -337,7 +337,7 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter"))
 				.withRequestBody(containing("{\"gsakSakIds\":[],\"psakSakIds\":[],\"fraDato\":\"0001-01-01\",\"tilDato\":null,\"inkluderJournalStatus\":[\"FL\",\"FS\",\"J\",\"E\"],\"inkluderJournalpostType\":[\"I\",\"U\",\"N\"],\"visFeilregistrerte\":false,\"alleIdenter\":[],\"foerste\":5,\"etterPeker\":null}")));
 		verifyEmptyJournalpostListeAndNullSideInfo(dokumentoversikt);
-		verifyabacDenyPep2AndHttpStatusCodeHentDokument(OK, responseEntity.getStatusCode());
+		verifyabacDenyPep2AndHttpStatusCode(true, OK, responseEntity.getStatusCode());
 	}
 
 	@Test

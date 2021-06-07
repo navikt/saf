@@ -413,7 +413,7 @@ class HentDokumentIT extends AbstractItest {
 
 		ResponseEntity<String> responseEntity = callHentDokument();
 
-		verifyabacDenyPep2AndHttpStatusCodeHentDokument(FORBIDDEN, responseEntity.getStatusCode());
+		verifyabacDenyPep2AndHttpStatusCode(true, FORBIDDEN, responseEntity.getStatusCode());
 	}
 
 	@Test

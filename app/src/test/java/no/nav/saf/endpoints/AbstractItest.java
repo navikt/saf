@@ -617,13 +617,12 @@ public abstract class AbstractItest {
 		assertEquals(expectedHttpStatus, actualHttpStatus);
 	}
 
-	protected void verifyabacDenyPep2AndHttpStatusCode(HttpStatus expectedHttpStatus, HttpStatus actualHttpStatus) {
-		verify(1, postRequestedFor(urlEqualTo("/abac")));
-		assertEquals(expectedHttpStatus, actualHttpStatus);
-	}
-
-	protected void verifyabacDenyPep2AndHttpStatusCodeHentDokument(HttpStatus expectedHttpStatus, HttpStatus actualHttpStatus) {
-		verify(2, postRequestedFor(urlEqualTo("/abac")));
+	protected void verifyabacDenyPep2AndHttpStatusCode(boolean isDokumentoversik, HttpStatus expectedHttpStatus, HttpStatus actualHttpStatus) {
+		if (isDokumentoversik) {
+			verify(2, postRequestedFor(urlEqualTo("/abac")));
+		} else {
+			verify(1, postRequestedFor(urlEqualTo("/abac")));
+		}
 		assertEquals(expectedHttpStatus, actualHttpStatus);
 	}
 
