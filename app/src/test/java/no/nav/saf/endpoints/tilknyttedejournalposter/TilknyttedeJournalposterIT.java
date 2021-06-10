@@ -151,10 +151,6 @@ class TilknyttedeJournalposterIT extends AbstractItest {
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("hentjournalsakinfo/tilknyttedejournalposter_far-happy.json")));
-		stubFor(get("/bidrag/" + BIDRAG_SAK_ID)
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("bidrag/bidragsak-happy.json")));
 		stubFor(post("/reststs")
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
@@ -185,21 +181,21 @@ class TilknyttedeJournalposterIT extends AbstractItest {
 						.withBodyFile("pdl/hentPdlDataForIdent-happy.json")));
 
 		List<Journalpost> tilknyttedeJournalposter = parseJournalpost(tilknyttedeJournalposterGjenbrukQuery());
-		DokumentInfo dokumentInfo1 = tilknyttedeJournalposter.get(0).getDokumenter().get(0);
-		assertFalse(dokumentInfo1.getDokumentvarianter().get(0).isSaksbehandlerHarTilgang());
+		DokumentInfo dokumentInfo = tilknyttedeJournalposter.get(0).getDokumenter().get(0);
+		assertFalse(dokumentInfo.getDokumentvarianter().get(0).isSaksbehandlerHarTilgang());
 	}
 
 	@Test
 	void shouldReturnNoJournalpostsWhenDenyOnPep3() throws Exception {
-		abacDenyPep3();
+		abacDenyPep3SkipPep2();
 		stubFor(get("/hentjournalsakinfo/tilknyttedejournalposter/" + DOKUMENT_INFO_ID + "/GJENBRUK")
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("hentjournalsakinfo/tilknyttedejournalposter_far-happy.json")));
+						.withBodyFile("hentjournalsakinfo/tilknyttedejournalposter_bid-happy.json")));
 		stubFor(get("/gsak/" + GSAK_ID)
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("gsak/gsak-sakBySaksId_far-happy.json")));
+						.withBodyFile("gsak/gsak-sakBySaksId-happy.json")));
 		stubFor(get("/bidrag/" + BIDRAG_SAK_ID)
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
@@ -252,6 +248,7 @@ class TilknyttedeJournalposterIT extends AbstractItest {
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("pdl/hentPdlDataForIdent-happy.json")));
+
 		List<Journalpost> tilknyttedeJournalposter = parseJournalpost(tilknyttedeJournalposterGjenbrukQuery());
 		assertThat(tilknyttedeJournalposter.get(0).getDokumenter(), hasSize(1));
 	}
@@ -277,8 +274,8 @@ class TilknyttedeJournalposterIT extends AbstractItest {
 						.withBodyFile("pdl/hentPdlDataForIdent-happy.json")));
 
 		List<Journalpost> tilknyttedeJournalposter = parseJournalpost(tilknyttedeJournalposterGjenbrukQuery());
-		DokumentInfo dokumentInfo1 = tilknyttedeJournalposter.get(0).getDokumenter().get(0);
-		assertFalse(dokumentInfo1.getDokumentvarianter().get(0).isSaksbehandlerHarTilgang());
+		DokumentInfo dokumentInfo = tilknyttedeJournalposter.get(0).getDokumenter().get(0);
+		assertFalse(dokumentInfo.getDokumentvarianter().get(0).isSaksbehandlerHarTilgang());
 	}
 
 	private ResponseEntity<LinkedHashMap> tilknyttedeJournalposterGjenbrukQuery() throws IOException, URISyntaxException {

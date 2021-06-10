@@ -65,7 +65,6 @@ class JournalpostIT extends AbstractItest {
 	@Test
 	void shouldQueryJournalpostByJournalpostIdWhenAllAccessPermit() throws Exception {
 		abacPermit();
-
 		stubFor(get("/hentjournalsakinfo/hentjournalpost/" + JOURNALPOST_ID)
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
@@ -126,7 +125,6 @@ class JournalpostIT extends AbstractItest {
 	@Test
 	void shouldQueryJournalpostWhenSakNotFound() throws Exception {
 		abacPermit();
-
 		stubFor(get("/hentjournalsakinfo/hentjournalpost/" + JOURNALPOST_ID)
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
@@ -145,7 +143,6 @@ class JournalpostIT extends AbstractItest {
 	@Test
 	void shouldQueryJournalpostAndFallbackToUkjentTemaWhenNoSakOrJournalpostTemaFound() throws Exception {
 		abacPermit();
-
 		stubFor(get("/hentjournalsakinfo/hentjournalpost/" + JOURNALPOST_ID)
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
@@ -157,8 +154,7 @@ class JournalpostIT extends AbstractItest {
 
 	@Test
 	void shouldQueryJournalpostByJournalpostIdWhenAllExceptPep1AccessPermitWithSakOrgnr() throws Exception {
-		abacPermitExceptPep1();
-
+		abacPermit();
 		stubFor(get("/hentjournalsakinfo/hentjournalpost/" + JOURNALPOST_ID)
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
@@ -209,13 +205,13 @@ class JournalpostIT extends AbstractItest {
 						.withBodyFile("gsak/gsak-sakBySaksId_not_bid-happy.json")));
 
 		Journalpost journalpost = parseJournalpost(journalpostQuery());
-		DokumentInfo dokumentInfo1 = journalpost.getDokumenter().get(0);
-		assertFalse(dokumentInfo1.getDokumentvarianter().get(0).isSaksbehandlerHarTilgang());
+		DokumentInfo dokumentInfo = journalpost.getDokumenter().get(0);
+		assertFalse(dokumentInfo.getDokumentvarianter().get(0).isSaksbehandlerHarTilgang());
 	}
 
 	@Test
 	void shouldReturnNullJournalpostWhenDenyOnPep3() throws Exception {
-		abacDenyPep3();
+		abacDenyPep3SkipPep2();
 		stubFor(get("/hentjournalsakinfo/hentjournalpost/" + JOURNALPOST_ID)
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)

@@ -37,6 +37,8 @@ import java.util.stream.Stream;
 
 import static no.nav.saf.anticorruptionlayer.joark.domain.kode.FagsystemCode.FS22;
 import static no.nav.saf.anticorruptionlayer.joark.domain.kode.FagsystemCode.PEN;
+import static no.nav.saf.domain.kode.Arkivsakssystem.GSAK;
+import static no.nav.saf.domain.kode.Arkivsakssystem.PSAK;
 
 /**
  * @author Joakim Bjørnstad, Jbit AS
@@ -112,9 +114,9 @@ class TilknyttedeJournalposterTilgangRepository {
 
 	private Arkivsakssystem mapJoarkFagsystemToArkivsakssystem(FagsystemCode joarkFagsystem) {
 		if (FS22 == joarkFagsystem) {
-			return Arkivsakssystem.GSAK;
+			return GSAK;
 		} else if (PEN == joarkFagsystem) {
-			return Arkivsakssystem.PSAK;
+			return PSAK;
 		} else {
 			return null;
 		}
@@ -122,7 +124,7 @@ class TilknyttedeJournalposterTilgangRepository {
 
 	private TilgangBruker sakstilknyttetTilgangBruker(Arkivsak arkivsak) {
 		// For å finne den ekte brukeren på saken så må vi slå opp andre steder
-		if (arkivsak.getArkivsaksystem() == Arkivsakssystem.GSAK) {
+		if (arkivsak.getArkivsaksystem() == GSAK) {
 			// GSAK
 			TilgangBruker tilgangBruker = TilgangBruker.builder()
 					.aktoerId(arkivsak.getAktoerId())
@@ -133,7 +135,7 @@ class TilknyttedeJournalposterTilgangRepository {
 			} else {
 				return aktoerAntiCorruptionLayer.hentTilgangBrukerByAktoerId(tilgangBruker.getAktoerId());
 			}
-		} else if (arkivsak.getArkivsaksystem() == Arkivsakssystem.PSAK) {
+		} else if (arkivsak.getArkivsaksystem() == PSAK) {
 			// PSAK
 			String foedselsnummer = pensjonSakAntiCorruptionLayer.findFoedselsnummerBySakId(arkivsak.getArkivsaksnummer());
 			return aktoerAntiCorruptionLayer.hentTilgangBrukerByFoedselsnummer(foedselsnummer);
@@ -158,9 +160,9 @@ class TilknyttedeJournalposterTilgangRepository {
 								 final SafRequestContext safRequestContext) {
 		return arkivsaker.stream()
 				.map(arkivsak -> {
-					if (arkivsak.getArkivsaksystem() == Arkivsakssystem.GSAK) {
+					if (arkivsak.getArkivsaksystem() == GSAK) {
 						return tilgangSakGsak(arkivsak, safRequestContext);
-					} else if (arkivsak.getArkivsaksystem() == Arkivsakssystem.PSAK) {
+					} else if (arkivsak.getArkivsaksystem() == PSAK) {
 						return tilgangSakPsak(arkivsak, safRequestContext);
 					} else {
 						return null;
@@ -178,6 +180,7 @@ class TilknyttedeJournalposterTilgangRepository {
 				.orgnummer(arkivsak.getOrgnummer())
 				.arkivsaksnummer(arkivsak.getArkivsaksnummer())
 				.arkivsaksystem(arkivsak.getArkivsaksystem())
+				.fagsaksystem(arkivsak.getFagsaksystem())
 				.tema(arkivsak.getTema())
 				.relevanteTredjeparter(bidragSak == null ? null : new ArrayList<>(bidragSak.getRelevanteTredjeparter()))
 				.build();
@@ -195,6 +198,7 @@ class TilknyttedeJournalposterTilgangRepository {
 							.aktoerId(psakArkivsak.getAktoerId())
 							.arkivsaksnummer(psakArkivsak.getArkivsaksnummer())
 							.arkivsaksystem(psakArkivsak.getArkivsaksystem())
+							.fagsaksystem(psakArkivsak.getFagsaksystem())
 							.tema(psakArkivsak.getTema())
 							.relevanteTredjeparter(new ArrayList<>())
 							.build();

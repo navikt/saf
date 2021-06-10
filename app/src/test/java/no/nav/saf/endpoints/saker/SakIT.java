@@ -26,7 +26,6 @@ import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME;
 import static no.nav.saf.anticorruptionlayer.joark.domain.kode.Sakstype.FAGSAK;
-import static no.nav.saf.anticorruptionlayer.joark.domain.kode.Sakstype.GENERELL_SAK;
 import static no.nav.saf.domain.kode.Arkivsakssystem.GSAK;
 import static no.nav.saf.domain.kode.Arkivsakssystem.PSAK;
 import static no.nav.saf.domain.kode.Tema.BID;
@@ -121,7 +120,6 @@ class SakIT extends AbstractItest {
 	@Test
 	void shouldReturnNoSakerWhenDenyOnPep1g() throws Exception {
 		abacDenyPep1g();
-
 		stubFor(post("/reststs")
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
@@ -129,7 +127,7 @@ class SakIT extends AbstractItest {
 		stubFor(post("/pdl")
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("pdl/hhentPdlDataForIdent-happy.json")));
+						.withBodyFile("pdl/hentPdlDataForIdent-happy.json")));
 		ResponseEntity<LinkedHashMap> responseEntity = callSakerWithAktoerId();
 		List<Sak> saker = parseSaker(responseEntity);
 
@@ -150,7 +148,7 @@ class SakIT extends AbstractItest {
 		stubFor(get("/gsak?aktoerId=" + AKTOER_ID)
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
-						.withBodyFile("gsak/gsak-sakerBySaksId_far-happy.json")));
+						.withBodyFile("gsak/gsak-sakerByFagsakIdAndFagsaksystem-FAR-happy.json")));
 		stubFor(post("/pensjonsakv1")
 				.willReturn(aResponse().withStatus(OK.value())
 						.withBodyFile("psak/psak-hentSakSammendragListe-happy-empty.xml")));
@@ -158,12 +156,12 @@ class SakIT extends AbstractItest {
 		ResponseEntity<LinkedHashMap> responseEntity = callSakerWithAktoerId();
 		List<Sak> saker = parseSaker(responseEntity);
 		assertThat(saker.size(), is(0));
-		verifyabacDenyPep2AndHttpStatusCode(false, OK, responseEntity.getStatusCode());
+		verifyabacDenyPep2AndHttpStatusCode(OK, responseEntity.getStatusCode());
 	}
 
 	@Test
 	void shouldReturnNoSakerWhenDenyOnPep3() throws Exception {
-		abacDenyPep3Withoutpep2d();
+		abacDenyPep3SkipPep2dAndPep2();
 		stubFor(post("/reststs")
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
@@ -175,7 +173,7 @@ class SakIT extends AbstractItest {
 		stubFor(get("/gsak?aktoerId=" + AKTOER_ID)
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
-						.withBodyFile("gsak/gsak-sakerBySaksId_bid-happy.json")));
+						.withBodyFile("gsak/gsak-sakerBySaksId-happy.json")));
 		stubFor(post("/pensjonsakv1")
 				.willReturn(aResponse().withStatus(OK.value())
 						.withBodyFile("psak/psak/psak-hentSakSammendragListe-happy-empty.xml")));
@@ -186,18 +184,17 @@ class SakIT extends AbstractItest {
 		ResponseEntity<LinkedHashMap> responseEntity = callSakerWithAktoerId();
 		List<Sak> saker = parseSaker(responseEntity);
 		assertThat(saker, hasSize(0));
-		verifyabacDenyPep3NoPep2dAndHttpStatusCode(OK, responseEntity.getStatusCode());
+		verifyabacDenyPep3SkipPep2AndPep2dAndHttpStatusCode(OK, responseEntity.getStatusCode());
 	}
 
 	private void assertGsak(Sak gsak) {
 		assertThat(gsak.getArkivsaksnummer(), is("135695442"));
 		assertThat(gsak.getArkivsaksystem(), is(GSAK));
 		assertThat(gsak.getDatoOpprettet(), is(LocalDateTime.parse("2018-07-17T11:49:01", ISO_LOCAL_DATE_TIME)));
-		assertThat(gsak.getFagsaksystem(), is("FS22"));
+		assertThat(gsak.getFagsaksystem(), is("BISYS"));
 		assertThat(gsak.getFagsakId(), is("654321"));
-		assertThat(gsak.getSakstype(), is(GENERELL_SAK));
+		assertThat(gsak.getSakstype(), is(FAGSAK));
 		assertThat(gsak.getTema(), is(BID));
-
 	}
 
 	private void assertPsak(Sak psak) {
@@ -210,13 +207,11 @@ class SakIT extends AbstractItest {
 		assertThat(psak.getTema(), is(UFO));
 	}
 
-
 	private ResponseEntity<LinkedHashMap> callSakerWithAktoerId() throws IOException, URISyntaxException {
 		GraphQLRequest request = new GraphQLRequest(stringFromClasspath("saker/saker_aktoerid.query"), null, null);
 		RequestEntity<GraphQLRequest> requestEntity = new RequestEntity<>(request, createHeaders(), HttpMethod.POST, new URI("/graphql"));
 		return restTemplate.exchange(requestEntity, LinkedHashMap.class);
 	}
-
 
 	private List<Sak> parseSaker(ResponseEntity<LinkedHashMap> responseEntity) {
 		Map<String, Object> responseEntityData = (Map<String, Object>) responseEntity.getBody().get("data");

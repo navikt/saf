@@ -7,11 +7,9 @@ import lombok.Setter;
 import lombok.Value;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
@@ -66,5 +64,4 @@ public class TilgangBruker {
 		idents.add(aktoerId);
 		return idents;
 	}
-
 }
