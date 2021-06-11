@@ -20,11 +20,13 @@ public class SideInfoMapper {
 		String sluttJournalpostId = sluttJournalpostId(journalposter);
 		return new SideInfo(
 				base64(sluttJournalpostId),
-				finnesNesteSide(pagination.getFoerste(), journalposter, sluttJournalpostId, safRequestContext)
+				finnesNesteSide(pagination.getFoerste(), journalposter, sluttJournalpostId, safRequestContext),
+				journalposter.size(),
+				totaltAntall(sluttJournalpostId, safRequestContext)
 		);
 	}
 
-	public SideInfo mapFilteredSideInfo(String sluttJournalpostId, SafRequestContext safRequestContext) {
+	public SideInfo mapFilteredSideInfo(String sluttJournalpostId, List<Journalpost> journalposter, SafRequestContext safRequestContext) {
 		if (sluttJournalpostId == null || sluttJournalpostId.isEmpty()) {
 			return SideInfo.empty();
 		}
@@ -32,7 +34,9 @@ public class SideInfoMapper {
 		Long nextJournalpostId = journalpostDto.getNextJournalpostId();
 		return new SideInfo(
 				base64(sluttJournalpostId),
-				finnesNesteJournalpostId(journalpostDto, nextJournalpostId)
+				finnesNesteJournalpostId(journalpostDto, nextJournalpostId),
+				journalposter.size(),
+				totaltAntall(sluttJournalpostId, safRequestContext)
 		);
 	}
 
@@ -59,5 +63,13 @@ public class SideInfoMapper {
 
 	private boolean finnesNesteJournalpostId(JournalpostDto journalpostDto, Long nextJournalpostId) {
 		return nextJournalpostId != null && !journalpostDto.getJournalpostId().equals(nextJournalpostId);
+	}
+
+	private int totaltAntall(String sluttJournalpostId, SafRequestContext safRequestContext) {
+		if(sluttJournalpostId == null) {
+			return 0;
+		}
+		JournalpostDto journalpostDto = safRequestContext.getRequestCache().getObject(sluttJournalpostId);
+		return journalpostDto.getTotaltAntall().intValue();
 	}
 }
