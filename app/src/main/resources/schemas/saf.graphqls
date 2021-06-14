@@ -182,8 +182,14 @@ type SideInfo {
     # Når man paginerer forover, pekeren for å fortsette.
     sluttpeker: String
 
-    # True/False verdi for om neste side eksisterer, når man paginerer forover
+    # True/False verdi for om neste side eksisterer, når man paginerer forover.
     finnesNesteSide: Boolean!
+
+    # Antall journalposter på denne siden.
+    antall: Int
+
+    # Totalt antall journalposter på alle sider.
+    totaltAntall: Int
 }
 
 # * Fagsystemene som arkiverer kan legge til egne fagspesifikke attributter per journalpost.
