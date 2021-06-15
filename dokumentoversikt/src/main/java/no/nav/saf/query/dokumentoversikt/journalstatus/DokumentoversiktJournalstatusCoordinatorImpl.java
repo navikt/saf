@@ -1,10 +1,5 @@
 package no.nav.saf.query.dokumentoversikt.journalstatus;
 
-import static no.nav.saf.domain.DomainConstants.PEP4;
-import static no.nav.saf.domain.DomainConstants.PEP5;
-import static no.nav.saf.domain.DomainConstants.PEP6D;
-import static no.nav.saf.util.MDCUtility.addMdcData;
-
 import io.reactivex.Flowable;
 import io.reactivex.schedulers.Schedulers;
 import lombok.extern.slf4j.Slf4j;
@@ -29,11 +24,6 @@ import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import static no.nav.saf.domain.DomainConstants.PEP4;
-import static no.nav.saf.domain.DomainConstants.PEP5;
-import static no.nav.saf.domain.DomainConstants.PEP6D;
-import static no.nav.saf.util.MDCUtility.addMdcData;
 
 import static no.nav.saf.domain.DomainConstants.PEP4;
 import static no.nav.saf.domain.DomainConstants.PEP5;
