@@ -1,7 +1,6 @@
 package no.nav.saf.anticorruptionlayer.bisys.hentbidragsak;
 
 import lombok.extern.slf4j.Slf4j;
-import no.nav.saf.cache.LokalCacheConfig;
 import no.nav.saf.config.ServiceuserAlias;
 import no.nav.saf.exceptions.SafFunctionalException;
 import no.nav.saf.exceptions.SafTechnicalException;
@@ -13,6 +12,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.Duration;
+
+import static no.nav.saf.cache.LokalCacheConfig.BIDRAG_SAK_BY_SAKID_CACHE;
 
 @Slf4j
 @Component
@@ -31,8 +32,10 @@ public class BidragSakConsumer {
 				.basicAuthentication(serviceuserAlias.getUsername(), serviceuserAlias.getPassword()).build();
 	}
 
-	@Cacheable(cacheNames = LokalCacheConfig.BIDRAG_SAK_BY_SAKID_CACHE, key = "#sakId")
+	//Testing av bidrag-sak fungerer kun med passord til servicebruker i prod. Må derfor testes lokalt med hardkoding av brukernavn/passord.
+	@Cacheable(cacheNames = BIDRAG_SAK_BY_SAKID_CACHE, key = "#sakId")
 	public BidragSakTo hentBidragSak(final String sakId) {
+		log.info("Henter relevante parter fra Bisys for sak={}", sakId);
 		ResponseEntity<BidragSakTo> response = restTemplate.getForEntity(bidragSakApiUrl + "/{sakId}", BidragSakTo.class, sakId);
 		switch (response.getStatusCode()) {
 			case OK:
