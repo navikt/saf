@@ -75,6 +75,5 @@ public class SakerCoordinatorImpl implements SakerCoordinator {
 				.filter(Objects::nonNull)
 				.collect(Collectors.toSet())
 				.stream().collect(Collectors.toList());
-
 	}
 }

@@ -6,8 +6,6 @@ import no.nav.saf.anticorruptionlayer.bisys.BisysAntiCorruptionLayer;
 import no.nav.saf.anticorruptionlayer.pensjonsak.PensjonSakAntiCorruptionLayer;
 import no.nav.saf.domain.Arkivsak;
 import no.nav.saf.domain.BidragSak;
-import no.nav.saf.domain.kode.Arkivsakssystem;
-import no.nav.saf.domain.kode.Tema;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.domain.tilgangsmodell.TilgangJournalpost;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
@@ -19,6 +17,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+
+import static no.nav.saf.domain.kode.Arkivsakssystem.GSAK;
+import static no.nav.saf.domain.kode.Arkivsakssystem.PSAK;
+import static no.nav.saf.domain.kode.Tema.PEN;
+import static no.nav.saf.domain.kode.Tema.UFO;
 
 /**
  * @author Joakim Bjørnstad, Jbit AS
@@ -82,12 +85,12 @@ public class JournalpostTilgangRepositoryImpl implements JournalpostTilgangRepos
 
 	public TilgangBruker findTilgangBrukerByArkivsak(Arkivsak arkivsak) {
 		try {
-			if (Arkivsakssystem.GSAK.equals(arkivsak.getArkivsaksystem())) {
+			if (GSAK.equals(arkivsak.getArkivsaksystem())) {
 				return TilgangBruker.builder()
 						.aktoerId(arkivsak.getAktoerId())
 						.orgnummer(arkivsak.getAktoerId() == null ? arkivsak.getOrgnummer() : null)
 						.build();
-			} else if (Arkivsakssystem.PSAK.equals(arkivsak.getArkivsaksystem())) {
+			} else if (PSAK.equals(arkivsak.getArkivsaksystem())) {
 				// Slår opp i PSAK for å finne fnr på bruker. Deretter opp i aktoerregister for fnr -> aktørId
 				String fnr = pensjonSakAntiCorruptionLayer.findFoedselsnummerBySakId(arkivsak.getArkivsaksnummer());
 				return aktoerAntiCorruptionLayer.hentTilgangBrukerByFoedselsnummer(fnr);
@@ -108,36 +111,35 @@ public class JournalpostTilgangRepositoryImpl implements JournalpostTilgangRepos
 
 	@Override
 	public TilgangSak findTilgangSak(Arkivsak arkivsak, TilgangBruker tilgangBruker, SafRequestContext safRequestContext) {
-		if(arkivsak == null) {
+		if (arkivsak == null) {
 			return null;
 		}
 		try {
 			String arkivSystem = Optional.ofNullable(arkivsak.getArkivsaksystem()).map(Object::toString).orElse(null);
-			if (Arkivsakssystem.GSAK.name().equals(arkivSystem)) {
+			if (GSAK.name().equals(arkivSystem)) {
 				safRequestContext.getRequestCache().putObject(arkivsak.getKey(), arkivsak);
-				BidragSak bidragSak = getBidragSakIfTemaIsBidOrFar(arkivsak);
+				BidragSak bidragSak = bisysAntiCorruptionLayer.hentBidragSakByArkivsak(arkivsak);
 				return TilgangSak.builder()
 						.aktoerId(arkivsak.getAktoerId())
 						.arkivsaksnummer(arkivsak.getArkivsaksnummer())
-						.arkivsaksystem(Arkivsakssystem.GSAK)
+						.arkivsaksystem(GSAK)
+						.fagsaksystem(arkivsak.getFagsaksystem())
 						.tema(arkivsak.getTema())
 						.orgnummer(arkivsak.getOrgnummer())
 						.relevanteTredjeparter(bidragSak == null ? null : new ArrayList<>(bidragSak.getRelevanteTredjeparter()))
-						.paragraf19(bidragSak == null ? null : bidragSak.isParagraf19())
 						.build();
-			} else if (Arkivsakssystem.PSAK.name().equals(arkivSystem)) {
-				List<Arkivsak> arkivsaker = pensjonSakAntiCorruptionLayer.findArkivsaker(tilgangBruker, Arrays.asList(Tema.PEN, Tema.UFO));
+			} else if (PSAK.name().equals(arkivSystem)) {
+				List<Arkivsak> arkivsaker = pensjonSakAntiCorruptionLayer.findArkivsaker(tilgangBruker, Arrays.asList(PEN, UFO));
 				for (Arkivsak pensjonArkivsak : arkivsaker) {
 					if (pensjonArkivsak.getArkivsaksnummer().equals(arkivsak.getArkivsaksnummer())) {
 						safRequestContext.getRequestCache().putObject(pensjonArkivsak.getKey(), pensjonArkivsak);
 						return TilgangSak.builder()
 								.aktoerId(pensjonArkivsak.getAktoerId())
 								.arkivsaksnummer(pensjonArkivsak.getArkivsaksnummer())
-								.arkivsaksystem(Arkivsakssystem.PSAK)
+								.arkivsaksystem(PSAK)
 								.tema(pensjonArkivsak.getTema())
 								.orgnummer(pensjonArkivsak.getOrgnummer())
 								.relevanteTredjeparter(new ArrayList<>())
-								.paragraf19(false)
 								.build();
 					}
 				}
@@ -147,14 +149,6 @@ public class JournalpostTilgangRepositoryImpl implements JournalpostTilgangRepos
 		} catch (Exception e) {
 			log.warn("findTilgangBrukerBySakId feilet ved oppslag på sakId={} og arkivsaksystem={}. Feilmelding={}", arkivsak.getArkivsaksnummer(), arkivsak.getArkivsaksystem(), e);
 			return null;
-		}
-	}
-
-	private BidragSak getBidragSakIfTemaIsBidOrFar(Arkivsak arkivsak) {
-		if (Tema.BID.equals(arkivsak.getTema()) || Tema.FAR.equals(arkivsak.getTema())) {
-			return bisysAntiCorruptionLayer.hentBidragSak(arkivsak.getFagsakId());
-		} else {
-			return new BidragSak();
 		}
 	}
 }

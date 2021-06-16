@@ -1,6 +1,7 @@
 package no.nav.saf.tilgangskontroll.pep;
 
 import lombok.extern.slf4j.Slf4j;
+import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlRequest;
 import no.nav.saf.tilgangskontroll.abac.dto.response.XacmlResponse;
@@ -10,7 +11,9 @@ import org.springframework.stereotype.Component;
 import javax.inject.Inject;
 import java.util.List;
 
+import static no.nav.saf.domain.DomainConstants.FAGSAKSYSTEM_FORELDREPENGELOSNING;
 import static no.nav.saf.domain.DomainConstants.PEP7;
+import static no.nav.saf.domain.kode.Tema.FOR;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_PERSON_AKTOERID_RESOURCE;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_RESOURCE_TYPE;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_SAF_TREDJEPART;
@@ -23,7 +26,7 @@ import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_SAF_TREDJEPART
  */
 @Slf4j
 @Component(PEP7)
-public class Pep7Impl implements Pep<List<String>> {
+public class Pep7Impl implements Pep<TilgangSak> {
 
 	private final AbacService abacService;
 
@@ -33,21 +36,27 @@ public class Pep7Impl implements Pep<List<String>> {
 	}
 
 	@Override
-	public XacmlResponse verifyAccessXacmlResponse(List<String> ressurs, SafRequestContext safRequestContext) {
+	public XacmlResponse verifyAccessXacmlResponse(TilgangSak ressurs, SafRequestContext safRequestContext) {
 
-		if (ressurs == null || ressurs.isEmpty()) {
-			log.info("Pep7 har ingen relevante parter. Tilgang gis.");
-			return XacmlResponse.permit();
+		if (ressurs != null && FOR.equals(ressurs.getTema()) && FAGSAKSYSTEM_FORELDREPENGELOSNING.equals(ressurs.getFagsaksystem())) {
+
+			if (ressurs.getFpAktoerIdList() == null || ressurs.getFpAktoerIdList().isEmpty()) {
+				log.info("Pep7 har ingen relevante parter. Tilgang gis.");
+				return XacmlResponse.permit();
+			}
+
+			List<String> fpAktoerIdList = ressurs.getFpAktoerIdList();
+
+			XacmlRequest request = SafXacmlRequestFactory.create(safRequestContext.getSecurityContext());
+			request.resource(RESOURCE_FELLES_RESOURCE_TYPE, RESOURCE_SAF_TREDJEPART);
+			fpAktoerIdList.forEach(aktoerId -> request.resource(RESOURCE_FELLES_PERSON_AKTOERID_RESOURCE, aktoerId));
+
+			Pep.traceLogPepStarted(PEP7, ressurs);
+			XacmlResponse response = abacService.evaluate(request);
+			Pep.traceLogPepFinished(PEP7, ressurs);
+
+			return response;
 		}
-
-		XacmlRequest request = SafXacmlRequestFactory.create(safRequestContext.getSecurityContext());
-		request.resource(RESOURCE_FELLES_RESOURCE_TYPE, RESOURCE_SAF_TREDJEPART);
-		ressurs.forEach(aktoerId -> request.resource(RESOURCE_FELLES_PERSON_AKTOERID_RESOURCE, aktoerId));
-
-		Pep.traceLogPepStarted(PEP7, ressurs);
-		XacmlResponse response = abacService.evaluate(request);
-		Pep.traceLogPepFinished(PEP7, ressurs);
-
-		return response;
+		return XacmlResponse.permit();
 	}
 }

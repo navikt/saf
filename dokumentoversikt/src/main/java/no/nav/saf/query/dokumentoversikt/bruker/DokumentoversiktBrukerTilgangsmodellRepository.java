@@ -92,7 +92,7 @@ public class DokumentoversiktBrukerTilgangsmodellRepository {
 			return Flowable.merge(Arrays.asList(gsakerFromOrgnr, gsakerFromAktoerId, psaker), 3)
 					.flatMapIterable(items -> items)
 					.map(arkivsak -> {
-						final BidragSak bidragSak = getBidragSakIfTemaIsBidOrFar(arkivsak);
+						final BidragSak bidragSak = bisysAntiCorruptionLayer.hentBidragSakByArkivsak(arkivsak);
 						safRequestContext.getRequestCache().putObject(arkivsak.getKey(), arkivsak);
 						return TilgangSak.builder()
 								.aktoerId(arkivsak.getAktoerId())
@@ -100,20 +100,12 @@ public class DokumentoversiktBrukerTilgangsmodellRepository {
 								.tema(arkivsak.getTema())
 								.arkivsaksnummer(arkivsak.getArkivsaksnummer())
 								.arkivsaksystem(arkivsak.getArkivsaksystem())
+								.fagsaksystem(arkivsak.getFagsaksystem())
 								.relevanteTredjeparter(bidragSak == null ? null : new ArrayList<>(bidragSak.getRelevanteTredjeparter()))
-								.paragraf19(bidragSak == null ? null : bidragSak.isParagraf19())
 								.build();
 					});
 		} catch (Exception e) {
 			return Flowable.empty();
-		}
-	}
-
-	private BidragSak getBidragSakIfTemaIsBidOrFar(Arkivsak arkivsak) {
-		if (Tema.BID.equals(arkivsak.getTema()) || Tema.FAR.equals(arkivsak.getTema())) {
-			return bisysAntiCorruptionLayer.hentBidragSak(arkivsak.getFagsakId());
-		} else {
-			return new BidragSak();
 		}
 	}
 }

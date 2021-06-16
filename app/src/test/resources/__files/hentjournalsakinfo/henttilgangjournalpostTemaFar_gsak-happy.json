@@ -3,11 +3,11 @@
     "journalpostId": "123",
     "journalStatus": "FL",
     "journalpostType": "N",
-    "fagomrade": "BID",
+    "fagomrade": "FAR",
     "datoOpprettet": "2008-12-06T00:00:00",
     "mottakskanal": null,
     "avsenderMottakerId": null,
-    "skjerming": "POL",
+    "skjerming": null,
     "bruker": {
       "brukerId": "1912374211459",
       "brukerType": "PERSON"
@@ -15,8 +15,8 @@
     "sak": {
       "sakId": "55555555",
       "fagsystem": "FS22",
-      "tema": "BID",
-      "applikasjon": "BISYS",
+      "tema": "FAR",
+      "applikasjon": "FS22",
       "aktoerId": "1460927426521",
       "orgnr": null,
       "fagsakNr": "765432",
@@ -27,10 +27,10 @@
       "dokumentinfoId": "123",
       "dokumentstatus": "FERDIGSTILT",
       "brevkode": null,
-      "skjerming": "POL",
+      "skjerming": null,
       "variant": {
         "variantFormat": "ARKIV",
-        "skjerming": "POL"
+        "skjerming": null
       }
     }
   }

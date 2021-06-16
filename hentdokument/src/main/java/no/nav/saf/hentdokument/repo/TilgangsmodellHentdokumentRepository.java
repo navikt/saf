@@ -6,8 +6,6 @@ import no.nav.saf.domain.tilgangsmodell.TilgangJournalpost;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 
-import java.util.List;
-
 /**
  * @author Sigurd Midttun, Visma Consulting.
  */
@@ -22,7 +20,4 @@ public interface TilgangsmodellHentdokumentRepository {
 	Arkivsak findArkivsakAndCacheJournalpostDto(String journalpostId, String dokumentInfoId, String variantFormat, SafRequestContext safRequestContext);
 
 	TilgangSak findTilgangSak(Arkivsak arkivsak, TilgangBruker tilgangBruker, SafRequestContext safRequestContext);
-
-	List<String> findRelevanteParterSak(TilgangSak tilgangSak);
-
 }

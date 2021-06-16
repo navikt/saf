@@ -4,7 +4,6 @@ import io.reactivex.Flowable;
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 import no.nav.saf.domain.TilgangsmodellRepository;
-import no.nav.saf.domain.kode.Journalstatus;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.domain.tilgangsmodell.TilgangDokumentInfo;
 import no.nav.saf.domain.tilgangsmodell.TilgangDokumentvariant;
@@ -35,6 +34,7 @@ import static no.nav.saf.domain.DomainConstants.PEP3;
 import static no.nav.saf.domain.DomainConstants.PEP4;
 import static no.nav.saf.domain.DomainConstants.PEP5;
 import static no.nav.saf.domain.DomainConstants.PEP6D;
+import static no.nav.saf.domain.kode.Journalstatus.FEILREGISTRERT;
 import static no.nav.saf.util.MDCUtility.addMdcData;
 
 /**
@@ -160,10 +160,9 @@ class DokumentoversiktFagsakCoordinatorImpl implements DokumentoversiktFagsakCoo
 	}
 
 	private boolean filterFeilregistrerte(DokumentoversiktFagsakArguments dokumentoversiktFagsakArguments, Journalpost j) {
-		if (Journalstatus.FEILREGISTRERT.equals(j.getJournalstatus())) {
+		if (FEILREGISTRERT.equals(j.getJournalstatus())) {
 			return dokumentoversiktFagsakArguments.getFilters().isVisFeilregistrerte();
-		} else {
-			return true;
 		}
+		return true;
 	}
 }

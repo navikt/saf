@@ -74,7 +74,6 @@ public class HentDokumentAntiCorruptionLayer {
 					.arkivsaksystem(mapJoarkFagsystemToArkivsakssystemCode(tilgangJournalpostDto.getSak()
 							.getFagsystem(), tilgangJournalpostDto.getJournalpostId()))
 					.tema(FagomradeCode.toSafTema(tilgangJournalpostDto.getFagomrade()))
-					.paragraf19(false)
 					.relevanteTredjeparter(new ArrayList<>())
 					.build();
 		}

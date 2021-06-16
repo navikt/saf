@@ -28,6 +28,7 @@ import java.util.stream.Collectors;
 import static no.nav.saf.domain.DomainConstants.PEP4;
 import static no.nav.saf.domain.DomainConstants.PEP5;
 import static no.nav.saf.domain.DomainConstants.PEP6D;
+import static no.nav.saf.domain.kode.Journalstatus.FEILREGISTRERT;
 import static no.nav.saf.util.MDCUtility.addMdcData;
 
 /**
@@ -125,10 +126,9 @@ class DokumentoversiktJournalstatusCoordinatorImpl implements DokumentoversiktJo
 	}
 
 	private boolean filterFeilregistrerte(DokumentoversiktJournalstatusArguments dokumentoversiktJournalstatusArguments, Journalpost j) {
-		if (Journalstatus.FEILREGISTRERT == j.getJournalstatus()) {
+		if (FEILREGISTRERT == j.getJournalstatus()) {
 			return dokumentoversiktJournalstatusArguments.getFilters().isVisFeilregistrerte();
-		} else {
-			return true;
 		}
+		return true;
 	}
 }

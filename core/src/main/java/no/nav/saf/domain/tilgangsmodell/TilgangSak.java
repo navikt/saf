@@ -18,13 +18,11 @@ public class TilgangSak {
 	private final String foedselsnummer;
 	private final String orgnummer;
 	private final Tema tema;
-	private final String fagsakId;
 	private final String fagsaksystem;
-	/**
-	 * Forvaltningslovens § 19 "innskrenkret adgang til visse slags opplysninger"
-	 */
-	private final Boolean paragraf19;
+
 	private final List<TilgangRelevantTredjepart> relevanteTredjeparter;
+
+	private final List<String> fpAktoerIdList;
 
 	//Ekstra attributter for å forenkle kodeflyt
 	private final String arkivsaksnummer;

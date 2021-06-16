@@ -13,6 +13,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.HashSet;
 import java.util.Optional;
 
+import static no.nav.saf.domain.kode.Tema.BID;
 import static org.mockito.Mockito.doReturn;
 
 /**
@@ -27,7 +28,8 @@ abstract class AbstractPepTest {
 	static String AKTOER_ID = "1234";
 	static String FNR = "11111111111";
 	static String FNR2 = "22222222222";
-	static Tema TEMA_BID = Tema.BID;
+	static Tema TEMA_BID = BID;
+
 	static Skjerming SKJERMING_POL = Skjerming.POL;
 
 	AbacService abacService;

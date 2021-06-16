@@ -232,7 +232,7 @@ class DokumentoversiktJournalstatusIT extends AbstractItest {
 
 	@Test
 	void shouldGetUnauthorizedFromPep6d() throws IOException, URISyntaxException {
-		abacDenyPep6d();
+		abacDenyPep6dSkipPep3OrPep2();
 
 		stubFor(post("/hentjournalsakinfo/finnjournalposterstatus")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())

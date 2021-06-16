@@ -41,6 +41,7 @@ import static no.nav.saf.domain.DomainConstants.RJOARK902_JOURNALPOST_DTO;
 @Slf4j
 @Component
 class JournalpostAntiCorruptionLayer {
+
 	private final HentJournalsakinfo hentJournalsakinfo;
 
 	@Inject
@@ -72,7 +73,6 @@ class JournalpostAntiCorruptionLayer {
 					.arkivsaksystem(mapJoarkFagsystemToArkivsakssystemCode(journalpostDto.getSaksrelasjon()
 							.getFagsystem(), journalpostDto.getJournalpostId()))
 					.tema(FagomradeCode.toSafTema(journalpostDto.getFagomrade()))
-					.paragraf19(false)
 					.relevanteTredjeparter(new ArrayList<>())
 					.build();
 		}

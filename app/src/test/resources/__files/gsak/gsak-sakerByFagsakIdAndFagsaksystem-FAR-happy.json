@@ -1,12 +1,12 @@
 [
-    {
-        "id": 112233445,
-        "tema": "FAR",
-        "applikasjon": "FS22",
-        "aktoerId": "1912374211459",
-        "orgnr": null,
-        "fagsakNr": "201545004",
-        "opprettetAv": "srvsyfoservice",
-        "opprettetTidspunkt": "2018-07-17T14:30:21.248+02:00"
-    }
+  {
+    "id": 112233445,
+    "tema": "FAR",
+    "applikasjon": "FS22",
+    "aktoerId": "1912374211459",
+    "orgnr": null,
+    "fagsakNr": "201545004",
+    "opprettetAv": "srvsyfoservice",
+    "opprettetTidspunkt": "2018-07-17T14:30:21.248+02:00"
+  }
 ]

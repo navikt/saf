@@ -7,13 +7,11 @@ import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class TilgangsbrukerMapperTest {
+class TilgangsbrukerMapperTest {
 
 	private static final String FOLKEREGISTERIDENT = "11111111111";
 	private static final String AKTOERID = "1313131313131";
@@ -60,7 +58,7 @@ public class TilgangsbrukerMapperTest {
 
 		assertThat(tilgangBruker.getAktoerId()).isEqualTo(AKTOERID);
 		assertThat(tilgangBruker.getFoedselsnr()).isEqualTo(FOLKEREGISTERIDENT);
-		assertThat(tilgangBruker.getHistoriskeIdenter()).hasSize(0);
+		assertThat(tilgangBruker.getHistoriskeIdenter()).isEmpty();
 		assertThat(tilgangBruker.getAlleIdenter()).contains(FOLKEREGISTERIDENT);
 		assertThat(tilgangBruker.hentAlleAktoerId()).hasSize(1).contains(AKTOERID);
 	}
