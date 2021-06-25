@@ -7,10 +7,14 @@ import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.exceptions.OidcAuthorizationException;
 import no.nav.security.token.support.core.context.TokenValidationContext;
 import no.nav.security.token.support.core.jwt.JwtToken;
+import org.apache.commons.lang3.StringUtils;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static no.nav.saf.util.MDCUtility.addMdcData;
 import static org.apache.commons.lang3.StringUtils.isBlank;
@@ -27,6 +31,7 @@ public class SafSecurityContext {
 	private static final Map<String, Boolean> PRIVILEGIED_SERVICEUSERS = new HashMap<>();
 	private static final String UNKNOWN_AUDIENCE = "unknownAudience";
 	private static final String UNKNOWN_ISSUER = "unknownIssuer";
+	private final String serviceusers;
 	private final String jwtToken;
 	private final String oidcTokenBody;
 	private final String subjectId;
@@ -38,20 +43,11 @@ public class SafSecurityContext {
 	private final String audience;
 	private final String issuer;
 
-	static {
-		// Disse servicebrukerene får tilgang til å hente dokumentvarianter som ARKIV
-		PRIVILEGIED_SERVICEUSERS.put("srvdokdistfordeling", true);
-		PRIVILEGIED_SERVICEUSERS.put("srvdokdisteformidling", true);
-		PRIVILEGIED_SERVICEUSERS.put("srvdokarkivproxy", true);
-		PRIVILEGIED_SERVICEUSERS.put("srvtilbakemeldings", true);
-		PRIVILEGIED_SERVICEUSERS.put("srvomsitramme", true);
-		PRIVILEGIED_SERVICEUSERS.put("srvmelosys", true);
-	}
-
 	SafSecurityContext(Set<String> azureIssuers,
 					   String navCallidHeader,
 					   String navConsumerIdHeader,
-					   TokenValidationContext tokenValidationContext) {
+					   TokenValidationContext tokenValidationContext,
+					   String serviceusers) {
 		this.azureIssuers = azureIssuers;
 		this.jwtToken = getFirstValidJwt(tokenValidationContext);
 		this.decodedJWT = getDecodedJWT(jwtToken);
@@ -63,16 +59,17 @@ public class SafSecurityContext {
 		// if zero, then executionId from graphQl is used.
 		this.navCallid = trim(navCallidHeader);
 		this.navConsumerId = determineNavConsumerId(trim(navConsumerIdHeader), audience);
-
+		this.serviceusers = serviceusers;
 		addMdcData(this.subjectId, this.navCallid, this.navConsumerId);
+		addServiceusers();
 	}
 
-	private String getPayloadFromToken(DecodedJWT decodedJWT){
+	private String getPayloadFromToken(DecodedJWT decodedJWT) {
 		return decodedJWT.getPayload();
 	}
 
-	private String getFirstValidJwt(TokenValidationContext tokenValidationContext){
-			 return tokenValidationContext.getFirstValidToken().map(JwtToken::getTokenAsString).orElse(null);
+	private String getFirstValidJwt(TokenValidationContext tokenValidationContext) {
+		return tokenValidationContext.getFirstValidToken().map(JwtToken::getTokenAsString).orElse(null);
 	}
 
 	private DecodedJWT getDecodedJWT(final String oidcTokenBody) {
@@ -82,7 +79,7 @@ public class SafSecurityContext {
 
 		try {
 			return JWT.decode(oidcTokenBody);
-		} catch(JWTDecodeException e) {
+		} catch (JWTDecodeException e) {
 			return null;
 		}
 	}
@@ -100,7 +97,7 @@ public class SafSecurityContext {
 	}
 
 	private String getSubjectFromToken(final DecodedJWT decodedJWT) {
-		if(decodedJWT == null) {
+		if (decodedJWT == null) {
 			return null;
 		}
 
@@ -113,7 +110,7 @@ public class SafSecurityContext {
 	}
 
 	private boolean getIsAzureToken(final DecodedJWT decodedJWT) {
-		if(decodedJWT == null) {
+		if (decodedJWT == null) {
 			return false;
 		} else {
 			return this.azureIssuers.contains(decodedJWT.getIssuer());
@@ -121,7 +118,7 @@ public class SafSecurityContext {
 	}
 
 	private String getAudienceFromToken(final DecodedJWT decodedJWT) {
-		if(decodedJWT == null) {
+		if (decodedJWT == null) {
 			return UNKNOWN_AUDIENCE;
 		}
 		try {
@@ -133,7 +130,7 @@ public class SafSecurityContext {
 	}
 
 	private String getIssuerFromToken(final DecodedJWT decodedJWT) {
-		if(decodedJWT == null) {
+		if (decodedJWT == null) {
 			return UNKNOWN_ISSUER;
 		}
 		try {
@@ -190,5 +187,10 @@ public class SafSecurityContext {
 
 	public boolean isAzureToken() {
 		return azureToken;
+	}
+
+	private void addServiceusers() {
+		List<String> serviceuserList = Arrays.stream(StringUtils.split(serviceusers, ',')).collect(Collectors.toList());
+		serviceuserList.forEach(serviceuser -> PRIVILEGIED_SERVICEUSERS.put(serviceuser, true));
 	}
 }

@@ -15,8 +15,8 @@ public class SafRequestContext {
 	private final SafSecurityContext securityContext;
 	private final RequestCache requestCache;
 
-	public SafRequestContext(Set<String> azureIssuers, String navCallid, String navConsumerId, TokenValidationContext tokenValidationContext) {
+	public SafRequestContext(Set<String> azureIssuers, String navCallid, String navConsumerId, TokenValidationContext tokenValidationContext, String serviceusers) {
 		this.requestCache = new RequestCache();
-		this.securityContext = new SafSecurityContext(azureIssuers, navCallid, navConsumerId, tokenValidationContext);
+		this.securityContext = new SafSecurityContext(azureIssuers, navCallid, navConsumerId, tokenValidationContext, serviceusers);
 	}
 }

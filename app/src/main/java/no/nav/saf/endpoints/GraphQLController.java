@@ -16,6 +16,7 @@ import no.nav.saf.metrics.AudienceCounter;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.security.token.support.core.api.Protected;
 import no.nav.security.token.support.core.context.TokenValidationContextHolder;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -48,13 +49,15 @@ public class GraphQLController extends AbstractSafController {
 	private final Set<String> azureIssuers;
 	private final TokenValidationContextHolder tokenValidationContextHolder;
 	private final AudienceCounter audienceCounter;
+	private final String serviceusers;
 
 	@Inject
 	public GraphQLController(@Named("azureIssuers") Set<String> azureIssuers,
 							 DokumentoversiktWiring dokumentoversiktWiring,
 							 GraphQLExceptionHandler graphQLExceptionHandler,
 							 AudienceCounter audienceCounter,
-							 TokenValidationContextHolder tokenValidationContextHolder) {
+							 TokenValidationContextHolder tokenValidationContextHolder,
+							 @Value("${privilegied.serviceusers}") String serviceusers) {
 		this.tokenValidationContextHolder = tokenValidationContextHolder;
 		this.graphQLExceptionHandler = graphQLExceptionHandler;
 		this.azureIssuers = azureIssuers;
@@ -65,6 +68,7 @@ public class GraphQLController extends AbstractSafController {
 		SchemaGenerator schemaGenerator = new SchemaGenerator();
 		this.graphQLSchema = schemaGenerator.makeExecutableSchema(typeRegistry, dokumentoversiktWiring.createRuntimeWiring());
 		this.audienceCounter = audienceCounter;
+		this.serviceusers = serviceusers;
     }
 
 	@PostMapping(value = "/graphql", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -79,7 +83,8 @@ public class GraphQLController extends AbstractSafController {
 				this.azureIssuers,
 				createNavCallid(navCallid, xCorrelationId),
 				navConsumerId,
-				tokenValidationContextHolder.getTokenValidationContext()
+				tokenValidationContextHolder.getTokenValidationContext(),
+				serviceusers
 		);
 
 		audienceCounter.increment(
