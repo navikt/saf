@@ -10,13 +10,13 @@ import graphql.schema.idl.SchemaGenerator;
 import graphql.schema.idl.SchemaParser;
 import graphql.schema.idl.TypeDefinitionRegistry;
 import lombok.extern.slf4j.Slf4j;
+import no.nav.saf.anticorruptionlayer.azure.SafProperties;
 import no.nav.saf.endpoints.wiring.DokumentoversiktWiring;
 import no.nav.saf.exceptionhandler.GraphQLExceptionHandler;
 import no.nav.saf.metrics.AudienceCounter;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.security.token.support.core.api.Protected;
 import no.nav.security.token.support.core.context.TokenValidationContextHolder;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -49,15 +49,16 @@ public class GraphQLController extends AbstractSafController {
 	private final Set<String> azureIssuers;
 	private final TokenValidationContextHolder tokenValidationContextHolder;
 	private final AudienceCounter audienceCounter;
-	private final String serviceusers;
+	private final Map<String, Boolean> privilegiedServiceusers;
 
 	@Inject
 	public GraphQLController(@Named("azureIssuers") Set<String> azureIssuers,
+							 @Named("privilegiedServiceusers") Map<String, Boolean> privilegiedServiceusers,
 							 DokumentoversiktWiring dokumentoversiktWiring,
 							 GraphQLExceptionHandler graphQLExceptionHandler,
 							 AudienceCounter audienceCounter,
 							 TokenValidationContextHolder tokenValidationContextHolder,
-							 @Value("${privilegied.serviceusers}") String serviceusers) {
+							 SafProperties safProperties) {
 		this.tokenValidationContextHolder = tokenValidationContextHolder;
 		this.graphQLExceptionHandler = graphQLExceptionHandler;
 		this.azureIssuers = azureIssuers;
@@ -68,7 +69,7 @@ public class GraphQLController extends AbstractSafController {
 		SchemaGenerator schemaGenerator = new SchemaGenerator();
 		this.graphQLSchema = schemaGenerator.makeExecutableSchema(typeRegistry, dokumentoversiktWiring.createRuntimeWiring());
 		this.audienceCounter = audienceCounter;
-		this.serviceusers = serviceusers;
+		this.privilegiedServiceusers = privilegiedServiceusers;
     }
 
 	@PostMapping(value = "/graphql", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -84,7 +85,7 @@ public class GraphQLController extends AbstractSafController {
 				createNavCallid(navCallid, xCorrelationId),
 				navConsumerId,
 				tokenValidationContextHolder.getTokenValidationContext(),
-				serviceusers
+				privilegiedServiceusers
 		);
 
 		audienceCounter.increment(

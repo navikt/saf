@@ -7,14 +7,9 @@ import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.exceptions.OidcAuthorizationException;
 import no.nav.security.token.support.core.context.TokenValidationContext;
 import no.nav.security.token.support.core.jwt.JwtToken;
-import org.apache.commons.lang3.StringUtils;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import static no.nav.saf.util.MDCUtility.addMdcData;
 import static org.apache.commons.lang3.StringUtils.isBlank;
@@ -28,10 +23,9 @@ public class SafSecurityContext {
 	private static final String SERVICEUSER_PREFIX = "srv";
 	private static final String AUTH_ERRORMESSAGE = "Autentiseringsmekanisme er ikke støttet. " +
 			"Kun OIDC-token (JWT via OAuth 2.0) med header \"Authorization\" : \"Bearer {token}\" er tillatt.";
-	private static final Map<String, Boolean> PRIVILEGIED_SERVICEUSERS = new HashMap<>();
 	private static final String UNKNOWN_AUDIENCE = "unknownAudience";
 	private static final String UNKNOWN_ISSUER = "unknownIssuer";
-	private final String serviceusers;
+	private final Map<String, Boolean> privilegiedServiceusers;
 	private final String jwtToken;
 	private final String oidcTokenBody;
 	private final String subjectId;
@@ -47,7 +41,7 @@ public class SafSecurityContext {
 					   String navCallidHeader,
 					   String navConsumerIdHeader,
 					   TokenValidationContext tokenValidationContext,
-					   String serviceusers) {
+					   Map<String, Boolean> privilegiedServiceusers) {
 		this.azureIssuers = azureIssuers;
 		this.jwtToken = getFirstValidJwt(tokenValidationContext);
 		this.decodedJWT = getDecodedJWT(jwtToken);
@@ -59,9 +53,8 @@ public class SafSecurityContext {
 		// if zero, then executionId from graphQl is used.
 		this.navCallid = trim(navCallidHeader);
 		this.navConsumerId = determineNavConsumerId(trim(navConsumerIdHeader), audience);
-		this.serviceusers = serviceusers;
+		this.privilegiedServiceusers = privilegiedServiceusers;
 		addMdcData(this.subjectId, this.navCallid, this.navConsumerId);
-		addServiceusers();
 	}
 
 	private String getPayloadFromToken(DecodedJWT decodedJWT) {
@@ -182,15 +175,10 @@ public class SafSecurityContext {
 	}
 
 	public boolean isPrivilegiedServiceUser() {
-		return isServiceUser() && PRIVILEGIED_SERVICEUSERS.containsKey(subjectId.toLowerCase());
+		return isServiceUser() && privilegiedServiceusers.containsKey(subjectId.toLowerCase());
 	}
 
 	public boolean isAzureToken() {
 		return azureToken;
-	}
-
-	private void addServiceusers() {
-		List<String> serviceuserList = Arrays.stream(StringUtils.split(serviceusers, ',')).collect(Collectors.toList());
-		serviceuserList.forEach(serviceuser -> PRIVILEGIED_SERVICEUSERS.put(serviceuser, true));
 	}
 }
