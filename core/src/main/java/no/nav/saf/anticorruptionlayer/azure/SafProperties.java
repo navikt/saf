@@ -13,6 +13,8 @@ public class SafProperties {
 
 	private final Endpoints endpoints = new Endpoints();
 
+	private String privilegiedserviceusers;
+
 	@Data
 	@Validated
 	public static class Endpoints {
@@ -22,5 +24,4 @@ public class SafProperties {
 		@NotEmpty
 		private String pdl;
 	}
-
 }

@@ -3,6 +3,7 @@ package no.nav.saf.endpoints;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
+import no.nav.saf.anticorruptionlayer.azure.SafProperties;
 import no.nav.saf.domain.HentDokument;
 import no.nav.saf.domain.kode.Variantformat;
 import no.nav.saf.exceptions.HentdokumentTilgangskontrollException;
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import java.util.Map;
 import java.util.Set;
 
 import static no.nav.saf.headers.SafHeaders.NAV_CALLID;
@@ -45,9 +47,11 @@ public class HentDokumentController extends AbstractSafController {
 	private final Set<String> azureIssuers;
 	private final TokenValidationContextHolder tokenValidationContextHolder;
 	private final AudienceCounter audienceCounter;
+	private final Map<String, Boolean> privilegiedServiceusers;
 
 	@Inject
 	public HentDokumentController(@Named("azureIssuers") Set<String> azureIssuers,
+								  @Named("privilegiedServiceusers")  Map<String, Boolean> privilegiedServiceusers,
 								  HentDokumentDomainCoordinator hentDokumentDomainCoordinator,
 								  AudienceCounter audienceCounter,
 								  TokenValidationContextHolder tokenValidationContextHolder) {
@@ -55,6 +59,7 @@ public class HentDokumentController extends AbstractSafController {
 		this.hentDokumentDomainCoordinator = hentDokumentDomainCoordinator;
 		this.azureIssuers = azureIssuers;
 		this.audienceCounter = audienceCounter;
+		this.privilegiedServiceusers = privilegiedServiceusers;
 	}
 
 	@SwaggerRestHentDokument
@@ -69,7 +74,7 @@ public class HentDokumentController extends AbstractSafController {
 			@ApiParam(name = X_CORRELATION_ID, value = "@Deprecated. Bruk " + NAV_CALLID, hidden = true) @RequestHeader(value = X_CORRELATION_ID, required = false) String xCorrelationId,
 			@ApiParam(name = NAV_CONSUMER_ID, value = "(Valgfri) ID for å identifisere komponent, modul eller system som kaller tjenesten hvis dette ikke utgår fra subjektet i tokenet. Eksempel: myapp") @RequestHeader(value = NAV_CONSUMER_ID, required = false) String navConsumerId
 	) {
-		SafRequestContext safRequestContext = new SafRequestContext(this.azureIssuers, createNavCallid(navCallid, xCorrelationId), navConsumerId, tokenValidationContextHolder.getTokenValidationContext());
+		SafRequestContext safRequestContext = new SafRequestContext(this.azureIssuers, createNavCallid(navCallid, xCorrelationId), navConsumerId, tokenValidationContextHolder.getTokenValidationContext(), privilegiedServiceusers);
 		log.info("hentDokument har mottatt kall. journalpostId={}, dokumentInfoId={}, variantFormat={}", journalpostId, dokumentInfoId, variantFormat);
 		try {
 			audienceCounter.increment(

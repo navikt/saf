@@ -6,6 +6,7 @@ import no.nav.saf.config.ServiceuserAlias;
 import no.nav.saf.graphiql.GraphiQLController;
 import no.nav.saf.metrics.DokMonitoringAspect;
 import no.nav.security.token.support.core.configuration.MultiIssuerConfiguration;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
@@ -20,8 +21,13 @@ import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 
 import javax.inject.Named;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @EnableAspectJAutoProxy
 @ComponentScan
@@ -57,5 +63,14 @@ public class ApplicationConfig {
 		multiIssuerConfiguration.getIssuer("azurev1").ifPresent(issuerConfiguration -> issuers.add(issuerConfiguration.getMetaData().getIssuer().getValue()));
 		multiIssuerConfiguration.getIssuer("azurev2").ifPresent(issuerConfiguration -> issuers.add(issuerConfiguration.getMetaData().getIssuer().getValue()));
 		return issuers;
+	}
+
+	@Bean
+	@Named("privilegiedServiceusers")
+	public Map<String, Boolean> getServiceusersMap(SafProperties safProperties) {
+		Map<String, Boolean> privilegiedServiceusers = new HashMap<>();
+		List<String> serviceuserList = Arrays.stream(StringUtils.split(safProperties.getPrivilegiedserviceusers(), ',')).collect(Collectors.toList());
+		serviceuserList.forEach(serviceuser -> privilegiedServiceusers.put(serviceuser, true));
+		return privilegiedServiceusers;
 	}
 }
