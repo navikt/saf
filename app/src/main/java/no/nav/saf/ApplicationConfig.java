@@ -67,7 +67,7 @@ public class ApplicationConfig {
 
 	@Bean
 	@Named("privilegiedServiceusers")
-	public Map<String, Boolean> getServiceusersMap(SafProperties safProperties){
+	public Map<String, Boolean> getServiceusersMap(SafProperties safProperties) {
 		Map<String, Boolean> privilegiedServiceusers = new HashMap<>();
 		List<String> serviceuserList = Arrays.stream(StringUtils.split(safProperties.getPrivilegiedserviceusers(), ',')).collect(Collectors.toList());
 		serviceuserList.forEach(serviceuser -> privilegiedServiceusers.put(serviceuser, true));
