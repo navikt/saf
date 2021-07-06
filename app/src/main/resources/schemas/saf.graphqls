@@ -429,6 +429,7 @@ type Dokumentvariant {
 
     # Dokumentets filtype, f.eks. PDFA, XML eller JPG. Gyldige verdier finnes på siden Fagarkiv - Filtype.
     # * NB: Informasjonen er ikke garantert å samsvare med dokumentets faktiske filtype, da dette ikke valideres under arkivering.
+    # * NB: Verdien 'PDFA' mappes til 'PDF'
     # * NB: Feltet skal kun brukes etter avtale med Team Dokument.
     filtype: String @deprecated(reason: "Feltet er deprekert og er kun til internt bruk. Feltet skal kun brukes etter avtale med Team Dokument.")
 

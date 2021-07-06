@@ -53,6 +53,8 @@ import static org.apache.commons.lang3.StringUtils.trim;
 @Component
 public class JournalpostDtoMapper {
 	private final AvsenderMottakerMapper avsenderMottakerMapper = new AvsenderMottakerMapper();
+	static final String FILTYPE_PDF = "PDF";
+	static final String FILTYPE_PDFA = "PDFA";
 
 	public Journalpost mapJournalpostDto(final JournalpostDto journalpostDto, final RequestCache requestCache) {
 		if (journalpostDto == null) {
@@ -115,7 +117,7 @@ public class JournalpostDtoMapper {
 										.variantformat(variantDto.getVariantf().getSafVariantformat())
 										.filnavn(variantDto.getFilnavn())
 										.filuuid(variantDto.getFiluuid())
-										.filtype(variantDto.getFiltype())
+										.filtype(mapFiltype(variantDto))
 										.skjerming(variantDto.getSkjerming() == null ? null : variantDto.getSkjerming()
 												.getSafSkjerming())
 										.build())
@@ -126,6 +128,13 @@ public class JournalpostDtoMapper {
 						.build()).collect(Collectors.toList());
 		journalpost.getDokumenter().addAll(dokumenter);
 		return journalpost;
+	}
+
+	private String mapFiltype(VariantDto variantDto) {
+		if (FILTYPE_PDFA.equals(variantDto.getFiltype())) {
+			return FILTYPE_PDF;
+		}
+		return variantDto.getFiltype();
 	}
 
 	private String mapAntallRetur(JournalpostDto journalpostDto) {
@@ -155,7 +164,7 @@ public class JournalpostDtoMapper {
 				// For journalposter som mangler saksrelasjon, er gjeldende tema lik Journalpost.fagomrade.
 				return FagomradeCode.toSafTema(journalpostDto.getFagomrade());
 			}
-			if(arkivsak.getTema() == null) {
+			if (arkivsak.getTema() == null) {
 				// For journalposter som ikke har tema på sak (f.eks ugyldig sakId), så er gjeldende tema lik Journalpost.fagomrade.
 				return FagomradeCode.toSafTema(journalpostDto.getFagomrade());
 			} else {
@@ -335,7 +344,7 @@ public class JournalpostDtoMapper {
 		}
 		if (arkivsak.isBrukerPerson()) {
 			return new Bruker(arkivsak.getAktoerId(), BrukerIdType.AKTOERID);
-		} else if(arkivsak.isBrukerOrganisasjon()) {
+		} else if (arkivsak.isBrukerOrganisasjon()) {
 			return new Bruker(arkivsak.getOrgnummer(), BrukerIdType.ORGNR);
 		} else {
 			return null;
@@ -350,7 +359,7 @@ public class JournalpostDtoMapper {
 		}
 		if (tilgangBruker.isPerson()) {
 			return new Bruker(tilgangBruker.getAktoerId(), BrukerIdType.AKTOERID);
-		} else if(tilgangBruker.isOrganisasjon()) {
+		} else if (tilgangBruker.isOrganisasjon()) {
 			return new Bruker(tilgangBruker.getOrgnummer(), BrukerIdType.ORGNR);
 		} else {
 			return null;
