@@ -33,6 +33,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 
+import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoMapper.FILTYPE_PDF;
 import static no.nav.saf.domain.DomainConstants.TILGANG_BRUKER;
 import static no.nav.saf.domain.kode.Kanal.SENTRAL_UTSKRIFT;
 import static org.assertj.core.groups.Tuple.tuple;
@@ -543,10 +544,25 @@ class JournalpostDtoMapperTest {
 		assertThat(dokumentInfo1.getLogiskeVedlegg().get(0).getTittel(), is(JournalpostDtoTestObjects.LOGISK_VEDLEGG_TITTEL));
 
 		Assertions.assertThat(dokumentInfo1.getDokumentvarianter())
-				.extracting(Dokumentvariant::getVariantformat, Dokumentvariant::getFilnavn, Dokumentvariant::getFiluuid, Dokumentvariant::isSaksbehandlerHarTilgang, Dokumentvariant::getSkjerming)
+				.extracting(Dokumentvariant::getVariantformat,
+						Dokumentvariant::getFilnavn,
+						Dokumentvariant::getFiluuid,
+						Dokumentvariant::isSaksbehandlerHarTilgang,
+						Dokumentvariant::getSkjerming,
+						Dokumentvariant::getFiltype)
 				.hasSize(2)
-				.containsExactlyInAnyOrder(tuple(JournalpostDtoTestObjects.VARIANT_FORMAT_CODE_ARKIV.getSafVariantformat(), JournalpostDtoTestObjects.FILNAVN_1, JournalpostDtoTestObjects.FILUUID_1, false, Skjerming.POL),
-						tuple(JournalpostDtoTestObjects.VARIANT_FORMAT_CODE_SLADDET.getSafVariantformat(), JournalpostDtoTestObjects.FILNAVN_2, JournalpostDtoTestObjects.FILUUID_2, false, null));
+				.containsExactlyInAnyOrder(
+						tuple(JournalpostDtoTestObjects.VARIANT_FORMAT_CODE_ARKIV.getSafVariantformat(),
+								JournalpostDtoTestObjects.FILNAVN_1,
+								JournalpostDtoTestObjects.FILUUID_1, false,
+								Skjerming.POL,
+								FILTYPE_PDF),
+						tuple(JournalpostDtoTestObjects.VARIANT_FORMAT_CODE_SLADDET.getSafVariantformat(),
+								JournalpostDtoTestObjects.FILNAVN_2,
+								JournalpostDtoTestObjects.FILUUID_2,
+								false,
+								null,
+								FILTYPE_PDF));
 
 		assertEquals(Dokumentstatus.FERDIGSTILT, dokumentInfo1.getDokumentstatus());
 		assertEquals(JournalpostDtoTestObjects.AKTOER_ID, journalpost.getBruker().getId());
