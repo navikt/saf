@@ -15,8 +15,6 @@ spec:
       value: {{ SAK_SAKER_URL }}
     - name: SECURITYTOKENSERVICE_URL
       value: {{ SECURITYTOKENSERVICE_URL }}
-    - name: AKTOER_V2_ENDPOINTURL
-      value: {{ AKTOER_V2_ENDPOINTURL }}
     - name: PENSJON_V1_ENDPOINTURL
       value: {{ PENSJON_V1_ENDPOINTURL }}
     - name: FPSAK_URL
