@@ -13,6 +13,7 @@ public class SafProperties {
 
 	private final Endpoints endpoints = new Endpoints();
 
+	@NotEmpty
 	private String privilegiedserviceusers;
 
 	@Data

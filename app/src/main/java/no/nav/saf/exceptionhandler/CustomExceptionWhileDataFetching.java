@@ -3,7 +3,7 @@ package no.nav.saf.exceptionhandler;
 import graphql.ErrorType;
 import graphql.GraphQLError;
 import graphql.GraphqlErrorHelper;
-import graphql.execution.ExecutionPath;
+import graphql.execution.ResultPath;
 import graphql.language.SourceLocation;
 import lombok.Getter;
 import lombok.ToString;
@@ -31,7 +31,7 @@ public class CustomExceptionWhileDataFetching implements GraphQLError {
     private final ExceptionType exceptionType;
     static final long serialVersionUID = 123456789;
 
-    public CustomExceptionWhileDataFetching(ExecutionPath path, Throwable exception, SourceLocation sourceLocation) {
+    public CustomExceptionWhileDataFetching(ResultPath path, Throwable exception, SourceLocation sourceLocation) {
         this.path = assertNotNull(path).toList();
         this.exception = assertNotNull(exception);
         this.locations = Collections.singletonList(sourceLocation);
@@ -50,7 +50,7 @@ public class CustomExceptionWhileDataFetching implements GraphQLError {
         return ExceptionType.TECHNICAL;
     }
 
-    private String mkMessage(ExecutionPath path, Throwable exception) {
+    private String mkMessage(ResultPath path, Throwable exception) {
         return format("Feilet ved henting av data (%s) : %s", path, exception.getMessage());
     }
 
