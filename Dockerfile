@@ -10,6 +10,7 @@ COPY --from=builder build/snapshot-dependencies/ ./
 COPY --from=builder build/spring-boot-loader/ ./
 COPY --from=builder build/application/ ./
 COPY export-vault-secrets.sh /init-scripts/10-export-vault-secrets.sh
+COPY run-java.sh /
 
 ENV APPD_ENABLED=true
 ENV MAIN_CLASS="org.springframework.boot.loader.JarLauncher"
