@@ -14,6 +14,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
@@ -27,10 +28,12 @@ public class FpsakConsumer {
 	private final StsRestConsumer stsRestConsumer;
 
 	public FpsakConsumer(RestTemplateBuilder restTemplateBuilder,
+						 ClientHttpRequestFactory clientHttpRequestFactory,
 						 @Value("${fpsak.url}") String fpsakUrl,
 						 StsRestConsumer stsRestConsumer) {
 		this.fpsakUrl = fpsakUrl;
 		this.restTemplate = restTemplateBuilder
+				.requestFactory(() -> clientHttpRequestFactory)
 				.setReadTimeout(Duration.ofSeconds(20))
 				.setConnectTimeout(Duration.ofSeconds(5)).build();
 		this.stsRestConsumer = stsRestConsumer;

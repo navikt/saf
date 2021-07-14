@@ -17,7 +17,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * @author Joakim Bjørnstad, Jbit AS
  */
 @ExtendWith(SpringExtension.class)
-@SpringBootTest(classes = {Application.class, TokenGeneratorConfiguration.class}, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(classes = {Application.class, TokenGeneratorConfiguration.class},
+		webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
+		properties = {"spring.main.allow-bean-definition-overriding=true"})
 @ActiveProfiles("itest")
 class ApplicationIT {
 	@Inject

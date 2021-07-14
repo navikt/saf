@@ -9,14 +9,18 @@ import no.nav.security.token.support.test.spring.TokenGeneratorConfiguration;
 import org.apache.cxf.helpers.IOUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.client.ClientHttpRequestFactory;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -44,10 +48,10 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
  * @author Sigurd Midttun, Visma Consulting.
  */
 @ExtendWith(SpringExtension.class)
-@SpringBootTest(classes = {ApplicationConfig.class, TokenGeneratorConfiguration.class, STSTestConfig.class},
-		webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(classes = {AbstractItest.TestConfig.class, ApplicationConfig.class, TokenGeneratorConfiguration.class, STSTestConfig.class},
+		webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
+		properties = {"spring.main.allow-bean-definition-overriding=true"})
 @ActiveProfiles(value = {"itest", "wiremock"})
-@ImportAutoConfiguration
 @AutoConfigureWireMock(port = Options.DYNAMIC_PORT)
 public abstract class AbstractItest {
 	private static final String SCENARIO_ABAC = "state_abac";
@@ -59,6 +63,15 @@ public abstract class AbstractItest {
 	private static final String STATE_PEP5 = "state_pep5";
 	private static final String STATE_PEP6D = "state_pep6d";
 	private static final String STATE_PEP7 = "state_pep7";
+
+	@Configuration
+	public static class TestConfig {
+		@Bean
+		@Primary
+		ClientHttpRequestFactory clientHttpRequestFactoryTest() {
+			return new SimpleClientHttpRequestFactory();
+		}
+	}
 
 	@Inject
 	protected TestRestTemplate restTemplate;
