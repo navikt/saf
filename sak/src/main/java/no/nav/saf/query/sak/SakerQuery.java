@@ -22,7 +22,7 @@ import static no.nav.saf.domain.DomainConstants.TILGANG_BRUKER;
 import static no.nav.saf.util.MDCUtility.addMdcData;
 
 @Component
-public class SakerCoordinatorImpl implements SakerCoordinator {
+class SakerQuery {
 
 	private final Pep<TilgangBruker> pep1g;
 	private final Pep<TilgangSak> pep2;
@@ -30,13 +30,12 @@ public class SakerCoordinatorImpl implements SakerCoordinator {
 	private final SakBrukerTilgangsmodellRepositoryImpl saksoversiktBrukerTilgangsmodellRepository;
 	private final SakMapper sakMapper;
 
-
 	@Inject
-	public SakerCoordinatorImpl(Pep<TilgangBruker> pep1g,
-								Pep<TilgangSak> pep2,
-								Pep<TilgangSak> pep3,
-								SakBrukerTilgangsmodellRepositoryImpl saksoversiktBrukerTilgangsmodellRepository,
-								SakMapper sakermapper) {
+	public SakerQuery(Pep<TilgangBruker> pep1g,
+					  Pep<TilgangSak> pep2,
+					  Pep<TilgangSak> pep3,
+					  SakBrukerTilgangsmodellRepositoryImpl saksoversiktBrukerTilgangsmodellRepository,
+					  SakMapper sakermapper) {
 		this.saksoversiktBrukerTilgangsmodellRepository = saksoversiktBrukerTilgangsmodellRepository;
 		this.sakMapper = sakermapper;
 		this.pep1g = pep1g;
@@ -44,7 +43,6 @@ public class SakerCoordinatorImpl implements SakerCoordinator {
 		this.pep3 = pep3;
 	}
 
-	@Override
 	@Monitor(value = "dok_request", extraTags = {"process", "saker", "requestType", "bruker"}, histogram = true)
 	public List<Sak> hentSaker(BrukerIdInput brukerIdInput, SafRequestContext safRequestContext) {
 		TilgangBruker tilgangBruker = saksoversiktBrukerTilgangsmodellRepository.findTilgangBruker(brukerIdInput);

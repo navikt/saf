@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @Component
-public class DokumentoversiktJournalstatusTilgangsmodellRepository {
+class DokumentoversiktJournalstatusTilgangsmodellRepository {
 	private final ArkivsakMapper arkivsakMapper;
 
 	public DokumentoversiktJournalstatusTilgangsmodellRepository(ArkivsakMapper arkivsakMapper) {

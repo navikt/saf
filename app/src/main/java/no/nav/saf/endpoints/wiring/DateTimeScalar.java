@@ -1,7 +1,5 @@
 package no.nav.saf.endpoints.wiring;
 
-import static java.time.temporal.ChronoUnit.SECONDS;
-
 import graphql.schema.Coercing;
 import graphql.schema.CoercingParseLiteralException;
 import graphql.schema.CoercingParseValueException;
@@ -10,6 +8,8 @@ import graphql.schema.GraphQLScalarType;
 
 import java.time.LocalDateTime;
 
+import static java.time.temporal.ChronoUnit.SECONDS;
+
 /**
  * @author Joakim Bjørnstad, Jbit AS
  */
@@ -17,7 +17,7 @@ final class DateTimeScalar {
 	static final GraphQLScalarType DATE_TIME = GraphQLScalarType.newScalar()
 			.name("DateTime")
 			.description("Identifikasjon av dato og tidspunkt etter ISO-8601 standarden.")
-			.coercing(new Coercing() {
+			.coercing(new Coercing<>() {
 				@Override
 				public Object serialize(Object dataFetcherResult) throws CoercingSerializeException {
 					if (dataFetcherResult instanceof LocalDateTime) {

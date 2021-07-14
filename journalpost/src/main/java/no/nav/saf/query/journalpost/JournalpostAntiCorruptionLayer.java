@@ -49,7 +49,6 @@ class JournalpostAntiCorruptionLayer {
 		this.hentJournalsakinfo = hentJournalsakinfo;
 	}
 
-
 	public TilgangJournalpost hentTilgangJournalpostFromSafRequestContext(SafRequestContext safRequestContext) {
 		JournalpostDto journalpostDto = safRequestContext.getRequestCache().getObject(RJOARK902_JOURNALPOST_DTO);
 		if (journalpostDto == null) {

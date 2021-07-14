@@ -46,7 +46,7 @@
         <lombok.version>1.18.20</lombok.version>
         <!-- test -->
         <mockito.version>3.11.2</mockito.version>
-        <spring-cloud-contract-wiremock.version>3.0.3</spring-cloud-contract-wiremock.version>
+        <spring-cloud-starter-contract-stub-runner.version>3.0.3</spring-cloud-starter-contract-stub-runner.version>
         <awaitility.version>4.1.0</awaitility.version>
         <!-- plugins -->
         <maven-toolchains-plugin.version>3.0.0</maven-toolchains-plugin.version>
@@ -195,8 +195,8 @@
             </dependency>
             <dependency>
                 <groupId>org.springframework.cloud</groupId>
-                <artifactId>spring-cloud-contract-wiremock</artifactId>
-                <version>${spring-cloud-contract-wiremock.version}</version>
+                <artifactId>spring-cloud-starter-contract-stub-runner</artifactId>
+                <version>${spring-cloud-starter-contract-stub-runner.version}</version>
                 <scope>test</scope>
             </dependency>
             <dependency>

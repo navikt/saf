@@ -36,10 +36,10 @@ import static no.nav.saf.util.MDCUtility.addMdcData;
  */
 @Slf4j
 @Component
-class DokumentoversiktJournalstatusCoordinatorImpl implements DokumentoversiktJournalstatusCoordinator {
+class DokumentoversiktJournalstatusQuery {
 
 	// Hvis nye gyldige journalstatuser legges til må PEP1G, PEP2, PEP2D og PEP3 filtrering vurderes innført
-	private static final EnumSet GYLDIGE_JOURNALSTATUSER = EnumSet.of(Journalstatus.UTGAAR, Journalstatus.UKJENT_BRUKER);
+	private static final EnumSet<Journalstatus> GYLDIGE_JOURNALSTATUSER = EnumSet.of(Journalstatus.UTGAAR, Journalstatus.UKJENT_BRUKER);
 
 	private final SideInfoMapper sideInfoMapper = new SideInfoMapper();
 	private final DokumentoversiktJournalstatusTilgangsmodellRepository dokumentoversiktJournalstatusTilgangsmodellRepository;
@@ -50,12 +50,12 @@ class DokumentoversiktJournalstatusCoordinatorImpl implements DokumentoversiktJo
 	private final Pep<TilgangDokumentvariant> pep6d;
 
 	@Inject
-	public DokumentoversiktJournalstatusCoordinatorImpl(DokumentoversiktJournalstatusTilgangsmodellRepository dokumentoversiktJournalstatusTilgangsmodellRepository,
-														TilgangsmodellRepository tilgangsmodellRepository,
-														DokumentoversiktVisningsmodellRepository visningsmodellRepository,
-														@Named(PEP4) Pep<TilgangJournalpost> pep4,
-														@Named(PEP5) Pep<TilgangDokumentInfo> pep5,
-														@Named(PEP6D) Pep<TilgangDokumentvariant> pep6d) {
+	public DokumentoversiktJournalstatusQuery(DokumentoversiktJournalstatusTilgangsmodellRepository dokumentoversiktJournalstatusTilgangsmodellRepository,
+											  TilgangsmodellRepository tilgangsmodellRepository,
+											  DokumentoversiktVisningsmodellRepository visningsmodellRepository,
+											  @Named(PEP4) Pep<TilgangJournalpost> pep4,
+											  @Named(PEP5) Pep<TilgangDokumentInfo> pep5,
+											  @Named(PEP6D) Pep<TilgangDokumentvariant> pep6d) {
 		this.dokumentoversiktJournalstatusTilgangsmodellRepository = dokumentoversiktJournalstatusTilgangsmodellRepository;
 		this.tilgangsmodellRepository = tilgangsmodellRepository;
 		this.visningsmodellRepository = visningsmodellRepository;
@@ -64,7 +64,6 @@ class DokumentoversiktJournalstatusCoordinatorImpl implements DokumentoversiktJo
 		this.pep6d = pep6d;
 	}
 
-	@Override
 	@Monitor(value = "dok_request", extraTags = {"process", "dokumentOversikt", "requestType", "journalstatus"}, histogram = true)
 	public Dokumentoversikt hentDokumentoversikt(DokumentoversiktJournalstatusArguments dokumentoversiktJournalstatusArguments, SafRequestContext safRequestContext) {
 
