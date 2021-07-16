@@ -11,7 +11,6 @@ import no.nav.saf.domain.kode.Tema;
 import no.nav.saf.domain.kode.Tilknytning;
 import no.nav.saf.domain.visningsmodell.Journalpost;
 import no.nav.saf.domain.visningsmodell.Sak;
-import no.nav.saf.query.dokumentoversikt.DokumentoversiktCoordinator;
 import no.nav.saf.query.dokumentoversikt.bruker.DokumentoversiktBrukerDataFetcher;
 import no.nav.saf.query.dokumentoversikt.fagsak.DokumentoversiktFagsakDataFetcher;
 import no.nav.saf.query.dokumentoversikt.journalstatus.DokumentoversiktJournalstatusDataFetcher;
@@ -34,7 +33,6 @@ public class DokumentoversiktWiring {
 	private final DokumentoversiktBrukerDataFetcher dokumentoversiktBrukerDataFetcher;
 	private final DokumentoversiktFagsakDataFetcher dokumentoversiktFagsakDataFetcher;
 	private final DokumentoversiktJournalstatusDataFetcher dokumentoversiktJournalstatusDataFetcher;
-	private final DokumentoversiktCoordinator dokumentoversiktCoordinator;
 	private final JournalpostDataFetcher journalpostDataFetcher;
 	private final TilknyttedeJournalposterDataFetcher tilknyttedeJournalposterDataFetcher;
 	private final SakerDataFetcher sakerDataFetcher;
@@ -44,14 +42,12 @@ public class DokumentoversiktWiring {
 	public DokumentoversiktWiring(DokumentoversiktBrukerDataFetcher dokumentoversiktBrukerDataFetcher,
 								  DokumentoversiktFagsakDataFetcher dokumentoversiktFagsakDataFetcher,
 								  DokumentoversiktJournalstatusDataFetcher dokumentoversiktJournalstatusDataFetcher,
-								  DokumentoversiktCoordinator dokumentoversiktCoordinator,
 								  JournalpostDataFetcher journalpostDataFetcher,
 								  TilknyttedeJournalposterDataFetcher tilknyttedeJournalposterDataFetcher,
 								  SakerDataFetcher sakerDataFetcher, MeterRegistry meterRegistry) {
 		this.dokumentoversiktBrukerDataFetcher = dokumentoversiktBrukerDataFetcher;
 		this.dokumentoversiktFagsakDataFetcher = dokumentoversiktFagsakDataFetcher;
 		this.dokumentoversiktJournalstatusDataFetcher = dokumentoversiktJournalstatusDataFetcher;
-		this.dokumentoversiktCoordinator = dokumentoversiktCoordinator;
 		this.journalpostDataFetcher = journalpostDataFetcher;
 		this.tilknyttedeJournalposterDataFetcher = tilknyttedeJournalposterDataFetcher;
 		this.sakerDataFetcher = sakerDataFetcher;
@@ -72,11 +68,6 @@ public class DokumentoversiktWiring {
 				.type(newTypeWiring("Query").dataFetcher("journalpost", journalpostDataFetcher))
 				.type(newTypeWiring("Query").dataFetcher("tilknyttedeJournalposter", tilknyttedeJournalposterDataFetcher))
 				.type(newTypeWiring("Query").dataFetcher("saker", sakerDataFetcher))
-				.type("Journalpost", typeWiring -> typeWiring.dataFetcher("dokumenter", environment -> {
-					Journalpost journalpost = environment.getSource();
-					final SafRequestContext safRequestContext = environment.getContext();
-					return dokumentoversiktCoordinator.findDokumenter(journalpost, safRequestContext);
-				}))
 				.type("Journalpost", typeWiring -> typeWiring.dataFetcher("journalforendeEnhet", environment -> {
 					SafRequestContext safRequestContext = environment.getContext();
 					Journalpost journalpost = environment.getSource();
