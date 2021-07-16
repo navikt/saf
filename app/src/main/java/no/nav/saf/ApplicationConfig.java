@@ -37,7 +37,7 @@ import java.util.stream.Collectors;
 @EnableConfigurationProperties(value = {SafProperties.class, ServiceuserAlias.class})
 public class ApplicationConfig {
 	@Bean
-	ClientHttpRequestFactory requestFactory(HttpClient httpClient) {
+	ClientHttpRequestFactory clientHttpRequestFactory(HttpClient httpClient) {
 		return new HttpComponentsClientHttpRequestFactory(httpClient);
 	}
 

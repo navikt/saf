@@ -32,7 +32,7 @@ import static no.nav.saf.domain.DomainConstants.ORGNR_LIST;
  */
 @Slf4j
 @Component
-public class DokumentoversiktFagsakTilgangsmodellRepository {
+class DokumentoversiktFagsakTilgangsmodellRepository {
 
 	private final PdlAntiCorruptionLayer aktoerAntiCorruptionLayer;
 	private final GsakAntiCorruptionLayer gsakAntiCorruptionLayer;

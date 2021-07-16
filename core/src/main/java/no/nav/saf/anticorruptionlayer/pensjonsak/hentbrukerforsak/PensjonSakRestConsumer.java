@@ -11,6 +11,7 @@ import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
@@ -27,10 +28,12 @@ public class PensjonSakRestConsumer {
     private final String pensjonsakApiUrl;
 
     public PensjonSakRestConsumer(RestTemplateBuilder restTemplateBuilder,
+                                  ClientHttpRequestFactory clientHttpRequestFactory,
                                   @Value("${pensjonsakrs.v1.url}") String pensjonsakApiUrl,
                                   ServiceuserAlias serviceuserAlias) {
         this.pensjonsakApiUrl = pensjonsakApiUrl;
         this.restTemplate = restTemplateBuilder
+                .requestFactory(() -> clientHttpRequestFactory)
                 .setReadTimeout(Duration.ofSeconds(20))
                 .setConnectTimeout(Duration.ofSeconds(5))
                 .basicAuthentication(serviceuserAlias.getUsername(), serviceuserAlias.getPassword()).build();

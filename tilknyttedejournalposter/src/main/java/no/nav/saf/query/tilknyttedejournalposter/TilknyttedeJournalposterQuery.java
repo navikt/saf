@@ -33,7 +33,7 @@ import static no.nav.saf.util.MDCUtility.addMdcData;
  * @author Joakim Bjørnstad, Jbit AS
  */
 @Component
-public class TilknyttedeJournalposterCoordinator {
+public class TilknyttedeJournalposterQuery {
 	private final TilknyttedeJournalposterTilgangRepository tilknyttedeJournalposterTilgangRepository;
 	private final JournalpostDtoMapper journalpostDtoMapper;
 	private final Pep<TilgangBruker> pep1g;
@@ -45,15 +45,15 @@ public class TilknyttedeJournalposterCoordinator {
 	private final Pep<TilgangDokumentvariant> pep6d;
 
 	@Inject
-	public TilknyttedeJournalposterCoordinator(TilknyttedeJournalposterTilgangRepository tilknyttedeJournalposterTilgangRepository,
-											   JournalpostDtoMapper journalpostDtoMapper,
-											   @Named(PEP1G) Pep<TilgangBruker> pep1g,
-											   @Named(PEP2) Pep<TilgangSak> pep2,
-											   @Named(PEP2D) Pep<TilgangSak> pep2d,
-											   @Named(PEP3) Pep<TilgangSak> pep3,
-											   @Named(PEP4) Pep<TilgangJournalpost> pep4,
-											   @Named(PEP5) Pep<TilgangDokumentInfo> pep5,
-											   @Named(PEP6D) Pep<TilgangDokumentvariant> pep6d) {
+	public TilknyttedeJournalposterQuery(TilknyttedeJournalposterTilgangRepository tilknyttedeJournalposterTilgangRepository,
+										 JournalpostDtoMapper journalpostDtoMapper,
+										 @Named(PEP1G) Pep<TilgangBruker> pep1g,
+										 @Named(PEP2) Pep<TilgangSak> pep2,
+										 @Named(PEP2D) Pep<TilgangSak> pep2d,
+										 @Named(PEP3) Pep<TilgangSak> pep3,
+										 @Named(PEP4) Pep<TilgangJournalpost> pep4,
+										 @Named(PEP5) Pep<TilgangDokumentInfo> pep5,
+										 @Named(PEP6D) Pep<TilgangDokumentvariant> pep6d) {
 		this.tilknyttedeJournalposterTilgangRepository = tilknyttedeJournalposterTilgangRepository;
 		this.journalpostDtoMapper = journalpostDtoMapper;
 		this.pep1g = pep1g;
@@ -64,7 +64,6 @@ public class TilknyttedeJournalposterCoordinator {
 		this.pep5 = pep5;
 		this.pep6d = pep6d;
 	}
-
 
 	public List<Journalpost> hentTilknyttedeJournalposter(String dokumentInfoId, Tilknytning tilknytning, SafRequestContext safRequestContext) {
 		addMdcData(safRequestContext);

@@ -14,6 +14,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
@@ -34,12 +35,14 @@ public class AbacConsumer {
     private final AbacResponseMapper abacResponseMapper;
 
     public AbacConsumer(RestTemplateBuilder restTemplateBuilder,
+                        ClientHttpRequestFactory clientHttpRequestFactory,
                         @Value("${abac.pdp.endpoint.url}") String url,
                         ServiceuserAlias serviceuserAlias,
                         AbacRequestMapper abacRequestMapper,
                         AbacResponseMapper abacResponseMapper) {
         this.url = url;
         this.restTemplate = restTemplateBuilder
+                .requestFactory(() -> clientHttpRequestFactory)
                 .setReadTimeout(Duration.ofSeconds(10))
                 .setConnectTimeout(Duration.ofSeconds(5))
                 .basicAuthentication(serviceuserAlias.getUsername(), serviceuserAlias.getPassword()).build();

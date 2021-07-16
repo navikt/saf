@@ -28,7 +28,7 @@ import static no.nav.saf.domain.kode.Tema.UFO;
  */
 @Slf4j
 @Component
-public class JournalpostTilgangRepositoryImpl implements JournalpostTilgangRepository {
+class JournalpostTilgangRepositoryImpl implements JournalpostTilgangRepository {
 
 	private final PensjonSakAntiCorruptionLayer pensjonSakAntiCorruptionLayer;
 	private final JournalpostAntiCorruptionLayer journalpostAntiCorruptionLayer;

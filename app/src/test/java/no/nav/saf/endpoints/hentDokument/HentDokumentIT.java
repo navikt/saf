@@ -339,6 +339,10 @@ class HentDokumentIT extends AbstractItest {
 	@Test
 	void shouldGetUnauthorizedFromPep1g() {
 		abacDenyPep1g();
+		stubFor(post(urlEqualTo("/reststs"))
+				.willReturn(aResponse().withStatus(OK.value())
+						.withHeader(CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+						.withBodyFile("sts/reststs-happy.json")));
 		stubFor(get("/hentjournalsakinfo/hentdokument/" + DOKUMENT_ID + "/" + VARIANTFORMAT).willReturn(aResponse().withStatus(OK
 				.value())
 				.withHeader(CONTENT_TYPE, APPLICATION_PDF_VALUE)
