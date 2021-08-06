@@ -128,14 +128,13 @@ public class HentDokumentDomainCoordinatorImpl implements HentDokumentDomainCoor
 			throw new HentdokumentTilgangskontrollException(PEP4_DENY_REASON, pep4Response);
 		}
 
-		XacmlResponse pep5Response = pep5.verifyAccessXacmlResponse(tilgangJournalpost.getDokumenter().get(0), safRequestContext);
+		final TilgangDokumentInfo tilgangDokumentInfo = tilgangJournalpost.getDokumenter().get(0);
+		XacmlResponse pep5Response = pep5.verifyAccessXacmlResponse(tilgangDokumentInfo, safRequestContext);
 		if (pep5Response.isDeny()) {
 			throw new HentdokumentTilgangskontrollException(PEP5_DENY_REASON, pep5Response);
 		}
 
-		XacmlResponse pep6dResponse = pep6d.verifyAccessXacmlResponse(tilgangJournalpost.getDokumenter()
-				.get(0).getTilgangDokumentvarianter().get(0), safRequestContext);
-
+		XacmlResponse pep6dResponse = pep6d.verifyAccessXacmlResponse(tilgangDokumentInfo.getTilgangDokumentvarianter().get(0), safRequestContext);
 		if (pep6dResponse.isDeny()) {
 			throw new HentdokumentTilgangskontrollException(PEP6D_DENY_REASON, pep6dResponse);
 		}

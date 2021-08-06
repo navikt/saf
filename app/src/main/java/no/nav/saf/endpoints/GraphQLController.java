@@ -32,9 +32,9 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-import static no.nav.saf.headers.SafHeaders.NAV_CALLID;
-import static no.nav.saf.headers.SafHeaders.NAV_CONSUMER_ID;
-import static no.nav.saf.headers.SafHeaders.X_CORRELATION_ID;
+import static no.nav.saf.headers.NavHeaders.NAV_CALLID;
+import static no.nav.saf.headers.NavHeaders.NAV_CONSUMER_ID;
+import static no.nav.saf.headers.NavHeaders.X_CORRELATION_ID;
 
 /**
  * GraphQL endepunktet til applikasjonen.
