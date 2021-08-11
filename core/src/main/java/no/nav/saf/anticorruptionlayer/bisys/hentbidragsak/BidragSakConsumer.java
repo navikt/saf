@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
@@ -23,10 +24,12 @@ public class BidragSakConsumer {
 	private final String bidragSakApiUrl;
 
 	public BidragSakConsumer(RestTemplateBuilder restTemplateBuilder,
+							 ClientHttpRequestFactory clientHttpRequestFactory,
 							 @Value("${bidrag.sak.url}") String bidragSakApiUrl,
 							 ServiceuserAlias serviceuserAlias) {
 		this.bidragSakApiUrl = bidragSakApiUrl;
 		this.restTemplate = restTemplateBuilder
+				.requestFactory(() -> clientHttpRequestFactory)
 				.setReadTimeout(Duration.ofSeconds(20))
 				.setConnectTimeout(Duration.ofSeconds(5))
 				.basicAuthentication(serviceuserAlias.getUsername(), serviceuserAlias.getPassword()).build();

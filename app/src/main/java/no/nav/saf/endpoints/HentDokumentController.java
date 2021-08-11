@@ -3,7 +3,6 @@ package no.nav.saf.endpoints;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
-import no.nav.saf.anticorruptionlayer.azure.SafProperties;
 import no.nav.saf.domain.HentDokument;
 import no.nav.saf.domain.kode.Variantformat;
 import no.nav.saf.exceptions.HentdokumentTilgangskontrollException;
@@ -15,6 +14,7 @@ import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.SafSecurityContext;
 import no.nav.security.token.support.core.api.Protected;
 import no.nav.security.token.support.core.context.TokenValidationContextHolder;
+import org.slf4j.MDC;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -93,6 +93,8 @@ public class HentDokumentController extends AbstractSafController {
 		} catch (HentdokumentTilgangskontrollException e) {
 			log.warn("hentDokument hentet ikke dokument. journalpostId={}, dokumentInfoId={}, variantFormat={}. Tilgang ble avvist av grunn: " + e.getMessage(), journalpostId, dokumentInfoId, variantFormat);
 			throw e;
+		} finally {
+			MDC.clear();
 		}
 	}
 

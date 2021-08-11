@@ -31,7 +31,7 @@ import java.util.Set;
  */
 @Slf4j
 @Component
-public class DokumentoversiktBrukerTilgangsmodellRepository {
+class DokumentoversiktBrukerTilgangsmodellRepository {
 	private static final Set<Tema> TEMA_PENSJON = EnumSet.of(Tema.PEN, Tema.UFO);
 
 	private final PdlAntiCorruptionLayer aktoerAntiCorruptionLayer;

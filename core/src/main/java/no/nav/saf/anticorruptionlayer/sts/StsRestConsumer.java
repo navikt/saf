@@ -30,10 +30,10 @@ public class StsRestConsumer {
 	public StsRestConsumer(@Value("${restsecuritytokenservice.url}") String ststokenurl,
 						   ServiceuserAlias serviceuserAlias,
 						   RestTemplateBuilder restTemplateBuilder,
-						   ClientHttpRequestFactory requestFactory) {
+						   ClientHttpRequestFactory clientHttpRequestFactory) {
 		this.ststokenurl = ststokenurl;
 		this.restTemplate = restTemplateBuilder
-				.requestFactory(() -> requestFactory)
+				.requestFactory(() -> clientHttpRequestFactory)
 				.basicAuthentication(serviceuserAlias.getUsername(), serviceuserAlias.getPassword())
 				.setConnectTimeout(Duration.ofSeconds(3))
 				.setReadTimeout(Duration.ofSeconds(20))

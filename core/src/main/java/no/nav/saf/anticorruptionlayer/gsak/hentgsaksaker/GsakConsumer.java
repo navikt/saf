@@ -16,6 +16,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
@@ -41,10 +42,12 @@ public class GsakConsumer {
 	private final String gsakApiUrl;
 
 	public GsakConsumer(RestTemplateBuilder restTemplateBuilder,
+						ClientHttpRequestFactory clientHttpRequestFactory,
 						@Value("${sak.saker.url}") String gsakApiUrl,
 						ServiceuserAlias serviceuserAlias) {
 		this.gsakApiUrl = gsakApiUrl;
 		this.restTemplate = restTemplateBuilder
+				.requestFactory(() -> clientHttpRequestFactory)
 				.setReadTimeout(Duration.ofSeconds(20))
 				.setConnectTimeout(Duration.ofSeconds(5))
 				.basicAuthentication(serviceuserAlias.getUsername(), serviceuserAlias.getPassword()).build();

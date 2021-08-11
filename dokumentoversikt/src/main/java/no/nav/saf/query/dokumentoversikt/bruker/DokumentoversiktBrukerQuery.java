@@ -44,7 +44,7 @@ import static no.nav.saf.util.MDCUtility.addMdcData;
  */
 @Slf4j
 @Component
-class DokumentoversiktBrukerCoordinatorImpl implements DokumentoversiktBrukerCoordinator {
+class DokumentoversiktBrukerQuery {
 
 	private final SideInfoMapper sideInfoMapper = new SideInfoMapper();
 	private final DokumentoversiktBrukerTilgangsmodellRepository dokumentoversiktBrukerTilgangsmodellRepository;
@@ -59,16 +59,16 @@ class DokumentoversiktBrukerCoordinatorImpl implements DokumentoversiktBrukerCoo
 	private final Pep<TilgangDokumentvariant> pep6d;
 
 	@Inject
-	public DokumentoversiktBrukerCoordinatorImpl(DokumentoversiktBrukerTilgangsmodellRepository dokumentoversiktBrukerTilgangsmodellRepository,
-												 TilgangsmodellRepository tilgangsmodellRepository,
-												 DokumentoversiktVisningsmodellRepository visningsmodellRepository,
-												 @Named(PEP1G) Pep<TilgangBruker> pep1g,
-												 @Named(PEP2) Pep<TilgangSak> pep2,
-												 @Named(PEP2D) Pep<TilgangSak> pep2d,
-												 @Named(PEP3) Pep<TilgangSak> pep3,
-												 @Named(PEP4) Pep<TilgangJournalpost> pep4,
-												 @Named(PEP5) Pep<TilgangDokumentInfo> pep5,
-												 @Named(PEP6D) Pep<TilgangDokumentvariant> pep6d) {
+	public DokumentoversiktBrukerQuery(DokumentoversiktBrukerTilgangsmodellRepository dokumentoversiktBrukerTilgangsmodellRepository,
+									   TilgangsmodellRepository tilgangsmodellRepository,
+									   DokumentoversiktVisningsmodellRepository visningsmodellRepository,
+									   @Named(PEP1G) Pep<TilgangBruker> pep1g,
+									   @Named(PEP2) Pep<TilgangSak> pep2,
+									   @Named(PEP2D) Pep<TilgangSak> pep2d,
+									   @Named(PEP3) Pep<TilgangSak> pep3,
+									   @Named(PEP4) Pep<TilgangJournalpost> pep4,
+									   @Named(PEP5) Pep<TilgangDokumentInfo> pep5,
+									   @Named(PEP6D) Pep<TilgangDokumentvariant> pep6d) {
 		this.dokumentoversiktBrukerTilgangsmodellRepository = dokumentoversiktBrukerTilgangsmodellRepository;
 		this.tilgangsmodellRepository = tilgangsmodellRepository;
 		this.visningsmodellRepository = visningsmodellRepository;
@@ -81,7 +81,6 @@ class DokumentoversiktBrukerCoordinatorImpl implements DokumentoversiktBrukerCoo
 		this.pep6d = pep6d;
 	}
 
-	@Override
 	@Monitor(value = "dok_request", extraTags = {"process", "dokumentOversikt", "requestType", "bruker"}, histogram = true)
 	public Dokumentoversikt hentDokumentoversikt(DokumentoversiktBrukerArguments dokumentoversiktBrukerArguments, SafRequestContext safRequestContext) {
 		TilgangBruker tilgangBruker = dokumentoversiktBrukerTilgangsmodellRepository.findTilgangBruker(dokumentoversiktBrukerArguments.getBrukerIdInput());

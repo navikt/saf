@@ -41,7 +41,7 @@ import static no.nav.saf.util.MDCUtility.addMdcData;
  * @author Joakim Bjørnstad, Jbit AS
  */
 @Component
-class DokumentoversiktFagsakCoordinatorImpl implements DokumentoversiktFagsakCoordinator {
+class DokumentoversiktFagsakQuery {
 
 	private final SideInfoMapper sideInfoMapper = new SideInfoMapper();
 	private final DokumentoversiktFagsakTilgangsmodellRepository dokumentoversiktFagsakTilgangsmodellRepository;
@@ -56,16 +56,16 @@ class DokumentoversiktFagsakCoordinatorImpl implements DokumentoversiktFagsakCoo
 	private final Pep<TilgangDokumentvariant> pep6d;
 
 	@Inject
-	public DokumentoversiktFagsakCoordinatorImpl(DokumentoversiktFagsakTilgangsmodellRepository dokumentoversiktFagsakTilgangsmodellRepository,
-												 TilgangsmodellRepository tilgangsmodellRepository,
-												 DokumentoversiktVisningsmodellRepository visningsmodellRepository,
-												 @Named(PEP1G) Pep<TilgangBruker> pep1g,
-												 @Named(PEP2) Pep<TilgangSak> pep2,
-												 @Named(PEP2D) Pep<TilgangSak> pep2d,
-												 @Named(PEP3) Pep<TilgangSak> pep3,
-												 @Named(PEP4) Pep<TilgangJournalpost> pep4,
-												 @Named(PEP5) Pep<TilgangDokumentInfo> pep5,
-												 @Named(PEP6D) Pep<TilgangDokumentvariant> pep6d) {
+	public DokumentoversiktFagsakQuery(DokumentoversiktFagsakTilgangsmodellRepository dokumentoversiktFagsakTilgangsmodellRepository,
+									   TilgangsmodellRepository tilgangsmodellRepository,
+									   DokumentoversiktVisningsmodellRepository visningsmodellRepository,
+									   @Named(PEP1G) Pep<TilgangBruker> pep1g,
+									   @Named(PEP2) Pep<TilgangSak> pep2,
+									   @Named(PEP2D) Pep<TilgangSak> pep2d,
+									   @Named(PEP3) Pep<TilgangSak> pep3,
+									   @Named(PEP4) Pep<TilgangJournalpost> pep4,
+									   @Named(PEP5) Pep<TilgangDokumentInfo> pep5,
+									   @Named(PEP6D) Pep<TilgangDokumentvariant> pep6d) {
 		this.dokumentoversiktFagsakTilgangsmodellRepository = dokumentoversiktFagsakTilgangsmodellRepository;
 		this.tilgangsmodellRepository = tilgangsmodellRepository;
 		this.visningsmodellRepository = visningsmodellRepository;
@@ -78,7 +78,6 @@ class DokumentoversiktFagsakCoordinatorImpl implements DokumentoversiktFagsakCoo
 		this.pep6d = pep6d;
 	}
 
-	@Override
 	@Monitor(value = "dok_request", extraTags = {"process", "dokumentOversikt", "requestType", "fagsak"}, histogram = true)
 	public Dokumentoversikt hentDokumentoversikt(DokumentoversiktFagsakArguments dokumentoversiktFagsakArguments, SafRequestContext safRequestContext) {
 		final FagsakInput fagsakInput = dokumentoversiktFagsakArguments.getFagsakInput();

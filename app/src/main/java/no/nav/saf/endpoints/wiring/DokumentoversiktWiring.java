@@ -1,6 +1,5 @@
 package no.nav.saf.endpoints.wiring;
 
-import graphql.execution.DataFetcherResult;
 import graphql.schema.idl.NaturalEnumValuesProvider;
 import graphql.schema.idl.RuntimeWiring;
 import io.micrometer.core.instrument.Counter;
@@ -10,30 +9,20 @@ import no.nav.saf.domain.kode.Journalposttype;
 import no.nav.saf.domain.kode.Journalstatus;
 import no.nav.saf.domain.kode.Tema;
 import no.nav.saf.domain.kode.Tilknytning;
-import no.nav.saf.domain.visningsmodell.BrukerIdType;
-import no.nav.saf.domain.visningsmodell.Dokumentoversikt;
 import no.nav.saf.domain.visningsmodell.Journalpost;
 import no.nav.saf.domain.visningsmodell.Sak;
-import no.nav.saf.exceptions.JournalpostIkkeFunnetException;
-import no.nav.saf.exceptions.SafFunctionalException;
-import no.nav.saf.query.dokumentoversikt.DokumentoversiktCoordinator;
-import no.nav.saf.query.dokumentoversikt.bruker.DokumentoversiktBrukerArguments;
-import no.nav.saf.query.dokumentoversikt.bruker.DokumentoversiktBrukerCoordinator;
-import no.nav.saf.query.dokumentoversikt.fagsak.DokumentoversiktFagsakArguments;
-import no.nav.saf.query.dokumentoversikt.fagsak.DokumentoversiktFagsakCoordinator;
-import no.nav.saf.query.dokumentoversikt.journalstatus.DokumentoversiktJournalstatusArguments;
-import no.nav.saf.query.dokumentoversikt.journalstatus.DokumentoversiktJournalstatusCoordinator;
-import no.nav.saf.query.journalpost.JournalpostCoordinator;
-import no.nav.saf.query.sak.SakerCoordinatorImpl;
-import no.nav.saf.query.tilknyttedejournalposter.TilknyttedeJournalposterCoordinator;
+import no.nav.saf.query.dokumentoversikt.bruker.DokumentoversiktBrukerDataFetcher;
+import no.nav.saf.query.dokumentoversikt.fagsak.DokumentoversiktFagsakDataFetcher;
+import no.nav.saf.query.dokumentoversikt.journalstatus.DokumentoversiktJournalstatusDataFetcher;
+import no.nav.saf.query.journalpost.JournalpostDataFetcher;
+import no.nav.saf.query.sak.SakerDataFetcher;
+import no.nav.saf.query.tilknyttedejournalposter.TilknyttedeJournalposterDataFetcher;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
-import no.nav.saf.tjeneste.argumenter.BrukerIdInput;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+
+import static graphql.schema.idl.TypeRuntimeWiring.newTypeWiring;
 
 /**
  * @author Joakim Bjørnstad, Jbit AS
@@ -41,31 +30,27 @@ import java.util.Map;
 @Component
 @Slf4j
 public class DokumentoversiktWiring {
-	private final DokumentoversiktCoordinator dokumentoversiktCoordinator;
-	private final DokumentoversiktBrukerCoordinator dokumentoversiktBrukerCoordinator;
-	private final DokumentoversiktFagsakCoordinator dokumentoversiktFagsakCoordinator;
-	private final DokumentoversiktJournalstatusCoordinator dokumentoversiktJournalstatusCoordinator;
-	private final JournalpostCoordinator journalpostCoordinator;
-	private final TilknyttedeJournalposterCoordinator tilknyttedeJournalposterCoordinator;
-	private final SakerCoordinatorImpl sakerCoordinatorImpl;
+	private final DokumentoversiktBrukerDataFetcher dokumentoversiktBrukerDataFetcher;
+	private final DokumentoversiktFagsakDataFetcher dokumentoversiktFagsakDataFetcher;
+	private final DokumentoversiktJournalstatusDataFetcher dokumentoversiktJournalstatusDataFetcher;
+	private final JournalpostDataFetcher journalpostDataFetcher;
+	private final TilknyttedeJournalposterDataFetcher tilknyttedeJournalposterDataFetcher;
+	private final SakerDataFetcher sakerDataFetcher;
 	private final MeterRegistry meterRegistry;
 
 	@Inject
-	public DokumentoversiktWiring(DokumentoversiktCoordinator dokumentoversiktCoordinator,
-								  DokumentoversiktBrukerCoordinator dokumentoversiktBrukerCoordinator,
-								  DokumentoversiktFagsakCoordinator dokumentoversiktFagsakCoordinator,
-								  DokumentoversiktJournalstatusCoordinator dokumentoversiktJournalstatusCoordinator,
-								  JournalpostCoordinator journalpostCoordinator,
-								  TilknyttedeJournalposterCoordinator tilknyttedeJournalposterCoordinator,
-								  SakerCoordinatorImpl sakerCoordinatorImpl,
-								  MeterRegistry meterRegistry) {
-		this.dokumentoversiktCoordinator = dokumentoversiktCoordinator;
-		this.dokumentoversiktBrukerCoordinator = dokumentoversiktBrukerCoordinator;
-		this.dokumentoversiktFagsakCoordinator = dokumentoversiktFagsakCoordinator;
-		this.dokumentoversiktJournalstatusCoordinator = dokumentoversiktJournalstatusCoordinator;
-		this.journalpostCoordinator = journalpostCoordinator;
-		this.tilknyttedeJournalposterCoordinator = tilknyttedeJournalposterCoordinator;
-		this.sakerCoordinatorImpl = sakerCoordinatorImpl;
+	public DokumentoversiktWiring(DokumentoversiktBrukerDataFetcher dokumentoversiktBrukerDataFetcher,
+								  DokumentoversiktFagsakDataFetcher dokumentoversiktFagsakDataFetcher,
+								  DokumentoversiktJournalstatusDataFetcher dokumentoversiktJournalstatusDataFetcher,
+								  JournalpostDataFetcher journalpostDataFetcher,
+								  TilknyttedeJournalposterDataFetcher tilknyttedeJournalposterDataFetcher,
+								  SakerDataFetcher sakerDataFetcher, MeterRegistry meterRegistry) {
+		this.dokumentoversiktBrukerDataFetcher = dokumentoversiktBrukerDataFetcher;
+		this.dokumentoversiktFagsakDataFetcher = dokumentoversiktFagsakDataFetcher;
+		this.dokumentoversiktJournalstatusDataFetcher = dokumentoversiktJournalstatusDataFetcher;
+		this.journalpostDataFetcher = journalpostDataFetcher;
+		this.tilknyttedeJournalposterDataFetcher = tilknyttedeJournalposterDataFetcher;
+		this.sakerDataFetcher = sakerDataFetcher;
 		this.meterRegistry = meterRegistry;
 	}
 
@@ -73,122 +58,16 @@ public class DokumentoversiktWiring {
 		return RuntimeWiring.newRuntimeWiring()
 				.scalar(DateScalar.DATE)
 				.scalar(DateTimeScalar.DATE_TIME)
-				.type("Tema", typeWiring -> typeWiring.enumValues(new NaturalEnumValuesProvider<>(Tema.class)))
-				.type("Journalposttype", typeWiring -> typeWiring.enumValues(new NaturalEnumValuesProvider<>(Journalposttype.class)))
-				.type("Journalstatus", typeWiring -> typeWiring.enumValues(new NaturalEnumValuesProvider<>(Journalstatus.class)))
-				.type("Tilknytning", typeWiring -> typeWiring.enumValues(new NaturalEnumValuesProvider<>(Tilknytning.class)))
-				.type("Query", typeWiring -> typeWiring.dataFetcher("dokumentoversiktBruker", environment -> {
-					try {
-						DokumentoversiktBrukerArguments arguments = DokumentoversiktBrukerArguments.create(environment);
-						SafRequestContext safRequestContext = environment.getContext();
-						safRequestContext.getSecurityContext().getOidcTokenBody();
-						log.info("dokumentoversiktBruker hentes for bruker med {}", arguments.getBrukerIdInput());
-						Dokumentoversikt dokumentoversikt = dokumentoversiktBrukerCoordinator.hentDokumentoversikt(arguments, safRequestContext);
-						log.info("dokumentoversiktBruker returnerer {} journalposter for bruker med {}", dokumentoversikt.getJournalposter()
-								.size(), arguments.getBrukerIdInput());
-						return dokumentoversikt;
-					} catch (SafFunctionalException e) {
-						return DataFetcherResult.newResult()
-								.data(Dokumentoversikt.empty())
-								.error(e)
-								.build();
-					}
-				}))
-				.type("Query", typeWiring -> typeWiring.dataFetcher("dokumentoversiktFagsak", environment -> {
-					try {
-						DokumentoversiktFagsakArguments arguments = DokumentoversiktFagsakArguments.create(environment);
-						SafRequestContext safRequestContext = environment.getContext();
-						safRequestContext.getSecurityContext().getOidcTokenBody();
-						log.info("dokumentoversiktFagsak hentes for fagsakIdInput={}", arguments.getFagsakInput());
-						Dokumentoversikt dokumentoversikt = dokumentoversiktFagsakCoordinator.hentDokumentoversikt(arguments, safRequestContext);
-						log.info("dokumentoversiktFagsak returnerer {} journalposter for fagsakId={}",
-								dokumentoversikt.getJournalposter().size(), arguments.getFagsakInput());
-						return dokumentoversikt;
-					} catch (SafFunctionalException e) {
-						return DataFetcherResult.newResult()
-								.data(Dokumentoversikt.empty())
-								.error(e)
-								.build();
-					}
-				}))
-				.type("Query", typeWiring -> typeWiring.dataFetcher("dokumentoversiktJournalstatus", environment -> {
-					try {
-						DokumentoversiktJournalstatusArguments arguments = DokumentoversiktJournalstatusArguments.create(environment);
-						SafRequestContext safRequestContext = environment.getContext();
-						safRequestContext.getSecurityContext().getOidcTokenBody();
-						log.info("dokumentoversiktJournalstatus hentes for filter={}", arguments.getFilters());
-						Dokumentoversikt dokumentoversikt = dokumentoversiktJournalstatusCoordinator.hentDokumentoversikt(arguments, safRequestContext);
-						log.info("dokumentoversiktJournalstatus returnerer {} journalposter for filter={}",
-								dokumentoversikt.getJournalposter().size(), arguments.getFilters());
-						return dokumentoversikt;
-					} catch (SafFunctionalException e) {
-						return DataFetcherResult.newResult()
-								.data(Dokumentoversikt.empty())
-								.error(e)
-								.build();
-					}
-				}))
-				.type("Query", typeWiring -> typeWiring.dataFetcher("journalpost", environment -> {
-					final String journalpostId = environment.getArgument("journalpostId");
-					try {
-						SafRequestContext safRequestContext = environment.getContext();
-						safRequestContext.getSecurityContext().getOidcTokenBody();
-						log.info("query journalpost for journalpostId={}", journalpostId);
-						Journalpost journalpost = journalpostCoordinator.hentJournalpost(journalpostId, safRequestContext);
-						log.info("journalpost hentet for journalpostId={}", journalpostId);
-						return journalpost;
-					} catch (JournalpostIkkeFunnetException e) {
-						log.warn("Fant ikke journalpost i fagarkivet. journalpostId={}", journalpostId, e);
-						return DataFetcherResult.newResult()
-								.data(null)
-								.error(e)
-								.build();
-					} catch (SafFunctionalException e) {
-						log.warn("Kunne ikke hente journalpost. journalpostId={}", journalpostId, e);
-						return DataFetcherResult.newResult()
-								.data(null)
-								.error(e)
-								.build();
-					}
-				}))
-				.type("Query", typeWiring -> typeWiring.dataFetcher("tilknyttedeJournalposter", environment -> {
-					try {
-						final String dokumentInfoId = environment.getArgument("dokumentInfoId");
-						final Tilknytning tilknytning = environment.getArgument("tilknytning");
-						SafRequestContext safRequestContext = environment.getContext();
-						safRequestContext.getSecurityContext().getOidcTokenBody();
-						log.info("tilknyttedeJournalposter for dokumentInfoId={}, tilknytning={}", dokumentInfoId, tilknytning);
-						List<Journalpost> tilknyttedeJournalposter = tilknyttedeJournalposterCoordinator.hentTilknyttedeJournalposter(dokumentInfoId, tilknytning, safRequestContext);
-						log.info("tilknyttedeJournalposter hentet for dokumentInfoId={}, tilknytning={}", dokumentInfoId, tilknytning);
-						return tilknyttedeJournalposter;
-					} catch (SafFunctionalException e) {
-						return DataFetcherResult.newResult()
-								.data(new ArrayList<>())
-								.error(e)
-								.build();
-					}
-				}))
-				.type("Query", typeWiring -> typeWiring.dataFetcher("saker", environment -> {
-					try {
-						Map<String, Object> brukerId = environment.getArgument("brukerId");
-						final BrukerIdInput brukerIdInput = new BrukerIdInput((String) brukerId.get("id"), BrukerIdType.valueOf((String) brukerId.get("type")));
-						SafRequestContext safRequestContext = environment.getContext();
-						safRequestContext.getSecurityContext().getOidcTokenBody();
-						List<Sak> tilknyttedeSaker = sakerCoordinatorImpl.hentSaker(brukerIdInput, safRequestContext);
-						log.info("Saker hentet {} saker for bruker",  tilknyttedeSaker.size() );
-						return tilknyttedeSaker;
-					} catch (SafFunctionalException e) {
-						return DataFetcherResult.newResult()
-								.data(new ArrayList<>())
-								.error(e)
-								.build();
-					}
-				}))
-				.type("Journalpost", typeWiring -> typeWiring.dataFetcher("dokumenter", environment -> {
-					Journalpost journalpost = environment.getSource();
-					final SafRequestContext safRequestContext = environment.getContext();
-					return dokumentoversiktCoordinator.findDokumenter(journalpost, safRequestContext);
-				}))
+				.type(newTypeWiring("Tema").enumValues(new NaturalEnumValuesProvider<>(Tema.class)))
+				.type(newTypeWiring("Journalposttype").enumValues(new NaturalEnumValuesProvider<>(Journalposttype.class)))
+				.type(newTypeWiring("Journalstatus").enumValues(new NaturalEnumValuesProvider<>(Journalstatus.class)))
+				.type(newTypeWiring("Tilknytning").enumValues(new NaturalEnumValuesProvider<>(Tilknytning.class)))
+				.type(newTypeWiring("Query").dataFetcher("dokumentoversiktBruker", dokumentoversiktBrukerDataFetcher))
+				.type(newTypeWiring("Query").dataFetcher("dokumentoversiktFagsak", dokumentoversiktFagsakDataFetcher))
+				.type(newTypeWiring("Query").dataFetcher("dokumentoversiktJournalstatus", dokumentoversiktJournalstatusDataFetcher))
+				.type(newTypeWiring("Query").dataFetcher("journalpost", journalpostDataFetcher))
+				.type(newTypeWiring("Query").dataFetcher("tilknyttedeJournalposter", tilknyttedeJournalposterDataFetcher))
+				.type(newTypeWiring("Query").dataFetcher("saker", sakerDataFetcher))
 				.type("Journalpost", typeWiring -> typeWiring.dataFetcher("journalforendeEnhet", environment -> {
 					SafRequestContext safRequestContext = environment.getContext();
 					Journalpost journalpost = environment.getSource();

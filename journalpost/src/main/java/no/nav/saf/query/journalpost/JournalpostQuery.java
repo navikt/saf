@@ -35,7 +35,7 @@ import static no.nav.saf.tilgangskontroll.pep.DenyReasons.PEP4_DENY_REASON;
  * @author Joakim Bjørnstad, Jbit AS
  */
 @Component
-public class JournalpostCoordinatorImpl implements JournalpostCoordinator {
+class JournalpostQuery {
 
 	private final JournalpostTilgangRepository journalpostTilgangRepository;
 	private final JournalpostDtoMapper journalpostDtoMapper;
@@ -47,15 +47,15 @@ public class JournalpostCoordinatorImpl implements JournalpostCoordinator {
 	private final Pep<TilgangDokumentInfo> pep5;
 	private final Pep<TilgangDokumentvariant> pep6d;
 
-	public JournalpostCoordinatorImpl(JournalpostTilgangRepository journalpostTilgangRepository,
-									  JournalpostDtoMapper journalpostDtoMapper,
-									  @Named(PEP1G) Pep<TilgangBruker> pep1,
-									  @Named(PEP2) Pep<TilgangSak> pep2,
-									  @Named(PEP2D) Pep<TilgangSak> pep2d,
-									  @Named(PEP3) Pep<TilgangSak> pep3,
-									  @Named(PEP4) Pep<TilgangJournalpost> pep4,
-									  @Named(PEP5) Pep<TilgangDokumentInfo> pep5,
-									  @Named(PEP6D) Pep<TilgangDokumentvariant> pep6d) {
+	public JournalpostQuery(JournalpostTilgangRepository journalpostTilgangRepository,
+							JournalpostDtoMapper journalpostDtoMapper,
+							@Named(PEP1G) Pep<TilgangBruker> pep1,
+							@Named(PEP2) Pep<TilgangSak> pep2,
+							@Named(PEP2D) Pep<TilgangSak> pep2d,
+							@Named(PEP3) Pep<TilgangSak> pep3,
+							@Named(PEP4) Pep<TilgangJournalpost> pep4,
+							@Named(PEP5) Pep<TilgangDokumentInfo> pep5,
+							@Named(PEP6D) Pep<TilgangDokumentvariant> pep6d) {
 		this.journalpostTilgangRepository = journalpostTilgangRepository;
 		this.journalpostDtoMapper = journalpostDtoMapper;
 		this.pep1 = pep1;
@@ -67,7 +67,6 @@ public class JournalpostCoordinatorImpl implements JournalpostCoordinator {
 		this.pep6d = pep6d;
 	}
 
-	@Override
 	public Journalpost hentJournalpost(String journalpostId, SafRequestContext safRequestContext) {
 		final Arkivsak arkivsak = journalpostTilgangRepository.findArkivsakAndCacheJournalpostDto(journalpostId, safRequestContext);
 		final TilgangBruker tilgangBruker = journalpostTilgangRepository.findTilgangBruker(arkivsak, safRequestContext);

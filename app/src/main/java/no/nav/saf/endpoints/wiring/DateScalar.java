@@ -17,7 +17,7 @@ final class DateScalar {
 	static final GraphQLScalarType DATE = GraphQLScalarType.newScalar()
 			.name("Date")
 			.description("Identifikasjon av et døgn i kalenderen etter ISO-8601 standarden.")
-			.coercing(new Coercing() {
+			.coercing(new Coercing<>() {
 				@Override
 				public Object serialize(Object dataFetcherResult) throws CoercingSerializeException {
 					if (dataFetcherResult instanceof LocalDate) {

@@ -20,7 +20,7 @@
   "NO_NAV_SECURITY_JWT_ISSUER_RESTSTS_ACCEPTED_AUDIENCE": "srvdokdistdpi,srvPensjon,srvdagpenger-joark,srvdp-graphql,srvinfotrygd-joark,srvjfr-arena,srvjfr-manuell-opp,srvjfr-filter,srvsyfosmpapirmottak,srveux-app,srvdokdisteformidl,srvdokdistfordeling,srvmelosys,srvmelosys-eessi,srvfamilie-ks-opps,srvmedlemskap,srvpensr,srvcoronapenger,srvjfr-automatisk,srvskjermingsbrev,srvpermref-journalf,srvdolly,srvsupstonad,srvarena-dokgen,srvregpapirsm,srv-digihotProxy,srvklage-saksbeh",
   "SAF_PRIVILEGIEDSERVICEUSERS": "srvdokdistfordeling,srvdokdisteformidling,srvdokarkivproxy,srvtilbakemeldings,srvomsitramme,srvmelosys,srvdolly,srvdolly_u",
   "BIDRAG_SAK_URL": "https://bidrag-sak.dev.adeo.no/bidrag-sak/pip/sak/",
-  "HENTJOURNALSAKINFO_URL": "https://dokarkiv-q2.nais.preprod.local/hentjournalsakinfo",
+  "HENTJOURNALSAKINFO_URL": "https://dokarkiv-q2.dev.intern.nav.no/hentjournalsakinfo",
   "SAF_ENDPOINTS_PDL": "https://pdl-api.dev.intern.nav.no/graphql",
   "RESTSECURITYTOKENSERVICE_URL": "https://security-token-service.dev.adeo.no/rest/v1/sts/token",
   "APPDYNAMICS": "/apikey/appdynamics/dev",
