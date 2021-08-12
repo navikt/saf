@@ -1,5 +1,5 @@
 {
-  "NAMESPACE": "q1",
+  "NAMESPACE": "teamdokumenthandtering",
   "ABAC_PDP_ENDPOINT_URL": "https://abac-saf.dev.intern.nav.no/application/asm-pdp/authorize",
   "PENSJONSAKRS_V1_URL": "https://pensjon-pen-q1.nais.preprod.local/pen/api/pip/hentBrukerOgEnhetstilgangerForSak/v1",
   "SAK_SAKER_URL": "https://sak-q1.nais.preprod.local/api/v1/saker",
@@ -20,7 +20,7 @@
   "NO_NAV_SECURITY_JWT_ISSUER_RESTSTS_ACCEPTED_AUDIENCE": "srvdokdistdpi,srvPensjon,srvdp-graphql,srvinfotrygd-joark,srvjfr-arena,srvjfr-manuell-opp,srvjfr-filter,srvsyfosmpapirmottak,srveux-app,srvdokdisteformidl,srvdokdistfordeling,srvmelosys,srvmelosys-eessi,srvfamilie-ks-opps,srvmedlemskap,srvpensr,srvjfr-automatisk,srvk9formidling,srvk9sak,srvk9klage,srvfpfordel,srvengangsstonad,srvdp-oppslag-henven,srvskjermingsbrev,srvpermref-journalf,srvomsitramme,srvdp-filter-permit,srvklage-dittnav,srvfpabakus,srv-sif-innsyn-mtk,srvdolly,srvsupstonad,srvarena-dokgen,srvregpapirsm,srv-digihotProxy,srvk9-fordel,srvtiltakrefusjon,srvdp-proxy,srvklage-saksbeh,srv-oms-proxy",
   "SAF_PRIVILEGIEDSERVICEUSERS": "srvdokdistfordeling,srvdokdisteformidling,srvdokarkivproxy,srvtilbakemeldings,srvomsitramme,srvmelosys,srvdolly,srvdolly_u",
   "BIDRAG_SAK_URL": "https://bidrag-sak.dev.adeo.no/bidrag-sak/pip/sak/",
-  "HENTJOURNALSAKINFO_URL": "https://dokarkiv-q1.nais.preprod.local/hentjournalsakinfo",
+  "HENTJOURNALSAKINFO_URL": "https://dokarkiv.dev.intern.nav.no/hentjournalsakinfo",
   "SAF_ENDPOINTS_PDL": "https://pdl-api-q1.dev.intern.nav.no/graphql",
   "RESTSECURITYTOKENSERVICE_URL": "https://security-token-service.dev.adeo.no/rest/v1/sts/token",
   "APPDYNAMICS": "/apikey/appdynamics/dev",
