@@ -43,6 +43,7 @@ import static no.nav.saf.headers.NavHeaders.X_CORRELATION_ID;
  */
 @RestController
 @Slf4j
+@Protected
 public class GraphQLController extends AbstractSafController {
 	private final GraphQLSchema graphQLSchema;
 	private final GraphQLExceptionHandler graphQLExceptionHandler;
@@ -73,7 +74,6 @@ public class GraphQLController extends AbstractSafController {
     }
 
 	@PostMapping(value = "/graphql", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	@Protected
 	@ResponseBody
 	public Map<String, Object> graphQLRequest(@RequestHeader(value = X_CORRELATION_ID, required = false) String xCorrelationId,
 											  @RequestHeader(value = NAV_CALLID, required = false) String navCallid,
