@@ -10,7 +10,9 @@ import no.nav.saf.graphql.GraphQLException;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import org.springframework.stereotype.Component;
 
+import static no.nav.saf.graphql.ErrorCode.BAD_REQUEST;
 import static no.nav.saf.graphql.ErrorCode.SERVER_ERROR;
+import static org.apache.commons.lang3.StringUtils.isNumeric;
 
 /**
  * @author Joakim Bjørnstad, Jbit AS
@@ -29,6 +31,7 @@ public class JournalpostDataFetcher implements DataFetcher<DataFetcherResult<Jou
 	public DataFetcherResult<Journalpost> get(DataFetchingEnvironment environment) throws Exception {
 		final String journalpostId = environment.getArgument("journalpostId");
 		try {
+			validateJournalpostId(journalpostId, environment);
 			SafRequestContext safRequestContext = environment.getContext();
 			safRequestContext.getSecurityContext().getOidcTokenBody();
 			log.info("query journalpost. journalpostId={}", journalpostId);
@@ -52,6 +55,12 @@ public class JournalpostDataFetcher implements DataFetcher<DataFetcherResult<Jou
 					.error(SERVER_ERROR.construct(environment,
 							"Ukjent teknisk feil. Meld fra til #team_dokumentløsninger på Slack."))
 					.build();
+		}
+	}
+
+	private void validateJournalpostId(String journalpostId, DataFetchingEnvironment environment) {
+		if(!isNumeric(journalpostId)) {
+			throw GraphQLException.of(BAD_REQUEST, environment, "journalpostId er en ikke-numerisk verdi.");
 		}
 	}
 }
