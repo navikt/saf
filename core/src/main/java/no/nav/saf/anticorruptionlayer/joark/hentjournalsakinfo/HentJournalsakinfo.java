@@ -35,7 +35,7 @@ import org.springframework.web.client.RestTemplate;
 import javax.inject.Inject;
 import java.time.Duration;
 
-import static no.nav.saf.util.MDCConstants.CORRELATION_ID;
+import static no.nav.saf.util.MDCConstants.CALL_ID;
 
 /**
  * @author Joakim Bjørnstad, Jbit AS
@@ -152,8 +152,8 @@ public class HentJournalsakinfo {
 
 	private HttpHeaders createCorrelationIdHeader() {
 		HttpHeaders headers = new HttpHeaders();
-		if (MDC.get(CORRELATION_ID) != null) {
-			headers.set("X-Correlation-ID", MDC.get(CORRELATION_ID));
+		if (MDC.get(CALL_ID) != null) {
+			headers.set("X-Correlation-ID", MDC.get(CALL_ID));
 		}
 		return headers;
 	}

@@ -81,5 +81,5 @@ Ved behov for tilgang til Saf kan andre team selv gjøre nødvendige kodeendring
 ----------
 
 ## Henvendelser
-Spørsmål til koden eller prosjektet kan rettes til Team Dokumentløsninger på:
+Spørsmål om koden eller prosjektet kan rettes til Team Dokumentløsninger på:
 [\#Team Dokumentløsninger](https://nav-it.slack.com/client/T5LNAMWNA/C6W9E5GPJ)

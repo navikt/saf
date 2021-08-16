@@ -19,7 +19,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import static java.util.Objects.requireNonNull;
-import static no.nav.saf.headers.SafHeaders.NAV_CALLID;
+import static no.nav.saf.headers.NavHeaders.NAV_CALLID;
 import static no.nav.saf.util.MDCUtility.getCallId;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;

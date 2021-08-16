@@ -27,7 +27,7 @@ import java.time.Duration;
 import java.util.List;
 import java.util.UUID;
 
-import static no.nav.saf.util.MDCConstants.CORRELATION_ID;
+import static no.nav.saf.util.MDCConstants.CALL_ID;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.trim;
 
@@ -134,10 +134,10 @@ public class GsakConsumer {
 	}
 
 	private String getOrGenerateCorrelationId() {
-		String correlationId = trim(MDC.get(CORRELATION_ID));
-		if (isBlank(correlationId)) {
+		String callId = trim(MDC.get(CALL_ID));
+		if (isBlank(callId)) {
 			return UUID.randomUUID().toString();
 		}
-		return correlationId;
+		return callId;
 	}
 }
