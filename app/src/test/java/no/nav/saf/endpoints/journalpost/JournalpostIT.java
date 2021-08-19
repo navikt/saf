@@ -2,6 +2,7 @@ package no.nav.saf.endpoints.journalpost;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import lombok.SneakyThrows;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.Sakstype;
 import no.nav.saf.domain.kode.Arkivsakssystem;
 import no.nav.saf.domain.kode.Journalposttype;
@@ -12,17 +13,13 @@ import no.nav.saf.domain.visningsmodell.DokumentInfo;
 import no.nav.saf.domain.visningsmodell.Journalpost;
 import no.nav.saf.endpoints.AbstractItest;
 import no.nav.saf.endpoints.GraphQLRequest;
+import no.nav.saf.endpoints.graphql.GraphQLResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.RequestEntity;
-import org.springframework.http.ResponseEntity;
 
-import java.io.IOException;
 import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
@@ -34,6 +31,10 @@ import static no.nav.saf.domain.kode.Kanal.SDP;
 import static no.nav.saf.domain.kode.Tema.PEN;
 import static no.nav.saf.domain.kode.Tema.UKJ;
 import static no.nav.saf.domain.kode.Variantformat.ARKIV;
+import static no.nav.saf.graphql.ErrorCode.BAD_REQUEST;
+import static no.nav.saf.graphql.ErrorCode.FORBIDDEN;
+import static no.nav.saf.graphql.ErrorCode.NOT_FOUND;
+import static no.nav.saf.graphql.ErrorCode.SERVER_ERROR;
 import static no.nav.saf.tilgangskontroll.pep.DenyReasons.PEP1G_DENY_REASON;
 import static no.nav.saf.tilgangskontroll.pep.DenyReasons.PEP2_DENY_REASON;
 import static no.nav.saf.tilgangskontroll.pep.DenyReasons.PEP3_DENY_REASON;
@@ -63,7 +64,7 @@ class JournalpostIT extends AbstractItest {
 	}
 
 	@Test
-	void shouldQueryJournalpostByJournalpostIdWhenAllAccessPermit() throws Exception {
+	void shouldQueryJournalpostByJournalpostIdWhenAllAccessPermit() {
 		abacPermit();
 		stubFor(get("/hentjournalsakinfo/hentjournalpost/" + JOURNALPOST_ID)
 				.willReturn(aResponse().withStatus(OK.value())
@@ -123,7 +124,7 @@ class JournalpostIT extends AbstractItest {
 	}
 
 	@Test
-	void shouldQueryJournalpostWhenSakNotFound() throws Exception {
+	void shouldQueryJournalpostWhenSakNotFound() {
 		abacPermit();
 		stubFor(get("/hentjournalsakinfo/hentjournalpost/" + JOURNALPOST_ID)
 				.willReturn(aResponse().withStatus(OK.value())
@@ -141,7 +142,7 @@ class JournalpostIT extends AbstractItest {
 	}
 
 	@Test
-	void shouldQueryJournalpostAndFallbackToUkjentTemaWhenNoSakOrJournalpostTemaFound() throws Exception {
+	void shouldQueryJournalpostAndFallbackToUkjentTemaWhenNoSakOrJournalpostTemaFound() {
 		abacPermit();
 		stubFor(get("/hentjournalsakinfo/hentjournalpost/" + JOURNALPOST_ID)
 				.willReturn(aResponse().withStatus(OK.value())
@@ -153,7 +154,7 @@ class JournalpostIT extends AbstractItest {
 	}
 
 	@Test
-	void shouldQueryJournalpostByJournalpostIdWhenAllExceptPep1AccessPermitWithSakOrgnr() throws Exception {
+	void shouldQueryJournalpostByJournalpostIdWhenAllExceptPep1AccessPermitWithSakOrgnr() {
 		abacPermit();
 		stubFor(get("/hentjournalsakinfo/hentjournalpost/" + JOURNALPOST_ID)
 				.willReturn(aResponse().withStatus(OK.value())
@@ -165,19 +166,20 @@ class JournalpostIT extends AbstractItest {
 	}
 
 	@Test
-	void shouldReturnNullJournalpostWhenDenyOnPep1g() throws Exception {
+	void shouldReturnNullJournalpostWhenDenyOnPep1g() {
 		abacDenyPep1g();
 		stubFor(get("/hentjournalsakinfo/hentjournalpost/" + JOURNALPOST_ID)
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("hentjournalsakinfo/hentjournalpost_not_bid-happy.json")));
 
-		ResponseEntity<LinkedHashMap> responseEntity = journalpostQuery();
-		assertErrorWithMessage(responseEntity, PEP1G_DENY_REASON);
+		GraphQLResponse graphQLResponse = journalpostQuery();
+		assertErrorWithCode(graphQLResponse, FORBIDDEN.getText());
+		assertErrorWithMessage(graphQLResponse, PEP1G_DENY_REASON);
 	}
 
 	@Test
-	void shouldReturnNullJournalpostWhenDenyOnPep2() throws Exception {
+	void shouldReturnNullJournalpostWhenDenyOnPep2() {
 		abacDenyPep2();
 		stubFor(get("/hentjournalsakinfo/hentjournalpost/" + JOURNALPOST_ID)
 				.willReturn(aResponse().withStatus(OK.value())
@@ -188,12 +190,13 @@ class JournalpostIT extends AbstractItest {
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("gsak/gsak-sakBySaksId_far-happy.json")));
 
-		ResponseEntity<LinkedHashMap> responseEntity = journalpostQuery();
-		assertErrorWithMessage(responseEntity, PEP2_DENY_REASON);
+		GraphQLResponse graphQLResponse = journalpostQuery();
+		assertErrorWithCode(graphQLResponse, FORBIDDEN.getText());
+		assertErrorWithMessage(graphQLResponse, PEP2_DENY_REASON);
 	}
 
 	@Test
-	void shouldReturnSaksbehandlerTilgangFalseWhenDenyOnPep2d() throws Exception {
+	void shouldReturnSaksbehandlerTilgangFalseWhenDenyOnPep2d() {
 		abacDenyPep2dSkipPep2();
 		stubFor(get("/hentjournalsakinfo/hentjournalpost/" + JOURNALPOST_ID)
 				.willReturn(aResponse().withStatus(OK.value())
@@ -210,7 +213,7 @@ class JournalpostIT extends AbstractItest {
 	}
 
 	@Test
-	void shouldReturnNullJournalpostWhenDenyOnPep3() throws Exception {
+	void shouldReturnNullJournalpostWhenDenyOnPep3() {
 		abacDenyPep3SkipPep2();
 		stubFor(get("/hentjournalsakinfo/hentjournalpost/" + JOURNALPOST_ID)
 				.willReturn(aResponse().withStatus(OK.value())
@@ -220,12 +223,13 @@ class JournalpostIT extends AbstractItest {
 				.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 				.withBodyFile("bidrag/bidragsak-happy.json")));
 
-		ResponseEntity<LinkedHashMap> responseEntity = journalpostQuery();
-		assertErrorWithMessage(responseEntity, PEP3_DENY_REASON);
+		GraphQLResponse graphQLResponse = journalpostQuery();
+		assertErrorWithCode(graphQLResponse, FORBIDDEN.getText());
+		assertErrorWithMessage(graphQLResponse, PEP3_DENY_REASON);
 	}
 
 	@Test
-	void shouldReturnNullJournalpostWhenDenyOnPep4() throws Exception {
+	void shouldReturnNullJournalpostWhenDenyOnPep4() {
 		abacDenyPep4SkipPep2Pep3();
 		stubFor(get("/hentjournalsakinfo/hentjournalpost/" + JOURNALPOST_ID)
 				.willReturn(aResponse().withStatus(OK.value())
@@ -236,12 +240,13 @@ class JournalpostIT extends AbstractItest {
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("gsak/gsak-sakBySaksId_not_bid-happy.json")));
 
-		ResponseEntity<LinkedHashMap> responseEntity = journalpostQuery();
-		assertErrorWithMessage(responseEntity, PEP4_DENY_REASON);
+		GraphQLResponse graphQLResponse = journalpostQuery();
+		assertErrorWithCode(graphQLResponse, FORBIDDEN.getText());
+		assertErrorWithMessage(graphQLResponse, PEP4_DENY_REASON);
 	}
 
 	@Test
-	void shouldReturnJournalpostWithOneFilteredDokumentInfoWhenDenyOnPep5() throws Exception {
+	void shouldReturnJournalpostWithOneFilteredDokumentInfoWhenDenyOnPep5() {
 		abacDenyPep5SkipPep2Pep3Pep4();
 		stubFor(get("/hentjournalsakinfo/hentjournalpost/" + JOURNALPOST_ID)
 				.willReturn(aResponse().withStatus(OK.value())
@@ -253,7 +258,7 @@ class JournalpostIT extends AbstractItest {
 	}
 
 	@Test
-	void shouldReturnSaksbehandlerTilgangFalseOnVariantWithDenyOnPep6d() throws Exception {
+	void shouldReturnSaksbehandlerTilgangFalseOnVariantWithDenyOnPep6d() {
 		abacDenyPep6dSkipPep2Pep3Pep4Pep5();
 		stubFor(get("/hentjournalsakinfo/hentjournalpost/" + JOURNALPOST_ID)
 				.willReturn(aResponse().withStatus(OK.value())
@@ -265,24 +270,52 @@ class JournalpostIT extends AbstractItest {
 		assertFalse(dokumentInfo1.getDokumentvarianter().get(0).isSaksbehandlerHarTilgang());
 	}
 
-	private void assertErrorWithMessage(ResponseEntity<LinkedHashMap> responseEntity, String expectedErrorMessage) {
-		Map<String, Object> data = (Map<String, Object>) responseEntity.getBody().get("data");
-		assertThat(data.get("journalpost"), nullValue());
-		assertErrorMessage(responseEntity, expectedErrorMessage);
+	@Test
+	void shouldReturnErrorCodeNotFoundWhenJournalpostNotFound() {
+		abacPermit();
+		stubFor(get("/hentjournalsakinfo/hentjournalpost/" + JOURNALPOST_ID)
+				.willReturn(aResponse().withStatus(HttpStatus.NOT_FOUND.value())));
+
+		assertErrorWithCode(journalpostQuery(), NOT_FOUND.getText());
 	}
 
-	private void assertErrorMessage(ResponseEntity<LinkedHashMap> responseEntity, String expectedErrorMessage) {
-		assertThat(((LinkedHashMap) ((ArrayList) responseEntity.getBody().get("errors")).get(0)).get("message"), is(expectedErrorMessage));
+	@Test
+	void shouldReturnErrorCodeServerErrorWhenJournalpostNotFound() {
+		abacPermit();
+		stubFor(get("/hentjournalsakinfo/hentjournalpost/" + JOURNALPOST_ID)
+				.willReturn(aResponse().withStatus(HttpStatus.INTERNAL_SERVER_ERROR.value())));
+
+		assertErrorWithCode(journalpostQuery(), SERVER_ERROR.getText());
 	}
 
-	private ResponseEntity<LinkedHashMap> journalpostQuery() throws IOException, URISyntaxException {
-		GraphQLRequest request = new GraphQLRequest(stringFromClasspath("journalpost/journalpost.query"), null, null);
+	@Test
+	void shouldReturnErrorCodeBadRequestWhenJournalpostIdNotValid() {
+		assertErrorWithCode(journalpostQuery("journalpost_invalid_journalpostid.query"), BAD_REQUEST.getText());
+	}
+
+	private void assertErrorWithCode(GraphQLResponse graphQLResponse, String errorCode) {
+		assertThat(graphQLResponse.getData().get("journalpost"), nullValue());
+		assertThat(graphQLResponse.getErrors().get(0).getExtensions().getCode(), is(errorCode));
+	}
+
+	private void assertErrorWithMessage(GraphQLResponse graphQLResponse, String expectedErrorMessage) {
+		assertThat(graphQLResponse.getData().get("journalpost"), nullValue());
+		assertThat(graphQLResponse.getErrors().get(0).getMessage(), is(expectedErrorMessage));
+	}
+
+	@SneakyThrows
+	private GraphQLResponse journalpostQuery() {
+		return journalpostQuery("journalpost.query");
+	}
+
+	@SneakyThrows
+	private GraphQLResponse journalpostQuery(String queryFile) {
+		GraphQLRequest request = new GraphQLRequest(stringFromClasspath("journalpost/" + queryFile), null, null);
 		RequestEntity<GraphQLRequest> requestEntity = new RequestEntity<>(request, createHeaders(), HttpMethod.POST, new URI("/graphql"));
-		return restTemplate.exchange(requestEntity, LinkedHashMap.class);
+		return restTemplate.exchange(requestEntity, GraphQLResponse.class).getBody();
 	}
 
-	private Journalpost parseJournalpost(ResponseEntity<LinkedHashMap> responseEntity) {
-		Map<String, Object> responseEntityData = (Map<String, Object>) responseEntity.getBody().get("data");
-		return OBJECT_MAPPER.convertValue(responseEntityData.get("journalpost"), Journalpost.class);
+	private Journalpost parseJournalpost(GraphQLResponse graphQLResponse) {
+		return OBJECT_MAPPER.convertValue(graphQLResponse.getData().get("journalpost"), Journalpost.class);
 	}
 }

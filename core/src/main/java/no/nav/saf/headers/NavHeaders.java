@@ -3,7 +3,7 @@ package no.nav.saf.headers;
 /**
  * @author Joakim Bjørnstad, Jbit AS
  */
-public final class SafHeaders {
+public final class NavHeaders {
 	/**
 	 * @deprecated Bruk NAV_CALLID i stedet. Eksisterer for bakoverkompatibilitet.
 	 */
@@ -12,7 +12,7 @@ public final class SafHeaders {
 	public static final String NAV_CALLID = "Nav-Callid";
 	public static final String NAV_CONSUMER_ID = "Nav-Consumer-Id";
 
-	private SafHeaders() {
+	private NavHeaders() {
 		// noop
 	}
 }

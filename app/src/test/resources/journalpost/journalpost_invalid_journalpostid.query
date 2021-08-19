@@ -1,0 +1,67 @@
+{
+    journalpost(journalpostId: "1abcd") {
+        journalpostId
+        tittel
+        journalposttype
+        journalstatus
+        tema
+        temanavn
+        behandlingstema
+        behandlingstemanavn
+        avsenderMottaker {
+          id
+          navn
+          land
+          erLikBruker
+        }
+        avsenderMottakerId
+        avsenderMottakerNavn
+        avsenderMottakerLand
+        journalforendeEnhet
+        journalfoerendeEnhet
+        journalfortAvNavn
+        opprettetAvNavn
+        kanal
+        kanalnavn
+        datoOpprettet
+        eksternReferanseId
+        relevanteDatoer {
+            dato
+            datotype
+        }
+        tilleggsopplysninger {
+            nokkel
+            verdi
+        }
+        sak {
+            arkivsaksnummer
+            arkivsaksystem
+            datoOpprettet
+            fagsakId
+            fagsaksystem
+            sakstype
+            tema
+        }
+        bruker {
+            id
+            type
+        }
+        dokumenter {
+            dokumentInfoId
+            tittel
+            brevkode
+            dokumentstatus
+            originalJournalpostId
+            logiskeVedlegg {
+                tittel
+            }
+            dokumentvarianter {
+                variantformat
+                saksbehandlerHarTilgang
+                filuuid
+                filnavn
+                filtype
+            }
+        }
+    }
+}

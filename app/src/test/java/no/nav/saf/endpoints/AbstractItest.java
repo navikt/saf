@@ -2,6 +2,7 @@ package no.nav.saf.endpoints;
 
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.core.Options;
+import lombok.SneakyThrows;
 import no.nav.saf.ApplicationConfig;
 import no.nav.saf.domain.visningsmodell.Dokumentoversikt;
 import no.nav.saf.endpoints.testconfig.STSTestConfig;
@@ -25,7 +26,6 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import javax.inject.Inject;
-import java.io.IOException;
 import java.util.Base64;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
@@ -35,6 +35,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static com.github.tomakehurst.wiremock.stubbing.Scenario.STARTED;
+import static java.util.Objects.requireNonNull;
 import static org.apache.http.client.utils.URLEncodedUtils.CONTENT_TYPE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -629,7 +630,8 @@ public abstract class AbstractItest {
 		return Base64.getEncoder().encodeToString(journalpostId.getBytes());
 	}
 
-	protected String stringFromClasspath(String resourcename) throws IOException {
-		return IOUtils.toString(this.getClass().getClassLoader().getResourceAsStream(resourcename));
+	@SneakyThrows
+	protected String stringFromClasspath(String resourcename) {
+		return IOUtils.toString(requireNonNull(this.getClass().getClassLoader().getResourceAsStream(resourcename)));
 	}
 }

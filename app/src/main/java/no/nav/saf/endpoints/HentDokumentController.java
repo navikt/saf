@@ -28,19 +28,20 @@ import javax.inject.Named;
 import java.util.Map;
 import java.util.Set;
 
-import static no.nav.saf.headers.SafHeaders.NAV_CALLID;
-import static no.nav.saf.headers.SafHeaders.NAV_CONSUMER_ID;
-import static no.nav.saf.headers.SafHeaders.X_CORRELATION_ID;
+import static no.nav.saf.headers.NavHeaders.NAV_CALLID;
+import static no.nav.saf.headers.NavHeaders.NAV_CONSUMER_ID;
+import static no.nav.saf.headers.NavHeaders.X_CORRELATION_ID;
 
 /**
  * Endepunktet til hentDokument, som returnerer et dokument fra joark basert på journalpostId, dokumentInfoId og variantFormat.
- * Tjenesten er sikret med Abac
+ * Tjenesten er sikret med Oauth2 flyt tokens.
  *
  * @author Sigurd Midttun, Visma Consulting.
  */
+@Api
+@Protected
 @RestController
 @RequestMapping("rest/")
-@Api(tags = "hentdokument API", description = "Tilbyr henting av fysiske dokumenter")
 @Slf4j
 public class HentDokumentController extends AbstractSafController {
 	private final HentDokumentDomainCoordinator hentDokumentDomainCoordinator;
@@ -64,7 +65,6 @@ public class HentDokumentController extends AbstractSafController {
 
 	@SwaggerRestHentDokument
 	@GetMapping(value = "hentdokument/{journalpostId}/{dokumentInfoId}/{variantFormat}")
-	@Protected
 	@Monitor(value = "dok_request", extraTags = {"process", "hentDokument", "requestType", "hentDokument"}, histogram = true)
 	public ResponseEntity<byte[]> hentDokument(
 			@ApiParam(name = "journalpostId", value = "Id for aktuell journalpost", required = true) @PathVariable String journalpostId,
@@ -92,6 +92,9 @@ public class HentDokumentController extends AbstractSafController {
 					.body(response.getDokument());
 		} catch (HentdokumentTilgangskontrollException e) {
 			log.warn("hentDokument hentet ikke dokument. journalpostId={}, dokumentInfoId={}, variantFormat={}. Tilgang ble avvist av grunn: " + e.getMessage(), journalpostId, dokumentInfoId, variantFormat);
+			throw e;
+		} catch(Exception e) {
+			log.error("hentDokument hentet ikke dokument. journalpostId={}, dokumentInfoId={}, variantFormat={}. Ukjent teknisk feil: " + e.getMessage(), journalpostId, dokumentInfoId, variantFormat, e);
 			throw e;
 		} finally {
 			MDC.clear();
