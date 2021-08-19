@@ -1,8 +1,8 @@
 {
-  "NAMESPACE": "q2",
+  "NAMESPACE": "teamdokumenthandtering",
   "ABAC_PDP_ENDPOINT_URL": "https://abac-saf.dev.intern.nav.no/application/asm-pdp/authorize",
   "PENSJONSAKRS_V1_URL": "https://pensjon-pen-q2.nais.preprod.local/pen/api/pip/hentBrukerOgEnhetstilgangerForSak/v1",
-  "SAK_SAKER_URL": "https://sak-q2.nais.preprod.local/api/v1/saker",
+  "SAK_SAKER_URL": "https://sak.dev.intern.nav.no/api/v1/saker",
   "SECURITYTOKENSERVICE_URL": "https://sts-q2.preprod.local/SecurityTokenServiceProvider/",
   "PENSJON_V1_ENDPOINTURL": "https://pensjon-pen-q2.nais.preprod.local/pen/services/PensjonSak_v1",
   "FPSAK_URL": "https://fpsak.dev.adeo.no/fpsak/api/pip/aktoer-for-sak",
@@ -15,7 +15,8 @@
   "INGRESSES": [
     "https://saf-q2.nais.preprod.local",
     "https://saf-q2.dev.adeo.no",
-    "https://saf-q2.dev.intern.nav.no"
+    "https://saf-q2.dev.intern.nav.no",
+    "https://saf.dev.intern.nav.no"
   ],
   "SRVSAF": "/serviceuser/data/dev/srvsaf",
   "NO_NAV_SECURITY_JWT_ISSUER_AZUREV1_ACCEPTED_AUDIENCE": "38e07d31-659d-4595-939a-f18dce3446c5",
@@ -24,7 +25,7 @@
   "NO_NAV_SECURITY_JWT_ISSUER_RESTSTS_ACCEPTED_AUDIENCE": "srvdokdistdpi,srvPensjon,srvdagpenger-joark,srvdp-graphql,srvinfotrygd-joark,srvjfr-arena,srvjfr-manuell-opp,srvjfr-filter,srvsyfosmpapirmottak,srveux-app,srvdokdisteformidl,srvdokdistfordeling,srvmelosys,srvmelosys-eessi,srvfamilie-ks-opps,srvmedlemskap,srvpensr,srvcoronapenger,srvjfr-automatisk,srvskjermingsbrev,srvpermref-journalf,srvdolly,srvsupstonad,srvarena-dokgen,srvregpapirsm,srv-digihotProxy,srvklage-saksbeh",
   "SAF_PRIVILEGIEDSERVICEUSERS": "srvdokdistfordeling,srvdokdisteformidling,srvdokarkivproxy,srvtilbakemeldings,srvomsitramme,srvmelosys,srvdolly,srvdolly_u",
   "BIDRAG_SAK_URL": "https://bidrag-sak.dev.adeo.no/bidrag-sak/pip/sak/",
-  "HENTJOURNALSAKINFO_URL": "https://dokarkiv-q2.dev.intern.nav.no/hentjournalsakinfo",
+  "HENTJOURNALSAKINFO_URL": "https://dokarkiv.dev.intern.nav.no/hentjournalsakinfo",
   "SAF_ENDPOINTS_PDL": "https://pdl-api.dev.intern.nav.no/graphql",
   "RESTSECURITYTOKENSERVICE_URL": "https://security-token-service.dev.adeo.no/rest/v1/sts/token",
   "APPDYNAMICS": "/apikey/appdynamics/dev",
