@@ -18,7 +18,6 @@ import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
-import java.time.Duration;
 import java.util.List;
 
 @Component
@@ -34,8 +33,7 @@ public class FpsakConsumer {
 		this.fpsakUrl = fpsakUrl;
 		this.restTemplate = restTemplateBuilder
 				.requestFactory(() -> clientHttpRequestFactory)
-				.setReadTimeout(Duration.ofSeconds(20))
-				.setConnectTimeout(Duration.ofSeconds(5)).build();
+				.build();
 		this.stsRestConsumer = stsRestConsumer;
 	}
 

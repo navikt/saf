@@ -38,7 +38,12 @@ import java.util.stream.Collectors;
 public class ApplicationConfig {
 	@Bean
 	ClientHttpRequestFactory clientHttpRequestFactory(HttpClient httpClient) {
-		return new HttpComponentsClientHttpRequestFactory(httpClient);
+		HttpComponentsClientHttpRequestFactory httpComponentsClientHttpRequestFactory = new HttpComponentsClientHttpRequestFactory(httpClient);
+		// Default timeouts for alle restklienter som bruker denne requestFactory.
+		// RestTemplate som behøver egne timeouts må konstruere en ny ClientHttpRequestFactory.
+		httpComponentsClientHttpRequestFactory.setConnectTimeout(5000);
+		httpComponentsClientHttpRequestFactory.setReadTimeout(60000);
+		return httpComponentsClientHttpRequestFactory;
 	}
 
 	@Bean

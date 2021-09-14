@@ -12,8 +12,6 @@ import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
-import java.time.Duration;
-
 import static no.nav.saf.cache.LokalCacheConfig.BIDRAG_SAK_BY_SAKID_CACHE;
 
 @Slf4j
@@ -30,8 +28,6 @@ public class BidragSakConsumer {
 		this.bidragSakApiUrl = bidragSakApiUrl;
 		this.restTemplate = restTemplateBuilder
 				.requestFactory(() -> clientHttpRequestFactory)
-				.setReadTimeout(Duration.ofSeconds(20))
-				.setConnectTimeout(Duration.ofSeconds(5))
 				.basicAuthentication(serviceuserAlias.getUsername(), serviceuserAlias.getPassword()).build();
 	}
 
