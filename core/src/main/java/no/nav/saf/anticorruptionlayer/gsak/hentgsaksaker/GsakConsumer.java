@@ -23,7 +23,6 @@ import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.time.Duration;
 import java.util.List;
 import java.util.UUID;
 
@@ -48,9 +47,8 @@ public class GsakConsumer {
 		this.gsakApiUrl = gsakApiUrl;
 		this.restTemplate = restTemplateBuilder
 				.requestFactory(() -> clientHttpRequestFactory)
-				.setReadTimeout(Duration.ofSeconds(20))
-				.setConnectTimeout(Duration.ofSeconds(5))
-				.basicAuthentication(serviceuserAlias.getUsername(), serviceuserAlias.getPassword()).build();
+				.basicAuthentication(serviceuserAlias.getUsername(), serviceuserAlias.getPassword())
+				.build();
 	}
 
 	@CircuitBreaker(name = SAK_INSTANCE)

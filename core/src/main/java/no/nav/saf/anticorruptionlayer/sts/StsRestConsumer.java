@@ -14,7 +14,6 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 
-import java.time.Duration;
 import java.util.Collections;
 
 import static no.nav.saf.cache.LokalCacheConfig.REST_STS_CACHE;
@@ -35,8 +34,6 @@ public class StsRestConsumer {
 		this.restTemplate = restTemplateBuilder
 				.requestFactory(() -> clientHttpRequestFactory)
 				.basicAuthentication(serviceuserAlias.getUsername(), serviceuserAlias.getPassword())
-				.setConnectTimeout(Duration.ofSeconds(3))
-				.setReadTimeout(Duration.ofSeconds(20))
 				.build();
 	}
 

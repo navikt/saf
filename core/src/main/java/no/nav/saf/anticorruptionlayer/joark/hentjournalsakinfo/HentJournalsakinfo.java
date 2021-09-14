@@ -33,7 +33,6 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import javax.inject.Inject;
-import java.time.Duration;
 
 import static no.nav.saf.util.MDCConstants.CALL_ID;
 
@@ -56,8 +55,6 @@ public class HentJournalsakinfo {
 				.requestFactory(() -> clientHttpRequestFactory)
 				.rootUri(hentjournalsakinfoUrl)
 				.basicAuthentication(serviceuserAlias.getUsername(), serviceuserAlias.getPassword())
-				.setReadTimeout(Duration.ofSeconds(120))
-				.setConnectTimeout(Duration.ofSeconds(5))
 				.build();
 		this.hentjournalsakinfoUrl = hentjournalsakinfoUrl;
 	}
