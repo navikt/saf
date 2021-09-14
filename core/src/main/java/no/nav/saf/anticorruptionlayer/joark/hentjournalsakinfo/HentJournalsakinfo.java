@@ -49,10 +49,10 @@ public class HentJournalsakinfo {
 	@Inject
 	public HentJournalsakinfo(@Value("${hentjournalsakinfo.url}") final String hentjournalsakinfoUrl,
 							  final RestTemplateBuilder restTemplateBuilder,
-							  final ClientHttpRequestFactory clientHttpRequestFactory,
+							  final ClientHttpRequestFactory hentJournalsakInfoClientHttpRequestFactory,
 							  final ServiceuserAlias serviceuserAlias) {
 		restTemplate = restTemplateBuilder
-				.requestFactory(() -> clientHttpRequestFactory)
+				.requestFactory(() -> hentJournalsakInfoClientHttpRequestFactory)
 				.rootUri(hentjournalsakinfoUrl)
 				.basicAuthentication(serviceuserAlias.getUsername(), serviceuserAlias.getPassword())
 				.build();

@@ -41,8 +41,8 @@ public class ApplicationConfig {
 		HttpComponentsClientHttpRequestFactory httpComponentsClientHttpRequestFactory = new HttpComponentsClientHttpRequestFactory(httpClient);
 		// Default timeouts for alle restklienter som bruker denne requestFactory.
 		// RestTemplate som behøver egne timeouts må konstruere en ny ClientHttpRequestFactory.
-		httpComponentsClientHttpRequestFactory.setConnectTimeout(5000);
-		httpComponentsClientHttpRequestFactory.setReadTimeout(60000);
+		httpComponentsClientHttpRequestFactory.setConnectTimeout(5_000);
+		httpComponentsClientHttpRequestFactory.setReadTimeout(20_000);
 		return httpComponentsClientHttpRequestFactory;
 	}
 
@@ -51,6 +51,24 @@ public class ApplicationConfig {
 		PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager();
 		connectionManager.setMaxTotal(400);
 		connectionManager.setDefaultMaxPerRoute(100);
+		return HttpClients.custom()
+				.setConnectionManager(connectionManager)
+				.build();
+	}
+
+	@Bean
+	ClientHttpRequestFactory hentJournalsakInfoClientHttpRequestFactory(HttpClient hentJournalsakInfoHttpClient) {
+		HttpComponentsClientHttpRequestFactory httpComponentsClientHttpRequestFactory = new HttpComponentsClientHttpRequestFactory(hentJournalsakInfoHttpClient);
+		httpComponentsClientHttpRequestFactory.setConnectTimeout(5_000);
+		httpComponentsClientHttpRequestFactory.setReadTimeout(120_000);
+		return httpComponentsClientHttpRequestFactory;
+	}
+
+	@Bean
+	HttpClient hentJournalsakInfoHttpClient() {
+		PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager();
+		connectionManager.setMaxTotal(200);
+		connectionManager.setDefaultMaxPerRoute(200);
 		return HttpClients.custom()
 				.setConnectionManager(connectionManager)
 				.build();
