@@ -60,7 +60,7 @@ public class ApplicationConfig {
 	ClientHttpRequestFactory hentJournalsakInfoClientHttpRequestFactory(HttpClient hentJournalsakInfoHttpClient) {
 		HttpComponentsClientHttpRequestFactory httpComponentsClientHttpRequestFactory = new HttpComponentsClientHttpRequestFactory(hentJournalsakInfoHttpClient);
 		httpComponentsClientHttpRequestFactory.setConnectTimeout(5_000);
-		httpComponentsClientHttpRequestFactory.setReadTimeout(120_000);
+		httpComponentsClientHttpRequestFactory.setReadTimeout(180_000);
 		return httpComponentsClientHttpRequestFactory;
 	}
 
