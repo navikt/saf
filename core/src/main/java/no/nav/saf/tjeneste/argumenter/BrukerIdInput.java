@@ -25,7 +25,7 @@ public class BrukerIdInput {
 			case ORGNR:
 				return "organisasjonsnummer=" + id;
 			default:
-				return "";
+				return "ukjentId=" + id;
 		}
 	}
 }

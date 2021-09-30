@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.domain.HentDokument;
 import no.nav.saf.domain.kode.Variantformat;
 import no.nav.saf.exceptions.HentdokumentTilgangskontrollException;
+import no.nav.saf.exceptions.JournalpostIkkeFunnetException;
 import no.nav.saf.hentdokument.HentDokumentDomainCoordinator;
 import no.nav.saf.metrics.AudienceCounter;
 import no.nav.saf.metrics.Monitor;
@@ -92,6 +93,9 @@ public class HentDokumentController extends AbstractSafController {
 					.body(response.getDokument());
 		} catch (HentdokumentTilgangskontrollException e) {
 			log.warn("hentDokument hentet ikke dokument. journalpostId={}, dokumentInfoId={}, variantFormat={}. Tilgang ble avvist av grunn: " + e.getMessage(), journalpostId, dokumentInfoId, variantFormat);
+			throw e;
+		} catch(JournalpostIkkeFunnetException e) {
+			log.warn("hentDokument fant ikke dokument tilknyttet journalpost. journalpostId={}, dokumentInfoId={}, variantFormat={}. " + e.getMessage(), journalpostId, dokumentInfoId, variantFormat);
 			throw e;
 		} catch(Exception e) {
 			log.error("hentDokument hentet ikke dokument. journalpostId={}, dokumentInfoId={}, variantFormat={}. Ukjent teknisk feil: " + e.getMessage(), journalpostId, dokumentInfoId, variantFormat, e);

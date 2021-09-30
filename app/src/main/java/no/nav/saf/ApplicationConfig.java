@@ -1,7 +1,7 @@
 package no.nav.saf;
 
 import io.micrometer.core.instrument.MeterRegistry;
-import no.nav.saf.anticorruptionlayer.azure.SafProperties;
+import no.nav.saf.config.SafProperties;
 import no.nav.saf.config.ServiceuserAlias;
 import no.nav.saf.graphiql.GraphiQLController;
 import no.nav.saf.metrics.DokMonitoringAspect;

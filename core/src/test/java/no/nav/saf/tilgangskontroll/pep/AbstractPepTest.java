@@ -1,6 +1,5 @@
 package no.nav.saf.tilgangskontroll.pep;
 
-import no.nav.saf.anticorruptionlayer.azure.SafProperties;
 import no.nav.saf.domain.kode.Skjerming;
 import no.nav.saf.domain.kode.Tema;
 import no.nav.saf.tilgangskontroll.SafRequestContext;

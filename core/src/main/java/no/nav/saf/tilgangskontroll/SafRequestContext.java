@@ -2,7 +2,6 @@ package no.nav.saf.tilgangskontroll;
 
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import no.nav.saf.anticorruptionlayer.azure.SafProperties;
 import no.nav.security.token.support.core.context.TokenValidationContext;
 
 import java.util.Map;
