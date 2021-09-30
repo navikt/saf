@@ -1,6 +1,5 @@
 package no.nav.saf.endpoints;
 
-import no.nav.saf.exceptionhandler.LoggingExceptionResolver;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;

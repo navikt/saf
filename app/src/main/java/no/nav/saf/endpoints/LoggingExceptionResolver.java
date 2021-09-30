@@ -1,4 +1,4 @@
-package no.nav.saf.exceptionhandler;
+package no.nav.saf.endpoints;
 
 import no.nav.saf.exceptions.SafFunctionalException;
 import org.springframework.stereotype.Component;

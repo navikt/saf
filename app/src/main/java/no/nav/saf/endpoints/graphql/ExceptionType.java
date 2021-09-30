@@ -1,4 +1,4 @@
-package no.nav.saf.exceptionhandler;
+package no.nav.saf.endpoints.graphql;
 
 /**
  * @author Ugur Alpay Cenar, Visma Consulting.

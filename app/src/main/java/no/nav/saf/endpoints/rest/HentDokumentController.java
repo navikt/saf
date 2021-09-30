@@ -1,4 +1,4 @@
-package no.nav.saf.endpoints;
+package no.nav.saf.endpoints.rest;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiParam;
@@ -29,9 +29,10 @@ import javax.inject.Named;
 import java.util.Map;
 import java.util.Set;
 
+import static no.nav.saf.endpoints.HeaderUtils.createNavCallid;
 import static no.nav.saf.headers.NavHeaders.NAV_CALLID;
-import static no.nav.saf.headers.NavHeaders.NAV_CONSUMER_ID;
 import static no.nav.saf.headers.NavHeaders.X_CORRELATION_ID;
+import static no.nav.saf.util.MDCUtility.addMdcData;
 
 /**
  * Endepunktet til hentDokument, som returnerer et dokument fra joark basert på journalpostId, dokumentInfoId og variantFormat.
@@ -44,7 +45,7 @@ import static no.nav.saf.headers.NavHeaders.X_CORRELATION_ID;
 @RestController
 @RequestMapping("rest/")
 @Slf4j
-public class HentDokumentController extends AbstractSafController {
+public class HentDokumentController {
 	private final HentDokumentDomainCoordinator hentDokumentDomainCoordinator;
 	private final Set<String> azureIssuers;
 	private final TokenValidationContextHolder tokenValidationContextHolder;
@@ -53,7 +54,7 @@ public class HentDokumentController extends AbstractSafController {
 
 	@Inject
 	public HentDokumentController(@Named("azureIssuers") Set<String> azureIssuers,
-								  @Named("privilegiedServiceusers")  Map<String, Boolean> privilegiedServiceusers,
+								  @Named("privilegiedServiceusers") Map<String, Boolean> privilegiedServiceusers,
 								  HentDokumentDomainCoordinator hentDokumentDomainCoordinator,
 								  AudienceCounter audienceCounter,
 								  TokenValidationContextHolder tokenValidationContextHolder) {
@@ -72,10 +73,13 @@ public class HentDokumentController extends AbstractSafController {
 			@ApiParam(name = "dokumentInfoId", value = "Id for aktuelt dokument", required = true) @PathVariable String dokumentInfoId,
 			@ApiParam(name = "variantFormat", value = "Varianten til dokumentet som skal hentes. [Følg lenken for gyldige verdier](https://confluence.adeo.no/display/BOA/Enum%3A+Variantformat).", required = true) @PathVariable String variantFormat,
 			@ApiParam(name = NAV_CALLID, value = "(Valgfri) ID for logging og sporing på tvers av verdikjeder. Eksempel: UUID") @RequestHeader(value = NAV_CALLID, required = false) String navCallid,
-			@ApiParam(name = X_CORRELATION_ID, value = "@Deprecated. Bruk " + NAV_CALLID, hidden = true) @RequestHeader(value = X_CORRELATION_ID, required = false) String xCorrelationId,
-			@ApiParam(name = NAV_CONSUMER_ID, value = "(Valgfri) ID for å identifisere komponent, modul eller system som kaller tjenesten hvis dette ikke utgår fra subjektet i tokenet. Eksempel: myapp") @RequestHeader(value = NAV_CONSUMER_ID, required = false) String navConsumerId
+			@ApiParam(name = X_CORRELATION_ID, value = "@Deprecated. Bruk " + NAV_CALLID, hidden = true) @RequestHeader(value = X_CORRELATION_ID, required = false) String xCorrelationId
 	) {
-		SafRequestContext safRequestContext = new SafRequestContext(this.azureIssuers, createNavCallid(navCallid, xCorrelationId), navConsumerId, tokenValidationContextHolder.getTokenValidationContext(), privilegiedServiceusers);
+		final SafRequestContext safRequestContext = new SafRequestContext(createNavCallid(navCallid, xCorrelationId),
+				tokenValidationContextHolder.getTokenValidationContext(),
+				privilegiedServiceusers
+		);
+		addMdcData(safRequestContext);
 		log.info("hentDokument har mottatt kall. journalpostId={}, dokumentInfoId={}, variantFormat={}", journalpostId, dokumentInfoId, variantFormat);
 		try {
 			audienceCounter.increment(
@@ -94,10 +98,10 @@ public class HentDokumentController extends AbstractSafController {
 		} catch (HentdokumentTilgangskontrollException e) {
 			log.warn("hentDokument hentet ikke dokument. journalpostId={}, dokumentInfoId={}, variantFormat={}. Tilgang ble avvist av grunn: " + e.getMessage(), journalpostId, dokumentInfoId, variantFormat);
 			throw e;
-		} catch(JournalpostIkkeFunnetException e) {
+		} catch (JournalpostIkkeFunnetException e) {
 			log.warn("hentDokument fant ikke dokument tilknyttet journalpost. journalpostId={}, dokumentInfoId={}, variantFormat={}. " + e.getMessage(), journalpostId, dokumentInfoId, variantFormat);
 			throw e;
-		} catch(Exception e) {
+		} catch (Exception e) {
 			log.error("hentDokument hentet ikke dokument. journalpostId={}, dokumentInfoId={}, variantFormat={}. Ukjent teknisk feil: " + e.getMessage(), journalpostId, dokumentInfoId, variantFormat, e);
 			throw e;
 		} finally {
@@ -110,7 +114,7 @@ public class HentDokumentController extends AbstractSafController {
 		if (securityContext.isPrivilegiedServiceUser()) {
 			return;
 		}
-		if (securityContext.isServiceUser() && !Variantformat.ORIGINAL.name().equals(variantFormat)) {
+		if (securityContext.isSystem() && !Variantformat.ORIGINAL.name().equals(variantFormat)) {
 			throw new HentdokumentTilgangskontrollException(
 					"Servicebruker forsøker å hente dokument med variantFormat=" +
 							variantFormat + ". Servicebrukere har kun tilgang til variantFormat=" + Variantformat.ORIGINAL +

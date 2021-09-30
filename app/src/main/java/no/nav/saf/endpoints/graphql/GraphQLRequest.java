@@ -1,4 +1,4 @@
-package no.nav.saf.endpoints;
+package no.nav.saf.endpoints.graphql;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;

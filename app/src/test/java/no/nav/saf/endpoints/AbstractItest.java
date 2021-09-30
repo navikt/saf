@@ -6,10 +6,13 @@ import lombok.SneakyThrows;
 import no.nav.saf.ApplicationConfig;
 import no.nav.saf.domain.visningsmodell.Dokumentoversikt;
 import no.nav.saf.endpoints.testconfig.STSTestConfig;
-import no.nav.security.token.support.test.spring.TokenGeneratorConfiguration;
+import no.nav.security.mock.oauth2.MockOAuth2Server;
+import no.nav.security.mock.oauth2.token.DefaultOAuth2TokenCallback;
+import no.nav.security.token.support.spring.test.EnableMockOAuth2Server;
 import org.apache.cxf.helpers.IOUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
@@ -25,8 +28,10 @@ import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import javax.inject.Inject;
 import java.util.Base64;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
@@ -49,10 +54,11 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
  * @author Sigurd Midttun, Visma Consulting.
  */
 @ExtendWith(SpringExtension.class)
-@SpringBootTest(classes = {AbstractItest.TestConfig.class, ApplicationConfig.class, TokenGeneratorConfiguration.class, STSTestConfig.class},
+@SpringBootTest(classes = {AbstractItest.TestConfig.class, ApplicationConfig.class, STSTestConfig.class},
 		webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
 		properties = {"spring.main.allow-bean-definition-overriding=true"})
 @ActiveProfiles(value = {"itest", "wiremock"})
+@EnableMockOAuth2Server
 @AutoConfigureWireMock(port = Options.DYNAMIC_PORT)
 public abstract class AbstractItest {
 	private static final String SCENARIO_ABAC = "state_abac";
@@ -74,8 +80,10 @@ public abstract class AbstractItest {
 		}
 	}
 
-	@Inject
+	@Autowired
 	protected TestRestTemplate restTemplate;
+	@Autowired
+	private MockOAuth2Server server;
 
 	@BeforeEach
 	public void setUp() {
@@ -97,7 +105,23 @@ public abstract class AbstractItest {
 	}
 
 	private String getHeaderToken() {
-		return "Bearer " + restTemplate.getForObject("/local/jwt", String.class);
+		return "Bearer " + jwt("saksbehandler", new HashMap<>());
+	}
+
+	protected String jwt(String subject, Map<String, Object> claims) {
+		String issuerId = "azurev2";
+		String audience = "gosys";
+		return server.issueToken(
+				issuerId,
+				"gosys-clientid",
+				new DefaultOAuth2TokenCallback(
+						issuerId,
+						subject,
+						List.of(audience),
+						claims,
+						60
+				)
+		).serialize();
 	}
 
 	protected void abacPermit() {

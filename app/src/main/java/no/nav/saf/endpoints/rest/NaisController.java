@@ -1,4 +1,4 @@
-package no.nav.saf.nais;
+package no.nav.saf.endpoints.rest;
 
 
 import io.micrometer.core.instrument.Gauge;
@@ -17,19 +17,23 @@ import javax.inject.Inject;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
+ * Implementerer NAIS kontraktene for
+ * - readiness
+ * - aliveness
+ *
  * @author Joakim Bjørnstad, Jbit AS
  */
 @Slf4j
 @RestController
-public final class NaisContract {
+public final class NaisController {
 
 	private static final String APPLICATION_ALIVE = "Application is alive!";
 	private static final String APPLICATION_READY = "Application is ready for traffic!";
-	private static AtomicInteger isReady = new AtomicInteger(1);
+	private static final AtomicInteger IS_READY = new AtomicInteger(1);
 
 	@Inject
-	public NaisContract(MeterRegistry meterRegistry) {
-		Gauge.builder("dok_app_is_ready", isReady, AtomicInteger::get).register(meterRegistry);
+	public NaisController(MeterRegistry meterRegistry) {
+		Gauge.builder("dok_app_is_ready", IS_READY, AtomicInteger::get).register(meterRegistry);
 	}
 
 	@GetMapping("/isAlive")

@@ -1,11 +1,5 @@
 package no.nav.saf.tilgangskontroll.pep;
 
-import static no.nav.saf.cache.RedisCacheConfig.TILGANG_CACHE;
-import static no.nav.saf.domain.DomainConstants.PEP6D;
-import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_RESOURCE_TYPE;
-import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_SAF_DOKUMENT_FIL;
-import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_SAF_SKJERMING;
-
 import io.lettuce.core.RedisException;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.cache.KeyGeneratorDistributedCaching;
@@ -26,6 +20,12 @@ import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+
+import static no.nav.saf.cache.RedisCacheConfig.TILGANG_CACHE;
+import static no.nav.saf.domain.DomainConstants.PEP6D;
+import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_RESOURCE_TYPE;
+import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_SAF_DOKUMENT_FIL;
+import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_SAF_SKJERMING;
 
 /**
  * Dekker følgende policies i saf:
@@ -64,7 +64,7 @@ public class Pep6dImpl implements Pep<TilgangDokumentvariant> {
 			Pep.traceLogPepStarted(PEP6D, ressurs);
 
 			String tilgangKeyDistributedCaching = KeyGeneratorDistributedCaching.getKeyForPep6d(
-					safRequestContext.getSecurityContext().getSubjectId(),
+					safRequestContext.getUserId(),
 					ressurs.getJournalpostId(),
 					ressurs.getDokumentInfoId(),
 					ressurs.getVariantformat().name(),
