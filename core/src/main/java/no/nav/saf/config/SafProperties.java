@@ -1,4 +1,4 @@
-package no.nav.saf.anticorruptionlayer.azure;
+package no.nav.saf.config;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;

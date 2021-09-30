@@ -1,6 +1,6 @@
 # Manuell instans av saf-redis
 # Lagt inn med:
-#  kubectl apply -f saf-redis.yaml
+#  kubectl apply -f p-saf-redis.yaml
 apiVersion: "nais.io/v1alpha1"
 kind: "Application"
 metadata:

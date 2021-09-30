@@ -10,7 +10,7 @@ import graphql.schema.idl.SchemaGenerator;
 import graphql.schema.idl.SchemaParser;
 import graphql.schema.idl.TypeDefinitionRegistry;
 import lombok.extern.slf4j.Slf4j;
-import no.nav.saf.anticorruptionlayer.azure.SafProperties;
+import no.nav.saf.config.SafProperties;
 import no.nav.saf.endpoints.wiring.DokumentoversiktWiring;
 import no.nav.saf.exceptionhandler.GraphQLExceptionHandler;
 import no.nav.saf.metrics.AudienceCounter;

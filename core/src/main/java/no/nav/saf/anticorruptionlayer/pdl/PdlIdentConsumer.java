@@ -2,9 +2,9 @@ package no.nav.saf.anticorruptionlayer.pdl;
 
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.retry.annotation.Retry;
-import no.nav.saf.anticorruptionlayer.azure.SafProperties;
 import no.nav.saf.anticorruptionlayer.sts.StsResponse;
 import no.nav.saf.anticorruptionlayer.sts.StsRestConsumer;
+import no.nav.saf.config.SafProperties;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.client.ClientHttpRequestFactory;
