@@ -78,7 +78,7 @@ public class Pep6dImpl implements Pep<TilgangDokumentvariant> {
 
 			try {
 				XacmlResponse response = fetchXacmlResponse(ressurs, safRequestContext, tilgangKeyDistributedCaching);
-				if(response == null) {
+				if (response == null) {
 					return XacmlResponse.deny();
 				}
 				safRequestContext.getRequestCache().putObject(tilgangKeyLocalCaching, decide(response.getDecision()));
@@ -102,14 +102,50 @@ public class Pep6dImpl implements Pep<TilgangDokumentvariant> {
 		}
 	}
 
+	@Override
+	public boolean verifyAzureClientCredentialFlowAccess(TilgangDokumentvariant ressurs, SafRequestContext safRequestContext) {
+		if (ressurs == null) {
+			log.warn("Pep6d mangler tilstrekkelig datagrunnlag for å kunne gjennomføre tilgangskontroll. Azure ccf.");
+			return false;
+		}
+
+		if (isSkjermingPresent(ressurs)) {
+			if (isVariantformatNull(ressurs)) {
+				log.warn("Pep6d mangler tilstrekkelig datagrunnlag for å kunne gjennomføre tilgangskontroll. Variantformat=null. journalpostId={} og dokumentinfoId={}. Azure ccf.",
+						ressurs.getJournalpostId(), ressurs.getDokumentInfoId());
+				return false;
+			}
+
+			Pep.traceLogPepStarted(PEP6D, ressurs);
+			String tilgangKeyLocalCaching = KeyGeneratorLocalCaching.getKeyForPep6d(
+					ressurs.getJournalpostId(),
+					ressurs.getDokumentInfoId(),
+					ressurs.getVariantformat().name(),
+					ressurs.getSkjerming().name());
+
+			boolean decision = !isSkjermingPresent(ressurs);
+			safRequestContext.getRequestCache().putObject(tilgangKeyLocalCaching, decision);
+			Pep.traceLogPepFinished(PEP6D, ressurs);
+			return decision;
+		} else {
+			String tilgangKeyLocalCaching = KeyGeneratorLocalCaching.getKeyForPep6d(
+					ressurs.getJournalpostId(),
+					ressurs.getDokumentInfoId(),
+					isVariantformatNull(ressurs) ? null : ressurs.getVariantformat().name(),
+					null);
+			safRequestContext.getRequestCache().putObject(tilgangKeyLocalCaching, true);
+			return true;
+		}
+	}
+
 	private XacmlResponse fetchXacmlResponse(TilgangDokumentvariant ressurs, SafRequestContext safRequestContext, String tilgangKeyDistributedCaching) {
 		XacmlResponse cachedResponse = tilgangCache.get(tilgangKeyDistributedCaching, XacmlResponse.class);
-		if(cachedResponse == null) {
+		if (cachedResponse == null) {
 			XacmlResponse abacResponse = hasDokumentFilAccess(ressurs, safRequestContext);
-			if(abacResponse == null) {
+			if (abacResponse == null) {
 				return XacmlResponse.deny();
 			}
-			if(decide(abacResponse.getDecision())) {
+			if (decide(abacResponse.getDecision())) {
 				tilgangCache.put(tilgangKeyDistributedCaching, abacResponse);
 			}
 			return abacResponse;

@@ -1,11 +1,5 @@
 package no.nav.saf.tilgangskontroll.pep;
 
-import static no.nav.saf.domain.DomainConstants.PEP1G;
-import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_PERSON_AKTOERID_RESOURCE;
-import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_PERSON_FNR;
-import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_RESOURCE_TYPE;
-import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_SAF_PERSON;
-
 import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
@@ -15,6 +9,12 @@ import no.nav.saf.tilgangskontroll.abac.service.AbacService;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
+
+import static no.nav.saf.domain.DomainConstants.PEP1G;
+import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_PERSON_AKTOERID_RESOURCE;
+import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_PERSON_FNR;
+import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_RESOURCE_TYPE;
+import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_SAF_PERSON;
 
 /**
  * Dekker følgende policies i saf:
@@ -61,5 +61,10 @@ public class Pep1gImpl implements Pep<TilgangBruker> {
 		XacmlResponse response = abacService.evaluate(request);
 		Pep.traceLogPepFinished(PEP1G, ressurs);
 		return response;
+	}
+
+	@Override
+	public boolean verifyAzureClientCredentialFlowAccess(TilgangBruker ressurs, SafRequestContext safRequestContext) {
+		return true;
 	}
 }

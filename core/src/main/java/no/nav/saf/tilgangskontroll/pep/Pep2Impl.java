@@ -56,6 +56,18 @@ public class Pep2Impl implements Pep<TilgangSak> {
 		}
 	}
 
+	@Override
+	public boolean verifyAzureClientCredentialFlowAccess(TilgangSak ressurs, SafRequestContext safRequestContext) {
+		if (ressurs == null) {
+			return true;
+		}
+		if (isFarskapSak(ressurs)) {
+			return safRequestContext.getSecurityContext().containsRole(ressurs.getTema().name().toLowerCase());
+		} else {
+			return true;
+		}
+	}
+
 	private boolean isFarskapSak(TilgangSak ressurs) {
 		return FAR.equals(ressurs.getTema());
 	}

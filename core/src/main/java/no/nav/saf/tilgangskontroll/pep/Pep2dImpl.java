@@ -77,6 +77,21 @@ public class Pep2dImpl implements Pep<TilgangSak> {
 		}
 	}
 
+	@Override
+	public boolean verifyAzureClientCredentialFlowAccess(TilgangSak ressurs, SafRequestContext safRequestContext) {
+		if (ressurs == null || ressurs.getTema() == null) {
+			return true;
+		}
+		Pep.traceLogPepStarted(PEP2D, ressurs);
+		String temakode = ressurs.getTema().name();
+		String tilgangKeyLocalCaching = KeyGeneratorLocalCaching.getKeyForPep2d(temakode);
+		boolean decision = safRequestContext.getSecurityContext().containsRole(temakode.toLowerCase());
+		safRequestContext.getRequestCache().putObject(tilgangKeyLocalCaching, decision);
+		Pep.traceLogPepFinished(PEP2D, ressurs);
+		log.info("pep2d decision {}", decision);
+		return decision;
+	}
+
 	private XacmlResponse fetchXacmlResponse(TilgangSak ressurs, SafRequestContext safRequestContext, String tilgangKeyDistributedCaching) {
 		XacmlResponse cachedResponse = tilgangCache.get(tilgangKeyDistributedCaching, XacmlResponse.class);
 		if (cachedResponse == null) {

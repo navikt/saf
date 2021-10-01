@@ -1,10 +1,5 @@
 package no.nav.saf.tilgangskontroll.pep;
 
-import static no.nav.saf.domain.DomainConstants.PEP5;
-import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_RESOURCE_TYPE;
-import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_SAF_DOKUMENT_METADATA;
-import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_SAF_SKJERMING;
-
 import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.cache.KeyGeneratorLocalCaching;
 import no.nav.saf.domain.tilgangsmodell.TilgangDokumentInfo;
@@ -16,6 +11,11 @@ import no.nav.saf.tilgangskontroll.abac.service.AbacService;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
+
+import static no.nav.saf.domain.DomainConstants.PEP5;
+import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_RESOURCE_TYPE;
+import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_SAF_DOKUMENT_METADATA;
+import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_SAF_SKJERMING;
 
 /**
  * Dekker følgende policies i saf:
@@ -52,6 +52,18 @@ public class Pep5Impl implements Pep<TilgangDokumentInfo> {
 			safRequestContext.getRequestCache().putObject(tilgangKeyLocalCaching, true);
 			return XacmlResponse.permit();
 		}
+	}
+
+	@Override
+	public boolean verifyAzureClientCredentialFlowAccess(TilgangDokumentInfo ressurs, SafRequestContext safRequestContext) {
+		if (ressurs == null) {
+			log.warn("Pep5 mangler tilstrekkelig datagrunnlag for å kunne gjennomføre tilgangskontroll. Azure ccf.");
+			return false;
+		}
+		String tilgangKeyLocalCaching = KeyGeneratorLocalCaching.getKeyForPep5(ressurs.getJournalpostId(), ressurs.getDokumentInfoId());
+		boolean decision = !isSkjermingPresent(ressurs);
+		safRequestContext.getRequestCache().putObject(tilgangKeyLocalCaching, decision);
+		return decision;
 	}
 
 	private boolean decide(Decision decision) {

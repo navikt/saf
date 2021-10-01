@@ -10,7 +10,10 @@ import no.nav.security.token.support.core.jwt.JwtToken;
 import no.nav.security.token.support.core.jwt.JwtTokenClaims;
 
 import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
@@ -29,9 +32,10 @@ public class SafSecurityContext {
 	static final String AZURE_CLAIM_AZP = "azp";
 	static final String AZURE_CLAIM_OID = "oid";
 	static final String AZURE_CLAIM_SUB = "sub";
+	static final String AZURE_CLAIM_ROLES = "roles";
 	// NAV custom Azure claim. https://doc.nais.io/security/auth/azure-ad/configuration/#extra
 	static final String AZURE_NAV_CUSTOM_CLAIM_NAVIDENT = "NAVident";
-	static final String AZURE_CUSTOM_CLAIM_AZP_NAME = "azp_name";
+	static final String AZURE_NAV_CUSTOM_CLAIM_AZP_NAME = "azp_name";
 
 	private static final String SERVICEUSER_PREFIX = "srv";
 	private static final String AUTH_ERRORMESSAGE = "Tilgang er avvist. " +
@@ -44,21 +48,23 @@ public class SafSecurityContext {
 	private static final String OPENAM_UKJENT_AUDIENCE = "openamUkjentAudience";
 
 	private final TokenValidationContext tokenValidationContext;
-	private final JwtToken jwt;
+	private final JwtToken jwtToken;
 	private final String cachedJwtPayload;
 	private final boolean jwtIssuedByAzure;
+	private final boolean jwtAzureClientCredentialFlow;
+	private final List<String> jwtAzureRoles;
 	private final Map<String, Boolean> privilegiedServiceusers;
 
 	SafSecurityContext(TokenValidationContext tokenValidationContext,
 					   Map<String, Boolean> privilegiedServiceusers) {
-		this.jwt = tokenValidationContext.getFirstValidToken()
+		this.jwtToken = tokenValidationContext.getFirstValidToken()
 				.orElseThrow(() -> new AuthorizationException(AUTH_ERRORMESSAGE));
 		this.tokenValidationContext = tokenValidationContext;
 		this.privilegiedServiceusers = privilegiedServiceusers;
 		// Payload fra JWT hentes ut en gang pga den blir hentet ut fra kontekst ofte.
 		JWT jwt;
 		try {
-			jwt = JWTParser.parse(this.jwt.getTokenAsString());
+			jwt = JWTParser.parse(this.jwtToken.getTokenAsString());
 		} catch (ParseException e) {
 			throw new AuthorizationException("Kunne ikke parse JWT token.", e);
 		}
@@ -68,6 +74,12 @@ public class SafSecurityContext {
 			throw new AuthorizationException("Kun SignedJWT er støttet i saf.");
 		}
 		this.jwtIssuedByAzure = tokenValidationContext.hasTokenFor(ISSUER_AZUREV1) || tokenValidationContext.hasTokenFor(ISSUER_AZUREV2);
+		this.jwtAzureClientCredentialFlow = isClientCredentialFlowToken(jwtToken);
+		if (jwtIssuedByAzure) {
+			this.jwtAzureRoles = findAzureRoles(jwtToken);
+		} else {
+			this.jwtAzureRoles = new ArrayList<>();
+		}
 	}
 
 	/**
@@ -96,52 +108,70 @@ public class SafSecurityContext {
 	 * @return true hvis token er utsted av REST-STS eller er Azure client-credential flow, ellers false
 	 */
 	public boolean isSystem() {
-		return isRestStsSystemToken() || isClientCredentialFlowToken();
+		return isRestStsSystemToken() || jwtAzureClientCredentialFlow;
 	}
 
-	public boolean isPrivilegiedServiceUser() {
-		return isSystem() && privilegiedServiceusers.containsKey(jwt.getSubject().toLowerCase());
+	/**
+	 * Om servicebruker er privilegiert og kan hente ARKIV varianter (pdf).
+	 *
+	 * @return true hvis systemet står i listen med ENV-verdi: SAF_PRIVILEGIEDSERVICEUSERS, ellers false
+	 */
+	public boolean isPrivilegiedServiceUserWithArkivVariantAccess() {
+		return isSystem() && privilegiedServiceusers.containsKey(jwtToken.getSubject().toLowerCase());
+	}
+
+	/**
+	 * Om token er utsted av Azure i deres client credential flow.
+	 *
+	 * @return true hvis jwt er Azure client credential flow token.
+	 */
+	public boolean isJwtAzureClientCredentialFlow() {
+		return jwtAzureClientCredentialFlow;
+	}
+
+	public boolean containsRole(String role) {
+		return jwtAzureRoles.contains(role);
 	}
 
 	@Deprecated
 	public String getIssuer() {
-		return jwt.getIssuer();
+		return jwtToken.getIssuer();
 	}
 
 	@Deprecated
 	public String getAudience() {
 		try {
-			return jwt.getJwtTokenClaims().getAsList(JWT_CLAIM_AUD).get(0);
-		} catch(Exception e) {
+			return jwtToken.getJwtTokenClaims().getAsList(JWT_CLAIM_AUD).get(0);
+		} catch (Exception e) {
 			return UKJENT_AUDIENCE;
 		}
 	}
 
 	protected String getConsumerId() {
 		if (isRestStsSystemToken()) {
-			return jwt.getSubject();
+			return jwtToken.getSubject();
 		} else if (isOpenAmBrukerToken()) {
 			try {
-				return jwt.getJwtTokenClaims().getAsList(JWT_CLAIM_AUD).get(0);
-			} catch(Exception e) {
+				return jwtToken.getJwtTokenClaims().getAsList(JWT_CLAIM_AUD).get(0);
+			} catch (Exception e) {
 				return OPENAM_UKJENT_AUDIENCE;
 			}
-		} else if (isClientCredentialFlowToken() || isOnBehalfOfFlowToken()) {
-			return findAzureAppnameClaim(jwt.getJwtTokenClaims());
+		} else if (jwtAzureClientCredentialFlow || isOnBehalfOfFlowToken()) {
+			return findAzureAppnameClaim(jwtToken.getJwtTokenClaims());
 		}
 		return UKJENT_CONSUMER_ID;
 	}
 
 	protected String getUserId() {
 		if (isRestStsSystemToken() || isOpenAmBrukerToken()) {
-			return jwt.getSubject();
-		} else if (isClientCredentialFlowToken()) {
-			return findAzureAppnameClaim(jwt.getJwtTokenClaims());
+			return jwtToken.getSubject();
+		} else if (isClientCredentialFlowToken(jwtToken)) {
+			return findAzureAppnameClaim(jwtToken.getJwtTokenClaims());
 		} else if (isOnBehalfOfFlowToken()) {
-			if (jwt.getJwtTokenClaims().getAllClaims().containsKey(AZURE_NAV_CUSTOM_CLAIM_NAVIDENT)) {
-				return jwt.getJwtTokenClaims().getStringClaim(AZURE_NAV_CUSTOM_CLAIM_NAVIDENT);
+			if (jwtToken.getJwtTokenClaims().getAllClaims().containsKey(AZURE_NAV_CUSTOM_CLAIM_NAVIDENT)) {
+				return jwtToken.getJwtTokenClaims().getStringClaim(AZURE_NAV_CUSTOM_CLAIM_NAVIDENT);
 			} else {
-				return jwt.getJwtTokenClaims().getStringClaim(AZURE_CLAIM_OID);
+				return jwtToken.getJwtTokenClaims().getStringClaim(AZURE_CLAIM_OID);
 			}
 		}
 		return UKJENT_USER_ID;
@@ -149,16 +179,23 @@ public class SafSecurityContext {
 
 	protected boolean isRestStsSystemToken() {
 		return tokenValidationContext.hasTokenFor(ISSUER_REST_STS)
-				&& jwt.getSubject().toLowerCase().startsWith(SERVICEUSER_PREFIX);
+				&& jwtToken.getSubject().toLowerCase().startsWith(SERVICEUSER_PREFIX);
 	}
 
 	protected boolean isOpenAmBrukerToken() {
 		return tokenValidationContext.hasTokenFor(ISSUER_OPENAM);
 	}
 
-	protected boolean isClientCredentialFlowToken() {
+	protected boolean isOnBehalfOfFlowToken() {
+		final JwtTokenClaims jwtTokenClaims = jwtToken.getJwtTokenClaims();
+		return jwtTokenClaims.getStringClaim(AZURE_CLAIM_SUB) != null &&
+				jwtTokenClaims.getStringClaim(AZURE_CLAIM_OID) != null &&
+				!jwtTokenClaims.getStringClaim(AZURE_CLAIM_SUB).equals(jwtTokenClaims.getStringClaim(AZURE_CLAIM_OID));
+	}
+
+	protected boolean isClientCredentialFlowToken(JwtToken jwtToken) {
 		if (isJwtIssuedByAzure()) {
-			final JwtTokenClaims jwtTokenClaims = jwt.getJwtTokenClaims();
+			final JwtTokenClaims jwtTokenClaims = jwtToken.getJwtTokenClaims();
 			return jwtTokenClaims.getStringClaim(AZURE_CLAIM_SUB) != null &&
 					jwtTokenClaims.getStringClaim(AZURE_CLAIM_OID) != null &&
 					jwtTokenClaims.getStringClaim(AZURE_CLAIM_SUB).equals(jwtTokenClaims.getStringClaim(AZURE_CLAIM_OID));
@@ -167,21 +204,23 @@ public class SafSecurityContext {
 		}
 	}
 
-	protected boolean isOnBehalfOfFlowToken() {
-		final JwtTokenClaims jwtTokenClaims = jwt.getJwtTokenClaims();
-		return jwtTokenClaims.getStringClaim(AZURE_CLAIM_SUB) != null &&
-				jwtTokenClaims.getStringClaim(AZURE_CLAIM_OID) != null &&
-				!jwtTokenClaims.getStringClaim(AZURE_CLAIM_SUB).equals(jwtTokenClaims.getStringClaim(AZURE_CLAIM_OID));
-	}
-
 	protected String findAzureAppnameClaim(JwtTokenClaims jwtTokenClaims) {
-		if (jwtTokenClaims.getAllClaims().containsKey(AZURE_CUSTOM_CLAIM_AZP_NAME)) {
-			String azpnameClaim = jwtTokenClaims.getStringClaim(AZURE_CUSTOM_CLAIM_AZP_NAME);
+		if (jwtTokenClaims.getAllClaims().containsKey(AZURE_NAV_CUSTOM_CLAIM_AZP_NAME)) {
+			String azpnameClaim = jwtTokenClaims.getStringClaim(AZURE_NAV_CUSTOM_CLAIM_AZP_NAME);
 			if (isNotBlank(azpnameClaim)) {
 				return azpnameClaim;
 			}
 			return jwtTokenClaims.getStringClaim(AZURE_CLAIM_AZP);
 		}
 		return jwtTokenClaims.getStringClaim(AZURE_CLAIM_AZP);
+	}
+
+	protected List<String> findAzureRoles(JwtToken jwtToken) {
+		if (jwtToken.getJwtTokenClaims().getAllClaims().containsKey(AZURE_CLAIM_ROLES)) {
+			return jwtToken.getJwtTokenClaims().getAsList(AZURE_CLAIM_ROLES).stream().map(String::toLowerCase).collect(Collectors.toList());
+		} else {
+			log.error("Azure client credential token flow token mangler roles claim. Permissions.roles må være satt på client i aad-iac. Må undersøkes.");
+			return new ArrayList<>();
+		}
 	}
 }

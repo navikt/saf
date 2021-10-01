@@ -111,7 +111,7 @@ public class HentDokumentController {
 
 	private void validateServiceUserAccess(SafRequestContext safRequestContext, String variantFormat) {
 		SafSecurityContext securityContext = safRequestContext.getSecurityContext();
-		if (securityContext.isPrivilegiedServiceUser()) {
+		if (securityContext.isPrivilegiedServiceUserWithArkivVariantAccess()) {
 			return;
 		}
 		if (securityContext.isSystem() && !Variantformat.ORIGINAL.name().equals(variantFormat)) {
