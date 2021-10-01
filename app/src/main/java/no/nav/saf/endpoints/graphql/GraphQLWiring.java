@@ -69,7 +69,7 @@ public class GraphQLWiring {
 				.type(newTypeWiring("Query").dataFetcher("tilknyttedeJournalposter", tilknyttedeJournalposterDataFetcher))
 				.type(newTypeWiring("Query").dataFetcher("saker", sakerDataFetcher))
 				.type("Journalpost", typeWiring -> typeWiring.dataFetcher("journalforendeEnhet", environment -> {
-					SafRequestContext safRequestContext = environment.getContext();
+					SafRequestContext safRequestContext = environment.getGraphQlContext().get(SafRequestContext.KEY);
 					Journalpost journalpost = environment.getSource();
 					Counter.builder("dok_saf_deprecated_field")
 							.tags("fieldname", "Journalpost.journalforendeEnhet")
