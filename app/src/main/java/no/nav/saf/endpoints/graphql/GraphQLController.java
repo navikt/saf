@@ -10,7 +10,6 @@ import graphql.schema.idl.SchemaGenerator;
 import graphql.schema.idl.SchemaParser;
 import graphql.schema.idl.TypeDefinitionRegistry;
 import lombok.extern.slf4j.Slf4j;
-import no.nav.saf.config.SafProperties;
 import no.nav.saf.metrics.AudienceCounter;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.security.token.support.core.api.Protected;
@@ -29,7 +28,6 @@ import java.io.InputStreamReader;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 
 import static no.nav.saf.endpoints.HeaderUtils.createNavCallid;
 import static no.nav.saf.headers.NavHeaders.NAV_CALLID;
@@ -47,22 +45,18 @@ import static no.nav.saf.util.MDCUtility.addMdcData;
 public class GraphQLController {
 	private final GraphQLSchema graphQLSchema;
 	private final GraphQLExceptionHandler graphQLExceptionHandler;
-	private final Set<String> azureIssuers;
 	private final TokenValidationContextHolder tokenValidationContextHolder;
 	private final AudienceCounter audienceCounter;
 	private final Map<String, Boolean> privilegiedServiceusers;
 
 	@Inject
-	public GraphQLController(@Named("azureIssuers") Set<String> azureIssuers,
-							 @Named("privilegiedServiceusers") Map<String, Boolean> privilegiedServiceusers,
+	public GraphQLController(@Named("privilegiedServiceusers") Map<String, Boolean> privilegiedServiceusers,
 							 GraphQLWiring graphQLWiring,
 							 GraphQLExceptionHandler graphQLExceptionHandler,
 							 AudienceCounter audienceCounter,
-							 TokenValidationContextHolder tokenValidationContextHolder,
-							 SafProperties safProperties) {
+							 TokenValidationContextHolder tokenValidationContextHolder) {
 		this.tokenValidationContextHolder = tokenValidationContextHolder;
 		this.graphQLExceptionHandler = graphQLExceptionHandler;
-		this.azureIssuers = azureIssuers;
 		SchemaParser schemaParser = new SchemaParser();
 		InputStreamReader schema = new InputStreamReader(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream("schemas/saf.graphqls")));
 

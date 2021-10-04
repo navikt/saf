@@ -80,12 +80,13 @@ public class Pep2dImpl implements Pep<TilgangSak> {
 	@Override
 	public boolean verifyAzureClientCredentialFlowAccess(TilgangSak ressurs, SafRequestContext safRequestContext) {
 		if (ressurs == null || ressurs.getTema() == null) {
+			log.info("Pep2d mangler data om sak. Tilgang gis likevel for at system skal kunne knytte dokument til sak og bruker. Azure ccf.");
 			return true;
 		}
 		Pep.traceLogPepStarted(PEP2D, ressurs);
 		String temakode = ressurs.getTema().name();
 		String tilgangKeyLocalCaching = KeyGeneratorLocalCaching.getKeyForPep2d(temakode);
-		boolean decision = safRequestContext.getSecurityContext().containsRole(temakode.toLowerCase());
+		boolean decision = safRequestContext.getSecurityContext().hasTemaAureRole(temakode.toLowerCase());
 		safRequestContext.getRequestCache().putObject(tilgangKeyLocalCaching, decision);
 		Pep.traceLogPepFinished(PEP2D, ressurs);
 		log.info("pep2d decision {}", decision);

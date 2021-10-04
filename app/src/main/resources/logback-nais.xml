@@ -62,9 +62,4 @@
 	<logger name="no.nav.saf" level="INFO" additivity="false">
 		<appender-ref ref="applikasjonslogg"/>
 	</logger>
-
-	<!-- Ikke logg org.apache.catalina.connector.ClientAbortException ERROR -->
-	<logger name="org.apache.catalina.connector.OutputBuffer" additivity="false" level="FATAL">
-		<appender-ref ref="applikasjonslogg"/>
-	</logger>
 </included>

@@ -39,7 +39,7 @@ public class Pep4Impl implements Pep<TilgangJournalpost> {
 	@Override
 	public XacmlResponse verifyAccessXacmlResponse(TilgangJournalpost ressurs, SafRequestContext safRequestContext) {
 		if (ressurs == null) {
-			log.warn("Pep4 mangler tilstrekkelig datagrunnlag for å kunne gjennomføre tilgangskontroll");
+			log.warn("Pep4 mangler tilstrekkelig datagrunnlag for å kunne gjennomføre tilgangskontroll.");
 			return XacmlResponse.deny();
 		}
 
@@ -52,6 +52,10 @@ public class Pep4Impl implements Pep<TilgangJournalpost> {
 
 	@Override
 	public boolean verifyAzureClientCredentialFlowAccess(TilgangJournalpost ressurs, SafRequestContext safRequestContext) {
+		if(ressurs == null) {
+			log.warn("Pep4 mangler tilstrekkelig datagrunnlag for å kunne gjennomføre tilgangskontroll. Azure ccf.");
+			return false;
+		}
 		return !isJournalpoststatusUtgaar(ressurs) && !isSkjermingPresent(ressurs);
 	}
 

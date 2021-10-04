@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.domain.HentDokument;
 import no.nav.saf.domain.kode.Variantformat;
+import no.nav.saf.exceptions.DokumentIkkeFunnetException;
 import no.nav.saf.exceptions.HentdokumentTilgangskontrollException;
 import no.nav.saf.exceptions.JournalpostIkkeFunnetException;
 import no.nav.saf.hentdokument.HentDokumentDomainCoordinator;
@@ -27,7 +28,6 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.inject.Inject;
 import javax.inject.Named;
 import java.util.Map;
-import java.util.Set;
 
 import static no.nav.saf.endpoints.HeaderUtils.createNavCallid;
 import static no.nav.saf.headers.NavHeaders.NAV_CALLID;
@@ -47,20 +47,17 @@ import static no.nav.saf.util.MDCUtility.addMdcData;
 @Slf4j
 public class HentDokumentController {
 	private final HentDokumentDomainCoordinator hentDokumentDomainCoordinator;
-	private final Set<String> azureIssuers;
 	private final TokenValidationContextHolder tokenValidationContextHolder;
 	private final AudienceCounter audienceCounter;
 	private final Map<String, Boolean> privilegiedServiceusers;
 
 	@Inject
-	public HentDokumentController(@Named("azureIssuers") Set<String> azureIssuers,
-								  @Named("privilegiedServiceusers") Map<String, Boolean> privilegiedServiceusers,
+	public HentDokumentController(@Named("privilegiedServiceusers") Map<String, Boolean> privilegiedServiceusers,
 								  HentDokumentDomainCoordinator hentDokumentDomainCoordinator,
 								  AudienceCounter audienceCounter,
 								  TokenValidationContextHolder tokenValidationContextHolder) {
 		this.tokenValidationContextHolder = tokenValidationContextHolder;
 		this.hentDokumentDomainCoordinator = hentDokumentDomainCoordinator;
-		this.azureIssuers = azureIssuers;
 		this.audienceCounter = audienceCounter;
 		this.privilegiedServiceusers = privilegiedServiceusers;
 	}
@@ -98,7 +95,7 @@ public class HentDokumentController {
 		} catch (HentdokumentTilgangskontrollException e) {
 			log.warn("hentDokument hentet ikke dokument. journalpostId={}, dokumentInfoId={}, variantFormat={}. Tilgang ble avvist av grunn: " + e.getMessage(), journalpostId, dokumentInfoId, variantFormat);
 			throw e;
-		} catch (JournalpostIkkeFunnetException e) {
+		} catch (JournalpostIkkeFunnetException | DokumentIkkeFunnetException e) {
 			log.warn("hentDokument fant ikke dokument tilknyttet journalpost. journalpostId={}, dokumentInfoId={}, variantFormat={}. " + e.getMessage(), journalpostId, dokumentInfoId, variantFormat);
 			throw e;
 		} catch (Exception e) {

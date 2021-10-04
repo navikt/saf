@@ -7,6 +7,8 @@ import no.nav.security.token.support.core.context.TokenValidationContext;
 import java.util.Map;
 
 /**
+ * Holder kontekst om kall inn til saf.
+ *
  * @author Joakim Bjørnstad, Jbit AS
  */
 @Slf4j

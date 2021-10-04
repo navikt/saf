@@ -13,11 +13,15 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
+import static no.nav.saf.util.MDCUtility.addMdcData;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 /**
+ * Holder informasjon om token.
+ *
  * @author Joakim Bjørnstad, Jbit AS
  */
 @Slf4j
@@ -75,7 +79,7 @@ public class SafSecurityContext {
 		}
 		this.jwtIssuedByAzure = tokenValidationContext.hasTokenFor(ISSUER_AZUREV1) || tokenValidationContext.hasTokenFor(ISSUER_AZUREV2);
 		this.jwtAzureClientCredentialFlow = isClientCredentialFlowToken(jwtToken);
-		if (jwtIssuedByAzure) {
+		if (jwtIssuedByAzure && jwtAzureClientCredentialFlow) {
 			this.jwtAzureRoles = findAzureRoles(jwtToken);
 		} else {
 			this.jwtAzureRoles = new ArrayList<>();
@@ -129,7 +133,28 @@ public class SafSecurityContext {
 		return jwtAzureClientCredentialFlow;
 	}
 
-	public boolean containsRole(String role) {
+	/**
+	 * Sjekker om konsument har tilgang til tema gjennom rollen "tema_{tema}" i roles claim på token. (Azure)
+	 * Se nais/naiserator.yaml azureator config
+	 *
+	 * @param tema Temakode. Eksempel "FOR"
+	 * @return true hvis tema rollen finnes. Ellers false
+	 */
+	public boolean hasTemaAureRole(String tema) {
+		return containsAzureRole("tema_" + tema.toLowerCase());
+	}
+
+	/**
+	 * Sjekker om konsument har tilgang til ARKIV variant i joark gjennom rollen "hent_arkiv_dokument" i roles claim på token. (Azure)
+	 * Se nais/naiserator.yaml azureator config
+	 *
+	 * @return true hvis konsument har tilgang til ARKIV variant. Ellers false
+	 */
+	public boolean hasArkivDokumentRole() {
+		return containsAzureRole("hent_arkiv_dokument");
+	}
+
+	private boolean containsAzureRole(String role) {
 		return jwtAzureRoles.contains(role);
 	}
 
@@ -219,7 +244,8 @@ public class SafSecurityContext {
 		if (jwtToken.getJwtTokenClaims().getAllClaims().containsKey(AZURE_CLAIM_ROLES)) {
 			return jwtToken.getJwtTokenClaims().getAsList(AZURE_CLAIM_ROLES).stream().map(String::toLowerCase).collect(Collectors.toList());
 		} else {
-			log.error("Azure client credential token flow token mangler roles claim. Permissions.roles må være satt på client i aad-iac. Må undersøkes.");
+			addMdcData(UUID.randomUUID().toString(), getUserId(), getConsumerId());
+			log.error("Azure client credential token flow token mangler roles claim. Permissions.roles må være satt på client i azureator. Må undersøkes.");
 			return new ArrayList<>();
 		}
 	}
