@@ -89,7 +89,6 @@ public class Pep2dImpl implements Pep<TilgangSak> {
 		boolean decision = safRequestContext.getSecurityContext().hasTemaAureRole(temakode.toLowerCase());
 		safRequestContext.getRequestCache().putObject(tilgangKeyLocalCaching, decision);
 		Pep.traceLogPepFinished(PEP2D, ressurs);
-		log.info("pep2d decision {}", decision);
 		return decision;
 	}
 
