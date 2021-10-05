@@ -56,6 +56,20 @@ public class Pep2Impl implements Pep<TilgangSak> {
 		}
 	}
 
+	@Override
+	public boolean verifyAzureClientCredentialFlowAccess(TilgangSak ressurs, SafRequestContext safRequestContext) {
+		if (ressurs == null) {
+			log.info("Pep2 mangler data om sak. Tilgang gis likevel for at system skal kunne knytte dokument til sak og bruker. Azure ccf.");
+			return true;
+		}
+		if (isFarskapSak(ressurs)) {
+			String tema = ressurs.getTema().name().toLowerCase();
+			return safRequestContext.getSecurityContext().hasTemaAureRole(tema);
+		} else {
+			return true;
+		}
+	}
+
 	private boolean isFarskapSak(TilgangSak ressurs) {
 		return FAR.equals(ressurs.getTema());
 	}

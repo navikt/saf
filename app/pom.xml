@@ -84,13 +84,18 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>no.nav.security</groupId>
-			<artifactId>token-validation-test-support</artifactId>
+			<groupId>org.awaitility</groupId>
+			<artifactId>awaitility</artifactId>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.awaitility</groupId>
-			<artifactId>awaitility</artifactId>
+			<groupId>no.nav.security</groupId>
+			<artifactId>token-validation-spring-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.squareup.okhttp3</groupId>
+			<artifactId>okhttp</artifactId>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>

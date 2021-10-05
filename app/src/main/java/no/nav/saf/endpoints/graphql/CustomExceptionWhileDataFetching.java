@@ -1,4 +1,4 @@
-package no.nav.saf.exceptionhandler;
+package no.nav.saf.endpoints.graphql;
 
 import graphql.ErrorType;
 import graphql.GraphQLError;
@@ -14,7 +14,7 @@ import java.util.Map;
 
 import static graphql.Assert.assertNotNull;
 import static java.lang.String.format;
-import static no.nav.saf.exceptionhandler.GraphQLExceptionHandler.isFunctionalException;
+import static no.nav.saf.endpoints.graphql.GraphQLExceptionHandler.isFunctionalException;
 
 /**
  * Copy of @ExceptionWhileDataFetching

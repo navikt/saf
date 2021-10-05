@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import no.nav.saf.domain.kode.Journalstatus;
 import no.nav.saf.domain.visningsmodell.Dokumentoversikt;
 import no.nav.saf.endpoints.AbstractItest;
-import no.nav.saf.endpoints.GraphQLRequest;
+import no.nav.saf.endpoints.graphql.GraphQLRequest;
 import org.apache.http.HttpHeaders;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpMethod;

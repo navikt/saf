@@ -61,4 +61,9 @@ public class Pep3Impl implements Pep<TilgangSak> {
 		}
 		return XacmlResponse.permit();
 	}
+
+	@Override
+	public boolean verifyAzureClientCredentialFlowAccess(TilgangSak ressurs, SafRequestContext safRequestContext) {
+		return true;
+	}
 }

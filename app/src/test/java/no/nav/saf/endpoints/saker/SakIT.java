@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import no.nav.saf.domain.visningsmodell.Sak;
 import no.nav.saf.endpoints.AbstractItest;
-import no.nav.saf.endpoints.GraphQLRequest;
+import no.nav.saf.endpoints.graphql.GraphQLRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.RequestEntity;

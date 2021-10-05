@@ -13,6 +13,8 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
 
+import static no.nav.saf.util.MDCUtility.addMdcData;
+
 /**
  * @author Joakim Bjørnstad, Jbit AS
  */
@@ -28,11 +30,11 @@ public class TilknyttedeJournalposterDataFetcher implements DataFetcher<DataFetc
 
 	@Override
 	public DataFetcherResult<List<Journalpost>> get(DataFetchingEnvironment environment) throws Exception {
+		SafRequestContext safRequestContext = environment.getGraphQlContext().get(SafRequestContext.KEY);
+		addMdcData(safRequestContext);
 		try {
 			final String dokumentInfoId = environment.getArgument("dokumentInfoId");
 			final Tilknytning tilknytning = environment.getArgument("tilknytning");
-			SafRequestContext safRequestContext = environment.getContext();
-			safRequestContext.getSecurityContext().getOidcTokenBody();
 			log.info("tilknyttedeJournalposter for dokumentInfoId={}, tilknytning={}", dokumentInfoId, tilknytning);
 			List<Journalpost> tilknyttedeJournalposter = tilknyttedeJournalposterQuery.hentTilknyttedeJournalposter(dokumentInfoId, tilknytning, safRequestContext);
 			log.info("tilknyttedeJournalposter hentet for dokumentInfoId={}, tilknytning={}", dokumentInfoId, tilknytning);

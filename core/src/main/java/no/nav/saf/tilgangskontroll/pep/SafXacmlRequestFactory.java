@@ -1,14 +1,14 @@
 package no.nav.saf.tilgangskontroll.pep;
 
+import no.nav.saf.tilgangskontroll.SafSecurityContext;
+import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlRequest;
+
 import static no.nav.saf.domain.DomainConstants.SAF;
 import static no.nav.saf.tilgangskontroll.SafAttributter.ENVIRONMENT_FELLES_AZURE_JWT_TOKEN_BODY;
 import static no.nav.saf.tilgangskontroll.SafAttributter.ENVIRONMENT_FELLES_OIDC_TOKEN_BODY;
 import static no.nav.saf.tilgangskontroll.SafAttributter.ENVIRONMENT_FELLES_PEP_ID;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_DOMENE;
 import static no.nav.saf.tilgangskontroll.SafAttributter.XACML_1_0_ACTION_ACTION_ID;
-
-import no.nav.saf.tilgangskontroll.SafSecurityContext;
-import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlRequest;
 
 /**
  * @author Sigurd Midttun, Visma Consulting.
@@ -23,10 +23,11 @@ final class SafXacmlRequestFactory {
 
 	static XacmlRequest create(final SafSecurityContext safSecurityContext) {
 		XacmlRequest request = new XacmlRequest();
-		if(safSecurityContext.isAzureToken()) {
-			request.environment(ENVIRONMENT_FELLES_AZURE_JWT_TOKEN_BODY, safSecurityContext.getOidcTokenBody());
+		String cachedJwtPayload = safSecurityContext.getCachedJwtPayload();
+		if(safSecurityContext.isJwtIssuedByAzure()) {
+			request.environment(ENVIRONMENT_FELLES_AZURE_JWT_TOKEN_BODY, cachedJwtPayload);
 		} else {
-			request.environment(ENVIRONMENT_FELLES_OIDC_TOKEN_BODY, safSecurityContext.getOidcTokenBody());
+			request.environment(ENVIRONMENT_FELLES_OIDC_TOKEN_BODY, cachedJwtPayload);
 		}
 		request.environment(ENVIRONMENT_FELLES_PEP_ID, SAF);
 		request.resource(RESOURCE_FELLES_DOMENE, SAF);

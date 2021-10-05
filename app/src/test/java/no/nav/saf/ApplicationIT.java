@@ -1,6 +1,6 @@
 package no.nav.saf;
 
-import no.nav.security.token.support.test.spring.TokenGeneratorConfiguration;
+import no.nav.security.token.support.spring.test.EnableMockOAuth2Server;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -17,9 +17,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * @author Joakim Bjørnstad, Jbit AS
  */
 @ExtendWith(SpringExtension.class)
-@SpringBootTest(classes = {Application.class, TokenGeneratorConfiguration.class},
+@SpringBootTest(classes = {Application.class},
 		webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
 		properties = {"spring.main.allow-bean-definition-overriding=true"})
+@EnableMockOAuth2Server
 @ActiveProfiles("itest")
 class ApplicationIT {
 	@Inject

@@ -1,23 +1,22 @@
 package no.nav.saf.tilgangskontroll.pep;
 
+import lombok.extern.slf4j.Slf4j;
+import no.nav.saf.domain.kode.Journalstatus;
+import no.nav.saf.domain.tilgangsmodell.TilgangJournalpost;
+import no.nav.saf.tilgangskontroll.SafRequestContext;
+import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlRequest;
+import no.nav.saf.tilgangskontroll.abac.dto.response.XacmlResponse;
+import no.nav.saf.tilgangskontroll.abac.service.AbacService;
+import org.springframework.stereotype.Component;
+
+import javax.inject.Inject;
+
 import static no.nav.saf.domain.DomainConstants.ABAC_JOURNALSTATUS_UTGAAR;
 import static no.nav.saf.domain.DomainConstants.PEP4;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_RESOURCE_TYPE;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_SAF_JOURNALSTATUS;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_SAF_JOURNAL_METADATA;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_SAF_SKJERMING;
-
-import lombok.extern.slf4j.Slf4j;
-import no.nav.saf.domain.kode.Journalstatus;
-import no.nav.saf.domain.tilgangsmodell.TilgangJournalpost;
-import no.nav.saf.tilgangskontroll.SafRequestContext;
-import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlRequest;
-import no.nav.saf.tilgangskontroll.abac.dto.response.Decision;
-import no.nav.saf.tilgangskontroll.abac.dto.response.XacmlResponse;
-import no.nav.saf.tilgangskontroll.abac.service.AbacService;
-import org.springframework.stereotype.Component;
-
-import javax.inject.Inject;
 
 /**
  * Dekker følgende policies i saf:
@@ -40,7 +39,7 @@ public class Pep4Impl implements Pep<TilgangJournalpost> {
 	@Override
 	public XacmlResponse verifyAccessXacmlResponse(TilgangJournalpost ressurs, SafRequestContext safRequestContext) {
 		if (ressurs == null) {
-			log.warn("Pep4 mangler tilstrekkelig datagrunnlag for å kunne gjennomføre tilgangskontroll");
+			log.warn("Pep4 mangler tilstrekkelig datagrunnlag for å kunne gjennomføre tilgangskontroll.");
 			return XacmlResponse.deny();
 		}
 
@@ -52,9 +51,12 @@ public class Pep4Impl implements Pep<TilgangJournalpost> {
 	}
 
 	@Override
-	public boolean hasAccess(TilgangJournalpost ressurs, SafRequestContext safRequestContext) {
-		XacmlResponse response = verifyAccessXacmlResponse(ressurs, safRequestContext);
-		return Decision.PERMIT.equals(response.getDecision());
+	public boolean verifyAzureClientCredentialFlowAccess(TilgangJournalpost ressurs, SafRequestContext safRequestContext) {
+		if(ressurs == null) {
+			log.warn("Pep4 mangler tilstrekkelig datagrunnlag for å kunne gjennomføre tilgangskontroll. Azure ccf.");
+			return false;
+		}
+		return !isJournalpoststatusUtgaar(ressurs) && !isSkjermingPresent(ressurs);
 	}
 
 	private XacmlResponse hasJournalpostAccess(SafRequestContext safRequestContext, TilgangJournalpost ressurs) {

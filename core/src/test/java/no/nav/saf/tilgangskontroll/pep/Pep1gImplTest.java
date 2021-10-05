@@ -1,17 +1,5 @@
 package no.nav.saf.tilgangskontroll.pep;
 
-import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_PERSON_AKTOERID_RESOURCE;
-import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_RESOURCE_TYPE;
-import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_SAF_PERSON;
-import static org.hamcrest.CoreMatchers.hasItem;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.domain.tilgangsmodell.TilgangIdent;
 import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlAttribute;
@@ -23,6 +11,18 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 
 import java.util.Collections;
+
+import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_PERSON_AKTOERID_RESOURCE;
+import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_RESOURCE_TYPE;
+import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_SAF_PERSON;
+import static org.hamcrest.CoreMatchers.hasItem;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
  * @author Sigurd Midttun, Visma Consulting.
@@ -86,5 +86,4 @@ class Pep1gImplTest extends AbstractPepTest {
 
 		assertFalse(hasAccess);
 	}
-
 }

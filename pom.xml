@@ -45,6 +45,7 @@
 		<!-- test -->
 		<spring-cloud-starter-contract-stub-runner.version>3.0.3</spring-cloud-starter-contract-stub-runner.version>
 		<awaitility.version>4.1.0</awaitility.version>
+		<okhttp3.version>4.9.1</okhttp3.version>
 		<!-- plugins -->
 		<maven-toolchains-plugin.version>3.0.0</maven-toolchains-plugin.version>
 	</properties>
@@ -185,8 +186,14 @@
 			</dependency>
 			<dependency>
 				<groupId>no.nav.security</groupId>
-				<artifactId>token-validation-test-support</artifactId>
+				<artifactId>token-validation-spring-test</artifactId>
 				<version>${token-support.version}</version>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>com.squareup.okhttp3</groupId>
+				<artifactId>okhttp</artifactId>
+				<version>${okhttp3.version}</version>
 				<scope>test</scope>
 			</dependency>
 			<dependency>

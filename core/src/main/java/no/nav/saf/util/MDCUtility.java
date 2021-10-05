@@ -10,20 +10,23 @@ import static no.nav.saf.util.MDCConstants.CONSUMER_ID;
 import static no.nav.saf.util.MDCConstants.USER_ID;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
+/**
+ * Setter metadata på webtråden for å gjøre sporing av logger for kall enklere.
+ */
 public final class MDCUtility {
 	private MDCUtility() {
 		// noop
 	}
 
 	public static void addMdcData(SafRequestContext safRequestContext) {
-		addMdcData(safRequestContext.getSecurityContext().getSubjectId(),
-				safRequestContext.getSecurityContext().getNavCallid(),
-				safRequestContext.getSecurityContext().getNavConsumerId());
+		addMdcData(safRequestContext.getNavCallId(),
+				safRequestContext.getUserId(),
+				safRequestContext.getConsumerId());
 	}
 
-	public static void addMdcData(String userId, String callId, String consumerId) {
-		MDC.put(USER_ID, userId);
+	public static void addMdcData(String callId, String userId, String consumerId) {
 		MDC.put(CALL_ID, callId);
+		MDC.put(USER_ID, userId);
 		MDC.put(CONSUMER_ID, consumerId);
 	}
 

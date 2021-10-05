@@ -1,11 +1,5 @@
 package no.nav.saf.tilgangskontroll.pep;
 
-import static no.nav.saf.cache.RedisCacheConfig.TILGANG_CACHE;
-import static no.nav.saf.domain.DomainConstants.PEP2D;
-import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_RESOURCE_TYPE;
-import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_TEMA;
-import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_SAF_SAK_DOKUMENT;
-
 import io.lettuce.core.RedisException;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.cache.KeyGeneratorDistributedCaching;
@@ -26,6 +20,12 @@ import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+
+import static no.nav.saf.cache.RedisCacheConfig.TILGANG_CACHE;
+import static no.nav.saf.domain.DomainConstants.PEP2D;
+import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_RESOURCE_TYPE;
+import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_TEMA;
+import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_SAF_SAK_DOKUMENT;
 
 /**
  * Dekker følgende policies i saf:
@@ -57,8 +57,7 @@ public class Pep2dImpl implements Pep<TilgangSak> {
 		}
 
 		Pep.traceLogPepStarted(PEP2D, ressurs);
-		String tilgangKeyDistributedCaching = KeyGeneratorDistributedCaching.getKeyForPep2d(safRequestContext.getSecurityContext()
-				.getSubjectId(), ressurs.getTema().name());
+		String tilgangKeyDistributedCaching = KeyGeneratorDistributedCaching.getKeyForPep2d(safRequestContext.getUserId(), ressurs.getTema().name());
 		String tilgangKeyLocalCaching = KeyGeneratorLocalCaching.getKeyForPep2d(ressurs.getTema().name());
 		// Try-catch er fordi redis ikke fungerer lokalt
 		try {
@@ -76,6 +75,21 @@ public class Pep2dImpl implements Pep<TilgangSak> {
 		} finally {
 			Pep.traceLogPepFinished(PEP2D, ressurs);
 		}
+	}
+
+	@Override
+	public boolean verifyAzureClientCredentialFlowAccess(TilgangSak ressurs, SafRequestContext safRequestContext) {
+		if (ressurs == null || ressurs.getTema() == null) {
+			log.info("Pep2d mangler data om sak. Tilgang gis likevel for at system skal kunne knytte dokument til sak og bruker. Azure ccf.");
+			return true;
+		}
+		Pep.traceLogPepStarted(PEP2D, ressurs);
+		String temakode = ressurs.getTema().name();
+		String tilgangKeyLocalCaching = KeyGeneratorLocalCaching.getKeyForPep2d(temakode);
+		boolean decision = safRequestContext.getSecurityContext().hasTemaAureRole(temakode.toLowerCase());
+		safRequestContext.getRequestCache().putObject(tilgangKeyLocalCaching, decision);
+		Pep.traceLogPepFinished(PEP2D, ressurs);
+		return decision;
 	}
 
 	private XacmlResponse fetchXacmlResponse(TilgangSak ressurs, SafRequestContext safRequestContext, String tilgangKeyDistributedCaching) {

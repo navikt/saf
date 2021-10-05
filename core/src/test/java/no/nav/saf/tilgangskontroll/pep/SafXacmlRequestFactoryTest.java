@@ -31,8 +31,8 @@ class SafXacmlRequestFactoryTest {
 	@Test
 	void shouldPopulateDefaultXacmlRequest() {
 		SafSecurityContext safSecurityContext = Mockito.mock(SafSecurityContext.class);
-		when(safSecurityContext.getOidcTokenBody()).thenReturn(AZURE_TOKEN);
-		when(safSecurityContext.isAzureToken()).thenReturn(false);
+		when(safSecurityContext.getCachedJwtPayload()).thenReturn(AZURE_TOKEN);
+		when(safSecurityContext.isJwtIssuedByAzure()).thenReturn(false);
 		XacmlRequest request = SafXacmlRequestFactory.create(safSecurityContext);
 
 		assertThat(request.getEnvironments(), hasItem(new XacmlAttribute(ENVIRONMENT_FELLES_PEP_ID, SAF)));
@@ -43,8 +43,8 @@ class SafXacmlRequestFactoryTest {
 	@Test
 	void shouldPopulateFellesOidcTokenBodyWhenNotAzureToken() {
 		SafSecurityContext safSecurityContext = Mockito.mock(SafSecurityContext.class);
-		when(safSecurityContext.getOidcTokenBody()).thenReturn(NON_AZURE_TOKEN);
-		when(safSecurityContext.isAzureToken()).thenReturn(false);
+		when(safSecurityContext.getCachedJwtPayload()).thenReturn(NON_AZURE_TOKEN);
+		when(safSecurityContext.isJwtIssuedByAzure()).thenReturn(false);
 		XacmlRequest request = SafXacmlRequestFactory.create(safSecurityContext);
 
 		assertThat(request.getEnvironments(), hasItem(new XacmlAttribute(ENVIRONMENT_FELLES_OIDC_TOKEN_BODY, NON_AZURE_TOKEN)));
@@ -53,8 +53,8 @@ class SafXacmlRequestFactoryTest {
 	@Test
 	void shouldPopulateAzureTokenBodyWhenAzureToken() {
 		SafSecurityContext safSecurityContext = Mockito.mock(SafSecurityContext.class);
-		when(safSecurityContext.getOidcTokenBody()).thenReturn(AZURE_TOKEN);
-		when(safSecurityContext.isAzureToken()).thenReturn(true);
+		when(safSecurityContext.getCachedJwtPayload()).thenReturn(AZURE_TOKEN);
+		when(safSecurityContext.isJwtIssuedByAzure()).thenReturn(true);
 		XacmlRequest request = SafXacmlRequestFactory.create(safSecurityContext);
 
 		assertThat(request.getEnvironments(), hasItem(new XacmlAttribute(ENVIRONMENT_FELLES_AZURE_JWT_TOKEN_BODY, AZURE_TOKEN)));

@@ -1,4 +1,4 @@
-package no.nav.saf.endpoints.wiring;
+package no.nav.saf.endpoints.graphql;
 
 import graphql.schema.idl.NaturalEnumValuesProvider;
 import graphql.schema.idl.RuntimeWiring;
@@ -29,7 +29,7 @@ import static graphql.schema.idl.TypeRuntimeWiring.newTypeWiring;
  */
 @Component
 @Slf4j
-public class DokumentoversiktWiring {
+public class GraphQLWiring {
 	private final DokumentoversiktBrukerDataFetcher dokumentoversiktBrukerDataFetcher;
 	private final DokumentoversiktFagsakDataFetcher dokumentoversiktFagsakDataFetcher;
 	private final DokumentoversiktJournalstatusDataFetcher dokumentoversiktJournalstatusDataFetcher;
@@ -39,12 +39,12 @@ public class DokumentoversiktWiring {
 	private final MeterRegistry meterRegistry;
 
 	@Inject
-	public DokumentoversiktWiring(DokumentoversiktBrukerDataFetcher dokumentoversiktBrukerDataFetcher,
-								  DokumentoversiktFagsakDataFetcher dokumentoversiktFagsakDataFetcher,
-								  DokumentoversiktJournalstatusDataFetcher dokumentoversiktJournalstatusDataFetcher,
-								  JournalpostDataFetcher journalpostDataFetcher,
-								  TilknyttedeJournalposterDataFetcher tilknyttedeJournalposterDataFetcher,
-								  SakerDataFetcher sakerDataFetcher, MeterRegistry meterRegistry) {
+	public GraphQLWiring(DokumentoversiktBrukerDataFetcher dokumentoversiktBrukerDataFetcher,
+						 DokumentoversiktFagsakDataFetcher dokumentoversiktFagsakDataFetcher,
+						 DokumentoversiktJournalstatusDataFetcher dokumentoversiktJournalstatusDataFetcher,
+						 JournalpostDataFetcher journalpostDataFetcher,
+						 TilknyttedeJournalposterDataFetcher tilknyttedeJournalposterDataFetcher,
+						 SakerDataFetcher sakerDataFetcher, MeterRegistry meterRegistry) {
 		this.dokumentoversiktBrukerDataFetcher = dokumentoversiktBrukerDataFetcher;
 		this.dokumentoversiktFagsakDataFetcher = dokumentoversiktFagsakDataFetcher;
 		this.dokumentoversiktJournalstatusDataFetcher = dokumentoversiktJournalstatusDataFetcher;
@@ -69,61 +69,61 @@ public class DokumentoversiktWiring {
 				.type(newTypeWiring("Query").dataFetcher("tilknyttedeJournalposter", tilknyttedeJournalposterDataFetcher))
 				.type(newTypeWiring("Query").dataFetcher("saker", sakerDataFetcher))
 				.type("Journalpost", typeWiring -> typeWiring.dataFetcher("journalforendeEnhet", environment -> {
-					SafRequestContext safRequestContext = environment.getContext();
+					SafRequestContext safRequestContext = environment.getGraphQlContext().get(SafRequestContext.KEY);
 					Journalpost journalpost = environment.getSource();
 					Counter.builder("dok_saf_deprecated_field")
 							.tags("fieldname", "Journalpost.journalforendeEnhet")
-							.tags("consumer_id", safRequestContext.getSecurityContext().getNavConsumerId())
+							.tags("consumer_id", safRequestContext.getConsumerId())
 							.register(meterRegistry)
 							.increment();
 					return journalpost.getJournalforendeEnhet();
 				}))
 				.type("Journalpost", typeWiring -> typeWiring.dataFetcher("avsenderMottakerId", environment -> {
-					SafRequestContext safRequestContext = environment.getContext();
+					SafRequestContext safRequestContext = environment.getGraphQlContext().get(SafRequestContext.KEY);
 					Journalpost journalpost = environment.getSource();
 					Counter.builder("dok_saf_deprecated_field")
 							.tags("fieldname", "Journalpost.avsenderMottakerId")
-							.tags("consumer_id", safRequestContext.getSecurityContext().getNavConsumerId())
+							.tags("consumer_id", safRequestContext.getConsumerId())
 							.register(meterRegistry)
 							.increment();
 					return journalpost.getAvsenderMottakerId();
 				}))
 				.type("Journalpost", typeWiring -> typeWiring.dataFetcher("avsenderMottakerNavn", environment -> {
-					SafRequestContext safRequestContext = environment.getContext();
+					SafRequestContext safRequestContext = environment.getGraphQlContext().get(SafRequestContext.KEY);
 					Journalpost journalpost = environment.getSource();
 					Counter.builder("dok_saf_deprecated_field")
 							.tags("fieldname", "Journalpost.avsenderMottakerNavn")
-							.tags("consumer_id", safRequestContext.getSecurityContext().getNavConsumerId())
+							.tags("consumer_id", safRequestContext.getConsumerId())
 							.register(meterRegistry)
 							.increment();
 					return journalpost.getAvsenderMottakerNavn();
 				}))
 				.type("Journalpost", typeWiring -> typeWiring.dataFetcher("avsenderMottakerLand", environment -> {
-					SafRequestContext safRequestContext = environment.getContext();
+					SafRequestContext safRequestContext = environment.getGraphQlContext().get(SafRequestContext.KEY);
 					Journalpost journalpost = environment.getSource();
 					Counter.builder("dok_saf_deprecated_field")
 							.tags("fieldname", "Journalpost.avsenderMottakerLand")
-							.tags("consumer_id", safRequestContext.getSecurityContext().getNavConsumerId())
+							.tags("consumer_id", safRequestContext.getConsumerId())
 							.register(meterRegistry)
 							.increment();
 					return journalpost.getAvsenderMottakerLand();
 				}))
 				.type("Sak", typeWiring -> typeWiring.dataFetcher("arkivsaksnummer", environment -> {
-					SafRequestContext safRequestContext = environment.getContext();
+					SafRequestContext safRequestContext = environment.getGraphQlContext().get(SafRequestContext.KEY);
 					Sak sak = environment.getSource();
 					Counter.builder("dok_saf_deprecated_field")
 							.tags("fieldname", "Sak.arkivsaksnummer")
-							.tags("consumer_id", safRequestContext.getSecurityContext().getNavConsumerId())
+							.tags("consumer_id", safRequestContext.getConsumerId())
 							.register(meterRegistry)
 							.increment();
 					return sak.getArkivsaksnummer();
 				}))
 				.type("Sak", typeWiring -> typeWiring.dataFetcher("arkivsaksystem", environment -> {
-					SafRequestContext safRequestContext = environment.getContext();
+					SafRequestContext safRequestContext = environment.getGraphQlContext().get(SafRequestContext.KEY);
 					Sak sak = environment.getSource();
 					Counter.builder("dok_saf_deprecated_field")
 							.tags("fieldname", "Sak.arkivsaksystem")
-							.tags("consumer_id", safRequestContext.getSecurityContext().getNavConsumerId())
+							.tags("consumer_id", safRequestContext.getConsumerId())
 							.register(meterRegistry)
 							.increment();
 					return sak.getArkivsaksystem();
