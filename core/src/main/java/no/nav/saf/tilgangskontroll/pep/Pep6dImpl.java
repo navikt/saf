@@ -26,6 +26,8 @@ import static no.nav.saf.domain.DomainConstants.PEP6D;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_RESOURCE_TYPE;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_SAF_DOKUMENT_FIL;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_SAF_SKJERMING;
+import static no.nav.saf.tilgangskontroll.pep.AbacAnswer.deny;
+import static no.nav.saf.tilgangskontroll.pep.AbacAnswer.permit;
 
 /**
  * Dekker følgende policies i saf:
@@ -36,7 +38,7 @@ import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_SAF_SKJERMING;
  */
 @Slf4j
 @Component(PEP6D)
-public class Pep6dImpl implements Pep<TilgangDokumentvariant> {
+public class Pep6dImpl extends Pep<TilgangDokumentvariant> {
 
 	private final Cache tilgangCache;
 	private final AbacService abacService;
@@ -48,7 +50,7 @@ public class Pep6dImpl implements Pep<TilgangDokumentvariant> {
 	}
 
 	@Override
-	public XacmlResponse verifyAccessXacmlResponse(TilgangDokumentvariant ressurs, SafRequestContext safRequestContext) {
+	public XacmlResponse verifyAbacPdpDecision(TilgangDokumentvariant ressurs, SafRequestContext safRequestContext) {
 		if (ressurs == null) {
 			log.warn("Pep6d mangler tilstrekkelig datagrunnlag for å kunne gjennomføre tilgangskontroll");
 			return XacmlResponse.deny();
@@ -61,7 +63,7 @@ public class Pep6dImpl implements Pep<TilgangDokumentvariant> {
 				return XacmlResponse.deny();
 			}
 
-			Pep.traceLogPepStarted(PEP6D, ressurs);
+			traceLogPepStarted(PEP6D, ressurs);
 
 			String tilgangKeyDistributedCaching = KeyGeneratorDistributedCaching.getKeyForPep6d(
 					safRequestContext.getUserId(),
@@ -89,7 +91,7 @@ public class Pep6dImpl implements Pep<TilgangDokumentvariant> {
 				safRequestContext.getRequestCache().putObject(tilgangKeyLocalCaching, decide(response.getDecision()));
 				return response;
 			} finally {
-				Pep.traceLogPepFinished(PEP6D, ressurs);
+				traceLogPepFinished(PEP6D, ressurs);
 			}
 		} else {
 			String tilgangKeyLocalCaching = KeyGeneratorLocalCaching.getKeyForPep6d(
@@ -103,20 +105,24 @@ public class Pep6dImpl implements Pep<TilgangDokumentvariant> {
 	}
 
 	@Override
-	public boolean verifyAzureClientCredentialFlowAccess(TilgangDokumentvariant ressurs, SafRequestContext safRequestContext) {
+	public AbacAnswer verifyAzureClientCredentialFlowAccess(TilgangDokumentvariant ressurs, SafRequestContext safRequestContext) {
 		if (ressurs == null) {
 			log.warn("Pep6d mangler tilstrekkelig datagrunnlag for å kunne gjennomføre tilgangskontroll. Azure ccf.");
-			return false;
+			return deny(AbacAnswer.AbacDenyReason.builder()
+					.cause("dokumentvariant_mangler_data").policy("saf_pep6d").rule("dokumentvariant_er_null")
+					.build());
 		}
 
 		if (isSkjermingPresent(ressurs)) {
 			if (isVariantformatNull(ressurs)) {
 				log.warn("Pep6d mangler tilstrekkelig datagrunnlag for å kunne gjennomføre tilgangskontroll. Variantformat=null. journalpostId={} og dokumentinfoId={}. Azure ccf.",
 						ressurs.getJournalpostId(), ressurs.getDokumentInfoId());
-				return false;
+				return deny(AbacAnswer.AbacDenyReason.builder()
+						.cause("dokumentvariant_mangler_variantformat").policy("saf_pep6d").rule("dokumentvariant_skjermet_og_variantformat_er_null")
+						.build());
 			}
 
-			Pep.traceLogPepStarted(PEP6D, ressurs);
+			traceLogPepStarted(PEP6D, ressurs);
 			String tilgangKeyLocalCaching = KeyGeneratorLocalCaching.getKeyForPep6d(
 					ressurs.getJournalpostId(),
 					ressurs.getDokumentInfoId(),
@@ -125,8 +131,10 @@ public class Pep6dImpl implements Pep<TilgangDokumentvariant> {
 
 			boolean decision = !isSkjermingPresent(ressurs);
 			safRequestContext.getRequestCache().putObject(tilgangKeyLocalCaching, decision);
-			Pep.traceLogPepFinished(PEP6D, ressurs);
-			return decision;
+			traceLogPepFinished(PEP6D, ressurs);
+			return decision ? permit() : deny(AbacAnswer.AbacDenyReason.builder()
+					.cause("dokumentvariant_skjermet").policy("saf_pep6d").rule("dokumentvariant_skjermet")
+					.build());
 		} else {
 			String tilgangKeyLocalCaching = KeyGeneratorLocalCaching.getKeyForPep6d(
 					ressurs.getJournalpostId(),
@@ -134,7 +142,7 @@ public class Pep6dImpl implements Pep<TilgangDokumentvariant> {
 					isVariantformatNull(ressurs) ? null : ressurs.getVariantformat().name(),
 					null);
 			safRequestContext.getRequestCache().putObject(tilgangKeyLocalCaching, true);
-			return true;
+			return permit();
 		}
 	}
 

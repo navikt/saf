@@ -9,7 +9,6 @@ import no.nav.saf.tilgangskontroll.SafRequestContext;
 
 import static no.nav.saf.hentdokument.HentDokumentSporingLogglinje.BESLUTNING_DENY;
 import static no.nav.saf.hentdokument.HentDokumentSporingLogglinje.BESLUTNING_PERMIT;
-import static no.nav.saf.tilgangskontroll.abac.dto.response.AdviceStringUtil.convertToString;
 
 /**
  * @author Joakim Bjørnstad, Jbit AS
@@ -38,7 +37,7 @@ class HentDokumentSporbarhetslogger {
 				.brukerId(getBrukerId(tilgangBruker))
 				.navIdent(safRequestContext.getUserId())
 				.tilgangsbeslutning(BESLUTNING_DENY)
-				.begrunnelse(convertToString(e.getXacmlResponse().getAdvices()))
+				.begrunnelse(e.getDenyReason())
 				.journalpostId(journalpostId)
 				.dokumentInfoId(dokumentInfoId)
 				.variantformat(variantFormat)

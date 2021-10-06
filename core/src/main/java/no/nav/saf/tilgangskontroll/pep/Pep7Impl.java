@@ -17,6 +17,7 @@ import static no.nav.saf.domain.kode.Tema.FOR;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_PERSON_AKTOERID_RESOURCE;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_RESOURCE_TYPE;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_SAF_TREDJEPART;
+import static no.nav.saf.tilgangskontroll.pep.AbacAnswer.permit;
 
 /**
  * Dekker følgende policies i saf:
@@ -26,7 +27,7 @@ import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_SAF_TREDJEPART
  */
 @Slf4j
 @Component(PEP7)
-public class Pep7Impl implements Pep<TilgangSak> {
+public class Pep7Impl extends Pep<TilgangSak> {
 
 	private final AbacService abacService;
 
@@ -36,7 +37,7 @@ public class Pep7Impl implements Pep<TilgangSak> {
 	}
 
 	@Override
-	public XacmlResponse verifyAccessXacmlResponse(TilgangSak ressurs, SafRequestContext safRequestContext) {
+	public XacmlResponse verifyAbacPdpDecision(TilgangSak ressurs, SafRequestContext safRequestContext) {
 
 		if (ressurs != null && FOR.equals(ressurs.getTema()) && FAGSAKSYSTEM_FORELDREPENGELOSNING.equals(ressurs.getFagsaksystem())) {
 
@@ -51,9 +52,9 @@ public class Pep7Impl implements Pep<TilgangSak> {
 			request.resource(RESOURCE_FELLES_RESOURCE_TYPE, RESOURCE_SAF_TREDJEPART);
 			fpAktoerIdList.forEach(aktoerId -> request.resource(RESOURCE_FELLES_PERSON_AKTOERID_RESOURCE, aktoerId));
 
-			Pep.traceLogPepStarted(PEP7, ressurs);
+			traceLogPepStarted(PEP7, ressurs);
 			XacmlResponse response = abacService.evaluate(request);
-			Pep.traceLogPepFinished(PEP7, ressurs);
+			traceLogPepFinished(PEP7, ressurs);
 
 			return response;
 		}
@@ -61,7 +62,7 @@ public class Pep7Impl implements Pep<TilgangSak> {
 	}
 
 	@Override
-	public boolean verifyAzureClientCredentialFlowAccess(TilgangSak ressurs, SafRequestContext safRequestContext) {
-		return true;
+	public AbacAnswer verifyAzureClientCredentialFlowAccess(TilgangSak ressurs, SafRequestContext safRequestContext) {
+		return permit();
 	}
 }

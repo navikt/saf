@@ -108,7 +108,8 @@ public class HentDokumentController {
 
 	private void validateServiceUserAccess(SafRequestContext safRequestContext, String variantFormat) {
 		SafSecurityContext securityContext = safRequestContext.getSecurityContext();
-		if (securityContext.isPrivilegiedServiceUserWithArkivVariantAccess()) {
+		if (securityContext.isPrivilegiedServiceUserWithArkivVariantAccess() || securityContext.isJwtAzureClientCredentialFlow()) {
+			// Azure client credential flow roller blir sjekket etter at journalpost er hentet.
 			return;
 		}
 		if (securityContext.isSystem() && !Variantformat.ORIGINAL.name().equals(variantFormat)) {

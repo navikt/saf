@@ -18,6 +18,7 @@ import static no.nav.saf.domain.kode.Tema.BID;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_PERSON_FNR;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_RESOURCE_TYPE;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_SAF_TREDJEPART;
+import static no.nav.saf.tilgangskontroll.pep.AbacAnswer.permit;
 
 /**
  * Dekker følgende policies i saf:
@@ -27,7 +28,7 @@ import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_SAF_TREDJEPART
  */
 @Slf4j
 @Component(PEP3)
-public class Pep3Impl implements Pep<TilgangSak> {
+public class Pep3Impl extends Pep<TilgangSak> {
 
 	private final AbacService abacService;
 
@@ -37,7 +38,7 @@ public class Pep3Impl implements Pep<TilgangSak> {
 	}
 
 	@Override
-	public XacmlResponse verifyAccessXacmlResponse(TilgangSak ressurs, SafRequestContext safRequestContext) {
+	public XacmlResponse verifyAbacPdpDecision(TilgangSak ressurs, SafRequestContext safRequestContext) {
 
 		if (ressurs != null && BID.equals(ressurs.getTema()) && FAGSAKSYSTEM_BISYS.equals(ressurs.getFagsaksystem())) {
 
@@ -53,9 +54,9 @@ public class Pep3Impl implements Pep<TilgangSak> {
 			request.resource(RESOURCE_FELLES_RESOURCE_TYPE, RESOURCE_SAF_TREDJEPART);
 			relevantTredjeparter.forEach(tilgangRelevantTredjepart -> request.resource(RESOURCE_FELLES_PERSON_FNR, tilgangRelevantTredjepart.getIdent().getIdentifikator()));
 
-			Pep.traceLogPepStarted(PEP3, ressurs);
+			traceLogPepStarted(PEP3, ressurs);
 			XacmlResponse response = abacService.evaluate(request);
-			Pep.traceLogPepFinished(PEP3, ressurs);
+			traceLogPepFinished(PEP3, ressurs);
 
 			return response;
 		}
@@ -63,7 +64,7 @@ public class Pep3Impl implements Pep<TilgangSak> {
 	}
 
 	@Override
-	public boolean verifyAzureClientCredentialFlowAccess(TilgangSak ressurs, SafRequestContext safRequestContext) {
-		return true;
+	public AbacAnswer verifyAzureClientCredentialFlowAccess(TilgangSak ressurs, SafRequestContext safRequestContext) {
+		return permit();
 	}
 }

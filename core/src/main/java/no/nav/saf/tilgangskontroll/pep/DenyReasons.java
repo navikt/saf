@@ -1,6 +1,8 @@
 package no.nav.saf.tilgangskontroll.pep;
 
 /**
+ * Menneskelesbare grunner til deny fra PEP.
+ *
  * @author Joakim Bjørnstad, Jbit AS
  */
 public final class DenyReasons {
