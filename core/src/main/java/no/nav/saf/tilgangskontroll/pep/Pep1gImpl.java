@@ -55,8 +55,7 @@ public class Pep1gImpl extends Pep<TilgangBruker> {
 		} else if (ressurs.getFoedselsnr() != null) {
 			request.resource(RESOURCE_FELLES_PERSON_FNR, ressurs.getFoedselsnr());
 		} else {
-			String message = "Pep1g kunne ikke validere bruker fordi bruker ikke er en person. Denne tilstanden indikerer en teknisk feil.";
-			log.error(message);
+			log.error("Pep1g kunne ikke validere bruker fordi bruker ikke er en person. Denne tilstanden indikerer en teknisk feil.");
 			return XacmlResponse.deny();
 		}
 		traceLogPepStarted(PEP1G, ressurs);
