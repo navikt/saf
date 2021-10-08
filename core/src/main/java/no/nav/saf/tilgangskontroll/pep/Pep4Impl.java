@@ -7,6 +7,7 @@ import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlRequest;
 import no.nav.saf.tilgangskontroll.abac.dto.response.XacmlResponse;
 import no.nav.saf.tilgangskontroll.abac.service.AbacService;
+import no.nav.saf.tilgangskontroll.pep.AbacAnswer.AbacDenyReason;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
@@ -17,6 +18,8 @@ import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_RESOURC
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_SAF_JOURNALSTATUS;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_SAF_JOURNAL_METADATA;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_SAF_SKJERMING;
+import static no.nav.saf.tilgangskontroll.pep.AbacAnswer.deny;
+import static no.nav.saf.tilgangskontroll.pep.AbacAnswer.permit;
 
 /**
  * Dekker følgende policies i saf:
@@ -27,7 +30,7 @@ import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_SAF_SKJERMING;
  */
 @Slf4j
 @Component(PEP4)
-public class Pep4Impl implements Pep<TilgangJournalpost> {
+public class Pep4Impl extends Pep<TilgangJournalpost> {
 
 	private final AbacService abacService;
 
@@ -37,7 +40,7 @@ public class Pep4Impl implements Pep<TilgangJournalpost> {
 	}
 
 	@Override
-	public XacmlResponse verifyAccessXacmlResponse(TilgangJournalpost ressurs, SafRequestContext safRequestContext) {
+	public XacmlResponse verifyAbacPdpDecision(TilgangJournalpost ressurs, SafRequestContext safRequestContext) {
 		if (ressurs == null) {
 			log.warn("Pep4 mangler tilstrekkelig datagrunnlag for å kunne gjennomføre tilgangskontroll.");
 			return XacmlResponse.deny();
@@ -51,12 +54,17 @@ public class Pep4Impl implements Pep<TilgangJournalpost> {
 	}
 
 	@Override
-	public boolean verifyAzureClientCredentialFlowAccess(TilgangJournalpost ressurs, SafRequestContext safRequestContext) {
-		if(ressurs == null) {
+	public AbacAnswer verifyAzureClientCredentialFlowAccess(TilgangJournalpost ressurs, SafRequestContext safRequestContext) {
+		if (ressurs == null) {
 			log.warn("Pep4 mangler tilstrekkelig datagrunnlag for å kunne gjennomføre tilgangskontroll. Azure ccf.");
-			return false;
+			return deny(AbacDenyReason.builder()
+					.cause("mangler_data").policy("saf_pep4").rule("journalpost_er_null")
+					.build());
 		}
-		return !isJournalpoststatusUtgaar(ressurs) && !isSkjermingPresent(ressurs);
+		boolean decision = !isJournalpoststatusUtgaar(ressurs) && !isSkjermingPresent(ressurs);
+		return decision ? permit() : deny(AbacDenyReason.builder()
+				.cause("journalpost_skjermet_eller_utgaar").policy("saf_pep4").rule("journalpost_skjermet_eller_utgaar")
+				.build());
 	}
 
 	private XacmlResponse hasJournalpostAccess(SafRequestContext safRequestContext, TilgangJournalpost ressurs) {
@@ -70,9 +78,9 @@ public class Pep4Impl implements Pep<TilgangJournalpost> {
 			request.resource(RESOURCE_SAF_SKJERMING, ressurs.getSkjerming().name());
 		}
 
-		Pep.traceLogPepStarted(PEP4, ressurs);
+		traceLogPepStarted(PEP4, ressurs);
 		XacmlResponse response = abacService.evaluate(request);
-		Pep.traceLogPepFinished(PEP4, ressurs);
+		traceLogPepFinished(PEP4, ressurs);
 
 		return response;
 	}

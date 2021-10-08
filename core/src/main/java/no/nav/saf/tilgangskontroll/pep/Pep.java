@@ -1,10 +1,13 @@
 package no.nav.saf.tilgangskontroll.pep;
 
+import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.abac.dto.response.Decision;
 import no.nav.saf.tilgangskontroll.abac.dto.response.XacmlResponse;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import static no.nav.saf.tilgangskontroll.abac.dto.response.AdviceStringUtil.convertToString;
+import static no.nav.saf.tilgangskontroll.pep.AbacAnswer.deny;
+import static no.nav.saf.tilgangskontroll.pep.AbacAnswer.permit;
 
 /**
  * Policy Enforcement Point for ABAC.
@@ -13,9 +16,8 @@ import org.slf4j.LoggerFactory;
  *
  * @author Joakim Bjørnstad, Jbit AS
  */
-public interface Pep<T> {
-	Logger logger = LoggerFactory.getLogger(Pep.class);
-
+@Slf4j
+public abstract class Pep<T> {
 	/**
 	 * Kall mot abac-saf (ekstern tjeneste) som er Policy Decision Point (PDP).
 	 * Bestemmer om kall skal få tilgang til ressurs.
@@ -25,9 +27,9 @@ public interface Pep<T> {
 	 *
 	 * @param ressurs           Ressursen som skal sjekkes
 	 * @param safRequestContext Kontekst for kallet
-	 * @return XacmlResponse med decision. Hvis decision er PERMIT, returner true. Ellers false.
+	 * @return Beslutning om tilgang fra saf-abac PDP
 	 */
-	XacmlResponse verifyAccessXacmlResponse(T ressurs, SafRequestContext safRequestContext);
+	abstract XacmlResponse verifyAbacPdpDecision(T ressurs, SafRequestContext safRequestContext);
 
 	/**
 	 * Sjekker tilgang for app registration autentisert med client credential flow i Azure.
@@ -36,28 +38,34 @@ public interface Pep<T> {
 	 *
 	 * @param ressurs           Ressursen som skal sjekkes
 	 * @param safRequestContext Kontekst for kallet
-	 * @return true hvis tilgang til ressurs. Ellers false.
+	 * @return Beslutning om tilgang fra intern ABAC PDP
 	 */
-	boolean verifyAzureClientCredentialFlowAccess(T ressurs, SafRequestContext safRequestContext);
+	abstract AbacAnswer verifyAzureClientCredentialFlowAccess(T ressurs, SafRequestContext safRequestContext);
 
-	default boolean hasAccess(T ressurs, SafRequestContext safRequestContext) {
+	public boolean hasAccess(T ressurs, SafRequestContext safRequestContext) {
+		return hasAccessWithAnswer(ressurs, safRequestContext).isPermit();
+	}
+
+	public AbacAnswer hasAccessWithAnswer(T ressurs, SafRequestContext safRequestContext) {
 		if (safRequestContext.getSecurityContext().isJwtAzureClientCredentialFlow()) {
 			return verifyAzureClientCredentialFlowAccess(ressurs, safRequestContext);
 		} else {
-			XacmlResponse response = verifyAccessXacmlResponse(ressurs, safRequestContext);
-			return Decision.PERMIT.equals(response.getDecision());
+			XacmlResponse response = verifyAbacPdpDecision(ressurs, safRequestContext);
+			return Decision.PERMIT.equals(response.getDecision()) ?
+					permit() :
+					deny(convertToString(response.getAdvices()));
 		}
 	}
 
-	static void traceLogPepStarted(String pepName, Object ressurs) {
-		if (logger.isTraceEnabled()) {
-			logger.trace("{} evaluerer ressurs={}", pepName, ressurs);
+	void traceLogPepStarted(String pepName, Object ressurs) {
+		if (log.isTraceEnabled()) {
+			log.trace("{} evaluerer ressurs={}", pepName, ressurs);
 		}
 	}
 
-	static void traceLogPepFinished(String pepName, Object ressurs) {
-		if (logger.isTraceEnabled()) {
-			logger.trace("{} ferdig evaluert ressurs={}", pepName, ressurs);
+	void traceLogPepFinished(String pepName, Object ressurs) {
+		if (log.isTraceEnabled()) {
+			log.trace("{} ferdig evaluert ressurs={}", pepName, ressurs);
 		}
 	}
 

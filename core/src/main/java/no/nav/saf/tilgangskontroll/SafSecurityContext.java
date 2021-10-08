@@ -135,6 +135,7 @@ public class SafSecurityContext {
 
 	/**
 	 * Sjekker om konsument har tilgang til tema gjennom rollen "tema_{tema}" i roles claim på token. (Azure)
+	 * Tema rollen gir tilgang til metadata (kun relevant for tema FAR) og dokumenter.
 	 * Se nais/naiserator.yaml azureator config
 	 *
 	 * @param tema Temakode. Eksempel "FOR"
@@ -142,16 +143,6 @@ public class SafSecurityContext {
 	 */
 	public boolean hasTemaAureRole(String tema) {
 		return containsAzureRole("tema_" + tema.toLowerCase());
-	}
-
-	/**
-	 * Sjekker om konsument har tilgang til ARKIV variant i joark gjennom rollen "hent_arkiv_dokument" i roles claim på token. (Azure)
-	 * Se nais/naiserator.yaml azureator config
-	 *
-	 * @return true hvis konsument har tilgang til ARKIV variant. Ellers false
-	 */
-	public boolean hasArkivDokumentRole() {
-		return containsAzureRole("hent_arkiv_dokument");
 	}
 
 	private boolean containsAzureRole(String role) {
