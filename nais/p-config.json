@@ -54,6 +54,11 @@
       "app": "salesforce",
       "namespace": "teamcrm",
       "cluster": "prod-external"
+    },
+    {
+      "app": "kabal-document",
+      "namespace": "klage",
+      "cluster": "prod-gcp"
     }
   ]
 }
