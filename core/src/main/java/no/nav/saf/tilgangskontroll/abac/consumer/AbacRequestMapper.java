@@ -31,7 +31,7 @@ public class AbacRequestMapper {
 			generator.writeEndObject();
 			generator.close();
 
-			return new String(stream.toByteArray());
+			return stream.toString();
 		} catch (IOException e) {
 			throw new JsonMarshallingException("Failed to write request as Json", e);
 		}

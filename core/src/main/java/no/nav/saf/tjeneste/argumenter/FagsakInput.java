@@ -7,6 +7,6 @@ import lombok.Value;
  */
 @Value
 public class FagsakInput {
-	private final String fagsakId;
-	private final String fagsaksystem;
+	String fagsakId;
+	String fagsaksystem;
 }
