@@ -19,6 +19,7 @@ public final class DomainConstants {
 
 	public static final String FAGSAKSYSTEM_BISYS = "BISYS";
 	public static final String FAGSAKSYSTEM_FORELDREPENGELOSNING = "FS36";
+	public static final String FAGSAKSYSTEM_K9 = "K9";
 
 
 	// PEP funksjonelt navn. Se https://confluence.adeo.no/display/BOA/saf+-+Tilgangskontroll

@@ -8,6 +8,7 @@
   "SECURITYTOKENSERVICE_URL": "https://sts-q1.preprod.local/SecurityTokenServiceProvider/",
   "PENSJON_V1_ENDPOINTURL": "https://pensjon-pen-q1.nais.preprod.local/pen/services/PensjonSak_v1",
   "FPSAK_URL": "https://fpsak.dev.adeo.no/fpsak/api/pip/aktoer-for-sak",
+  "K9SAK_URL": "http://k9-sak.k9saksbehandling.svc.nais.local/k9/sak/api/pip/aktoer-for-sak",
   "GRAPHIQL_ENABLED": "true",
   "SWAGGER_ENABLED": "true",
   "NO_NAV_SECURITY_JWT_ISSUER_AZUREV1_DISCOVERYURL": "https://login.microsoftonline.com/966ac572-f5b7-4bbe-aa88-c76419c0f851/.well-known/openid-configuration",

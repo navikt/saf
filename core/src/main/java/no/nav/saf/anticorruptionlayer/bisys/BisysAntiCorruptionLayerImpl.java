@@ -31,7 +31,7 @@ class BisysAntiCorruptionLayerImpl implements BisysAntiCorruptionLayer {
 
 	@Override
 	public BidragSak hentBidragSakByArkivsak(Arkivsak arkivsak) {
-		if (BID.equals(arkivsak.getTema()) || FAGSAKSYSTEM_BISYS.equals(arkivsak.getFagsaksystem())) {
+		if (BID.equals(arkivsak.getTema()) || FAGSAKSYSTEM_BISYS.equals(arkivsak.getFagsaksystem())) { // TODO: Denne burde vere &&
 			return hentBidragSak(arkivsak.getFagsakId());
 		}
 		return new BidragSak();
