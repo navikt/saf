@@ -82,6 +82,11 @@
       "app": "kabal-document",
       "namespace": "klage",
       "cluster": "dev-gcp"
+    },
+    {
+      "app": "smregistrering-backend",
+      "namespace": "teamsykmelding",
+      "cluster": "dev-fss"
     }
   ]
 }
