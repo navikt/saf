@@ -1,11 +1,14 @@
 # Manuell instans av saf-redis
 # Lagt inn med:
-#  kubectl apply -f p-saf-redis.yaml
+#  kubectl apply -f saf-redis-q2.yaml
 apiVersion: "nais.io/v1alpha1"
 kind: "Application"
 metadata:
   labels:
     team: teamdokumenthandtering
+  annotations:
+    nais.io/read-only-file-system: "false"
+    nais.io/run-as-user: "999"
   name: saf-redis
   namespace: teamdokumenthandtering
 spec:

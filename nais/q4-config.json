@@ -28,7 +28,9 @@
   "BIDRAG_SAK_URL": "https://bidrag-sak.dev.adeo.no/bidrag-sak/pip/sak/",
   "HENTJOURNALSAKINFO_URL": "https://dokarkiv-q4.dev.intern.nav.no/hentjournalsakinfo",
   "SAF_ENDPOINTS_PDL": "https://pdl-api-q1.dev.intern.nav.no/graphql",
+  "SAF_REDIS_HOSTNAME":  "saf-redis-q4",
   "RESTSECURITYTOKENSERVICE_URL": "https://security-token-service.dev.adeo.no/rest/v1/sts/token",
   "APPDYNAMICS": "/apikey/appdynamics/dev",
-  "APPD_NAME": "saf_q4"
+  "APPD_NAME": "saf_q4",
+  "APP_NAME": "saf-q4"
 }

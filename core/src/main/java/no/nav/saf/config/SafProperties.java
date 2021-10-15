@@ -12,6 +12,7 @@ import javax.validation.constraints.NotEmpty;
 public class SafProperties {
 
 	private final Endpoints endpoints = new Endpoints();
+	private final Redis redis = new Redis();
 
 	@NotEmpty
 	private String privilegiedserviceusers;
@@ -24,5 +25,13 @@ public class SafProperties {
 		 */
 		@NotEmpty
 		private String pdl;
+	}
+
+	@Data
+	@Validated
+	public static class Redis {
+		@NotEmpty
+		private String hostname = "saf-redis";
+		private int port = 6379;
 	}
 }
