@@ -33,7 +33,7 @@
   "RESTSECURITYTOKENSERVICE_URL": "https://security-token-service.dev.adeo.no/rest/v1/sts/token",
   "APPDYNAMICS": "/apikey/appdynamics/dev",
   "APPD_NAME": "saf_q2",
-  "APP_NAME": "saf-q2",
+  "APP_NAME": "saf",
   "AZURE_IAC_RULES": [
     {
       "app": "k9-punsj",
