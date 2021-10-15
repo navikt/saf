@@ -1,5 +1,5 @@
 {
-  "NAMESPACE": "q0",
+  "NAMESPACE": "teamdokumenthandtering",
   "MIN_REPLICAS": 1,
   "MAX_REPLICAS": 2,
   "ABAC_PDP_ENDPOINT_URL": "https://abac-saf.dev.intern.nav.no/application/asm-pdp/authorize",
