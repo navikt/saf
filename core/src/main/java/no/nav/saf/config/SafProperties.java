@@ -32,6 +32,6 @@ public class SafProperties {
 	public static class Redis {
 		@NotEmpty
 		private String hostname = "saf-redis";
-		private int port = 6379;
+		private int portnumber = 6379;
 	}
 }

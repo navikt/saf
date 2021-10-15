@@ -62,7 +62,7 @@ public class RedisCacheConfig extends CachingConfigurerSupport {
 		RedisStandaloneConfiguration config = new RedisStandaloneConfiguration();
 		log.info("Starting redis connection on {}", redisConfig);
 		config.setHostName(redisConfig.getHostname());
-		config.setPort(redisConfig.getPort());
+		config.setPort(redisConfig.getPortnumber());
 		LettuceConnectionFactory factory = new LettuceConnectionFactory(config, clientConfiguration);
 		factory.setShareNativeConnection(true);
 		return factory;
