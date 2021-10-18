@@ -1,7 +1,7 @@
 kind: Application
 apiVersion: nais.io/v1alpha1
 metadata:
-  name: saf
+  name: {{ APP_NAME }}
   namespace: {{ NAMESPACE }}
   labels:
     team: teamdokumenthandtering
@@ -51,6 +51,8 @@ spec:
       value: {{ RESTSECURITYTOKENSERVICE_URL }}
     - name: APPD_NAME
       value: {{ APPD_NAME }}
+    - name: SAF_REDIS_HOSTNAME
+      value: {{ SAF_REDIS_HOSTNAME }}
   image: {{ image }}
   ingresses:
     {{#each INGRESSES}}
