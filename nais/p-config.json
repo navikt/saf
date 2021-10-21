@@ -73,7 +73,7 @@
       "app": "isdialogmote",
       "namespace": "teamsykefravr",
       "cluster": "prod-gcp",
-      "roles": ["tema_OPP"]
+      "roles": ["tema_opp"]
     }
   ]
 }
