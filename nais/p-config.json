@@ -68,6 +68,12 @@
       "app": "smregistrering-backend",
       "namespace": "teamsykmelding",
       "cluster": "prod-fss"
+    },
+    {
+      "app": "isdialogmote",
+      "namespace": "teamsykefravr",
+      "cluster": "prod-gcp",
+      "roles": ["tema_OPP"]
     }
   ]
 }
