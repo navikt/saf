@@ -27,11 +27,11 @@ public class K9AntiCorruptionLayerImpl implements K9AntiCorruptionLayer {
 		this.k9Consumer = k9Consumer;
 	}
 
-	private final List<Tema> temaTyper = Arrays.asList(FRI, OMS);
+	private final List<Tema> relevanteTema = Arrays.asList(FRI, OMS);
 
 	@Override
 	public List<String> hentRelevanteParter(Arkivsak arkivsak) {
-		if (temaTyper.contains(arkivsak.getTema()) && FAGSAKSYSTEM_K9.equals(arkivsak.getFagsaksystem())) {
+		if (relevanteTema.contains(arkivsak.getTema()) && FAGSAKSYSTEM_K9.equals(arkivsak.getFagsaksystem())) {
 			try {
 				return k9Consumer.hentAktoerForSak(arkivsak.getFagsakId());
 			} catch (Exception e) {

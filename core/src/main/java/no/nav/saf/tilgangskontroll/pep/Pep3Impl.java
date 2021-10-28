@@ -1,6 +1,7 @@
 package no.nav.saf.tilgangskontroll.pep;
 
 import lombok.extern.slf4j.Slf4j;
+import no.nav.saf.domain.kode.Tema;
 import no.nav.saf.domain.tilgangsmodell.TilgangRelevantTredjepart;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
@@ -10,11 +11,13 @@ import no.nav.saf.tilgangskontroll.abac.service.AbacService;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
+import java.util.Arrays;
 import java.util.List;
 
 import static no.nav.saf.domain.DomainConstants.FAGSAKSYSTEM_BISYS;
 import static no.nav.saf.domain.DomainConstants.PEP3;
 import static no.nav.saf.domain.kode.Tema.BID;
+import static no.nav.saf.domain.kode.Tema.FAR;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_PERSON_FNR;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_RESOURCE_TYPE;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_SAF_TREDJEPART;
@@ -37,10 +40,12 @@ public class Pep3Impl extends Pep<TilgangSak> {
 		this.abacService = abacService;
 	}
 
+	private final List<Tema> relevanteTema = Arrays.asList(BID, FAR);
+
 	@Override
 	public XacmlResponse verifyAbacPdpDecision(TilgangSak ressurs, SafRequestContext safRequestContext) {
 
-		if (ressurs != null && BID.equals(ressurs.getTema()) && FAGSAKSYSTEM_BISYS.equals(ressurs.getFagsaksystem())) {
+		if (ressurs != null && relevanteTema.contains(ressurs.getTema()) && FAGSAKSYSTEM_BISYS.equals(ressurs.getFagsaksystem())) {
 
 			if (ressurs.getRelevanteTredjeparter() == null || ressurs.getRelevanteTredjeparter().isEmpty()) {
 				log.info("Pep3 har ingen relevante parter. Tilgang gis.");

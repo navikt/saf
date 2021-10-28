@@ -1,6 +1,7 @@
 package no.nav.saf.tilgangskontroll.pep;
 
 import lombok.extern.slf4j.Slf4j;
+import no.nav.saf.domain.kode.Tema;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlRequest;
@@ -40,6 +41,8 @@ public class Pep7Impl extends Pep<TilgangSak> {
 		this.abacService = abacService;
 	}
 
+	private final List<Tema> relevanteTemaK9 = Arrays.asList(FRI, OMS);
+
 	@Override
 	public XacmlResponse verifyAbacPdpDecision(TilgangSak ressurs, SafRequestContext safRequestContext) {
 
@@ -50,7 +53,7 @@ public class Pep7Impl extends Pep<TilgangSak> {
 				return getXacmlResponse(ressurs, safRequestContext, ressurs.getFpAktoerIdList());
 			}
 
-			if (Arrays.asList(FRI, OMS).contains(ressurs.getTema()) && FAGSAKSYSTEM_K9.equals(ressurs.getFagsaksystem())) {
+			if (relevanteTemaK9.contains(ressurs.getTema()) && FAGSAKSYSTEM_K9.equals(ressurs.getFagsaksystem())) {
 				if (aktoerlisteErNullEllerTomForK9(ressurs)) return XacmlResponse.permit();
 
 				return getXacmlResponse(ressurs, safRequestContext, ressurs.getK9AktoerIdList());
