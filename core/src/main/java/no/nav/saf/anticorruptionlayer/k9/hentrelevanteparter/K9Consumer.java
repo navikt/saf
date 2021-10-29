@@ -16,7 +16,8 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 
-import static no.nav.saf.cache.LokalCacheConfig.FPSAK_RELEVANTE_PARTER_BY_SAKID_CACHE;
+import static no.nav.saf.headers.NavHeaders.NAV_CALLID;
+import static no.nav.saf.util.MDCUtility.getCallId;
 import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
@@ -44,10 +45,11 @@ public class K9Consumer {
 	public List<String> hentAktoerForSak(final String sakId) {
 		HttpHeaders headers = createHeaders();
 		ResponseEntity<List<String>> response = restTemplate.exchange(
-				k9Url + "?saksnummer=" + sakId, GET,
+				k9Url + "?saksnummer=" + sakId,
+				GET,
 				new HttpEntity<>(headers),
-				new ParameterizedTypeReference<>() {
-				});
+				new ParameterizedTypeReference<>() {}
+		);
 
 		if (OK.equals(response.getStatusCode())) {
 			return response.getBody();
@@ -64,6 +66,7 @@ public class K9Consumer {
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(APPLICATION_JSON);
 		headers.setBearerAuth(stsRestConsumer.getStsToken().getAccess_token());
+		headers.set(NAV_CALLID, getCallId());
 		return headers;
 	}
 }
