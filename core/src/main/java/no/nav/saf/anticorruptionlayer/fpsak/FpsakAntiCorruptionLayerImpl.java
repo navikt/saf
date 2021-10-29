@@ -7,7 +7,6 @@ import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import static no.nav.saf.domain.DomainConstants.FAGSAKSYSTEM_FORELDREPENGELOSNING;
@@ -31,7 +30,6 @@ public class FpsakAntiCorruptionLayerImpl implements FpsakAntiCorruptionLayer {
 				return fpsakConsumer.hentAktoerForSak(arkivsak.getFagsakId());
 			} catch (Exception e) {
 				log.warn("Kunne ikke hente relevante parter fra fpsak for sakId={}", arkivsak.getFagsakId(), e);
-				return Collections.emptyList();
 			}
 		}
 		return new ArrayList<>();

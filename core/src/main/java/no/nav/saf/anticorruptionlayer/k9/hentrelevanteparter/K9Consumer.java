@@ -1,7 +1,6 @@
-package no.nav.saf.anticorruptionlayer.fpsak.hentrelevanteparter;
+package no.nav.saf.anticorruptionlayer.k9.hentrelevanteparter;
 
 import no.nav.saf.anticorruptionlayer.sts.StsRestConsumer;
-import no.nav.saf.cache.LokalCacheConfig;
 import no.nav.saf.exceptions.SafFunctionalException;
 import no.nav.saf.exceptions.SafTechnicalException;
 import org.springframework.beans.factory.annotation.Value;
@@ -10,9 +9,6 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
@@ -20,7 +16,8 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 
-import static no.nav.saf.cache.LokalCacheConfig.FPSAK_RELEVANTE_PARTER_BY_SAKID_CACHE;
+import static no.nav.saf.headers.NavHeaders.NAV_CALLID;
+import static no.nav.saf.util.MDCUtility.getCallId;
 import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
@@ -29,27 +26,30 @@ import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 
 @Component
-public class FpsakConsumer {
-	private final String fpsakUrl;
+public class K9Consumer {
+	private final String k9Url;
 	private final RestTemplate restTemplate;
 	private final StsRestConsumer stsRestConsumer;
 
-	public FpsakConsumer(RestTemplateBuilder restTemplateBuilder,
-						 ClientHttpRequestFactory clientHttpRequestFactory,
-						 @Value("${fpsak.url}") String fpsakUrl,
-						 StsRestConsumer stsRestConsumer) {
-		this.fpsakUrl = fpsakUrl;
+	public K9Consumer(RestTemplateBuilder restTemplateBuilder,
+					  ClientHttpRequestFactory clientHttpRequestFactory,
+					  @Value("${k9sak.url}") String k9Url,
+					  StsRestConsumer stsRestConsumer) {
+		this.k9Url = k9Url;
 		this.restTemplate = restTemplateBuilder
 				.requestFactory(() -> clientHttpRequestFactory)
 				.build();
 		this.stsRestConsumer = stsRestConsumer;
 	}
 
-	@Cacheable(cacheNames = FPSAK_RELEVANTE_PARTER_BY_SAKID_CACHE, key = "#sakId")
 	public List<String> hentAktoerForSak(final String sakId) {
 		HttpHeaders headers = createHeaders();
-		ResponseEntity<List<String>> response = restTemplate.exchange(fpsakUrl + "?saksnummer=" + sakId, GET, new HttpEntity<>(headers), new ParameterizedTypeReference<>() {
-		});
+		ResponseEntity<List<String>> response = restTemplate.exchange(
+				k9Url + "?saksnummer=" + sakId,
+				GET,
+				new HttpEntity<>(headers),
+				new ParameterizedTypeReference<>() {}
+		);
 
 		if (OK.equals(response.getStatusCode())) {
 			return response.getBody();
@@ -66,6 +66,7 @@ public class FpsakConsumer {
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(APPLICATION_JSON);
 		headers.setBearerAuth(stsRestConsumer.getStsToken().getAccess_token());
+		headers.set(NAV_CALLID, getCallId());
 		return headers;
 	}
 }

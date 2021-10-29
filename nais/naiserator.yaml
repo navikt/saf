@@ -19,6 +19,8 @@ spec:
       value: {{ PENSJON_V1_ENDPOINTURL }}
     - name: FPSAK_URL
       value: {{ FPSAK_URL }}
+    - name: K9SAK_URL
+      value: {{ K9SAK_URL }}
     - name: GRAPHIQL_ENABLED
       value: "{{ GRAPHIQL_ENABLED }}"
     - name: SWAGGER_ENABLED

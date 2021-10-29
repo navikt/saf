@@ -13,12 +13,12 @@ import static no.nav.saf.tilgangskontroll.pep.AbacAnswer.AbacDecision.PERMIT;
  */
 @Value
 public class AbacAnswer {
-	private final AbacDecision decision;
+	AbacDecision decision;
 	/**
 	 * Brukes til sporingslogging for ArcSight.
 	 * https://confluence.adeo.no/display/BOA/saf+-+Sporingslogg+hentdokument
 	 */
-	private final String denyReasonSporing;
+	String denyReasonSporing;
 
 	public boolean isDeny() {
 		return DENY == decision;
@@ -48,9 +48,9 @@ public class AbacAnswer {
 	@Builder
 	@Value
 	public static class AbacDenyReason {
-		private final String cause;
-		private final String policy;
-		private final String rule;
+		String cause;
+		String policy;
+		String rule;
 
 		@Override
 		public String toString() {

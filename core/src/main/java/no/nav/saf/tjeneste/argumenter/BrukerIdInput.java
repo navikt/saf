@@ -8,8 +8,8 @@ import no.nav.saf.domain.visningsmodell.BrukerIdType;
  */
 @Value
 public class BrukerIdInput {
-	private String id;
-	private BrukerIdType type;
+	String id;
+	BrukerIdType type;
 
 	public boolean isPersonBruker() {
 		return !type.equals(BrukerIdType.ORGNR);
