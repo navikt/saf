@@ -20,6 +20,14 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 
+import static no.nav.saf.cache.LokalCacheConfig.FPSAK_RELEVANTE_PARTER_BY_SAKID_CACHE;
+import static org.springframework.http.HttpMethod.GET;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
+import static org.springframework.http.HttpStatus.OK;
+import static org.springframework.http.HttpStatus.UNAUTHORIZED;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
+
 @Component
 public class FpsakConsumer {
 	private final String fpsakUrl;
@@ -37,27 +45,27 @@ public class FpsakConsumer {
 		this.stsRestConsumer = stsRestConsumer;
 	}
 
-	@Cacheable(cacheNames = LokalCacheConfig.FPSAK_RELEVANTE_PARTER_BY_SAKID_CACHE, key = "#sakId")
+	@Cacheable(cacheNames = FPSAK_RELEVANTE_PARTER_BY_SAKID_CACHE, key = "#sakId")
 	public List<String> hentAktoerForSak(final String sakId) {
 		HttpHeaders headers = createHeaders();
-		ResponseEntity<List<String>> response = restTemplate.exchange(fpsakUrl + "?saksnummer=" + sakId, HttpMethod.GET, new HttpEntity<>(headers), new ParameterizedTypeReference<List<String>>() {
+		ResponseEntity<List<String>> response = restTemplate.exchange(fpsakUrl + "?saksnummer=" + sakId, GET, new HttpEntity<>(headers), new ParameterizedTypeReference<>() {
 		});
 
-		if (HttpStatus.OK.equals(response.getStatusCode())) {
+		if (OK.equals(response.getStatusCode())) {
 			return response.getBody();
-		} else if (HttpStatus.BAD_REQUEST.equals(response.getStatusCode()) && response.getBody() != null) {
+		} else if (BAD_REQUEST.equals(response.getStatusCode()) && response.getBody() != null) {
 			throw new SafFunctionalException(String.format("hentAktoerForSak feilet funksjonelt. Feilmelding: %s", response.getBody()), response.getStatusCode());
-		} else if (HttpStatus.UNAUTHORIZED.equals(response.getStatusCode())) {
+		} else if (UNAUTHORIZED.equals(response.getStatusCode())) {
 			throw new SafTechnicalException("hentAktoerForSak feilet teknisk. Tilgang avvist.", response.getStatusCode());
 		} else {
-			throw new SafTechnicalException("hentAktoerForSak feilet med ukjent feil.", HttpStatus.INTERNAL_SERVER_ERROR);
+			throw new SafTechnicalException("hentAktoerForSak feilet med ukjent feil.", INTERNAL_SERVER_ERROR);
 		}
 	}
 
 	private HttpHeaders createHeaders() {
 		HttpHeaders headers = new HttpHeaders();
-		headers.setContentType(MediaType.APPLICATION_JSON);
-		headers.set(HttpHeaders.AUTHORIZATION, "Bearer " + stsRestConsumer.getStsToken().getAccess_token());
+		headers.setContentType(APPLICATION_JSON);
+		headers.setBearerAuth(stsRestConsumer.getStsToken().getAccess_token());
 		return headers;
 	}
 }
