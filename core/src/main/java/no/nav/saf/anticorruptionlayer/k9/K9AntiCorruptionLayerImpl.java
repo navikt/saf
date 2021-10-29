@@ -9,7 +9,6 @@ import org.springframework.stereotype.Component;
 import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import static no.nav.saf.domain.DomainConstants.FAGSAKSYSTEM_K9;
@@ -36,7 +35,6 @@ public class K9AntiCorruptionLayerImpl implements K9AntiCorruptionLayer {
 				return k9Consumer.hentAktoerForSak(arkivsak.getFagsakId());
 			} catch (Exception e) {
 				log.warn("Kunne ikke hente relevante parter fra K9-sak for sakId={}", arkivsak.getFagsakId(), e);
-				return Collections.emptyList();
 			}
 		}
 		return new ArrayList<>();

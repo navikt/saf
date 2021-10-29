@@ -48,13 +48,17 @@ public class Pep7Impl extends Pep<TilgangSak> {
 
 		if (ressurs != null) {
 			if (FOR.equals(ressurs.getTema()) && FAGSAKSYSTEM_FORELDREPENGELOSNING.equals(ressurs.getFagsaksystem())) {
-				if (aktoerlisteErNullEllerTomForFp(ressurs)) return XacmlResponse.permit();
+				if (aktoerlisteErNullEllerTomForFp(ressurs)) {
+					return XacmlResponse.permit();
+				}
 
 				return getXacmlResponse(ressurs, safRequestContext, ressurs.getFpAktoerIdList());
 			}
 
 			if (relevanteTemaK9.contains(ressurs.getTema()) && FAGSAKSYSTEM_K9.equals(ressurs.getFagsaksystem())) {
-				if (aktoerlisteErNullEllerTomForK9(ressurs)) return XacmlResponse.permit();
+				if (aktoerlisteErNullEllerTomForK9(ressurs)) {
+					return XacmlResponse.permit();
+				}
 
 				return getXacmlResponse(ressurs, safRequestContext, ressurs.getK9AktoerIdList());
 			}

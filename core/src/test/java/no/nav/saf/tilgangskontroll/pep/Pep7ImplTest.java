@@ -10,9 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import static java.util.Arrays.asList;
 import static no.nav.saf.domain.DomainConstants.FAGSAKSYSTEM_FORELDREPENGELOSNING;
 import static no.nav.saf.domain.DomainConstants.FAGSAKSYSTEM_K9;
 import static no.nav.saf.domain.kode.Tema.FOR;
@@ -118,24 +116,18 @@ class Pep7ImplTest extends AbstractPepTest {
 	}
 
 	private TilgangSak createTilgangSakWithFpAktoerIdList() {
-		List<String> aktoerIdList = new ArrayList<>();
-		aktoerIdList.add(FNR);
-		aktoerIdList.add(FNR2);
 		return TilgangSak.builder()
 				.fagsaksystem(FAGSAKSYSTEM_FORELDREPENGELOSNING)
 				.tema(FOR)
-				.fpAktoerIdList(aktoerIdList)
+				.fpAktoerIdList(asList(FNR, FNR2))
 				.build();
 	}
 
 	private TilgangSak createTilgangSakWithK9AktoerIdList(Tema tema) {
-		List<String> aktoerIdList = new ArrayList<>();
-		aktoerIdList.add(FNR);
-		aktoerIdList.add(FNR2);
 		return TilgangSak.builder()
 				.fagsaksystem(FAGSAKSYSTEM_K9)
 				.tema(tema)
-				.k9AktoerIdList(aktoerIdList)
+				.k9AktoerIdList(asList(FNR, FNR2))
 				.build();
 	}
 }
