@@ -62,12 +62,12 @@
       "cluster": "dev-fss"
     },
     {
-      "app": "jfr-infotrygd-q1",
+      "app": "jfr-infotrygd-q2",
       "namespace": "isa",
       "cluster": "dev-fss"
     },
     {
-      "app": "jfr-infotrygd-q2",
+      "app": "jfr-arena-q2",
       "namespace": "isa",
       "cluster": "dev-fss"
     },
