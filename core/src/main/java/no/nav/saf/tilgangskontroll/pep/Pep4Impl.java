@@ -7,7 +7,6 @@ import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlRequest;
 import no.nav.saf.tilgangskontroll.abac.dto.response.XacmlResponse;
 import no.nav.saf.tilgangskontroll.abac.service.AbacService;
-import no.nav.saf.tilgangskontroll.pep.AbacAnswer.AbacDenyReason;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
@@ -18,7 +17,6 @@ import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_RESOURC
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_SAF_JOURNALSTATUS;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_SAF_JOURNAL_METADATA;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_SAF_SKJERMING;
-import static no.nav.saf.tilgangskontroll.pep.AbacAnswer.deny;
 import static no.nav.saf.tilgangskontroll.pep.AbacAnswer.permit;
 
 /**
@@ -53,20 +51,6 @@ public class Pep4Impl extends Pep<TilgangJournalpost> {
 		}
 	}
 
-	@Override
-	public AbacAnswer verifyAzureClientCredentialFlowAccess(TilgangJournalpost ressurs, SafRequestContext safRequestContext) {
-		if (ressurs == null) {
-			log.warn("Pep4 mangler tilstrekkelig datagrunnlag for å kunne gjennomføre tilgangskontroll. Azure ccf.");
-			return deny(AbacDenyReason.builder()
-					.cause("mangler_data").policy("saf_pep4").rule("journalpost_er_null")
-					.build());
-		}
-		boolean decision = !isJournalpoststatusUtgaar(ressurs) && !isSkjermingPresent(ressurs);
-		return decision ? permit() : deny(AbacDenyReason.builder()
-				.cause("journalpost_skjermet_eller_utgaar").policy("saf_pep4").rule("journalpost_skjermet_eller_utgaar")
-				.build());
-	}
-
 	private XacmlResponse hasJournalpostAccess(SafRequestContext safRequestContext, TilgangJournalpost ressurs) {
 		XacmlRequest request = SafXacmlRequestFactory.create(safRequestContext.getSecurityContext());
 		request.resource(RESOURCE_FELLES_RESOURCE_TYPE, RESOURCE_SAF_JOURNAL_METADATA);
@@ -83,6 +67,11 @@ public class Pep4Impl extends Pep<TilgangJournalpost> {
 		traceLogPepFinished(PEP4, ressurs);
 
 		return response;
+	}
+
+	@Override
+	public AbacAnswer verifyAzureClientCredentialFlowAccess(TilgangJournalpost ressurs, SafRequestContext safRequestContext) {
+		return permit();
 	}
 
 	private boolean isJournalpoststatusUtgaar(TilgangJournalpost ressurs) {
