@@ -64,7 +64,7 @@
     {
       "app": "jfr-infotrygd-q2",
       "namespace": "isa",
-      "cluster": "dev-gcp"
+      "cluster": "dev-fss"
     },
     {
       "app": "jfr-arena-q2",
