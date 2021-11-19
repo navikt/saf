@@ -17,7 +17,7 @@ import java.util.Map;
 @EqualsAndHashCode(callSuper = true)
 public class DokumentoversiktFagsakArguments extends AbstractDokumentoversiktArguments {
 	static final String INFOTRYGD_FAGSAKSYSTEM = "IT01";
-	private final FagsakInput fagsakInput;
+	FagsakInput fagsakInput;
 
 	private DokumentoversiktFagsakArguments(FagsakInput fagsakInput,
 											DokumentoversiktFilters filters,

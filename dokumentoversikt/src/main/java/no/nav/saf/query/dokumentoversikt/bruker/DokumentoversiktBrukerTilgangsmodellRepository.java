@@ -77,10 +77,10 @@ class DokumentoversiktBrukerTilgangsmodellRepository {
 				return Flowable.empty();
 			}
 			Flowable<List<Arkivsak>> gsakerFromOrgnr = Flowable.fromCallable(() ->
-					gsakAntiCorruptionLayer.findArkivsakerByOrgnr(tilgangBruker.getOrgnummer(), tema))
+							gsakAntiCorruptionLayer.findArkivsakerByOrgnr(tilgangBruker.getOrgnummer(), tema))
 					.subscribeOn(Schedulers.io());
 			Flowable<List<Arkivsak>> gsakerFromAktoerId = Flowable.fromCallable(() ->
-					gsakAntiCorruptionLayer.findArkivsakerByAktoerId(tilgangBruker.hentAlleAktoerId(), tema))
+							gsakAntiCorruptionLayer.findArkivsakerByAktoerId(tilgangBruker.hentAlleAktoerId(), tema))
 					.subscribeOn(Schedulers.io());
 			Flowable<List<Arkivsak>> psaker = Flowable.fromCallable(() -> {
 				if (!Collections.disjoint(tema, TEMA_PENSJON)) {
