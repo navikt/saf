@@ -80,6 +80,11 @@
       "namespace": "teamsykefravr",
       "cluster": "prod-gcp",
       "roles": ["tema_opp"]
+    },
+    {
+      "app": "tpts-tiltakspenger-mottak",
+      "namespace": "tpts",
+      "cluster": "prod-gcp"
     }
   ]
 }
