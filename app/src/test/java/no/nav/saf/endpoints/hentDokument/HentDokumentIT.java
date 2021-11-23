@@ -486,7 +486,7 @@ class HentDokumentIT extends AbstractItest {
 
 	@Test
 	void shouldGetUnauthorizedFromPep7ForFp() {
-		abacDenyPep7skipPep2Pep3Pep4Pep5Pep6();
+		abacDenyPep7dSkipPep2Pep3Pep4Pep5Pep6();
 		stubFor(get("/hentjournalsakinfo/hentdokument/" + DOKUMENT_ID + "/" + VARIANTFORMAT)
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_PDF_VALUE)
@@ -505,12 +505,12 @@ class HentDokumentIT extends AbstractItest {
 						.withBodyFile("sts/reststs-happy.json")));
 
 		ResponseEntity<String> responseEntity = callHentDokument();
-		verifyabacDenyPep7SkipPep2Pep3Pep4Pep5Pep6AndHttpStatusCode(FORBIDDEN, responseEntity.getStatusCode());
+		verifyabacDenyPep7dSkipPep2Pep3Pep4Pep5Pep6AndHttpStatusCode(FORBIDDEN, responseEntity.getStatusCode());
 	}
 
 	@Test
 	void shouldGetUnauthorizedFromPep7ForK9TemaFri() {
-		abacDenyPep7skipPep2Pep3Pep4Pep5Pep6();
+		abacDenyPep7dSkipPep2Pep3Pep4Pep5Pep6();
 		stubFor(get("/hentjournalsakinfo/hentdokument/" + DOKUMENT_ID + "/" + VARIANTFORMAT)
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_PDF_VALUE)
@@ -529,12 +529,12 @@ class HentDokumentIT extends AbstractItest {
 						.withBodyFile("sts/reststs-happy.json")));
 
 		ResponseEntity<String> responseEntity = callHentDokument();
-		verifyabacDenyPep7SkipPep2Pep3Pep4Pep5Pep6AndHttpStatusCode(FORBIDDEN, responseEntity.getStatusCode());
+		verifyabacDenyPep7dSkipPep2Pep3Pep4Pep5Pep6AndHttpStatusCode(FORBIDDEN, responseEntity.getStatusCode());
 	}
 
 	@Test
 	void shouldGetUnauthorizedFromPep7ForK9TemaOms() {
-		abacDenyPep7skipPep2Pep3Pep4Pep5Pep6();
+		abacDenyPep7dSkipPep2Pep3Pep4Pep5Pep6();
 		stubFor(get("/hentjournalsakinfo/hentdokument/" + DOKUMENT_ID + "/" + VARIANTFORMAT)
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_PDF_VALUE)
@@ -553,7 +553,7 @@ class HentDokumentIT extends AbstractItest {
 						.withBodyFile("sts/reststs-happy.json")));
 
 		ResponseEntity<String> responseEntity = callHentDokument();
-		verifyabacDenyPep7SkipPep2Pep3Pep4Pep5Pep6AndHttpStatusCode(FORBIDDEN, responseEntity.getStatusCode());
+		verifyabacDenyPep7dSkipPep2Pep3Pep4Pep5Pep6AndHttpStatusCode(FORBIDDEN, responseEntity.getStatusCode());
 	}
 
 	private void assertOkArkivResponse(ResponseEntity<String> responseEntity) {

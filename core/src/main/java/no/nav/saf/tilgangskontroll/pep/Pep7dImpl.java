@@ -15,7 +15,7 @@ import java.util.List;
 
 import static no.nav.saf.domain.DomainConstants.FAGSAKSYSTEM_FORELDREPENGELOSNING;
 import static no.nav.saf.domain.DomainConstants.FAGSAKSYSTEM_K9;
-import static no.nav.saf.domain.DomainConstants.PEP7;
+import static no.nav.saf.domain.DomainConstants.PEP7D;
 import static no.nav.saf.domain.kode.Tema.FOR;
 import static no.nav.saf.domain.kode.Tema.FRI;
 import static no.nav.saf.domain.kode.Tema.OMS;
@@ -31,13 +31,13 @@ import static no.nav.saf.tilgangskontroll.pep.AbacAnswer.permit;
  * https://confluence.adeo.no/display/ABAC/FP2%3A+Behandling+Kode+7+Brukere
  */
 @Slf4j
-@Component(PEP7)
-public class Pep7Impl extends Pep<TilgangSak> {
+@Component(PEP7D)
+public class Pep7dImpl extends Pep<TilgangSak> {
 
 	private final AbacService abacService;
 
 	@Inject
-	public Pep7Impl(AbacService abacService) {
+	public Pep7dImpl(AbacService abacService) {
 		this.abacService = abacService;
 	}
 
@@ -68,7 +68,7 @@ public class Pep7Impl extends Pep<TilgangSak> {
 
 	private boolean aktoerlisteErNullEllerTomForFp(TilgangSak ressurs) {
 		if (ressurs.getFpAktoerIdList() == null || ressurs.getFpAktoerIdList().isEmpty()) {
-			log.info("Pep7 har ingen relevante parter. Tilgang gis.");
+			log.info("Pep7d har ingen relevante parter. Tilgang gis.");
 			return true;
 		}
 		return false;
@@ -76,7 +76,7 @@ public class Pep7Impl extends Pep<TilgangSak> {
 
 	private boolean aktoerlisteErNullEllerTomForK9(TilgangSak ressurs) {
 		if (ressurs.getK9AktoerIdList() == null || ressurs.getK9AktoerIdList().isEmpty()) {
-			log.info("Pep7 har ingen relevante parter. Tilgang gis.");
+			log.info("Pep7d har ingen relevante parter. Tilgang gis.");
 			return true;
 		}
 		return false;
@@ -88,9 +88,9 @@ public class Pep7Impl extends Pep<TilgangSak> {
 		request.resource(RESOURCE_FELLES_RESOURCE_TYPE, RESOURCE_SAF_TREDJEPART);
 		aktoerIdList.forEach(aktoerId -> request.resource(RESOURCE_FELLES_PERSON_AKTOERID_RESOURCE, aktoerId));
 
-		traceLogPepStarted(PEP7, ressurs);
+		traceLogPepStarted(PEP7D, ressurs);
 		XacmlResponse response = abacService.evaluate(request);
-		traceLogPepFinished(PEP7, ressurs);
+		traceLogPepFinished(PEP7D, ressurs);
 
 		return response;
 	}

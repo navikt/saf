@@ -28,14 +28,14 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-class Pep7ImplTest extends AbstractPepTest {
+class Pep7dImplTest extends AbstractPepTest {
 
 	@InjectMocks
-	private Pep7Impl pep7;
+	private Pep7dImpl pep7d;
 
 	@Test
 	void shouldPermitWhenNoAktoerId() {
-		boolean hasAccess = pep7.hasAccess(TilgangSak.builder().build(), createSafRequestContext());
+		boolean hasAccess = pep7d.hasAccess(TilgangSak.builder().build(), createSafRequestContext());
 		verify(abacService, never()).evaluate(any());
 		assertTrue(hasAccess);
 	}
@@ -43,7 +43,7 @@ class Pep7ImplTest extends AbstractPepTest {
 	@Test
 	void shouldDenyWhenAbacDeniesForFagsaksystemFS36AndTemaFor() {
 		when(abacService.evaluate(any(XacmlRequest.class))).thenReturn(new XacmlResponse(Decision.DENY, null, null, null));
-		boolean hasAccess = pep7.hasAccess(createTilgangSakWithFpAktoerIdList(), createSafRequestContext());
+		boolean hasAccess = pep7d.hasAccess(createTilgangSakWithFpAktoerIdList(), createSafRequestContext());
 		verify(abacService).evaluate(any());
 		assertFalse(hasAccess);
 	}
@@ -51,7 +51,7 @@ class Pep7ImplTest extends AbstractPepTest {
 	@Test
 	void shouldDenyWhenAbacDeniesForFagsaksystemK9AndTemaFri() {
 		when(abacService.evaluate(any(XacmlRequest.class))).thenReturn(new XacmlResponse(Decision.DENY, null, null, null));
-		boolean hasAccess = pep7.hasAccess(createTilgangSakWithK9AktoerIdList(FRI), createSafRequestContext());
+		boolean hasAccess = pep7d.hasAccess(createTilgangSakWithK9AktoerIdList(FRI), createSafRequestContext());
 		verify(abacService).evaluate(any());
 		assertFalse(hasAccess);
 	}
@@ -59,7 +59,7 @@ class Pep7ImplTest extends AbstractPepTest {
 	@Test
 	void shouldDenyWhenAbacDeniesForFagsaksystemK9AndTemaOms() {
 		when(abacService.evaluate(any(XacmlRequest.class))).thenReturn(new XacmlResponse(Decision.DENY, null, null, null));
-		boolean hasAccess = pep7.hasAccess(createTilgangSakWithK9AktoerIdList(OMS), createSafRequestContext());
+		boolean hasAccess = pep7d.hasAccess(createTilgangSakWithK9AktoerIdList(OMS), createSafRequestContext());
 		verify(abacService).evaluate(any());
 		assertFalse(hasAccess);
 	}
@@ -69,7 +69,7 @@ class Pep7ImplTest extends AbstractPepTest {
 		when(abacService.evaluate(any(XacmlRequest.class))).thenReturn(new XacmlResponse(Decision.PERMIT, null, null, null));
 		ArgumentCaptor<XacmlRequest> request = ArgumentCaptor.forClass(XacmlRequest.class);
 
-		boolean hasAccess = pep7.hasAccess(createTilgangSakWithFpAktoerIdList(), createSafRequestContext());
+		boolean hasAccess = pep7d.hasAccess(createTilgangSakWithFpAktoerIdList(), createSafRequestContext());
 
 		verify(abacService).evaluate(request.capture());
 		XacmlRequest capturedRequest = request.getValue();
@@ -86,7 +86,7 @@ class Pep7ImplTest extends AbstractPepTest {
 		when(abacService.evaluate(any(XacmlRequest.class))).thenReturn(new XacmlResponse(Decision.PERMIT, null, null, null));
 		ArgumentCaptor<XacmlRequest> request = ArgumentCaptor.forClass(XacmlRequest.class);
 
-		boolean hasAccess = pep7.hasAccess(createTilgangSakWithK9AktoerIdList(FRI), createSafRequestContext());
+		boolean hasAccess = pep7d.hasAccess(createTilgangSakWithK9AktoerIdList(FRI), createSafRequestContext());
 
 		verify(abacService).evaluate(request.capture());
 		XacmlRequest capturedRequest = request.getValue();
@@ -103,7 +103,7 @@ class Pep7ImplTest extends AbstractPepTest {
 		when(abacService.evaluate(any(XacmlRequest.class))).thenReturn(new XacmlResponse(Decision.PERMIT, null, null, null));
 		ArgumentCaptor<XacmlRequest> request = ArgumentCaptor.forClass(XacmlRequest.class);
 
-		boolean hasAccess = pep7.hasAccess(createTilgangSakWithK9AktoerIdList(OMS), createSafRequestContext());
+		boolean hasAccess = pep7d.hasAccess(createTilgangSakWithK9AktoerIdList(OMS), createSafRequestContext());
 
 		verify(abacService).evaluate(request.capture());
 		XacmlRequest capturedRequest = request.getValue();
