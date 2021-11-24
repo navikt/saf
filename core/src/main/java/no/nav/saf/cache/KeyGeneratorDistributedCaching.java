@@ -7,8 +7,7 @@ package no.nav.saf.cache;
  */
 public final class KeyGeneratorDistributedCaching extends AbstractKeyGeneratorCaching {
 
-	private KeyGeneratorDistributedCaching() {
-	}
+	private KeyGeneratorDistributedCaching() {}
 
 	public static String getKeyForPep2d(String saksbehandlerId, String tema) {
 		return createIdentifierPair(RESSURS, RESSURS_SAK_DOKUMENT) + createUniqueIdentifier(createIdentifierPair(SAKSBEHANDLER_ID, saksbehandlerId), createIdentifierPair(TEMA, tema));

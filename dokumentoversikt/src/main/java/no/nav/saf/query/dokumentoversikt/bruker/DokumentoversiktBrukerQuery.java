@@ -36,6 +36,7 @@ import static no.nav.saf.domain.DomainConstants.PEP3;
 import static no.nav.saf.domain.DomainConstants.PEP4;
 import static no.nav.saf.domain.DomainConstants.PEP5;
 import static no.nav.saf.domain.DomainConstants.PEP6D;
+import static no.nav.saf.domain.DomainConstants.PEP7D;
 import static no.nav.saf.domain.DomainConstants.TILGANG_BRUKER;
 import static no.nav.saf.util.MDCUtility.addMdcData;
 
@@ -57,6 +58,7 @@ class DokumentoversiktBrukerQuery {
 	private final Pep<TilgangJournalpost> pep4;
 	private final Pep<TilgangDokumentInfo> pep5;
 	private final Pep<TilgangDokumentvariant> pep6d;
+	private final Pep<TilgangSak> pep7d;
 
 	@Inject
 	public DokumentoversiktBrukerQuery(DokumentoversiktBrukerTilgangsmodellRepository dokumentoversiktBrukerTilgangsmodellRepository,
@@ -68,7 +70,9 @@ class DokumentoversiktBrukerQuery {
 									   @Named(PEP3) Pep<TilgangSak> pep3,
 									   @Named(PEP4) Pep<TilgangJournalpost> pep4,
 									   @Named(PEP5) Pep<TilgangDokumentInfo> pep5,
-									   @Named(PEP6D) Pep<TilgangDokumentvariant> pep6d) {
+									   @Named(PEP6D) Pep<TilgangDokumentvariant> pep6d,
+									   @Named(PEP7D) Pep<TilgangSak> pep7d
+	) {
 		this.dokumentoversiktBrukerTilgangsmodellRepository = dokumentoversiktBrukerTilgangsmodellRepository;
 		this.tilgangsmodellRepository = tilgangsmodellRepository;
 		this.visningsmodellRepository = visningsmodellRepository;
@@ -79,6 +83,7 @@ class DokumentoversiktBrukerQuery {
 		this.pep4 = pep4;
 		this.pep5 = pep5;
 		this.pep6d = pep6d;
+		this.pep7d = pep7d;
 	}
 
 	@Monitor(value = "dok_request", extraTags = {"process", "dokumentOversikt", "requestType", "bruker"}, histogram = true)
@@ -94,7 +99,7 @@ class DokumentoversiktBrukerQuery {
 			return Dokumentoversikt.empty();
 		}
 
-		//  Resultat fra pep2d caches lokalt og brukes i JournalpostDtoMapper.java. Med bakgrunn i resultat fra pep2d og pep6d settes feltet saksbehandlerHarTilgang=true/false.
+		//  Resultat fra pep2d caches lokalt og brukes i JournalpostDtoMapper.java. Med bakgrunn i resultat fra pep2d, pep6d og pep7d settes feltet saksbehandlerHarTilgang=true/false.
 		final Flowable<TilgangSak> tilgangSakFlow = dokumentoversiktBrukerTilgangsmodellRepository.findTilgangSaker(tilgangBruker, dokumentoversiktBrukerArguments
 				.getFilters().getTema(), safRequestContext);
 		List<TilgangSak> filteredTilgangSakList = tilgangSakFlow
@@ -105,6 +110,7 @@ class DokumentoversiktBrukerQuery {
 				.filter(ts -> pep2.hasAccess(ts, safRequestContext))
 				.doOnNext(ts -> pep2d.hasAccess(ts, safRequestContext))
 				.filter(ts -> pep3.hasAccess(ts, safRequestContext))
+				.doOnNext(ts -> pep7d.hasAccess(ts, safRequestContext))
 				.sequential()
 				.toList().blockingGet();
 
@@ -132,7 +138,7 @@ class DokumentoversiktBrukerQuery {
 				.blockingGet();
 
 		// Resultat fra pep5 caches lokalt og brukes i JournalpostDtoMapper.java for å filtrere på dokumentinfo-metadata som skal gis til saksbehandler.
-		// Resultat fra pep6d caches også lokalt og brukes i JournalpostDtoMapper.java. Med bakgrunn i resultat fra pep2d og pep6d settes feltet saksbehandlerHarTilgang=true/false.
+		// Resultat fra pep6d og pep7d caches også lokalt og brukes i JournalpostDtoMapper.java. Med bakgrunn i resultat fra pep2d, pep6d og pep7d settes feltet saksbehandlerHarTilgang=true/false.
 		Flowable.fromIterable(filteredTilgangJournalpostList)
 				.parallel(10)
 				.runOn(Schedulers.io())

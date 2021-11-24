@@ -1,5 +1,7 @@
 package no.nav.saf.cache;
 
+import no.nav.saf.domain.kode.Arkivsakssystem;
+
 /**
  * @author Sigurd Midttun, Visma Consulting.
  * <p>
@@ -8,20 +10,34 @@ package no.nav.saf.cache;
 public final class KeyGeneratorLocalCaching extends AbstractKeyGeneratorCaching {
 
 	private KeyGeneratorLocalCaching() {
-		super();
 	}
 
 	public static String getKeyForPep2d(String tema) {
-		return createIdentifierPair(RESSURS, RESSURS_SAK_DOKUMENT) + createUniqueIdentifier(createIdentifierPair(TEMA, tema));
+		return createIdentifierPair(RESSURS, RESSURS_SAK_DOKUMENT) + createUniqueIdentifier(
+				createIdentifierPair(TEMA, tema)
+		);
 	}
 
 	public static String getKeyForPep5(String journalpostId, String dokumentInfoId) {
-		return createIdentifierPair(RESSURS, RESSURS_DOKUMENT_METADATA) + createUniqueIdentifier(createIdentifierPair(JOURNALPOST_ID, journalpostId),
-				createIdentifierPair(DOKUMENTINFO_ID, dokumentInfoId));
+		return createIdentifierPair(RESSURS, RESSURS_DOKUMENT_METADATA) + createUniqueIdentifier(
+				createIdentifierPair(JOURNALPOST_ID, journalpostId),
+				createIdentifierPair(DOKUMENTINFO_ID, dokumentInfoId)
+		);
 	}
 
 	public static String getKeyForPep6d(String journalpostId, String dokumentInfoId, String variantFormat, String skjerming) {
-		return createIdentifierPair(RESSURS, RESSURS_DOKUMENT_FIL) + createUniqueIdentifier(createIdentifierPair(JOURNALPOST_ID, journalpostId), createIdentifierPair(DOKUMENTINFO_ID, dokumentInfoId), createIdentifierPair(VARIANTFORMAT, variantFormat),
-				createIdentifierPair(SKJERMING, skjerming));
+		return createIdentifierPair(RESSURS, RESSURS_DOKUMENT_FIL) + createUniqueIdentifier(
+				createIdentifierPair(JOURNALPOST_ID, journalpostId),
+				createIdentifierPair(DOKUMENTINFO_ID, dokumentInfoId),
+				createIdentifierPair(VARIANTFORMAT, variantFormat),
+				createIdentifierPair(SKJERMING, skjerming)
+		);
+	}
+
+	public static String getKeyForPep7d(Arkivsakssystem arkivsaksystem, String arkivsaksnummer) {
+		return createIdentifierPair(RESSURS, RESSURS_SAK_DOKUMENT) + createUniqueIdentifier(
+				createIdentifierPair(ARKIVSAKSSYSTEM, arkivsaksystem.name()),
+				createIdentifierPair(ARKIVSAKSNUMMER, arkivsaksnummer)
+		);
 	}
 }

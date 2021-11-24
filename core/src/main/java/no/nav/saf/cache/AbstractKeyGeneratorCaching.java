@@ -20,6 +20,9 @@ abstract class AbstractKeyGeneratorCaching {
 	static final String VARIANTFORMAT = "variantFormat";
 	static final String SKJERMING = "skjerming";
 
+	static final String ARKIVSAKSSYSTEM = "arkivsakssystem";
+	static final String ARKIVSAKSNUMMER = "arkivsaksnummer";
+
 	AbstractKeyGeneratorCaching() {
 	}
 

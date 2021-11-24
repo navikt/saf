@@ -40,6 +40,7 @@ import java.util.stream.Collectors;
 import static no.nav.saf.cache.KeyGeneratorLocalCaching.getKeyForPep2d;
 import static no.nav.saf.cache.KeyGeneratorLocalCaching.getKeyForPep5;
 import static no.nav.saf.cache.KeyGeneratorLocalCaching.getKeyForPep6d;
+import static no.nav.saf.cache.KeyGeneratorLocalCaching.getKeyForPep7d;
 import static no.nav.saf.domain.DomainConstants.TILGANG_BRUKER;
 import static no.nav.saf.domain.visningsmodell.RelevantDato.INVALID_DATE;
 import static org.apache.commons.lang3.BooleanUtils.isTrue;
@@ -377,9 +378,11 @@ public class JournalpostDtoMapper {
 			return getDecisionFromPep6d(journalpost.getJournalpostId(), dokumentInfoDto.getDokumentInfoId(), variantDto, requestCache);
 		} else {
 			return getDecisionFromPep2d(journalpost.getTema(), requestCache) &&
-					getDecisionFromPep6d(journalpost.getJournalpostId(), dokumentInfoDto.getDokumentInfoId(), variantDto, requestCache);
+					getDecisionFromPep6d(journalpost.getJournalpostId(), dokumentInfoDto.getDokumentInfoId(), variantDto, requestCache) &&
+					getDecisionFromPep7d(journalpost.getSak().getArkivsaksystem(), journalpost.getSak().getArkivsaksnummer(), requestCache);
 		}
 	}
+
 
 	private boolean getDecisionFromPep2d(Tema tema, RequestCache requestCache) {
 		String tilgangKeyPep2dLocalCaching = getKeyForPep2d(tema.name());
@@ -392,6 +395,11 @@ public class JournalpostDtoMapper {
 						.getSafVariantformat().name(), variantDto.getSkjerming() == null ? null : variantDto.getSkjerming()
 						.getSafSkjerming().name());
 		return getCachedDecision(requestCache, tilgangKeyPep6dLocalCaching);
+	}
+
+	private boolean getDecisionFromPep7d(Arkivsakssystem arkivsakssystem, String arkivsaksnummer, RequestCache requestCache) {
+		String tilgangKeyPep7dLocalCaching = getKeyForPep7d(arkivsakssystem, arkivsaksnummer);
+		return getCachedDecision(requestCache, tilgangKeyPep7dLocalCaching);
 	}
 
 	private boolean shouldMapDokumentInfo(String journalpostId, String dokumentInfoId, RequestCache requestCache) {
