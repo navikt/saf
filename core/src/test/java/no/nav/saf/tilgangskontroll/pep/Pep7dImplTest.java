@@ -1,5 +1,6 @@
 package no.nav.saf.tilgangskontroll.pep;
 
+import no.nav.saf.domain.kode.Arkivsakssystem;
 import no.nav.saf.domain.kode.Tema;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlAttribute;
@@ -35,7 +36,11 @@ class Pep7dImplTest extends AbstractPepTest {
 
 	@Test
 	void shouldPermitWhenNoAktoerId() {
-		boolean hasAccess = pep7d.hasAccess(TilgangSak.builder().build(), createSafRequestContext());
+		TilgangSak tilgangSak = TilgangSak.builder()
+				.arkivsaksystem(Arkivsakssystem.GSAK)
+				.arkivsaksnummer("100000000")
+				.build();
+		boolean hasAccess = pep7d.hasAccess(tilgangSak, createSafRequestContext());
 		verify(abacService, never()).evaluate(any());
 		assertTrue(hasAccess);
 	}
@@ -120,6 +125,8 @@ class Pep7dImplTest extends AbstractPepTest {
 				.fagsaksystem(FAGSAKSYSTEM_FORELDREPENGELOSNING)
 				.tema(FOR)
 				.fpAktoerIdList(asList(FNR, FNR2))
+				.arkivsaksystem(Arkivsakssystem.GSAK)
+				.arkivsaksnummer("100000000")
 				.build();
 	}
 
@@ -128,6 +135,8 @@ class Pep7dImplTest extends AbstractPepTest {
 				.fagsaksystem(FAGSAKSYSTEM_K9)
 				.tema(tema)
 				.k9AktoerIdList(asList(FNR, FNR2))
+				.arkivsaksystem(Arkivsakssystem.GSAK)
+				.arkivsaksnummer("100000000")
 				.build();
 	}
 }
