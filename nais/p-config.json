@@ -61,6 +61,11 @@
       "cluster": "prod-fss"
     },
     {
+      "app": "jfr-generell",
+      "namespace": "isa",
+      "cluster": "prod-fss"
+    },
+    {
       "app": "kabal-api",
       "namespace": "klage",
       "cluster": "prod-gcp"
