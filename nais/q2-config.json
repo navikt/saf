@@ -111,6 +111,11 @@
       "app": "tpts-tiltakspenger-mottak",
       "namespace": "tpts",
       "cluster": "dev-gcp"
+    },
+    {
+      "app": "yrkesskade-melding-mottak",
+      "namespace": "yrkesskade",
+      "cluster": "dev-gcp"
     }
   ]
 }
