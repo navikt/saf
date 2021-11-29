@@ -5,7 +5,6 @@ import no.nav.saf.exceptions.SafFunctionalException;
 import no.nav.saf.exceptions.SafTechnicalException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -31,10 +30,12 @@ public class K9Consumer {
 	private final RestTemplate restTemplate;
 	private final StsRestConsumer stsRestConsumer;
 
-	public K9Consumer(RestTemplateBuilder restTemplateBuilder,
-					  ClientHttpRequestFactory clientHttpRequestFactory,
-					  @Value("${k9sak.url}") String k9Url,
-					  StsRestConsumer stsRestConsumer) {
+	public K9Consumer(
+			RestTemplateBuilder restTemplateBuilder,
+			ClientHttpRequestFactory clientHttpRequestFactory,
+			@Value("${k9sak.url}") String k9Url,
+			StsRestConsumer stsRestConsumer
+	) {
 		this.k9Url = k9Url;
 		this.restTemplate = restTemplateBuilder
 				.requestFactory(() -> clientHttpRequestFactory)
@@ -48,7 +49,8 @@ public class K9Consumer {
 				k9Url + "?saksnummer=" + sakId,
 				GET,
 				new HttpEntity<>(headers),
-				new ParameterizedTypeReference<>() {}
+				new ParameterizedTypeReference<>() {
+				}
 		);
 
 		if (OK.equals(response.getStatusCode())) {

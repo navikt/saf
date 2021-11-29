@@ -1,7 +1,6 @@
 package no.nav.saf.anticorruptionlayer.fpsak.hentrelevanteparter;
 
 import no.nav.saf.anticorruptionlayer.sts.StsRestConsumer;
-import no.nav.saf.cache.LokalCacheConfig;
 import no.nav.saf.exceptions.SafFunctionalException;
 import no.nav.saf.exceptions.SafTechnicalException;
 import org.springframework.beans.factory.annotation.Value;
@@ -10,9 +9,6 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
@@ -34,10 +30,12 @@ public class FpsakConsumer {
 	private final RestTemplate restTemplate;
 	private final StsRestConsumer stsRestConsumer;
 
-	public FpsakConsumer(RestTemplateBuilder restTemplateBuilder,
-						 ClientHttpRequestFactory clientHttpRequestFactory,
-						 @Value("${fpsak.url}") String fpsakUrl,
-						 StsRestConsumer stsRestConsumer) {
+	public FpsakConsumer(
+			RestTemplateBuilder restTemplateBuilder,
+			ClientHttpRequestFactory clientHttpRequestFactory,
+			@Value("${fpsak.url}") String fpsakUrl,
+			StsRestConsumer stsRestConsumer
+	) {
 		this.fpsakUrl = fpsakUrl;
 		this.restTemplate = restTemplateBuilder
 				.requestFactory(() -> clientHttpRequestFactory)
@@ -48,8 +46,12 @@ public class FpsakConsumer {
 	@Cacheable(cacheNames = FPSAK_RELEVANTE_PARTER_BY_SAKID_CACHE, key = "#sakId")
 	public List<String> hentAktoerForSak(final String sakId) {
 		HttpHeaders headers = createHeaders();
-		ResponseEntity<List<String>> response = restTemplate.exchange(fpsakUrl + "?saksnummer=" + sakId, GET, new HttpEntity<>(headers), new ParameterizedTypeReference<>() {
-		});
+		ResponseEntity<List<String>> response = restTemplate.exchange(
+				fpsakUrl + "?saksnummer=" + sakId,
+				GET,
+				new HttpEntity<>(headers),
+				new ParameterizedTypeReference<>() {}
+		);
 
 		if (OK.equals(response.getStatusCode())) {
 			return response.getBody();

@@ -45,37 +45,34 @@ public class Pep7Impl extends Pep<TilgangSak> {
 
 	@Override
 	public XacmlResponse verifyAbacPdpDecision(TilgangSak ressurs, SafRequestContext safRequestContext) {
-
 		if (ressurs != null) {
 			if (FOR.equals(ressurs.getTema()) && FAGSAKSYSTEM_FORELDREPENGELOSNING.equals(ressurs.getFagsaksystem())) {
-				if (aktoerlisteErNullEllerTomForFp(ressurs)) {
+				if (checkIfAktoerListIsEmptyForFp(ressurs)) {
 					return XacmlResponse.permit();
 				}
-
 				return getXacmlResponse(ressurs, safRequestContext, ressurs.getFpAktoerIdList());
 			}
 
 			if (relevanteTemaK9.contains(ressurs.getTema()) && FAGSAKSYSTEM_K9.equals(ressurs.getFagsaksystem())) {
-				if (aktoerlisteErNullEllerTomForK9(ressurs)) {
+				if (checkIfAktoerListIsEmptyForK9(ressurs)) {
 					return XacmlResponse.permit();
 				}
-
 				return getXacmlResponse(ressurs, safRequestContext, ressurs.getK9AktoerIdList());
 			}
 		}
 		return XacmlResponse.permit();
 	}
 
-	private boolean aktoerlisteErNullEllerTomForFp(TilgangSak ressurs) {
-		if (ressurs.getFpAktoerIdList() == null || ressurs.getFpAktoerIdList().isEmpty()) {
+	private boolean checkIfAktoerListIsEmptyForFp(TilgangSak ressurs) {
+		if (ressurs.getFpAktoerIdList().isEmpty()) {
 			log.info("Pep7 har ingen relevante parter. Tilgang gis.");
 			return true;
 		}
 		return false;
 	}
 
-	private boolean aktoerlisteErNullEllerTomForK9(TilgangSak ressurs) {
-		if (ressurs.getK9AktoerIdList() == null || ressurs.getK9AktoerIdList().isEmpty()) {
+	private boolean checkIfAktoerListIsEmptyForK9(TilgangSak ressurs) {
+		if (ressurs.getK9AktoerIdList().isEmpty()) {
 			log.info("Pep7 har ingen relevante parter. Tilgang gis.");
 			return true;
 		}

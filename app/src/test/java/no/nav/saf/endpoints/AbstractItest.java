@@ -1,7 +1,6 @@
 package no.nav.saf.endpoints;
 
 import com.github.tomakehurst.wiremock.client.WireMock;
-import com.github.tomakehurst.wiremock.core.Options;
 import lombok.SneakyThrows;
 import no.nav.saf.ApplicationConfig;
 import no.nav.saf.domain.visningsmodell.Dokumentoversikt;
@@ -39,6 +38,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
+import static com.github.tomakehurst.wiremock.core.Options.DYNAMIC_PORT;
 import static com.github.tomakehurst.wiremock.stubbing.Scenario.STARTED;
 import static java.util.Objects.requireNonNull;
 import static org.apache.http.client.utils.URLEncodedUtils.CONTENT_TYPE;
@@ -46,20 +46,21 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.springframework.http.HttpStatus.OK;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 
-/**
- * @author Sigurd Midttun, Visma Consulting.
- */
 @ExtendWith(SpringExtension.class)
-@SpringBootTest(classes = {AbstractItest.TestConfig.class, ApplicationConfig.class, STSTestConfig.class},
-		webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-		properties = {"spring.main.allow-bean-definition-overriding=true"})
+@SpringBootTest(
+		classes = {AbstractItest.TestConfig.class, ApplicationConfig.class, STSTestConfig.class},
+		webEnvironment = RANDOM_PORT,
+		properties = {"spring.main.allow-bean-definition-overriding=true"}
+)
 @ActiveProfiles(value = {"itest", "wiremock"})
 @EnableMockOAuth2Server
-@AutoConfigureWireMock(port = Options.DYNAMIC_PORT)
+@AutoConfigureWireMock(port = DYNAMIC_PORT)
 public abstract class AbstractItest {
 	private static final String SCENARIO_ABAC = "state_abac";
 	private static final String STATE_PERMIT = "state_permit";
@@ -82,6 +83,7 @@ public abstract class AbstractItest {
 
 	@Autowired
 	protected TestRestTemplate restTemplate;
+
 	@Autowired
 	private MockOAuth2Server server;
 
@@ -91,6 +93,8 @@ public abstract class AbstractItest {
 		WireMock.resetAllRequests();
 		WireMock.removeAllMappings();
 		WireMock.resetAllScenarios();
+
+		this.stubHappySts();
 	}
 
 	protected HttpEntity<?> createHttpEntity() {
@@ -99,7 +103,7 @@ public abstract class AbstractItest {
 
 	protected HttpHeaders createHeaders() {
 		HttpHeaders headers = new HttpHeaders();
-		headers.setContentType(MediaType.APPLICATION_JSON);
+		headers.setContentType(APPLICATION_JSON);
 		headers.add(HttpHeaders.AUTHORIZATION, getHeaderToken());
 		return headers;
 	}
@@ -253,7 +257,7 @@ public abstract class AbstractItest {
 		stubFor(post(urlEqualTo("/abac"))
 				.inScenario(SCENARIO_ABAC)
 				.whenScenarioStateIs(STATE_PEP2)
-				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
+				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
 						.withBodyFile("abac/abac-permit.json"))
 				.willSetStateTo(STATE_PEP2D));
@@ -467,7 +471,7 @@ public abstract class AbstractItest {
 		stubFor(post(urlEqualTo("/abac"))
 				.inScenario(SCENARIO_ABAC)
 				.whenScenarioStateIs(STATE_PEP2D)
-				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
+				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
 						.withBodyFile("abac/abac-deny.json"))
 				.willSetStateTo(STATE_PERMIT));
@@ -557,6 +561,32 @@ public abstract class AbstractItest {
 						.withBodyFile("abac/abac-deny.json")));
 	}
 
+	public void stubHappyPdl() {
+		stubFor(post("/pdl")
+				.willReturn(aResponse().withStatus(OK.value())
+						.withHeader(org.apache.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("pdl/hentPdlDataForIdent-happy.json")));
+	}
+
+	protected void stubHappyPsakWithBody() {
+		stubFor(post("/pensjonsakv1")
+				.willReturn(aResponse().withStatus(OK.value())
+						.withBodyFile("psak/psak-hentSakSammendragListe-happy.xml")));
+	}
+
+	protected void stubHappyPsakWithEmptyList() {
+		stubFor(post("/pensjonsakv1")
+				.willReturn(aResponse().withStatus(OK.value())
+						.withBodyFile("psak/psak-hentSakSammendragListe-happy-empty.xml")));
+	}
+
+	protected void stubHappySts() {
+		stubFor(post(urlEqualTo("/reststs"))
+				.willReturn(aResponse().withStatus(OK.value())
+						.withHeader(org.apache.http.HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+						.withBodyFile("sts/reststs-happy.json")));
+	}
+
 	protected void verifyabacDenyPep7SkipPep2Pep3Pep4Pep5Pep6AndHttpStatusCode(HttpStatus expectedHttpStatus, HttpStatus actualHttpStatus) {
 		verify(3, postRequestedFor(urlEqualTo("/abac")));
 		assertEquals(expectedHttpStatus, actualHttpStatus);
@@ -593,11 +623,6 @@ public abstract class AbstractItest {
 
 	protected void verifyabacDenyPep4SkipPep2OrPep3AndHttpStatusCode(HttpStatus expectedHttpStatus, HttpStatus actualHttpStatus) {
 		verify(4, postRequestedFor(urlEqualTo("/abac")));
-		assertEquals(expectedHttpStatus, actualHttpStatus);
-	}
-
-	protected void verifyabacDenyPep4SkipPep2Pep3AndHttpStatusCode(HttpStatus expectedHttpStatus, HttpStatus actualHttpStatus) {
-		verify(3, postRequestedFor(urlEqualTo("/abac")));
 		assertEquals(expectedHttpStatus, actualHttpStatus);
 	}
 
