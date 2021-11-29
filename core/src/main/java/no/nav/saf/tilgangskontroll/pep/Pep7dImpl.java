@@ -48,12 +48,10 @@ public class Pep7dImpl extends Pep<TilgangSak> {
 	@Override
 	public XacmlResponse verifyAbacPdpDecision(TilgangSak ressurs, SafRequestContext safRequestContext) {
 
-		if (ressurs != null) {
+		if (ressurs != null && ressurs.getArkivsaksystem() != null && ressurs.getArkivsaksnummer() != null) {
 			String tilgangKeyLocalCaching = KeyGeneratorLocalCaching.getKeyForPep7d(ressurs.getArkivsaksystem(), ressurs.getArkivsaksnummer());
 
 			if (FOR.equals(ressurs.getTema()) && FAGSAKSYSTEM_FORELDREPENGELOSNING.equals(ressurs.getFagsaksystem())) {
-				//TODO: MMA-5760 relevanteAktørerlisten kan validere true når den ikke skal det fordi
-				// kallet mot FP feiler og resulterer i en tom liste
 				if (aktoerlisteErNullEllerTomForFp(ressurs)) {
 					return XacmlResponse.permit();
 				}
@@ -79,6 +77,7 @@ public class Pep7dImpl extends Pep<TilgangSak> {
 
 				return safRequestContext.getRequestCache().getObject(tilgangKeyLocalCaching) ? XacmlResponse.permit() : XacmlResponse.deny();
 			}
+			safRequestContext.getRequestCache().putObject(tilgangKeyLocalCaching, true);
 		}
 		return XacmlResponse.permit();
 	}

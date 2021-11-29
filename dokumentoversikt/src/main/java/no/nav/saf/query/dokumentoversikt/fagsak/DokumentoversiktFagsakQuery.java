@@ -34,6 +34,7 @@ import static no.nav.saf.domain.DomainConstants.PEP3;
 import static no.nav.saf.domain.DomainConstants.PEP4;
 import static no.nav.saf.domain.DomainConstants.PEP5;
 import static no.nav.saf.domain.DomainConstants.PEP6D;
+import static no.nav.saf.domain.DomainConstants.PEP7D;
 import static no.nav.saf.domain.kode.Journalstatus.FEILREGISTRERT;
 import static no.nav.saf.util.MDCUtility.addMdcData;
 
@@ -54,18 +55,21 @@ class DokumentoversiktFagsakQuery {
 	private final Pep<TilgangJournalpost> pep4;
 	private final Pep<TilgangDokumentInfo> pep5;
 	private final Pep<TilgangDokumentvariant> pep6d;
+	private final Pep<TilgangSak> pep7d;
 
 	@Inject
-	public DokumentoversiktFagsakQuery(DokumentoversiktFagsakTilgangsmodellRepository dokumentoversiktFagsakTilgangsmodellRepository,
-									   TilgangsmodellRepository tilgangsmodellRepository,
-									   DokumentoversiktVisningsmodellRepository visningsmodellRepository,
-									   @Named(PEP1G) Pep<TilgangBruker> pep1g,
-									   @Named(PEP2) Pep<TilgangSak> pep2,
-									   @Named(PEP2D) Pep<TilgangSak> pep2d,
-									   @Named(PEP3) Pep<TilgangSak> pep3,
-									   @Named(PEP4) Pep<TilgangJournalpost> pep4,
-									   @Named(PEP5) Pep<TilgangDokumentInfo> pep5,
-									   @Named(PEP6D) Pep<TilgangDokumentvariant> pep6d) {
+	public DokumentoversiktFagsakQuery(
+			DokumentoversiktFagsakTilgangsmodellRepository dokumentoversiktFagsakTilgangsmodellRepository,
+			TilgangsmodellRepository tilgangsmodellRepository,
+			DokumentoversiktVisningsmodellRepository visningsmodellRepository,
+			@Named(PEP1G) Pep<TilgangBruker> pep1g,
+			@Named(PEP2) Pep<TilgangSak> pep2,
+			@Named(PEP2D) Pep<TilgangSak> pep2d,
+			@Named(PEP3) Pep<TilgangSak> pep3,
+			@Named(PEP4) Pep<TilgangJournalpost> pep4,
+			@Named(PEP5) Pep<TilgangDokumentInfo> pep5,
+			@Named(PEP6D) Pep<TilgangDokumentvariant> pep6d,
+			@Named(PEP7D) Pep<TilgangSak> pep7d) {
 		this.dokumentoversiktFagsakTilgangsmodellRepository = dokumentoversiktFagsakTilgangsmodellRepository;
 		this.tilgangsmodellRepository = tilgangsmodellRepository;
 		this.visningsmodellRepository = visningsmodellRepository;
@@ -76,6 +80,7 @@ class DokumentoversiktFagsakQuery {
 		this.pep4 = pep4;
 		this.pep5 = pep5;
 		this.pep6d = pep6d;
+		this.pep7d = pep7d;
 	}
 
 	@Monitor(value = "dok_request", extraTags = {"process", "dokumentOversikt", "requestType", "fagsak"}, histogram = true)
@@ -103,6 +108,7 @@ class DokumentoversiktFagsakQuery {
 				.filter(ts -> pep2.hasAccess(ts, safRequestContext))
 				.doOnNext(ts -> pep2d.hasAccess(ts, safRequestContext))
 				.filter(ts -> pep3.hasAccess(ts, safRequestContext))
+				.doOnNext(ts -> pep7d.hasAccess(ts, safRequestContext))
 				.sequential()
 				.toList()
 				.blockingGet();

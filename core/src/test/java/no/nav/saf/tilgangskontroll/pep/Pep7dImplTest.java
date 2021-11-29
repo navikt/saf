@@ -46,6 +46,17 @@ class Pep7dImplTest extends AbstractPepTest {
 	}
 
 	@Test
+	void shouldPermitWhenNoArkivsaksystemOrArkivsaknummer() { // Midlertidig journalført uten sakstilknytning
+		TilgangSak tilgangSak = TilgangSak.builder()
+				.arkivsaksystem(null)
+				.arkivsaksnummer(null)
+				.build();
+		boolean hasAccess = pep7d.hasAccess(tilgangSak, createSafRequestContext());
+		verify(abacService, never()).evaluate(any());
+		assertTrue(hasAccess);
+	}
+
+	@Test
 	void shouldDenyWhenAbacDeniesForFagsaksystemFS36AndTemaFor() {
 		when(abacService.evaluate(any(XacmlRequest.class))).thenReturn(new XacmlResponse(Decision.DENY, null, null, null));
 		boolean hasAccess = pep7d.hasAccess(createTilgangSakWithFpAktoerIdList(), createSafRequestContext());

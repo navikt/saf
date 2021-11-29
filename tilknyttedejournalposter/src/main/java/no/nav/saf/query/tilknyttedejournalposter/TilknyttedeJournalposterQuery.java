@@ -27,6 +27,7 @@ import static no.nav.saf.domain.DomainConstants.PEP3;
 import static no.nav.saf.domain.DomainConstants.PEP4;
 import static no.nav.saf.domain.DomainConstants.PEP5;
 import static no.nav.saf.domain.DomainConstants.PEP6D;
+import static no.nav.saf.domain.DomainConstants.PEP7D;
 import static no.nav.saf.util.MDCUtility.addMdcData;
 
 /**
@@ -43,17 +44,20 @@ public class TilknyttedeJournalposterQuery {
 	private final Pep<TilgangJournalpost> pep4;
 	private final Pep<TilgangDokumentInfo> pep5;
 	private final Pep<TilgangDokumentvariant> pep6d;
+	private final Pep<TilgangSak> pep7d;
 
 	@Inject
-	public TilknyttedeJournalposterQuery(TilknyttedeJournalposterTilgangRepository tilknyttedeJournalposterTilgangRepository,
-										 JournalpostDtoMapper journalpostDtoMapper,
-										 @Named(PEP1G) Pep<TilgangBruker> pep1g,
-										 @Named(PEP2) Pep<TilgangSak> pep2,
-										 @Named(PEP2D) Pep<TilgangSak> pep2d,
-										 @Named(PEP3) Pep<TilgangSak> pep3,
-										 @Named(PEP4) Pep<TilgangJournalpost> pep4,
-										 @Named(PEP5) Pep<TilgangDokumentInfo> pep5,
-										 @Named(PEP6D) Pep<TilgangDokumentvariant> pep6d) {
+	public TilknyttedeJournalposterQuery(
+			TilknyttedeJournalposterTilgangRepository tilknyttedeJournalposterTilgangRepository,
+			JournalpostDtoMapper journalpostDtoMapper,
+			@Named(PEP1G) Pep<TilgangBruker> pep1g,
+			@Named(PEP2) Pep<TilgangSak> pep2,
+			@Named(PEP2D) Pep<TilgangSak> pep2d,
+			@Named(PEP3) Pep<TilgangSak> pep3,
+			@Named(PEP4) Pep<TilgangJournalpost> pep4,
+			@Named(PEP5) Pep<TilgangDokumentInfo> pep5,
+			@Named(PEP6D) Pep<TilgangDokumentvariant> pep6d,
+			@Named(PEP7D) Pep<TilgangSak> pep7d) {
 		this.tilknyttedeJournalposterTilgangRepository = tilknyttedeJournalposterTilgangRepository;
 		this.journalpostDtoMapper = journalpostDtoMapper;
 		this.pep1g = pep1g;
@@ -63,6 +67,7 @@ public class TilknyttedeJournalposterQuery {
 		this.pep4 = pep4;
 		this.pep5 = pep5;
 		this.pep6d = pep6d;
+		this.pep7d = pep7d;
 	}
 
 	public List<Journalpost> hentTilknyttedeJournalposter(String dokumentInfoId, Tilknytning tilknytning, SafRequestContext safRequestContext) {
@@ -87,6 +92,7 @@ public class TilknyttedeJournalposterQuery {
 				.filter(tilgangSak -> pep2.hasAccess(tilgangSak, safRequestContext))
 				.peek(tilgangSak -> pep2d.hasAccess(tilgangSak, safRequestContext))
 				.filter(tilgangSak -> pep3.hasAccess(tilgangSak, safRequestContext))
+				.peek(tilgangSak -> pep7d.hasAccess(tilgangSak, safRequestContext))
 				.collect(Collectors.toSet());
 
 		List<TilgangJournalpost> filteredTilgangJournalposter = tilknyttedeJournalposterTilgangRepository.tilgangJournalposter(filteredTilgangSaker, datagrunnlag)
