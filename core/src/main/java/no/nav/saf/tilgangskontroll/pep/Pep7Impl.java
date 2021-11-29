@@ -64,7 +64,7 @@ public class Pep7Impl extends Pep<TilgangSak> {
 	}
 
 	private boolean checkIfAktoerListIsEmptyForFp(TilgangSak ressurs) {
-		if (ressurs.getFpAktoerIdList().isEmpty()) {
+		if (ressurs.getFpAktoerIdList() != null && ressurs.getFpAktoerIdList().isEmpty()) {
 			log.info("Pep7 har ingen relevante parter. Tilgang gis.");
 			return true;
 		}
@@ -72,7 +72,7 @@ public class Pep7Impl extends Pep<TilgangSak> {
 	}
 
 	private boolean checkIfAktoerListIsEmptyForK9(TilgangSak ressurs) {
-		if (ressurs.getK9AktoerIdList().isEmpty()) {
+		if (ressurs.getK9AktoerIdList() != null && ressurs.getK9AktoerIdList().isEmpty()) {
 			log.info("Pep7 har ingen relevante parter. Tilgang gis.");
 			return true;
 		}
