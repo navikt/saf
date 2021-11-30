@@ -115,6 +115,21 @@ class Pep7ImplTest extends AbstractPepTest {
 		assertThat(capturedRequest.getResources(), hasItem(new XacmlAttribute(RESOURCE_FELLES_PERSON_AKTOERID_RESOURCE, FNR2)));
 	}
 
+
+	@Test
+	void shouldDenyWhenK9sEmpty() {
+		boolean hasAccess = pep7.hasAccess(createTilgangSakWithoutK9(), createSafRequestContext());
+		assertFalse(hasAccess);
+		verify(abacService, never()).evaluate(any());
+	}
+
+	@Test
+	void shouldDenyWhenRelevanteFpAktoerIdIsEmpty() {
+		boolean hasAccess = pep7.hasAccess(createTilgangSakWithoutFpAktoerIdList(), createSafRequestContext());
+		assertFalse(hasAccess);
+		verify(abacService, never()).evaluate(any());
+	}
+
 	private TilgangSak createTilgangSakWithFpAktoerIdList() {
 		return TilgangSak.builder()
 				.fagsaksystem(FAGSAKSYSTEM_FORELDREPENGELOSNING)
@@ -123,11 +138,25 @@ class Pep7ImplTest extends AbstractPepTest {
 				.build();
 	}
 
+	private TilgangSak createTilgangSakWithoutFpAktoerIdList() {
+		return TilgangSak.builder()
+				.fagsaksystem(FAGSAKSYSTEM_FORELDREPENGELOSNING)
+				.tema(FOR)
+				.build();
+	}
+
 	private TilgangSak createTilgangSakWithK9AktoerIdList(Tema tema) {
 		return TilgangSak.builder()
 				.fagsaksystem(FAGSAKSYSTEM_K9)
 				.tema(tema)
 				.k9AktoerIdList(asList(FNR, FNR2))
+				.build();
+	}
+
+	private TilgangSak createTilgangSakWithoutK9() {
+		return TilgangSak.builder()
+				.fagsaksystem(FAGSAKSYSTEM_K9)
+				.tema(FRI)
 				.build();
 	}
 }

@@ -28,9 +28,6 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-/**
- * @author Sigurd Midttun, Visma Consulting.
- */
 class Pep3ImplTest extends AbstractPepTest {
 
 	@InjectMocks
@@ -100,6 +97,21 @@ class Pep3ImplTest extends AbstractPepTest {
 				createSafRequestContext());
 		verify(abacService).evaluate(any());
 		assertFalse(hasAccess);
+	}
+
+	@Test
+	void shouldDenyWhenRelevanteTredjeparterIsEmpty() {
+		boolean hasAccess = pep3.hasAccess(createTilgangSakBuilderWithTemaBid().build(),
+				createSafRequestContext());
+		verify(abacService, never()).evaluate(any());
+		assertFalse(hasAccess);
+	}
+
+	private TilgangSak.TilgangSakBuilder createTilgangSakBuilderWithTemaBid() {
+		return TilgangSak.builder()
+				.fagsaksystem(FAGSAKSYSTEM_BISYS)
+				.tema(TEMA_BID)
+				.relevanteTredjeparter(null);
 	}
 
 	private TilgangSak.TilgangSakBuilder createTilgangSakBuilderWithTemaBidAndRelevanteTredjeparter() {
