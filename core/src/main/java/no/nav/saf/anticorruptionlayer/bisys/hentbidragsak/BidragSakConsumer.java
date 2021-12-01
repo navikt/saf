@@ -1,5 +1,6 @@
 package no.nav.saf.anticorruptionlayer.bisys.hentbidragsak;
 
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.config.ServiceuserAlias;
 import no.nav.saf.exceptions.SafFunctionalException;
@@ -17,6 +18,7 @@ import static no.nav.saf.cache.LokalCacheConfig.BIDRAG_SAK_BY_SAKID_CACHE;
 @Slf4j
 @Component
 public class BidragSakConsumer {
+	private static final String BIDRAG_INSTANCE = "bidragsak";
 
 	private final RestTemplate restTemplate;
 	private final String bidragSakApiUrl;
@@ -32,6 +34,7 @@ public class BidragSakConsumer {
 	}
 
 	//Testing av bidrag-sak fungerer kun med passord til servicebruker i prod. Må derfor testes lokalt med hardkoding av brukernavn/passord.
+	@CircuitBreaker(name = BIDRAG_INSTANCE)
 	@Cacheable(cacheNames = BIDRAG_SAK_BY_SAKID_CACHE, key = "#sakId")
 	public BidragSakTo hentBidragSak(final String sakId) {
 		log.info("Henter relevante parter fra Bisys for sak={}", sakId);
