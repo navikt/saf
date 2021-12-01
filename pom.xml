@@ -27,12 +27,10 @@
 		<java.version>11</java.version>
 		<sonar.exclusions>no.nav.saf.graphiql/**/*</sonar.exclusions>
 		<javax.inject.version>1</javax.inject.version>
-		<jakarta.jaxws-api.version>2.3.3</jakarta.jaxws-api.version>
 		<pensjon-sak-v1-tjenestespesifikasjon.version>1.2019.09.25-00.21-49b69f0625e0
 		</pensjon-sak-v1-tjenestespesifikasjon.version>
 		<cxf.version>3.4.4</cxf.version>
 		<graphql-java.version>17.3</graphql-java.version>
-		<rxjava.version>2.2.21</rxjava.version>
 		<resilience4j.version>1.7.1</resilience4j.version>
 		<java-jwt.version>3.18.1</java-jwt.version>
 		<token-support.version>1.3.8</token-support.version>
@@ -40,12 +38,14 @@
 		<logback-syslog4j.version>1.0.0</logback-syslog4j.version>
 		<io.springfox.version>3.0.0</io.springfox.version>
 		<commons-text.version>1.9</commons-text.version>
+
 		<!-- Oppdaterer versjon inkludert som transitiv avhengighet gjennom cxf-rt-ws-security -->
 		<bcprov-jdk15on.version>1.69</bcprov-jdk15on.version>
+
 		<!-- test -->
 		<spring-cloud-starter-contract-stub-runner.version>3.0.3</spring-cloud-starter-contract-stub-runner.version>
-		<awaitility.version>4.1.0</awaitility.version>
 		<okhttp3.version>4.9.1</okhttp3.version>
+
 		<!-- plugins -->
 		<maven-toolchains-plugin.version>3.0.0</maven-toolchains-plugin.version>
 	</properties>
@@ -88,11 +88,6 @@
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>io.reactivex.rxjava2</groupId>
-				<artifactId>rxjava</artifactId>
-				<version>${rxjava.version}</version>
-			</dependency>
-			<dependency>
 				<groupId>io.github.resilience4j</groupId>
 				<artifactId>resilience4j-spring-boot2</artifactId>
 				<version>${resilience4j.version}</version>
@@ -106,11 +101,6 @@
 				<groupId>javax.inject</groupId>
 				<artifactId>javax.inject</artifactId>
 				<version>${javax.inject.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>jakarta.xml.ws</groupId>
-				<artifactId>jakarta.xml.ws-api</artifactId>
-				<version>${jakarta.jaxws-api.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>no.nav.tjenestespesifikasjoner</groupId>
@@ -191,12 +181,6 @@
 				<version>${okhttp3.version}</version>
 				<scope>test</scope>
 			</dependency>
-			<dependency>
-				<groupId>org.awaitility</groupId>
-				<artifactId>awaitility</artifactId>
-				<version>${awaitility.version}</version>
-				<scope>test</scope>
-			</dependency>
 		</dependencies>
 	</dependencyManagement>
 	<dependencies>
@@ -216,6 +200,11 @@
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-junit-jupiter</artifactId>
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<scope>provided</scope>
 		</dependency>
 	</dependencies>
 

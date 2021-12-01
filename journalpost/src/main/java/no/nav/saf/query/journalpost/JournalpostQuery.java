@@ -25,6 +25,7 @@ import static no.nav.saf.domain.DomainConstants.PEP3;
 import static no.nav.saf.domain.DomainConstants.PEP4;
 import static no.nav.saf.domain.DomainConstants.PEP5;
 import static no.nav.saf.domain.DomainConstants.PEP6D;
+import static no.nav.saf.domain.DomainConstants.PEP7D;
 import static no.nav.saf.domain.DomainConstants.RJOARK902_JOURNALPOST_DTO;
 import static no.nav.saf.domain.DomainConstants.TILGANG_BRUKER;
 import static no.nav.saf.domain.kode.Journalstatus.MOTTATT;
@@ -50,16 +51,19 @@ class JournalpostQuery {
 	private final Pep<TilgangJournalpost> pep4;
 	private final Pep<TilgangDokumentInfo> pep5;
 	private final Pep<TilgangDokumentvariant> pep6d;
+	private final Pep<TilgangSak> pep7d;
 
-	public JournalpostQuery(JournalpostTilgangRepository journalpostTilgangRepository,
-							JournalpostDtoMapper journalpostDtoMapper,
-							@Named(PEP1G) Pep<TilgangBruker> pep1,
-							@Named(PEP2) Pep<TilgangSak> pep2,
-							@Named(PEP2D) Pep<TilgangSak> pep2d,
-							@Named(PEP3) Pep<TilgangSak> pep3,
-							@Named(PEP4) Pep<TilgangJournalpost> pep4,
-							@Named(PEP5) Pep<TilgangDokumentInfo> pep5,
-							@Named(PEP6D) Pep<TilgangDokumentvariant> pep6d) {
+	public JournalpostQuery(
+			JournalpostTilgangRepository journalpostTilgangRepository,
+			JournalpostDtoMapper journalpostDtoMapper,
+			@Named(PEP1G) Pep<TilgangBruker> pep1,
+			@Named(PEP2) Pep<TilgangSak> pep2,
+			@Named(PEP2D) Pep<TilgangSak> pep2d,
+			@Named(PEP3) Pep<TilgangSak> pep3,
+			@Named(PEP4) Pep<TilgangJournalpost> pep4,
+			@Named(PEP5) Pep<TilgangDokumentInfo> pep5,
+			@Named(PEP6D) Pep<TilgangDokumentvariant> pep6d,
+			@Named(PEP7D) Pep<TilgangSak> pep7d) {
 		this.journalpostTilgangRepository = journalpostTilgangRepository;
 		this.journalpostDtoMapper = journalpostDtoMapper;
 		this.pep1 = pep1;
@@ -69,6 +73,7 @@ class JournalpostQuery {
 		this.pep4 = pep4;
 		this.pep5 = pep5;
 		this.pep6d = pep6d;
+		this.pep7d = pep7d;
 	}
 
 	public Journalpost hentJournalpost(final String journalpostId,
@@ -96,7 +101,8 @@ class JournalpostQuery {
 
 			final TilgangJournalpost tilgangJournalpost = journalpostTilgangRepository.findTilgangJournalpostFromSafRequestContext(safRequestContext, tilgangSak);
 			if (tilgangJournalpost.getJournalstatus() != MOTTATT) {
-                pep2d.hasAccess(tilgangSak, safRequestContext);
+				pep2d.hasAccess(tilgangSak, safRequestContext);
+				pep7d.hasAccess(tilgangSak, safRequestContext);
 			}
 
 			boolean pep3Access = pep3.hasAccess(tilgangSak, safRequestContext);

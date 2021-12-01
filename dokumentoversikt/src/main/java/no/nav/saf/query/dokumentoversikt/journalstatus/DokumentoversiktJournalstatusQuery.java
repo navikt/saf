@@ -97,9 +97,9 @@ class DokumentoversiktJournalstatusQuery {
 		dokumentoversiktJournalstatusTilgangsmodellRepository.mapOgCacheArkivsaker(filteredTilgangJournalpostList, safRequestContext);
 
 		List<Journalpost> journalposter = visningsmodellRepository.findJournalposter(filteredTilgangJournalpostList.stream()
-				.map(TilgangJournalpost::getJournalpostId)
-				.sorted(Comparator.reverseOrder())
-				.collect(Collectors.toList()), safRequestContext)
+						.map(TilgangJournalpost::getJournalpostId)
+						.sorted(Comparator.reverseOrder())
+						.collect(Collectors.toList()), safRequestContext)
 				.stream()
 				.filter(j -> dokumentoversiktJournalstatusArguments.getFilters().getTema().contains(j.getTema()))
 				.filter(j -> filterFeilregistrerte(dokumentoversiktJournalstatusArguments, j))

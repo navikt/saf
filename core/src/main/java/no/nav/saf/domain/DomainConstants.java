@@ -30,7 +30,7 @@ public final class DomainConstants {
 	public static final String PEP4 = "pep4";
 	public static final String PEP5 = "pep5";
 	public static final String PEP6D = "pep6d";
-	public static final String PEP7 = "pep7";
+	public static final String PEP7D = "pep7d";
 
 	private DomainConstants() {
 	}

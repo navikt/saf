@@ -27,7 +27,7 @@ import static no.nav.saf.domain.DomainConstants.PEP3;
 import static no.nav.saf.domain.DomainConstants.PEP4;
 import static no.nav.saf.domain.DomainConstants.PEP5;
 import static no.nav.saf.domain.DomainConstants.PEP6D;
-import static no.nav.saf.domain.DomainConstants.PEP7;
+import static no.nav.saf.domain.DomainConstants.PEP7D;
 import static no.nav.saf.tilgangskontroll.pep.DenyReasons.PEP1G_DENY_REASON;
 import static no.nav.saf.tilgangskontroll.pep.DenyReasons.PEP2D_DENY_REASON;
 import static no.nav.saf.tilgangskontroll.pep.DenyReasons.PEP2_DENY_REASON;
@@ -35,7 +35,7 @@ import static no.nav.saf.tilgangskontroll.pep.DenyReasons.PEP3_DENY_REASON;
 import static no.nav.saf.tilgangskontroll.pep.DenyReasons.PEP4_DENY_REASON;
 import static no.nav.saf.tilgangskontroll.pep.DenyReasons.PEP5_DENY_REASON;
 import static no.nav.saf.tilgangskontroll.pep.DenyReasons.PEP6D_DENY_REASON;
-import static no.nav.saf.tilgangskontroll.pep.DenyReasons.PEP7_DENY_REASON;
+import static no.nav.saf.tilgangskontroll.pep.DenyReasons.PEP7D_DENY_REASON;
 
 @Component
 public class HentDokumentDomainCoordinatorImpl implements HentDokumentDomainCoordinator {
@@ -49,7 +49,7 @@ public class HentDokumentDomainCoordinatorImpl implements HentDokumentDomainCoor
 	private final Pep<TilgangJournalpost> pep4;
 	private final Pep<TilgangDokumentInfo> pep5;
 	private final Pep<TilgangDokumentvariant> pep6d;
-	private final Pep<TilgangSak> pep7;
+	private final Pep<TilgangSak> pep7d;
 	private final HentDokumentSporbarhetslogger hentDokumentSporbarhetslogger;
 
 	@Inject
@@ -62,7 +62,7 @@ public class HentDokumentDomainCoordinatorImpl implements HentDokumentDomainCoor
 											 @Named(PEP4) Pep<TilgangJournalpost> pep4,
 											 @Named(PEP5) Pep<TilgangDokumentInfo> pep5,
 											 @Named(PEP6D) Pep<TilgangDokumentvariant> pep6d,
-											 @Named(PEP7) Pep<TilgangSak> pep7) {
+											 @Named(PEP7D) Pep<TilgangSak> pep7d) {
 		this.dokumentRepository = dokumentRepository;
 		this.tilgangsmodellHentdokumentRepository = tilgangsmodellHentdokumentRepository;
 		this.pep1g = pep1g;
@@ -72,7 +72,7 @@ public class HentDokumentDomainCoordinatorImpl implements HentDokumentDomainCoor
 		this.pep4 = pep4;
 		this.pep5 = pep5;
 		this.pep6d = pep6d;
-		this.pep7 = pep7;
+		this.pep7d = pep7d;
 		this.hentDokumentSporbarhetslogger = new HentDokumentSporbarhetslogger();
 	}
 
@@ -135,9 +135,9 @@ public class HentDokumentDomainCoordinatorImpl implements HentDokumentDomainCoor
 			throw new HentdokumentTilgangskontrollException(PEP6D_DENY_REASON, pep6dResponse.getDenyReasonSporing());
 		}
 
-		AbacAnswer pep7Response = pep7.hasAccessWithAnswer(tilgangSak, safRequestContext);
-		if (pep7Response.isDeny()) {
-			throw new HentdokumentTilgangskontrollException(PEP7_DENY_REASON, pep7Response.getDenyReasonSporing());
+		AbacAnswer pep7dResponse = pep7d.hasAccessWithAnswer(tilgangSak, safRequestContext);
+		if (pep7dResponse.isDeny()) {
+			throw new HentdokumentTilgangskontrollException(PEP7D_DENY_REASON, pep7dResponse.getDenyReasonSporing());
 		}
 	}
 }
