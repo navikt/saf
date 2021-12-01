@@ -213,7 +213,7 @@ class HentDokumentIT extends AbstractItest {
 	}
 
 	@Test
-	void hentDokumentHentSakBySakIdNoTechinalErrorForGsak() { //TODO test fails
+	void hentDokumentHentSakBySakIdNoTechinalErrorForGsak() {
 		abacPermit();
 		stubHappyBidragWithId("765432");
 		this.stubHappyHentdokument();
