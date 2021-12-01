@@ -173,6 +173,8 @@ class HentDokumentIT extends AbstractItest {
 		byte[] decodeFailProvokerFile = "whitespace breaks base64 decode".getBytes();
 
 		abacPermit();
+		stubHappyBidragWithId("654321");
+		this.stubHappyFpsakResponse();
 		stubFor(get("/hentjournalsakinfo/hentdokument/" + DOKUMENT_ID + "/" + VARIANTFORMAT)
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_PDF_VALUE)
@@ -187,6 +189,8 @@ class HentDokumentIT extends AbstractItest {
 	@Test
 	void hentDokumentJoarkTechnicalFail() {
 		abacPermit();
+		stubHappyBidragWithId("654321");
+		this.stubHappyFpsakResponse();
 		stubFor(get("/hentjournalsakinfo/hentdokument/" + DOKUMENT_ID + "/" + VARIANTFORMAT)
 				.willReturn(aResponse().withStatus(INTERNAL_SERVER_ERROR.value())));
 
@@ -209,10 +213,13 @@ class HentDokumentIT extends AbstractItest {
 	}
 
 	@Test
-	void hentDokumentHentSakBySakIdNoTechinalErrorForGsak() {
+	void hentDokumentHentSakBySakIdNoTechinalErrorForGsak() { //TODO test fails
 		abacPermit();
+		stubHappyBidragWithId("765432");
 		this.stubHappyHentdokument();
 		this.stubHappyTilgangjournalpostWithBody("hentjournalsakinfo/henttilgangjournalpostTemaBid_gsak-happy.json");
+		this.stubHappyFpsakResponse();
+		this.stubHappyk9Response();
 
 		ResponseEntity<String> responseEntity = callHentDokument();
 		assertEquals(OK, responseEntity.getStatusCode());
@@ -300,13 +307,12 @@ class HentDokumentIT extends AbstractItest {
 	@Test
 	void shouldGetUnauthorizedFromPep2d() {
 		abacDenyPep2d();
-		this.stubHappyBidrag();
+		stubHappyBidragWithId("765432");
+		this.stubHappyHentdokument();
+		this.stubHappyTilgangjournalpostWithBody("hentjournalsakinfo/henttilgangjournalpostTemaBid_gsak-happy.json");
 		stubFor(get("/gsak/10672720").willReturn(aResponse().withStatus(OK.value())
 				.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 				.withBodyFile("hentsak/hentsakbysaksid-happy.json")));
-
-		this.stubHappyHentdokument();
-		this.stubHappyTilgangjournalpostWithBody("hentjournalsakinfo/henttilgangjournalpostTemaBid_gsak-happy.json");
 
 		ResponseEntity<String> responseEntity = callHentDokument();
 		verifyabacDenyPep2dAndHttpStatusCode(false, FORBIDDEN, responseEntity.getStatusCode());
@@ -315,12 +321,12 @@ class HentDokumentIT extends AbstractItest {
 	@Test
 	void shouldGetUnauthorizedFromPep3() {
 		abacDenyPep3SkipPep2dAndPep2();
-		this.stubHappyBidrag();
+		stubHappyBidragWithId("765432");
+		this.stubHappyHentdokument();
+		this.stubHappyTilgangjournalpostWithBody("hentjournalsakinfo/henttilgangjournalpostTemaBid_gsak-happy.json");
 		stubFor(get("/gsak/55555555").willReturn(aResponse().withStatus(OK.value())
 				.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 				.withBodyFile("hentsak/hentsakbysaksidTemaBid-happy.json")));
-		this.stubHappyHentdokument();
-		this.stubHappyTilgangjournalpostWithBody("hentjournalsakinfo/henttilgangjournalpostTemaBid_gsak-happy.json");
 
 		ResponseEntity<String> responseEntity = callHentDokument();
 		verifyabacDenyPep3SkipPep2AndPep2dAndHttpStatusCode(FORBIDDEN, responseEntity.getStatusCode());
@@ -329,7 +335,7 @@ class HentDokumentIT extends AbstractItest {
 	@Test
 	void shouldGetUnauthorizedFromPep4() {
 		abacDenyPep4SkipPep2OrPep3();
-		this.stubHappyBidrag();
+		stubHappyBidragWithId("765432");
 		this.stubHappyHentdokument();
 		this.stubHappyTilgangjournalpostWithBody("hentjournalsakinfo/henttilgangjournalpostTemaBidWithSkjerming_gsak-happy.json");
 
@@ -340,8 +346,8 @@ class HentDokumentIT extends AbstractItest {
 	@Test
 	void shouldGetUnauthorizedFromPep5() {
 		abacDenyPep5SkipPep2OrPep3();
+		stubHappyBidragWithId("765432");
 		this.stubHappyHentdokument();
-		this.stubHappyBidrag();
 		this.stubHappyTilgangjournalpostWithBody("hentjournalsakinfo/henttilgangjournalpostTemaBidWithSkjerming_gsak-happy.json");
 
 		ResponseEntity<String> responseEntity = callHentDokument();
@@ -351,8 +357,8 @@ class HentDokumentIT extends AbstractItest {
 	@Test
 	void shouldGetUnauthorizedFromPep6d() {
 		abacDenyPep6dSkipPep3OrPep2();
+		stubHappyBidragWithId("765432");
 		this.stubHappyHentdokument();
-		this.stubHappyBidrag();
 		this.stubHappyTilgangjournalpostWithBody("hentjournalsakinfo/henttilgangjournalpostTemaBidWithSkjerming_gsak-happy.json");
 
 		ResponseEntity<String> responseEntity = callHentDokument();
@@ -428,13 +434,6 @@ class HentDokumentIT extends AbstractItest {
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile(body)));
-	}
-
-	private void stubHappyBidrag(){
-		stubFor(get("/bidrag/765432").willReturn(aResponse()
-				.withStatus(OK.value())
-				.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-				.withBodyFile("bidrag/bidragsak-happy.json")));
 	}
 
 	private void assertOkArkivResponse(ResponseEntity<String> responseEntity) {

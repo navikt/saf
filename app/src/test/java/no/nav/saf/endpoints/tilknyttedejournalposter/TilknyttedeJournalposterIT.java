@@ -144,12 +144,9 @@ class TilknyttedeJournalposterIT extends AbstractItest {
 	void shouldReturnNoJournalpostsWhenDenyOnPep3() throws Exception {
 		abacDenyPep3SkipPep2();
 		stubHappyPdl();
+		stubHappyBidragWithId(BIDRAG_SAK_ID);
 		this.stubHappyTilknyttedejournalposterWithBody("hentjournalsakinfo/tilknyttedejournalposter_bid-happy.json");
 		this.stubHappyGsakWithBody("gsak/gsak-sakBySaksId-happy.json");
-		stubFor(get("/bidrag/" + BIDRAG_SAK_ID)
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("bidrag/bidragsak-happy.json")));
 
 		List<Journalpost> tilknyttedeJournalposter = parseJournalpost(tilknyttedeJournalposterGjenbrukQuery());
 		assertThat(tilknyttedeJournalposter, hasSize(0));

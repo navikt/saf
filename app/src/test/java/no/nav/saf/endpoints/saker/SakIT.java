@@ -36,7 +36,6 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.springframework.http.HttpMethod.POST;
 import static org.springframework.http.HttpStatus.OK;
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 class SakIT extends AbstractItest {
 
@@ -51,6 +50,7 @@ class SakIT extends AbstractItest {
 	void shouldRemoveSakDuplicates() {
 		abacPermit();
 		stubHappyPdl();
+		stubHappyBidragWithId("654321");
 		this.stubHappyGsakWithBody("gsak/gsak-sakerBySaksId-happy-duplicates.json");
 		this.stubHappyPsak();
 
@@ -75,6 +75,7 @@ class SakIT extends AbstractItest {
 		abacPermit();
 		stubHappyPdl();
 		stubHappyPsakWithBody();
+		stubHappyBidragWithId("654321");
 		this.stubHappyGsakWithBody("gsak/gsak-sakerBySaksId-happy.json");
 
 		await().atMost(Duration.ofSeconds(5)).untilAsserted(() -> {
@@ -120,10 +121,8 @@ class SakIT extends AbstractItest {
 		abacDenyPep3SkipPep2dAndPep2();
 		stubHappyPdl();
 		stubHappyPsakWithEmptyList();
+		stubHappyBidragWithId("654321");
 		this.stubHappyGsakWithBody("gsak/gsak-sakerBySaksId-happy.json");
-		stubFor(get("/bidrag/654321").willReturn(aResponse().withStatus(OK.value())
-				.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-				.withBodyFile("bidrag/bidragsak-happy.json")));
 
 		ResponseEntity<LinkedHashMap> responseEntity = callSakerWithAktoerId();
 		List<Sak> saker = parseSaker(responseEntity);

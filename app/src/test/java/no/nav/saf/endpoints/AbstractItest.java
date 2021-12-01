@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Map;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
@@ -434,6 +435,12 @@ public abstract class AbstractItest {
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("abac/abac-deny.json"))
 				.willSetStateTo(STATE_PERMIT));
+		stubFor(post(urlEqualTo("/abac"))
+				.inScenario(SCENARIO_ABAC)
+				.whenScenarioStateIs(STATE_PERMIT)
+				.willReturn(aResponse().withStatus(OK.value())
+						.withHeader(CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+						.withBodyFile("abac/abac-permit.json")));
 	}
 
 	protected void abacDenyPep3SkipPep2dAndPep2() {
@@ -585,6 +592,13 @@ public abstract class AbstractItest {
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(org.apache.http.HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
 						.withBodyFile("sts/reststs-happy.json")));
+	}
+
+	protected void stubHappyBidragWithId(String id){
+		stubFor(get("/bidrag/" + id).willReturn(aResponse()
+				.withStatus(OK.value())
+				.withHeader(org.apache.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
+				.withBodyFile("bidrag/bidragsak-happy.json")));
 	}
 
 	protected void verifyabacDenyPep7SkipPep2Pep3Pep4Pep5Pep6AndHttpStatusCode(HttpStatus expectedHttpStatus, HttpStatus actualHttpStatus) {

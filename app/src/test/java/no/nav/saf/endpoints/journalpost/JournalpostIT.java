@@ -186,10 +186,8 @@ class JournalpostIT extends AbstractItest {
 	@Test
 	void shouldReturnNullJournalpostWhenDenyOnPep3() {
 		abacDenyPep3SkipPep2();
+		stubHappyBidragWithId("abc123");
 		this.stubHappyHentjournalpostWithBody("hentjournalsakinfo/hentjournalpost_bid-happy.json");
-		stubFor(get("/bidrag/abc123").willReturn(aResponse().withStatus(OK.value())
-				.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-				.withBodyFile("bidrag/bidragsak-happy.json")));
 
 		GraphQLResponse graphQLResponse = journalpostQuery();
 		assertErrorWithCode(graphQLResponse, FORBIDDEN.getText());
