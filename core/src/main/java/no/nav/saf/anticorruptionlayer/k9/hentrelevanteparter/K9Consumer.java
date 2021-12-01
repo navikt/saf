@@ -1,11 +1,11 @@
 package no.nav.saf.anticorruptionlayer.k9.hentrelevanteparter;
 
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import no.nav.saf.anticorruptionlayer.sts.StsRestConsumer;
 import no.nav.saf.exceptions.SafFunctionalException;
 import no.nav.saf.exceptions.SafTechnicalException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -27,6 +27,8 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 
 @Component
 public class K9Consumer {
+	private static final String K9_INSTANCE = "k9sak";
+
 	private final String k9Url;
 	private final RestTemplate restTemplate;
 	private final StsRestConsumer stsRestConsumer;
@@ -42,6 +44,8 @@ public class K9Consumer {
 		this.stsRestConsumer = stsRestConsumer;
 	}
 
+
+	@CircuitBreaker(name = K9_INSTANCE)
 	public List<String> hentAktoerForSak(final String sakId) {
 		HttpHeaders headers = createHeaders();
 		ResponseEntity<List<String>> response = restTemplate.exchange(
