@@ -17,7 +17,7 @@ import java.util.Map;
 @Value
 @EqualsAndHashCode(callSuper = true)
 public class DokumentoversiktBrukerArguments extends AbstractDokumentoversiktArguments {
-	private final BrukerIdInput brukerIdInput;
+	BrukerIdInput brukerIdInput;
 
 	private DokumentoversiktBrukerArguments(BrukerIdInput brukerIdInput,
 											DokumentoversiktFilters filters,

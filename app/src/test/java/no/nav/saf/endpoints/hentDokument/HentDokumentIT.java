@@ -367,7 +367,7 @@ class HentDokumentIT extends AbstractItest {
 
 	@Test
 	void shouldGetUnauthorizedFromPep7ForFp() {
-		abacDenyPep7skipPep2Pep3Pep4Pep5Pep6();
+		abacDenyPep7dSkipPep2Pep3Pep4Pep5Pep6d();
 		stubFor(get("/fpsak?saksnummer=" + SAK_ID).willReturn(aResponse()
 				.withStatus(OK.value())
 				.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
@@ -376,29 +376,29 @@ class HentDokumentIT extends AbstractItest {
 		this.stubHappyk9Response();
 
 		ResponseEntity<String> responseEntity = callHentDokument();
-		verifyabacDenyPep7SkipPep2Pep3Pep4Pep5Pep6AndHttpStatusCode(FORBIDDEN, responseEntity.getStatusCode());
+		verifyabacDenyPep7dSkipPep2Pep3Pep4Pep5Pep6dAndHttpStatusCode(FORBIDDEN, responseEntity.getStatusCode());
 	}
 
 	@Test
 	void shouldGetUnauthorizedFromPep7ForK9TemaFri() {
-		abacDenyPep7skipPep2Pep3Pep4Pep5Pep6();
+		abacDenyPep7dSkipPep2Pep3Pep4Pep5Pep6d();
 		this.stubHappyHentdokument();
 		this.stubHappyk9Response();
 		this.stubHappyTilgangjournalpostWithBody("hentjournalsakinfo/henttilgangjournalpostTemaFri_gsak-happy.json");
 
 		ResponseEntity<String> responseEntity = callHentDokument();
-		verifyabacDenyPep7SkipPep2Pep3Pep4Pep5Pep6AndHttpStatusCode(FORBIDDEN, responseEntity.getStatusCode());
+		verifyabacDenyPep7dSkipPep2Pep3Pep4Pep5Pep6dAndHttpStatusCode(FORBIDDEN, responseEntity.getStatusCode());
 	}
 
 	@Test
 	void shouldGetUnauthorizedFromPep7ForK9TemaOms() {
-		abacDenyPep7skipPep2Pep3Pep4Pep5Pep6();
+		abacDenyPep7dSkipPep2Pep3Pep4Pep5Pep6d();
 		this.stubHappyHentdokument();
 		this.stubHappyTilgangjournalpostWithBody("hentjournalsakinfo/henttilgangjournalpostTemaOms_gsak-happy.json");
 		this.stubHappyk9Response();
 
 		ResponseEntity<String> responseEntity = callHentDokument();
-		verifyabacDenyPep7SkipPep2Pep3Pep4Pep5Pep6AndHttpStatusCode(FORBIDDEN, responseEntity.getStatusCode());
+		verifyabacDenyPep7dSkipPep2Pep3Pep4Pep5Pep6dAndHttpStatusCode(FORBIDDEN, responseEntity.getStatusCode());
 	}
 
 	private void stubHappyPsak() {

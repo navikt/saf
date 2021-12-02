@@ -1,5 +1,6 @@
 package no.nav.saf.anticorruptionlayer.fpsak.hentrelevanteparter;
 
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import no.nav.saf.anticorruptionlayer.sts.StsRestConsumer;
 import no.nav.saf.exceptions.SafFunctionalException;
 import no.nav.saf.exceptions.SafTechnicalException;
@@ -26,6 +27,8 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 
 @Component
 public class FpsakConsumer {
+	private static final String FPSAK_INSTANCE = "fpsak";
+
 	private final String fpsakUrl;
 	private final RestTemplate restTemplate;
 	private final StsRestConsumer stsRestConsumer;
@@ -43,6 +46,7 @@ public class FpsakConsumer {
 		this.stsRestConsumer = stsRestConsumer;
 	}
 
+	@CircuitBreaker(name = FPSAK_INSTANCE)
 	@Cacheable(cacheNames = FPSAK_RELEVANTE_PARTER_BY_SAKID_CACHE, key = "#sakId")
 	public List<String> hentAktoerForSak(final String sakId) {
 		HttpHeaders headers = createHeaders();

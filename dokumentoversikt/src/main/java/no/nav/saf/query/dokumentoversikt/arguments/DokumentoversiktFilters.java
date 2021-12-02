@@ -18,12 +18,12 @@ import java.util.stream.Collectors;
  */
 @Value
 public class DokumentoversiktFilters {
-	private final LocalDate fraDato;
-	private final LocalDate tilDato;
-	private final List<Tema> tema;
-	private final List<Journalposttype> journalposttyper;
-	private final List<Journalstatus> journalstatuser;
-	private final boolean visFeilregistrerte;
+	LocalDate fraDato;
+	LocalDate tilDato;
+	List<Tema> tema;
+	List<Journalposttype> journalposttyper;
+	List<Journalstatus> journalstatuser;
+	boolean visFeilregistrerte;
 
 	DokumentoversiktFilters(LocalDate fraDato, LocalDate tilDato, List<Tema> tema, List<Journalposttype> journalposttyper, List<Journalstatus> journalstatuser) {
 		if (fraDato == null) {
@@ -45,7 +45,7 @@ public class DokumentoversiktFilters {
 		if (journalstatuser == null || journalstatuser.isEmpty()) {
 			this.journalstatuser = Journalstatus.asList();
 		} else {
-			this.journalstatuser =  new ArrayList<>(journalstatuser);
+			this.journalstatuser = new ArrayList<>(journalstatuser);
 		}
 		this.visFeilregistrerte = this.journalstatuser.contains(Journalstatus.FEILREGISTRERT);
 	}
@@ -61,7 +61,7 @@ public class DokumentoversiktFilters {
 
 	private static List<Journalposttype> getJournalposttypeList(DataFetchingEnvironment environment) {
 		List<Object> journalstatuserObjectList = environment.getArgument("journalposttyper");
-		if(journalstatuserObjectList == null || journalstatuserObjectList.isEmpty()) {
+		if (journalstatuserObjectList == null || journalstatuserObjectList.isEmpty()) {
 			return new ArrayList<>();
 		}
 		return journalstatuserObjectList.stream()
@@ -76,7 +76,7 @@ public class DokumentoversiktFilters {
 		}
 
 		List<Object> journalstatuserObjectList = environment.getArgument("journalstatuser");
-		if(journalstatuserObjectList == null || journalstatuserObjectList.isEmpty()) {
+		if (journalstatuserObjectList == null || journalstatuserObjectList.isEmpty()) {
 			return new ArrayList<>();
 		}
 		return journalstatuserObjectList.stream()

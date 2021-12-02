@@ -13,6 +13,7 @@ import org.mockito.InjectMocks;
 import static java.util.Arrays.asList;
 import static no.nav.saf.domain.DomainConstants.FAGSAKSYSTEM_FORELDREPENGELOSNING;
 import static no.nav.saf.domain.DomainConstants.FAGSAKSYSTEM_K9;
+import static no.nav.saf.domain.kode.Arkivsakssystem.GSAK;
 import static no.nav.saf.domain.kode.Tema.FOR;
 import static no.nav.saf.domain.kode.Tema.FRI;
 import static no.nav.saf.domain.kode.Tema.OMS;
@@ -28,14 +29,29 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-class Pep7ImplTest extends AbstractPepTest {
+class Pep7dImplTest extends AbstractPepTest {
 
 	@InjectMocks
-	private Pep7Impl pep7;
+	private Pep7dImpl pep7d;
 
 	@Test
 	void shouldPermitWhenNoAktoerId() {
-		boolean hasAccess = pep7.hasAccess(TilgangSak.builder().build(), createSafRequestContext());
+		TilgangSak tilgangSak = TilgangSak.builder()
+				.arkivsaksystem(GSAK)
+				.arkivsaksnummer("100000000")
+				.build();
+		boolean hasAccess = pep7d.hasAccess(tilgangSak, createSafRequestContext());
+		verify(abacService, never()).evaluate(any());
+		assertTrue(hasAccess);
+	}
+
+	@Test
+	void shouldPermitWhenNoArkivsaksystemOrArkivsaknummer() { // Midlertidig journalført uten sakstilknytning
+		TilgangSak tilgangSak = TilgangSak.builder()
+				.arkivsaksystem(null)
+				.arkivsaksnummer(null)
+				.build();
+		boolean hasAccess = pep7d.hasAccess(tilgangSak, createSafRequestContext());
 		verify(abacService, never()).evaluate(any());
 		assertTrue(hasAccess);
 	}
@@ -43,7 +59,7 @@ class Pep7ImplTest extends AbstractPepTest {
 	@Test
 	void shouldDenyWhenAbacDeniesForFagsaksystemFS36AndTemaFor() {
 		when(abacService.evaluate(any(XacmlRequest.class))).thenReturn(new XacmlResponse(Decision.DENY, null, null, null));
-		boolean hasAccess = pep7.hasAccess(createTilgangSakWithFpAktoerIdList(), createSafRequestContext());
+		boolean hasAccess = pep7d.hasAccess(createTilgangSakWithFpAktoerIdList(), createSafRequestContext());
 		verify(abacService).evaluate(any());
 		assertFalse(hasAccess);
 	}
@@ -51,7 +67,7 @@ class Pep7ImplTest extends AbstractPepTest {
 	@Test
 	void shouldDenyWhenAbacDeniesForFagsaksystemK9AndTemaFri() {
 		when(abacService.evaluate(any(XacmlRequest.class))).thenReturn(new XacmlResponse(Decision.DENY, null, null, null));
-		boolean hasAccess = pep7.hasAccess(createTilgangSakWithK9AktoerIdList(FRI), createSafRequestContext());
+		boolean hasAccess = pep7d.hasAccess(createTilgangSakWithK9AktoerIdList(FRI), createSafRequestContext());
 		verify(abacService).evaluate(any());
 		assertFalse(hasAccess);
 	}
@@ -59,7 +75,7 @@ class Pep7ImplTest extends AbstractPepTest {
 	@Test
 	void shouldDenyWhenAbacDeniesForFagsaksystemK9AndTemaOms() {
 		when(abacService.evaluate(any(XacmlRequest.class))).thenReturn(new XacmlResponse(Decision.DENY, null, null, null));
-		boolean hasAccess = pep7.hasAccess(createTilgangSakWithK9AktoerIdList(OMS), createSafRequestContext());
+		boolean hasAccess = pep7d.hasAccess(createTilgangSakWithK9AktoerIdList(OMS), createSafRequestContext());
 		verify(abacService).evaluate(any());
 		assertFalse(hasAccess);
 	}
@@ -69,7 +85,7 @@ class Pep7ImplTest extends AbstractPepTest {
 		when(abacService.evaluate(any(XacmlRequest.class))).thenReturn(new XacmlResponse(Decision.PERMIT, null, null, null));
 		ArgumentCaptor<XacmlRequest> request = ArgumentCaptor.forClass(XacmlRequest.class);
 
-		boolean hasAccess = pep7.hasAccess(createTilgangSakWithFpAktoerIdList(), createSafRequestContext());
+		boolean hasAccess = pep7d.hasAccess(createTilgangSakWithFpAktoerIdList(), createSafRequestContext());
 
 		verify(abacService).evaluate(request.capture());
 		XacmlRequest capturedRequest = request.getValue();
@@ -86,7 +102,7 @@ class Pep7ImplTest extends AbstractPepTest {
 		when(abacService.evaluate(any(XacmlRequest.class))).thenReturn(new XacmlResponse(Decision.PERMIT, null, null, null));
 		ArgumentCaptor<XacmlRequest> request = ArgumentCaptor.forClass(XacmlRequest.class);
 
-		boolean hasAccess = pep7.hasAccess(createTilgangSakWithK9AktoerIdList(FRI), createSafRequestContext());
+		boolean hasAccess = pep7d.hasAccess(createTilgangSakWithK9AktoerIdList(FRI), createSafRequestContext());
 
 		verify(abacService).evaluate(request.capture());
 		XacmlRequest capturedRequest = request.getValue();
@@ -103,7 +119,7 @@ class Pep7ImplTest extends AbstractPepTest {
 		when(abacService.evaluate(any(XacmlRequest.class))).thenReturn(new XacmlResponse(Decision.PERMIT, null, null, null));
 		ArgumentCaptor<XacmlRequest> request = ArgumentCaptor.forClass(XacmlRequest.class);
 
-		boolean hasAccess = pep7.hasAccess(createTilgangSakWithK9AktoerIdList(OMS), createSafRequestContext());
+		boolean hasAccess = pep7d.hasAccess(createTilgangSakWithK9AktoerIdList(OMS), createSafRequestContext());
 
 		verify(abacService).evaluate(request.capture());
 		XacmlRequest capturedRequest = request.getValue();
@@ -118,14 +134,14 @@ class Pep7ImplTest extends AbstractPepTest {
 
 	@Test
 	void shouldDenyWhenK9sEmpty() {
-		boolean hasAccess = pep7.hasAccess(createTilgangSakWithoutK9(), createSafRequestContext());
+		boolean hasAccess = pep7d.hasAccess(createTilgangSakWithoutK9(), createSafRequestContext());
 		assertFalse(hasAccess);
 		verify(abacService, never()).evaluate(any());
 	}
 
 	@Test
 	void shouldDenyWhenRelevanteFpAktoerIdIsEmpty() {
-		boolean hasAccess = pep7.hasAccess(createTilgangSakWithoutFpAktoerIdList(), createSafRequestContext());
+		boolean hasAccess = pep7d.hasAccess(createTilgangSakWithoutFpAktoerIdList(), createSafRequestContext());
 		assertFalse(hasAccess);
 		verify(abacService, never()).evaluate(any());
 	}
@@ -135,11 +151,15 @@ class Pep7ImplTest extends AbstractPepTest {
 				.fagsaksystem(FAGSAKSYSTEM_FORELDREPENGELOSNING)
 				.tema(FOR)
 				.fpAktoerIdList(asList(FNR, FNR2))
+				.arkivsaksystem(GSAK)
+				.arkivsaksnummer("100000000")
 				.build();
 	}
 
 	private TilgangSak createTilgangSakWithoutFpAktoerIdList() {
 		return TilgangSak.builder()
+				.arkivsaksnummer("")
+				.arkivsaksystem(GSAK)
 				.fagsaksystem(FAGSAKSYSTEM_FORELDREPENGELOSNING)
 				.tema(FOR)
 				.build();
@@ -150,12 +170,16 @@ class Pep7ImplTest extends AbstractPepTest {
 				.fagsaksystem(FAGSAKSYSTEM_K9)
 				.tema(tema)
 				.k9AktoerIdList(asList(FNR, FNR2))
+				.arkivsaksystem(GSAK)
+				.arkivsaksnummer("100000000")
 				.build();
 	}
 
 	private TilgangSak createTilgangSakWithoutK9() {
 		return TilgangSak.builder()
 				.fagsaksystem(FAGSAKSYSTEM_K9)
+				.arkivsaksnummer("")
+				.arkivsaksystem(GSAK)
 				.tema(FRI)
 				.build();
 	}

@@ -13,8 +13,8 @@ public final class DokumentoversiktPagination {
 
 	@Value
 	public static class SeekPagination {
-		private final Integer foerste;
-		private final String etterPeker;
+		Integer foerste;
+		String etterPeker;
 	}
 
 	public static SeekPagination create(DataFetchingEnvironment environment) {
@@ -22,7 +22,7 @@ public final class DokumentoversiktPagination {
 			throw new IllegalArgumentException("Du må angi en `foerste` verdi for å paginere.");
 		}
 		Integer foerste = environment.getArgument("foerste");
-		if(foerste <= 0) {
+		if (foerste <= 0) {
 			throw new IllegalArgumentException("`foerste` kan ikke være 0 eller negativ.");
 		}
 		String etterPeker = environment.getArgument("etter");

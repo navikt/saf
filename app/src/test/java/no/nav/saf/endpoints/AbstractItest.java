@@ -71,7 +71,7 @@ public abstract class AbstractItest {
 	private static final String STATE_PEP4 = "state_pep4";
 	private static final String STATE_PEP5 = "state_pep5";
 	private static final String STATE_PEP6D = "state_pep6d";
-	private static final String STATE_PEP7 = "state_pep7";
+	private static final String STATE_PEP7D = "state_pep7d";
 
 	@Configuration
 	public static class TestConfig {
@@ -545,24 +545,24 @@ public abstract class AbstractItest {
 						.withBodyFile("abac/abac-permit.json")));
 	}
 
-	protected void abacDenyPep7skipPep2Pep3Pep4Pep5Pep6() {
+	protected void abacDenyPep7dSkipPep2Pep3Pep4Pep5Pep6d() {
 		stubFor(post(urlEqualTo("/abac"))
 				.inScenario(SCENARIO_ABAC)
 				.whenScenarioStateIs(STARTED)
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("abac/abac-permit.json"))
-				.willSetStateTo(STATE_PEP3));
+				.willSetStateTo(STATE_PEP2D));
 		stubFor(post(urlEqualTo("/abac"))
 				.inScenario(SCENARIO_ABAC)
-				.whenScenarioStateIs(STATE_PEP3)
+				.whenScenarioStateIs(STATE_PEP2D)
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("abac/abac-permit.json"))
-				.willSetStateTo(STATE_PEP7));
+				.willSetStateTo(STATE_PEP7D));
 		stubFor(post(urlEqualTo("/abac"))
 				.inScenario(SCENARIO_ABAC)
-				.whenScenarioStateIs(STATE_PEP7)
+				.whenScenarioStateIs(STATE_PEP7D)
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("abac/abac-deny.json")));
@@ -601,7 +601,7 @@ public abstract class AbstractItest {
 				.withBodyFile("bidrag/bidragsak-happy.json")));
 	}
 
-	protected void verifyabacDenyPep7SkipPep2Pep3Pep4Pep5Pep6AndHttpStatusCode(HttpStatus expectedHttpStatus, HttpStatus actualHttpStatus) {
+	protected void verifyabacDenyPep7dSkipPep2Pep3Pep4Pep5Pep6dAndHttpStatusCode(HttpStatus expectedHttpStatus, HttpStatus actualHttpStatus) {
 		verify(3, postRequestedFor(urlEqualTo("/abac")));
 		assertEquals(expectedHttpStatus, actualHttpStatus);
 	}
