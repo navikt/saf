@@ -1,6 +1,5 @@
 package no.nav.saf.tilgangskontroll.pep;
 
-import no.nav.saf.domain.kode.Arkivsakssystem;
 import no.nav.saf.domain.kode.Tema;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlAttribute;
@@ -14,6 +13,7 @@ import org.mockito.InjectMocks;
 import static java.util.Arrays.asList;
 import static no.nav.saf.domain.DomainConstants.FAGSAKSYSTEM_FORELDREPENGELOSNING;
 import static no.nav.saf.domain.DomainConstants.FAGSAKSYSTEM_K9;
+import static no.nav.saf.domain.kode.Arkivsakssystem.GSAK;
 import static no.nav.saf.domain.kode.Tema.FOR;
 import static no.nav.saf.domain.kode.Tema.FRI;
 import static no.nav.saf.domain.kode.Tema.OMS;
@@ -37,7 +37,7 @@ class Pep7dImplTest extends AbstractPepTest {
 	@Test
 	void shouldPermitWhenNoAktoerId() {
 		TilgangSak tilgangSak = TilgangSak.builder()
-				.arkivsaksystem(Arkivsakssystem.GSAK)
+				.arkivsaksystem(GSAK)
 				.arkivsaksnummer("100000000")
 				.build();
 		boolean hasAccess = pep7d.hasAccess(tilgangSak, createSafRequestContext());
@@ -131,13 +131,37 @@ class Pep7dImplTest extends AbstractPepTest {
 		assertThat(capturedRequest.getResources(), hasItem(new XacmlAttribute(RESOURCE_FELLES_PERSON_AKTOERID_RESOURCE, FNR2)));
 	}
 
+
+	@Test
+	void shouldDenyWhenK9sEmpty() {
+		boolean hasAccess = pep7d.hasAccess(createTilgangSakWithoutK9(), createSafRequestContext());
+		assertFalse(hasAccess);
+		verify(abacService, never()).evaluate(any());
+	}
+
+	@Test
+	void shouldDenyWhenRelevanteFpAktoerIdIsEmpty() {
+		boolean hasAccess = pep7d.hasAccess(createTilgangSakWithoutFpAktoerIdList(), createSafRequestContext());
+		assertFalse(hasAccess);
+		verify(abacService, never()).evaluate(any());
+	}
+
 	private TilgangSak createTilgangSakWithFpAktoerIdList() {
 		return TilgangSak.builder()
 				.fagsaksystem(FAGSAKSYSTEM_FORELDREPENGELOSNING)
 				.tema(FOR)
 				.fpAktoerIdList(asList(FNR, FNR2))
-				.arkivsaksystem(Arkivsakssystem.GSAK)
+				.arkivsaksystem(GSAK)
 				.arkivsaksnummer("100000000")
+				.build();
+	}
+
+	private TilgangSak createTilgangSakWithoutFpAktoerIdList() {
+		return TilgangSak.builder()
+				.arkivsaksnummer("")
+				.arkivsaksystem(GSAK)
+				.fagsaksystem(FAGSAKSYSTEM_FORELDREPENGELOSNING)
+				.tema(FOR)
 				.build();
 	}
 
@@ -146,8 +170,17 @@ class Pep7dImplTest extends AbstractPepTest {
 				.fagsaksystem(FAGSAKSYSTEM_K9)
 				.tema(tema)
 				.k9AktoerIdList(asList(FNR, FNR2))
-				.arkivsaksystem(Arkivsakssystem.GSAK)
+				.arkivsaksystem(GSAK)
 				.arkivsaksnummer("100000000")
+				.build();
+	}
+
+	private TilgangSak createTilgangSakWithoutK9() {
+		return TilgangSak.builder()
+				.fagsaksystem(FAGSAKSYSTEM_K9)
+				.arkivsaksnummer("")
+				.arkivsaksystem(GSAK)
+				.tema(FRI)
 				.build();
 	}
 }

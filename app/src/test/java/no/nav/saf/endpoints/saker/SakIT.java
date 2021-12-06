@@ -7,11 +7,9 @@ import no.nav.saf.domain.visningsmodell.Sak;
 import no.nav.saf.endpoints.AbstractItest;
 import no.nav.saf.endpoints.graphql.GraphQLRequest;
 import org.junit.jupiter.api.Test;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 
-import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.time.Duration;
@@ -36,8 +34,8 @@ import static org.awaitility.Awaitility.await;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
+import static org.springframework.http.HttpMethod.POST;
 import static org.springframework.http.HttpStatus.OK;
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 class SakIT extends AbstractItest {
 
@@ -51,21 +49,10 @@ class SakIT extends AbstractItest {
 	@Test
 	void shouldRemoveSakDuplicates() {
 		abacPermit();
-		stubFor(post("/reststs")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("sts/sts-token.json")));
-		stubFor(post("/pdl")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("pdl/hentPdlDataForIdent-happy.json")));
-		stubFor(get("/gsak?aktoerId=" + AKTOER_ID)
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
-						.withBodyFile("gsak/gsak-sakerBySaksId-happy-duplicates.json")));
-		stubFor(post("/pensjonsakv1")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withBodyFile("psak/psak-hentSakSammendragListe-happy-duplicates.xml")));
+		stubHappyPdl();
+		stubHappyBidragWithId("654321");
+		this.stubHappyGsakWithBody("gsak/gsak-sakerBySaksId-happy-duplicates.json");
+		this.stubHappyPsak();
 
 		await().atMost(Duration.ofSeconds(10)).untilAsserted(() -> {
 			ResponseEntity<LinkedHashMap> responseEntity = callSakerWithAktoerId();
@@ -86,21 +73,10 @@ class SakIT extends AbstractItest {
 	@Test
 	void shouldGetSakerForAktoerID() {
 		abacPermit();
-		stubFor(post("/reststs")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("sts/sts-token.json")));
-		stubFor(post("/pdl")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("pdl/hentPdlDataForIdent-happy.json")));
-		stubFor(get("/gsak?aktoerId=" + AKTOER_ID)
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
-						.withBodyFile("gsak/gsak-sakerBySaksId-happy.json")));
-		stubFor(post("/pensjonsakv1")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withBodyFile("psak/psak-hentSakSammendragListe-happy.xml")));
+		stubHappyPdl();
+		stubHappyPsakWithBody();
+		stubHappyBidragWithId("654321");
+		this.stubHappyGsakWithBody("gsak/gsak-sakerBySaksId-happy.json");
 
 		await().atMost(Duration.ofSeconds(5)).untilAsserted(() -> {
 			ResponseEntity<LinkedHashMap> responseEntity = callSakerWithAktoerId();
@@ -120,14 +96,7 @@ class SakIT extends AbstractItest {
 	@Test
 	void shouldReturnNoSakerWhenDenyOnPep1g() throws Exception {
 		abacDenyPep1g();
-		stubFor(post("/reststs")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("sts/sts-token.json")));
-		stubFor(post("/pdl")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("pdl/hentPdlDataForIdent-happy.json")));
+		stubHappyPdl();
 		ResponseEntity<LinkedHashMap> responseEntity = callSakerWithAktoerId();
 		List<Sak> saker = parseSaker(responseEntity);
 
@@ -137,21 +106,9 @@ class SakIT extends AbstractItest {
 	@Test
 	void shouldReturnNoSakerWhenDenyOnPep2() throws Exception {
 		abacDenyPep2();
-		stubFor(post("/reststs")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("sts/sts-token.json")));
-		stubFor(post("/pdl")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("pdl/hentPdlDataForIdent-happy.json")));
-		stubFor(get("/gsak?aktoerId=" + AKTOER_ID)
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
-						.withBodyFile("gsak/gsak-sakerByFagsakIdAndFagsaksystem-FAR-happy.json")));
-		stubFor(post("/pensjonsakv1")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withBodyFile("psak/psak-hentSakSammendragListe-happy-empty.xml")));
+		stubHappyPdl();
+		stubHappyPsakWithEmptyList();
+		this.stubHappyGsakWithBody("gsak/gsak-sakerByFagsakIdAndFagsaksystem-FAR-happy.json");
 
 		ResponseEntity<LinkedHashMap> responseEntity = callSakerWithAktoerId();
 		List<Sak> saker = parseSaker(responseEntity);
@@ -162,29 +119,28 @@ class SakIT extends AbstractItest {
 	@Test
 	void shouldReturnNoSakerWhenDenyOnPep3() throws Exception {
 		abacDenyPep3SkipPep2dAndPep2();
-		stubFor(post("/reststs")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("sts/sts-token.json")));
-		stubFor(post("/pdl")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("pdl/hentPdlDataForIdent-happy.json")));
-		stubFor(get("/gsak?aktoerId=" + AKTOER_ID)
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
-						.withBodyFile("gsak/gsak-sakerBySaksId-happy.json")));
-		stubFor(post("/pensjonsakv1")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withBodyFile("psak/psak/psak-hentSakSammendragListe-happy-empty.xml")));
-		stubFor(get("/bidrag/654321").willReturn(aResponse().withStatus(OK.value())
-				.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-				.withBodyFile("bidrag/bidragsak-happy.json")));
+		stubHappyPdl();
+		stubHappyPsakWithEmptyList();
+		stubHappyBidragWithId("654321");
+		this.stubHappyGsakWithBody("gsak/gsak-sakerBySaksId-happy.json");
 
 		ResponseEntity<LinkedHashMap> responseEntity = callSakerWithAktoerId();
 		List<Sak> saker = parseSaker(responseEntity);
 		assertThat(saker, hasSize(0));
 		verifyabacDenyPep3SkipPep2AndPep2dAndHttpStatusCode(OK, responseEntity.getStatusCode());
+	}
+
+	private void stubHappyGsakWithBody(String body) {
+		stubFor(get("/gsak?aktoerId=" + AKTOER_ID)
+				.willReturn(aResponse().withStatus(OK.value())
+						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
+						.withBodyFile(body)));
+	}
+
+	public void stubHappyPsak() {
+		stubFor(post("/pensjonsakv1")
+				.willReturn(aResponse().withStatus(OK.value())
+						.withBodyFile("psak/psak-hentSakSammendragListe-happy-duplicates.xml")));
 	}
 
 	private void assertGsak(Sak gsak) {
@@ -207,9 +163,9 @@ class SakIT extends AbstractItest {
 		assertThat(psak.getTema(), is(UFO));
 	}
 
-	private ResponseEntity<LinkedHashMap> callSakerWithAktoerId() throws IOException, URISyntaxException {
+	private ResponseEntity<LinkedHashMap> callSakerWithAktoerId() throws URISyntaxException {
 		GraphQLRequest request = new GraphQLRequest(stringFromClasspath("saker/saker_aktoerid.query"), null, null);
-		RequestEntity<GraphQLRequest> requestEntity = new RequestEntity<>(request, createHeaders(), HttpMethod.POST, new URI("/graphql"));
+		RequestEntity<GraphQLRequest> requestEntity = new RequestEntity<>(request, createHeaders(), POST, new URI("/graphql"));
 		return restTemplate.exchange(requestEntity, LinkedHashMap.class);
 	}
 

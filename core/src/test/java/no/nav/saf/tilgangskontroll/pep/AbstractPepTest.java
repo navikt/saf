@@ -15,9 +15,6 @@ import java.util.Map;
 
 import static no.nav.saf.domain.kode.Tema.BID;
 
-/**
- * @author Sigurd Midttun, Visma Consulting.
- */
 @ExtendWith(SpringExtension.class)
 abstract class AbstractPepTest {
 

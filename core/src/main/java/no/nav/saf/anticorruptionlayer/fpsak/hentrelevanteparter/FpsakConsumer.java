@@ -33,10 +33,12 @@ public class FpsakConsumer {
 	private final RestTemplate restTemplate;
 	private final StsRestConsumer stsRestConsumer;
 
-	public FpsakConsumer(RestTemplateBuilder restTemplateBuilder,
-						 ClientHttpRequestFactory clientHttpRequestFactory,
-						 @Value("${fpsak.url}") String fpsakUrl,
-						 StsRestConsumer stsRestConsumer) {
+	public FpsakConsumer(
+			RestTemplateBuilder restTemplateBuilder,
+			ClientHttpRequestFactory clientHttpRequestFactory,
+			@Value("${fpsak.url}") String fpsakUrl,
+			StsRestConsumer stsRestConsumer
+	) {
 		this.fpsakUrl = fpsakUrl;
 		this.restTemplate = restTemplateBuilder
 				.requestFactory(() -> clientHttpRequestFactory)
@@ -48,8 +50,12 @@ public class FpsakConsumer {
 	@Cacheable(cacheNames = FPSAK_RELEVANTE_PARTER_BY_SAKID_CACHE, key = "#sakId")
 	public List<String> hentAktoerForSak(final String sakId) {
 		HttpHeaders headers = createHeaders();
-		ResponseEntity<List<String>> response = restTemplate.exchange(fpsakUrl + "?saksnummer=" + sakId, GET, new HttpEntity<>(headers), new ParameterizedTypeReference<>() {
-		});
+		ResponseEntity<List<String>> response = restTemplate.exchange(
+				fpsakUrl + "?saksnummer=" + sakId,
+				GET,
+				new HttpEntity<>(headers),
+				new ParameterizedTypeReference<>() {}
+		);
 
 		if (OK.equals(response.getStatusCode())) {
 			return response.getBody();
