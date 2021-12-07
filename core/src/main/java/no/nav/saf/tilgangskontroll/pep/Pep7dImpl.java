@@ -52,11 +52,7 @@ public class Pep7dImpl extends Pep<TilgangSak> {
 			String tilgangKeyLocalCaching = KeyGeneratorLocalCaching.getKeyForPep7d(ressurs.getArkivsaksystem(), ressurs.getArkivsaksnummer());
 
 			if (FOR.equals(ressurs.getTema()) && FAGSAKSYSTEM_FORELDREPENGELOSNING.equals(ressurs.getFagsaksystem())) {
-				if (ressurs.getFpAktoerIdList() == null) {
-					return XacmlResponse.deny();
-				}
-				if (ressurs.getFpAktoerIdList().isEmpty()) {
-					log.info("Pep7 har ingen relevante parter. Tilgang gis.");
+				if (aktoerlisteErNullEllerTomForFp(ressurs)) {
 					return XacmlResponse.permit();
 				}
 
@@ -70,11 +66,7 @@ public class Pep7dImpl extends Pep<TilgangSak> {
 			}
 
 			if (relevanteTemaK9.contains(ressurs.getTema()) && FAGSAKSYSTEM_K9.equals(ressurs.getFagsaksystem())) {
-				if (ressurs.getK9AktoerIdList() == null) {
-					return XacmlResponse.deny();
-				}
-				if (ressurs.getK9AktoerIdList().isEmpty()) {
-					log.info("Pep7d har ingen relevante parter. Tilgang gis.");
+				if (aktoerlisteErNullEllerTomForK9(ressurs)) {
 					return XacmlResponse.permit();
 				}
 				if (safRequestContext.getRequestCache().getObject(tilgangKeyLocalCaching) == null) {
@@ -88,6 +80,22 @@ public class Pep7dImpl extends Pep<TilgangSak> {
 			safRequestContext.getRequestCache().putObject(tilgangKeyLocalCaching, true);
 		}
 		return XacmlResponse.permit();
+	}
+
+	private boolean aktoerlisteErNullEllerTomForFp(TilgangSak ressurs) {
+		if (ressurs.getFpAktoerIdList() == null || ressurs.getFpAktoerIdList().isEmpty()) {
+			log.info("Pep7d har ingen relevante parter. Tilgang gis.");
+			return true;
+		}
+		return false;
+	}
+
+	private boolean aktoerlisteErNullEllerTomForK9(TilgangSak ressurs) {
+		if (ressurs.getK9AktoerIdList() == null || ressurs.getK9AktoerIdList().isEmpty()) {
+			log.info("Pep7d har ingen relevante parter. Tilgang gis.");
+			return true;
+		}
+		return false;
 	}
 
 	private XacmlResponse getXacmlResponseFromAbac(TilgangSak ressurs, SafRequestContext safRequestContext, List<String> aktoerIdList) {

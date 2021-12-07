@@ -47,10 +47,7 @@ public class Pep3Impl extends Pep<TilgangSak> {
 
 		if (ressurs != null && relevanteTema.contains(ressurs.getTema()) && FAGSAKSYSTEM_BISYS.equals(ressurs.getFagsaksystem())) {
 
-			if (ressurs.getRelevanteTredjeparter() == null) {
-				return XacmlResponse.deny();
-			}
-			if (ressurs.getRelevanteTredjeparter().isEmpty()) {
+			if (ressurs.getRelevanteTredjeparter() == null || ressurs.getRelevanteTredjeparter().isEmpty()) {
 				log.info("Pep3 har ingen relevante parter. Tilgang gis.");
 				return XacmlResponse.permit();
 			}

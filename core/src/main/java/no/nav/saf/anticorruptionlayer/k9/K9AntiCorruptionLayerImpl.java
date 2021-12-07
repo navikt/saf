@@ -8,9 +8,9 @@ import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
-import static java.util.Arrays.asList;
 import static no.nav.saf.domain.DomainConstants.FAGSAKSYSTEM_K9;
 import static no.nav.saf.domain.kode.Tema.FRI;
 import static no.nav.saf.domain.kode.Tema.OMS;
@@ -26,7 +26,7 @@ public class K9AntiCorruptionLayerImpl implements K9AntiCorruptionLayer {
 		this.k9Consumer = k9Consumer;
 	}
 
-	private final List<Tema> relevanteTema = asList(FRI, OMS);
+	private final List<Tema> relevanteTema = Arrays.asList(FRI, OMS);
 
 	@Override
 	public List<String> hentRelevanteParter(Arkivsak arkivsak) {
@@ -35,7 +35,6 @@ public class K9AntiCorruptionLayerImpl implements K9AntiCorruptionLayer {
 				return k9Consumer.hentAktoerForSak(arkivsak.getFagsakId());
 			} catch (Exception e) {
 				log.warn("Kunne ikke hente relevante parter fra K9-sak for sakId={}", arkivsak.getFagsakId(), e);
-				return null;
 			}
 		}
 		return new ArrayList<>();

@@ -15,6 +15,7 @@ import no.nav.saf.endpoints.AbstractItest;
 import no.nav.saf.endpoints.graphql.GraphQLRequest;
 import no.nav.saf.endpoints.graphql.GraphQLResponse;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.RequestEntity;
 
@@ -46,11 +47,12 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.springframework.http.HttpMethod.POST;
-import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
+/**
+ * @author Joakim Bjørnstad, Jbit AS
+ */
 class JournalpostIT extends AbstractItest {
 	private final String JOURNALPOST_ID = "400000000";
 	private final String GSAK_ID = "100000000";
@@ -64,7 +66,10 @@ class JournalpostIT extends AbstractItest {
 	@Test
 	void shouldQueryJournalpostByJournalpostIdWhenAllAccessPermit() {
 		abacPermit();
-		this.stubHappyHentjournalpostWithBody("hentjournalsakinfo/hentjournalpost_not_bid-happy.json");
+		stubFor(get("/hentjournalsakinfo/hentjournalpost/" + JOURNALPOST_ID)
+				.willReturn(aResponse().withStatus(OK.value())
+						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("hentjournalsakinfo/hentjournalpost_not_bid-happy.json")));
 
 		Journalpost journalpost = parseJournalpost(journalpostQuery());
 
@@ -120,7 +125,10 @@ class JournalpostIT extends AbstractItest {
 	@Test
 	void shouldQueryJournalpostWhenSakNotFound() {
 		abacPermit();
-		this.stubHappyHentjournalpostWithBody("hentjournalsakinfo/hentjournalpost_not_bid-null-user-and-sak-happy.json");
+		stubFor(get("/hentjournalsakinfo/hentjournalpost/" + JOURNALPOST_ID)
+				.willReturn(aResponse().withStatus(OK.value())
+						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("hentjournalsakinfo/hentjournalpost_not_bid-null-user-and-sak-happy.json")));
 
 		Journalpost journalpost = parseJournalpost(journalpostQuery());
 		assertThat(journalpost.getTema(), is(PEN));
@@ -135,7 +143,10 @@ class JournalpostIT extends AbstractItest {
 	@Test
 	void shouldQueryJournalpostAndFallbackToUkjentTemaWhenNoSakOrJournalpostTemaFound() {
 		abacPermit();
-		this.stubHappyHentjournalpostWithBody("hentjournalsakinfo/hentjournalpost_not_bid-null-temas.json");
+		stubFor(get("/hentjournalsakinfo/hentjournalpost/" + JOURNALPOST_ID)
+				.willReturn(aResponse().withStatus(OK.value())
+						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("hentjournalsakinfo/hentjournalpost_not_bid-null-temas.json")));
 
 		Journalpost journalpost = parseJournalpost(journalpostQuery());
 		assertThat(journalpost.getTema(), is(UKJ));
@@ -144,7 +155,10 @@ class JournalpostIT extends AbstractItest {
 	@Test
 	void shouldQueryJournalpostByJournalpostIdWhenAllExceptPep1AccessPermitWithSakOrgnr() {
 		abacPermit();
-		this.stubHappyHentjournalpostWithBody("hentjournalsakinfo/hentjournalpost_orgnr-happy.json");
+		stubFor(get("/hentjournalsakinfo/hentjournalpost/" + JOURNALPOST_ID)
+				.willReturn(aResponse().withStatus(OK.value())
+						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("hentjournalsakinfo/hentjournalpost_orgnr-happy.json")));
 
 		Journalpost journalpost = parseJournalpost(journalpostQuery());
 		assertThat(journalpost, notNullValue());
@@ -153,7 +167,10 @@ class JournalpostIT extends AbstractItest {
 	@Test
 	void shouldReturnNullJournalpostWhenDenyOnPep1g() {
 		abacDenyPep1g();
-		this.stubHappyHentjournalpostWithBody("hentjournalsakinfo/hentjournalpost_not_bid-happy.json");
+		stubFor(get("/hentjournalsakinfo/hentjournalpost/" + JOURNALPOST_ID)
+				.willReturn(aResponse().withStatus(OK.value())
+						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("hentjournalsakinfo/hentjournalpost_not_bid-happy.json")));
 
 		GraphQLResponse graphQLResponse = journalpostQuery();
 		assertErrorWithCode(graphQLResponse, FORBIDDEN.getText());
@@ -163,8 +180,14 @@ class JournalpostIT extends AbstractItest {
 	@Test
 	void shouldReturnNullJournalpostWhenDenyOnPep2() {
 		abacDenyPep2();
-		this.stubHappyHentjournalpostWithBody("hentjournalsakinfo/hentjournalpost_far-happy.json");
-		this.stubHappyGsakWithBody("gsak/gsak-sakBySaksId_far-happy.json");
+		stubFor(get("/hentjournalsakinfo/hentjournalpost/" + JOURNALPOST_ID)
+				.willReturn(aResponse().withStatus(OK.value())
+						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("hentjournalsakinfo/hentjournalpost_far-happy.json")));
+		stubFor(get("/gsak/" + GSAK_ID)
+				.willReturn(aResponse().withStatus(OK.value())
+						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("gsak/gsak-sakBySaksId_far-happy.json")));
 
 		GraphQLResponse graphQLResponse = journalpostQuery();
 		assertErrorWithCode(graphQLResponse, FORBIDDEN.getText());
@@ -174,8 +197,14 @@ class JournalpostIT extends AbstractItest {
 	@Test
 	void shouldReturnSaksbehandlerTilgangFalseWhenDenyOnPep2d() {
 		abacDenyPep2dSkipPep2();
-		this.stubHappyHentjournalpostWithBody("hentjournalsakinfo/hentjournalpost_not_bid-happy.json");
-		this.stubHappyGsakWithBody("gsak/gsak-sakBySaksId_not_bid-happy.json");
+		stubFor(get("/hentjournalsakinfo/hentjournalpost/" + JOURNALPOST_ID)
+				.willReturn(aResponse().withStatus(OK.value())
+						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("hentjournalsakinfo/hentjournalpost_not_bid-happy.json")));
+		stubFor(get("/gsak/" + GSAK_ID)
+				.willReturn(aResponse().withStatus(OK.value())
+						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("gsak/gsak-sakBySaksId_not_bid-happy.json")));
 
 		Journalpost journalpost = parseJournalpost(journalpostQuery());
 		DokumentInfo dokumentInfo = journalpost.getDokumenter().get(0);
@@ -185,8 +214,13 @@ class JournalpostIT extends AbstractItest {
 	@Test
 	void shouldReturnNullJournalpostWhenDenyOnPep3() {
 		abacDenyPep3SkipPep2();
-		stubHappyBidragWithId("abc123");
-		this.stubHappyHentjournalpostWithBody("hentjournalsakinfo/hentjournalpost_bid-happy.json");
+		stubFor(get("/hentjournalsakinfo/hentjournalpost/" + JOURNALPOST_ID)
+				.willReturn(aResponse().withStatus(OK.value())
+						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("hentjournalsakinfo/hentjournalpost_bid-happy.json")));
+		stubFor(get("/bidrag/abc123").willReturn(aResponse().withStatus(OK.value())
+				.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+				.withBodyFile("bidrag/bidragsak-happy.json")));
 
 		GraphQLResponse graphQLResponse = journalpostQuery();
 		assertErrorWithCode(graphQLResponse, FORBIDDEN.getText());
@@ -196,8 +230,14 @@ class JournalpostIT extends AbstractItest {
 	@Test
 	void shouldReturnNullJournalpostWhenDenyOnPep4() {
 		abacDenyPep4SkipPep2Pep3();
-		this.stubHappyHentjournalpostWithBody("hentjournalsakinfo/hentjournalpost_jp_pol_skjerming-happy.json");
-		this.stubHappyGsakWithBody("gsak/gsak-sakBySaksId_not_bid-happy.json");
+		stubFor(get("/hentjournalsakinfo/hentjournalpost/" + JOURNALPOST_ID)
+				.willReturn(aResponse().withStatus(OK.value())
+						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("hentjournalsakinfo/hentjournalpost_jp_pol_skjerming-happy.json")));
+		stubFor(get("/gsak/" + GSAK_ID)
+				.willReturn(aResponse().withStatus(OK.value())
+						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("gsak/gsak-sakBySaksId_not_bid-happy.json")));
 
 		GraphQLResponse graphQLResponse = journalpostQuery();
 		assertErrorWithCode(graphQLResponse, FORBIDDEN.getText());
@@ -207,7 +247,10 @@ class JournalpostIT extends AbstractItest {
 	@Test
 	void shouldReturnJournalpostWithOneFilteredDokumentInfoWhenDenyOnPep5() {
 		abacDenyPep5SkipPep2Pep3Pep4();
-		this.stubHappyHentjournalpostWithBody("hentjournalsakinfo/hentjournalpost_dokumentinfo_pol_skjerming-happy.json");
+		stubFor(get("/hentjournalsakinfo/hentjournalpost/" + JOURNALPOST_ID)
+				.willReturn(aResponse().withStatus(OK.value())
+						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("hentjournalsakinfo/hentjournalpost_dokumentinfo_pol_skjerming-happy.json")));
 
 		Journalpost journalpost = parseJournalpost(journalpostQuery());
 		assertThat(journalpost.getDokumenter(), hasSize(1));
@@ -216,7 +259,10 @@ class JournalpostIT extends AbstractItest {
 	@Test
 	void shouldReturnSaksbehandlerTilgangFalseOnVariantWithDenyOnPep6d() {
 		abacDenyPep6dSkipPep2Pep3Pep4Pep5();
-		this.stubHappyHentjournalpostWithBody("hentjournalsakinfo/hentjournalpost_variant_pol_skjerming-happy.json");
+		stubFor(get("/hentjournalsakinfo/hentjournalpost/" + JOURNALPOST_ID)
+				.willReturn(aResponse().withStatus(OK.value())
+						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("hentjournalsakinfo/hentjournalpost_variant_pol_skjerming-happy.json")));
 
 		Journalpost journalpost = parseJournalpost(journalpostQuery());
 		DokumentInfo dokumentInfo1 = journalpost.getDokumenter().get(0);
@@ -236,23 +282,9 @@ class JournalpostIT extends AbstractItest {
 	void shouldReturnErrorCodeServerErrorWhenJournalpostNotFound() {
 		abacPermit();
 		stubFor(get("/hentjournalsakinfo/hentjournalpost/" + JOURNALPOST_ID)
-				.willReturn(aResponse().withStatus(INTERNAL_SERVER_ERROR.value())));
+				.willReturn(aResponse().withStatus(HttpStatus.INTERNAL_SERVER_ERROR.value())));
 
 		assertErrorWithCode(journalpostQuery(), SERVER_ERROR.getText());
-	}
-
-	public void stubHappyHentjournalpostWithBody(String body) {
-		stubFor(get("/hentjournalsakinfo/hentjournalpost/" + JOURNALPOST_ID)
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile(body)));
-	}
-
-	private void stubHappyGsakWithBody(String body) {
-		stubFor(get("/gsak/" + GSAK_ID)
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile(body)));
 	}
 
 	@Test
@@ -278,7 +310,7 @@ class JournalpostIT extends AbstractItest {
 	@SneakyThrows
 	private GraphQLResponse journalpostQuery(String queryFile) {
 		GraphQLRequest request = new GraphQLRequest(stringFromClasspath("journalpost/" + queryFile), null, null);
-		RequestEntity<GraphQLRequest> requestEntity = new RequestEntity<>(request, createHeaders(), POST, new URI("/graphql"));
+		RequestEntity<GraphQLRequest> requestEntity = new RequestEntity<>(request, createHeaders(), HttpMethod.POST, new URI("/graphql"));
 		return restTemplate.exchange(requestEntity, GraphQLResponse.class).getBody();
 	}
 
