@@ -259,6 +259,11 @@ class HentDokumentIT extends AbstractItest {
 	@Test
 	void hentDokumentHentSakBySakIdNoTechinalErrorForGsak() {
 		abacPermit();
+		stubFor(get("/bidrag/765432").willReturn(aResponse()
+				.withStatus(OK.value())
+				.withHeader(org.apache.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
+				.withBodyFile("bidrag/bidragsak-happy.json")));
+
 		stubFor(get("/hentjournalsakinfo/hentdokument/" + DOKUMENT_ID + "/" + VARIANTFORMAT).willReturn(aResponse().withStatus(OK
 				.value())
 				.withHeader(CONTENT_TYPE, APPLICATION_PDF_VALUE)
@@ -267,6 +272,14 @@ class HentDokumentIT extends AbstractItest {
 				.withStatus(OK.value())
 				.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 				.withBodyFile("hentjournalsakinfo/henttilgangjournalpostTemaBid_gsak-happy.json")));
+		stubFor(get("/k9sak?saksnummer=" + SAK_ID)
+				.willReturn(aResponse().withStatus(OK.value())
+						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("k9/happy-response.json")));
+		stubFor(get("/fpsak?saksnummer=" + SAK_ID)
+				.willReturn(aResponse().withStatus(OK.value())
+						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("fpsak/happy-response.json")));
 
 		ResponseEntity<String> responseEntity = callHentDokument();
 		assertEquals(OK, responseEntity.getStatusCode());
