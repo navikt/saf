@@ -1,184 +1,243 @@
 package no.nav.saf.tilgangskontroll;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.exceptions.JWTDecodeException;
-import com.auth0.jwt.interfaces.DecodedJWT;
+import com.nimbusds.jwt.JWT;
+import com.nimbusds.jwt.JWTParser;
+import com.nimbusds.jwt.SignedJWT;
 import lombok.extern.slf4j.Slf4j;
-import no.nav.saf.exceptions.OidcAuthorizationException;
+import no.nav.saf.exceptions.AuthorizationException;
 import no.nav.security.token.support.core.context.TokenValidationContext;
 import no.nav.security.token.support.core.jwt.JwtToken;
+import no.nav.security.token.support.core.jwt.JwtTokenClaims;
 
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static no.nav.saf.util.MDCUtility.addMdcData;
-import static org.apache.commons.lang3.StringUtils.isBlank;
-import static org.apache.commons.lang3.StringUtils.trim;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 /**
+ * Holder informasjon om token.
+ *
  * @author Joakim Bjørnstad, Jbit AS
  */
 @Slf4j
 public class SafSecurityContext {
+	private static final String ISSUER_REST_STS = "reststs";
+	private static final String ISSUER_OPENAM = "openam";
+	private static final String ISSUER_AZUREV1 = "azurev1";
+	private static final String ISSUER_AZUREV2 = "azurev2";
+	// JWT claims. https://datatracker.ietf.org/doc/html/rfc7519#section-4.1
+	static final String JWT_CLAIM_AUD = "aud";
+	// Azure claims. https://docs.microsoft.com/en-us/azure/active-directory/develop/access-tokens#payload-claims
+	static final String AZURE_CLAIM_AZP = "azp";
+	static final String AZURE_CLAIM_OID = "oid";
+	static final String AZURE_CLAIM_SUB = "sub";
+	static final String AZURE_CLAIM_ROLES = "roles";
+	// NAV custom Azure claim. https://doc.nais.io/security/auth/azure-ad/configuration/#extra
+	static final String AZURE_NAV_CUSTOM_CLAIM_NAVIDENT = "NAVident";
+	static final String AZURE_NAV_CUSTOM_CLAIM_AZP_NAME = "azp_name";
+
 	private static final String SERVICEUSER_PREFIX = "srv";
-	private static final String AUTH_ERRORMESSAGE = "Autentiseringsmekanisme er ikke støttet. " +
-			"Kun OIDC-token (JWT via OAuth 2.0) med header \"Authorization\" : \"Bearer {token}\" er tillatt.";
-	private static final String UNKNOWN_AUDIENCE = "unknownAudience";
-	private static final String UNKNOWN_ISSUER = "unknownIssuer";
+	private static final String AUTH_ERRORMESSAGE = "Tilgang er avvist. " +
+			"Ingen gyldig token på Authorization header. Token må være utsted av NAV onprem security-token-service, openam eller azure.";
+	private static final String UKJENT_CONSUMER_ID = "ukjentConsumerId";
+	private static final String UKJENT_USER_ID = "ukjentUserId";
+	@Deprecated
+	private static final String UKJENT_AUDIENCE = "ukjentAudience";
+	@Deprecated
+	private static final String OPENAM_UKJENT_AUDIENCE = "openamUkjentAudience";
+
+	private final TokenValidationContext tokenValidationContext;
+	private final JwtToken jwtToken;
+	private final String cachedJwtPayload;
+	private final boolean jwtIssuedByAzure;
+	private final boolean jwtAzureClientCredentialFlow;
+	private final List<String> jwtAzureRoles;
 	private final Map<String, Boolean> privilegiedServiceusers;
-	private final String jwtToken;
-	private final String oidcTokenBody;
-	private final String subjectId;
-	private final String navCallid;
-	private final String navConsumerId;
-	private final boolean azureToken;
-	private final DecodedJWT decodedJWT;
-	private final Set<String> azureIssuers;
-	private final String audience;
-	private final String issuer;
 
-	SafSecurityContext(Set<String> azureIssuers,
-					   String navCallidHeader,
-					   String navConsumerIdHeader,
-					   TokenValidationContext tokenValidationContext,
+	SafSecurityContext(TokenValidationContext tokenValidationContext,
 					   Map<String, Boolean> privilegiedServiceusers) {
-		this.azureIssuers = azureIssuers;
-		this.jwtToken = getFirstValidJwt(tokenValidationContext);
-		this.decodedJWT = getDecodedJWT(jwtToken);
-		this.oidcTokenBody = getPayloadFromToken(decodedJWT);
-		this.subjectId = getSubjectFromToken(decodedJWT);
-		this.azureToken = getIsAzureToken(decodedJWT);
-		this.audience = getAudienceFromToken(decodedJWT);
-		this.issuer = getIssuerFromToken(decodedJWT);
-		// if zero, then executionId from graphQl is used.
-		this.navCallid = trim(navCallidHeader);
-		this.navConsumerId = determineNavConsumerId(trim(navConsumerIdHeader), audience);
+		this.jwtToken = tokenValidationContext.getFirstValidToken()
+				.orElseThrow(() -> new AuthorizationException(AUTH_ERRORMESSAGE));
+		this.tokenValidationContext = tokenValidationContext;
 		this.privilegiedServiceusers = privilegiedServiceusers;
-		addMdcData(this.subjectId, this.navCallid, this.navConsumerId);
-	}
-
-	private String getPayloadFromToken(DecodedJWT decodedJWT) {
-		return decodedJWT.getPayload();
-	}
-
-	private String getFirstValidJwt(TokenValidationContext tokenValidationContext) {
-		return tokenValidationContext.getFirstValidToken().map(JwtToken::getTokenAsString).orElse(null);
-	}
-
-	private DecodedJWT getDecodedJWT(final String oidcTokenBody) {
-		if (oidcTokenBody == null) {
-			return null;
-		}
-
+		// Payload fra JWT hentes ut en gang pga den blir hentet ut fra kontekst ofte.
+		JWT jwt;
 		try {
-			return JWT.decode(oidcTokenBody);
-		} catch (JWTDecodeException e) {
-			return null;
+			jwt = JWTParser.parse(this.jwtToken.getTokenAsString());
+		} catch (ParseException e) {
+			throw new AuthorizationException("Kunne ikke parse JWT token.", e);
 		}
-	}
-
-	private String determineNavConsumerId(final String navConsumerIdHeader, final String audience) {
-		if (isBlank(navConsumerIdHeader)) {
-			if (isBlank(audience)) {
-				return getSubjectId();
-			} else {
-				return audience;
-			}
+		if (jwt instanceof SignedJWT) {
+			this.cachedJwtPayload = ((SignedJWT) jwt).getPayload().toBase64URL().toString();
 		} else {
-			return navConsumerIdHeader;
+			throw new AuthorizationException("Kun SignedJWT er støttet i saf.");
 		}
-	}
-
-	private String getSubjectFromToken(final DecodedJWT decodedJWT) {
-		if (decodedJWT == null) {
-			return null;
-		}
-
-		try {
-			return decodedJWT.getSubject();
-		} catch (JWTDecodeException e) {
-			log.error("Kunne ikke utlede subject fra OIDC-Token i header.", e);
-			return null;
-		}
-	}
-
-	private boolean getIsAzureToken(final DecodedJWT decodedJWT) {
-		if (decodedJWT == null) {
-			return false;
+		this.jwtIssuedByAzure = tokenValidationContext.hasTokenFor(ISSUER_AZUREV1) || tokenValidationContext.hasTokenFor(ISSUER_AZUREV2);
+		this.jwtAzureClientCredentialFlow = isClientCredentialFlowToken(jwtToken);
+		if (jwtIssuedByAzure && jwtAzureClientCredentialFlow) {
+			this.jwtAzureRoles = findAzureRoles(jwtToken);
 		} else {
-			return this.azureIssuers.contains(decodedJWT.getIssuer());
+			this.jwtAzureRoles = new ArrayList<>();
 		}
 	}
 
-	private String getAudienceFromToken(final DecodedJWT decodedJWT) {
-		if (decodedJWT == null) {
-			return UNKNOWN_AUDIENCE;
-		}
-		try {
-			return decodedJWT.getAudience().stream().findFirst().orElse(UNKNOWN_AUDIENCE);
-		} catch (JWTDecodeException e) {
-			log.error("Kunne ikke utlede audience fra OIDC-Token i header.", e);
-			return null;
-		}
+	/**
+	 * Brukes av abac-saf policy decision point (PDP).
+	 * Hentet ut en gang for ytelse.
+	 *
+	 * @return Payload delen av JWT
+	 */
+	public String getCachedJwtPayload() {
+		return cachedJwtPayload;
 	}
 
-	private String getIssuerFromToken(final DecodedJWT decodedJWT) {
-		if (decodedJWT == null) {
-			return UNKNOWN_ISSUER;
-		}
-		try {
-			return decodedJWT.getIssuer();
-		} catch (JWTDecodeException e) {
-			log.error("Kunne ikke utlede issuer fra OIDC-Token i header.", e);
-			return null;
-		}
+	/**
+	 * Brukes av saf policy enforcement point (PEP).
+	 * Lagres pga ytelse
+	 *
+	 * @return true hvis token er utsted av Azure, false ellers
+	 */
+	public boolean isJwtIssuedByAzure() {
+		return jwtIssuedByAzure;
 	}
 
-	public String getNavCallid() {
-		return navCallid;
+	/**
+	 * Om token er i kontekst av system eller bruker.
+	 *
+	 * @return true hvis token er utsted av REST-STS eller er Azure client-credential flow, ellers false
+	 */
+	public boolean isSystem() {
+		return isRestStsSystemToken() || jwtAzureClientCredentialFlow;
 	}
 
-	public String getNavConsumerId() {
-		return navConsumerId;
+	/**
+	 * Om servicebruker er privilegiert og kan hente ARKIV varianter (pdf).
+	 *
+	 * @return true hvis systemet står i listen med ENV-verdi: SAF_PRIVILEGIEDSERVICEUSERS, ellers false
+	 */
+	public boolean isPrivilegiedServiceUserWithArkivVariantAccess() {
+		return isSystem() && privilegiedServiceusers.containsKey(jwtToken.getSubject().toLowerCase());
 	}
 
-	public String getOidcTokenBody() {
-		if (oidcTokenBody == null) {
-			throw new OidcAuthorizationException(AUTH_ERRORMESSAGE);
-		} else {
-			return oidcTokenBody;
-		}
+	/**
+	 * Om token er utsted av Azure i deres client credential flow.
+	 *
+	 * @return true hvis jwt er Azure client credential flow token.
+	 */
+	public boolean isJwtAzureClientCredentialFlow() {
+		return jwtAzureClientCredentialFlow;
 	}
 
-	public String getSubjectId() {
-		if (subjectId == null) {
-			throw new OidcAuthorizationException(AUTH_ERRORMESSAGE);
-		} else {
-			return subjectId;
-		}
+	/**
+	 * Sjekker om konsument har tilgang til tema gjennom rollen "tema_{tema}" i roles claim på token. (Azure)
+	 * Tema rollen gir tilgang til metadata (kun relevant for tema FAR) og dokumenter.
+	 * Se nais/naiserator.yaml azureator config
+	 *
+	 * @param tema Temakode. Eksempel "FOR"
+	 * @return true hvis tema rollen finnes. Ellers false
+	 */
+	public boolean hasTemaAureRole(String tema) {
+		return containsAzureRole("tema_" + tema.toLowerCase());
 	}
 
-	public String getAudience() {
-		return audience;
+	private boolean containsAzureRole(String role) {
+		return jwtAzureRoles.contains(role);
 	}
 
+	@Deprecated
 	public String getIssuer() {
-		return issuer;
+		return jwtToken.getIssuer();
 	}
 
-	public boolean isServiceUser() {
-		if (subjectId == null) {
-			throw new OidcAuthorizationException(AUTH_ERRORMESSAGE);
-		} else {
-			return subjectId.toLowerCase().startsWith(SERVICEUSER_PREFIX);
+	@Deprecated
+	public String getAudience() {
+		try {
+			return jwtToken.getJwtTokenClaims().getAsList(JWT_CLAIM_AUD).get(0);
+		} catch (Exception e) {
+			return UKJENT_AUDIENCE;
 		}
 	}
 
-	public boolean isPrivilegiedServiceUser() {
-		return isServiceUser() && privilegiedServiceusers.containsKey(subjectId.toLowerCase());
+	protected String getConsumerId() {
+		if (isRestStsSystemToken()) {
+			return jwtToken.getSubject();
+		} else if (isOpenAmBrukerToken()) {
+			try {
+				return jwtToken.getJwtTokenClaims().getAsList(JWT_CLAIM_AUD).get(0);
+			} catch (Exception e) {
+				return OPENAM_UKJENT_AUDIENCE;
+			}
+		} else if (jwtAzureClientCredentialFlow || isOnBehalfOfFlowToken()) {
+			return findAzureAppnameClaim(jwtToken.getJwtTokenClaims());
+		}
+		return UKJENT_CONSUMER_ID;
 	}
 
-	public boolean isAzureToken() {
-		return azureToken;
+	protected String getUserId() {
+		if (isRestStsSystemToken() || isOpenAmBrukerToken()) {
+			return jwtToken.getSubject();
+		} else if (isClientCredentialFlowToken(jwtToken)) {
+			return findAzureAppnameClaim(jwtToken.getJwtTokenClaims());
+		} else if (isOnBehalfOfFlowToken()) {
+			if (jwtToken.getJwtTokenClaims().getAllClaims().containsKey(AZURE_NAV_CUSTOM_CLAIM_NAVIDENT)) {
+				return jwtToken.getJwtTokenClaims().getStringClaim(AZURE_NAV_CUSTOM_CLAIM_NAVIDENT);
+			} else {
+				return jwtToken.getJwtTokenClaims().getStringClaim(AZURE_CLAIM_OID);
+			}
+		}
+		return UKJENT_USER_ID;
+	}
+
+	protected boolean isRestStsSystemToken() {
+		return tokenValidationContext.hasTokenFor(ISSUER_REST_STS)
+				&& jwtToken.getSubject().toLowerCase().startsWith(SERVICEUSER_PREFIX);
+	}
+
+	protected boolean isOpenAmBrukerToken() {
+		return tokenValidationContext.hasTokenFor(ISSUER_OPENAM);
+	}
+
+	protected boolean isOnBehalfOfFlowToken() {
+		final JwtTokenClaims jwtTokenClaims = jwtToken.getJwtTokenClaims();
+		return jwtTokenClaims.getStringClaim(AZURE_CLAIM_SUB) != null &&
+				jwtTokenClaims.getStringClaim(AZURE_CLAIM_OID) != null &&
+				!jwtTokenClaims.getStringClaim(AZURE_CLAIM_SUB).equals(jwtTokenClaims.getStringClaim(AZURE_CLAIM_OID));
+	}
+
+	protected boolean isClientCredentialFlowToken(JwtToken jwtToken) {
+		if (isJwtIssuedByAzure()) {
+			final JwtTokenClaims jwtTokenClaims = jwtToken.getJwtTokenClaims();
+			return jwtTokenClaims.getStringClaim(AZURE_CLAIM_SUB) != null &&
+					jwtTokenClaims.getStringClaim(AZURE_CLAIM_OID) != null &&
+					jwtTokenClaims.getStringClaim(AZURE_CLAIM_SUB).equals(jwtTokenClaims.getStringClaim(AZURE_CLAIM_OID));
+		} else {
+			return false;
+		}
+	}
+
+	protected String findAzureAppnameClaim(JwtTokenClaims jwtTokenClaims) {
+		if (jwtTokenClaims.getAllClaims().containsKey(AZURE_NAV_CUSTOM_CLAIM_AZP_NAME)) {
+			String azpnameClaim = jwtTokenClaims.getStringClaim(AZURE_NAV_CUSTOM_CLAIM_AZP_NAME);
+			if (isNotBlank(azpnameClaim)) {
+				return azpnameClaim;
+			}
+			return jwtTokenClaims.getStringClaim(AZURE_CLAIM_AZP);
+		}
+		return jwtTokenClaims.getStringClaim(AZURE_CLAIM_AZP);
+	}
+
+	protected List<String> findAzureRoles(JwtToken jwtToken) {
+		if (jwtToken.getJwtTokenClaims().getAllClaims().containsKey(AZURE_CLAIM_ROLES)) {
+			return jwtToken.getJwtTokenClaims().getAsList(AZURE_CLAIM_ROLES).stream().map(String::toLowerCase).collect(Collectors.toList());
+		} else {
+			addMdcData(UUID.randomUUID().toString(), getUserId(), getConsumerId());
+			log.error("Azure client credential token flow token mangler roles claim. Permissions.roles må være satt på client i azureator. Må undersøkes.");
+			return new ArrayList<>();
+		}
 	}
 }

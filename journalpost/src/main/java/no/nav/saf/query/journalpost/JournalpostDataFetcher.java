@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 
 import static no.nav.saf.graphql.ErrorCode.BAD_REQUEST;
 import static no.nav.saf.graphql.ErrorCode.SERVER_ERROR;
+import static no.nav.saf.util.MDCUtility.addMdcData;
 import static org.apache.commons.lang3.StringUtils.isNumeric;
 
 /**
@@ -29,11 +30,11 @@ public class JournalpostDataFetcher implements DataFetcher<DataFetcherResult<Jou
 
 	@Override
 	public DataFetcherResult<Journalpost> get(DataFetchingEnvironment environment) throws Exception {
-		final String journalpostId = environment.getArgument("journalpostId");
+		SafRequestContext safRequestContext = environment.getGraphQlContext().get(SafRequestContext.KEY);
+		addMdcData(safRequestContext);
 		try {
+			final String journalpostId = environment.getArgument("journalpostId");
 			validateJournalpostId(journalpostId, environment);
-			SafRequestContext safRequestContext = environment.getContext();
-			safRequestContext.getSecurityContext().getOidcTokenBody();
 			log.info("query journalpost. journalpostId={}", journalpostId);
 			Journalpost journalpost = journalpostQuery.hentJournalpost(journalpostId, safRequestContext, environment);
 			log.info("journalpost hentet. journalpostId={}", journalpostId);

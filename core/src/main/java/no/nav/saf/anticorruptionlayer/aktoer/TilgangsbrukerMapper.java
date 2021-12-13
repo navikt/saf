@@ -36,7 +36,7 @@ public class TilgangsbrukerMapper {
 		}
 
 		if (foedselsnummer == null) {
-			log.error("Feil i mapping av identer fra Pdl. foedselsnummer er null etter mapping. Må følges opp.");
+			log.warn("Feil i mapping av identer fra Pdl. foedselsnummer er null etter mapping. Dette skyldes at bruker har NPID");
 		}
 
 		if (aktoerId == null) {

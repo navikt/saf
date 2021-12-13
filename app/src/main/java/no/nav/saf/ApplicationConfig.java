@@ -1,11 +1,10 @@
 package no.nav.saf;
 
 import io.micrometer.core.instrument.MeterRegistry;
-import no.nav.saf.anticorruptionlayer.azure.SafProperties;
+import no.nav.saf.config.SafProperties;
 import no.nav.saf.config.ServiceuserAlias;
 import no.nav.saf.graphiql.GraphiQLController;
 import no.nav.saf.metrics.DokMonitoringAspect;
-import no.nav.security.token.support.core.configuration.MultiIssuerConfiguration;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.HttpClients;
@@ -23,10 +22,8 @@ import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import javax.inject.Named;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @EnableAspectJAutoProxy
@@ -38,7 +35,12 @@ import java.util.stream.Collectors;
 public class ApplicationConfig {
 	@Bean
 	ClientHttpRequestFactory clientHttpRequestFactory(HttpClient httpClient) {
-		return new HttpComponentsClientHttpRequestFactory(httpClient);
+		HttpComponentsClientHttpRequestFactory httpComponentsClientHttpRequestFactory = new HttpComponentsClientHttpRequestFactory(httpClient);
+		// Default timeouts for alle restklienter som bruker denne requestFactory.
+		// RestTemplate som behøver egne timeouts må konstruere en ny ClientHttpRequestFactory.
+		httpComponentsClientHttpRequestFactory.setConnectTimeout(5_000);
+		httpComponentsClientHttpRequestFactory.setReadTimeout(20_000);
+		return httpComponentsClientHttpRequestFactory;
 	}
 
 	@Bean
@@ -52,17 +54,26 @@ public class ApplicationConfig {
 	}
 
 	@Bean
-	DokMonitoringAspect timedAspect(MeterRegistry meterRegistry) {
-		return new DokMonitoringAspect(meterRegistry);
+	ClientHttpRequestFactory hentJournalsakInfoClientHttpRequestFactory(HttpClient hentJournalsakInfoHttpClient) {
+		HttpComponentsClientHttpRequestFactory httpComponentsClientHttpRequestFactory = new HttpComponentsClientHttpRequestFactory(hentJournalsakInfoHttpClient);
+		httpComponentsClientHttpRequestFactory.setConnectTimeout(5_000);
+		httpComponentsClientHttpRequestFactory.setReadTimeout(180_000);
+		return httpComponentsClientHttpRequestFactory;
 	}
 
 	@Bean
-	@Named("azureIssuers")
-	Set<String> azureIssuers(MultiIssuerConfiguration multiIssuerConfiguration) {
-		Set<String> issuers = new HashSet<>();
-		multiIssuerConfiguration.getIssuer("azurev1").ifPresent(issuerConfiguration -> issuers.add(issuerConfiguration.getMetaData().getIssuer().getValue()));
-		multiIssuerConfiguration.getIssuer("azurev2").ifPresent(issuerConfiguration -> issuers.add(issuerConfiguration.getMetaData().getIssuer().getValue()));
-		return issuers;
+	HttpClient hentJournalsakInfoHttpClient() {
+		PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager();
+		connectionManager.setMaxTotal(200);
+		connectionManager.setDefaultMaxPerRoute(200);
+		return HttpClients.custom()
+				.setConnectionManager(connectionManager)
+				.build();
+	}
+
+	@Bean
+	DokMonitoringAspect timedAspect(MeterRegistry meterRegistry) {
+		return new DokMonitoringAspect(meterRegistry);
 	}
 
 	@Bean

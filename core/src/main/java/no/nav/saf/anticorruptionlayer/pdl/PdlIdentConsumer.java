@@ -2,9 +2,9 @@ package no.nav.saf.anticorruptionlayer.pdl;
 
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.retry.annotation.Retry;
-import no.nav.saf.anticorruptionlayer.azure.SafProperties;
 import no.nav.saf.anticorruptionlayer.sts.StsResponse;
 import no.nav.saf.anticorruptionlayer.sts.StsRestConsumer;
+import no.nav.saf.config.SafProperties;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.client.ClientHttpRequestFactory;
@@ -14,7 +14,6 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
-import java.time.Duration;
 import java.util.HashMap;
 import java.util.List;
 
@@ -46,8 +45,6 @@ class PdlIdentConsumer implements IdentConsumer {
 							final StsRestConsumer stsRestConsumer,
 							final ClientHttpRequestFactory clientHttpRequestFactory) {
 		this.restTemplate = restTemplateBuilder
-				.setConnectTimeout(Duration.ofSeconds(3))
-				.setReadTimeout(Duration.ofSeconds(20))
 				.requestFactory(() -> clientHttpRequestFactory)
 				.build();
 		this.pdlUri = UriComponentsBuilder.fromHttpUrl(safProperties.getEndpoints().getPdl()).build().toUri();

@@ -10,6 +10,6 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 public class Advice {
-    private String id;
-    private List<AttributeAssignment> attributeAssignments;
+    String id;
+    List<AttributeAssignment> attributeAssignments;
 }

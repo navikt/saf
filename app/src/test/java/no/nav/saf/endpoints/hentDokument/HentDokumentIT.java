@@ -485,16 +485,12 @@ class HentDokumentIT extends AbstractItest {
 	}
 
 	@Test
-	void shouldGetUnauthorizedFromPep7() {
-		abacDenyPep7skipPep2Pep3Pep4Pep5Pep6();
+	void shouldGetUnauthorizedFromPep7ForFp() {
+		abacDenyPep7dSkipPep2Pep3Pep4Pep5Pep6d();
 		stubFor(get("/hentjournalsakinfo/hentdokument/" + DOKUMENT_ID + "/" + VARIANTFORMAT)
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_PDF_VALUE)
 						.withBody(Base64.getEncoder().encode(TEST_FILE_BYTES))));
-		stubFor(get("/bidrag/765432").willReturn(aResponse()
-				.withStatus(OK.value())
-				.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-				.withBodyFile("bidrag/bidragsak-happy.json")));
 		stubFor(get("/hentjournalsakinfo/henttilgangjournalpost/" + JOURNALPOST_ID + "/" + DOKUMENT_ID + "/" + VARIANTFORMAT).willReturn(aResponse()
 				.withStatus(OK.value())
 				.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
@@ -509,7 +505,55 @@ class HentDokumentIT extends AbstractItest {
 						.withBodyFile("sts/reststs-happy.json")));
 
 		ResponseEntity<String> responseEntity = callHentDokument();
-		verifyabacDenyPep7SkipPep2Pep3Pep4Pep5Pep6AndHttpStatusCode(FORBIDDEN, responseEntity.getStatusCode());
+		verifyabacDenyPep7dSkipPep2Pep3Pep4Pep5Pep6dAndHttpStatusCode(FORBIDDEN, responseEntity.getStatusCode());
+	}
+
+	@Test
+	void shouldGetUnauthorizedFromPep7ForK9TemaFri() {
+		abacDenyPep7dSkipPep2Pep3Pep4Pep5Pep6d();
+		stubFor(get("/hentjournalsakinfo/hentdokument/" + DOKUMENT_ID + "/" + VARIANTFORMAT)
+				.willReturn(aResponse().withStatus(OK.value())
+						.withHeader(CONTENT_TYPE, APPLICATION_PDF_VALUE)
+						.withBody(Base64.getEncoder().encode(TEST_FILE_BYTES))));
+		stubFor(get("/hentjournalsakinfo/henttilgangjournalpost/" + JOURNALPOST_ID + "/" + DOKUMENT_ID + "/" + VARIANTFORMAT).willReturn(aResponse()
+				.withStatus(OK.value())
+				.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+				.withBodyFile("hentjournalsakinfo/henttilgangjournalpostTemaFri_gsak-happy.json")));
+		stubFor(get("/k9sak?saksnummer=" + SAK_ID).willReturn(aResponse()
+				.withStatus(OK.value())
+				.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+				.withBodyFile("k9/happy-response.json")));
+		stubFor(post(urlEqualTo("/reststs"))
+				.willReturn(aResponse().withStatus(OK.value())
+						.withHeader(CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+						.withBodyFile("sts/reststs-happy.json")));
+
+		ResponseEntity<String> responseEntity = callHentDokument();
+		verifyabacDenyPep7dSkipPep2Pep3Pep4Pep5Pep6dAndHttpStatusCode(FORBIDDEN, responseEntity.getStatusCode());
+	}
+
+	@Test
+	void shouldGetUnauthorizedFromPep7ForK9TemaOms() {
+		abacDenyPep7dSkipPep2Pep3Pep4Pep5Pep6d();
+		stubFor(get("/hentjournalsakinfo/hentdokument/" + DOKUMENT_ID + "/" + VARIANTFORMAT)
+				.willReturn(aResponse().withStatus(OK.value())
+						.withHeader(CONTENT_TYPE, APPLICATION_PDF_VALUE)
+						.withBody(Base64.getEncoder().encode(TEST_FILE_BYTES))));
+		stubFor(get("/hentjournalsakinfo/henttilgangjournalpost/" + JOURNALPOST_ID + "/" + DOKUMENT_ID + "/" + VARIANTFORMAT).willReturn(aResponse()
+				.withStatus(OK.value())
+				.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+				.withBodyFile("hentjournalsakinfo/henttilgangjournalpostTemaOms_gsak-happy.json")));
+		stubFor(get("/k9sak?saksnummer=" + SAK_ID).willReturn(aResponse()
+				.withStatus(OK.value())
+				.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+				.withBodyFile("k9/happy-response.json")));
+		stubFor(post(urlEqualTo("/reststs"))
+				.willReturn(aResponse().withStatus(OK.value())
+						.withHeader(CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+						.withBodyFile("sts/reststs-happy.json")));
+
+		ResponseEntity<String> responseEntity = callHentDokument();
+		verifyabacDenyPep7dSkipPep2Pep3Pep4Pep5Pep6dAndHttpStatusCode(FORBIDDEN, responseEntity.getStatusCode());
 	}
 
 	private void assertOkArkivResponse(ResponseEntity<String> responseEntity) {
@@ -529,12 +573,12 @@ class HentDokumentIT extends AbstractItest {
 	}
 
 	private ResponseEntity<String> callHentDokument() {
-		String uri = "/rest/hentdokument/" + JOURNALPOST_ID + "/" + DOKUMENT_ID + "/" + VARIANTFORMAT.toString();
+		String uri = "/rest/hentdokument/" + JOURNALPOST_ID + "/" + DOKUMENT_ID + "/" + VARIANTFORMAT;
 		return this.restTemplate.exchange(uri, HttpMethod.GET, createHttpEntity(), String.class);
 	}
 
 	private ResponseEntity<String> callHentDokumentSladdetVariant() {
-		String uri = "/rest/hentdokument/" + JOURNALPOST_ID + "/" + DOKUMENT_ID + "/" + SLADDET_VARIANTFORMAT.toString();
+		String uri = "/rest/hentdokument/" + JOURNALPOST_ID + "/" + DOKUMENT_ID + "/" + SLADDET_VARIANTFORMAT;
 		return this.restTemplate.exchange(uri, HttpMethod.GET, createHttpEntity(), String.class);
 	}
 }

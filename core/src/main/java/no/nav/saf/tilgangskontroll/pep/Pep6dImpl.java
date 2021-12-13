@@ -1,11 +1,5 @@
 package no.nav.saf.tilgangskontroll.pep;
 
-import static no.nav.saf.cache.RedisCacheConfig.TILGANG_CACHE;
-import static no.nav.saf.domain.DomainConstants.PEP6D;
-import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_RESOURCE_TYPE;
-import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_SAF_DOKUMENT_FIL;
-import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_SAF_SKJERMING;
-
 import io.lettuce.core.RedisException;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.cache.KeyGeneratorDistributedCaching;
@@ -27,16 +21,24 @@ import org.springframework.stereotype.Component;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import static no.nav.saf.cache.RedisCacheConfig.TILGANG_CACHE;
+import static no.nav.saf.domain.DomainConstants.PEP6D;
+import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_RESOURCE_TYPE;
+import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_SAF_DOKUMENT_FIL;
+import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_SAF_SKJERMING;
+import static no.nav.saf.tilgangskontroll.pep.AbacAnswer.deny;
+import static no.nav.saf.tilgangskontroll.pep.AbacAnswer.permit;
+
 /**
  * Dekker følgende policies i saf:
  * <p>
- * Lokal caching er kun relevant for dokumentoversiktene og brukes i journalpostMapperDto.java
+ * Lokal caching er kun relevant for dokumentoversiktene og brukes i journalpostDtoMapper.java
  *
  * @author Joakim Bjørnstad, Jbit AS
  */
 @Slf4j
 @Component(PEP6D)
-public class Pep6dImpl implements Pep<TilgangDokumentvariant> {
+public class Pep6dImpl extends Pep<TilgangDokumentvariant> {
 
 	private final Cache tilgangCache;
 	private final AbacService abacService;
@@ -48,7 +50,7 @@ public class Pep6dImpl implements Pep<TilgangDokumentvariant> {
 	}
 
 	@Override
-	public XacmlResponse verifyAccessXacmlResponse(TilgangDokumentvariant ressurs, SafRequestContext safRequestContext) {
+	public XacmlResponse verifyAbacPdpDecision(TilgangDokumentvariant ressurs, SafRequestContext safRequestContext) {
 		if (ressurs == null) {
 			log.warn("Pep6d mangler tilstrekkelig datagrunnlag for å kunne gjennomføre tilgangskontroll");
 			return XacmlResponse.deny();
@@ -61,10 +63,10 @@ public class Pep6dImpl implements Pep<TilgangDokumentvariant> {
 				return XacmlResponse.deny();
 			}
 
-			Pep.traceLogPepStarted(PEP6D, ressurs);
+			traceLogPepStarted(PEP6D, ressurs);
 
 			String tilgangKeyDistributedCaching = KeyGeneratorDistributedCaching.getKeyForPep6d(
-					safRequestContext.getSecurityContext().getSubjectId(),
+					safRequestContext.getUserId(),
 					ressurs.getJournalpostId(),
 					ressurs.getDokumentInfoId(),
 					ressurs.getVariantformat().name(),
@@ -78,7 +80,7 @@ public class Pep6dImpl implements Pep<TilgangDokumentvariant> {
 
 			try {
 				XacmlResponse response = fetchXacmlResponse(ressurs, safRequestContext, tilgangKeyDistributedCaching);
-				if(response == null) {
+				if (response == null) {
 					return XacmlResponse.deny();
 				}
 				safRequestContext.getRequestCache().putObject(tilgangKeyLocalCaching, decide(response.getDecision()));
@@ -89,7 +91,7 @@ public class Pep6dImpl implements Pep<TilgangDokumentvariant> {
 				safRequestContext.getRequestCache().putObject(tilgangKeyLocalCaching, decide(response.getDecision()));
 				return response;
 			} finally {
-				Pep.traceLogPepFinished(PEP6D, ressurs);
+				traceLogPepFinished(PEP6D, ressurs);
 			}
 		} else {
 			String tilgangKeyLocalCaching = KeyGeneratorLocalCaching.getKeyForPep6d(
@@ -102,14 +104,56 @@ public class Pep6dImpl implements Pep<TilgangDokumentvariant> {
 		}
 	}
 
+	@Override
+	public AbacAnswer verifyAzureClientCredentialFlowAccess(TilgangDokumentvariant ressurs, SafRequestContext safRequestContext) {
+		if (ressurs == null) {
+			log.warn("Pep6d mangler tilstrekkelig datagrunnlag for å kunne gjennomføre tilgangskontroll. Azure ccf.");
+			return deny(AbacAnswer.AbacDenyReason.builder()
+					.cause("dokumentvariant_mangler_data").policy("saf_pep6d").rule("dokumentvariant_er_null")
+					.build());
+		}
+
+		if (isSkjermingPresent(ressurs)) {
+			if (isVariantformatNull(ressurs)) {
+				log.warn("Pep6d mangler tilstrekkelig datagrunnlag for å kunne gjennomføre tilgangskontroll. Variantformat=null. journalpostId={} og dokumentinfoId={}. Azure ccf.",
+						ressurs.getJournalpostId(), ressurs.getDokumentInfoId());
+				return deny(AbacAnswer.AbacDenyReason.builder()
+						.cause("dokumentvariant_mangler_variantformat").policy("saf_pep6d").rule("dokumentvariant_skjermet_og_variantformat_er_null")
+						.build());
+			}
+
+			traceLogPepStarted(PEP6D, ressurs);
+			String tilgangKeyLocalCaching = KeyGeneratorLocalCaching.getKeyForPep6d(
+					ressurs.getJournalpostId(),
+					ressurs.getDokumentInfoId(),
+					ressurs.getVariantformat().name(),
+					ressurs.getSkjerming().name());
+
+			boolean decision = !isSkjermingPresent(ressurs);
+			safRequestContext.getRequestCache().putObject(tilgangKeyLocalCaching, decision);
+			traceLogPepFinished(PEP6D, ressurs);
+			return decision ? permit() : deny(AbacAnswer.AbacDenyReason.builder()
+					.cause("dokumentvariant_skjermet").policy("saf_pep6d").rule("dokumentvariant_skjermet")
+					.build());
+		} else {
+			String tilgangKeyLocalCaching = KeyGeneratorLocalCaching.getKeyForPep6d(
+					ressurs.getJournalpostId(),
+					ressurs.getDokumentInfoId(),
+					isVariantformatNull(ressurs) ? null : ressurs.getVariantformat().name(),
+					null);
+			safRequestContext.getRequestCache().putObject(tilgangKeyLocalCaching, true);
+			return permit();
+		}
+	}
+
 	private XacmlResponse fetchXacmlResponse(TilgangDokumentvariant ressurs, SafRequestContext safRequestContext, String tilgangKeyDistributedCaching) {
 		XacmlResponse cachedResponse = tilgangCache.get(tilgangKeyDistributedCaching, XacmlResponse.class);
-		if(cachedResponse == null) {
+		if (cachedResponse == null) {
 			XacmlResponse abacResponse = hasDokumentFilAccess(ressurs, safRequestContext);
-			if(abacResponse == null) {
+			if (abacResponse == null) {
 				return XacmlResponse.deny();
 			}
-			if(decide(abacResponse.getDecision())) {
+			if (decide(abacResponse.getDecision())) {
 				tilgangCache.put(tilgangKeyDistributedCaching, abacResponse);
 			}
 			return abacResponse;

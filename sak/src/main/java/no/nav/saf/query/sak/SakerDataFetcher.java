@@ -15,6 +15,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static no.nav.saf.util.MDCUtility.addMdcData;
+
 /**
  * @author Joakim Bjørnstad, Jbit AS
  */
@@ -30,11 +32,11 @@ public class SakerDataFetcher implements DataFetcher<DataFetcherResult<List<Sak>
 
 	@Override
 	public DataFetcherResult<List<Sak>> get(DataFetchingEnvironment environment) throws Exception {
+		SafRequestContext safRequestContext = environment.getGraphQlContext().get(SafRequestContext.KEY);
+		addMdcData(safRequestContext);
 		try {
 			Map<String, Object> brukerId = environment.getArgument("brukerId");
 			final BrukerIdInput brukerIdInput = new BrukerIdInput((String) brukerId.get("id"), BrukerIdType.valueOf((String) brukerId.get("type")));
-			SafRequestContext safRequestContext = environment.getContext();
-			safRequestContext.getSecurityContext().getOidcTokenBody();
 			List<Sak> tilknyttedeSaker = sakerQuery.hentSaker(brukerIdInput, safRequestContext);
 			log.info("Saker hentet {} saker for bruker", tilknyttedeSaker.size());
 			return DataFetcherResult.<List<Sak>>newResult()

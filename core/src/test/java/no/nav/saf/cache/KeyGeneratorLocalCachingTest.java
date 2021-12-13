@@ -1,5 +1,7 @@
 package no.nav.saf.cache;
 
+import static no.nav.saf.cache.AbstractKeyGeneratorCaching.ARKIVSAKSNUMMER;
+import static no.nav.saf.cache.AbstractKeyGeneratorCaching.ARKIVSAKSSYSTEM;
 import static no.nav.saf.cache.AbstractKeyGeneratorCaching.DOKUMENTINFO_ID;
 import static no.nav.saf.cache.AbstractKeyGeneratorCaching.JOURNALPOST_ID;
 import static no.nav.saf.cache.AbstractKeyGeneratorCaching.RESSURS;
@@ -12,6 +14,7 @@ import static no.nav.saf.cache.AbstractKeyGeneratorCaching.VARIANTFORMAT;
 import static no.nav.saf.cache.KeyGeneratorLocalCaching.getKeyForPep2d;
 import static no.nav.saf.cache.KeyGeneratorLocalCaching.getKeyForPep5;
 import static no.nav.saf.cache.KeyGeneratorLocalCaching.getKeyForPep6d;
+import static no.nav.saf.cache.KeyGeneratorLocalCaching.getKeyForPep7d;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 
@@ -41,4 +44,9 @@ class KeyGeneratorLocalCachingTest extends AbstractKeyGeneratorCachingTest {
 				JOURNALPOST_ID_TEST, DOKUMENTINFO_ID, DOKUMENTINFO_ID_TEST, VARIANTFORMAT, VARIANT_FORMAT_TEST, SKJERMING, SKJERMING_TEST)));
 	}
 
+	@Test
+	void checkPep7dKeyGenerator() {
+		String key = getKeyForPep7d(ARKIVSAKSSYSTEM_TEST, ARKIVSAKSNUMMER_TEST);
+		assertThat(key, is(String.format("%s:%s;%s:%s;%s:%s", RESSURS, RESSURS_SAK_DOKUMENT, ARKIVSAKSSYSTEM, ARKIVSAKSSYSTEM_TEST, ARKIVSAKSNUMMER, ARKIVSAKSNUMMER_TEST)));
+	}
 }

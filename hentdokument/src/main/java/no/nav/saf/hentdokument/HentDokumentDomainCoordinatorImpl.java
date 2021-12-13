@@ -13,7 +13,7 @@ import no.nav.saf.exceptions.JournalpostIkkeFunnetException;
 import no.nav.saf.hentdokument.repo.DokumentRepository;
 import no.nav.saf.hentdokument.repo.TilgangsmodellHentdokumentRepository;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
-import no.nav.saf.tilgangskontroll.abac.dto.response.XacmlResponse;
+import no.nav.saf.tilgangskontroll.pep.AbacAnswer;
 import no.nav.saf.tilgangskontroll.pep.Pep;
 import org.springframework.stereotype.Component;
 
@@ -27,7 +27,7 @@ import static no.nav.saf.domain.DomainConstants.PEP3;
 import static no.nav.saf.domain.DomainConstants.PEP4;
 import static no.nav.saf.domain.DomainConstants.PEP5;
 import static no.nav.saf.domain.DomainConstants.PEP6D;
-import static no.nav.saf.domain.DomainConstants.PEP7;
+import static no.nav.saf.domain.DomainConstants.PEP7D;
 import static no.nav.saf.tilgangskontroll.pep.DenyReasons.PEP1G_DENY_REASON;
 import static no.nav.saf.tilgangskontroll.pep.DenyReasons.PEP2D_DENY_REASON;
 import static no.nav.saf.tilgangskontroll.pep.DenyReasons.PEP2_DENY_REASON;
@@ -35,11 +35,7 @@ import static no.nav.saf.tilgangskontroll.pep.DenyReasons.PEP3_DENY_REASON;
 import static no.nav.saf.tilgangskontroll.pep.DenyReasons.PEP4_DENY_REASON;
 import static no.nav.saf.tilgangskontroll.pep.DenyReasons.PEP5_DENY_REASON;
 import static no.nav.saf.tilgangskontroll.pep.DenyReasons.PEP6D_DENY_REASON;
-import static no.nav.saf.tilgangskontroll.pep.DenyReasons.PEP7_DENY_REASON;
-
-/**
- * @author Sigurd Midttun, Visma Consulting.
- */
+import static no.nav.saf.tilgangskontroll.pep.DenyReasons.PEP7D_DENY_REASON;
 
 @Component
 public class HentDokumentDomainCoordinatorImpl implements HentDokumentDomainCoordinator {
@@ -53,7 +49,7 @@ public class HentDokumentDomainCoordinatorImpl implements HentDokumentDomainCoor
 	private final Pep<TilgangJournalpost> pep4;
 	private final Pep<TilgangDokumentInfo> pep5;
 	private final Pep<TilgangDokumentvariant> pep6d;
-	private final Pep<TilgangSak> pep7;
+	private final Pep<TilgangSak> pep7d;
 	private final HentDokumentSporbarhetslogger hentDokumentSporbarhetslogger;
 
 	@Inject
@@ -66,7 +62,7 @@ public class HentDokumentDomainCoordinatorImpl implements HentDokumentDomainCoor
 											 @Named(PEP4) Pep<TilgangJournalpost> pep4,
 											 @Named(PEP5) Pep<TilgangDokumentInfo> pep5,
 											 @Named(PEP6D) Pep<TilgangDokumentvariant> pep6d,
-											 @Named(PEP7) Pep<TilgangSak> pep7) {
+											 @Named(PEP7D) Pep<TilgangSak> pep7d) {
 		this.dokumentRepository = dokumentRepository;
 		this.tilgangsmodellHentdokumentRepository = tilgangsmodellHentdokumentRepository;
 		this.pep1g = pep1g;
@@ -76,7 +72,7 @@ public class HentDokumentDomainCoordinatorImpl implements HentDokumentDomainCoor
 		this.pep4 = pep4;
 		this.pep5 = pep5;
 		this.pep6d = pep6d;
-		this.pep7 = pep7;
+		this.pep7d = pep7d;
 		this.hentDokumentSporbarhetslogger = new HentDokumentSporbarhetslogger();
 	}
 
@@ -97,19 +93,19 @@ public class HentDokumentDomainCoordinatorImpl implements HentDokumentDomainCoor
 	}
 
 	private void doTilgangskontroll(String journalpostId, String dokumentInfoId, String variantFormat, TilgangSak tilgangSak, TilgangBruker tilgangBruker, SafRequestContext safRequestContext) {
-		XacmlResponse pep1gResponse = pep1g.verifyAccessXacmlResponse(tilgangBruker, safRequestContext);
+		AbacAnswer pep1gResponse = pep1g.hasAccessWithAnswer(tilgangBruker, safRequestContext);
 		if (pep1gResponse.isDeny()) {
-			throw new HentdokumentTilgangskontrollException(PEP1G_DENY_REASON, pep1gResponse);
+			throw new HentdokumentTilgangskontrollException(PEP1G_DENY_REASON, pep1gResponse.getDenyReasonSporing());
 		}
 
-		XacmlResponse pep2Response = pep2.verifyAccessXacmlResponse(tilgangSak, safRequestContext);
+		AbacAnswer pep2Response = pep2.hasAccessWithAnswer(tilgangSak, safRequestContext);
 		if (pep2Response.isDeny()) {
-			throw new HentdokumentTilgangskontrollException(PEP2_DENY_REASON, pep2Response);
+			throw new HentdokumentTilgangskontrollException(PEP2_DENY_REASON, pep2Response.getDenyReasonSporing());
 		}
 
-		XacmlResponse pep3Response = pep3.verifyAccessXacmlResponse(tilgangSak, safRequestContext);
+		AbacAnswer pep3Response = pep3.hasAccessWithAnswer(tilgangSak, safRequestContext);
 		if (pep3Response.isDeny()) {
-			throw new HentdokumentTilgangskontrollException(PEP3_DENY_REASON, pep3Response);
+			throw new HentdokumentTilgangskontrollException(PEP3_DENY_REASON, pep3Response.getDenyReasonSporing());
 		}
 
 		final TilgangJournalpost tilgangJournalpost = tilgangsmodellHentdokumentRepository.findTilgangJournalpostFromSafRequestContext(safRequestContext);
@@ -117,31 +113,31 @@ public class HentDokumentDomainCoordinatorImpl implements HentDokumentDomainCoor
 			throw new JournalpostIkkeFunnetException("Dokumentet tilnyttet journalpostId=" + journalpostId + ", dokumentInfoId=" + dokumentInfoId + ", variant=" + variantFormat + " ikke funnet.");
 		}
 		if (tilgangJournalpost.getJournalstatus() != Journalstatus.MOTTATT) {
-			XacmlResponse pep2dResponse = pep2d.verifyAccessXacmlResponse(tilgangSak, safRequestContext);
+			AbacAnswer pep2dResponse = pep2d.hasAccessWithAnswer(tilgangSak, safRequestContext);
 			if (pep2dResponse.isDeny()) {
-				throw new HentdokumentTilgangskontrollException(PEP2D_DENY_REASON, pep2dResponse);
+				throw new HentdokumentTilgangskontrollException(PEP2D_DENY_REASON, pep2dResponse.getDenyReasonSporing());
 			}
 		}
 
-		XacmlResponse pep4Response = pep4.verifyAccessXacmlResponse(tilgangJournalpost, safRequestContext);
+		AbacAnswer pep4Response = pep4.hasAccessWithAnswer(tilgangJournalpost, safRequestContext);
 		if (pep4Response.isDeny()) {
-			throw new HentdokumentTilgangskontrollException(PEP4_DENY_REASON, pep4Response);
+			throw new HentdokumentTilgangskontrollException(PEP4_DENY_REASON, pep4Response.getDenyReasonSporing());
 		}
 
 		final TilgangDokumentInfo tilgangDokumentInfo = tilgangJournalpost.getDokumenter().get(0);
-		XacmlResponse pep5Response = pep5.verifyAccessXacmlResponse(tilgangDokumentInfo, safRequestContext);
+		AbacAnswer pep5Response = pep5.hasAccessWithAnswer(tilgangDokumentInfo, safRequestContext);
 		if (pep5Response.isDeny()) {
-			throw new HentdokumentTilgangskontrollException(PEP5_DENY_REASON, pep5Response);
+			throw new HentdokumentTilgangskontrollException(PEP5_DENY_REASON, pep5Response.getDenyReasonSporing());
 		}
 
-		XacmlResponse pep6dResponse = pep6d.verifyAccessXacmlResponse(tilgangDokumentInfo.getTilgangDokumentvarianter().get(0), safRequestContext);
+		AbacAnswer pep6dResponse = pep6d.hasAccessWithAnswer(tilgangDokumentInfo.getTilgangDokumentvarianter().get(0), safRequestContext);
 		if (pep6dResponse.isDeny()) {
-			throw new HentdokumentTilgangskontrollException(PEP6D_DENY_REASON, pep6dResponse);
+			throw new HentdokumentTilgangskontrollException(PEP6D_DENY_REASON, pep6dResponse.getDenyReasonSporing());
 		}
 
-		XacmlResponse pep7Response = pep7.verifyAccessXacmlResponse(tilgangSak, safRequestContext);
-		if (pep7Response.isDeny()) {
-			throw new HentdokumentTilgangskontrollException(PEP7_DENY_REASON, pep7Response);
+		AbacAnswer pep7dResponse = pep7d.hasAccessWithAnswer(tilgangSak, safRequestContext);
+		if (pep7dResponse.isDeny()) {
+			throw new HentdokumentTilgangskontrollException(PEP7D_DENY_REASON, pep7dResponse.getDenyReasonSporing());
 		}
 	}
 }

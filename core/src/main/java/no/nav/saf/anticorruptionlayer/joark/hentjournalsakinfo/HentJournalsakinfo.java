@@ -33,7 +33,6 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import javax.inject.Inject;
-import java.time.Duration;
 
 import static no.nav.saf.util.MDCConstants.CALL_ID;
 
@@ -50,14 +49,12 @@ public class HentJournalsakinfo {
 	@Inject
 	public HentJournalsakinfo(@Value("${hentjournalsakinfo.url}") final String hentjournalsakinfoUrl,
 							  final RestTemplateBuilder restTemplateBuilder,
-							  final ClientHttpRequestFactory clientHttpRequestFactory,
+							  final ClientHttpRequestFactory hentJournalsakInfoClientHttpRequestFactory,
 							  final ServiceuserAlias serviceuserAlias) {
 		restTemplate = restTemplateBuilder
-				.requestFactory(() -> clientHttpRequestFactory)
+				.requestFactory(() -> hentJournalsakInfoClientHttpRequestFactory)
 				.rootUri(hentjournalsakinfoUrl)
 				.basicAuthentication(serviceuserAlias.getUsername(), serviceuserAlias.getPassword())
-				.setReadTimeout(Duration.ofSeconds(60))
-				.setConnectTimeout(Duration.ofSeconds(5))
 				.build();
 		this.hentjournalsakinfoUrl = hentjournalsakinfoUrl;
 	}

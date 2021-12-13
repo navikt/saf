@@ -3,6 +3,8 @@ package no.nav.saf.query.journalpost;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.anticorruptionlayer.aktoer.PdlAntiCorruptionLayer;
 import no.nav.saf.anticorruptionlayer.bisys.BisysAntiCorruptionLayer;
+import no.nav.saf.anticorruptionlayer.fpsak.FpsakAntiCorruptionLayer;
+import no.nav.saf.anticorruptionlayer.k9.K9AntiCorruptionLayer;
 import no.nav.saf.anticorruptionlayer.pensjonsak.PensjonSakAntiCorruptionLayer;
 import no.nav.saf.domain.Arkivsak;
 import no.nav.saf.domain.BidragSak;
@@ -33,16 +35,24 @@ class JournalpostTilgangRepositoryImpl implements JournalpostTilgangRepository {
 	private final PensjonSakAntiCorruptionLayer pensjonSakAntiCorruptionLayer;
 	private final JournalpostAntiCorruptionLayer journalpostAntiCorruptionLayer;
 	private final BisysAntiCorruptionLayer bisysAntiCorruptionLayer;
+	private final FpsakAntiCorruptionLayer fpsakAntiCorruptionLayer;
+	private final K9AntiCorruptionLayer k9AntiCorruptionLayer;
 	private final PdlAntiCorruptionLayer aktoerAntiCorruptionLayer;
 
+
 	@Inject
-	public JournalpostTilgangRepositoryImpl(PensjonSakAntiCorruptionLayer pensjonSakAntiCorruptionLayer,
-											JournalpostAntiCorruptionLayer journalpostAntiCorruptionLayer,
-											BisysAntiCorruptionLayer bisysAntiCorruptionLayer,
-											PdlAntiCorruptionLayer aktoerAntiCorruptionLayer) {
+	public JournalpostTilgangRepositoryImpl(
+			PensjonSakAntiCorruptionLayer pensjonSakAntiCorruptionLayer,
+			JournalpostAntiCorruptionLayer journalpostAntiCorruptionLayer,
+			BisysAntiCorruptionLayer bisysAntiCorruptionLayer,
+			FpsakAntiCorruptionLayer fpsakAntiCorruptionLayer,
+			K9AntiCorruptionLayer k9AntiCorruptionLayer,
+			PdlAntiCorruptionLayer aktoerAntiCorruptionLayer) {
 		this.pensjonSakAntiCorruptionLayer = pensjonSakAntiCorruptionLayer;
 		this.journalpostAntiCorruptionLayer = journalpostAntiCorruptionLayer;
 		this.bisysAntiCorruptionLayer = bisysAntiCorruptionLayer;
+		this.fpsakAntiCorruptionLayer = fpsakAntiCorruptionLayer;
+		this.k9AntiCorruptionLayer = k9AntiCorruptionLayer;
 		this.aktoerAntiCorruptionLayer = aktoerAntiCorruptionLayer;
 	}
 
@@ -119,6 +129,8 @@ class JournalpostTilgangRepositoryImpl implements JournalpostTilgangRepository {
 			if (GSAK.name().equals(arkivSystem)) {
 				safRequestContext.getRequestCache().putObject(arkivsak.getKey(), arkivsak);
 				BidragSak bidragSak = bisysAntiCorruptionLayer.hentBidragSakByArkivsak(arkivsak);
+				List<String> fpsak = fpsakAntiCorruptionLayer.hentRelevanteParter(arkivsak);
+				List<String> k9sak = k9AntiCorruptionLayer.hentRelevanteParter(arkivsak);
 				return TilgangSak.builder()
 						.aktoerId(arkivsak.getAktoerId())
 						.arkivsaksnummer(arkivsak.getArkivsaksnummer())
@@ -127,6 +139,8 @@ class JournalpostTilgangRepositoryImpl implements JournalpostTilgangRepository {
 						.tema(arkivsak.getTema())
 						.orgnummer(arkivsak.getOrgnummer())
 						.relevanteTredjeparter(bidragSak == null ? null : new ArrayList<>(bidragSak.getRelevanteTredjeparter()))
+						.fpAktoerIdList(fpsak)
+						.k9AktoerIdList(k9sak)
 						.build();
 			} else if (PSAK.name().equals(arkivSystem)) {
 				List<Arkivsak> arkivsaker = pensjonSakAntiCorruptionLayer.findArkivsaker(tilgangBruker, Arrays.asList(PEN, UFO));

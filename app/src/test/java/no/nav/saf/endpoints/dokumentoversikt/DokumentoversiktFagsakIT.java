@@ -3,7 +3,7 @@ package no.nav.saf.endpoints.dokumentoversikt;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import no.nav.saf.domain.visningsmodell.Dokumentoversikt;
 import no.nav.saf.endpoints.AbstractItest;
-import no.nav.saf.endpoints.GraphQLRequest;
+import no.nav.saf.endpoints.graphql.GraphQLRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.RequestEntity;

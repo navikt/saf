@@ -12,7 +12,7 @@ import no.nav.saf.domain.visningsmodell.BrukerIdType;
 import no.nav.saf.domain.visningsmodell.DokumentInfo;
 import no.nav.saf.domain.visningsmodell.Journalpost;
 import no.nav.saf.endpoints.AbstractItest;
-import no.nav.saf.endpoints.GraphQLRequest;
+import no.nav.saf.endpoints.graphql.GraphQLRequest;
 import no.nav.saf.endpoints.graphql.GraphQLResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpMethod;
@@ -86,7 +86,6 @@ class JournalpostIT extends AbstractItest {
 		assertThat(journalpost.getSak().getFagsakId(), is("abc123"));
 		assertThat(journalpost.getSak().getFagsaksystem(), is("K9"));
 		assertThat(journalpost.getSak().getDatoOpprettet(), notNullValue());
-		assertThat(journalpost.getSak().getArkivsaksnummer(), is("100000000"));
 		assertThat(journalpost.getSak().getSakstype(), is(Sakstype.FAGSAK));
 		assertThat(journalpost.getSak().getTema(), is(Tema.FOR));
 		assertThat(journalpost.getBruker().getId(), is("1900000000000"));

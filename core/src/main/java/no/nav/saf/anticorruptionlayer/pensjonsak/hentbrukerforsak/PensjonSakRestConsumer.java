@@ -17,8 +17,6 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 
-import java.time.Duration;
-
 @Slf4j
 @Component
 public class PensjonSakRestConsumer {
@@ -34,9 +32,8 @@ public class PensjonSakRestConsumer {
         this.pensjonsakApiUrl = pensjonsakApiUrl;
         this.restTemplate = restTemplateBuilder
                 .requestFactory(() -> clientHttpRequestFactory)
-                .setReadTimeout(Duration.ofSeconds(20))
-                .setConnectTimeout(Duration.ofSeconds(5))
-                .basicAuthentication(serviceuserAlias.getUsername(), serviceuserAlias.getPassword()).build();
+                .basicAuthentication(serviceuserAlias.getUsername(), serviceuserAlias.getPassword())
+                .build();
     }
 
     @Retry(name = PENSJON_SAK_REST_INSTANCE)

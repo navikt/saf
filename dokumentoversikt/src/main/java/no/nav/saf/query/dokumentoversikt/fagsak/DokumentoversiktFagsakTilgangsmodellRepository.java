@@ -3,7 +3,9 @@ package no.nav.saf.query.dokumentoversikt.fagsak;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.anticorruptionlayer.aktoer.PdlAntiCorruptionLayer;
 import no.nav.saf.anticorruptionlayer.bisys.BisysAntiCorruptionLayer;
+import no.nav.saf.anticorruptionlayer.fpsak.FpsakAntiCorruptionLayer;
 import no.nav.saf.anticorruptionlayer.gsak.GsakAntiCorruptionLayer;
+import no.nav.saf.anticorruptionlayer.k9.K9AntiCorruptionLayer;
 import no.nav.saf.anticorruptionlayer.pensjonsak.PensjonSakAntiCorruptionLayer;
 import no.nav.saf.cache.LokalCacheConfig;
 import no.nav.saf.domain.Arkivsak;
@@ -38,15 +40,23 @@ class DokumentoversiktFagsakTilgangsmodellRepository {
 	private final GsakAntiCorruptionLayer gsakAntiCorruptionLayer;
 	private final PensjonSakAntiCorruptionLayer pensjonSakAntiCorruptionLayer;
 	private final BisysAntiCorruptionLayer bisysAntiCorruptionLayer;
+	private final FpsakAntiCorruptionLayer fpsakAntiCorruptionLayer;
+	private final K9AntiCorruptionLayer k9AntiCorruptionLayer;
 
-	public DokumentoversiktFagsakTilgangsmodellRepository(PdlAntiCorruptionLayer aktoerAntiCorruptionLayer,
-														  GsakAntiCorruptionLayer gsakAntiCorruptionLayer,
-														  PensjonSakAntiCorruptionLayer pensjonSakAntiCorruptionLayer,
-														  BisysAntiCorruptionLayer bisysAntiCorruptionLayer) {
+	public DokumentoversiktFagsakTilgangsmodellRepository(
+			PdlAntiCorruptionLayer aktoerAntiCorruptionLayer,
+			GsakAntiCorruptionLayer gsakAntiCorruptionLayer,
+			PensjonSakAntiCorruptionLayer pensjonSakAntiCorruptionLayer,
+			BisysAntiCorruptionLayer bisysAntiCorruptionLayer,
+			FpsakAntiCorruptionLayer fpsakAntiCorruptionLayer,
+			K9AntiCorruptionLayer k9AntiCorruptionLayer
+	) {
 		this.aktoerAntiCorruptionLayer = aktoerAntiCorruptionLayer;
 		this.gsakAntiCorruptionLayer = gsakAntiCorruptionLayer;
 		this.pensjonSakAntiCorruptionLayer = pensjonSakAntiCorruptionLayer;
 		this.bisysAntiCorruptionLayer = bisysAntiCorruptionLayer;
+		this.fpsakAntiCorruptionLayer = fpsakAntiCorruptionLayer;
+		this.k9AntiCorruptionLayer = k9AntiCorruptionLayer;
 	}
 
 	@Cacheable(cacheNames = LokalCacheConfig.TILGANGSMODELL_REPO_BRUKER_CACHE)
@@ -118,6 +128,8 @@ class DokumentoversiktFagsakTilgangsmodellRepository {
 					.map(arkivsak -> {
 						safRequestContext.getRequestCache().putObject(arkivsak.getKey(), arkivsak);
 						final BidragSak bidragSak = bisysAntiCorruptionLayer.hentBidragSakByArkivsak(arkivsak);
+						List<String> fpsak = fpsakAntiCorruptionLayer.hentRelevanteParter(arkivsak);
+						List<String> k9sak = k9AntiCorruptionLayer.hentRelevanteParter(arkivsak);
 						return TilgangSak.builder()
 								.aktoerId(arkivsak.getAktoerId())
 								.orgnummer(arkivsak.getOrgnummer())
@@ -125,6 +137,8 @@ class DokumentoversiktFagsakTilgangsmodellRepository {
 								.arkivsaksystem(arkivsak.getArkivsaksystem())
 								.fagsaksystem(arkivsak.getFagsaksystem())
 								.tema(arkivsak.getTema())
+								.fpAktoerIdList(fpsak)
+								.k9AktoerIdList(k9sak)
 								.relevanteTredjeparter(bidragSak == null ? null : new ArrayList<>(bidragSak.getRelevanteTredjeparter()))
 								.build();
 					}).collect(Collectors.toList());

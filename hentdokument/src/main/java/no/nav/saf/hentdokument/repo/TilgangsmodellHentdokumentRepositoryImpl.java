@@ -3,6 +3,7 @@ package no.nav.saf.hentdokument.repo;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.anticorruptionlayer.bisys.BisysAntiCorruptionLayer;
 import no.nav.saf.anticorruptionlayer.fpsak.FpsakAntiCorruptionLayer;
+import no.nav.saf.anticorruptionlayer.k9.K9AntiCorruptionLayer;
 import no.nav.saf.anticorruptionlayer.pensjonsak.PensjonSakAntiCorruptionLayer;
 import no.nav.saf.domain.Arkivsak;
 import no.nav.saf.domain.BidragSak;
@@ -34,16 +35,20 @@ public class TilgangsmodellHentdokumentRepositoryImpl implements TilgangsmodellH
 	private final HentDokumentAntiCorruptionLayer hentDokumentAntiCorruptionLayer;
 	private final BisysAntiCorruptionLayer bisysAntiCorruptionLayer;
 	private final FpsakAntiCorruptionLayer fpsakAntiCorruptionLayer;
+	private final K9AntiCorruptionLayer k9AntiCorruptionLayer;
 
 	@Inject
 	public TilgangsmodellHentdokumentRepositoryImpl(PensjonSakAntiCorruptionLayer pensjonSakAntiCorruptionLayer,
 													HentDokumentAntiCorruptionLayer hentDokumentAntiCorruptionLayer,
 													BisysAntiCorruptionLayer bisysAntiCorruptionLayer,
-													FpsakAntiCorruptionLayer fpsakAntiCorruptionLayer) {
+													FpsakAntiCorruptionLayer fpsakAntiCorruptionLayer,
+													K9AntiCorruptionLayer k9AntiCorruptionLayer
+	) {
 		this.pensjonSakAntiCorruptionLayer = pensjonSakAntiCorruptionLayer;
 		this.hentDokumentAntiCorruptionLayer = hentDokumentAntiCorruptionLayer;
 		this.bisysAntiCorruptionLayer = bisysAntiCorruptionLayer;
 		this.fpsakAntiCorruptionLayer = fpsakAntiCorruptionLayer;
+		this.k9AntiCorruptionLayer = k9AntiCorruptionLayer;
 	}
 
 	@Override
@@ -124,9 +129,11 @@ public class TilgangsmodellHentdokumentRepositoryImpl implements TilgangsmodellH
 			if (arkivsak == null || tilgangBruker == null) {
 				return null;
 			}
+
 			if (GSAK == arkivsak.getArkivsaksystem()) {
 				BidragSak bidragSak = bisysAntiCorruptionLayer.hentBidragSakByArkivsak(arkivsak);
 				List<String> fpsak = fpsakAntiCorruptionLayer.hentRelevanteParter(arkivsak);
+				List<String> k9sak = k9AntiCorruptionLayer.hentRelevanteParter(arkivsak);
 				return TilgangSak.builder()
 						.aktoerId(arkivsak.getAktoerId())
 						.arkivsaksnummer(arkivsak.getArkivsaksnummer())
@@ -136,6 +143,7 @@ public class TilgangsmodellHentdokumentRepositoryImpl implements TilgangsmodellH
 						.relevanteTredjeparter(bidragSak == null ? null : new ArrayList<>(bidragSak.getRelevanteTredjeparter()))
 						.fagsaksystem(arkivsak.getFagsaksystem())
 						.fpAktoerIdList(fpsak)
+						.k9AktoerIdList(k9sak)
 						.build();
 			} else if (PSAK == arkivsak.getArkivsaksystem()) {
 				List<Arkivsak> arkivsaker = pensjonSakAntiCorruptionLayer.findArkivsaker(tilgangBruker, Arrays.asList(PEN, UFO));
@@ -152,11 +160,8 @@ public class TilgangsmodellHentdokumentRepositoryImpl implements TilgangsmodellH
 								.build();
 					}
 				}
-				// fallback
-				return hentDokumentAntiCorruptionLayer.hentTilgangSakFromSafRequestContext(safRequestContext, tilgangBruker);
-			} else {
-				return hentDokumentAntiCorruptionLayer.hentTilgangSakFromSafRequestContext(safRequestContext, tilgangBruker);
 			}
+			return hentDokumentAntiCorruptionLayer.hentTilgangSakFromSafRequestContext(safRequestContext, tilgangBruker);
 		} catch (Exception e) {
 			log.warn("findTilgangBrukerBySakId feilet ved oppslag på sakId={} og arkivsaksystem={}. Feilmelding={}", arkivsak.getArkivsaksnummer(), arkivsak.getArkivsaksystem(), e);
 			return null;

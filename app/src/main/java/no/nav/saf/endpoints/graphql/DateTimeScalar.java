@@ -1,4 +1,4 @@
-package no.nav.saf.endpoints.wiring;
+package no.nav.saf.endpoints.graphql;
 
 import graphql.schema.Coercing;
 import graphql.schema.CoercingParseLiteralException;

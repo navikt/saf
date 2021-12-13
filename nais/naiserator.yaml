@@ -1,7 +1,7 @@
 kind: Application
 apiVersion: nais.io/v1alpha1
 metadata:
-  name: saf
+  name: {{ APP_NAME }}
   namespace: {{ NAMESPACE }}
   labels:
     team: teamdokumenthandtering
@@ -19,6 +19,8 @@ spec:
       value: {{ PENSJON_V1_ENDPOINTURL }}
     - name: FPSAK_URL
       value: {{ FPSAK_URL }}
+    - name: K9SAK_URL
+      value: {{ K9SAK_URL }}
     - name: GRAPHIQL_ENABLED
       value: "{{ GRAPHIQL_ENABLED }}"
     - name: SWAGGER_ENABLED
@@ -51,6 +53,8 @@ spec:
       value: {{ RESTSECURITYTOKENSERVICE_URL }}
     - name: APPD_NAME
       value: {{ APPD_NAME }}
+    - name: SAF_REDIS_HOSTNAME
+      value: {{ SAF_REDIS_HOSTNAME }}
   image: {{ image }}
   ingresses:
     {{#each INGRESSES}}
@@ -71,8 +75,8 @@ spec:
     initialDelay: 30
     timeout: 3
   replicas:
-    min: 6
-    max: 20
+    min: {{ MIN_REPLICAS }}
+    max: {{ MAX_REPLICAS }}
     cpuThresholdPercentage: 50
   resources:
     limits:
@@ -88,3 +92,27 @@ spec:
       - kvPath: {{ APPDYNAMICS }}
         mountPath: /var/run/secrets/nais.io/appdynamics
   webproxy: true
+{{#if AZURE_IAC_RULES}}
+  azure:
+    application:
+      enabled: true
+      claims:
+        extra:
+          - "NAVident"
+          - "azp_name"
+  accessPolicy:
+    inbound:
+      rules:
+    {{#each AZURE_IAC_RULES}}
+        - application: {{app}}
+          namespace: {{namespace}}
+          cluster: {{cluster}}
+          {{#if roles}}
+          permissions:
+            roles:
+              {{#each roles}}
+              - "{{this}}"
+              {{/each}}
+          {{/if}}
+    {{/each}}
+{{/if}}

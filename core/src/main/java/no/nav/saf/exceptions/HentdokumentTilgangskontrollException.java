@@ -1,24 +1,23 @@
 package no.nav.saf.exceptions;
 
-import no.nav.saf.tilgangskontroll.abac.dto.response.XacmlResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ResponseStatus(value = HttpStatus.FORBIDDEN)
 public class HentdokumentTilgangskontrollException extends SafFunctionalException {
-	private final XacmlResponse xacmlResponse;
+	private final String denyReason;
 
 	public HentdokumentTilgangskontrollException(String message) {
 		super(message);
-		this.xacmlResponse = null;
+		this.denyReason = null;
 	}
 
-	public HentdokumentTilgangskontrollException(String message, XacmlResponse xacmlResponse) {
+	public HentdokumentTilgangskontrollException(String message, String denyReason) {
 		super("Avvist av SAF tilgangskontroll: " + message);
-		this.xacmlResponse = xacmlResponse;
+		this.denyReason = denyReason;
 	}
 
-	public XacmlResponse getXacmlResponse() {
-		return xacmlResponse;
+	public String getDenyReason() {
+		return denyReason;
 	}
 }

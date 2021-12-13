@@ -13,18 +13,19 @@ import java.util.List;
 @Value
 @Builder
 public class TilgangSak {
-	//Kjerneattrubutter brukt for tilgangskontroll
-	private final String aktoerId;
-	private final String foedselsnummer;
-	private final String orgnummer;
-	private final Tema tema;
-	private final String fagsaksystem;
+	// Kjerneattributter brukt for tilgangskontroll
+	String aktoerId;
+	String foedselsnummer;
+	String orgnummer;
+	Tema tema;
+	String fagsaksystem;
 
-	private final List<TilgangRelevantTredjepart> relevanteTredjeparter;
+	List<TilgangRelevantTredjepart> relevanteTredjeparter; // Bisys
 
-	private final List<String> fpAktoerIdList;
+	List<String> fpAktoerIdList;
+	List<String> k9AktoerIdList;
 
-	//Ekstra attributter for å forenkle kodeflyt
-	private final String arkivsaksnummer;
-	private final Arkivsakssystem arkivsaksystem;
+	// Ekstra attributter for å forenkle kodeflyt
+	String arkivsaksnummer;
+	Arkivsakssystem arkivsaksystem;
 }

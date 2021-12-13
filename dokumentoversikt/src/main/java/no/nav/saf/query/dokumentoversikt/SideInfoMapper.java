@@ -66,7 +66,7 @@ public class SideInfoMapper {
 	}
 
 	private int totaltAntall(String sluttJournalpostId, SafRequestContext safRequestContext) {
-		if(sluttJournalpostId == null) {
+		if (sluttJournalpostId == null) {
 			return 0;
 		}
 		JournalpostDto journalpostDto = safRequestContext.getRequestCache().getObject(sluttJournalpostId);

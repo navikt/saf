@@ -3,7 +3,7 @@ package no.nav.saf.endpoints.dokumentoversikt;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import no.nav.saf.domain.visningsmodell.Dokumentoversikt;
 import no.nav.saf.endpoints.AbstractItest;
-import no.nav.saf.endpoints.GraphQLRequest;
+import no.nav.saf.endpoints.graphql.GraphQLRequest;
 import org.apache.http.HttpHeaders;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpMethod;
@@ -688,6 +688,44 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter"))
 				.withRequestBody(containing("{\"gsakSakIds\":[\"135695442\"],\"psakSakIds\":[],\"fraDato\":\"0001-01-01\",\"tilDato\":null,\"inkluderJournalStatus\":[\"FL\",\"FS\",\"J\",\"E\"],\"inkluderJournalpostType\":[\"I\",\"U\",\"N\"],\"visFeilregistrerte\":false,\"alleIdenter\":[\"11111111111\"],\"foerste\":3,\"etterPeker\":null}")));
 		verifyabacDenyPep6dSkipPep2Pep3AndHttpStatusCode(OK, responseEntity.getStatusCode());
+	}
+
+	@Test
+	void shouldGetUnauthorizedFromPep7d() throws IOException, URISyntaxException {
+		String SAK_ID = "123456";
+		abacDenyPep7dSkipPep2Pep3Pep4Pep5Pep6d();
+		stubFor(post("/reststs")
+				.willReturn(aResponse().withStatus(OK.value())
+						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("sts/sts-token.json")));
+		stubFor(post("/pdl")
+				.willReturn(aResponse().withStatus(OK.value())
+						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("pdl/hentPdlDataForIdent-happy.json")));
+		stubFor(post("/sts")
+				.willReturn(aResponse().withStatus(OK.value())
+						.withBodyFile("sts/sts-happy.xml")));
+		stubFor(get("/gsak?aktoerId=" + AKTOER_ID)
+				.willReturn(aResponse().withStatus(OK.value())
+						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
+						.withBodyFile("gsak/gsak-sakerBySaksId_oms-happy.json")));
+		stubFor(post("/hentjournalsakinfo/finnjournalposter")
+				.willReturn(aResponse().withStatus(OK.value())
+						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
+						.withBodyFile("joark/finnjournalposter_single_temaK9Nullskjerming-happy.json")));
+		stubFor(get("/k9sak?saksnummer=" + SAK_ID).willReturn(aResponse()
+				.withStatus(OK.value())
+				.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+				.withBodyFile("k9/happy-response.json")));
+
+		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikBrukerWithAktoerId();
+		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
+
+		assertEquals("429837417", dokumentoversikt.getJournalposter().get(0).getJournalpostId());
+		assertSaksbehandlerHarIkkeTilgang(dokumentoversikt);
+		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter"))
+				.withRequestBody(containing("{\"gsakSakIds\":[\"135695442\"],\"psakSakIds\":[],\"fraDato\":\"0001-01-01\",\"tilDato\":null,\"inkluderJournalStatus\":[\"FL\",\"FS\",\"J\",\"E\"],\"inkluderJournalpostType\":[\"I\",\"U\",\"N\"],\"visFeilregistrerte\":false,\"alleIdenter\":[\"11111111111\"],\"foerste\":3,\"etterPeker\":null}")));
+		verifyabacDenyPep7dSkipPep2Pep3Pep4Pep5Pep6dAndHttpStatusCode(OK, responseEntity.getStatusCode());
 	}
 
 	private ResponseEntity<LinkedHashMap> callDokumentOversikBrukerWithAktoerId() throws IOException, URISyntaxException {

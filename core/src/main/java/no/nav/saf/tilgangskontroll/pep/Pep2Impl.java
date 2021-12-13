@@ -15,6 +15,8 @@ import static no.nav.saf.domain.kode.Tema.FAR;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_RESOURCE_TYPE;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_TEMA;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_SAF_SAK_JP_METADATA;
+import static no.nav.saf.tilgangskontroll.pep.AbacAnswer.deny;
+import static no.nav.saf.tilgangskontroll.pep.AbacAnswer.permit;
 
 /**
  * Dekker følgende policies i saf:
@@ -25,7 +27,7 @@ import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_SAF_SAK_JP_MET
  */
 @Slf4j
 @Component(PEP2)
-public class Pep2Impl implements Pep<TilgangSak> {
+public class Pep2Impl extends Pep<TilgangSak> {
 
 	private final AbacService abacService;
 
@@ -35,7 +37,7 @@ public class Pep2Impl implements Pep<TilgangSak> {
 	}
 
 	@Override
-	public XacmlResponse verifyAccessXacmlResponse(TilgangSak ressurs, SafRequestContext safRequestContext) {
+	public XacmlResponse verifyAbacPdpDecision(TilgangSak ressurs, SafRequestContext safRequestContext) {
 		if (ressurs == null) {
 			log.info("Pep2 mangler data om sak. Tilgang gis likevel for at saksbehandler skal kunne knytte dokument til sak og bruker.");
 			return XacmlResponse.permit();
@@ -46,13 +48,30 @@ public class Pep2Impl implements Pep<TilgangSak> {
 			request.resource(RESOURCE_FELLES_RESOURCE_TYPE, RESOURCE_SAF_SAK_JP_METADATA);
 			request.resource(RESOURCE_FELLES_TEMA, FAR.name());
 
-			Pep.traceLogPepStarted(PEP2, ressurs);
+			traceLogPepStarted(PEP2, ressurs);
 			XacmlResponse response = abacService.evaluate(request);
-			Pep.traceLogPepFinished(PEP2, ressurs);
+			traceLogPepFinished(PEP2, ressurs);
 
 			return response;
 		} else {
 			return XacmlResponse.permit();
+		}
+	}
+
+	@Override
+	public AbacAnswer verifyAzureClientCredentialFlowAccess(TilgangSak ressurs, SafRequestContext safRequestContext) {
+		if (ressurs == null) {
+			log.info("Pep2 mangler data om sak. Tilgang gis likevel for at system skal kunne knytte dokument til sak og bruker. Azure ccf.");
+			return permit();
+		}
+		if (isFarskapSak(ressurs)) {
+			String tema = ressurs.getTema().name().toLowerCase();
+			return safRequestContext.getSecurityContext().hasTemaAureRole(tema) ?
+					permit() : deny(AbacAnswer.AbacDenyReason.builder()
+					.cause("ingen_tilgang_farskap").policy("saf_pep2").rule("clientid_mangler_far_rolle")
+					.build());
+		} else {
+			return permit();
 		}
 	}
 

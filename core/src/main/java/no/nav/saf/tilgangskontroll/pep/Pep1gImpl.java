@@ -1,11 +1,5 @@
 package no.nav.saf.tilgangskontroll.pep;
 
-import static no.nav.saf.domain.DomainConstants.PEP1G;
-import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_PERSON_AKTOERID_RESOURCE;
-import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_PERSON_FNR;
-import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_RESOURCE_TYPE;
-import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_SAF_PERSON;
-
 import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
@@ -15,6 +9,13 @@ import no.nav.saf.tilgangskontroll.abac.service.AbacService;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
+
+import static no.nav.saf.domain.DomainConstants.PEP1G;
+import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_PERSON_AKTOERID_RESOURCE;
+import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_PERSON_FNR;
+import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_RESOURCE_TYPE;
+import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_SAF_PERSON;
+import static no.nav.saf.tilgangskontroll.pep.AbacAnswer.permit;
 
 /**
  * Dekker følgende policies i saf:
@@ -27,7 +28,7 @@ import javax.inject.Inject;
  */
 @Component(PEP1G)
 @Slf4j
-public class Pep1gImpl implements Pep<TilgangBruker> {
+public class Pep1gImpl extends Pep<TilgangBruker> {
 
 	private final AbacService abacService;
 
@@ -37,7 +38,7 @@ public class Pep1gImpl implements Pep<TilgangBruker> {
 	}
 
 	@Override
-	public XacmlResponse verifyAccessXacmlResponse(TilgangBruker ressurs, SafRequestContext safRequestContext) {
+	public XacmlResponse verifyAbacPdpDecision(TilgangBruker ressurs, SafRequestContext safRequestContext) {
 		if (ressurs == null || ressurs.isUkjent()) {
 			log.info("Pep1g mangler data om bruker. Tilgang gis for å kunne identifisere bruker.");
 			return XacmlResponse.permit();
@@ -57,9 +58,14 @@ public class Pep1gImpl implements Pep<TilgangBruker> {
 			log.error("Pep1g kunne ikke validere bruker fordi bruker ikke er en person. Denne tilstanden indikerer en teknisk feil.");
 			return XacmlResponse.deny();
 		}
-		Pep.traceLogPepStarted(PEP1G, ressurs);
+		traceLogPepStarted(PEP1G, ressurs);
 		XacmlResponse response = abacService.evaluate(request);
-		Pep.traceLogPepFinished(PEP1G, ressurs);
+		traceLogPepFinished(PEP1G, ressurs);
 		return response;
+	}
+
+	@Override
+	public AbacAnswer verifyAzureClientCredentialFlowAccess(TilgangBruker ressurs, SafRequestContext safRequestContext) {
+		return permit();
 	}
 }

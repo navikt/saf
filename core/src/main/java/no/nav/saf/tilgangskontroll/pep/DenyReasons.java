@@ -1,6 +1,8 @@
 package no.nav.saf.tilgangskontroll.pep;
 
 /**
+ * Menneskelesbare grunner til deny fra PEP.
+ *
  * @author Joakim Bjørnstad, Jbit AS
  */
 public final class DenyReasons {
@@ -19,7 +21,7 @@ public final class DenyReasons {
 			"Saksbehandler eller system har ikke tilgang til ressurs som er skjermet eller begrenset.";
 	public static final String PEP6D_DENY_REASON = DENY_PREFIX +
 			"Saksbehandler eller system har ikke tilgang til ressurs som er skjermet, begrenset eller logisk kassert.";
-	public static final String PEP7_DENY_REASON = DENY_PREFIX +
+	public static final String PEP7D_DENY_REASON = DENY_PREFIX +
 			"Saksbehandler eller system har ikke tilgang til ressurs relevante parter på sak har kode 6/7.";
 
 	private DenyReasons() {

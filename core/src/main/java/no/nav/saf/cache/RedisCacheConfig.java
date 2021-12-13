@@ -1,13 +1,11 @@
 package no.nav.saf.cache;
 
-import static org.springframework.data.redis.serializer.RedisSerializationContext.SerializationPair.fromSerializer;
-
 import io.lettuce.core.ClientOptions;
 import io.lettuce.core.SocketOptions;
 import lombok.extern.slf4j.Slf4j;
+import no.nav.saf.config.SafProperties;
 import no.nav.saf.tilgangskontroll.abac.dto.response.XacmlResponse;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CachingConfigurerSupport;
 import org.springframework.cache.annotation.EnableCaching;
@@ -27,6 +25,8 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 import javax.inject.Named;
 import java.time.Duration;
 import java.util.Collections;
+
+import static org.springframework.data.redis.serializer.RedisSerializationContext.SerializationPair.fromSerializer;
 
 /**
  * @author Joakim Bjørnstad, Jbit AS
@@ -56,13 +56,13 @@ public class RedisCacheConfig extends CachingConfigurerSupport {
 	}
 
 	@Bean
-	public RedisConnectionFactory redisConnectionFactory(@Value("${redis.hostname:saf-redis}") String redisHost,
-														 @Value("${redis.port:6379}") int redisPort,
+	public RedisConnectionFactory redisConnectionFactory(SafProperties safProperties,
 														 LettuceClientConfiguration clientConfiguration) {
+		SafProperties.Redis redisConfig = safProperties.getRedis();
 		RedisStandaloneConfiguration config = new RedisStandaloneConfiguration();
-		log.info("Starting redis connection to {} on port {}", redisHost, redisPort);
-		config.setHostName(redisHost);
-		config.setPort(redisPort);
+		log.info("Starting redis connection on {}", redisConfig);
+		config.setHostName(redisConfig.getHostname());
+		config.setPort(redisConfig.getPortnumber());
 		LettuceConnectionFactory factory = new LettuceConnectionFactory(config, clientConfiguration);
 		factory.setShareNativeConnection(true);
 		return factory;

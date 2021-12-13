@@ -9,6 +9,8 @@ import no.nav.saf.exceptions.SafFunctionalException;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import org.springframework.stereotype.Component;
 
+import static no.nav.saf.util.MDCUtility.addMdcData;
+
 /**
  * @author Joakim Bjørnstad, Jbit AS
  */
@@ -25,9 +27,9 @@ public class DokumentoversiktFagsakDataFetcher implements DataFetcher<DataFetche
 	@Override
 	public DataFetcherResult<Dokumentoversikt> get(DataFetchingEnvironment environment) throws Exception {
 		try {
+			SafRequestContext safRequestContext = environment.getGraphQlContext().get(SafRequestContext.KEY);
+			addMdcData(safRequestContext);
 			DokumentoversiktFagsakArguments arguments = DokumentoversiktFagsakArguments.create(environment);
-			SafRequestContext safRequestContext = environment.getContext();
-			safRequestContext.getSecurityContext().getOidcTokenBody();
 			log.info("dokumentoversiktFagsak hentes for fagsakIdInput={}", arguments.getFagsakInput());
 			Dokumentoversikt dokumentoversikt = dokumentoversiktFagsakQuery.hentDokumentoversikt(arguments, safRequestContext);
 			log.info("dokumentoversiktFagsak returnerer {} journalposter for fagsakId={}",

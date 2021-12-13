@@ -1,15 +1,14 @@
 package no.nav.saf.hentdokument;
 
-import static no.nav.saf.hentdokument.HentDokumentSporingLogglinje.BESLUTNING_DENY;
-import static no.nav.saf.hentdokument.HentDokumentSporingLogglinje.BESLUTNING_PERMIT;
-import static no.nav.saf.tilgangskontroll.abac.dto.response.AdviceStringUtil.convertToString;
-
 import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.domain.kode.Tema;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 import no.nav.saf.exceptions.HentdokumentTilgangskontrollException;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
+
+import static no.nav.saf.hentdokument.HentDokumentSporingLogglinje.BESLUTNING_DENY;
+import static no.nav.saf.hentdokument.HentDokumentSporingLogglinje.BESLUTNING_PERMIT;
 
 /**
  * @author Joakim Bjørnstad, Jbit AS
@@ -23,7 +22,7 @@ class HentDokumentSporbarhetslogger {
 				   TilgangSak tilgangSak, TilgangBruker tilgangBruker, final SafRequestContext safRequestContext) {
 		logAccess(HentDokumentSporingLogglinje.builder()
 				.brukerId(getBrukerId(tilgangBruker))
-				.navIdent(safRequestContext.getSecurityContext().getSubjectId())
+				.navIdent(safRequestContext.getUserId())
 				.tilgangsbeslutning(BESLUTNING_PERMIT)
 				.journalpostId(journalpostId)
 				.dokumentInfoId(dokumentInfoId)
@@ -36,9 +35,9 @@ class HentDokumentSporbarhetslogger {
 				 TilgangSak tilgangSak, TilgangBruker tilgangBruker, final SafRequestContext safRequestContext, HentdokumentTilgangskontrollException e) {
 		logAccess(HentDokumentSporingLogglinje.builder()
 				.brukerId(getBrukerId(tilgangBruker))
-				.navIdent(safRequestContext.getSecurityContext().getSubjectId())
+				.navIdent(safRequestContext.getUserId())
 				.tilgangsbeslutning(BESLUTNING_DENY)
-				.begrunnelse(convertToString(e.getXacmlResponse().getAdvices()))
+				.begrunnelse(e.getDenyReason())
 				.journalpostId(journalpostId)
 				.dokumentInfoId(dokumentInfoId)
 				.variantformat(variantFormat)
