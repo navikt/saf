@@ -24,7 +24,7 @@
 	</modules>
 
 	<properties>
-		<java.version>11</java.version>
+		<java.version>17</java.version>
 		<sonar.exclusions>no.nav.saf.graphiql/**/*</sonar.exclusions>
 		<javax.inject.version>1</javax.inject.version>
 		<pensjon-sak-v1-tjenestespesifikasjon.version>1.2019.09.25-00.21-49b69f0625e0
@@ -238,7 +238,7 @@
 				<configuration>
 					<toolchains>
 						<jdk>
-							<version>11</version>
+							<version>17</version>
 							<vendor>openjdk</vendor>
 						</jdk>
 					</toolchains>
