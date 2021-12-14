@@ -116,6 +116,11 @@
       "app": "yrkesskade-melding-mottak",
       "namespace": "yrkesskade",
       "cluster": "dev-gcp"
+    },
+    {
+      "app": "pdl-web",
+      "namespace": "pdl",
+      "cluster": "dev-fss"
     }
   ]
 }
