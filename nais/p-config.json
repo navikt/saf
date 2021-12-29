@@ -95,6 +95,11 @@
       "app": "tpts-tiltakspenger-mottak",
       "namespace": "tpts",
       "cluster": "prod-gcp"
+    },
+    {
+      "app": "kabal-anke-api",
+      "namespace": "klage",
+      "cluster": "prod-gcp"
     }
   ]
 }

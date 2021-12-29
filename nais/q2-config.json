@@ -121,6 +121,11 @@
       "app": "pdl-web",
       "namespace": "pdl",
       "cluster": "dev-fss"
+    },
+    {
+      "app": "kabal-anke-api",
+      "namespace": "klage",
+      "cluster": "dev-gcp"
     }
   ]
 }
