@@ -53,6 +53,7 @@ public class Pep7dImpl extends Pep<TilgangSak> {
 
 			if (FOR.equals(ressurs.getTema()) && FAGSAKSYSTEM_FORELDREPENGELOSNING.equals(ressurs.getFagsaksystem())) {
 				if (aktoerlisteErNullEllerTomForFp(ressurs)) {
+					safRequestContext.getRequestCache().putObject(tilgangKeyLocalCaching, true);
 					return XacmlResponse.permit();
 				}
 
@@ -67,6 +68,7 @@ public class Pep7dImpl extends Pep<TilgangSak> {
 
 			if (relevanteTemaK9.contains(ressurs.getTema()) && FAGSAKSYSTEM_K9.equals(ressurs.getFagsaksystem())) {
 				if (aktoerlisteErNullEllerTomForK9(ressurs)) {
+					safRequestContext.getRequestCache().putObject(tilgangKeyLocalCaching, true);
 					return XacmlResponse.permit();
 				}
 				if (safRequestContext.getRequestCache().getObject(tilgangKeyLocalCaching) == null) {
@@ -84,7 +86,7 @@ public class Pep7dImpl extends Pep<TilgangSak> {
 
 	private boolean aktoerlisteErNullEllerTomForFp(TilgangSak ressurs) {
 		if (ressurs.getFpAktoerIdList() == null || ressurs.getFpAktoerIdList().isEmpty()) {
-			log.info("Pep7d har ingen relevante parter. Tilgang gis.");
+			log.info("Pep7d har ingen relevante parter for foreldrepengesak. Tilgang gis.");
 			return true;
 		}
 		return false;
@@ -92,7 +94,7 @@ public class Pep7dImpl extends Pep<TilgangSak> {
 
 	private boolean aktoerlisteErNullEllerTomForK9(TilgangSak ressurs) {
 		if (ressurs.getK9AktoerIdList() == null || ressurs.getK9AktoerIdList().isEmpty()) {
-			log.info("Pep7d har ingen relevante parter. Tilgang gis.");
+			log.info("Pep7d har ingen relevante parter for K9sak. Tilgang gis.");
 			return true;
 		}
 		return false;
@@ -116,6 +118,10 @@ public class Pep7dImpl extends Pep<TilgangSak> {
 
 	@Override
 	public AbacAnswer verifyAzureClientCredentialFlowAccess(TilgangSak ressurs, SafRequestContext safRequestContext) {
+		if (ressurs != null && ressurs.getArkivsaksystem() != null && ressurs.getArkivsaksnummer() != null) {
+			String tilgangKeyLocalCaching = KeyGeneratorLocalCaching.getKeyForPep7d(ressurs.getArkivsaksystem(), ressurs.getArkivsaksnummer());
+			safRequestContext.getRequestCache().putObject(tilgangKeyLocalCaching, true);
+		}
 		return permit();
 	}
 }

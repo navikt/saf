@@ -3,6 +3,7 @@ package no.nav.saf.tilgangskontroll.pep;
 import no.nav.saf.domain.kode.Arkivsakssystem;
 import no.nav.saf.domain.kode.Tema;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
+import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlAttribute;
 import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlRequest;
 import no.nav.saf.tilgangskontroll.abac.dto.response.Decision;
@@ -12,6 +13,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 
 import static java.util.Arrays.asList;
+import static no.nav.saf.cache.KeyGeneratorLocalCaching.getKeyForPep7d;
 import static no.nav.saf.domain.DomainConstants.FAGSAKSYSTEM_FORELDREPENGELOSNING;
 import static no.nav.saf.domain.DomainConstants.FAGSAKSYSTEM_K9;
 import static no.nav.saf.domain.kode.Tema.FOR;
@@ -30,6 +32,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class Pep7dImplTest extends AbstractPepTest {
+
+	public static final String ARKIVSAKSNUMMER = "100000000";
 
 	@InjectMocks
 	private Pep7dImpl pep7d;
@@ -59,25 +63,31 @@ class Pep7dImplTest extends AbstractPepTest {
 	@Test
 	void shouldDenyWhenAbacDeniesForFagsaksystemFS36AndTemaFor() {
 		when(abacService.evaluate(any(XacmlRequest.class))).thenReturn(new XacmlResponse(Decision.DENY, null, null, null));
-		boolean hasAccess = pep7d.hasAccess(createTilgangSakWithFpAktoerIdList(), createSafRequestContext());
+		SafRequestContext safRequestContext = createSafRequestContext();
+		boolean hasAccess = pep7d.hasAccess(createTilgangSakWithFpAktoerIdList(), safRequestContext);
 		verify(abacService).evaluate(any());
 		assertFalse(hasAccess);
+		assertFalse((Boolean) safRequestContext.getRequestCache().getObject(getKeyForPep7d(Arkivsakssystem.GSAK, ARKIVSAKSNUMMER)));
 	}
 
 	@Test
 	void shouldDenyWhenAbacDeniesForFagsaksystemK9AndTemaFri() {
 		when(abacService.evaluate(any(XacmlRequest.class))).thenReturn(new XacmlResponse(Decision.DENY, null, null, null));
-		boolean hasAccess = pep7d.hasAccess(createTilgangSakWithK9AktoerIdList(FRI), createSafRequestContext());
+		SafRequestContext safRequestContext = createSafRequestContext();
+		boolean hasAccess = pep7d.hasAccess(createTilgangSakWithK9AktoerIdList(FRI), safRequestContext);
 		verify(abacService).evaluate(any());
 		assertFalse(hasAccess);
+		assertFalse((Boolean) safRequestContext.getRequestCache().getObject(getKeyForPep7d(Arkivsakssystem.GSAK, ARKIVSAKSNUMMER)));
 	}
 
 	@Test
 	void shouldDenyWhenAbacDeniesForFagsaksystemK9AndTemaOms() {
 		when(abacService.evaluate(any(XacmlRequest.class))).thenReturn(new XacmlResponse(Decision.DENY, null, null, null));
-		boolean hasAccess = pep7d.hasAccess(createTilgangSakWithK9AktoerIdList(OMS), createSafRequestContext());
+		SafRequestContext safRequestContext = createSafRequestContext();
+		boolean hasAccess = pep7d.hasAccess(createTilgangSakWithK9AktoerIdList(OMS), safRequestContext);
 		verify(abacService).evaluate(any());
 		assertFalse(hasAccess);
+		assertFalse((Boolean) safRequestContext.getRequestCache().getObject(getKeyForPep7d(Arkivsakssystem.GSAK, ARKIVSAKSNUMMER)));
 	}
 
 	@Test
@@ -85,13 +95,15 @@ class Pep7dImplTest extends AbstractPepTest {
 		when(abacService.evaluate(any(XacmlRequest.class))).thenReturn(new XacmlResponse(Decision.PERMIT, null, null, null));
 		ArgumentCaptor<XacmlRequest> request = ArgumentCaptor.forClass(XacmlRequest.class);
 
-		boolean hasAccess = pep7d.hasAccess(createTilgangSakWithFpAktoerIdList(), createSafRequestContext());
+		SafRequestContext safRequestContext = createSafRequestContext();
+		boolean hasAccess = pep7d.hasAccess(createTilgangSakWithFpAktoerIdList(), safRequestContext);
 
 		verify(abacService).evaluate(request.capture());
 		XacmlRequest capturedRequest = request.getValue();
 
 		assertTrue(hasAccess);
 
+		assertTrue((Boolean) safRequestContext.getRequestCache().getObject(getKeyForPep7d(Arkivsakssystem.GSAK, ARKIVSAKSNUMMER)));
 		assertThat(capturedRequest.getResources(), hasItem(new XacmlAttribute(RESOURCE_FELLES_RESOURCE_TYPE, RESOURCE_SAF_TREDJEPART)));
 		assertThat(capturedRequest.getResources(), hasItem(new XacmlAttribute(RESOURCE_FELLES_PERSON_AKTOERID_RESOURCE, FNR)));
 		assertThat(capturedRequest.getResources(), hasItem(new XacmlAttribute(RESOURCE_FELLES_PERSON_AKTOERID_RESOURCE, FNR2)));
@@ -102,13 +114,14 @@ class Pep7dImplTest extends AbstractPepTest {
 		when(abacService.evaluate(any(XacmlRequest.class))).thenReturn(new XacmlResponse(Decision.PERMIT, null, null, null));
 		ArgumentCaptor<XacmlRequest> request = ArgumentCaptor.forClass(XacmlRequest.class);
 
-		boolean hasAccess = pep7d.hasAccess(createTilgangSakWithK9AktoerIdList(FRI), createSafRequestContext());
+		SafRequestContext safRequestContext = createSafRequestContext();
+		boolean hasAccess = pep7d.hasAccess(createTilgangSakWithK9AktoerIdList(FRI), safRequestContext);
 
 		verify(abacService).evaluate(request.capture());
 		XacmlRequest capturedRequest = request.getValue();
 
 		assertTrue(hasAccess);
-
+		assertTrue((Boolean) safRequestContext.getRequestCache().getObject(getKeyForPep7d(Arkivsakssystem.GSAK, ARKIVSAKSNUMMER)));
 		assertThat(capturedRequest.getResources(), hasItem(new XacmlAttribute(RESOURCE_FELLES_RESOURCE_TYPE, RESOURCE_SAF_TREDJEPART)));
 		assertThat(capturedRequest.getResources(), hasItem(new XacmlAttribute(RESOURCE_FELLES_PERSON_AKTOERID_RESOURCE, FNR)));
 		assertThat(capturedRequest.getResources(), hasItem(new XacmlAttribute(RESOURCE_FELLES_PERSON_AKTOERID_RESOURCE, FNR2)));
@@ -119,13 +132,14 @@ class Pep7dImplTest extends AbstractPepTest {
 		when(abacService.evaluate(any(XacmlRequest.class))).thenReturn(new XacmlResponse(Decision.PERMIT, null, null, null));
 		ArgumentCaptor<XacmlRequest> request = ArgumentCaptor.forClass(XacmlRequest.class);
 
-		boolean hasAccess = pep7d.hasAccess(createTilgangSakWithK9AktoerIdList(OMS), createSafRequestContext());
+		SafRequestContext safRequestContext = createSafRequestContext();
+		boolean hasAccess = pep7d.hasAccess(createTilgangSakWithK9AktoerIdList(OMS), safRequestContext);
 
 		verify(abacService).evaluate(request.capture());
 		XacmlRequest capturedRequest = request.getValue();
 
 		assertTrue(hasAccess);
-
+		assertTrue((Boolean) safRequestContext.getRequestCache().getObject(getKeyForPep7d(Arkivsakssystem.GSAK, ARKIVSAKSNUMMER)));
 		assertThat(capturedRequest.getResources(), hasItem(new XacmlAttribute(RESOURCE_FELLES_RESOURCE_TYPE, RESOURCE_SAF_TREDJEPART)));
 		assertThat(capturedRequest.getResources(), hasItem(new XacmlAttribute(RESOURCE_FELLES_PERSON_AKTOERID_RESOURCE, FNR)));
 		assertThat(capturedRequest.getResources(), hasItem(new XacmlAttribute(RESOURCE_FELLES_PERSON_AKTOERID_RESOURCE, FNR2)));
@@ -137,7 +151,7 @@ class Pep7dImplTest extends AbstractPepTest {
 				.tema(FOR)
 				.fpAktoerIdList(asList(FNR, FNR2))
 				.arkivsaksystem(Arkivsakssystem.GSAK)
-				.arkivsaksnummer("100000000")
+				.arkivsaksnummer(ARKIVSAKSNUMMER)
 				.build();
 	}
 
@@ -147,7 +161,7 @@ class Pep7dImplTest extends AbstractPepTest {
 				.tema(tema)
 				.k9AktoerIdList(asList(FNR, FNR2))
 				.arkivsaksystem(Arkivsakssystem.GSAK)
-				.arkivsaksnummer("100000000")
+				.arkivsaksnummer(ARKIVSAKSNUMMER)
 				.build();
 	}
 }
