@@ -131,6 +131,11 @@
       "app": "flex-joark-mottak",
       "namespace": "flex",
       "cluster": "dev-gcp"
+    },
+    {
+      "app": "su-se-bakover",
+      "namespace": "supstonad",
+      "cluster": "dev-fss"
     }
   ]
 }
