@@ -141,6 +141,11 @@
       "app": "arena",
       "namespace": "teamarenanais",
       "cluster": "dev-fss"
+    },
+    {
+      "app": "veilarbvedtaksstotte",
+      "namespace": "pto",
+      "cluster": "dev-fss"
     }
   ]
 }
