@@ -110,6 +110,11 @@
       "app": "su-se-bakover",
       "namespace": "supstonad",
       "cluster": "prod-fss"
+    },
+    {
+      "app": "veilarbvedtaksstotte",
+      "namespace": "pto",
+      "cluster": "prod-fss"
     }
   ]
 }
