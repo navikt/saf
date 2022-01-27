@@ -145,7 +145,8 @@
     {
       "app": "veilarbvedtaksstotte",
       "namespace": "pto",
-      "cluster": "dev-fss"
+      "cluster": "dev-fss",
+      "roles": ["tema_opp"]
     }
   ]
 }
