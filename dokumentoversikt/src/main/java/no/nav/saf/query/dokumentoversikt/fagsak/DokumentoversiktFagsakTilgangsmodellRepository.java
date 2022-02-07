@@ -7,7 +7,6 @@ import no.nav.saf.anticorruptionlayer.fpsak.FpsakAntiCorruptionLayer;
 import no.nav.saf.anticorruptionlayer.gsak.GsakAntiCorruptionLayer;
 import no.nav.saf.anticorruptionlayer.k9.K9AntiCorruptionLayer;
 import no.nav.saf.anticorruptionlayer.pensjonsak.PensjonSakAntiCorruptionLayer;
-import no.nav.saf.cache.LokalCacheConfig;
 import no.nav.saf.domain.Arkivsak;
 import no.nav.saf.domain.BidragSak;
 import no.nav.saf.domain.kode.Tema;
@@ -26,6 +25,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static no.nav.saf.anticorruptionlayer.pensjonsak.PensjonSakAntiCorruptionLayerImpl.PSAK_FAGSYSTEM;
+import static no.nav.saf.cache.LokalCacheConfig.TILGANGSMODELL_REPO_BRUKER_CACHE;
 import static no.nav.saf.domain.DomainConstants.AKTOER_ID_LIST;
 import static no.nav.saf.domain.DomainConstants.ORGNR_LIST;
 
@@ -59,7 +59,7 @@ class DokumentoversiktFagsakTilgangsmodellRepository {
 		this.k9AntiCorruptionLayer = k9AntiCorruptionLayer;
 	}
 
-	@Cacheable(cacheNames = LokalCacheConfig.TILGANGSMODELL_REPO_BRUKER_CACHE)
+	@Cacheable(cacheNames = TILGANGSMODELL_REPO_BRUKER_CACHE, unless = "#result==null or #result.isEmpty()")
 	public List<TilgangBruker> findTilgangBrukerList(FagsakInput fagsakInput) {
 		try {
 			if (fagsakInput.getFagsaksystem().equals(PSAK_FAGSYSTEM)) {
