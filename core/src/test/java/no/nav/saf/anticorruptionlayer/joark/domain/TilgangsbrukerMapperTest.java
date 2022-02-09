@@ -48,18 +48,15 @@ class TilgangsbrukerMapperTest {
 	}
 
 	@Test
-	void shouldNotMapNpIdToFolkeregisterIdent() {
+	void shouldGetIdenterWhenNpId() {
 		List<PdlResponse.PdlIdent> baseResponse = createBaseResponse();
-		baseResponse.addAll(Arrays.asList(
-				createIdent(NP_ID, PdlResponse.PdlGruppe.NPID, false),
-				createIdent(NP_ID, PdlResponse.PdlGruppe.NPID, true)
-		));
+		baseResponse.add(createIdent(NP_ID, PdlResponse.PdlGruppe.NPID, false));
 		TilgangBruker tilgangBruker = TilgangsbrukerMapper.map(baseResponse);
 
 		assertThat(tilgangBruker.getAktoerId()).isEqualTo(AKTOERID);
 		assertThat(tilgangBruker.getFoedselsnr()).isEqualTo(FOLKEREGISTERIDENT);
-		assertThat(tilgangBruker.getHistoriskeIdenter()).isEmpty();
-		assertThat(tilgangBruker.getAlleIdenter()).contains(FOLKEREGISTERIDENT);
+		assertThat(tilgangBruker.getNpId()).isEqualTo(NP_ID);
+		assertThat(tilgangBruker.getAlleIdenter()).hasSize(2).contains(FOLKEREGISTERIDENT, NP_ID);
 		assertThat(tilgangBruker.hentAlleAktoerId()).hasSize(1).contains(AKTOERID);
 	}
 

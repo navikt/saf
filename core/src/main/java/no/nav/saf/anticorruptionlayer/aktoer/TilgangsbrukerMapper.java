@@ -16,27 +16,29 @@ public class TilgangsbrukerMapper {
 	private TilgangsbrukerMapper() {
 	}
 
-	private static final EnumSet<PdlResponse.PdlGruppe> GYLDIGE_IDENTGRUPPER = EnumSet.of(PdlResponse.PdlGruppe.AKTORID, PdlResponse.PdlGruppe.FOLKEREGISTERIDENT);
+	private static final EnumSet<PdlResponse.PdlGruppe> GYLDIGE_IDENTGRUPPER = EnumSet.of(
+			PdlResponse.PdlGruppe.AKTORID,
+			PdlResponse.PdlGruppe.FOLKEREGISTERIDENT,
+			PdlResponse.PdlGruppe.NPID);
 
 	public static TilgangBruker map(List<PdlResponse.PdlIdent> responseTo) {
 		String aktoerId = null;
 		String foedselsnummer = null;
+		String npId = null;
 		List<TilgangIdent> tilgangsIdentList = new ArrayList<>();
 		for (PdlResponse.PdlIdent pdlIdent : responseTo) {
 			if (pdlIdent.isHistorisk() && GYLDIGE_IDENTGRUPPER.contains(pdlIdent.getGruppe())) {
 				tilgangsIdentList.add(TilgangIdent.builder()
 						.identifikator(pdlIdent.getIdent())
-						.identType(pdlIdent.getGruppe().equals(PdlResponse.PdlGruppe.AKTORID) ? IdentType.AKTOERID : IdentType.FOLKEREGISTERIDENT)
+						.identType(IdentType.fromPdlGruppe(pdlIdent.getGruppe()))
 						.build());
 			} else if (pdlIdent.getGruppe().equals(PdlResponse.PdlGruppe.AKTORID)) {
 				aktoerId = pdlIdent.getIdent();
 			} else if (pdlIdent.getGruppe().equals(PdlResponse.PdlGruppe.FOLKEREGISTERIDENT)) {
 				foedselsnummer = pdlIdent.getIdent();
+			} else if (pdlIdent.getGruppe().equals(PdlResponse.PdlGruppe.NPID)) {
+				npId = pdlIdent.getIdent();
 			}
-		}
-
-		if (foedselsnummer == null) {
-			log.warn("Feil i mapping av identer fra Pdl. foedselsnummer er null etter mapping. Dette skyldes at bruker har NPID");
 		}
 
 		if (aktoerId == null) {
@@ -46,6 +48,7 @@ public class TilgangsbrukerMapper {
 		return TilgangBruker.builder()
 				.foedselsnr(foedselsnummer)
 				.aktoerId(aktoerId)
+				.npId(npId)
 				.historiskeIdenter(tilgangsIdentList)
 				.build();
 	}
