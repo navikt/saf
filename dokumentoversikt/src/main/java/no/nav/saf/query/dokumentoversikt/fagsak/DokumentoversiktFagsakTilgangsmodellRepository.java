@@ -59,7 +59,7 @@ class DokumentoversiktFagsakTilgangsmodellRepository {
 		this.k9AntiCorruptionLayer = k9AntiCorruptionLayer;
 	}
 
-	@Cacheable(cacheNames = TILGANGSMODELL_REPO_BRUKER_CACHE, unless = "#result==null or #result.isEmpty()")
+	@Cacheable(cacheNames = TILGANGSMODELL_REPO_BRUKER_CACHE, unless = "#fagsakInput.fagsaksystem == 'BISYS'")
 	public List<TilgangBruker> findTilgangBrukerList(FagsakInput fagsakInput) {
 		try {
 			if (fagsakInput.getFagsaksystem().equals(PSAK_FAGSYSTEM)) {
