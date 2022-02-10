@@ -24,21 +24,23 @@ public class TilgangsbrukerMapper {
 	public static TilgangBruker map(List<PdlResponse.PdlIdent> responseTo) {
 		String aktoerId = null;
 		String foedselsnummer = null;
-		String npId = null;
 		List<TilgangIdent> tilgangsIdentList = new ArrayList<>();
 		for (PdlResponse.PdlIdent pdlIdent : responseTo) {
 			if (pdlIdent.isHistorisk() && GYLDIGE_IDENTGRUPPER.contains(pdlIdent.getGruppe())) {
 				tilgangsIdentList.add(TilgangIdent.builder()
 						.identifikator(pdlIdent.getIdent())
-						.identType(IdentType.fromPdlGruppe(pdlIdent.getGruppe()))
+						.identType(pdlIdent.getGruppe().equals(PdlResponse.PdlGruppe.AKTORID) ? IdentType.AKTOERID : IdentType.FOLKEREGISTERIDENT)
 						.build());
 			} else if (pdlIdent.getGruppe().equals(PdlResponse.PdlGruppe.AKTORID)) {
 				aktoerId = pdlIdent.getIdent();
-			} else if (pdlIdent.getGruppe().equals(PdlResponse.PdlGruppe.FOLKEREGISTERIDENT)) {
+			} else if (pdlIdent.getGruppe().equals(PdlResponse.PdlGruppe.FOLKEREGISTERIDENT)
+					|| pdlIdent.getGruppe().equals(PdlResponse.PdlGruppe.NPID)) {
 				foedselsnummer = pdlIdent.getIdent();
-			} else if (pdlIdent.getGruppe().equals(PdlResponse.PdlGruppe.NPID)) {
-				npId = pdlIdent.getIdent();
 			}
+		}
+
+		if (foedselsnummer == null) {
+			log.warn("Feil i mapping av identer fra Pdl. foedselsnummer er null etter mapping.");
 		}
 
 		if (aktoerId == null) {
@@ -48,7 +50,6 @@ public class TilgangsbrukerMapper {
 		return TilgangBruker.builder()
 				.foedselsnr(foedselsnummer)
 				.aktoerId(aktoerId)
-				.npId(npId)
 				.historiskeIdenter(tilgangsIdentList)
 				.build();
 	}

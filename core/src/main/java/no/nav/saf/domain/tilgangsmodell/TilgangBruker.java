@@ -21,7 +21,6 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 public class TilgangBruker {
 	private final String foedselsnr;
 	private final String aktoerId;
-	private final String npId;
 	private final String orgnummer;
 	@Builder.Default
 	private final List<TilgangIdent> historiskeIdenter = new ArrayList<>();
@@ -31,8 +30,7 @@ public class TilgangBruker {
 
 	public List<String> getAlleIdenter() {
 		List<String> tmpAlleIdenter = historiskeIdenter.stream()
-				.filter(ident -> IdentType.FOLKEREGISTERIDENT.equals(ident.getIdentType()) ||
-						IdentType.NPID.equals(ident.getIdentType()) )
+				.filter(ident -> IdentType.FOLKEREGISTERIDENT.equals(ident.getIdentType()))
 				.map(TilgangIdent::getIdentifikator)
 				.collect(Collectors.toList());
 		if (foedselsnr != null) {
@@ -41,15 +39,11 @@ public class TilgangBruker {
 		if (orgnummer != null) {
 			tmpAlleIdenter.add(orgnummer);
 		}
-		if (npId != null) {
-			tmpAlleIdenter.add(npId);
-		}
-
 		return tmpAlleIdenter;
 	}
 
 	public boolean isPerson() {
-		return isNotBlank(foedselsnr) || isNotBlank(aktoerId) || isNotBlank(npId);
+		return isNotBlank(foedselsnr) || isNotBlank(aktoerId);
 	}
 
 	public boolean isOrganisasjon() {
