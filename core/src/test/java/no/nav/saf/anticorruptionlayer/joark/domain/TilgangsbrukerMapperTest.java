@@ -56,6 +56,17 @@ class TilgangsbrukerMapperTest {
 		assertThat(tilgangBruker.getAlleIdenter()).hasSize(1).contains(NP_ID);
 	}
 
+	@Test
+	void shouldNotMapNpIdIfFolkeregisteridentExists() {
+		List<PdlResponse.PdlIdent> response = createBaseResponse();
+		response.add(createIdent(NP_ID, PdlResponse.PdlGruppe.NPID, false));
+		TilgangBruker tilgangBruker = TilgangsbrukerMapper.map(response);
+
+		assertThat(tilgangBruker.getFoedselsnr()).isEqualTo(FOLKEREGISTERIDENT);
+		assertThat(tilgangBruker.getAlleIdenter()).hasSize(1).contains(FOLKEREGISTERIDENT);
+	}
+
+
 	List<PdlResponse.PdlIdent> createBaseResponse() {
 		List<PdlResponse.PdlIdent> response = new ArrayList<>();
 		response.add(createIdent(FOLKEREGISTERIDENT, PdlResponse.PdlGruppe.FOLKEREGISTERIDENT, false));

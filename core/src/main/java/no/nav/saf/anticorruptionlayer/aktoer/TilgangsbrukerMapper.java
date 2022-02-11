@@ -33,8 +33,9 @@ public class TilgangsbrukerMapper {
 						.build());
 			} else if (pdlIdent.getGruppe().equals(PdlResponse.PdlGruppe.AKTORID)) {
 				aktoerId = pdlIdent.getIdent();
-			} else if (pdlIdent.getGruppe().equals(PdlResponse.PdlGruppe.FOLKEREGISTERIDENT)
-					|| pdlIdent.getGruppe().equals(PdlResponse.PdlGruppe.NPID)) {
+			} else if (pdlIdent.getGruppe().equals(PdlResponse.PdlGruppe.FOLKEREGISTERIDENT)) {
+				foedselsnummer = pdlIdent.getIdent();
+			} else if (pdlIdent.getGruppe().equals(PdlResponse.PdlGruppe.NPID) && foedselsnummer == null) {
 				foedselsnummer = pdlIdent.getIdent();
 			}
 		}
