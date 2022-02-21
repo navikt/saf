@@ -30,7 +30,7 @@ public class TilgangBruker {
 
 	public List<String> getAlleIdenter() {
 		List<String> tmpAlleIdenter = historiskeIdenter.stream()
-				.filter(ident -> ident.getIdentType().equals(IdentType.FOLKEREGISTERIDENT))
+				.filter(ident -> IdentType.FOLKEREGISTERIDENT.equals(ident.getIdentType()))
 				.map(TilgangIdent::getIdentifikator)
 				.collect(Collectors.toList());
 		if (foedselsnr != null) {
@@ -60,7 +60,7 @@ public class TilgangBruker {
 		} else if (historiskeIdenter.isEmpty()) {
 			return new ArrayList<>();
 		}
-		List<String> idents = historiskeIdenter.stream().filter(h -> h.getIdentType().equals(IdentType.AKTOERID)).map(TilgangIdent::getIdentifikator).collect(Collectors.toList());
+		List<String> idents = historiskeIdenter.stream().filter(h -> IdentType.AKTOERID.equals(h.getIdentType())).map(TilgangIdent::getIdentifikator).collect(Collectors.toList());
 		idents.add(aktoerId);
 		return idents;
 	}
