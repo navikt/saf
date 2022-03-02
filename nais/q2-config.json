@@ -19,6 +19,7 @@
     "https://saf-q2.nais.preprod.local",
     "https://saf-q2.dev.adeo.no",
     "https://saf-q2.dev.intern.nav.no",
+    "https://saf-q2.dev-fss-pub.nais.io",
     "https://saf.dev.intern.nav.no"
   ],
   "SRVSAF": "/serviceuser/data/dev/srvsaf",
