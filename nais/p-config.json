@@ -97,11 +97,6 @@
       "cluster": "prod-gcp"
     },
     {
-      "app": "kabal-anke-api",
-      "namespace": "klage",
-      "cluster": "prod-gcp"
-    },
-    {
       "app": "flex-joark-mottak",
       "namespace": "flex",
       "cluster": "prod-gcp"
