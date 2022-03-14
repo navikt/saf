@@ -249,7 +249,11 @@ public enum FagomradeCode {
 	/**
 	 * Kompensasjon for selvstendig næringsdrivende/frilansere
 	 */
-	FRI;
+	FRI,
+	/** Barnepensjon */
+	EYB,
+	/** Omstillingsstønad */
+	EYO;
 
 	// Vennligst se https://jira.adeo.no/browse/MMA-3142
 	// Tema CON har data i joark men temaet skal ikke vises.

@@ -16,6 +16,8 @@ public enum Tema {
 	DAG("Dagpenger"),
 	ENF("Enslig forsørger"),
 	ERS("Erstatning"),
+	EYB("Barnepensjon"),
+	EYO("Omstillingsstønad"),
 	FAR("Farskap"),
 	FEI("Feilutbetaling"),
 	FOR("Foreldre- og svangerskapspenger"),
