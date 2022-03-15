@@ -660,6 +660,12 @@ enum Tema {
     # Erstatning
     ERS
 
+    #Barnepensjon
+    EYB
+
+    #Omstillingsstønad
+    EYO
+
     # Farskap
     FAR
 
