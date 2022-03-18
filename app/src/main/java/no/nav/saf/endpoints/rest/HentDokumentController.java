@@ -1,7 +1,7 @@
 package no.nav.saf.endpoints.rest;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.domain.HentDokument;
 import no.nav.saf.domain.kode.Variantformat;
@@ -11,7 +11,7 @@ import no.nav.saf.exceptions.JournalpostIkkeFunnetException;
 import no.nav.saf.hentdokument.HentDokumentDomainCoordinator;
 import no.nav.saf.metrics.AudienceCounter;
 import no.nav.saf.metrics.Monitor;
-import no.nav.saf.swagger.SwaggerRestHentDokument;
+import no.nav.saf.springdoc.SwaggerRestHentDokument;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.SafSecurityContext;
 import no.nav.security.token.support.core.api.Protected;
@@ -40,7 +40,7 @@ import static no.nav.saf.util.MDCUtility.addMdcData;
  *
  * @author Sigurd Midttun, Visma Consulting.
  */
-@Api
+@Tag(name="saf REST API", description = "Lesemodellen til fagarkivet. Henter dokumenter.")
 @Protected
 @RestController
 @RequestMapping("rest/")
@@ -66,11 +66,11 @@ public class HentDokumentController {
 	@GetMapping(value = "hentdokument/{journalpostId}/{dokumentInfoId}/{variantFormat}")
 	@Monitor(value = "dok_request", extraTags = {"process", "hentDokument", "requestType", "hentDokument"}, histogram = true)
 	public ResponseEntity<byte[]> hentDokument(
-			@ApiParam(name = "journalpostId", value = "Id for aktuell journalpost", required = true) @PathVariable String journalpostId,
-			@ApiParam(name = "dokumentInfoId", value = "Id for aktuelt dokument", required = true) @PathVariable String dokumentInfoId,
-			@ApiParam(name = "variantFormat", value = "Varianten til dokumentet som skal hentes. [Følg lenken for gyldige verdier](https://confluence.adeo.no/display/BOA/Enum%3A+Variantformat).", required = true) @PathVariable String variantFormat,
-			@ApiParam(name = NAV_CALLID, value = "(Valgfri) ID for logging og sporing på tvers av verdikjeder. Eksempel: UUID") @RequestHeader(value = NAV_CALLID, required = false) String navCallid,
-			@ApiParam(name = X_CORRELATION_ID, value = "@Deprecated. Bruk " + NAV_CALLID, hidden = true) @RequestHeader(value = X_CORRELATION_ID, required = false) String xCorrelationId
+			@Parameter(name = "journalpostId", description = "Id for aktuell journalpost", required = true) @PathVariable String journalpostId,
+			@Parameter(name = "dokumentInfoId", description = "Id for aktuelt dokument", required = true) @PathVariable String dokumentInfoId,
+			@Parameter(name = "variantFormat", description = "Varianten til dokumentet som skal hentes. [Følg lenken for gyldige verdier](https://confluence.adeo.no/display/BOA/Enum%3A+Variantformat).", required = true) @PathVariable String variantFormat,
+			@Parameter(name = NAV_CALLID, description = "(Valgfri) ID for logging og sporing på tvers av verdikjeder. Eksempel: UUID") @RequestHeader(value = NAV_CALLID, required = false) String navCallid,
+			@Parameter(name = X_CORRELATION_ID, description = "@Deprecated. Bruk " + NAV_CALLID, hidden = true) @RequestHeader(value = X_CORRELATION_ID, required = false) String xCorrelationId
 	) {
 		final SafRequestContext safRequestContext = new SafRequestContext(createNavCallid(navCallid, xCorrelationId),
 				tokenValidationContextHolder.getTokenValidationContext(),
