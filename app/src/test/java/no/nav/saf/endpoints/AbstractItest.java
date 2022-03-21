@@ -117,6 +117,7 @@ public abstract class AbstractItest {
 				new DefaultOAuth2TokenCallback(
 						issuerId,
 						subject,
+						"JWT",
 						List.of(audience),
 						claims,
 						60

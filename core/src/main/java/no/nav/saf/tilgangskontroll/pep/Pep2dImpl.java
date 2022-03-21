@@ -55,7 +55,7 @@ public class Pep2dImpl extends Pep<TilgangSak> {
 	@Override
 	public XacmlResponse verifyAbacPdpDecision(TilgangSak ressurs, SafRequestContext safRequestContext) {
 		if (ressurs == null || ressurs.getTema() == null) {
-			log.info("Pep2d mangler data om sak. Tilgang gis likevel for at saksbehandler skal kunne knytte dokument til sak og bruker.");
+			log.info("Pep2d(tema-tilgang) mangler data om sak. Tilgang gis likevel for at saksbehandler skal kunne knytte dokument til sak og bruker.");
 			return XacmlResponse.permit();
 		}
 
@@ -83,7 +83,7 @@ public class Pep2dImpl extends Pep<TilgangSak> {
 	@Override
 	public AbacAnswer verifyAzureClientCredentialFlowAccess(TilgangSak ressurs, SafRequestContext safRequestContext) {
 		if (ressurs == null || ressurs.getTema() == null) {
-			log.info("Pep2d mangler data om sak. Tilgang gis likevel for at system skal kunne knytte dokument til sak og bruker. Azure ccf.");
+			log.info("Pep2d(tema-tilgang) mangler data om sak. Tilgang gis likevel for at system skal kunne knytte dokument til sak og bruker. Azure ccf.");
 			return permit();
 		}
 		traceLogPepStarted(PEP2D, ressurs);
