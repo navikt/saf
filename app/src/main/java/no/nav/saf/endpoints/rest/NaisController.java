@@ -3,6 +3,7 @@ package no.nav.saf.endpoints.rest;
 
 import io.micrometer.core.instrument.Gauge;
 import io.micrometer.core.instrument.MeterRegistry;
+import io.swagger.v3.oas.annotations.Hidden;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.security.token.support.core.api.Unprotected;
 import org.springframework.http.HttpStatus;
@@ -23,6 +24,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  *
  * @author Joakim Bjørnstad, Jbit AS
  */
+@Hidden
 @Slf4j
 @RestController
 public final class NaisController {

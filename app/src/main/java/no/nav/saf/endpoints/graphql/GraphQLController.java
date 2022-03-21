@@ -9,6 +9,7 @@ import graphql.schema.GraphQLSchema;
 import graphql.schema.idl.SchemaGenerator;
 import graphql.schema.idl.SchemaParser;
 import graphql.schema.idl.TypeDefinitionRegistry;
+import io.swagger.v3.oas.annotations.Hidden;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.metrics.AudienceCounter;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
@@ -39,6 +40,7 @@ import static no.nav.saf.util.MDCUtility.addMdcData;
  *
  * @author Ugur Alpay Cenar, Visma Consulting.
  */
+@Hidden
 @RestController
 @Slf4j
 @Protected
