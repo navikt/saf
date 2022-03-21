@@ -40,10 +40,10 @@ public class Pep1gImpl extends Pep<TilgangBruker> {
 	@Override
 	public XacmlResponse verifyAbacPdpDecision(TilgangBruker ressurs, SafRequestContext safRequestContext) {
 		if (ressurs == null || ressurs.isUkjent()) {
-			log.info("Pep1g mangler data om bruker. Tilgang gis for å kunne identifisere bruker.");
+			log.info("Pep1g(kode6/7, egen-ansatt, geografi) mangler data om bruker. Tilgang gis for å kunne identifisere bruker.");
 			return XacmlResponse.permit();
 		} else if (ressurs.isOrganisasjon()) {
-			log.info("Pep1g validerer organisasjon. Tilgang gis siden bruker er en organisasjon.");
+			log.info("Pep1g(kode6/7, egen-ansatt, geografi) validerer organisasjon. Tilgang gis siden bruker er en organisasjon.");
 			return XacmlResponse.permit();
 		}
 

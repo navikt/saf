@@ -86,7 +86,7 @@ public class Pep7dImpl extends Pep<TilgangSak> {
 
 	private boolean aktoerlisteErNullEllerTomForFp(TilgangSak ressurs) {
 		if (ressurs.getFpAktoerIdList() == null || ressurs.getFpAktoerIdList().isEmpty()) {
-			log.info("Pep7d har ingen relevante parter for foreldrepengesak. Tilgang gis.");
+			log.info("Pep7d(kode6/7-relevante-parter) har ingen relevante parter for foreldrepengesak. Tilgang gis.");
 			return true;
 		}
 		return false;
@@ -94,7 +94,7 @@ public class Pep7dImpl extends Pep<TilgangSak> {
 
 	private boolean aktoerlisteErNullEllerTomForK9(TilgangSak ressurs) {
 		if (ressurs.getK9AktoerIdList() == null || ressurs.getK9AktoerIdList().isEmpty()) {
-			log.info("Pep7d har ingen relevante parter for K9sak. Tilgang gis.");
+			log.info("Pep7d(kode6/7-relevante-parter) har ingen relevante parter for K9sak. Tilgang gis.");
 			return true;
 		}
 		return false;
