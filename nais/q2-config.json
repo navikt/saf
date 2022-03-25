@@ -144,6 +144,11 @@
       "namespace": "pto",
       "cluster": "dev-fss",
       "roles": ["tema_opp"]
+    },
+    {
+      "app": "syfosmpapirmottak",
+      "namespace": "teamsykmelding",
+      "cluster": "dev-fss"
     }
   ]
 }

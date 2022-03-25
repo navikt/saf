@@ -116,6 +116,11 @@
       "app": "yrkesskade-melding-mottak",
       "namespace": "yrkesskade",
       "cluster": "prod-gcp"
+    },
+    {
+      "app": "syfosmpapirmottak",
+      "namespace": "teamsykmelding",
+      "cluster": "prod-fss"
     }
   ]
 }
