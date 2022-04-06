@@ -149,6 +149,11 @@
       "app": "syfosmpapirmottak",
       "namespace": "teamsykmelding",
       "cluster": "dev-fss"
+    },
+    {
+      "app": "eessi-pensjon-fagmodul-q2",
+      "namespace": "eessipensjon",
+      "cluster": "dev-gcp"
     }
   ]
 }
