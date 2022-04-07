@@ -121,6 +121,11 @@
       "app": "syfosmpapirmottak",
       "namespace": "teamsykmelding",
       "cluster": "prod-fss"
+    },
+    {
+      "app": "bidrag-dokument-arkiv",
+      "namespace": "bidrag",
+      "cluster": "prod-fss"
     }
   ]
 }
