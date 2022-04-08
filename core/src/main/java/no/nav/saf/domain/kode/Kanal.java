@@ -21,7 +21,9 @@ public enum Kanal {
 	UKJENT("Ukjent"),
 	NAV_NO_UINNLOGGET("Ditt NAV uten ID-porten-pålogging"),
 	INNSENDT_NAV_ANSATT("Registrert av Nav-ansatt"),
-	NAV_NO_CHAT("Innlogget samtale");
+	NAV_NO_CHAT("Innlogget samtale"),
+	DPV("Digital Post til Virksomhet"),
+	DPVS("Digital Post til Virksomhet (sensitiv)");
 
 	private final String kanalnavn;
 
