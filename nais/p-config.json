@@ -131,6 +131,11 @@
       "app": "eessi-pensjon-fagmodul",
       "namespace": "eessipensjon",
       "cluster": "prod-gcp"
+    },
+    {
+      "app": "spberegning",
+      "namespace": "helsearbeidsgiver",
+      "cluster": "prod-fss"
     }
   ]
 }
