@@ -164,11 +164,6 @@
       "app": "bidrag-dokument-arkiv-feature",
       "namespace": "bidrag",
       "cluster": "dev-fss"
-    },
-    {
-      "app": "spberegning",
-      "namespace": "helsearbeidsgiver",
-      "cluster": "dev-fss"
     }
   ]
 }
