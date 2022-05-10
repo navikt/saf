@@ -11,6 +11,9 @@ import static no.nav.saf.hentdokument.HentDokumentSporingLogglinje.BESLUTNING_DE
 import static no.nav.saf.hentdokument.HentDokumentSporingLogglinje.BESLUTNING_PERMIT;
 
 /**
+ * Sporingslogger til nais.audit.
+ * https://confluence.adeo.no/display/BOA/saf+-+Sporingslogg+hentdokument
+ *
  * @author Joakim Bjørnstad, Jbit AS
  */
 @Slf4j(topic = "hentdokument_sporbarhetslogg")
@@ -58,10 +61,10 @@ class HentDokumentSporbarhetslogger {
 	}
 
 	private String getBrukerId(TilgangBruker tilgangBruker) {
-		if(tilgangBruker == null) {
+		if (tilgangBruker == null) {
 			return UKJENT_BRUKERID;
 		}
-		if(tilgangBruker.isPerson()) {
+		if (tilgangBruker.isPerson()) {
 			return tilgangBruker.getFoedselsnr();
 		} else {
 			return tilgangBruker.getOrgnummer();

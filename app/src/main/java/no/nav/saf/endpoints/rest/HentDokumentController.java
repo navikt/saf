@@ -31,6 +31,7 @@ import java.util.Map;
 
 import static no.nav.saf.endpoints.HeaderUtils.createNavCallid;
 import static no.nav.saf.headers.NavHeaders.NAV_CALLID;
+import static no.nav.saf.headers.NavHeaders.NAV_USER_ID;
 import static no.nav.saf.headers.NavHeaders.X_CORRELATION_ID;
 import static no.nav.saf.util.MDCUtility.addMdcData;
 
@@ -70,9 +71,11 @@ public class HentDokumentController {
 			@Parameter(name = "dokumentInfoId", description = "Id for aktuelt dokument", required = true) @PathVariable String dokumentInfoId,
 			@Parameter(name = "variantFormat", description = "Varianten til dokumentet som skal hentes. [Følg lenken for gyldige verdier](https://confluence.adeo.no/display/BOA/Enum%3A+Variantformat).", required = true) @PathVariable String variantFormat,
 			@Parameter(name = NAV_CALLID, description = "(Valgfri) ID for logging og sporing på tvers av verdikjeder. Eksempel: UUID") @RequestHeader(value = NAV_CALLID, required = false) String navCallid,
+			@Parameter(name = NAV_USER_ID, description = "(Valgfri) NAV ident som overstyrer sporing for kall fra servicebrukere.") @RequestHeader(value = NAV_USER_ID, required = false) String navUserId,
 			@Parameter(name = X_CORRELATION_ID, description = "@Deprecated. Bruk " + NAV_CALLID, hidden = true) @RequestHeader(value = X_CORRELATION_ID, required = false) String xCorrelationId
 	) {
 		final SafRequestContext safRequestContext = new SafRequestContext(createNavCallid(navCallid, xCorrelationId),
+				navUserId,
 				tokenValidationContextHolder.getTokenValidationContext(),
 				privilegiedServiceusers
 		);

@@ -4,6 +4,9 @@ import lombok.Builder;
 import lombok.Value;
 
 /**
+ * Representerer en linje i sporingsloggen.
+ * Typisk en linje per kall til hentdokument.
+ *
  * @author Joakim Bjørnstad, Jbit AS
  */
 @Value
