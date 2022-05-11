@@ -32,6 +32,7 @@ import java.util.Objects;
 
 import static no.nav.saf.endpoints.HeaderUtils.createNavCallid;
 import static no.nav.saf.headers.NavHeaders.NAV_CALLID;
+import static no.nav.saf.headers.NavHeaders.NAV_USER_ID;
 import static no.nav.saf.headers.NavHeaders.X_CORRELATION_ID;
 import static no.nav.saf.util.MDCUtility.addMdcData;
 
@@ -73,10 +74,12 @@ public class GraphQLController {
 	@ResponseBody
 	public Map<String, Object> graphQLRequest(@RequestHeader(value = X_CORRELATION_ID, required = false) String xCorrelationId,
 											  @RequestHeader(value = NAV_CALLID, required = false) String navCallid,
+											  @RequestHeader(value = NAV_USER_ID, required = false) String navUserId,
 											  @RequestBody GraphQLRequest request) {
 		try {
 			final SafRequestContext safRequestContext = new SafRequestContext(
 					createNavCallid(navCallid, xCorrelationId),
+					navUserId,
 					tokenValidationContextHolder.getTokenValidationContext(),
 					privilegiedServiceusers
 			);

@@ -10,7 +10,7 @@ public final class NavHeaders {
 	@Deprecated
 	public static final String X_CORRELATION_ID = "X-Correlation-ID";
 	public static final String NAV_CALLID = "Nav-Callid";
-	public static final String NAV_CONSUMER_ID = "Nav-Consumer-Id";
+	public static final String NAV_USER_ID = "Nav-User-Id";
 
 	private NavHeaders() {
 		// noop

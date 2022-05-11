@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.6.6</version>
+		<version>2.6.7</version>
 	</parent>
 	<groupId>no.nav.saf</groupId>
 	<artifactId>saf</artifactId>
@@ -29,7 +29,7 @@
 		<javax.inject.version>1</javax.inject.version>
 		<pensjon-sak-v1-tjenestespesifikasjon.version>1.2019.09.25-00.21-49b69f0625e0
 		</pensjon-sak-v1-tjenestespesifikasjon.version>
-		<cxf.version>3.5.1</cxf.version>
+		<cxf.version>3.5.2</cxf.version>
 		<graphql-java.version>18.0</graphql-java.version>
 		<resilience4j.version>1.7.1</resilience4j.version>
 		<java-jwt.version>3.18.1</java-jwt.version>

@@ -14,18 +14,20 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static no.nav.saf.util.MDCUtility.addMdcData;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 /**
- * Holder informasjon om token.
+ * Holder informasjon om token. Opprettes for hvert kall til saf.
  *
  * @author Joakim Bjørnstad, Jbit AS
  */
 @Slf4j
 public class SafSecurityContext {
+
 	private static final String ISSUER_REST_STS = "reststs";
 	private static final String ISSUER_OPENAM = "openam";
 	private static final String ISSUER_AZUREV1 = "azurev1";
@@ -50,6 +52,8 @@ public class SafSecurityContext {
 	private static final String UKJENT_AUDIENCE = "ukjentAudience";
 	@Deprecated
 	private static final String OPENAM_UKJENT_AUDIENCE = "openamUkjentAudience";
+	static final String NAVIDENT_REGEX = "^[a-zA-Z]\\d{6}$";
+	static final Pattern NAVIDENT_PATTERN = Pattern.compile(NAVIDENT_REGEX);
 
 	private final TokenValidationContext tokenValidationContext;
 	private final JwtToken jwtToken;
@@ -58,13 +62,17 @@ public class SafSecurityContext {
 	private final boolean jwtAzureClientCredentialFlow;
 	private final List<String> jwtAzureRoles;
 	private final Map<String, Boolean> privilegiedServiceusers;
+	private final String navUserId;
 
 	SafSecurityContext(TokenValidationContext tokenValidationContext,
-					   Map<String, Boolean> privilegiedServiceusers) {
+					   Map<String, Boolean> privilegiedServiceusers,
+					   String navUserId) {
 		this.jwtToken = tokenValidationContext.getFirstValidToken()
 				.orElseThrow(() -> new AuthorizationException(AUTH_ERRORMESSAGE));
 		this.tokenValidationContext = tokenValidationContext;
 		this.privilegiedServiceusers = privilegiedServiceusers;
+		// Nav-User-Id header. Valgfri
+		this.navUserId = navUserId;
 		// Payload fra JWT hentes ut en gang pga den blir hentet ut fra kontekst ofte.
 		JWT jwt;
 		try {
@@ -179,6 +187,18 @@ public class SafSecurityContext {
 	}
 
 	protected String getUserId() {
+		if (navUserId == null) {
+			return getUserIdFromToken();
+		} else if (isNotBlank(navUserId) && isRestStsSystemToken()) {
+			if (!NAVIDENT_PATTERN.matcher(navUserId).matches()) {
+				log.error("Tjeneste kalt med REST-STS token og Nav-User-Id header. Ugyldig format på NAVIdent={}. Må matche \"^[a-zA-Z]\\d{6}$\". Konsument må informeres og bes om å rette dette.", navUserId);
+			}
+			return navUserId;
+		}
+		return getUserIdFromToken();
+	}
+
+	private String getUserIdFromToken() {
 		if (isRestStsSystemToken() || isOpenAmBrukerToken()) {
 			return jwtToken.getSubject();
 		} else if (isClientCredentialFlowToken(jwtToken)) {

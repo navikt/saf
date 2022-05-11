@@ -41,6 +41,6 @@ abstract class AbstractPepTest {
 		privilegiedServiceusers.put("srvdokopp", true);
 		Map<String, JwtToken> issuerValidated = new HashMap<>();
 		issuerValidated.put("openam", new JwtToken(OIDC_TOKEN_PERSON_USER_TEST));
-		return new SafRequestContext(NAV_CALLID, new TokenValidationContext(issuerValidated), privilegiedServiceusers);
+		return new SafRequestContext(NAV_CALLID, null, new TokenValidationContext(issuerValidated), privilegiedServiceusers);
 	}
 }
