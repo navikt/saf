@@ -189,7 +189,7 @@ public class SafSecurityContext {
 	protected String getUserId() {
 		if (navUserId == null) {
 			return getUserIdFromToken();
-		} else if (isNotBlank(navUserId) && isRestStsSystemToken()) {
+		} else if (isNotBlank(navUserId) && (isRestStsSystemToken() || isClientCredentialFlowToken(jwtToken))) {
 			if (!NAVIDENT_PATTERN.matcher(navUserId).matches()) {
 				log.error("Tjeneste kalt med REST-STS token og Nav-User-Id header. Ugyldig format på NAVIdent={}. Må matche \"^[a-zA-Z]\\d{6}$\". Konsument må informeres og bes om å rette dette.", navUserId);
 			}
