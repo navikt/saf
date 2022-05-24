@@ -158,12 +158,14 @@
     {
       "app": "bidrag-dokument-arkiv",
       "namespace": "bidrag",
-      "cluster": "dev-fss"
+      "cluster": "dev-fss",
+      "roles": ["tema_far"]
     },
     {
       "app": "bidrag-dokument-arkiv-feature",
       "namespace": "bidrag",
-      "cluster": "dev-fss"
+      "cluster": "dev-fss",
+      "roles": ["tema_far"]
     }
   ]
 }
