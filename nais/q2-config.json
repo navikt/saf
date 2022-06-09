@@ -26,7 +26,7 @@
   "NO_NAV_SECURITY_JWT_ISSUER_AZUREV1_ACCEPTED_AUDIENCE": "38e07d31-659d-4595-939a-f18dce3446c5",
   "NO_NAV_SECURITY_JWT_ISSUER_AZUREV2_ACCEPTED_AUDIENCE": "c7adbfbb-1b1e-41f6-9b7a-af9627c04998",
   "NO_NAV_SECURITY_JWT_ISSUER_OPENAM_ACCEPTED_AUDIENCE": "fptilbake-q2,k9-tilbake-q2,gosys-dokument-auth-proxy-q2,gosys-localhost,gosys-nais-q2,gosys-q2,joarkadmin-localhost,joarkadmin-q2,modiabrukerdialog-q2,veilarblogin-q2,ida-q,eessi-pensjon-frontend-api-fss-q2,gosys-dokument-auth-proxy-q2,eux-helloeu-app-q2,k9-fordel-q2,pensjon-dokdist-localhost,pensjon-dokdist-q2,bisys-q2,bidrag-ui-q2,bidrag-q-localhost,melosys-q2,pensjon-psak-q2,psak-localhost",
-  "NO_NAV_SECURITY_JWT_ISSUER_RESTSTS_ACCEPTED_AUDIENCE": "srvdokdistdpi,srvdokdistdpi-2,srvpensjon,srvdagpenger-joark,srvdp-graphql,srvjfr-enhancer,srvinfotrygd-joark,srvjfr-infotrygd,srvjfr-arena,srvjfr-manuell-opp,srvjfr-filter,srvsyfosmpapirmottak,srveux-app,srvdokdisteformidl,srvdokdistfordeling,srvmelosys,srvmelosys-eessi,srvfamilie-ks-opps,srvmedlemskap,srvpensr,srvcoronapenger,srvjfr-automatisk,srvskjermingsbrev,srvpermref-journalf,srvdolly,srvsupstonad,srvarena-dokgen,srvregpapirsm,srv-digihotProxy,srvklage-saksbeh,srvbdarkiv,srvccmarkivogdist,srvbdarkivering,srvinnsending-api,srvspberegning",
+  "NO_NAV_SECURITY_JWT_ISSUER_RESTSTS_ACCEPTED_AUDIENCE": "srvdokdistdpi,srvdokdistdpi-2,srvpensjon,srvpselv,srvdagpenger-joark,srvdp-graphql,srvjfr-enhancer,srvinfotrygd-joark,srvjfr-infotrygd,srvjfr-arena,srvjfr-manuell-opp,srvjfr-filter,srvsyfosmpapirmottak,srveux-app,srvdokdisteformidl,srvdokdistfordeling,srvmelosys,srvmelosys-eessi,srvfamilie-ks-opps,srvmedlemskap,srvpensr,srvcoronapenger,srvjfr-automatisk,srvskjermingsbrev,srvpermref-journalf,srvdolly,srvsupstonad,srvarena-dokgen,srvregpapirsm,srv-digihotProxy,srvklage-saksbeh,srvbdarkiv,srvccmarkivogdist,srvbdarkivering,srvinnsending-api,srvspberegning",
   "SAF_PRIVILEGIEDSERVICEUSERS": "srvdokdistfordeling,srvdokdisteformidling,srvdokarkivproxy,srvtilbakemeldings,srvomsitramme,srvmelosys,srvdolly,srvdolly_u",
   "BIDRAG_SAK_URL": "https://bidrag-sak.dev.adeo.no/bidrag-sak/pip/sak/",
   "HENTJOURNALSAKINFO_URL": "https://dokarkiv.dev.intern.nav.no/hentjournalsakinfo",
@@ -153,6 +153,11 @@
     {
       "app": "eessi-pensjon-fagmodul-q2",
       "namespace": "eessipensjon",
+      "cluster": "dev-gcp"
+    },
+    {
+      "app": "pensjon-pselv-q2",
+      "namespace": "teampensjon",
       "cluster": "dev-gcp"
     },
     {
