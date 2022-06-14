@@ -36,6 +36,11 @@
   "APP_NAME": "saf",
   "AZURE_IAC_RULES": [
     {
+      "app": "etterlatte-brev-api",
+      "namespace": "etterlatte",
+      "cluster": "prod-gcp"
+    },
+    {
       "app": "familie-integrasjoner",
       "namespace": "teamfamilie",
       "cluster": "prod-fss"
