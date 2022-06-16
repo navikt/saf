@@ -114,7 +114,7 @@
       "cluster": "dev-gcp"
     },
     {
-      "app": "tpts-tiltakspenger-mottak",
+      "app": "tiltakspenger-mottak",
       "namespace": "tpts",
       "cluster": "dev-gcp"
     },

@@ -97,7 +97,7 @@
       "roles": ["tema_opp"]
     },
     {
-      "app": "tpts-tiltakspenger-mottak",
+      "app": "tiltakspenger-mottak",
       "namespace": "tpts",
       "cluster": "prod-gcp"
     },
