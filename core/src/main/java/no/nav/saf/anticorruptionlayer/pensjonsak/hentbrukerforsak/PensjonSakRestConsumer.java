@@ -3,7 +3,7 @@ package no.nav.saf.anticorruptionlayer.pensjonsak.hentbrukerforsak;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.retry.annotation.Retry;
 import lombok.extern.slf4j.Slf4j;
-import no.nav.saf.config.ServiceuserAlias;
+import no.nav.saf.anticorruptionlayer.sts.StsRestConsumer;
 import no.nav.saf.exceptions.SafFunctionalException;
 import no.nav.saf.exceptions.SafTechnicalException;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,6 +17,10 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 
+import static no.nav.saf.headers.NavHeaders.NAV_CALLID;
+import static no.nav.saf.util.MDCUtility.getCallId;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
+
 @Slf4j
 @Component
 public class PensjonSakRestConsumer {
@@ -24,15 +28,16 @@ public class PensjonSakRestConsumer {
 
     private final RestTemplate restTemplate;
     private final String pensjonsakApiUrl;
+    private final StsRestConsumer stsRestConsumer;
 
     public PensjonSakRestConsumer(RestTemplateBuilder restTemplateBuilder,
                                   ClientHttpRequestFactory clientHttpRequestFactory,
                                   @Value("${pensjonsakrs.v1.url}") String pensjonsakApiUrl,
-                                  ServiceuserAlias serviceuserAlias) {
+                                  StsRestConsumer stsRestConsumer) {
         this.pensjonsakApiUrl = pensjonsakApiUrl;
+        this.stsRestConsumer = stsRestConsumer;
         this.restTemplate = restTemplateBuilder
                 .requestFactory(() -> clientHttpRequestFactory)
-                .basicAuthentication(serviceuserAlias.getUsername(), serviceuserAlias.getPassword())
                 .build();
     }
 
@@ -40,7 +45,7 @@ public class PensjonSakRestConsumer {
     @CircuitBreaker(name = PENSJON_SAK_REST_INSTANCE)
     public HentBrukerForSakResponseTo hentBrukerForSak(final String sakId) {
         try {
-            HttpHeaders headers = new HttpHeaders();
+            HttpHeaders headers = createHeaders();
             headers.add("sakId", sakId);
             HentBrukerForSakResponseTo hentBrukerForSakResponseTo = restTemplate.exchange(pensjonsakApiUrl, HttpMethod.GET, new HttpEntity<>(headers), HentBrukerForSakResponseTo.class)
                     .getBody();
@@ -57,4 +62,11 @@ public class PensjonSakRestConsumer {
                     .getStatusCode(), e.getMessage()), e, e.getStatusCode());
         }
     }
-}
+
+    private HttpHeaders createHeaders() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(APPLICATION_JSON);
+        headers.setBearerAuth(stsRestConsumer.getStsToken().getAccess_token());
+        headers.set(NAV_CALLID, getCallId());
+        return headers;
+    }}
