@@ -176,6 +176,11 @@
       "namespace": "bidrag",
       "cluster": "dev-fss",
       "roles": ["tema_far"]
+    },
+    {
+      "app": "notat-administrasjon-q2",
+      "namespace": "isa",
+      "cluster": "dev-gcp",
     }
   ]
 }
