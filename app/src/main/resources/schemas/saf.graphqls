@@ -634,6 +634,10 @@ enum Kanal {
     # * Brukes for utgående journalposter.
     DPVS
 
+    # Brevet er sendt til virksomhet som taushetsbelagt digital post.
+    # * Brukes for utgående journalposter.
+    DPVT
+
     # Forsendelsen har ingen kjent kanal.
     UKJENT
 }

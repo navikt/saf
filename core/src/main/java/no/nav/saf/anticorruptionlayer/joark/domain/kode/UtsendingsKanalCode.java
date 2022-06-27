@@ -15,7 +15,8 @@ public enum UtsendingsKanalCode {
 	HELSENETTET(Kanal.HELSENETTET),
 	NAV_NO_CHAT(Kanal.NAV_NO_CHAT),
 	DPV(Kanal.DPV),
-	DPVS(Kanal.DPVS);;
+	DPVS(Kanal.DPVS),
+	DPVT(Kanal.DPVT);
 
 	private final Kanal safKanal;
 
