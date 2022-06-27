@@ -17,6 +17,8 @@ import no.nav.saf.tilgangskontroll.SafSecurityContext;
 import no.nav.security.token.support.core.api.Protected;
 import no.nav.security.token.support.core.context.TokenValidationContextHolder;
 import org.slf4j.MDC;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,8 +27,6 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.inject.Inject;
-import javax.inject.Named;
 import java.util.Map;
 
 import static no.nav.saf.endpoints.HeaderUtils.createNavCallid;
@@ -52,8 +52,8 @@ public class HentDokumentController {
 	private final AudienceCounter audienceCounter;
 	private final Map<String, Boolean> privilegiedServiceusers;
 
-	@Inject
-	public HentDokumentController(@Named("privilegiedServiceusers") Map<String, Boolean> privilegiedServiceusers,
+	@Autowired
+	public HentDokumentController(@Qualifier("privilegiedServiceusers") Map<String, Boolean> privilegiedServiceusers,
 								  HentDokumentDomainCoordinator hentDokumentDomainCoordinator,
 								  AudienceCounter audienceCounter,
 								  TokenValidationContextHolder tokenValidationContextHolder) {

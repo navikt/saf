@@ -3,9 +3,8 @@ package no.nav.saf.hentdokument.repo;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.domain.HentDokument;
 import no.nav.saf.hentdokument.HentDokumentAntiCorruptionLayer;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-
-import javax.inject.Inject;
 
 /**
  * @author Sigurd Midttun, Visma Consulting.
@@ -16,7 +15,7 @@ public class DokumentRepositoryImpl implements DokumentRepository {
 
 	private final HentDokumentAntiCorruptionLayer hentDokumentAntiCorruptionLayer;
 
-	@Inject
+	@Autowired
 	public DokumentRepositoryImpl(HentDokumentAntiCorruptionLayer hentDokumentAntiCorruptionLayer) {
 		this.hentDokumentAntiCorruptionLayer = hentDokumentAntiCorruptionLayer;
 	}

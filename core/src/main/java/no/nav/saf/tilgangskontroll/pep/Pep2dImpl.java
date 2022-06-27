@@ -12,15 +12,14 @@ import no.nav.saf.tilgangskontroll.abac.dto.response.Decision;
 import no.nav.saf.tilgangskontroll.abac.dto.response.XacmlResponse;
 import no.nav.saf.tilgangskontroll.abac.service.AbacService;
 import no.nav.saf.tilgangskontroll.pep.AbacAnswer.AbacDenyReason;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.data.redis.RedisConnectionFailureException;
 import org.springframework.data.redis.RedisSystemException;
 import org.springframework.data.redis.connection.PoolException;
 import org.springframework.stereotype.Component;
-
-import javax.inject.Inject;
-import javax.inject.Named;
 
 import static no.nav.saf.cache.RedisCacheConfig.TILGANG_CACHE;
 import static no.nav.saf.domain.DomainConstants.PEP2D;
@@ -46,8 +45,8 @@ public class Pep2dImpl extends Pep<TilgangSak> {
 	private final Cache tilgangCache;
 	private final AbacService abacService;
 
-	@Inject
-	public Pep2dImpl(@Named(RedisCacheConfig.MANAGER_DISTRIBUTED) CacheManager redisCacheManager, AbacService abacService) {
+	@Autowired
+	public Pep2dImpl(@Qualifier(RedisCacheConfig.MANAGER_DISTRIBUTED) CacheManager redisCacheManager, AbacService abacService) {
 		this.tilgangCache = redisCacheManager.getCache(TILGANG_CACHE);
 		this.abacService = abacService;
 	}

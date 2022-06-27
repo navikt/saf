@@ -3,9 +3,9 @@ package no.nav.saf.anticorruptionlayer.fpsak;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.anticorruptionlayer.fpsak.hentrelevanteparter.FpsakConsumer;
 import no.nav.saf.domain.Arkivsak;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,7 +18,7 @@ public class FpsakAntiCorruptionLayerImpl implements FpsakAntiCorruptionLayer {
 
 	private final FpsakConsumer fpsakConsumer;
 
-	@Inject
+	@Autowired
 	public FpsakAntiCorruptionLayerImpl(FpsakConsumer fpsakConsumer) {
 		this.fpsakConsumer = fpsakConsumer;
 	}

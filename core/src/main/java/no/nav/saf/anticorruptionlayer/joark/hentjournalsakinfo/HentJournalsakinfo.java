@@ -18,6 +18,7 @@ import no.nav.saf.exceptions.SafTechnicalException;
 import no.nav.saf.exceptions.UgyldigInputException;
 import no.nav.saf.metrics.Monitor;
 import org.slf4j.MDC;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpEntity;
@@ -32,8 +33,6 @@ import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
-import javax.inject.Inject;
-
 import static no.nav.saf.util.MDCConstants.CALL_ID;
 
 /**
@@ -46,7 +45,7 @@ public class HentJournalsakinfo {
 	private final RestTemplate restTemplate;
 	private final String hentjournalsakinfoUrl;
 
-	@Inject
+	@Autowired
 	public HentJournalsakinfo(@Value("${hentjournalsakinfo.url}") final String hentjournalsakinfoUrl,
 							  final RestTemplateBuilder restTemplateBuilder,
 							  final ClientHttpRequestFactory hentJournalsakInfoClientHttpRequestFactory,

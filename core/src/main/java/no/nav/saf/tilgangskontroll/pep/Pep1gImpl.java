@@ -6,9 +6,8 @@ import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlRequest;
 import no.nav.saf.tilgangskontroll.abac.dto.response.XacmlResponse;
 import no.nav.saf.tilgangskontroll.abac.service.AbacService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import javax.inject.Inject;
 
 import static no.nav.saf.domain.DomainConstants.PEP1G;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_PERSON_AKTOERID_RESOURCE;
@@ -32,7 +31,7 @@ public class Pep1gImpl extends Pep<TilgangBruker> {
 
 	private final AbacService abacService;
 
-	@Inject
+	@Autowired
 	public Pep1gImpl(AbacService abacService) {
 		this.abacService = abacService;
 	}

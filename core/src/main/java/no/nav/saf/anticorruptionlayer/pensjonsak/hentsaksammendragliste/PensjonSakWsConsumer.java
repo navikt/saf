@@ -15,10 +15,10 @@ import no.nav.tjeneste.virksomhet.pensjonsak.v1.HentSakSammendragListeSakMangler
 import no.nav.tjeneste.virksomhet.pensjonsak.v1.PensjonSakV1;
 import no.nav.tjeneste.virksomhet.pensjonsak.v1.meldinger.WSHentSakSammendragListeRequest;
 import no.nav.tjeneste.virksomhet.pensjonsak.v1.meldinger.WSHentSakSammendragListeResponse;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
 import javax.xml.ws.soap.SOAPFaultException;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +35,7 @@ public class PensjonSakWsConsumer {
     private final PensjonSakV1 pensjonSakV1;
     private static final int MILLI_TO_NANO_CONST = 1000000;
 
-    @Inject
+    @Autowired
     public PensjonSakWsConsumer(PensjonSakV1 pensjonSakV1) {
         this.pensjonSakV1 = pensjonSakV1;
     }

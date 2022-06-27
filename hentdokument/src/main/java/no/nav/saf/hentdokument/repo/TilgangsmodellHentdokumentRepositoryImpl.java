@@ -12,9 +12,9 @@ import no.nav.saf.domain.tilgangsmodell.TilgangJournalpost;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 import no.nav.saf.hentdokument.HentDokumentAntiCorruptionLayer;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -37,7 +37,7 @@ public class TilgangsmodellHentdokumentRepositoryImpl implements TilgangsmodellH
 	private final FpsakAntiCorruptionLayer fpsakAntiCorruptionLayer;
 	private final K9AntiCorruptionLayer k9AntiCorruptionLayer;
 
-	@Inject
+	@Autowired
 	public TilgangsmodellHentdokumentRepositoryImpl(PensjonSakAntiCorruptionLayer pensjonSakAntiCorruptionLayer,
 													HentDokumentAntiCorruptionLayer hentDokumentAntiCorruptionLayer,
 													BisysAntiCorruptionLayer bisysAntiCorruptionLayer,

@@ -4,11 +4,11 @@ import no.nav.saf.integration.sts.STSConfig;
 import no.nav.tjeneste.virksomhet.pensjonsak.v1.PensjonSakV1;
 import org.apache.cxf.Bus;
 import org.apache.cxf.ws.addressing.WSAddressingFeature;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import javax.inject.Inject;
 import javax.xml.namespace.QName;
 
 /**
@@ -22,7 +22,7 @@ public class PensjonConfig extends AbstractCxfEndpointConfig {
 	private static final QName PORT_QNAME = new QName(NAMESPACE, "PensjonSak_v1Port");
 	private static final String WSDL_URL = "wsdl/no/nav/tjeneste/virksomhet/pensjonSak/v1/Binding.wsdl";
 
-	@Inject
+	@Autowired
 	public PensjonConfig(Bus bus, STSConfig stsConfig) {
 		super(bus, stsConfig);
 	}

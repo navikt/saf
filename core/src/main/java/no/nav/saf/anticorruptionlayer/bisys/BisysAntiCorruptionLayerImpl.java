@@ -8,9 +8,9 @@ import no.nav.saf.domain.BidragSak;
 import no.nav.saf.domain.kode.Tema;
 import no.nav.saf.domain.tilgangsmodell.TilgangIdent;
 import no.nav.saf.domain.tilgangsmodell.TilgangRelevantTredjepart;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -28,7 +28,7 @@ class BisysAntiCorruptionLayerImpl implements BisysAntiCorruptionLayer {
 
 	private final BidragSakConsumer bidragSakConsumer;
 
-	@Inject
+	@Autowired
 	public BisysAntiCorruptionLayerImpl(BidragSakConsumer bidragSakConsumer) {
 		this.bidragSakConsumer = bidragSakConsumer;
 	}

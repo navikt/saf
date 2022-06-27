@@ -2,14 +2,14 @@ package no.nav.saf.metrics;
 
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import javax.inject.Inject;
 
 @Component
 public class AudienceCounter {
     private final MeterRegistry meterRegistry;
-    @Inject
+
+    @Autowired
     public AudienceCounter(MeterRegistry meterRegistry){
         this.meterRegistry = meterRegistry;
     }

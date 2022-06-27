@@ -4,12 +4,11 @@ import no.nav.security.token.support.spring.test.EnableMockOAuth2Server;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-
-import javax.inject.Inject;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -23,7 +22,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @EnableMockOAuth2Server
 @ActiveProfiles("itest")
 class ApplicationIT {
-	@Inject
+
+	@Autowired
 	private TestRestTemplate testRestTemplate;
 
 	@Test

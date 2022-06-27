@@ -10,9 +10,9 @@ import no.nav.saf.query.sak.repo.SakBrukerTilgangsmodellRepositoryImpl;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.pep.Pep;
 import no.nav.saf.tjeneste.argumenter.BrukerIdInput;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -30,7 +30,7 @@ class SakerQuery {
 	private final SakBrukerTilgangsmodellRepositoryImpl saksoversiktBrukerTilgangsmodellRepository;
 	private final SakMapper sakMapper;
 
-	@Inject
+	@Autowired
 	public SakerQuery(Pep<TilgangBruker> pep1g,
 					  Pep<TilgangSak> pep2,
 					  Pep<TilgangSak> pep3,

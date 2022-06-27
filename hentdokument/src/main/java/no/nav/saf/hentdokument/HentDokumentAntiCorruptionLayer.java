@@ -21,9 +21,9 @@ import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 import no.nav.saf.exceptions.SafTechnicalException;
 import no.nav.saf.exceptions.UgyldigArkivsaksystemException;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Base64;
@@ -45,7 +45,7 @@ import static no.nav.saf.util.MimetypeFileextensionMapper.toFileextension;
 public class HentDokumentAntiCorruptionLayer {
 	private final HentJournalsakinfo hentJournalsakinfo;
 
-	@Inject
+	@Autowired
 	public HentDokumentAntiCorruptionLayer(HentJournalsakinfo hentJournalsakinfo) {
 		this.hentJournalsakinfo = hentJournalsakinfo;
 	}

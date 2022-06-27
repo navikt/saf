@@ -13,9 +13,9 @@ import no.nav.saf.domain.tilgangsmodell.TilgangDokumentvariant;
 import no.nav.saf.domain.tilgangsmodell.TilgangJournalpost;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import javax.inject.Inject;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +31,7 @@ public class TilgangsmodellRepositoryImpl implements TilgangsmodellRepository {
 
 	private final JoarkAntiCorruptionLayer joarkAntiCorruptionLayer;
 
-	@Inject
+	@Autowired
 	public TilgangsmodellRepositoryImpl(JoarkAntiCorruptionLayer joarkAntiCorruptionLayer) {
 		this.joarkAntiCorruptionLayer = joarkAntiCorruptionLayer;
 	}

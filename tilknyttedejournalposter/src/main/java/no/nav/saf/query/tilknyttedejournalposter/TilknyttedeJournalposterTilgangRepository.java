@@ -22,9 +22,9 @@ import no.nav.saf.domain.tilgangsmodell.TilgangDokumentvariant;
 import no.nav.saf.domain.tilgangsmodell.TilgangJournalpost;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -51,7 +51,7 @@ class TilknyttedeJournalposterTilgangRepository {
 	private final PdlAntiCorruptionLayer aktoerAntiCorruptionLayer;
 	private final BisysAntiCorruptionLayer bisysAntiCorruptionLayer;
 
-	@Inject
+	@Autowired
 	TilknyttedeJournalposterTilgangRepository(HentJournalsakinfo hentJournalsakinfo,
 											  PensjonSakAntiCorruptionLayer pensjonSakAntiCorruptionLayer,
 											  PdlAntiCorruptionLayer aktoerAntiCorruptionLayer,

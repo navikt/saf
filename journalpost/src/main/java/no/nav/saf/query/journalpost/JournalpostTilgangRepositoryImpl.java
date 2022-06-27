@@ -12,9 +12,9 @@ import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.domain.tilgangsmodell.TilgangJournalpost;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -40,7 +40,7 @@ class JournalpostTilgangRepositoryImpl implements JournalpostTilgangRepository {
 	private final PdlAntiCorruptionLayer aktoerAntiCorruptionLayer;
 
 
-	@Inject
+	@Autowired
 	public JournalpostTilgangRepositoryImpl(
 			PensjonSakAntiCorruptionLayer pensjonSakAntiCorruptionLayer,
 			JournalpostAntiCorruptionLayer journalpostAntiCorruptionLayer,

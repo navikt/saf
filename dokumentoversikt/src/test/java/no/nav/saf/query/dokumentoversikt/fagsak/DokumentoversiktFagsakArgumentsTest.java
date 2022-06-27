@@ -1,15 +1,14 @@
 package no.nav.saf.query.dokumentoversikt.fagsak;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.when;
-
 import graphql.schema.DataFetchingEnvironment;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.util.Map;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.when;
 
 /**
  * @author Joakim Bjørnstad, Jbit AS
