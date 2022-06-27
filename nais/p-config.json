@@ -142,6 +142,12 @@
       "app": "pensjon-pselv",
       "namespace": "pensjondeployer",
       "cluster": "prod-gcp"
+    },
+    {
+      "app": "arena",
+      "namespace": "teamarenanais",
+      "cluster": "prod-fss",
+      "roles": ["tema_aap", "tema_dag", "tema_fei", "tema_ind", "tema_opp", "tema_sym", "tema_tso", "tema_tsr"]
     }
   ]
 }
