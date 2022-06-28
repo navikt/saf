@@ -16,6 +16,8 @@ import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.security.token.support.core.api.Protected;
 import no.nav.security.token.support.core.context.TokenValidationContextHolder;
 import org.slf4j.MDC;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -23,8 +25,6 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.inject.Inject;
-import javax.inject.Named;
 import java.io.InputStreamReader;
 import java.util.Collections;
 import java.util.Map;
@@ -52,8 +52,8 @@ public class GraphQLController {
 	private final AudienceCounter audienceCounter;
 	private final Map<String, Boolean> privilegiedServiceusers;
 
-	@Inject
-	public GraphQLController(@Named("privilegiedServiceusers") Map<String, Boolean> privilegiedServiceusers,
+	@Autowired
+	public GraphQLController(@Qualifier("privilegiedServiceusers") Map<String, Boolean> privilegiedServiceusers,
 							 GraphQLWiring graphQLWiring,
 							 GraphQLExceptionHandler graphQLExceptionHandler,
 							 AudienceCounter audienceCounter,

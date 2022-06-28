@@ -21,9 +21,9 @@ import no.nav.saf.domain.tilgangsmodell.TilgangJournalpost;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 import no.nav.saf.exceptions.UgyldigArkivsaksystemException;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Optional;
@@ -44,7 +44,7 @@ class JournalpostAntiCorruptionLayer {
 
 	private final HentJournalsakinfo hentJournalsakinfo;
 
-	@Inject
+	@Autowired
 	JournalpostAntiCorruptionLayer(HentJournalsakinfo hentJournalsakinfo) {
 		this.hentJournalsakinfo = hentJournalsakinfo;
 	}

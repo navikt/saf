@@ -7,9 +7,9 @@ import no.nav.saf.domain.Arkivsak;
 import no.nav.saf.domain.kode.Arkivsakssystem;
 import no.nav.saf.domain.kode.Tema;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -21,7 +21,7 @@ public class PensjonSakAntiCorruptionLayerImpl implements PensjonSakAntiCorrupti
 	private final PensjonSakWsConsumer pensjonSakWsConsumer;
 	private final PensjonSakRestConsumer pensjonSakRestConsumer;
 
-	@Inject
+	@Autowired
 	public PensjonSakAntiCorruptionLayerImpl(PensjonSakWsConsumer pensjonSakWsConsumer, PensjonSakRestConsumer pensjonSakRestConsumer) {
 		this.pensjonSakWsConsumer = pensjonSakWsConsumer;
 		this.pensjonSakRestConsumer = pensjonSakRestConsumer;

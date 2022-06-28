@@ -4,9 +4,9 @@ import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.anticorruptionlayer.k9.hentrelevanteparter.K9Consumer;
 import no.nav.saf.domain.Arkivsak;
 import no.nav.saf.domain.kode.Tema;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -21,7 +21,7 @@ public class K9AntiCorruptionLayerImpl implements K9AntiCorruptionLayer {
 
 	private final K9Consumer k9Consumer;
 
-	@Inject
+	@Autowired
 	public K9AntiCorruptionLayerImpl(K9Consumer k9Consumer) {
 		this.k9Consumer = k9Consumer;
 	}

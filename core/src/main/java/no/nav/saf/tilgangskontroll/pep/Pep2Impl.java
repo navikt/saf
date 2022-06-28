@@ -6,9 +6,8 @@ import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlRequest;
 import no.nav.saf.tilgangskontroll.abac.dto.response.XacmlResponse;
 import no.nav.saf.tilgangskontroll.abac.service.AbacService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import javax.inject.Inject;
 
 import static no.nav.saf.domain.DomainConstants.PEP2;
 import static no.nav.saf.domain.kode.Tema.FAR;
@@ -31,7 +30,7 @@ public class Pep2Impl extends Pep<TilgangSak> {
 
 	private final AbacService abacService;
 
-	@Inject
+	@Autowired
 	public Pep2Impl(AbacService abacService) {
 		this.abacService = abacService;
 	}

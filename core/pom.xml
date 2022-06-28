@@ -2,17 +2,22 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
 		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
 	<parent>
 		<artifactId>saf</artifactId>
 		<groupId>no.nav.saf</groupId>
 		<version>1-SNAPSHOT</version>
 	</parent>
-	<modelVersion>4.0.0</modelVersion>
 
 	<artifactId>core</artifactId>
-	<name>core</name>
 
 	<dependencies>
+		<dependency>
+			<groupId>no.nav.tjenestespesifikasjoner</groupId>
+			<artifactId>pensjon-sak-v1-tjenestespesifikasjon</artifactId>
+		</dependency>
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
@@ -50,22 +55,7 @@
 			<groupId>org.apache.cxf</groupId>
 			<artifactId>cxf-rt-ws-security</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>com.sun.xml.messaging.saaj</groupId>
-			<artifactId>saaj-impl</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>javax.inject</groupId>
-			<artifactId>javax.inject</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>jakarta.xml.ws</groupId>
-			<artifactId>jakarta.xml.ws-api</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.sun.activation</groupId>
-			<artifactId>jakarta.activation</artifactId>
-		</dependency>
+
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
 			<artifactId>httpclient</artifactId>
@@ -86,26 +76,16 @@
 			<groupId>io.github.resilience4j</groupId>
 			<artifactId>resilience4j-spring-boot2</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>no.nav.tjenestespesifikasjoner</groupId>
-			<artifactId>pensjon-sak-v1-tjenestespesifikasjon</artifactId>
-		</dependency>
+
 		<dependency>
 			<groupId>io.micrometer</groupId>
 			<artifactId>micrometer-registry-prometheus</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-aspects</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>no.nav.security</groupId>
 			<artifactId>token-validation-core</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>org.hibernate.validator</groupId>
-			<artifactId>hibernate-validator</artifactId>
-		</dependency>
+
 		<!--Test dependencies-->
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
@@ -113,6 +93,7 @@
 			<scope>test</scope>
 		</dependency>
     </dependencies>
+
 	<build>
 		<plugins>
 			<plugin>

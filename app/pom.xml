@@ -2,6 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
+
 	<parent>
 		<groupId>no.nav.saf</groupId>
 		<artifactId>saf</artifactId>
@@ -10,7 +11,6 @@
 
 	<artifactId>app</artifactId>
 	<packaging>jar</packaging>
-	<name>app</name>
 
 	<dependencies>
 		<dependency>
@@ -37,6 +37,7 @@
 			<groupId>no.nav.saf</groupId>
 			<artifactId>sak</artifactId>
 		</dependency>
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
@@ -44,10 +45,6 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-actuator</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>javax.inject</groupId>
-			<artifactId>javax.inject</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>net.logstash.logback</groupId>
@@ -73,6 +70,8 @@
 			<groupId>no.nav.security</groupId>
 			<artifactId>token-validation-spring</artifactId>
 		</dependency>
+
+		<!-- Test -->
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-contract-stub-runner</artifactId>

@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.config.SafProperties;
 import no.nav.saf.tilgangskontroll.abac.dto.response.XacmlResponse;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CachingConfigurerSupport;
 import org.springframework.cache.annotation.EnableCaching;
@@ -22,7 +23,6 @@ import org.springframework.data.redis.connection.lettuce.LettucePoolingClientCon
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
-import javax.inject.Named;
 import java.time.Duration;
 import java.util.Collections;
 
@@ -40,7 +40,7 @@ public class RedisCacheConfig extends CachingConfigurerSupport {
 	public static final String TILGANG_CACHE = "tilgang";
 
 	@Bean
-	@Named(MANAGER_DISTRIBUTED)
+	@Qualifier(MANAGER_DISTRIBUTED)
 	CacheManager redisCacheManager(RedisConnectionFactory connectionFactory) {
 		// Tilgang cache brukt av Pep2d
 		RedisCacheConfiguration tilgangCache = RedisCacheConfiguration.defaultCacheConfig()

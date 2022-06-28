@@ -39,6 +39,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
+import static com.github.tomakehurst.wiremock.core.Options.DYNAMIC_PORT;
 import static com.github.tomakehurst.wiremock.stubbing.Scenario.STARTED;
 import static java.util.Objects.requireNonNull;
 import static org.apache.http.client.utils.URLEncodedUtils.CONTENT_TYPE;
@@ -46,7 +47,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.springframework.http.HttpStatus.OK;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 
@@ -55,11 +58,11 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
  */
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = {AbstractItest.TestConfig.class, ApplicationConfig.class, STSTestConfig.class},
-		webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
+		webEnvironment = RANDOM_PORT,
 		properties = {"spring.main.allow-bean-definition-overriding=true"})
 @ActiveProfiles(value = {"itest", "wiremock"})
 @EnableMockOAuth2Server
-@AutoConfigureWireMock(port = Options.DYNAMIC_PORT)
+@AutoConfigureWireMock(port = DYNAMIC_PORT)
 public abstract class AbstractItest {
 	private static final String SCENARIO_ABAC = "state_abac";
 	private static final String STATE_PERMIT = "state_permit";
@@ -85,27 +88,19 @@ public abstract class AbstractItest {
 	@Autowired
 	private MockOAuth2Server server;
 
-	@BeforeEach
-	public void setUp() {
-		WireMock.reset();
-		WireMock.resetAllRequests();
-		WireMock.removeAllMappings();
-		WireMock.resetAllScenarios();
-	}
-
 	protected HttpEntity<?> createHttpEntity() {
 		return new HttpEntity<>(createHeaders());
 	}
 
 	protected HttpHeaders createHeaders() {
 		HttpHeaders headers = new HttpHeaders();
-		headers.setContentType(MediaType.APPLICATION_JSON);
-		headers.add(HttpHeaders.AUTHORIZATION, getHeaderToken());
+		headers.setContentType(APPLICATION_JSON);
+		headers.setBearerAuth(getHeaderToken());
 		return headers;
 	}
 
 	private String getHeaderToken() {
-		return "Bearer " + jwt("saksbehandler", new HashMap<>());
+		return jwt("saksbehandler", new HashMap<>());
 	}
 
 	protected String jwt(String subject, Map<String, Object> claims) {

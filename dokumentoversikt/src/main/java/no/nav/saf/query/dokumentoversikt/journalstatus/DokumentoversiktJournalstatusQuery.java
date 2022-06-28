@@ -16,18 +16,14 @@ import no.nav.saf.query.dokumentoversikt.DokumentoversiktVisningsmodellRepositor
 import no.nav.saf.query.dokumentoversikt.SideInfoMapper;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.pep.Pep;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
-import javax.inject.Named;
 import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static no.nav.saf.domain.DomainConstants.PEP4;
-import static no.nav.saf.domain.DomainConstants.PEP5;
-import static no.nav.saf.domain.DomainConstants.PEP6D;
 import static no.nav.saf.domain.kode.Journalstatus.FEILREGISTRERT;
 import static no.nav.saf.util.MDCUtility.addMdcData;
 
@@ -49,13 +45,13 @@ class DokumentoversiktJournalstatusQuery {
 	private final Pep<TilgangDokumentInfo> pep5;
 	private final Pep<TilgangDokumentvariant> pep6d;
 
-	@Inject
+	@Autowired
 	public DokumentoversiktJournalstatusQuery(DokumentoversiktJournalstatusTilgangsmodellRepository dokumentoversiktJournalstatusTilgangsmodellRepository,
 											  TilgangsmodellRepository tilgangsmodellRepository,
 											  DokumentoversiktVisningsmodellRepository visningsmodellRepository,
-											  @Named(PEP4) Pep<TilgangJournalpost> pep4,
-											  @Named(PEP5) Pep<TilgangDokumentInfo> pep5,
-											  @Named(PEP6D) Pep<TilgangDokumentvariant> pep6d) {
+											  @Autowired Pep<TilgangJournalpost> pep4,
+											  @Autowired Pep<TilgangDokumentInfo> pep5,
+											  @Autowired Pep<TilgangDokumentvariant> pep6d) {
 		this.dokumentoversiktJournalstatusTilgangsmodellRepository = dokumentoversiktJournalstatusTilgangsmodellRepository;
 		this.tilgangsmodellRepository = tilgangsmodellRepository;
 		this.visningsmodellRepository = visningsmodellRepository;

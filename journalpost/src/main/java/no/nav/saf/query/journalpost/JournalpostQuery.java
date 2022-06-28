@@ -14,18 +14,9 @@ import no.nav.saf.exceptions.JournalpostIkkeFunnetException;
 import no.nav.saf.graphql.GraphQLException;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.pep.Pep;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Named;
-
-import static no.nav.saf.domain.DomainConstants.PEP1G;
-import static no.nav.saf.domain.DomainConstants.PEP2;
-import static no.nav.saf.domain.DomainConstants.PEP2D;
-import static no.nav.saf.domain.DomainConstants.PEP3;
-import static no.nav.saf.domain.DomainConstants.PEP4;
-import static no.nav.saf.domain.DomainConstants.PEP5;
-import static no.nav.saf.domain.DomainConstants.PEP6D;
-import static no.nav.saf.domain.DomainConstants.PEP7D;
 import static no.nav.saf.domain.DomainConstants.RJOARK902_JOURNALPOST_DTO;
 import static no.nav.saf.domain.DomainConstants.TILGANG_BRUKER;
 import static no.nav.saf.domain.kode.Journalstatus.MOTTATT;
@@ -44,7 +35,7 @@ class JournalpostQuery {
 
 	private final JournalpostTilgangRepository journalpostTilgangRepository;
 	private final JournalpostDtoMapper journalpostDtoMapper;
-	private final Pep<TilgangBruker> pep1;
+	private final Pep<TilgangBruker> pep1g;
 	private final Pep<TilgangSak> pep2;
 	private final Pep<TilgangSak> pep2d;
 	private final Pep<TilgangSak> pep3;
@@ -56,17 +47,17 @@ class JournalpostQuery {
 	public JournalpostQuery(
 			JournalpostTilgangRepository journalpostTilgangRepository,
 			JournalpostDtoMapper journalpostDtoMapper,
-			@Named(PEP1G) Pep<TilgangBruker> pep1,
-			@Named(PEP2) Pep<TilgangSak> pep2,
-			@Named(PEP2D) Pep<TilgangSak> pep2d,
-			@Named(PEP3) Pep<TilgangSak> pep3,
-			@Named(PEP4) Pep<TilgangJournalpost> pep4,
-			@Named(PEP5) Pep<TilgangDokumentInfo> pep5,
-			@Named(PEP6D) Pep<TilgangDokumentvariant> pep6d,
-			@Named(PEP7D) Pep<TilgangSak> pep7d) {
+			@Autowired Pep<TilgangBruker> pep1g,
+			@Autowired Pep<TilgangSak> pep2,
+			@Autowired Pep<TilgangSak> pep2d,
+			@Autowired Pep<TilgangSak> pep3,
+			@Autowired Pep<TilgangJournalpost> pep4,
+			@Autowired Pep<TilgangDokumentInfo> pep5,
+			@Autowired Pep<TilgangDokumentvariant> pep6d,
+			@Autowired Pep<TilgangSak> pep7d) {
 		this.journalpostTilgangRepository = journalpostTilgangRepository;
 		this.journalpostDtoMapper = journalpostDtoMapper;
-		this.pep1 = pep1;
+		this.pep1g = pep1g;
 		this.pep2 = pep2;
 		this.pep2d = pep2d;
 		this.pep3 = pep3;
@@ -87,7 +78,7 @@ class JournalpostQuery {
 				safRequestContext.getRequestCache().putObject(TILGANG_BRUKER, tilgangBruker);
 			}
 
-			boolean pep1Access = pep1.hasAccess(tilgangBruker, safRequestContext);
+			boolean pep1Access = pep1g.hasAccess(tilgangBruker, safRequestContext);
 			if (!pep1Access) {
 				throw GraphQLException.of(FORBIDDEN, environment, PEP1G_DENY_REASON);
 			}

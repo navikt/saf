@@ -4,9 +4,9 @@ import no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoMapper;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.dto.JournalpostDto;
 import no.nav.saf.domain.visningsmodell.Journalpost;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 class DokumentoversiktVisningsmodellRepositoryImpl implements DokumentoversiktVisningsmodellRepository {
 	private final JournalpostDtoMapper journalpostDtoMapper;
 
-	@Inject
+	@Autowired
 	public DokumentoversiktVisningsmodellRepositoryImpl(JournalpostDtoMapper journalpostDtoMapper) {
 		this.journalpostDtoMapper = journalpostDtoMapper;
 	}

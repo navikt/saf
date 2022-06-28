@@ -18,9 +18,8 @@ import no.nav.saf.query.journalpost.JournalpostDataFetcher;
 import no.nav.saf.query.sak.SakerDataFetcher;
 import no.nav.saf.query.tilknyttedejournalposter.TilknyttedeJournalposterDataFetcher;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import javax.inject.Inject;
 
 import static graphql.schema.idl.TypeRuntimeWiring.newTypeWiring;
 
@@ -38,7 +37,7 @@ public class GraphQLWiring {
 	private final SakerDataFetcher sakerDataFetcher;
 	private final MeterRegistry meterRegistry;
 
-	@Inject
+	@Autowired
 	public GraphQLWiring(DokumentoversiktBrukerDataFetcher dokumentoversiktBrukerDataFetcher,
 						 DokumentoversiktFagsakDataFetcher dokumentoversiktFagsakDataFetcher,
 						 DokumentoversiktJournalstatusDataFetcher dokumentoversiktJournalstatusDataFetcher,

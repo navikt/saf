@@ -9,6 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -19,7 +20,6 @@ import org.springframework.context.annotation.Import;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 
-import javax.inject.Named;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -77,7 +77,7 @@ public class ApplicationConfig {
 	}
 
 	@Bean
-	@Named("privilegiedServiceusers")
+	@Qualifier("privilegiedServiceusers")
 	public Map<String, Boolean> getServiceusersMap(SafProperties safProperties) {
 		Map<String, Boolean> privilegiedServiceusers = new HashMap<>();
 		List<String> serviceuserList = Arrays.stream(StringUtils.split(safProperties.getPrivilegiedserviceusers(), ',')).collect(Collectors.toList());

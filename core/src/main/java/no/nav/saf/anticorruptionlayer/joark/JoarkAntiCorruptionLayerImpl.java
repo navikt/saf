@@ -15,9 +15,9 @@ import no.nav.saf.domain.kode.Arkivsakssystem;
 import no.nav.saf.domain.kode.Journalposttype;
 import no.nav.saf.domain.kode.Journalstatus;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
@@ -32,7 +32,7 @@ class JoarkAntiCorruptionLayerImpl implements JoarkAntiCorruptionLayer {
 	private final HentJournalsakinfo hentJournalsakinfo;
 	private final SafToJoarkJournalstatusMapper safToJoarkJournalstatusMapper;
 
-	@Inject
+	@Autowired
 	public JoarkAntiCorruptionLayerImpl(HentJournalsakinfo hentJournalsakinfo) {
 		this.hentJournalsakinfo = hentJournalsakinfo;
 		this.safToJoarkJournalstatusMapper = new SafToJoarkJournalstatusMapper();

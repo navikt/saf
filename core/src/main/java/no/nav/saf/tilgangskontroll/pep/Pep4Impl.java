@@ -7,9 +7,8 @@ import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlRequest;
 import no.nav.saf.tilgangskontroll.abac.dto.response.XacmlResponse;
 import no.nav.saf.tilgangskontroll.abac.service.AbacService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import javax.inject.Inject;
 
 import static no.nav.saf.domain.DomainConstants.ABAC_JOURNALSTATUS_UTGAAR;
 import static no.nav.saf.domain.DomainConstants.PEP4;
@@ -32,7 +31,7 @@ public class Pep4Impl extends Pep<TilgangJournalpost> {
 
 	private final AbacService abacService;
 
-	@Inject
+	@Autowired
 	public Pep4Impl(AbacService abacService) {
 		this.abacService = abacService;
 	}

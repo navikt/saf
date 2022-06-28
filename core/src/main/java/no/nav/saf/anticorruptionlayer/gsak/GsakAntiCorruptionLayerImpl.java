@@ -1,8 +1,5 @@
 package no.nav.saf.anticorruptionlayer.gsak;
 
-import static no.nav.saf.domain.DomainConstants.AKTOER_ID_LIST;
-import static no.nav.saf.domain.DomainConstants.ORGNR_LIST;
-
 import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.anticorruptionlayer.gsak.hentgsaksaker.GsakConsumer;
 import no.nav.saf.anticorruptionlayer.gsak.hentgsaksaker.GsakSakerTo;
@@ -10,14 +7,17 @@ import no.nav.saf.anticorruptionlayer.joark.domain.kode.FagomradeCode;
 import no.nav.saf.domain.Arkivsak;
 import no.nav.saf.domain.kode.Arkivsakssystem;
 import no.nav.saf.domain.kode.Tema;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import static no.nav.saf.domain.DomainConstants.AKTOER_ID_LIST;
+import static no.nav.saf.domain.DomainConstants.ORGNR_LIST;
 
 /**
  * @author Joakim Bjørnstad, Jbit AS
@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 class GsakAntiCorruptionLayerImpl implements GsakAntiCorruptionLayer {
 	private final GsakConsumer gsakConsumer;
 
-	@Inject
+	@Autowired
 	public GsakAntiCorruptionLayerImpl(GsakConsumer gsakConsumer) {
 		this.gsakConsumer = gsakConsumer;
 	}

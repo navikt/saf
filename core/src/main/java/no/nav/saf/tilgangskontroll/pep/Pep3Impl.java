@@ -8,9 +8,9 @@ import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlRequest;
 import no.nav.saf.tilgangskontroll.abac.dto.response.XacmlResponse;
 import no.nav.saf.tilgangskontroll.abac.service.AbacService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
 import java.util.Arrays;
 import java.util.List;
 
@@ -35,7 +35,7 @@ public class Pep3Impl extends Pep<TilgangSak> {
 
 	private final AbacService abacService;
 
-	@Inject
+	@Autowired
 	public Pep3Impl(AbacService abacService) {
 		this.abacService = abacService;
 	}
