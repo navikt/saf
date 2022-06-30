@@ -181,6 +181,11 @@
       "app": "notat-administrasjon-q2",
       "namespace": "isa",
       "cluster": "dev-gcp",
+    },
+    {
+      "app": "dokdistdpv",
+      "namespace": "teamdokumenthandtering",
+      "cluster": "dev-fss"
     }
   ]
 }
