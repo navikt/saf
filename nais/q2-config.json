@@ -203,6 +203,11 @@
       "cluster": "dev-fss"
     },
     {
+      "app": "pensjon-dokdist-lokal",
+      "namespace": "pensjonsbrev",
+      "cluster": "dev-gcp"
+    },
+    {
       "app": "dokopp",
       "namespace": "teamdokumenthandtering",
       "cluster": "dev-fss"
