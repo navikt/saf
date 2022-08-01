@@ -200,7 +200,7 @@
     {
       "app": "pensjon-dokdist",
       "namespace": "pensjonsbrev",
-      "cluster": "dev-fss"
+      "cluster": "dev-gcp"
     },
     {
       "app": "pensjon-dokdist-lokal",
