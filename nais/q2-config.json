@@ -73,9 +73,19 @@
       "cluster": "dev-fss"
     },
     {
+      "app": "jfr-infotrygd-q2",
+      "namespace": "isa",
+      "cluster": "dev-gcp"
+    },
+    {
       "app": "jfr-arena-q2",
       "namespace": "isa",
       "cluster": "dev-fss"
+    },
+    {
+      "app": "jfr-arena-q2",
+      "namespace": "isa",
+      "cluster": "dev-gcp"
     },
     {
       "app": "jfr-generell-q2",
