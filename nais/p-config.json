@@ -76,6 +76,21 @@
       "cluster": "prod-fss"
     },
     {
+      "app": "jfr-infotrygd",
+      "namespace": "isa",
+      "cluster": "prod-gcp"
+    },
+    {
+      "app": "jfr-arena",
+      "namespace": "isa",
+      "cluster": "prod-gcp"
+    },
+    {
+      "app": "jfr-generell",
+      "namespace": "isa",
+      "cluster": "prod-gcp"
+    },
+    {
       "app": "kabal-api",
       "namespace": "klage",
       "cluster": "prod-gcp"
