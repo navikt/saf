@@ -231,6 +231,11 @@
       "app": "dokopp-q1",
       "namespace": "teamdokumenthandtering",
       "cluster": "dev-fss"
+    },
+    {
+      "app": "omsorgspenger-journalforing",
+      "namespace": "omsorgspenger",
+      "cluster": "dev-gcp"
     }
   ]
 }
