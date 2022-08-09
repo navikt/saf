@@ -178,6 +178,11 @@
       "app": "dokopp",
       "namespace": "teamdokumenthandtering",
       "cluster": "prod-fss"
+    },
+    {
+      "app": "omsorgspenger-journalforing",
+      "namespace": "omsorgspenger",
+      "cluster": "prod-gcp"
     }
   ]
 }
