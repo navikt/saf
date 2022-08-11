@@ -182,7 +182,8 @@
     {
       "app": "omsorgspenger-journalforing",
       "namespace": "omsorgspenger",
-      "cluster": "prod-gcp"
+      "cluster": "prod-gcp",
+      "roles": ["tema_oms"]
     }
   ]
 }
