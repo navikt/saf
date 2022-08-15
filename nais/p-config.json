@@ -184,6 +184,11 @@
       "namespace": "omsorgspenger",
       "cluster": "prod-gcp",
       "roles": ["tema_oms"]
+    },
+    {
+      "app": "modia-robot-api",
+      "namespace": "personoversikt",
+      "cluster": "prod-fss"
     }
   ]
 }
