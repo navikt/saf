@@ -236,6 +236,11 @@
       "app": "omsorgspenger-journalforing",
       "namespace": "omsorgspenger",
       "cluster": "dev-gcp"
+    },
+    {
+      "app": "modia-robot-api",
+      "namespace": "personoversikt",
+      "cluster": "dev-fss"
     }
   ]
 }
