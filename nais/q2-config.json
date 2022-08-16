@@ -205,7 +205,7 @@
     {
       "app": "notat-administrasjon-q2",
       "namespace": "isa",
-      "cluster": "dev-gcp",
+      "cluster": "dev-gcp"
     },
     {
       "app": "dokdistdpv",
@@ -240,6 +240,16 @@
     {
       "app": "modia-robot-api",
       "namespace": "personoversikt",
+      "cluster": "dev-fss"
+    },
+    {
+      "app": "esyfovarsel",
+      "namespace": "team-esyfo",
+      "cluster": "dev-gcp"
+    },
+    {
+      "app": "esyfovarsel",
+      "namespace": "team-esyfo",
       "cluster": "dev-fss"
     }
   ]

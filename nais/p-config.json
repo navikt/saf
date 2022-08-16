@@ -189,6 +189,16 @@
       "app": "modia-robot-api",
       "namespace": "personoversikt",
       "cluster": "prod-fss"
+    },
+    {
+      "app": "esyfovarsel",
+      "namespace": "team-esyfo",
+      "cluster": "prod-gcp"
+    },
+    {
+      "app": "esyfovarsel",
+      "namespace": "team-esyfo",
+      "cluster": "prod-fss"
     }
   ]
 }
