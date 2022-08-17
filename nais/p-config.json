@@ -111,6 +111,11 @@
       "cluster": "prod-fss"
     },
     {
+      "app": "smregistrering-backend",
+      "namespace": "teamsykmelding",
+      "cluster": "prod-gcp"
+    },
+    {
       "app": "isdialogmote",
       "namespace": "teamsykefravr",
       "cluster": "prod-gcp",
@@ -146,6 +151,11 @@
       "app": "syfosmpapirmottak",
       "namespace": "teamsykmelding",
       "cluster": "prod-fss"
+    },
+    {
+      "app": "syfosmpapirmottak",
+      "namespace": "teamsykmelding",
+      "cluster": "prod-gcp"
     },
     {
       "app": "bidrag-dokument-arkiv",

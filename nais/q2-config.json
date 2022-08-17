@@ -118,6 +118,11 @@
       "cluster": "dev-fss"
     },
     {
+      "app": "smregistrering-backend",
+      "namespace": "teamsykmelding",
+      "cluster": "dev-gcp"
+    },
+    {
       "app": "isdialogmote",
       "namespace": "teamsykefravr",
       "cluster": "dev-gcp",
@@ -179,6 +184,11 @@
       "app": "syfosmpapirmottak",
       "namespace": "teamsykmelding",
       "cluster": "dev-fss"
+    },
+    {
+      "app": "syfosmpapirmottak",
+      "namespace": "teamsykmelding",
+      "cluster": "dev-gcp"
     },
     {
       "app": "eessi-pensjon-fagmodul-q2",
