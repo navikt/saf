@@ -255,12 +255,14 @@
     {
       "app": "esyfovarsel",
       "namespace": "team-esyfo",
-      "cluster": "dev-gcp"
+      "cluster": "dev-gcp",
+      "roles": ["tema_opp"]
     },
     {
       "app": "esyfovarsel",
       "namespace": "team-esyfo",
-      "cluster": "dev-fss"
+      "cluster": "dev-fss",
+      "roles": ["tema_opp"]
     }
   ]
 }
