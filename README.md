@@ -71,8 +71,16 @@ Deploy av saf-koden til miljø gjøres lettest ved hjelp av jenkins.
 ----------
 
 ## Tilgangsstyring
-
 Ved behov for tilgang til Saf kan andre team selv gjøre nødvendige kodeendringer:
+
+For Azure tokens: 
+- Lag en ny branch hvor dere legger til et innslag for appen deres i ```AZURE_IAC_RULES```\
+&emsp; - [dev](https://github.com/navikt/saf/blob/master/nais/q2-config.json) (gjelder alle q-miljø) \
+&emsp; - [produksjon](https://github.com/navikt/saf/blob/master/nais/p-config.json)
+- Push endringene og lag en pull request.
+- Pull requesten vil bli gått gjennom og merget av noen i Team Dokumentløsninger.
+
+For Rest sts eller OpenAm:
 - Lag en ny branch med endringene du ønsker for tilgang. Endringene må legges til i alle ønskede miljø i filene: /nais/<miljø>-config.json.
 - Legg til audience i ```NO_NAV_SECURITY_JWT_ISSUER_OPENAM_ACCEPTED_AUDIENCE``` eller ```NO_NAV_SECURITY_JWT_ISSUER_RESTSTS_ACCEPTED_AUDIENCE```, avhengig om du bruker OpenAm eller Rest sts.
 - Push endringene og lag en pull request. 
