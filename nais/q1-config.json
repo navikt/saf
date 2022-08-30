@@ -52,6 +52,11 @@
       "namespace": "team-esyfo",
       "cluster": "dev-fss",
       "roles": ["tema_opp"]
+    },
+    {
+      "app": "fpformidling",
+      "namespace": "teamforeldrepenger",
+      "cluster": "dev-fss"
     }
   ]
 }
