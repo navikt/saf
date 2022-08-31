@@ -57,6 +57,11 @@
       "app": "fpformidling",
       "namespace": "teamforeldrepenger",
       "cluster": "dev-fss"
+    },
+    {
+      "app": "melosys-q1",
+      "namespace": "teammelosys",
+      "cluster": "dev-fss"
     }
   ]
 }
