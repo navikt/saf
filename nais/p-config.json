@@ -108,11 +108,6 @@
     {
       "app": "smregistrering-backend",
       "namespace": "teamsykmelding",
-      "cluster": "prod-fss"
-    },
-    {
-      "app": "smregistrering-backend",
-      "namespace": "teamsykmelding",
       "cluster": "prod-gcp"
     },
     {
@@ -146,11 +141,6 @@
       "app": "yrkesskade-melding-mottak",
       "namespace": "yrkesskade",
       "cluster": "prod-gcp"
-    },
-    {
-      "app": "syfosmpapirmottak",
-      "namespace": "teamsykmelding",
-      "cluster": "prod-fss"
     },
     {
       "app": "syfosmpapirmottak",
@@ -211,6 +201,11 @@
       "namespace": "team-esyfo",
       "cluster": "prod-fss",
       "roles": ["tema_opp"]
+    },
+    {
+      "app": "syk-dig-backend",
+      "namespace": "teamsykmelding",
+      "cluster": "prod-gcp"
     }
   ]
 }
