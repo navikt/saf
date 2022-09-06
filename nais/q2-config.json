@@ -120,11 +120,6 @@
     {
       "app": "smregistrering-backend",
       "namespace": "teamsykmelding",
-      "cluster": "dev-fss"
-    },
-    {
-      "app": "smregistrering-backend",
-      "namespace": "teamsykmelding",
       "cluster": "dev-gcp"
     },
     {
@@ -184,11 +179,6 @@
       "namespace": "pto",
       "cluster": "dev-fss",
       "roles": ["tema_opp"]
-    },
-    {
-      "app": "syfosmpapirmottak",
-      "namespace": "teamsykmelding",
-      "cluster": "dev-fss"
     },
     {
       "app": "syfosmpapirmottak",
@@ -268,6 +258,16 @@
       "namespace": "team-esyfo",
       "cluster": "dev-fss",
       "roles": ["tema_opp"]
+    },
+    {
+      "app": "melosys-q1",
+      "namespace": "teammelosys",
+      "cluster": "dev-fss"
+    },
+    {
+      "app": "syk-dig-backend",
+      "namespace": "teamsykmelding",
+      "cluster": "dev-gcp"
     },
     {
       "app": "joarkadmin",
