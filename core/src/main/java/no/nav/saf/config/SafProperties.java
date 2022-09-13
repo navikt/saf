@@ -36,6 +36,18 @@ public class SafProperties {
 		 */
 		@NotEmpty
 		private String pdl;
+
+		/**
+		 * URL til PEN (PESYS REST/ Pensjon).
+		 */
+		@NotEmpty
+		private String pen;
+
+		/**
+		 * URL til PEN (PESYS REST/ Pensjon).
+		 */
+		@NotEmpty
+		private String penScope;
 	}
 
 	@Data

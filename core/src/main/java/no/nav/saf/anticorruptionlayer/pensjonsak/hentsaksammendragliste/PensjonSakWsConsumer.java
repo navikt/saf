@@ -9,12 +9,12 @@ import no.nav.saf.cache.LokalCacheConfig;
 import no.nav.saf.domain.kode.Arkivsakssystem;
 import no.nav.saf.exceptions.SafFunctionalException;
 import no.nav.saf.exceptions.SafTechnicalException;
+import no.nav.saf.integration.penrest.HentSakSammendragListeResponse;
+import no.nav.saf.integration.penrest.PensjonSakRest;
+import no.nav.saf.integration.penrest.SakSammendrag;
 import no.nav.saf.metrics.Monitor;
 import no.nav.tjeneste.virksomhet.pensjonsak.v1.HentSakSammendragListePersonIkkeFunnet;
 import no.nav.tjeneste.virksomhet.pensjonsak.v1.HentSakSammendragListeSakManglerEierenhet;
-import no.nav.tjeneste.virksomhet.pensjonsak.v1.PensjonSakV1;
-import no.nav.tjeneste.virksomhet.pensjonsak.v1.meldinger.WSHentSakSammendragListeRequest;
-import no.nav.tjeneste.virksomhet.pensjonsak.v1.meldinger.WSHentSakSammendragListeResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
@@ -32,12 +32,11 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 public class PensjonSakWsConsumer {
     private static final String PENSJON_SAK_SOAP_INSTANCE = "pensjonsaksoap";
 
-    private final PensjonSakV1 pensjonSakV1;
-    private static final int MILLI_TO_NANO_CONST = 1000000;
+    private final PensjonSakRest pensjonSakRest;
 
     @Autowired
-    public PensjonSakWsConsumer(PensjonSakV1 pensjonSakV1) {
-        this.pensjonSakV1 = pensjonSakV1;
+    public PensjonSakWsConsumer(PensjonSakRest pensjonSakRest) {
+        this.pensjonSakRest = pensjonSakRest;
     }
 
 
@@ -49,26 +48,24 @@ public class PensjonSakWsConsumer {
         if(isBlank(personident)) {
             return new ArrayList<>();
         }
-        WSHentSakSammendragListeRequest request = new WSHentSakSammendragListeRequest();
-        request.setPersonident(personident);
 
         if (log.isDebugEnabled()) {
             log.debug("Henter psaker for foedselsnummer={}", personident);
         }
 
         try {
-            WSHentSakSammendragListeResponse response = pensjonSakV1.hentSakSammendragListe(request);
+            List<SakSammendrag> response = pensjonSakRest.hentSakSammendragListe(personident);
 
             if (log.isDebugEnabled()) {
                 log.debug("Hentet ferdig psaker for foedselsnummer={}", personident);
             }
-            return response.getSakSammendragListe().stream().map(saksammendrag ->
+            return response.stream().map(saksammendrag ->
                     PsakSakerTo.builder()
-                            .sakNr(saksammendrag.getSakId())
+                            .sakNr(saksammendrag.sakId())
                             .arkivSakSystem(Arkivsakssystem.PSAK)
-                            .tema(saksammendrag.getArkivtema().getValue())
-                            .datoOpprettet(saksammendrag.getSaksperiode().getFom() == null ? null :
-                                    jodaToJavaLocalDateTime(saksammendrag.getSaksperiode().getFom().toDateTimeAtStartOfDay().toLocalDateTime()))
+                            .tema(saksammendrag.arkivtema().value())
+                            .datoOpprettet(saksammendrag.saksperiode().fom() == null ? null :
+                                    saksammendrag.saksperiode().fom().atStartOfDay())
                             .build())
                     .collect(Collectors.toList());
         } catch (HentSakSammendragListeSakManglerEierenhet e) {
@@ -86,16 +83,5 @@ public class PensjonSakWsConsumer {
         } catch (Exception e) {
             throw new SafTechnicalException("Teknisk feil mot PensjonSak_v1.hentSakSammendragListe", e);
         }
-    }
-
-    private static java.time.LocalDateTime jodaToJavaLocalDateTime(org.joda.time.LocalDateTime localDateTime) {
-        return java.time.LocalDateTime.of(
-                localDateTime.getYear(),
-                localDateTime.getMonthOfYear(),
-                localDateTime.getDayOfMonth(),
-                localDateTime.getHourOfDay(),
-                localDateTime.getMinuteOfHour(),
-                localDateTime.getSecondOfMinute(),
-                localDateTime.getMillisOfSecond() * MILLI_TO_NANO_CONST);
     }
 }

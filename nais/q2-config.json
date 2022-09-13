@@ -31,6 +31,8 @@
   "BIDRAG_SAK_URL": "https://bidrag-sak.dev.adeo.no/bidrag-sak/pip/sak/",
   "HENTJOURNALSAKINFO_URL": "https://dokarkiv.dev.intern.nav.no/hentjournalsakinfo",
   "SAF_ENDPOINTS_PDL": "https://pdl-api.dev.intern.nav.no/graphql",
+  "SAF_ENDPOINTS_PEN": "https://pensjon-pen-q2.nais.preprod.local/pen/springapi/sak/",
+  "SAF_ENDPOINTS_PEN_SCOPE": "api://dev-fss.teampensjon.pensjon-pen-q2/.default",
   "SAF_REDIS_HOSTNAME":  "saf-redis",
   "RESTSECURITYTOKENSERVICE_URL": "https://security-token-service.dev.adeo.no/rest/v1/sts/token",
   "APPDYNAMICS": "/apikey/appdynamics/dev",
