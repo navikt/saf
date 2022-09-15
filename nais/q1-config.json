@@ -59,6 +59,26 @@
       "cluster": "dev-fss"
     },
     {
+      "app": "fpsak",
+      "namespace": "teamforeldrepenger",
+      "cluster": "dev-fss"
+    },
+    {
+      "app": "fpfordel",
+      "namespace": "teamforeldrepenger",
+      "cluster": "dev-fss"
+    },
+    {
+      "app": "fpabakus",
+      "namespace": "teamforeldrepenger",
+      "cluster": "dev-fss"
+    },
+    {
+      "app": "fptilbake",
+      "namespace": "teamforeldrepenger",
+      "cluster": "dev-fss"
+    },
+    {
       "app": "melosys-q1",
       "namespace": "teammelosys",
       "cluster": "dev-fss"
