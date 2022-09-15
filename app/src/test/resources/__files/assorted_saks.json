@@ -1,0 +1,82 @@
+[
+  {
+    "sakId": 21248166,
+    "sakType": "UFOREP",
+    "sakStatus": "AVSLUTTET",
+    "fomDato": null,
+    "tomDato": null,
+    "enhetId": "4475",
+    "sakTypeObj": {
+      "name": "UFOREP",
+      "description": "Uføretrygd"
+    },
+    "sakStatusObj": {
+      "name": "AVSLUTTET",
+      "description": "Avsluttet"
+    }
+  },
+  {
+    "sakId": 21225259,
+    "sakType": "GENRL",
+    "sakStatus": "OPPRETTET",
+    "fomDato": null,
+    "tomDato": null,
+    "enhetId": "4808",
+    "sakTypeObj": {
+      "name": "GENRL",
+      "description": "Generell"
+    },
+    "sakStatusObj": {
+      "name": "OPPRETTET",
+      "description": "Opprettet"
+    }
+  },
+  {
+    "sakId": 24648059,
+    "sakType": "KRIGSP",
+    "sakStatus": "OPPRETTET",
+    "fomDato": null,
+    "tomDato": null,
+    "enhetId": "4808",
+    "sakTypeObj": {
+      "name": "KRIGSP",
+      "description": "Krigspensjon"
+    },
+    "sakStatusObj": {
+      "name": "OPPRETTET",
+      "description": "Opprettet"
+    }
+  },
+  {
+    "sakId": 22274451,
+    "sakType": "ALDER",
+    "sakStatus": "AVSLUTTET",
+    "fomDato": null,
+    "tomDato": null,
+    "enhetId": "4808",
+    "sakTypeObj": {
+      "name": "ALDER",
+      "description": "Alderspensjon"
+    },
+    "sakStatusObj": {
+      "name": "AVSLUTTET",
+      "description": "Avsluttet"
+    }
+  },
+  {
+    "sakId": 22274452,
+    "sakType": "GJENLEV",
+    "sakStatus": "AVSLUTTET",
+    "fomDato": null,
+    "tomDato": null,
+    "enhetId": "4815",
+    "sakTypeObj": {
+      "name": "GJENLEV",
+      "description": "Gjenlevendeytelse"
+    },
+    "sakStatusObj": {
+      "name": "AVSLUTTET",
+      "description": "Avsluttet"
+    }
+  }
+]

@@ -10,6 +10,10 @@ public record Periode (
 	private static final DateTimeFormatter dateFormat = DateTimeFormatter.ISO_LOCAL_DATE;
 
 	public static Periode of(String fom, String tom) {
-		return new Periode(LocalDate.from(dateFormat.parse(fom)), LocalDate.from(dateFormat.parse(tom)));
+		return new Periode(nullsafeParseDate(fom), nullsafeParseDate(tom));
+	}
+
+	private static LocalDate nullsafeParseDate(String dateString) {
+		return dateString != null ? LocalDate.from(dateFormat.parse(dateString)) : null;
 	}
 }

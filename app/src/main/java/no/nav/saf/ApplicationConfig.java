@@ -1,12 +1,14 @@
 package no.nav.saf;
 
 import io.micrometer.core.instrument.MeterRegistry;
+import no.nav.saf.config.AzureProperties;
 import no.nav.saf.config.SafProperties;
 import no.nav.saf.config.ServiceuserAlias;
 import no.nav.saf.graphiql.GraphiQLController;
 import no.nav.saf.metrics.DokMonitoringAspect;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.HttpClient;
+import org.apache.http.conn.HttpClientConnectionManager;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -31,7 +33,7 @@ import java.util.stream.Collectors;
 @Configuration
 @EnableAutoConfiguration
 @Import({GraphiQLController.class})
-@EnableConfigurationProperties(value = {SafProperties.class, ServiceuserAlias.class})
+@EnableConfigurationProperties(value = {SafProperties.class, ServiceuserAlias.class, AzureProperties.class})
 public class ApplicationConfig {
 	@Bean
 	ClientHttpRequestFactory clientHttpRequestFactory(HttpClient httpClient) {
@@ -69,6 +71,14 @@ public class ApplicationConfig {
 		return HttpClients.custom()
 				.setConnectionManager(connectionManager)
 				.build();
+	}
+
+	@Bean
+	HttpClientConnectionManager httpClientConnectionManager() {
+		PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager();
+		connectionManager.setMaxTotal(400);
+		connectionManager.setDefaultMaxPerRoute(100);
+		return connectionManager;
 	}
 
 	@Bean
