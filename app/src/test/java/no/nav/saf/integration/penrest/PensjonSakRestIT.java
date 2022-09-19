@@ -1,10 +1,8 @@
 package no.nav.saf.integration.penrest;
 
 import com.github.tomakehurst.wiremock.client.WireMock;
+import no.nav.saf.anticorruptionlayer.pensjonsak.domain.SakSammendrag;
 import no.nav.saf.anticorruptionlayer.pensjonsak.hentbrukerforsak.PensjonSakRestConsumer;
-import no.nav.saf.anticorruptionlayer.pensjonsak.hentsaksammendragliste.PensjonSakWsConsumer;
-import no.nav.saf.config.SafProperties;
-import no.nav.saf.config.ServiceuserAlias;
 import no.nav.saf.endpoints.AbstractItest;
 import no.nav.tjeneste.virksomhet.pensjonsak.v1.HentSakSammendragListePersonIkkeFunnet;
 import no.nav.tjeneste.virksomhet.pensjonsak.v1.HentSakSammendragListeSakManglerEierenhet;
@@ -13,17 +11,8 @@ import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.platform.commons.util.FunctionUtils;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
 import org.springframework.http.HttpStatus;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import javax.annotation.Resource;
 
@@ -51,7 +40,7 @@ class PensjonSakRestIT  extends AbstractItest {
 	private TestRestTemplate testRestTemplate;
 
 	@Resource
-	private PensjonSakRest pensjonSakRest;
+	private PensjonSakRestConsumer pensjonSakRest;
 
 	@BeforeEach
 	public void setup() {

@@ -84,10 +84,11 @@ class HentDokumentIT extends AbstractItest {
 	@Test
 	void hentPsakDokumentHappyPath() {
 		abacPermit();
-		stubFor(post(urlEqualTo("/reststs"))
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-						.withBodyFile("sts/reststs-happy.json")));
+		stubFor(post("/azure_token")
+				.willReturn(aResponse()
+						.withStatus(OK.value())
+						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("azure/token_response.json")));
 		stubFor(get("/hentjournalsakinfo/hentdokument/" + DOKUMENT_ID + "/" + VARIANTFORMAT).willReturn(aResponse().withStatus(OK
 				.value())
 				.withHeader(CONTENT_TYPE, APPLICATION_PDF_VALUE)
@@ -101,7 +102,7 @@ class HentDokumentIT extends AbstractItest {
 				.withBodyFile("psak/psak-hentBrukerForSak-happy.json")));
 		stubFor(post("/pensjonsakv1")
 				.willReturn(aResponse().withStatus(OK.value())
-						.withBodyFile("psak/psak-hentSakSammendragListe-hentdokument-happy.xml")));
+						.withBodyFile("psak/psak-hentSakSammendragListe-hentdokument-happy.json")));
 
 		ResponseEntity<String> responseEntity = callHentDokument();
 
@@ -344,10 +345,6 @@ class HentDokumentIT extends AbstractItest {
 	@Test
 	void shouldGetUnauthorizedFromPep1g() {
 		abacDenyPep1g();
-		stubFor(post(urlEqualTo("/reststs"))
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-						.withBodyFile("sts/reststs-happy.json")));
 		stubFor(get("/hentjournalsakinfo/hentdokument/" + DOKUMENT_ID + "/" + VARIANTFORMAT).willReturn(aResponse().withStatus(OK
 				.value())
 				.withHeader(CONTENT_TYPE, APPLICATION_PDF_VALUE)
@@ -504,10 +501,6 @@ class HentDokumentIT extends AbstractItest {
 				.withStatus(OK.value())
 				.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 				.withBodyFile("fpsak/happy-response.json")));
-		stubFor(post(urlEqualTo("/reststs"))
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-						.withBodyFile("sts/reststs-happy.json")));
 
 		ResponseEntity<String> responseEntity = callHentDokument();
 		verifyabacDenyPep7dSkipPep2Pep3Pep4Pep5Pep6dAndHttpStatusCode(FORBIDDEN, responseEntity.getStatusCode());
@@ -528,10 +521,6 @@ class HentDokumentIT extends AbstractItest {
 				.withStatus(OK.value())
 				.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 				.withBodyFile("k9/happy-response.json")));
-		stubFor(post(urlEqualTo("/reststs"))
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-						.withBodyFile("sts/reststs-happy.json")));
 
 		ResponseEntity<String> responseEntity = callHentDokument();
 		verifyabacDenyPep7dSkipPep2Pep3Pep4Pep5Pep6dAndHttpStatusCode(FORBIDDEN, responseEntity.getStatusCode());
@@ -552,10 +541,6 @@ class HentDokumentIT extends AbstractItest {
 				.withStatus(OK.value())
 				.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 				.withBodyFile("k9/happy-response.json")));
-		stubFor(post(urlEqualTo("/reststs"))
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-						.withBodyFile("sts/reststs-happy.json")));
 
 		ResponseEntity<String> responseEntity = callHentDokument();
 		verifyabacDenyPep7dSkipPep2Pep3Pep4Pep5Pep6dAndHttpStatusCode(FORBIDDEN, responseEntity.getStatusCode());

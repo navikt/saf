@@ -6,6 +6,7 @@
     "fomDato": null,
     "tomDato": null,
     "enhetId": "4475",
+    "arkivtema": "UFO",
     "sakTypeObj": {
       "name": "UFOREP",
       "description": "Uføretrygd"
@@ -22,6 +23,7 @@
     "fomDato": null,
     "tomDato": null,
     "enhetId": "4808",
+    "arkivtema": "PEN",
     "sakTypeObj": {
       "name": "GENRL",
       "description": "Generell"
@@ -38,6 +40,7 @@
     "fomDato": null,
     "tomDato": null,
     "enhetId": "4808",
+    "arkivtema": "PEN",
     "sakTypeObj": {
       "name": "KRIGSP",
       "description": "Krigspensjon"
@@ -54,6 +57,7 @@
     "fomDato": null,
     "tomDato": null,
     "enhetId": "4808",
+    "arkivtema": "PEN",
     "sakTypeObj": {
       "name": "ALDER",
       "description": "Alderspensjon"
@@ -70,6 +74,7 @@
     "fomDato": null,
     "tomDato": null,
     "enhetId": "4815",
+    "arkivtema": "PEN",
     "sakTypeObj": {
       "name": "GJENLEV",
       "description": "Gjenlevendeytelse"

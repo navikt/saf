@@ -104,7 +104,7 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 						.withBodyFile("pdl/hentPdlDataForIdent-happy.json")));
 		stubFor(post("/pensjonsakv1")
 				.willReturn(aResponse().withStatus(OK.value())
-						.withBodyFile("psak/psak-hentSakSammendragListe-happy.xml")));
+						.withBodyFile("psak/psak-hentSakSammendragListe-happy.json")));
 
 		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikFagsakPsak();
 		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
@@ -206,7 +206,7 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 						.withBodyFile("joark/finnjournalposter-empty.json")));
 		stubFor(post("/pensjonsakv1")
 				.willReturn(aResponse().withStatus(INTERNAL_SERVER_ERROR.value())
-						.withBodyFile("psak-hentSakSammendragListe-technical.xml")));
+						.withBodyFile("psak-hentSakSammendragListe-technical.json")));
 
 		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikFagsakPsak();
 		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
@@ -229,7 +229,7 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 						.withBodyFile("joark/finnjournalposter-empty.json")));
 		stubFor(post("/pensjonsakv1")
 				.willReturn(aResponse().withStatus(BAD_REQUEST.value())
-						.withBodyFile("psak-hentSakSammendragListe-technical.xml")));
+						.withBodyFile("psak-hentSakSammendragListe-technical.json")));
 
 		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikFagsakPsak();
 		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
