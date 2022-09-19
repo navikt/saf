@@ -112,6 +112,11 @@ public class PensjonSakRestConsumer {
             throw new SafTechnicalException(String.format("hentBrukerForSak feilet teknisk med statusKode=%s. Feilmelding=%s", e
                     .getStatusCode(), e.getMessage()), e, e.getStatusCode());
         } catch (HttpClientErrorException e) {
+            if (e.getStatusCode() == HttpStatus.NOT_FOUND) {
+                // TODO: dobbeltsjekk at det stemmer at vi får denne for bruker ikke funnet
+                throw new SafFunctionalException(String.format("hentBrukerForSak feilet funksjonelt med statusKode=%s. Feilmelding=%s", e
+                        .getStatusCode(), e.getMessage()), e, e.getStatusCode());
+            }
             throw new SafFunctionalException(String.format("hentBrukerForSak feilet funksjonelt med statusKode=%s. Feilmelding=%s", e
                     .getStatusCode(), e.getMessage()), e, e.getStatusCode());
         }

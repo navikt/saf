@@ -8,7 +8,6 @@ import no.nav.saf.graphiql.GraphiQLController;
 import no.nav.saf.metrics.DokMonitoringAspect;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.HttpClient;
-import org.apache.http.conn.HttpClientConnectionManager;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -71,14 +70,6 @@ public class ApplicationConfig {
 		return HttpClients.custom()
 				.setConnectionManager(connectionManager)
 				.build();
-	}
-
-	@Bean
-	HttpClientConnectionManager httpClientConnectionManager() {
-		PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager();
-		connectionManager.setMaxTotal(400);
-		connectionManager.setDefaultMaxPerRoute(100);
-		return connectionManager;
 	}
 
 	@Bean
