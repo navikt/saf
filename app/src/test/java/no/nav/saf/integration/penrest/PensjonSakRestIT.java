@@ -65,10 +65,11 @@ class PensjonSakRestIT  extends AbstractItest {
 
 
 		List<SakSammendrag> sammendragList = pensjonSakRest.hentSakSammendragListe("12345654321");
+		Function<SakSammendrag,String> sammendragStringFunction = sammendrag -> sammendrag.saksstatus;
 
 		assertAll(
 				() -> assertThat(sammendragList, hasSize(5)),
-				() -> assertThat(sammendragList, hasItem(where(SakSammendrag::saksstatus, equalToIgnoringCase("AVSLUTTET"))))
+				() -> assertThat(sammendragList, hasItem(where(sammendragStringFunction, equalToIgnoringCase("AVSLUTTET"))))
 		);
 	}
 

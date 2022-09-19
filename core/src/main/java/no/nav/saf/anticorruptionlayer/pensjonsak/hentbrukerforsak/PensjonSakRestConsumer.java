@@ -23,6 +23,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.client.UnknownContentTypeException;
 
 import java.net.URI;
 import java.util.Collections;
@@ -100,24 +101,27 @@ public class PensjonSakRestConsumer {
             HttpHeaders headers = createHeaders();
             headers.add("fnr", personident);
 
-            List<SakSammendrag> result =  Objects.requireNonNullElse(
-                    restTemplate.exchange(pensjonSakSammendragURI, HttpMethod.GET, new HttpEntity<>(headers), new ParameterizedTypeReference<List<SakSammendrag>>() {}).getBody(),
+            List<SakSammendrag> result = Objects.requireNonNullElse(
+                    restTemplate.exchange(pensjonSakSammendragURI, HttpMethod.GET, new HttpEntity<>(headers), new ParameterizedTypeReference<List<SakSammendrag>>() {
+                    }).getBody(),
                     Collections.emptyList());
 
             if (log.isDebugEnabled()) {
                 log.debug("Hentet ferdig psaker for foedselsnummer={}", personident);
             }
             return result;
+        } catch (UnknownContentTypeException e) {
+            throw new SafTechnicalException(String.format("hentSakSammendrag feilet teknisk med statusKode=%s. Feilmelding=%s", "uhhhhh", e.getMessage()), e);
         } catch (HttpServerErrorException e) {
-            throw new SafTechnicalException(String.format("hentBrukerForSak feilet teknisk med statusKode=%s. Feilmelding=%s", e
+            throw new SafTechnicalException(String.format("hentSakSammendrag feilet teknisk med statusKode=%s. Feilmelding=%s", e
                     .getStatusCode(), e.getMessage()), e, e.getStatusCode());
         } catch (HttpClientErrorException e) {
             if (e.getStatusCode() == HttpStatus.NOT_FOUND) {
-                // TODO: dobbeltsjekk at det stemmer at vi får denne for bruker ikke funnet
-                throw new SafFunctionalException(String.format("hentBrukerForSak feilet funksjonelt med statusKode=%s. Feilmelding=%s", e
+                // TODO: dobbeltsjekk at det stemmer at vi får denne for saksammendrag ikke funnet
+                throw new SafFunctionalException(String.format("hentSakSammendrag feilet funksjonelt med statusKode=%s. Feilmelding=%s", e
                         .getStatusCode(), e.getMessage()), e, e.getStatusCode());
             }
-            throw new SafFunctionalException(String.format("hentBrukerForSak feilet funksjonelt med statusKode=%s. Feilmelding=%s", e
+            throw new SafFunctionalException(String.format("hentSakSammendrag feilet funksjonelt med statusKode=%s. Feilmelding=%s", e
                     .getStatusCode(), e.getMessage()), e, e.getStatusCode());
         }
     }
