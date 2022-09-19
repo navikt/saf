@@ -1,4 +1,4 @@
-package no.nav.saf.integration.penrest;
+package no.nav.saf.anticorruptionlayer.pensjonsak.domain;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;

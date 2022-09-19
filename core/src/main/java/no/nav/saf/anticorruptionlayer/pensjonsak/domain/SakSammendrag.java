@@ -1,12 +1,13 @@
-package no.nav.saf.integration.penrest;
+package no.nav.saf.anticorruptionlayer.pensjonsak.domain;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import no.nav.saf.anticorruptionlayer.pensjonsak.domain.Periode;
 
 public record SakSammendrag  (
 		String sakId,
 		String sakstype,
-		Arkivtema arkivtema,
+		String arkivtema,
 		String saksstatus,
 		Periode saksperiode,
 		String enhetId
@@ -16,11 +17,12 @@ public record SakSammendrag  (
 			@JsonProperty("sakId") String sakId,
 			@JsonProperty("sakType") String sakstype,
 			@JsonProperty("sakStatus") String saksstatus,
+			@JsonProperty("arkivtema") String arkivtema,
 			@JsonProperty("fomDato") String fomDato,
 			@JsonProperty("tomDato") String tomDato,
 			@JsonProperty("enhetId") String enhetId
 	) {
-		this(sakId, sakstype, Arkivtema.hardcoded(), saksstatus, Periode.of(fomDato, tomDato), enhetId);
+		this(sakId, sakstype, arkivtema, saksstatus, Periode.of(fomDato, tomDato), enhetId);
 	}
 
 }

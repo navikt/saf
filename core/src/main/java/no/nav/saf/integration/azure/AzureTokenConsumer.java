@@ -16,6 +16,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
@@ -41,6 +42,7 @@ public class AzureTokenConsumer implements TokenConsumer {
 	public AzureTokenConsumer(SafProperties safProperties,
 							  AzureProperties azureProperties,
 							  RestTemplateBuilder restTemplateBuilder,
+							  ClientHttpRequestFactory clientHttpRequestFactory,
 							  HttpClientConnectionManager httpClientConnectionManager) {
 		final CloseableHttpClient httpClient = createHttpClient(safProperties, httpClientConnectionManager);
 		this.restTemplate = restTemplateBuilder
