@@ -4,9 +4,7 @@
     "sakstype": "Uføretrygd",
     "arkivtema": "UFO",
     "saksstatus": "Løpende",
-    "saksperiode": {
-      "fom": "2015-06-01+02:00"
-    },
+    "fomDato": "2015-06-01+02:00",
     "enhetId": "4410"
   },
   {
@@ -14,9 +12,7 @@
     "sakstype": "Uføretrygd",
     "arkivtema": "UFO",
     "saksstatus": "Løpende",
-    "saksperiode": {
-      "fom": "2015-06-01+02:00"
-    },
+    "fomDato": "2015-06-01+02:00",
     "enhetId": "4410"
   },
   {
@@ -24,9 +20,7 @@
     "sakstype": "Uføretrygd",
     "arkivtema": "UFO",
     "saksstatus": "Løpende",
-    "saksperiode": {
-      "fom": "2015-06-01+02:00"
-    },
+    "fomDato": "2015-06-01+02:00",
     "enhetId": "4410"
   }
 ]

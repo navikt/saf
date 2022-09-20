@@ -55,27 +55,21 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 
 
 	@BeforeEach
-	public void setyp () {
-		stubFor(post("/azure_token")
-				.willReturn(aResponse()
-						.withStatus(HttpStatus.OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("azure/token_response.json")));
+	public void setup() {
+		setupHappyPathRestSTS();
+		setupHappyPathAzureToken();
+		stubFor(post("/sts")
+				.willReturn(aResponse().withStatus(OK.value())
+						.withBodyFile("sts/sts-happy.xml")));
 	}
+
 	@Test
 	void shouldHentDokumentoversiktBrukerWithAktoerID() throws IOException, URISyntaxException {
 		abacPermit();
-		stubFor(post("/reststs")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("sts/sts-token.json")));
 		stubFor(post("/pdl")
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("pdl/hentPdlDataForIdent-happy.json")));
-		stubFor(post("/sts")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withBodyFile("sts/sts-happy.xml")));
 		stubFor(get("/gsak?aktoerId=" + AKTOER_ID)
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
@@ -84,16 +78,14 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
 						.withBodyFile("joark/finnjournalposter-happy.json")));
-						stubFor(get("/pen/springapi/sak/sammendrag")
-								.willReturn(aResponse().withStatus(OK.value())
-										.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
+		stubFor(get("/pen/springapi/sak/sammendrag")
+				.willReturn(aResponse().withStatus(OK.value())
+						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
 						.withBodyFile("psak/psak-hentSakSammendragListe-happy.json")));
 
 		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikBrukerWithAktoerId();
 		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
 		assertEquals(OK, responseEntity.getStatusCode());
-		verify(postRequestedFor(urlEqualTo("/azure_token")));
-		verify(getRequestedFor(urlEqualTo("/pen/springapi/sak/sammendrag")).withHeader("fnr", new EqualToPattern(FNR)));
 		assertEquals("429837417", dokumentoversikt.getJournalposter().get(0).getJournalpostId());
 		assertEquals("429837329", dokumentoversikt.getJournalposter().get(1).getJournalpostId());
 		assertEquals("429812815", dokumentoversikt.getJournalposter().get(2).getJournalpostId());
@@ -112,17 +104,10 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 	@Test
 	void shouldHentDokumentoversiktBrukerWithFNR() throws IOException, URISyntaxException {
 		abacPermit();
-		stubFor(post("/reststs")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("sts/sts-token.json")));
 		stubFor(post("/pdl")
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("pdl/hentPdlDataForIdent-happy.json")));
-		stubFor(post("/sts")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withBodyFile("sts/sts-happy.xml")));
 		stubFor(get("/gsak?aktoerId=" + AKTOER_ID)
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
@@ -140,8 +125,6 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
 
 		assertEquals(OK, responseEntity.getStatusCode());
-		verify(postRequestedFor(urlEqualTo("/azure_token")));
-		verify(getRequestedFor(urlEqualTo("/pen/springapi/sak/sammendrag")).withHeader("fnr", new EqualToPattern(FNR)));
 		assertEquals("429837417", dokumentoversikt.getJournalposter().get(0).getJournalpostId());
 		assertEquals("429837329", dokumentoversikt.getJournalposter().get(1).getJournalpostId());
 		assertEquals("429812815", dokumentoversikt.getJournalposter().get(2).getJournalpostId());
@@ -153,14 +136,13 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter"))
 				.withRequestBody(containing("{\"gsakSakIds\":[\"135695442\"],\"psakSakIds\":[\"21998969\"],\"fraDato\":\"0001-01-01\",\"tilDato\":null,\"inkluderJournalStatus\":[\"FL\",\"FS\",\"J\",\"E\"],\"inkluderJournalpostType\":[\"I\",\"U\",\"N\"],\"visFeilregistrerte\":false,\"alleIdenter\":[\"11111111111\"],\"foerste\":3,\"etterPeker\":null}")));
 		verify(postRequestedFor(urlEqualTo("/reststs")));
+		verify(postRequestedFor(urlEqualTo("/azure_token")));
+		verify(getRequestedFor(urlEqualTo("/pen/springapi/sak/sammendrag")).withHeader("fnr", new EqualToPattern(FNR)));
 	}
 
 	@Test
 	void shouldHentDokumentoversiktBrukerWithOrgNr() throws IOException, URISyntaxException {
 		abacPermit();
-		stubFor(post("/sts")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withBodyFile("sts/sts-happy.xml")));
 		stubFor(get("/gsak?orgnr=" + ORG_NR)
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
@@ -184,17 +166,10 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 	@Test
 	void shouldHentDokumentoversiktBrukerWithFraDato() throws IOException, URISyntaxException {
 		abacPermit();
-		stubFor(post("/reststs")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("sts/sts-token.json")));
 		stubFor(post("/pdl")
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("pdl/hentPdlDataForIdent-happy.json")));
-		stubFor(post("/sts")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withBodyFile("sts/sts-happy.xml")));
 		stubFor(get("/gsak?aktoerId=" + AKTOER_ID)
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
@@ -218,17 +193,10 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 	@Test
 	void shouldHentDokumentoversiktBrukerWithAktoerIDMidlertidig() throws IOException, URISyntaxException {
 		abacPermit();
-		stubFor(post("/reststs")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("sts/sts-token.json")));
 		stubFor(post("/pdl")
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("pdl/hentPdlDataForIdent-happy.json")));
-		stubFor(post("/sts")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withBodyFile("sts/sts-happy.xml")));
 		stubFor(get("/gsak?aktoerId=" + AKTOER_ID)
 				.willReturn(aResponse().withStatus(NOT_FOUND.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
@@ -237,9 +205,9 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
 						.withBodyFile("joark/finnjournalposter-midlertidig-happy.json")));
-						stubFor(get("/pen/springapi/sak/sammendrag")
-								.willReturn(aResponse().withStatus(OK.value())
-										.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
+		stubFor(get("/pen/springapi/sak/sammendrag")
+				.willReturn(aResponse().withStatus(OK.value())
+						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
 						.withBodyFile("psak/psak-hentSakSammendragListe-happy-empty.json")));
 
 		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikBrukerWithAktoerId();
@@ -258,22 +226,10 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 	@Test
 	void shouldHentDokumentoversiktBrukerWithAktoerIDSladdet() throws IOException, URISyntaxException {
 		abacPermit();
-		stubFor(post("/azure_token")
-				.willReturn(aResponse()
-						.withStatus(HttpStatus.OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("azure/token_response.json")));
-		stubFor(post("/reststs")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("sts/sts-token.json")));
 		stubFor(post("/pdl")
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("pdl/hentPdlDataForIdent-happy.json")));
-		stubFor(post("/sts")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withBodyFile("sts/sts-happy.xml")));
 		stubFor(get("/gsak?aktoerId=" + AKTOER_ID)
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
@@ -303,10 +259,6 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 
 	@Test
 	void hentIdentForAktoerIdTechnicalFail() throws IOException, URISyntaxException {
-		stubFor(post("/reststs")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("sts/sts-token.json")));
 		stubFor(post("/pdl")
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
@@ -324,10 +276,6 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 
 	@Test
 	void hentIdentForAktoerIdFunctionalFail() throws IOException, URISyntaxException {
-		stubFor(post("/reststs")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("sts/sts-token.json")));
 		stubFor(post("/pdl")
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
@@ -346,17 +294,10 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 	@Test
 	void HentSakerByAktoerIdGsakTechnicalFail() throws IOException, URISyntaxException {
 		abacPermit();
-		stubFor(post("/reststs")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("sts/sts-token.json")));
 		stubFor(post("/pdl")
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("pdl/hentPdlDataForIdent-happy.json")));
-		stubFor(post("/sts")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withBodyFile("sts/sts-happy.xml")));
 		stubFor(get("/gsak?aktoerId=" + AKTOER_ID)
 				.willReturn(aResponse().withStatus(INTERNAL_SERVER_ERROR.value())));
 		stubFor(post("/hentjournalsakinfo/finnjournalposter")
@@ -383,17 +324,10 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 	@Test
 	void HentSakerByAktoerIdGsakFunctionalFail() throws IOException, URISyntaxException {
 		abacPermit();
-		stubFor(post("/reststs")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("sts/sts-token.json")));
 		stubFor(post("/pdl")
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("pdl/hentPdlDataForIdent-happy.json")));
-		stubFor(post("/sts")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withBodyFile("sts/sts-happy.xml")));
 		stubFor(get("/gsak?aktoerId=" + AKTOER_ID)
 				.willReturn(aResponse().withStatus(NOT_FOUND.value())));
 		stubFor(post("/hentjournalsakinfo/finnjournalposter")
@@ -423,17 +357,10 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 	@Test
 	void bidragConsumerTechnicalError() throws IOException, URISyntaxException {
 		abacPermit();
-		stubFor(post("/reststs")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("sts/sts-token.json")));
 		stubFor(post("/pdl")
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("pdl/hentPdlDataForIdent-happy.json")));
-		stubFor(post("/sts")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withBodyFile("sts/sts-happy.xml")));
 		stubFor(get("/gsak?aktoerId=" + AKTOER_ID)
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
@@ -467,17 +394,10 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 	@Test
 	void shouldGetUnauthorizedFromPep1g() throws IOException, URISyntaxException {
 		abacDenyPep1g();
-		stubFor(post("/reststs")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("sts/sts-token.json")));
 		stubFor(post("/pdl")
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("pdl/hentPdlDataForIdent-happy.json")));
-		stubFor(post("/sts")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withBodyFile("sts/sts-happy.xml")));
 		stubFor(get("/gsak?aktoerId=" + AKTOER_ID)
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
@@ -504,17 +424,10 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 	@Test
 	void shouldGetUnauthorizedFromPep2() throws IOException, URISyntaxException {
 		abacDenyPep2();
-		stubFor(post("/reststs")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("sts/sts-token.json")));
 		stubFor(post("/pdl")
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("pdl/hentPdlDataForIdent-happy.json")));
-		stubFor(post("/sts")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withBodyFile("sts/sts-happy.xml")));
 		stubFor(get("/gsak?aktoerId=" + AKTOER_ID)
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
@@ -540,17 +453,10 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 	@Test
 	void shouldGetUnauthorizedFromPep2d() throws IOException, URISyntaxException {
 		abacDenyPep2dSkipPep2();
-		stubFor(post("/reststs")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("sts/sts-token.json")));
 		stubFor(post("/pdl")
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("pdl/hentPdlDataForIdent-happy.json")));
-		stubFor(post("/sts")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withBodyFile("sts/sts-happy.xml")));
 		stubFor(get("/gsak?aktoerId=" + AKTOER_ID)
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
@@ -580,17 +486,10 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 	@Test
 	void shouldGetUnauthorizedFromPep3() throws IOException, URISyntaxException {
 		abacDenyPep3SkipPep2();
-		stubFor(post("/reststs")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("sts/sts-token.json")));
 		stubFor(post("/pdl")
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("pdl/hentPdlDataForIdent-happy.json")));
-		stubFor(post("/sts")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withBodyFile("sts/sts-happy.xml")));
 		stubFor(get("/gsak?aktoerId=" + AKTOER_ID)
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
@@ -619,17 +518,10 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 	@Test
 	void shouldGetUnauthorizedFromPep4() throws IOException, URISyntaxException {
 		abacDenyPep4SkipPep2OrPep3();
-		stubFor(post("/reststs")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("sts/sts-token.json")));
 		stubFor(post("/pdl")
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("pdl/hentPdlDataForIdent-happy.json")));
-		stubFor(post("/sts")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withBodyFile("sts/sts-happy.xml")));
 		stubFor(get("/gsak?aktoerId=" + AKTOER_ID)
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
@@ -658,17 +550,10 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 	@Test
 	void shouldGetUnauthorizedFromPep5() throws IOException, URISyntaxException {
 		abacDenyPep5SkipPep2OrPep3();
-		stubFor(post("/reststs")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("sts/sts-token.json")));
 		stubFor(post("/pdl")
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("pdl/hentPdlDataForIdent-happy.json")));
-		stubFor(post("/sts")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withBodyFile("sts/sts-happy.xml")));
 		stubFor(get("/gsak?aktoerId=" + AKTOER_ID)
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
@@ -699,17 +584,10 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 	@Test
 	void shouldGetUnauthorizedFromPep6d() throws IOException, URISyntaxException {
 		abacDenyPep6dSkipPep2Pep3();
-		stubFor(post("/reststs")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("sts/sts-token.json")));
 		stubFor(post("/pdl")
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("pdl/hentPdlDataForIdent-happy.json")));
-		stubFor(post("/sts")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withBodyFile("sts/sts-happy.xml")));
 		stubFor(get("/gsak?aktoerId=" + AKTOER_ID)
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
@@ -737,17 +615,10 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 	void shouldGetUnauthorizedFromPep7d() throws IOException, URISyntaxException {
 		String SAK_ID = "123456";
 		abacDenyPep7dSkipPep2Pep3Pep4Pep5Pep6d();
-		stubFor(post("/reststs")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("sts/sts-token.json")));
 		stubFor(post("/pdl")
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("pdl/hentPdlDataForIdent-happy.json")));
-		stubFor(post("/sts")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withBodyFile("sts/sts-happy.xml")));
 		stubFor(get("/gsak?aktoerId=" + AKTOER_ID)
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())

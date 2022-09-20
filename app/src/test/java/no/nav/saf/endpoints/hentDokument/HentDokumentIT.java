@@ -3,10 +3,10 @@ package no.nav.saf.endpoints.hentDokument;
 import com.github.tomakehurst.wiremock.client.BasicCredentials;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.VariantFormatCode;
 import no.nav.saf.endpoints.AbstractItest;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
 import java.util.Base64;
@@ -15,7 +15,6 @@ import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
@@ -43,6 +42,12 @@ class HentDokumentIT extends AbstractItest {
 	private static final VariantFormatCode VARIANTFORMAT = ARKIV;
 	private static final VariantFormatCode SLADDET_VARIANTFORMAT = SLADDET;
 	private static final byte[] TEST_FILE_BYTES = "TestThis".getBytes();
+
+	@BeforeEach
+	public void setup () {
+		setupHappyPathRestSTS();
+		setupHappyPathAzureToken();
+	}
 
 	@Test
 	void hentGsakDokumentHappyPath() {
@@ -84,11 +89,6 @@ class HentDokumentIT extends AbstractItest {
 	@Test
 	void hentPsakDokumentHappyPath() {
 		abacPermit();
-		stubFor(post("/azure_token")
-				.willReturn(aResponse()
-						.withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("azure/token_response.json")));
 		stubFor(get("/hentjournalsakinfo/hentdokument/" + DOKUMENT_ID + "/" + VARIANTFORMAT).willReturn(aResponse().withStatus(OK
 				.value())
 				.withHeader(CONTENT_TYPE, APPLICATION_PDF_VALUE)
@@ -100,15 +100,12 @@ class HentDokumentIT extends AbstractItest {
 		stubFor(get("/pensjonsakrs").willReturn(aResponse().withStatus(OK.value())
 				.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 				.withBodyFile("psak/psak-hentBrukerForSak-happy.json")));
-		stubFor(post("/pensjonsakv1")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withBodyFile("psak/psak-hentSakSammendragListe-hentdokument-happy.json")));
 
 		ResponseEntity<String> responseEntity = callHentDokument();
 
 		assertOkArkivResponse(responseEntity);
 		verify(getRequestedFor(urlEqualTo("/hentjournalsakinfo/hentdokument/" + DOKUMENT_ID + "/" + VARIANTFORMAT)).withBasicAuth(new BasicCredentials("srvsaf", "srvsafpw")));
-		verify(getRequestedFor(urlEqualTo("/pensjonsakrs")).withHeader(AUTHORIZATION, equalTo("Bearer AccessToken")));
+		verify(getRequestedFor(urlEqualTo("/pensjonsakrs")).withHeader(AUTHORIZATION, equalTo("Bearer AzureAccessToken")));
 		verify(getRequestedFor(urlEqualTo("/pensjonsakrs")).withHeader("sakId", equalTo("10672720")));
 	}
 
