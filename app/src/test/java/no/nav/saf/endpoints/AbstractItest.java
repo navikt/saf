@@ -1,16 +1,11 @@
 package no.nav.saf.endpoints;
 
-import com.github.tomakehurst.wiremock.client.WireMock;
-import com.github.tomakehurst.wiremock.core.Options;
 import lombok.SneakyThrows;
 import no.nav.saf.ApplicationConfig;
 import no.nav.saf.domain.visningsmodell.Dokumentoversikt;
-import no.nav.saf.endpoints.testconfig.STSTestConfig;
 import no.nav.security.mock.oauth2.MockOAuth2Server;
 import no.nav.security.mock.oauth2.token.DefaultOAuth2TokenCallback;
 import no.nav.security.token.support.spring.test.EnableMockOAuth2Server;
-import org.apache.cxf.helpers.IOUtils;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -28,6 +23,7 @@ import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
@@ -57,7 +53,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
  * @author Sigurd Midttun, Visma Consulting.
  */
 @ExtendWith(SpringExtension.class)
-@SpringBootTest(classes = {AbstractItest.TestConfig.class, ApplicationConfig.class, STSTestConfig.class},
+@SpringBootTest(classes = {AbstractItest.TestConfig.class, ApplicationConfig.class},
 		webEnvironment = RANDOM_PORT,
 		properties = {"spring.main.allow-bean-definition-overriding=true"})
 @ActiveProfiles(value = {"itest", "wiremock"})
@@ -667,6 +663,6 @@ public abstract class AbstractItest {
 
 	@SneakyThrows
 	protected String stringFromClasspath(String resourcename) {
-		return IOUtils.toString(requireNonNull(this.getClass().getClassLoader().getResourceAsStream(resourcename)));
+		return new String(requireNonNull(this.getClass().getClassLoader().getResourceAsStream(resourcename)).readAllBytes(), StandardCharsets.UTF_8);
 	}
 }
