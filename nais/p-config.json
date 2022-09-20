@@ -119,7 +119,8 @@
     {
       "app": "tiltakspenger-mottak",
       "namespace": "tpts",
-      "cluster": "prod-gcp"
+      "cluster": "prod-gcp",
+      "roles": ["tema_ind"]
     },
     {
       "app": "flex-joark-mottak",
