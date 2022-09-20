@@ -49,7 +49,7 @@ class PensjonSakRestIT extends AbstractItest {
 				.willReturn(aResponse()
 						.withStatus(HttpStatus.OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("assorted_saks.json")));
+						.withBodyFile("psak/psak-hentSakSammendragListe-happy-full.json")));
 
 
 		List<SakSammendrag> sammendragList = pensjonSakRest.hentSakSammendragListe("12345654321");
