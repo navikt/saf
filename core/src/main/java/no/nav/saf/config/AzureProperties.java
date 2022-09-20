@@ -13,14 +13,14 @@ import javax.validation.constraints.NotEmpty;
 @ConfigurationProperties("azure.app")
 @Validated
 public class AzureProperties {
-    @NotEmpty
-    private String tokenUrl;
-    @NotEmpty
-    private String clientId;
-    @NotEmpty
-    private String clientSecret;
-    @NotEmpty
-    private String tenantId;
-    @NotEmpty
-    private String wellKnownUrl;
+	@NotEmpty
+	private String tokenUrl;
+	@NotEmpty
+	private String clientId;
+	@NotEmpty
+	private String clientSecret;
+	@NotEmpty
+	private String tenantId;
+	@NotEmpty
+	private String wellKnownUrl;
 }

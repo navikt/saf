@@ -3,15 +3,15 @@ package no.nav.saf.anticorruptionlayer.pensjonsak.domain;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class SakSammendrag  {
+public record SakSammendrag(
+		String sakId,
+		String sakstype,
+		String saksstatus,
+		String arkivtema,
+		Periode saksperiode,
+		String enhetId
+) {
 
-	public final String sakId;
-	public final String sakstype;
-	public final String arkivtema;
-	public final String saksstatus;
-	private final String fomDato;
-	private final String tomDato;
-	public final String enhetId;
 
 	@JsonCreator
 	public SakSammendrag(
@@ -23,16 +23,6 @@ public class SakSammendrag  {
 			@JsonProperty("tomDato") String tomDato,
 			@JsonProperty("enhetId") String enhetId
 	) {
-		this.sakId = sakId;
-		this.sakstype = sakstype;
-		this.saksstatus = saksstatus;
-		this.arkivtema = arkivtema;
-		this.fomDato = fomDato;
-		this.tomDato = tomDato;
-		this.enhetId = enhetId;
-	}
-
-	public Periode saksperiode() {
-		return Periode.of(fomDato, tomDato);
+		this(sakId, sakstype, saksstatus, arkivtema, Periode.of(fomDato, tomDato), enhetId);
 	}
 }

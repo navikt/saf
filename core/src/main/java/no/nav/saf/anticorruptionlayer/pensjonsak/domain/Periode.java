@@ -3,7 +3,7 @@ package no.nav.saf.anticorruptionlayer.pensjonsak.domain;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
-public record Periode (
+public record Periode(
 		LocalDate fom,
 		LocalDate tom
 ) {

@@ -35,7 +35,7 @@ public class PensjonSakAntiCorruptionLayerImpl implements PensjonSakAntiCorrupti
 		if (tilgangBruker.getFoedselsnr() == null || tema.isEmpty()) {
 			return emptyList();
 		} else {
-			Predicate<SakSammendrag> selectForTema = sakSammendrag -> tema.contains(mapToTema(sakSammendrag.arkivtema));
+			Predicate<SakSammendrag> selectForTema = sakSammendrag -> tema.contains(mapToTema(sakSammendrag.arkivtema()));
 			return findArkivsaker(tilgangBruker, selectForTema);
 		}
 	}
@@ -55,11 +55,11 @@ public class PensjonSakAntiCorruptionLayerImpl implements PensjonSakAntiCorrupti
 						.filter(sakSammendragSelector)
 						.map(sakSammendrag -> Arkivsak.builder()
 								.aktoerId(tilgangBruker.getAktoerId())
-								.arkivsaksnummer(sakSammendrag.sakId)
+								.arkivsaksnummer(sakSammendrag.sakId())
 								.arkivsaksystem(Arkivsakssystem.PSAK)
-								.fagsakId(sakSammendrag.sakId)
+								.fagsakId(sakSammendrag.sakId())
 								.fagsaksystem(PSAK_FAGSYSTEM)
-								.tema(mapToTema(sakSammendrag.arkivtema))
+								.tema(mapToTema(sakSammendrag.arkivtema()))
 								.datoOpprettet(getDatoOpprettet(sakSammendrag))
 								.build())
 						.collect(Collectors.toList());

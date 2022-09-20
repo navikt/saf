@@ -50,7 +50,7 @@ class SakIT extends AbstractItest {
 	}
 
 	@BeforeEach
-	void setup () {
+	void setup() {
 		setupHappyPathRestSTS();
 		setupHappyPathAzureToken();
 	}
