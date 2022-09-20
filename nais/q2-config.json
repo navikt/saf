@@ -129,11 +129,6 @@
       "roles": ["tema_opp"]
     },
     {
-      "app": "tpts-arena",
-      "namespace": "tpts",
-      "cluster": "dev-gcp"
-    },
-    {
       "app": "tiltakspenger-mottak",
       "namespace": "tpts",
       "cluster": "dev-gcp"
