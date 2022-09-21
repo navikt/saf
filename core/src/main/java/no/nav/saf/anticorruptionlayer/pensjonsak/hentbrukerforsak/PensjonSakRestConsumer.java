@@ -108,14 +108,13 @@ public class PensjonSakRestConsumer {
 			}
 			return result;
 		} catch (UnknownContentTypeException e) {
-			throw new SafTechnicalException(String.format("hentSakSammendrag feilet teknisk med statusKode=%s. Feilmelding=%s", "uhhhhh", e.getMessage()), e);
+			throw new SafTechnicalException(String.format("hentSakSammendrag feilet teknisk. Feilmelding=%s", e.getMessage()), e);
 		} catch (HttpServerErrorException e) {
 			throw new SafTechnicalException(String.format("hentSakSammendrag feilet teknisk med statusKode=%s. Feilmelding=%s", e
 					.getStatusCode(), e.getMessage()), e, e.getStatusCode());
 		} catch (HttpClientErrorException e) {
 			if (e.getStatusCode() == HttpStatus.NOT_FOUND) {
-				// TODO: dobbeltsjekk at det stemmer at vi får denne for saksammendrag ikke funnet
-				throw new SafFunctionalException(String.format("hentSakSammendrag feilet funksjonelt med statusKode=%s. Feilmelding=%s", e
+				throw new SafFunctionalException(String.format("hentSakSammendrag feilet funksjonelt (person ikke funnet). StatusKode=%s. Feilmelding=%s", e
 						.getStatusCode(), e.getMessage()), e, e.getStatusCode());
 			}
 			throw new SafFunctionalException(String.format("hentSakSammendrag feilet funksjonelt med statusKode=%s. Feilmelding=%s", e
