@@ -29,14 +29,15 @@
   "BIDRAG_SAK_URL": "https://bidrag-sak.dev.adeo.no/bidrag-sak/pip/sak/",
   "HENTJOURNALSAKINFO_URL": "https://dokarkiv.dev.intern.nav.no/hentjournalsakinfo",
   "SAF_ENDPOINTS_PDL": "https://pdl-api.dev.intern.nav.no/graphql",
-  "SAF_ENDPOINTS_PEN_SAKSAMMENDRAG": "https://pensjon-pen-q2.nais.preprod.local/pen/springapi/sak/sammendrag",
-  "SAF_ENDPOINTS_PEN_BRUKERFORSAK": "https://pensjon-pen-q2.nais.preprod.local/pen/api/pip/hentBrukerOgEnhetstilgangerForSak/v1",
-  "SAF_ENDPOINTS_PENSCOPE": "api://dev-fss.teampensjon.pensjon-pen-q2/.default",
+  "SAF_ENDPOINTS_PEN_SAK_SAMMENDRAG": "https://pensjon-pen-q2.nais.preprod.local/pen/springapi/sak/sammendrag",
+  "SAF_ENDPOINTS_PEN_BRUKER_FOR_SAK": "https://pensjon-pen-q2.nais.preprod.local/pen/api/pip/hentBrukerOgEnhetstilgangerForSak/v1",
+  "SAF_ENDPOINTS_PEN_SCOPE": "api://dev-fss.teampensjon.pensjon-pen-q2/.default",
   "SAF_REDIS_HOSTNAME":  "saf-redis",
   "RESTSECURITYTOKENSERVICE_URL": "https://security-token-service.dev.adeo.no/rest/v1/sts/token",
   "APPDYNAMICS": "/apikey/appdynamics/dev",
   "APPD_NAME": "saf_q2",
   "APP_NAME": "saf",
+  "AZURE_APP_TOKEN_URL": "https://login.microsoftonline.com/966ac572-f5b7-4bbe-aa88-c76419c0f851/oauth2/v2.0/token",
   "AZURE_IAC_RULES": [
     {
       "app": "pensjon-journalforing",

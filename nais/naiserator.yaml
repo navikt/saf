@@ -45,18 +45,20 @@ spec:
       value: {{ BIDRAG_SAK_URL }}
     - name: SAF_ENDPOINTS_PDL
       value: {{SAF_ENDPOINTS_PDL}}
-    - name: SAF_ENDPOINTS_PENSAKSAMMENDRAG
-      value: {{SAF_ENDPOINTS_PEN_SAKSAMMENDRAG}}
-    - name: SAF_ENDPOINTS_PENBRUKERFORSAK
-      value: {{SAF_ENDPOINTS_PEN_BRUKERFORSAK}}
-    - name: SAF_ENDPOINTS_PENSCOPE
-      value: {{SAF_ENDPOINTS_PENSCOPE}}
+    - name: SAF_ENDPOINTS_PEN_SAK_SAMMENDRAG
+      value: {{SAF_ENDPOINTS_PEN_SAK_SAMMENDRAG}}
+    - name: SAF_ENDPOINTS_PEN_BRUKER_FOR_SAK
+      value: {{SAF_ENDPOINTS_PEN_BRUKER_FOR_SAK}}
+    - name: SAF_ENDPOINTS_PEN_SCOPE
+      value: {{SAF_ENDPOINTS_PEN_SCOPE}}
     - name: RESTSECURITYTOKENSERVICE_URL
       value: {{ RESTSECURITYTOKENSERVICE_URL }}
     - name: APPD_NAME
       value: {{ APPD_NAME }}
     - name: SAF_REDIS_HOSTNAME
       value: {{ SAF_REDIS_HOSTNAME }}
+    - name: AZURE_APP_TOKEN_URL
+      value: {{ AZURE_APP_TOKEN_URL }}
   image: {{ image }}
   ingresses:
     {{#each INGRESSES}}

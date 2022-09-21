@@ -51,7 +51,7 @@ public class PensjonSakRestConsumer {
 								  SafProperties safProperties
 	) {
 		this.tokenConsumer = tokenConsumer;
-		this.pensjonSakScope = safProperties.getEndpoints().getPenscope();
+		this.pensjonSakScope = safProperties.getEndpoints().getPenScope();
 		this.restTemplate = restTemplateBuilder
 				.requestFactory(() -> clientHttpRequestFactory)
 				.build();

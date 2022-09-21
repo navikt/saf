@@ -31,26 +31,26 @@ public class SafProperties {
 		 * URI til PEN: hent sak sammendrag (PESYS REST/ Pensjon).
 		 */
 		@NotEmpty
-		private String pensaksammendrag;
+		private String penSakSammendrag;
 
 		/**
 		 * URI til PEN: hent bruker for sak (PESYS REST/ Pensjon).
 		 */
 		@NotEmpty
-		private String penbrukerforsak;
+		private String penBrukerForSak;
 
 		/**
 		 * Scope for Azure Oauth mot PEN (PESYS REST/ Pensjon).
 		 */
 		@NotEmpty
-		private String penscope;
+		private String penScope;
 
 		public URI getPenSakSammendragURI() {
-			return URI.create(pensaksammendrag);
+			return URI.create(penSakSammendrag);
 		}
 
 		public URI getPenBrukerForSakURI() {
-			return URI.create(penbrukerforsak);
+			return URI.create(penBrukerForSak);
 		}
 	}
 
