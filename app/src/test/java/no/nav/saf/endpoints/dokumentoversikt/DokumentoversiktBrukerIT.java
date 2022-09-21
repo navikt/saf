@@ -58,9 +58,6 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 	public void setup() {
 		setupHappyPathRestSTS();
 		setupHappyPathAzureToken();
-		stubFor(post("/sts")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withBodyFile("sts/sts-happy.xml")));
 	}
 
 	@Test
