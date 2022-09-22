@@ -5,7 +5,7 @@
   "ABAC_PDP_ENDPOINT_URL": "https://abac-saf.dev.intern.nav.no/application/asm-pdp/authorize",
   "SAK_SAKER_URL": "https://sak.dev.intern.nav.no/api/v1/saker",
   "SECURITYTOKENSERVICE_URL": "https://sts-q2.preprod.local/SecurityTokenServiceProvider/",
-  "FPSAK_URL": "https://fpsak.dev.adeo.no/fpsak/api/pip/aktoer-for-sak",
+  "FPSAK_URL": "https://fpsak-api.dev.intern.nav.no/fpsak/api/pip/aktoer-for-sak",
   "K9SAK_URL": "http://k9-sak.k9saksbehandling/k9/sak/api/pip/aktoer-for-sak",
   "GRAPHIQL_ENABLED": "true",
   "SPRINGDOC_ENABLED": "true",
@@ -129,11 +129,6 @@
       "namespace": "teamsykefravr",
       "cluster": "dev-gcp",
       "roles": ["tema_opp"]
-    },
-    {
-      "app": "tpts-arena",
-      "namespace": "tpts",
-      "cluster": "dev-gcp"
     },
     {
       "app": "tiltakspenger-mottak",
@@ -270,6 +265,41 @@
       "app": "syk-dig-backend",
       "namespace": "teamsykmelding",
       "cluster": "dev-gcp"
+    },
+    {
+      "app": "joarkadmin",
+      "namespace": "teamdokumenthandtering",
+      "cluster": "dev-fss"
+    },
+    {
+      "app": "joarkadmin-q1",
+      "namespace": "teamdokumenthandtering",
+      "cluster": "dev-fss"
+    },
+    {
+      "app": "fpformidling",
+      "namespace": "teamforeldrepenger",
+      "cluster": "dev-fss"
+    },
+    {
+      "app": "fpsak",
+      "namespace": "teamforeldrepenger",
+      "cluster": "dev-fss"
+    },
+    {
+      "app": "fpfordel",
+      "namespace": "teamforeldrepenger",
+      "cluster": "dev-fss"
+    },
+    {
+      "app": "fpabakus",
+      "namespace": "teamforeldrepenger",
+      "cluster": "dev-fss"
+    },
+    {
+      "app": "fptilbake",
+      "namespace": "teamforeldrepenger",
+      "cluster": "dev-fss"
     }
   ]
 }
