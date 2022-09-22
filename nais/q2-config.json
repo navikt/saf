@@ -146,7 +146,8 @@
     {
       "app": "yrkesskade-brevutsending",
       "namespace": "yrkesskade",
-      "cluster": "dev-gcp"
+      "cluster": "dev-gcp",
+      "roles": ["tema_yrk"]
     },
     {
       "app": "pdl-web",
