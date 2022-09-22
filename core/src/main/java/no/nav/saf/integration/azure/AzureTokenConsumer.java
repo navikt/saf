@@ -11,9 +11,9 @@ import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
+import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
-import java.time.Duration;
 import java.util.Collections;
 
 import static no.nav.saf.cache.LokalCacheConfig.AZURE_CLIENT_CREDENTIAL_TOKEN_CACHE;
@@ -32,8 +32,6 @@ public class AzureTokenConsumer implements TokenConsumer {
 							  RestTemplateBuilder restTemplateBuilder,
 							  ClientHttpRequestFactory clientHttpRequestFactory) {
 		this.restTemplate = restTemplateBuilder
-				.setConnectTimeout(Duration.ofSeconds(3))
-				.setReadTimeout(Duration.ofSeconds(20))
 				.requestFactory(() -> clientHttpRequestFactory)
 				.build();
 		this.azureProperties = azureProperties;
@@ -53,6 +51,8 @@ public class AzureTokenConsumer implements TokenConsumer {
 					.getBody();
 		} catch (HttpClientErrorException | HttpServerErrorException e) {
 			throw new AzureTokenException(String.format("Klarte ikke hente token fra Azure. Feilet med httpstatus=%s. Feilmelding=%s", e.getStatusCode(), e.getMessage()), e);
+		} catch (ResourceAccessException e) {
+			throw new AzureTokenException(String.format("Klarte ikke hente token fra Azure. Fikk ingen respons. Feilmelding=%s", e.getMessage()), e);
 		}
 	}
 

@@ -103,7 +103,7 @@ class SakIT extends AbstractItest {
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
 						.withBodyFile("psak/psak-hentSakSammendragListe-happy.json")));
 
-		await().atMost(Duration.ofSeconds(35)).untilAsserted(() -> {
+		await().atMost(Duration.ofSeconds(5)).untilAsserted(() -> {
 			ResponseEntity<LinkedHashMap> responseEntity = callSakerWithAktoerId();
 			List<Sak> saker = parseSaker(responseEntity);
 			assertThat(OK, is(responseEntity.getStatusCode()));

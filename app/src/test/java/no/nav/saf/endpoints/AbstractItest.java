@@ -2,14 +2,19 @@ package no.nav.saf.endpoints;
 
 import lombok.SneakyThrows;
 import no.nav.saf.ApplicationConfig;
+import no.nav.saf.config.AzureProperties;
 import no.nav.saf.domain.visningsmodell.Dokumentoversikt;
+import no.nav.saf.integration.azure.AzureTokenConsumer;
 import no.nav.security.mock.oauth2.MockOAuth2Server;
 import no.nav.security.mock.oauth2.token.DefaultOAuth2TokenCallback;
 import no.nav.security.token.support.spring.test.EnableMockOAuth2Server;
+import org.apache.http.impl.NoConnectionReuseStrategy;
+import org.apache.http.impl.client.HttpClients;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,6 +24,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.client.ClientHttpRequestFactory;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -91,6 +97,19 @@ public abstract class AbstractItest {
 		@Primary
 		ClientHttpRequestFactory clientHttpRequestFactoryTest() {
 			return new SimpleClientHttpRequestFactory();
+		}
+
+		@Bean
+		@Primary
+		AzureTokenConsumer azureTokenConsumer(AzureProperties azureProperties, RestTemplateBuilder restTemplateBuilder) {
+			var httpClient = HttpClients.custom()
+					.setConnectionReuseStrategy(new NoConnectionReuseStrategy())
+					.build();
+			var clientHttpRequestFactory = new HttpComponentsClientHttpRequestFactory(httpClient);
+			clientHttpRequestFactory.setConnectTimeout(5_000);
+			clientHttpRequestFactory.setReadTimeout(20_000);
+
+			return new AzureTokenConsumer(azureProperties, restTemplateBuilder, clientHttpRequestFactory);
 		}
 	}
 

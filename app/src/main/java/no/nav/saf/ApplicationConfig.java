@@ -4,6 +4,7 @@ import io.micrometer.core.instrument.MeterRegistry;
 import no.nav.saf.config.AzureProperties;
 import no.nav.saf.config.SafProperties;
 import no.nav.saf.config.ServiceuserAlias;
+import no.nav.saf.config.WebProxyProperties;
 import no.nav.saf.graphiql.GraphiQLController;
 import no.nav.saf.metrics.DokMonitoringAspect;
 import org.apache.commons.lang3.StringUtils;
@@ -32,7 +33,7 @@ import java.util.stream.Collectors;
 @Configuration
 @EnableAutoConfiguration
 @Import({GraphiQLController.class})
-@EnableConfigurationProperties(value = {SafProperties.class, ServiceuserAlias.class, AzureProperties.class})
+@EnableConfigurationProperties(value = {SafProperties.class, ServiceuserAlias.class, AzureProperties.class, WebProxyProperties.class})
 public class ApplicationConfig {
 	@Bean
 	ClientHttpRequestFactory clientHttpRequestFactory(HttpClient httpClient) {
@@ -70,6 +71,28 @@ public class ApplicationConfig {
 		return HttpClients.custom()
 				.setConnectionManager(connectionManager)
 				.build();
+	}
+
+	@Bean
+	public ClientHttpRequestFactory azureTokenHttpClient(WebProxyProperties webProxyProperties) {
+		var connectionManager = new PoolingHttpClientConnectionManager();
+		connectionManager.setMaxTotal(40);
+		connectionManager.setDefaultMaxPerRoute(10);
+
+		var httpClient = webProxyProperties.getProxy()
+				.map(proxy -> HttpClients.custom()
+						.setConnectionManager(connectionManager)
+						.setProxy(proxy)
+						.build())
+				.orElseGet(() -> HttpClients.custom()
+						.setConnectionManager(connectionManager)
+						.build());
+
+		var clientHttpRequestFactory = new HttpComponentsClientHttpRequestFactory(httpClient);
+		clientHttpRequestFactory.setConnectTimeout(5_000);
+		clientHttpRequestFactory.setReadTimeout(20_000);
+
+		return clientHttpRequestFactory;
 	}
 
 	@Bean
