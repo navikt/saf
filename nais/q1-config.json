@@ -54,31 +54,6 @@
       "roles": ["tema_opp"]
     },
     {
-      "app": "fpformidling",
-      "namespace": "teamforeldrepenger",
-      "cluster": "dev-fss"
-    },
-    {
-      "app": "fpsak",
-      "namespace": "teamforeldrepenger",
-      "cluster": "dev-fss"
-    },
-    {
-      "app": "fpfordel",
-      "namespace": "teamforeldrepenger",
-      "cluster": "dev-fss"
-    },
-    {
-      "app": "fpabakus",
-      "namespace": "teamforeldrepenger",
-      "cluster": "dev-fss"
-    },
-    {
-      "app": "fptilbake",
-      "namespace": "teamforeldrepenger",
-      "cluster": "dev-fss"
-    },
-    {
       "app": "k9-sak",
       "namespace": "k9saksbehandling",
       "cluster": "dev-fss"
