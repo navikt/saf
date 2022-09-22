@@ -3,8 +3,6 @@ package no.nav.saf.integration.azure;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.retry.annotation.Retry;
 import no.nav.saf.config.AzureProperties;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.cache.annotation.Cacheable;
@@ -27,7 +25,6 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 
 @Component
 public class AzureTokenConsumer implements TokenConsumer {
-	private static final Logger LOG = LoggerFactory.getLogger(AzureTokenConsumer.class);
 	private static final String AZURE_TOKEN_INSTANCE = "azuretoken";
 	private final RestTemplate restTemplate;
 	private final AzureProperties azureProperties;
@@ -39,7 +36,6 @@ public class AzureTokenConsumer implements TokenConsumer {
 				.requestFactory(() -> clientHttpRequestFactory)
 				.build();
 		this.azureProperties = azureProperties;
-		LOG.info("Bruker HttpClient (" + clientHttpRequestFactory + ") for Azure OAuth i AzureTokenConsumer ");
 	}
 
 	@Retry(name = AZURE_TOKEN_INSTANCE)

@@ -11,8 +11,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -37,9 +35,6 @@ import java.util.stream.Collectors;
 @Import({GraphiQLController.class})
 @EnableConfigurationProperties(value = {SafProperties.class, ServiceuserAlias.class, AzureProperties.class, WebProxyProperties.class})
 public class ApplicationConfig {
-
-	private static final Logger LOG = LoggerFactory.getLogger(ApplicationConfig.class);
-
 	@Bean
 	ClientHttpRequestFactory clientHttpRequestFactory(HttpClient httpClient) {
 		HttpComponentsClientHttpRequestFactory httpComponentsClientHttpRequestFactory = new HttpComponentsClientHttpRequestFactory(httpClient);
@@ -96,8 +91,6 @@ public class ApplicationConfig {
 		var clientHttpRequestFactory = new HttpComponentsClientHttpRequestFactory(httpClient);
 		clientHttpRequestFactory.setConnectTimeout(5_000);
 		clientHttpRequestFactory.setReadTimeout(20_000);
-
-		LOG.info("Oppretter HttpClient (" + clientHttpRequestFactory + ")for Azure OAuth" + webProxyProperties.getProxy().map(ph -> " med proxy (" + ph.toHostString() + ")").orElse("") );
 
 		return clientHttpRequestFactory;
 	}
