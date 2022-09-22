@@ -7,7 +7,7 @@
   "SAK_SAKER_URL": "https://sak.nais.adeo.no/api/v1/saker",
   "SECURITYTOKENSERVICE_URL": "https://sts.adeo.no/SecurityTokenServiceProvider/",
   "PENSJON_V1_ENDPOINTURL": "https://pensjon-pen.nais.adeo.no/pen/services/PensjonSak_v1",
-  "FPSAK_URL": "https://fpsak.nais.adeo.no/fpsak/api/pip/aktoer-for-sak",
+  "FPSAK_URL": "http://fpsak.teamforeldrepenger/fpsak/api/pip/aktoer-for-sak",
   "K9SAK_URL": "http://k9-sak.k9saksbehandling/k9/sak/api/pip/aktoer-for-sak",
   "GRAPHIQL_ENABLED": "false",
   "SPRINGDOC_ENABLED": "false",
@@ -207,6 +207,31 @@
       "app": "syk-dig-backend",
       "namespace": "teamsykmelding",
       "cluster": "prod-gcp"
+    },
+    {
+      "app": "fpformidling",
+      "namespace": "teamforeldrepenger",
+      "cluster": "prod-fss"
+    },
+    {
+      "app": "fpsak",
+      "namespace": "teamforeldrepenger",
+      "cluster": "prod-fss"
+    },
+    {
+      "app": "fpfordel",
+      "namespace": "teamforeldrepenger",
+      "cluster": "prod-fss"
+    },
+    {
+      "app": "fpabakus",
+      "namespace": "teamforeldrepenger",
+      "cluster": "prod-fss"
+    },
+    {
+      "app": "fptilbake",
+      "namespace": "teamforeldrepenger",
+      "cluster": "prod-fss"
     }
   ]
 }
