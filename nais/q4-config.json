@@ -7,7 +7,7 @@
   "SAK_SAKER_URL": "https://sak-q4.nais.preprod.local/api/v1/saker",
   "SECURITYTOKENSERVICE_URL": "https://sts-q4.preprod.local/SecurityTokenServiceProvider/",
   "PENSJON_V1_ENDPOINTURL": "https://pensjon-pen-q4.nais.preprod.local/pen/services/PensjonSak_v1",
-  "FPSAK_URL": "https://fpsak.dev.adeo.no/fpsak/api/pip/aktoer-for-sak",
+  "FPSAK_URL": "https://fpsak-api.dev.intern.nav.no/fpsak/api/pip/aktoer-for-sak",
   "K9SAK_URL": "http://k9-sak.k9saksbehandling/k9/sak/api/pip/aktoer-for-sak",
   "GRAPHIQL_ENABLED": "true",
   "SPRINGDOC_ENABLED": "true",
