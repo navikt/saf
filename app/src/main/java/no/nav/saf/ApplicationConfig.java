@@ -79,7 +79,7 @@ public class ApplicationConfig {
 	}
 
 	@Bean
-	public ClientHttpRequestFactory azureTokenHttpClient(WebProxyProperties webProxyProperties) {
+	public ClientHttpRequestFactory azureTokenHttpRequestFactory(WebProxyProperties webProxyProperties) {
 		var connectionManager = new PoolingHttpClientConnectionManager();
 		connectionManager.setMaxTotal(40);
 		connectionManager.setDefaultMaxPerRoute(10);
