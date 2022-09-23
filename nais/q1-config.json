@@ -56,11 +56,6 @@
       "roles": ["tema_opp"]
     },
     {
-      "app": "k9-sak",
-      "namespace": "k9saksbehandling",
-      "cluster": "dev-fss"
-    },
-    {
       "app": "melosys-q1",
       "namespace": "teammelosys",
       "cluster": "dev-fss"
