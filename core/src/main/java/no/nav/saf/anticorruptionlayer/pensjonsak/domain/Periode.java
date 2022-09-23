@@ -7,7 +7,7 @@ public record Periode(
 		LocalDate fom,
 		LocalDate tom
 ) {
-	private static final DateTimeFormatter dateFormat = DateTimeFormatter.ISO_OFFSET_DATE;
+	private static final DateTimeFormatter dateFormat = DateTimeFormatter.ISO_DATE;
 
 	public static Periode of(String fom, String tom) {
 		return new Periode(nullsafeParseDate(fom), nullsafeParseDate(tom));

@@ -3,6 +3,7 @@ package no.nav.saf.integration.penrest;
 import no.nav.saf.anticorruptionlayer.pensjonsak.domain.SakSammendrag;
 import no.nav.saf.anticorruptionlayer.pensjonsak.hentbrukerforsak.PensjonSakRestConsumer;
 import no.nav.saf.endpoints.AbstractItest;
+import no.nav.saf.integration.azure.AzureTokenException;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
@@ -48,15 +49,16 @@ class PensjonSakRestIT extends AbstractItest {
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("psak/psak-hentSakSammendragListe-happy-full.json")));
 
-		given().ignoreExceptions().await().atMost(Duration.ofSeconds(5)).untilAsserted(() -> {
-			List<SakSammendrag> sammendragList = pensjonSakRest.hentSakSammendragListe("12345654321");
+		given().ignoreException(AzureTokenException.class)
+				.await().atMost(Duration.ofSeconds(5)).untilAsserted(() -> {
+					List<SakSammendrag> sammendragList = pensjonSakRest.hentSakSammendragListe("12345654321");
 
-			assertAll(
-					() -> assertThat(sammendragList, hasSize(5)),
-					() -> assertThat(sammendragList, hasItem(where(SakSammendrag::saksstatus, equalToIgnoringCase("AVSLUTTET")))),
-					() -> assertThat(sammendragList, hasItem(where((Function<SakSammendrag, LocalDate>) sammendrag -> sammendrag.saksperiode().fom(), equalTo(LocalDate.of(2019, 5, 12)))))
-			);
-		});
+					assertAll(
+							() -> assertThat(sammendragList, hasSize(5)),
+							() -> assertThat(sammendragList, hasItem(where(SakSammendrag::saksstatus, equalToIgnoringCase("AVSLUTTET")))),
+							() -> assertThat(sammendragList, hasItem(where((Function<SakSammendrag, LocalDate>) sammendrag -> sammendrag.saksperiode().fom(), equalTo(LocalDate.of(2019, 5, 12)))))
+					);
+				});
 	}
 
 
