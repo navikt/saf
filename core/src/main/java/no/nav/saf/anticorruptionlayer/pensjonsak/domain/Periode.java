@@ -7,13 +7,17 @@ public record Periode(
 		LocalDate fom,
 		LocalDate tom
 ) {
-	private static final DateTimeFormatter dateFormat = DateTimeFormatter.ISO_DATE;
+	private static final DateTimeFormatter catchMostDateFormat = DateTimeFormatter
+				.ofPattern("[yyyy-MM-dd]['T'[HH:mm:ss][HH:mm][.SSSSSSSSS][.SSSSSS][.SSS][.SS][.S]][OOOO][O][z][XXXXX][XXXX]");
 
 	public static Periode of(String fom, String tom) {
 		return new Periode(nullsafeParseDate(fom), nullsafeParseDate(tom));
 	}
 
 	private static LocalDate nullsafeParseDate(String dateString) {
-		return dateString != null ? LocalDate.from(dateFormat.parse(dateString)) : null;
+		if (dateString != null) {
+				return LocalDate.from(catchMostDateFormat.parse(dateString));
+		}
+		return null;
 	}
 }
