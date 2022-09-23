@@ -2,77 +2,71 @@ package no.nav.saf.anticorruptionlayer.pensjonsak;
 
 import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.anticorruptionlayer.pensjonsak.hentbrukerforsak.PensjonSakRestConsumer;
-import no.nav.saf.anticorruptionlayer.pensjonsak.hentsaksammendragliste.PensjonSakWsConsumer;
 import no.nav.saf.domain.Arkivsak;
 import no.nav.saf.domain.kode.Arkivsakssystem;
 import no.nav.saf.domain.kode.Tema;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
+import no.nav.saf.anticorruptionlayer.pensjonsak.domain.SakSammendrag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
+
+import static java.util.Collections.emptyList;
 
 @Slf4j
 @Component
 public class PensjonSakAntiCorruptionLayerImpl implements PensjonSakAntiCorruptionLayer {
 	public static final String PSAK_FAGSYSTEM = "PP01";
-	private final PensjonSakWsConsumer pensjonSakWsConsumer;
+	private static final Predicate<SakSammendrag> selectAllSakSammendrag = __ -> true;
+
 	private final PensjonSakRestConsumer pensjonSakRestConsumer;
 
 	@Autowired
-	public PensjonSakAntiCorruptionLayerImpl(PensjonSakWsConsumer pensjonSakWsConsumer, PensjonSakRestConsumer pensjonSakRestConsumer) {
-		this.pensjonSakWsConsumer = pensjonSakWsConsumer;
+	public PensjonSakAntiCorruptionLayerImpl(PensjonSakRestConsumer pensjonSakRestConsumer) {
 		this.pensjonSakRestConsumer = pensjonSakRestConsumer;
 	}
 
 	@Override
 	public List<Arkivsak> findArkivsaker(final TilgangBruker tilgangBruker, final List<Tema> tema) {
-		try {
-			if (tilgangBruker.getFoedselsnr() == null || tema.isEmpty()) {
-				return new ArrayList<>();
-			} else {
-				return pensjonSakWsConsumer.hentSakSammendragListe(tilgangBruker.getFoedselsnr()).stream()
-						.filter(psak -> tema.contains(mapToTema(psak.getTema())))
-						.map(psak -> Arkivsak.builder()
-								.aktoerId(tilgangBruker.getAktoerId())
-								.arkivsaksnummer(psak.getSakNr())
-								.arkivsaksystem(Arkivsakssystem.PSAK)
-								.fagsakId(psak.getSakNr())
-								.fagsaksystem(PSAK_FAGSYSTEM)
-								.tema(Tema.valueOf(psak.getTema()))
-								.datoOpprettet(psak.getDatoOpprettet())
-								.build())
-						.collect(Collectors.toList());
-			}
-		} catch (Exception e) {
-			log.warn("Klarte ikke hente pensjonssaker for fødselsnummer={}", "*****", e);
-			return new ArrayList<>();
+		if (tilgangBruker.getFoedselsnr() == null || tema.isEmpty()) {
+			return emptyList();
+		} else {
+			Predicate<SakSammendrag> selectForTema = sakSammendrag -> tema.contains(mapToTema(sakSammendrag.arkivtema()));
+			return findArkivsaker(tilgangBruker, selectForTema);
 		}
 	}
 
 	@Override
 	public List<Arkivsak> findArkivsaker(final TilgangBruker tilgangBruker) {
+		return findArkivsaker(tilgangBruker, selectAllSakSammendrag);
+	}
+
+	private List<Arkivsak> findArkivsaker(TilgangBruker tilgangBruker, Predicate<SakSammendrag> sakSammendragSelector) {
 		try {
 			if (tilgangBruker.getFoedselsnr() == null) {
-				return new ArrayList<>();
+				return emptyList();
 			} else {
-				return pensjonSakWsConsumer.hentSakSammendragListe(tilgangBruker.getFoedselsnr()).stream()
-						.map(psak -> Arkivsak.builder()
+				return pensjonSakRestConsumer.hentSakSammendragListe(tilgangBruker.getFoedselsnr())
+						.stream()
+						.filter(sakSammendragSelector)
+						.map(sakSammendrag -> Arkivsak.builder()
 								.aktoerId(tilgangBruker.getAktoerId())
-								.arkivsaksnummer(psak.getSakNr())
+								.arkivsaksnummer(sakSammendrag.sakId())
 								.arkivsaksystem(Arkivsakssystem.PSAK)
-								.fagsakId(psak.getSakNr())
+								.fagsakId(sakSammendrag.sakId())
 								.fagsaksystem(PSAK_FAGSYSTEM)
-								.tema(Tema.valueOf(psak.getTema()))
-								.datoOpprettet(psak.getDatoOpprettet())
+								.tema(mapToTema(sakSammendrag.arkivtema()))
+								.datoOpprettet(getDatoOpprettet(sakSammendrag))
 								.build())
 						.collect(Collectors.toList());
 			}
 		} catch (Exception e) {
 			log.warn("Klarte ikke hente pensjonssaker for fødselsnummer={}", "*****", e);
-			return new ArrayList<>();
+			return emptyList();
 		}
 	}
 
@@ -91,6 +85,14 @@ public class PensjonSakAntiCorruptionLayerImpl implements PensjonSakAntiCorrupti
 			return Tema.valueOf(tema);
 		} catch (Exception e) {
 			return null;
+		}
+	}
+
+	private static LocalDateTime getDatoOpprettet(SakSammendrag sakSammendrag) {
+		if (sakSammendrag.saksperiode().fom() == null) {
+			return null;
+		} else {
+			return sakSammendrag.saksperiode().fom().atStartOfDay();
 		}
 	}
 }

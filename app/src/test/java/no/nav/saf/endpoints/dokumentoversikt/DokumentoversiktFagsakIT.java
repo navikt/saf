@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import no.nav.saf.domain.visningsmodell.Dokumentoversikt;
 import no.nav.saf.endpoints.AbstractItest;
 import no.nav.saf.endpoints.graphql.GraphQLRequest;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.RequestEntity;
@@ -47,6 +48,12 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 
 	private final ObjectMapper objectMapper = new ObjectMapper();
 
+	@BeforeEach
+	void setup() {
+		setupHappyPathAzureToken();
+		setupHappyPathRestSTS();
+	}
+
 	@Test
 	void shouldHentDokumentoversiktFagsakWithFagsakIdGSAK() throws IOException, URISyntaxException {
 		abacPermit();
@@ -59,10 +66,6 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("joark/finnjournalposter-happy.json")));
-		stubFor(post("/reststs")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("sts/sts-token.json")));
 		stubFor(post("/pdl")
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
@@ -86,6 +89,7 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 	void shouldHentDokumentoversiktFagsakWithFagsakIdPSAK() throws IOException, URISyntaxException {
 		abacPermit();
 
+		setupHappyPathAzureToken();
 		stubFor(get("/pensjonsakrs")
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
@@ -94,17 +98,14 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("joark/finnjournalposter-happy.json")));
-		stubFor(post("/reststs")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("sts/sts-token.json")));
 		stubFor(post("/pdl")
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("pdl/hentPdlDataForIdent-happy.json")));
-		stubFor(post("/pensjonsakv1")
+		stubFor(get("/pen/springapi/sak/sammendrag")
 				.willReturn(aResponse().withStatus(OK.value())
-						.withBodyFile("psak/psak-hentSakSammendragListe-happy.xml")));
+						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
+						.withBodyFile("psak/psak-hentSakSammendragListe-happy.json")));
 
 		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikFagsakPsak();
 		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
@@ -204,9 +205,10 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("joark/finnjournalposter-empty.json")));
-		stubFor(post("/pensjonsakv1")
+		stubFor(get("/pen/springapi/sak/sammendrag")
 				.willReturn(aResponse().withStatus(INTERNAL_SERVER_ERROR.value())
-						.withBodyFile("psak-hentSakSammendragListe-technical.xml")));
+						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
+						.withBodyFile("psak-hentSakSammendragListe-technical.json")));
 
 		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikFagsakPsak();
 		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
@@ -227,9 +229,10 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("joark/finnjournalposter-empty.json")));
-		stubFor(post("/pensjonsakv1")
+		stubFor(get("/pen/springapi/sak/sammendrag")
 				.willReturn(aResponse().withStatus(BAD_REQUEST.value())
-						.withBodyFile("psak-hentSakSammendragListe-technical.xml")));
+						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
+						.withBodyFile("psak-hentSakSammendragListe-technical.json")));
 
 		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikFagsakPsak();
 		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
@@ -250,10 +253,6 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("joark/finnjournalposter-empty.json")));
-		stubFor(post("/reststs")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("sts/sts-token.json")));
 		stubFor(post("/pdl")
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
@@ -281,10 +280,6 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("joark/finnjournalposter-happy.json")));
-		stubFor(post("/reststs")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("sts/sts-token.json")));
 		stubFor(post("/pdl")
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
@@ -309,10 +304,6 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("joark/finnjournalposter-empty.json")));
-		stubFor(post("/reststs")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("sts/sts-token.json")));
 		stubFor(post("/pdl")
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
@@ -338,10 +329,6 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("joark/finnjournalposter_single_bidragAndSkjerming-happy.json")));
-		stubFor(post("/reststs")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("sts/sts-token.json")));
 		stubFor(post("/pdl")
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
@@ -367,10 +354,6 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("joark/finnjournalposter_single_bidragAndSkjerming-happy.json")));
-		stubFor(post("/reststs")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("sts/sts-token.json")));
 		stubFor(post("/pdl")
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
@@ -400,10 +383,6 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("joark/finnjournalposter_single_bidragAndSkjerming-happy.json")));
-		stubFor(post("/reststs")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("sts/sts-token.json")));
 		stubFor(post("/pdl")
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
@@ -429,10 +408,6 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("joark/finnjournalposter_single_bidragAndSkjerming-happy.json")));
-		stubFor(post("/reststs")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("sts/sts-token.json")));
 		stubFor(post("/pdl")
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
@@ -461,10 +436,6 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("joark/finnjournalposter_single_bidragAndSkjerming-happy.json")));
-		stubFor(post("/reststs")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("sts/sts-token.json")));
 		stubFor(post("/pdl")
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)

@@ -1,20 +1,20 @@
 package no.nav.saf.endpoints;
 
-import com.github.tomakehurst.wiremock.client.WireMock;
-import com.github.tomakehurst.wiremock.core.Options;
 import lombok.SneakyThrows;
 import no.nav.saf.ApplicationConfig;
+import no.nav.saf.config.AzureProperties;
 import no.nav.saf.domain.visningsmodell.Dokumentoversikt;
-import no.nav.saf.endpoints.testconfig.STSTestConfig;
+import no.nav.saf.integration.azure.AzureTokenConsumer;
 import no.nav.security.mock.oauth2.MockOAuth2Server;
 import no.nav.security.mock.oauth2.token.DefaultOAuth2TokenCallback;
 import no.nav.security.token.support.spring.test.EnableMockOAuth2Server;
-import org.apache.cxf.helpers.IOUtils;
-import org.junit.jupiter.api.BeforeEach;
+import org.apache.http.impl.NoConnectionReuseStrategy;
+import org.apache.http.impl.client.HttpClients;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,10 +24,12 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.client.ClientHttpRequestFactory;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
@@ -57,7 +59,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
  * @author Sigurd Midttun, Visma Consulting.
  */
 @ExtendWith(SpringExtension.class)
-@SpringBootTest(classes = {AbstractItest.TestConfig.class, ApplicationConfig.class, STSTestConfig.class},
+@SpringBootTest(classes = {AbstractItest.TestConfig.class, ApplicationConfig.class},
 		webEnvironment = RANDOM_PORT,
 		properties = {"spring.main.allow-bean-definition-overriding=true"})
 @ActiveProfiles(value = {"itest", "wiremock"})
@@ -74,12 +76,40 @@ public abstract class AbstractItest {
 	private static final String STATE_PEP6D = "state_pep6d";
 	private static final String STATE_PEP7D = "state_pep7d";
 
+	protected static void setupHappyPathRestSTS() {
+		stubFor(post("/reststs")
+				.willReturn(aResponse().withStatus(OK.value())
+						.withHeader(org.apache.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("sts/sts-token.json")));
+	}
+
+	protected static void setupHappyPathAzureToken() {
+		stubFor(post("/azure_token")
+				.willReturn(aResponse()
+						.withStatus(OK.value())
+						.withHeader(org.apache.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("azure/token_response_dummy.json")));
+	}
+
 	@Configuration
 	public static class TestConfig {
 		@Bean
 		@Primary
 		ClientHttpRequestFactory clientHttpRequestFactoryTest() {
 			return new SimpleClientHttpRequestFactory();
+		}
+
+		@Bean
+		@Primary
+		AzureTokenConsumer azureTokenConsumer(AzureProperties azureProperties, RestTemplateBuilder restTemplateBuilder) {
+			var httpClient = HttpClients.custom()
+					.setConnectionReuseStrategy(new NoConnectionReuseStrategy())
+					.build();
+			var clientHttpRequestFactory = new HttpComponentsClientHttpRequestFactory(httpClient);
+			clientHttpRequestFactory.setConnectTimeout(5_000);
+			clientHttpRequestFactory.setReadTimeout(20_000);
+
+			return new AzureTokenConsumer(azureProperties, restTemplateBuilder, clientHttpRequestFactory);
 		}
 	}
 
@@ -652,6 +682,6 @@ public abstract class AbstractItest {
 
 	@SneakyThrows
 	protected String stringFromClasspath(String resourcename) {
-		return IOUtils.toString(requireNonNull(this.getClass().getClassLoader().getResourceAsStream(resourcename)));
+		return new String(requireNonNull(this.getClass().getClassLoader().getResourceAsStream(resourcename)).readAllBytes(), StandardCharsets.UTF_8);
 	}
 }

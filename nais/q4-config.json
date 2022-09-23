@@ -3,10 +3,8 @@
   "MIN_REPLICAS": 1,
   "MAX_REPLICAS": 2,
   "ABAC_PDP_ENDPOINT_URL": "https://abac-saf.dev.intern.nav.no/application/asm-pdp/authorize",
-  "PENSJONSAKRS_V1_URL": "https://pensjon-pen-q4.nais.preprod.local/pen/api/pip/hentBrukerOgEnhetstilgangerForSak/v1",
   "SAK_SAKER_URL": "https://sak-q4.nais.preprod.local/api/v1/saker",
   "SECURITYTOKENSERVICE_URL": "https://sts-q4.preprod.local/SecurityTokenServiceProvider/",
-  "PENSJON_V1_ENDPOINTURL": "https://pensjon-pen-q4.nais.preprod.local/pen/services/PensjonSak_v1",
   "FPSAK_URL": "https://fpsak-api.dev.intern.nav.no/fpsak/api/pip/aktoer-for-sak",
   "K9SAK_URL": "http://k9-sak.k9saksbehandling/k9/sak/api/pip/aktoer-for-sak",
   "GRAPHIQL_ENABLED": "true",
@@ -29,9 +27,13 @@
   "BIDRAG_SAK_URL": "https://bidrag-sak.dev.adeo.no/bidrag-sak/pip/sak/",
   "HENTJOURNALSAKINFO_URL": "https://dokarkiv-q4.dev.intern.nav.no/hentjournalsakinfo",
   "SAF_ENDPOINTS_PDL": "https://pdl-api-q1.dev.intern.nav.no/graphql",
+  "SAF_ENDPOINTS_PEN_SAK_SAMMENDRAG": "https://pensjon-pen-q4.nais.preprod.local/pen/springapi/sak/sammendrag",
+  "SAF_ENDPOINTS_PEN_BRUKER_FOR_SAK": "https://pensjon-pen-q4.nais.preprod.local/pen/api/pip/hentBrukerOgEnhetstilgangerForSak/v1",
+  "SAF_ENDPOINTS_PEN_SCOPE": "api://dev-fss.teampensjon.pensjon-pen-q1/.default",
   "SAF_REDIS_HOSTNAME":  "saf-redis-q4",
   "RESTSECURITYTOKENSERVICE_URL": "https://security-token-service.dev.adeo.no/rest/v1/sts/token",
   "APPDYNAMICS": "/apikey/appdynamics/dev",
   "APPD_NAME": "saf_q4",
-  "APP_NAME": "saf-q4"
+  "APP_NAME": "saf-q4",
+  "AZURE_APP_TOKEN_URL": "https://login.microsoftonline.com/966ac572-f5b7-4bbe-aa88-c76419c0f851/oauth2/v2.0/token"
 }

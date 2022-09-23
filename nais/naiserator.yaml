@@ -9,14 +9,10 @@ spec:
   env:
     - name: ABAC_PDP_ENDPOINT_URL
       value: {{ ABAC_PDP_ENDPOINT_URL }}
-    - name: PENSJONSAKRS_V1_URL
-      value: {{ PENSJONSAKRS_V1_URL }}
     - name: SAK_SAKER_URL
       value: {{ SAK_SAKER_URL }}
     - name: SECURITYTOKENSERVICE_URL
       value: {{ SECURITYTOKENSERVICE_URL }}
-    - name: PENSJON_V1_ENDPOINTURL
-      value: {{ PENSJON_V1_ENDPOINTURL }}
     - name: FPSAK_URL
       value: {{ FPSAK_URL }}
     - name: K9SAK_URL
@@ -49,12 +45,20 @@ spec:
       value: {{ BIDRAG_SAK_URL }}
     - name: SAF_ENDPOINTS_PDL
       value: {{SAF_ENDPOINTS_PDL}}
+    - name: SAF_ENDPOINTS_PEN_SAK_SAMMENDRAG
+      value: {{SAF_ENDPOINTS_PEN_SAK_SAMMENDRAG}}
+    - name: SAF_ENDPOINTS_PEN_BRUKER_FOR_SAK
+      value: {{SAF_ENDPOINTS_PEN_BRUKER_FOR_SAK}}
+    - name: SAF_ENDPOINTS_PEN_SCOPE
+      value: {{SAF_ENDPOINTS_PEN_SCOPE}}
     - name: RESTSECURITYTOKENSERVICE_URL
       value: {{ RESTSECURITYTOKENSERVICE_URL }}
     - name: APPD_NAME
       value: {{ APPD_NAME }}
     - name: SAF_REDIS_HOSTNAME
       value: {{ SAF_REDIS_HOSTNAME }}
+    - name: AZURE_APP_TOKEN_URL
+      value: {{ AZURE_APP_TOKEN_URL }}
   image: {{ image }}
   ingresses:
     {{#each INGRESSES}}

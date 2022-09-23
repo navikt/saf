@@ -41,3 +41,6 @@ APP_LOG_HOME_IS_UNDEFINED
 /dist/
 /nbdist/
 /.nb-gradle/
+
+#macos
+.DS_Store
