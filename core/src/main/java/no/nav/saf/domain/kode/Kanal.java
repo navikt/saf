@@ -9,7 +9,7 @@ public enum Kanal {
 	EIA("EIA"),
 	EKST_OPPS("Eksternt oppslag"),
 	LOKAL_UTSKRIFT("Lokal utskrift"),
-	NAV_NO("Ditt NAV"),
+	NAV_NO("Nav.no"),
 	SENTRAL_UTSKRIFT("Sentral utskrift"),
 	SDP("Digital postkasse til innbyggere"),
 	SKAN_NETS("Skanning Nets"),
@@ -19,7 +19,7 @@ public enum Kanal {
 	HELSENETTET("Helsenettet"),
 	INGEN_DISTRIBUSJON("Ingen distribusjon"),
 	UKJENT("Ukjent"),
-	NAV_NO_UINNLOGGET("Ditt NAV uten ID-porten-pålogging"),
+	NAV_NO_UINNLOGGET("Nav.no uten ID-porten-pålogging"),
 	INNSENDT_NAV_ANSATT("Registrert av Nav-ansatt"),
 	NAV_NO_CHAT("Innlogget samtale"),
 	DPVT("Taushetsbelagt digital post til virksomhet");
