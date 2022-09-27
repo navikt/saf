@@ -306,6 +306,11 @@
       "app": "k9-sak",
       "namespace": "k9saksbehandling",
       "cluster": "dev-fss"
+    },
+    {
+      "app": "dokarkiv",
+      "namespace": "teamdokumenthandtering",
+      "cluster": "dev-fss"
     }
   ]
 }
