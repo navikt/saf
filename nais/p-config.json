@@ -234,6 +234,11 @@
       "app": "fptilbake",
       "namespace": "teamforeldrepenger",
       "cluster": "prod-fss"
+    },
+    {
+      "app": "joarkadmin",
+      "namespace": "teamdokumenthandtering",
+      "cluster": "prod-fss"
     }
   ]
 }
