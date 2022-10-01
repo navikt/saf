@@ -146,6 +146,17 @@
       "cluster": "prod-gcp"
     },
     {
+      "app": "yrkesskade-saksbehandling-backend",
+      "namespace": "yrkesskade",
+      "cluster": "prod-gcp"
+    },
+    {
+      "app": "yrkesskade-brevutsending",
+      "namespace": "yrkesskade",
+      "cluster": "prod-gcp",
+      "roles": ["tema_yrk"]
+    },
+    {
       "app": "syfosmpapirmottak",
       "namespace": "teamsykmelding",
       "cluster": "prod-gcp"
