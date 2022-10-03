@@ -65,7 +65,7 @@ For å kjøre saf lokalt er det nødvendig å hente en truststore, sette profil 
 
 ## Deploy
 
-Deploy av saf-koden til miljø gjøres lettest ved hjelp av jenkins. 
+Deploy av saf-koden til miljø gjøres vha. Github Actions.
 
 
 ----------
