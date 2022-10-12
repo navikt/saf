@@ -254,7 +254,7 @@
     {
       "app": "dokumenter",
       "namespace": "aap",
-      "cluster": "dev-gcp"
+      "cluster": "prod-gcp"
     }
   ]
 }
