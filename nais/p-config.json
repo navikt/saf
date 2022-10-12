@@ -250,6 +250,11 @@
       "app": "joarkadmin",
       "namespace": "teamdokumenthandtering",
       "cluster": "prod-fss"
+    },
+    {
+      "app": "dokumenter",
+      "namespace": "aap",
+      "cluster": "dev-gcp"
     }
   ]
 }
