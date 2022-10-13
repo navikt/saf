@@ -59,6 +59,11 @@
       "app": "melosys-q1",
       "namespace": "teammelosys",
       "cluster": "dev-fss"
+    },
+    {
+      "app": "dokarkiv-q1",
+      "namespace": "teamdokumenthandtering",
+      "cluster": "dev-fss"
     }
   ]
 }
