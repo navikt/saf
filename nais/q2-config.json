@@ -189,7 +189,7 @@
       "cluster": "dev-gcp"
     },
     {
-      "app": "pensjon-pak-q2",
+      "app": "pensjon-psak-q2",
       "namespace": "teampensjon",
       "cluster": "dev-fss"
     },
