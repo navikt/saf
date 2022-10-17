@@ -255,6 +255,11 @@
       "app": "dokumenter",
       "namespace": "aap",
       "cluster": "prod-gcp"
+    },
+    {
+      "app": "modiapersonoversikt-api",
+      "namespace": "personoversikt",
+      "cluster": "prod-fss"
     }
   ]
 }
