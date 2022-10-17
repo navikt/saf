@@ -316,6 +316,11 @@
       "app": "dokumenter",
       "namespace": "aap",
       "cluster": "dev-gcp"
+    },
+    {
+      "app": "modiapersonoversikt-api-q1",
+      "namespace": "personoversikt",
+      "cluster": "dev-fss"
     }
   ]
 }

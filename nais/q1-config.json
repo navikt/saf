@@ -64,11 +64,6 @@
       "app": "dokarkiv-q1",
       "namespace": "teamdokumenthandtering",
       "cluster": "dev-fss"
-    },
-    {
-      "app": "modiapersonoversikt-api-q1",
-      "namespace": "personoversikt",
-      "cluster": "dev-fss"
     }
   ]
 }
