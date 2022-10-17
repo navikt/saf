@@ -318,6 +318,11 @@
       "cluster": "dev-gcp"
     },
     {
+      "app": "gosys-q2",
+      "namespace": "isa",
+      "cluster": "dev-fss"
+    },
+    {
       "app": "modiapersonoversikt-api-q1",
       "namespace": "personoversikt",
       "cluster": "dev-fss"
