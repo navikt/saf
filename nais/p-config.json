@@ -93,6 +93,11 @@
       "cluster": "prod-gcp"
     },
     {
+      "app": "gosys",
+      "namespace": "isa",
+      "cluster": "prod-fss"
+    },
+    {
       "app": "kabal-api",
       "namespace": "klage",
       "cluster": "prod-gcp"
