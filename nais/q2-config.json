@@ -174,22 +174,22 @@
       "cluster": "dev-gcp"
     },
     {
-      "app": "eux-helloeu-app-q1",
+      "app": "eux-neessi-q1",
       "namespace": "eessibasis",
       "cluster": "dev-fss"
     },
      {
-      "app": "eux-helloeu-app-q1",
+      "app": "eux-neessi-q1",
       "namespace": "eessibasis",
       "cluster": "dev-gcp"
     },
     {
-      "app": "eux-helloeu-app-q2",
+      "app": "eux-neessi-q2",
       "namespace": "eessibasis",
       "cluster": "dev-fss"
     },
      {
-      "app": "eux-helloeu-app-q2",
+      "app": "eux-neessi-q2",
       "namespace": "eessibasis",
       "cluster": "dev-gcp"
     },
