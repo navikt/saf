@@ -7,6 +7,7 @@ import graphql.execution.ResultPath;
 import graphql.language.SourceLocation;
 import lombok.Getter;
 import lombok.ToString;
+import no.nav.saf.exceptions.SafFunctionalException;
 
 import java.util.Collections;
 import java.util.List;
@@ -14,7 +15,6 @@ import java.util.Map;
 
 import static graphql.Assert.assertNotNull;
 import static java.lang.String.format;
-import static no.nav.saf.endpoints.graphql.GraphQLExceptionHandler.isFunctionalException;
 
 /**
  * Copy of @ExceptionWhileDataFetching
@@ -43,8 +43,8 @@ public class CustomExceptionWhileDataFetching implements GraphQLError {
         return this.exceptionType;
     }
 
-    public ExceptionType getExceptionTypeFromThrowable(Throwable exception) {
-        if (isFunctionalException(exception)) {
+    private static ExceptionType getExceptionTypeFromThrowable(Throwable exception) {
+		if (exception instanceof SafFunctionalException) {
             return ExceptionType.FUNCTIONAL;
         }
         return ExceptionType.TECHNICAL;
