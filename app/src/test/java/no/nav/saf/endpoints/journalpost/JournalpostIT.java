@@ -35,15 +35,12 @@ import static no.nav.saf.graphql.ErrorCode.BAD_REQUEST;
 import static no.nav.saf.graphql.ErrorCode.FORBIDDEN;
 import static no.nav.saf.graphql.ErrorCode.NOT_FOUND;
 import static no.nav.saf.graphql.ErrorCode.SERVER_ERROR;
-import static no.nav.saf.tilgangskontroll.pep.DenyReasons.PEP1G_DENY_REASON;
-import static no.nav.saf.tilgangskontroll.pep.DenyReasons.PEP2_DENY_REASON;
-import static no.nav.saf.tilgangskontroll.pep.DenyReasons.PEP3_DENY_REASON;
-import static no.nav.saf.tilgangskontroll.pep.DenyReasons.PEP4_DENY_REASON;
 import static org.apache.http.HttpHeaders.CONTENT_TYPE;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -174,7 +171,7 @@ class JournalpostIT extends AbstractItest {
 
 		GraphQLResponse graphQLResponse = journalpostQuery();
 		assertErrorWithCode(graphQLResponse, FORBIDDEN.getText());
-		assertErrorWithMessage(graphQLResponse, PEP1G_DENY_REASON);
+		assertErrorWithMessage(graphQLResponse, "ikke tilgang til ressurs tilhørende bruker som har kode 6/7, egen ansatt eller utenfor tillatt geografisk område");
 	}
 
 	@Test
@@ -191,7 +188,7 @@ class JournalpostIT extends AbstractItest {
 
 		GraphQLResponse graphQLResponse = journalpostQuery();
 		assertErrorWithCode(graphQLResponse, FORBIDDEN.getText());
-		assertErrorWithMessage(graphQLResponse, PEP2_DENY_REASON);
+		assertErrorWithMessage(graphQLResponse, "ikke tilgang til tema ressurset tilhører eller på grunn av Forvaltningsloven § 19.");
 	}
 
 	@Test
@@ -224,7 +221,7 @@ class JournalpostIT extends AbstractItest {
 
 		GraphQLResponse graphQLResponse = journalpostQuery();
 		assertErrorWithCode(graphQLResponse, FORBIDDEN.getText());
-		assertErrorWithMessage(graphQLResponse, PEP3_DENY_REASON);
+		assertErrorWithMessage(graphQLResponse, "ikke tilgang til ressurs der en av partene i bidragssaken har kode6/7 eller egen ansatt.");
 	}
 
 	@Test
@@ -241,7 +238,7 @@ class JournalpostIT extends AbstractItest {
 
 		GraphQLResponse graphQLResponse = journalpostQuery();
 		assertErrorWithCode(graphQLResponse, FORBIDDEN.getText());
-		assertErrorWithMessage(graphQLResponse, PEP4_DENY_REASON);
+		assertErrorWithMessage(graphQLResponse, "ikke tilgang til ressurs på grunn av journalposten sin status.");
 	}
 
 	@Test
@@ -299,7 +296,7 @@ class JournalpostIT extends AbstractItest {
 
 	private void assertErrorWithMessage(GraphQLResponse graphQLResponse, String expectedErrorMessage) {
 		assertThat(graphQLResponse.getData().get("journalpost"), nullValue());
-		assertThat(graphQLResponse.getErrors().get(0).getMessage(), is(expectedErrorMessage));
+		assertThat(graphQLResponse.getErrors().get(0).getMessage(), containsString(expectedErrorMessage));
 	}
 
 	@SneakyThrows
