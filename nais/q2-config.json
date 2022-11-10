@@ -339,6 +339,16 @@
       "cluster": "dev-fss"
     },
     {
+      "app": "dokarkiv-q1",
+      "namespace": "teamdokumenthandtering",
+      "cluster": "dev-fss"
+    },
+    {
+      "app": "dokarkiv-q5",
+      "namespace": "teamdokumenthandtering",
+      "cluster": "dev-fss"
+    },
+    {
       "app": "dokumenter",
       "namespace": "aap",
       "cluster": "dev-gcp"
