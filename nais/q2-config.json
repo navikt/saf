@@ -49,6 +49,11 @@
       "cluster": "dev-gcp"
     },
     {
+      "app": "etterlatte-brev-distribusjon",
+      "namespace": "etterlatte",
+      "cluster": "dev-gcp"
+    },
+    {
       "app": "k9-punsj",
       "namespace": "k9saksbehandling",
       "cluster": "dev-fss"
