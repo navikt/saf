@@ -22,10 +22,10 @@ import static no.nav.saf.domain.DomainConstants.TILGANG_BRUKER;
 import static no.nav.saf.domain.kode.Journalstatus.MOTTATT;
 import static no.nav.saf.graphql.ErrorCode.FORBIDDEN;
 import static no.nav.saf.graphql.ErrorCode.NOT_FOUND;
-import static no.nav.saf.tilgangskontroll.pep.DenyReasons.PEP1G_DENY_REASON;
-import static no.nav.saf.tilgangskontroll.pep.DenyReasons.PEP2_DENY_REASON;
-import static no.nav.saf.tilgangskontroll.pep.DenyReasons.PEP3_DENY_REASON;
-import static no.nav.saf.tilgangskontroll.pep.DenyReasons.PEP4_DENY_REASON;
+import static no.nav.saf.tilgangskontroll.pep.DenyReasonFactory.createPep1gDenyReason;
+import static no.nav.saf.tilgangskontroll.pep.DenyReasonFactory.createPep2DenyReason;
+import static no.nav.saf.tilgangskontroll.pep.DenyReasonFactory.createPep3DenyReason;
+import static no.nav.saf.tilgangskontroll.pep.DenyReasonFactory.createPep4DenyReason;
 
 /**
  * @author Joakim Bjørnstad, Jbit AS
@@ -80,14 +80,14 @@ class JournalpostQuery {
 
 			boolean pep1Access = pep1g.hasAccess(tilgangBruker, safRequestContext);
 			if (!pep1Access) {
-				throw GraphQLException.of(FORBIDDEN, environment, PEP1G_DENY_REASON);
+				throw GraphQLException.of(FORBIDDEN, environment, createPep1gDenyReason(safRequestContext));
 			}
 
 			final TilgangSak tilgangSak = journalpostTilgangRepository.findTilgangSak(arkivsak, tilgangBruker, safRequestContext);
 
 			boolean pep2Access = pep2.hasAccess(tilgangSak, safRequestContext);
 			if (!pep2Access) {
-				throw GraphQLException.of(FORBIDDEN, environment, PEP2_DENY_REASON);
+				throw GraphQLException.of(FORBIDDEN, environment, createPep2DenyReason(safRequestContext));
 			}
 
 			final TilgangJournalpost tilgangJournalpost = journalpostTilgangRepository.findTilgangJournalpostFromSafRequestContext(safRequestContext, tilgangSak);
@@ -98,12 +98,12 @@ class JournalpostQuery {
 
 			boolean pep3Access = pep3.hasAccess(tilgangSak, safRequestContext);
 			if (!pep3Access) {
-				throw GraphQLException.of(FORBIDDEN, environment, PEP3_DENY_REASON);
+				throw GraphQLException.of(FORBIDDEN, environment, createPep3DenyReason(safRequestContext));
 			}
 
 			boolean pep4Access = pep4.hasAccess(tilgangJournalpost, safRequestContext);
 			if (!pep4Access) {
-				throw GraphQLException.of(FORBIDDEN, environment, PEP4_DENY_REASON);
+				throw GraphQLException.of(FORBIDDEN, environment, createPep4DenyReason(safRequestContext));
 			}
 
 			tilgangJournalpost.getDokumenter().forEach(tilgangDokumentInfo -> {

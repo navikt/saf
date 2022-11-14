@@ -6,7 +6,6 @@ import graphql.execution.DataFetcherExceptionHandlerResult;
 import graphql.execution.ResultPath;
 import graphql.language.SourceLocation;
 import lombok.extern.slf4j.Slf4j;
-import no.nav.saf.exceptions.SafFunctionalException;
 import org.springframework.stereotype.Component;
 
 /**
@@ -30,7 +29,4 @@ public class GraphQLExceptionHandler implements DataFetcherExceptionHandler {
 				.build();
 	}
 
-	static boolean isFunctionalException(Throwable e) {
-		return e instanceof SafFunctionalException;
-	}
 }

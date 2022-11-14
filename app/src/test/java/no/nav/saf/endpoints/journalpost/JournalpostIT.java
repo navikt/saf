@@ -35,24 +35,22 @@ import static no.nav.saf.graphql.ErrorCode.BAD_REQUEST;
 import static no.nav.saf.graphql.ErrorCode.FORBIDDEN;
 import static no.nav.saf.graphql.ErrorCode.NOT_FOUND;
 import static no.nav.saf.graphql.ErrorCode.SERVER_ERROR;
-import static no.nav.saf.tilgangskontroll.pep.DenyReasons.PEP1G_DENY_REASON;
-import static no.nav.saf.tilgangskontroll.pep.DenyReasons.PEP2_DENY_REASON;
-import static no.nav.saf.tilgangskontroll.pep.DenyReasons.PEP3_DENY_REASON;
-import static no.nav.saf.tilgangskontroll.pep.DenyReasons.PEP4_DENY_REASON;
+import static no.nav.saf.tilgangskontroll.pep.DenyReasonFactory.PEP1G_DENY_REASON;
+import static no.nav.saf.tilgangskontroll.pep.DenyReasonFactory.PEP2_DENY_REASON;
+import static no.nav.saf.tilgangskontroll.pep.DenyReasonFactory.PEP3_DENY_REASON;
+import static no.nav.saf.tilgangskontroll.pep.DenyReasonFactory.PEP4_DENY_REASON;
 import static org.apache.http.HttpHeaders.CONTENT_TYPE;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
-/**
- * @author Joakim Bjørnstad, Jbit AS
- */
 class JournalpostIT extends AbstractItest {
 	private final String JOURNALPOST_ID = "400000000";
 	private final String GSAK_ID = "100000000";
@@ -299,7 +297,7 @@ class JournalpostIT extends AbstractItest {
 
 	private void assertErrorWithMessage(GraphQLResponse graphQLResponse, String expectedErrorMessage) {
 		assertThat(graphQLResponse.getData().get("journalpost"), nullValue());
-		assertThat(graphQLResponse.getErrors().get(0).getMessage(), is(expectedErrorMessage));
+		assertThat(graphQLResponse.getErrors().get(0).getMessage(), containsString(expectedErrorMessage));
 	}
 
 	@SneakyThrows
