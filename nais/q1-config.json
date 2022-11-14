@@ -316,6 +316,11 @@
       "app": "modiapersonoversikt-api-q1",
       "namespace": "personoversikt",
       "cluster": "dev-fss"
+    },
+    {
+      "app": "sif-innsyn-api",
+      "namespace": "dusseldorf",
+      "cluster": "dev-gcp"
     }
   ]
 }
