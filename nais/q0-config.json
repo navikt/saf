@@ -20,7 +20,6 @@
   ],
   "SRVSAF": "/serviceuser/data/dev/srvsaf",
   "NO_NAV_SECURITY_JWT_ISSUER_AZUREV1_ACCEPTED_AUDIENCE": "38e07d31-659d-4595-939a-f18dce3446c5",
-  "NO_NAV_SECURITY_JWT_ISSUER_AZUREV2_ACCEPTED_AUDIENCE": "c7adbfbb-1b1e-41f6-9b7a-af9627c04998",
   "NO_NAV_SECURITY_JWT_ISSUER_OPENAM_ACCEPTED_AUDIENCE": "gosys-dokument-auth-proxy-q0,gosys-localhost,gosys-nais-q0,gosys-q0,joarkadmin-localhost,joarkadmin-q0,modialogin-q0,modiabrukerdialog-q0,veilarblogin-q0,ida-q,eessi-pensjon-frontend-api-fss-q0,gosys-dokument-auth-proxy-q0,eux-helloeu-app-q0,k9-fordel-q0,bisys-q0,bidrag-ui-q0,bidrag-q-localhost,pensjon-psak-q0,psak-localhost",
   "NO_NAV_SECURITY_JWT_ISSUER_RESTSTS_ACCEPTED_AUDIENCE": "srvpensjon,srvpselv,srvdp-graphql,srvinfotrygd-joark,srvjfr-manuell-opp,srvsyfosmpapirmottak,srveux-app,srvdokdisteformidl,srvdokdistfordeling,srvmelosys,srvfamilie-ks-opps,srvmedlemskap,srvpensr,srvpermref-journalf,srvdolly,srvregpapirsm,srvdp-proxy,srvklage-saksbeh,srvmeldekortservice,srvspberegning,srvdokproduksjon,srvdokumentfordeling",
   "SAF_PRIVILEGIEDSERVICEUSERS": "srvdokdistfordeling,srvdokdisteformidling,srvdokarkivproxy,srvtilbakemeldings,srvomsitramme,srvmelosys,srvdolly,srvdolly_u,srvdokproduksjon",
@@ -29,12 +28,29 @@
   "SAF_ENDPOINTS_PDL": "https://pdl-api-q1.dev.intern.nav.no/graphql",
   "SAF_ENDPOINTS_PEN_SAK_SAMMENDRAG": "https://pensjon-pen-q0.nais.preprod.local/pen/springapi/sak/sammendrag",
   "SAF_ENDPOINTS_PEN_BRUKER_FOR_SAK": "https://pensjon-pen-q0.nais.preprod.local/pen/api/pip/hentBrukerOgEnhetstilgangerForSak/v1",
-  "SAF_ENDPOINTS_PEN_SCOPE": "api://dev-fss.teampensjon.pensjon-pen-q1/.default",
+  "SAF_ENDPOINTS_PEN_SCOPE": "api://dev-fss.teampensjon.pensjon-pen-q0/.default",
   "SAF_REDIS_HOSTNAME":  "saf-redis-q0",
   "RESTSECURITYTOKENSERVICE_URL": "https://security-token-service.dev.adeo.no/rest/v1/sts/token",
   "APPDYNAMICS": "/apikey/appdynamics/dev",
   "APPD_NAME": "saf_q0",
   "APP_NAME": "saf-q0",
   "AZURE_APP_TOKEN_URL": "https://login.microsoftonline.com/966ac572-f5b7-4bbe-aa88-c76419c0f851/oauth2/v2.0/token",
-  "AZURE_IAC_RULES": []
+  "AZURE_IAC_RULES": [
+    {
+      "app": "dokarkiv-q0",
+      "namespace": "teamdokumenthandtering",
+      "cluster": "dev-fss"
+    },
+    {
+      "app": "arena",
+      "namespace": "teamarenanais",
+      "cluster": "dev-fss",
+      "roles": ["tema_aap", "tema_dag", "tema_fei", "tema_ind", "tema_opp", "tema_sym", "tema_tso", "tema_tsr"]
+    },
+    {
+      "app": "gosys-q0",
+      "namespace": "isa",
+      "cluster": "dev-fss"
+    }
+  ]
 }
