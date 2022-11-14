@@ -35,6 +35,10 @@ import static no.nav.saf.graphql.ErrorCode.BAD_REQUEST;
 import static no.nav.saf.graphql.ErrorCode.FORBIDDEN;
 import static no.nav.saf.graphql.ErrorCode.NOT_FOUND;
 import static no.nav.saf.graphql.ErrorCode.SERVER_ERROR;
+import static no.nav.saf.tilgangskontroll.pep.DenyReasonFactory.PEP1G_DENY_REASON;
+import static no.nav.saf.tilgangskontroll.pep.DenyReasonFactory.PEP2_DENY_REASON;
+import static no.nav.saf.tilgangskontroll.pep.DenyReasonFactory.PEP3_DENY_REASON;
+import static no.nav.saf.tilgangskontroll.pep.DenyReasonFactory.PEP4_DENY_REASON;
 import static org.apache.http.HttpHeaders.CONTENT_TYPE;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
@@ -47,9 +51,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
-/**
- * @author Joakim Bjørnstad, Jbit AS
- */
 class JournalpostIT extends AbstractItest {
 	private final String JOURNALPOST_ID = "400000000";
 	private final String GSAK_ID = "100000000";
@@ -171,7 +172,7 @@ class JournalpostIT extends AbstractItest {
 
 		GraphQLResponse graphQLResponse = journalpostQuery();
 		assertErrorWithCode(graphQLResponse, FORBIDDEN.getText());
-		assertErrorWithMessage(graphQLResponse, "ikke tilgang til ressurs tilhørende bruker som har kode 6/7, egen ansatt eller utenfor tillatt geografisk område");
+		assertErrorWithMessage(graphQLResponse, PEP1G_DENY_REASON);
 	}
 
 	@Test
@@ -188,7 +189,7 @@ class JournalpostIT extends AbstractItest {
 
 		GraphQLResponse graphQLResponse = journalpostQuery();
 		assertErrorWithCode(graphQLResponse, FORBIDDEN.getText());
-		assertErrorWithMessage(graphQLResponse, "ikke tilgang til tema ressurset tilhører eller på grunn av Forvaltningsloven § 19.");
+		assertErrorWithMessage(graphQLResponse, PEP2_DENY_REASON);
 	}
 
 	@Test
@@ -221,7 +222,7 @@ class JournalpostIT extends AbstractItest {
 
 		GraphQLResponse graphQLResponse = journalpostQuery();
 		assertErrorWithCode(graphQLResponse, FORBIDDEN.getText());
-		assertErrorWithMessage(graphQLResponse, "ikke tilgang til ressurs der en av partene i bidragssaken har kode6/7 eller egen ansatt.");
+		assertErrorWithMessage(graphQLResponse, PEP3_DENY_REASON);
 	}
 
 	@Test
@@ -238,7 +239,7 @@ class JournalpostIT extends AbstractItest {
 
 		GraphQLResponse graphQLResponse = journalpostQuery();
 		assertErrorWithCode(graphQLResponse, FORBIDDEN.getText());
-		assertErrorWithMessage(graphQLResponse, "ikke tilgang til ressurs på grunn av journalposten sin status.");
+		assertErrorWithMessage(graphQLResponse, PEP4_DENY_REASON);
 	}
 
 	@Test
