@@ -72,7 +72,8 @@
     {
       "app": "etterlatte-brev-distribusjon",
       "namespace": "etterlatte",
-      "cluster": "dev-gcp"
+      "cluster": "dev-gcp",
+      "roles": ["tema_pen"]
     },
     {
       "app": "k9-punsj",
