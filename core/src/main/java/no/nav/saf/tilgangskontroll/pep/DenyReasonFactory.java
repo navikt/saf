@@ -1,5 +1,7 @@
 package no.nav.saf.tilgangskontroll.pep;
 
+import no.nav.saf.domain.kode.Tema;
+import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 
 /**
@@ -12,7 +14,7 @@ public final class DenyReasonFactory {
 			" har ikke tilgang til ressurs tilhørende bruker som har kode 6/7 (strengt fortrolig/fortrolig adressesperre), egen ansatt eller utenfor tillatt geografisk område.";
 
 	private static final String PEP1G_DENY_SAKSBEHANDLER_INFO =
-			"Saksbehandler må ha tilgang til Enhet som brukeren er tilknyttet i AXSYS.";
+			" Saksbehandler må ha tilgang til Enhet som brukeren er tilknyttet i AXSYS.";
 	public static final String PEP2_DENY_REASON =
 			" har ikke tilgang til tema ressursen tilhører eller på grunn av Forvaltningsloven § 19.";
 
@@ -39,29 +41,41 @@ public final class DenyReasonFactory {
 	private static String saksbehandlerEllerSystem(boolean isSystem) {
 		return isSystem ? "System" : "Saksbehandler";
 	}
+
 	public static String createPep1gDenyReason(SafRequestContext safRequestContext) {
 		boolean isSystem = safRequestContext.getSecurityContext().isSystem();
 		return DENY_PREFIX + saksbehandlerEllerSystem(isSystem) + PEP1G_DENY_REASON +
 				(isSystem ? "" : PEP1G_DENY_SAKSBEHANDLER_INFO) + CONTACT_US_SUFFIX;
 	}
+
 	public static String createPep2DenyReason(SafRequestContext safRequestContext) {
 		return DENY_PREFIX + saksbehandlerEllerSystem(safRequestContext.getSecurityContext().isSystem()) + PEP2_DENY_REASON;
 	}
-	public static String createPep2dDenyReason(SafRequestContext safRequestContext, String tema) {
-		return DENY_PREFIX + (safRequestContext.getSecurityContext().isSystem() ? PEP2D_DENY_SYSTEM_INFO.formatted(tema) : PEP2D_DENY_SAKSBEHANDLER_INFO.formatted(tema)) + CONTACT_US_SUFFIX;
+
+	public static String createPep2dDenyReason(SafRequestContext safRequestContext, TilgangSak tilgangSak) {
+		if (tilgangSak == null || tilgangSak.getTema() == null) {
+			return DENY_PREFIX + (safRequestContext.getSecurityContext().isSystem() ? PEP2D_DENY_SYSTEM_INFO.formatted("ukjent") : PEP2D_DENY_SAKSBEHANDLER_INFO.formatted("UKJENT")) + CONTACT_US_SUFFIX;
+		}
+		Tema tema = tilgangSak.getTema();
+		return DENY_PREFIX + (safRequestContext.getSecurityContext().isSystem() ? PEP2D_DENY_SYSTEM_INFO.formatted(tema.name().toLowerCase()) : PEP2D_DENY_SAKSBEHANDLER_INFO.formatted(tema.name())) + CONTACT_US_SUFFIX;
 	}
+
 	public static String createPep3DenyReason(SafRequestContext safRequestContext) {
 		return DENY_PREFIX + saksbehandlerEllerSystem(safRequestContext.getSecurityContext().isSystem()) + PEP3_DENY_REASON;
 	}
+
 	public static String createPep4DenyReason(SafRequestContext safRequestContext) {
 		return DENY_PREFIX + saksbehandlerEllerSystem(safRequestContext.getSecurityContext().isSystem()) + PEP4_DENY_REASON;
 	}
+
 	public static String createPep5DenyReason(SafRequestContext safRequestContext) {
 		return DENY_PREFIX + saksbehandlerEllerSystem(safRequestContext.getSecurityContext().isSystem()) + PEP5_DENY_REASON;
 	}
+
 	public static String createPep6dDenyReason(SafRequestContext safRequestContext) {
 		return DENY_PREFIX + saksbehandlerEllerSystem(safRequestContext.getSecurityContext().isSystem()) + PEP6D_DENY_REASON;
 	}
+
 	public static String createPep7dDenyReason(SafRequestContext safRequestContext) {
 		return DENY_PREFIX + saksbehandlerEllerSystem(safRequestContext.getSecurityContext().isSystem()) + PEP7D_DENY_REASON;
 	}

@@ -105,7 +105,7 @@ public class HentDokumentDomainCoordinatorImpl implements HentDokumentDomainCoor
 		if (tilgangJournalpost.getJournalstatus() != Journalstatus.MOTTATT) {
 			AbacAnswer pep2dResponse = pep2d.hasAccessWithAnswer(tilgangSak, safRequestContext);
 			if (pep2dResponse.isDeny()) {
-				throw new HentdokumentTilgangskontrollException(createPep2dDenyReason(safRequestContext, tilgangSak.getTema().getTemanavn()), pep2dResponse.getDenyReasonSporing());
+				throw new HentdokumentTilgangskontrollException(createPep2dDenyReason(safRequestContext, tilgangSak), pep2dResponse.getDenyReasonSporing());
 			}
 		}
 
