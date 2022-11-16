@@ -309,6 +309,16 @@
       "cluster": "dev-fss"
     },
     {
+      "app": "k9-klage",
+      "namespace": "k9saksbehandling",
+      "cluster": "dev-fss"
+    },
+    {
+      "app": "k9-tilbake",
+      "namespace": "k9saksbehandling",
+      "cluster": "dev-fss"
+    },
+    {
       "app": "dokarkiv-q1",
       "namespace": "teamdokumenthandtering",
       "cluster": "dev-fss"
