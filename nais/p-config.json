@@ -112,6 +112,11 @@
       "cluster": "prod-gcp"
     },
     {
+      "app": "klage-dittnav-api",
+      "namespace": "klage",
+      "cluster": "prod-gcp"
+    },
+    {
       "app": "smregistrering-backend",
       "namespace": "teamsykmelding",
       "cluster": "prod-gcp"
