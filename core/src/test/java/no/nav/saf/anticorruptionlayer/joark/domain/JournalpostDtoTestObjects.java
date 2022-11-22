@@ -40,6 +40,7 @@ public class JournalpostDtoTestObjects {
 	static final Date JOURNAL_DATO = new Date(6000L);
 	static final Date MOTTAT_DATO = new Date(7000L);
 	static final Date DATO_FERDIGSTILT = new Date(8000L);
+	static final Date LEST_DATO = new Date(9000L);
 	static final String FNR = "12345678901";
 	static final String AKTOER_ID = "4321098765431";
 	static final String SAKS_ID = "12345";
@@ -81,6 +82,7 @@ public class JournalpostDtoTestObjects {
 				.journalstatus(journalStatusCode)
 				.journalDato(JOURNAL_DATO)
 				.dokumentDato(DOKUMENT_DATO)
+				.datoLest(LEST_DATO)
 				.avsReturDato(AVS_RETUR_DATO)
 				.sendtPrintDato(SENDT_PRINT_DATO)
 				.ekspedertDato(EKSPEDERT_DATO)
