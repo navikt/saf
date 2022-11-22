@@ -1,8 +1,6 @@
 package no.nav.saf.domain.kode;
 
-/**
- * @author Joakim Bjørnstad, Jbit AS
- */
+
 public enum Datotype {
 	DATO_DOKUMENT,
 	DATO_AVS_RETUR,
