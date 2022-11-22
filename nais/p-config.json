@@ -109,7 +109,8 @@
     {
       "app": "kabal-document",
       "namespace": "klage",
-      "cluster": "prod-gcp"
+      "cluster": "prod-gcp",
+      "roles": ["tema_alle"]
     },
     {
       "app": "klage-dittnav-api",
