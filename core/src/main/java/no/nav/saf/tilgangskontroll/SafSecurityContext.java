@@ -54,6 +54,7 @@ public class SafSecurityContext {
 	private static final String OPENAM_UKJENT_AUDIENCE = "openamUkjentAudience";
 	static final String NAVIDENT_REGEX = "^[a-zA-Z]\\d{6}$";
 	static final Pattern NAVIDENT_PATTERN = Pattern.compile(NAVIDENT_REGEX);
+	public static final String AZURE_ROLE_ALLE_TEMA = "tema_alle";
 
 	private final TokenValidationContext tokenValidationContext;
 	private final JwtToken jwtToken;
@@ -144,12 +145,16 @@ public class SafSecurityContext {
 	/**
 	 * Sjekker om konsument har tilgang til tema gjennom rollen "tema_{tema}" i roles claim på token. (Azure)
 	 * Tema rollen gir tilgang til metadata (kun relevant for tema FAR) og dokumenter.
+	 * tema_alle rollen gir tilgang til alle tema.
 	 * Se nais/naiserator.yaml azureator config
 	 *
 	 * @param tema Temakode. Eksempel "FOR"
 	 * @return true hvis tema rollen finnes. Ellers false
 	 */
 	public boolean hasTemaAureRole(String tema) {
+		if(containsAzureRole(AZURE_ROLE_ALLE_TEMA)) {
+			return true;
+		}
 		return containsAzureRole("tema_" + tema.toLowerCase());
 	}
 
