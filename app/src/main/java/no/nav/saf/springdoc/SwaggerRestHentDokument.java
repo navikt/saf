@@ -7,13 +7,15 @@ import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.http.HttpHeaders;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+
+import static org.springframework.http.HttpHeaders.CONTENT_DISPOSITION;
+import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 
 @ConditionalOnProperty(
 		value = {"springdoc.enabled"},
@@ -28,8 +30,8 @@ import java.lang.annotation.Target;
 @ApiResponses(value = {
 		@ApiResponse(responseCode = "200", description = "OK - dokument returneres. Representasjonen er en base64 encoded string.",
 				headers = {
-						@Header(name = HttpHeaders.CONTENT_TYPE, description = "Mimetypen til dokumentet. Eksempel: `Content-Type: application/pdf`.", required = true),
-						@Header(name = HttpHeaders.CONTENT_DISPOSITION, description = """
+						@Header(name = CONTENT_TYPE, description = "Mimetypen til dokumentet. Eksempel: `Content-Type: application/pdf`.", required = true),
+						@Header(name = CONTENT_DISPOSITION, description = """
 								Hvordan dokumentet skal vises og filnavnet hvis det skal lastes ned.
 								Standardverdi er inline for visning. Filnavnet er formattert som `<dokumentInfoId>_<variantformat>.<filendelse>`.
 								Fileendelse vil være tilpasset for mimetypen, f.eks Content-Type: application/pdf vil gi filendelse .pdf.
