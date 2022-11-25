@@ -280,6 +280,11 @@
       "app": "sif-innsyn-api",
       "namespace": "dusseldorf",
       "cluster": "prod-gcp"
+    },
+    {
+      "app": "hm-joark-listener",
+      "namespace": "teamdigihot",
+      "cluster": "prod-gcp"
     }
   ]
 }

@@ -343,6 +343,11 @@
       "app": "sif-innsyn-api",
       "namespace": "dusseldorf",
       "cluster": "dev-gcp"
+    },
+    {
+      "app": "hm-joark-listener",
+      "namespace": "teamdigihot",
+      "cluster": "dev-gcp"
     }
   ]
 }
