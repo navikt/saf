@@ -363,6 +363,11 @@
       "app": "modiapersonoversikt-api-q1",
       "namespace": "personoversikt",
       "cluster": "dev-fss"
+    },
+    {
+      "app": "hm-joark-listener",
+      "namespace": "teamdigihot",
+      "cluster": "dev-gcp"
     }
   ]
 }
