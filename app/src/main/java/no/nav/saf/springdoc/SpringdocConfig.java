@@ -9,11 +9,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpHeaders;
 
-/**
- * @author Joakim Bjørnstad, Jbit AS
- */
+import static io.swagger.v3.oas.models.security.SecurityScheme.In.HEADER;
+import static io.swagger.v3.oas.models.security.SecurityScheme.Type.HTTP;
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
+
 @ConditionalOnProperty(
 		value = {"springdoc.enabled"},
 		havingValue = "true"
@@ -27,22 +27,24 @@ public class SpringdocConfig {
 				.info(new Info()
 						.title("saf REST API")
 						.description("""
-								Her dokumenteres REST tjenestegrensesnittet til sak og arkivfasade (SAF). <br/><br/>
-								Til autentisering brukes OIDC-token (JWT via OAuth2.0). Følgende format må brukes i Authorize sitt input-felt "Value": <strong> Bearer {token} </strong>.\s
-								Eksempel på verdi i input-feltet: <strong> Bearer eYdmifml0ejugm </strong>. Et gyldig token kommer til å ha mange flere karakterer enn i eksempelet.<br/><br/>
-								Tokens for manuell test kan hentes fra <a href="https://ida.adeo.no/">IDA</a>. For maskinell test og produksjon kan tokens komme fra Azure V2, NAV REST-STS eller OpenAM.
+								Her dokumenteres REST tjenestegrensesnittet til sak- og arkivfasade (SAF).
+								
+								Til autentisering brukes OIDC-token (JWT via OAuth 2.0). Følgende format må brukes i Authorize sitt input-felt "Value": <strong>Bearer {token}</strong>.
+								Eksempel på verdi i input-feltet: <strong> Bearer eYdmifml0ejugm</strong>. Et gyldig token kommer til å ha mange flere karakterer enn i eksempelet.
+								
+								Tokens for manuell test kan hentes fra <a href="https://ida.intern.nav.no/">IDA</a>. For maskinell test og produksjon kan tokens komme fra Azure V2, NAV REST-STS eller OpenAM.
 								""")
 						.version(version))
 				.components(
 						new Components()
 								.addSecuritySchemes("Authorization",
 										new SecurityScheme()
-												.type(SecurityScheme.Type.HTTP)
+												.type(HTTP)
 												.scheme("Bearer")
 												.bearerFormat("JWT")
-												.in(SecurityScheme.In.HEADER)
+												.in(HEADER)
 												.description("Eksempel på verdi som skal inn i Value-feltet (Bearer trengs altså ikke å oppgis): 'eyAidH...'")
-												.name(HttpHeaders.AUTHORIZATION)
+												.name(AUTHORIZATION)
 								)
 				)
 				.addSecurityItem(
