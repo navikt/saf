@@ -48,7 +48,7 @@ public class JournalpostDto {
 	private Date avsReturDato;
 	private Date sendtPrintDato;
 	private Date ekspedertDato;
-	private Date datoLest;
+	private Date lestDato;
 	private SkjermingTypeCode skjerming;
 	private List<TilleggsopplysningDto> tilleggsopplysninger;
 	private List<DokumentInfoDto> dokumenter;

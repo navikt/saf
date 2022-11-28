@@ -82,7 +82,7 @@ public class JournalpostDtoTestObjects {
 				.journalstatus(journalStatusCode)
 				.journalDato(JOURNAL_DATO)
 				.dokumentDato(DOKUMENT_DATO)
-				.datoLest(LEST_DATO)
+				.lestDato(LEST_DATO)
 				.avsReturDato(AVS_RETUR_DATO)
 				.sendtPrintDato(SENDT_PRINT_DATO)
 				.ekspedertDato(EKSPEDERT_DATO)
