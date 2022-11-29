@@ -283,6 +283,9 @@ public class JournalpostDtoMapper {
 				if (journalpostDto.getAvsReturDato() != null) {
 					relevanteDatoer.add(new RelevantDato(journalpostDto.getAvsReturDato(), Datotype.DATO_AVS_RETUR));
 				}
+				if (journalpostDto.getLestDato() != null) {
+					relevanteDatoer.add(new RelevantDato(journalpostDto.getLestDato(), Datotype.DATO_LEST));
+				}
 				break;
 			default:
 				return relevanteDatoer;
