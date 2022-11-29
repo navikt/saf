@@ -51,6 +51,11 @@
       "app": "gosys-q0",
       "namespace": "isa",
       "cluster": "dev-fss"
+    },
+    {
+      "app": "pensjon-psak-q0",
+      "namespace": "teampensjon",
+      "cluster": "dev-fss"
     }
   ]
 }

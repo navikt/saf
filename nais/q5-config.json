@@ -39,6 +39,11 @@
       "app": "dokarkiv-q5",
       "namespace": "teamdokumenthandtering",
       "cluster": "dev-fss"
+    },
+    {
+      "app": "pensjon-psak-q5",
+      "namespace": "teampensjon",
+      "cluster": "dev-fss"
     }
   ]
 }
