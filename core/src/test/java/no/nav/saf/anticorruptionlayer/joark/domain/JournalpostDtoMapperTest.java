@@ -10,6 +10,7 @@ import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.dto.SaksrelasjonD
 import no.nav.saf.cache.KeyGeneratorLocalCaching;
 import no.nav.saf.domain.Arkivsak;
 import no.nav.saf.domain.kode.Arkivsakssystem;
+import no.nav.saf.domain.kode.Datotype;
 import no.nav.saf.domain.kode.Dokumentstatus;
 import no.nav.saf.domain.kode.Journalposttype;
 import no.nav.saf.domain.kode.Skjerming;
@@ -58,6 +59,7 @@ import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObje
 import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.JOURNALPOST_ID;
 import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.JOURNAL_DATO;
 import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.KANAL_REFERANSE_ID;
+import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.LEST_DATO;
 import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.LOGISK_VEDLEGG_ID;
 import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.LOGISK_VEDLEGG_TITTEL;
 import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.MOTTAT_DATO;
@@ -81,6 +83,7 @@ import static no.nav.saf.domain.kode.Datotype.DATO_AVS_RETUR;
 import static no.nav.saf.domain.kode.Datotype.DATO_DOKUMENT;
 import static no.nav.saf.domain.kode.Datotype.DATO_EKSPEDERT;
 import static no.nav.saf.domain.kode.Datotype.DATO_JOURNALFOERT;
+import static no.nav.saf.domain.kode.Datotype.DATO_LEST;
 import static no.nav.saf.domain.kode.Datotype.DATO_REGISTRERT;
 import static no.nav.saf.domain.kode.Datotype.DATO_SENDT_PRINT;
 import static no.nav.saf.domain.kode.Dokumentstatus.KASSERT;
@@ -134,6 +137,7 @@ class JournalpostDtoMapperTest {
 		assertThat(journalpost.getRelevanteDatoer(), hasItem(new RelevantDato(AVS_RETUR_DATO, DATO_AVS_RETUR)));
 		assertThat(journalpost.getRelevanteDatoer(), hasItem(new RelevantDato(SENDT_PRINT_DATO, DATO_SENDT_PRINT)));
 		assertThat(journalpost.getRelevanteDatoer(), hasItem(new RelevantDato(EKSPEDERT_DATO, DATO_EKSPEDERT)));
+		assertThat(journalpost.getRelevanteDatoer(), hasItem(new RelevantDato(LEST_DATO, DATO_LEST)));
 		assertThat(journalpost.getRelevanteDatoer(), not(hasItem(new RelevantDato(MOTTAT_DATO, DATO_REGISTRERT))));
 	}
 
@@ -154,6 +158,7 @@ class JournalpostDtoMapperTest {
 		assertThat(journalpost.getRelevanteDatoer(), not(hasItem(new RelevantDato(AVS_RETUR_DATO, DATO_AVS_RETUR))));
 		assertThat(journalpost.getRelevanteDatoer(), not(hasItem(new RelevantDato(SENDT_PRINT_DATO, DATO_SENDT_PRINT))));
 		assertThat(journalpost.getRelevanteDatoer(), not(hasItem(new RelevantDato(EKSPEDERT_DATO, DATO_EKSPEDERT))));
+		assertThat(journalpost.getRelevanteDatoer(), not(hasItem(new RelevantDato(LEST_DATO, DATO_LEST))));
 		assertThat(journalpost.getRelevanteDatoer(), hasItem(new RelevantDato(MOTTAT_DATO, DATO_REGISTRERT)));
 		assertThat(journalpost.getRelevanteDatoer(), hasItem(new RelevantDato(JOURNAL_DATO, DATO_JOURNALFOERT)));
 	}
@@ -580,7 +585,7 @@ class JournalpostDtoMapperTest {
 		assertEquals(AVSENDER_MOTTAKER_ID, journalpost.getAvsenderMottakerId());
 		assertEquals(AVSENDER_MOTTAKER_NAVN, journalpost.getAvsenderMottakerNavn());
 		assertEquals(AVSENDER_MOTTAKER_LAND, journalpost.getAvsenderMottakerLand());
-		assertEquals(JOURNALFOERENDE_ENHET, journalpost.getJournalforendeEnhet());
+		assertEquals(JOURNALFOERENDE_ENHET, journalpost.getJournalfoerendeEnhet());
 		assertEquals(OPPRETTET_AV_NAVN, journalpost.getOpprettetAvNavn());
 		assertEquals(POL, journalpost.getSkjerming());
 

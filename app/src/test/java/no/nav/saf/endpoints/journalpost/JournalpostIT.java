@@ -26,6 +26,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static no.nav.saf.anticorruptionlayer.joark.domain.kode.Sakstype.GENERELL_SAK;
 import static no.nav.saf.domain.kode.Datotype.DATO_EKSPEDERT;
+import static no.nav.saf.domain.kode.Datotype.DATO_LEST;
 import static no.nav.saf.domain.kode.Dokumentstatus.FERDIGSTILT;
 import static no.nav.saf.domain.kode.Kanal.SDP;
 import static no.nav.saf.domain.kode.Tema.PEN;
@@ -103,6 +104,7 @@ class JournalpostIT extends AbstractItest {
 		assertThat(journalpost.getKanalnavn(), is(SDP.getKanalnavn()));
 		assertThat(journalpost.getDatoOpprettet(), notNullValue());
 		assertThat(journalpost.getRelevanteDatoer().get(0).getDatotype(), is(DATO_EKSPEDERT));
+		assertThat(journalpost.getRelevanteDatoer().get(1).getDatotype(), is(DATO_LEST));
 		assertThat(journalpost.getTilleggsopplysninger().get(0).getNokkel(), is("min_nokkel"));
 		assertThat(journalpost.getTilleggsopplysninger().get(0).getVerdi(), is("min_verdi"));
 		assertThat(journalpost.getEksternReferanseId(), is("KANAL REFERANSE ID"));

@@ -15,9 +15,6 @@ import no.nav.saf.anticorruptionlayer.joark.domain.kode.UtsendingsKanalCode;
 import java.util.Date;
 import java.util.List;
 
-/**
- * @author Joakim Bjørnstad, Jbit AS
- */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -51,6 +48,7 @@ public class JournalpostDto {
 	private Date avsReturDato;
 	private Date sendtPrintDato;
 	private Date ekspedertDato;
+	private Date lestDato;
 	private SkjermingTypeCode skjerming;
 	private List<TilleggsopplysningDto> tilleggsopplysninger;
 	private List<DokumentInfoDto> dokumenter;
