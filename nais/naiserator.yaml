@@ -11,8 +11,6 @@ spec:
       value: {{ ABAC_PDP_ENDPOINT_URL }}
     - name: SAK_SAKER_URL
       value: {{ SAK_SAKER_URL }}
-    - name: SECURITYTOKENSERVICE_URL
-      value: {{ SECURITYTOKENSERVICE_URL }}
     - name: FPSAK_URL
       value: {{ FPSAK_URL }}
     - name: K9SAK_URL
