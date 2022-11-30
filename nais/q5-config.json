@@ -4,7 +4,6 @@
   "MAX_REPLICAS": 2,
   "ABAC_PDP_ENDPOINT_URL": "https://abac-saf.dev.intern.nav.no/application/asm-pdp/authorize",
   "SAK_SAKER_URL": "https://sak-q5.dev.intern.nav.no/api/v1/saker",
-  "SECURITYTOKENSERVICE_URL": "https://sts-q4.preprod.local/SecurityTokenServiceProvider/",
   "FPSAK_URL": "https://fpsak-api.dev.intern.nav.no/fpsak/api/pip/aktoer-for-sak",
   "K9SAK_URL": "http://k9-sak.k9saksbehandling/k9/sak/api/pip/aktoer-for-sak",
   "GRAPHIQL_ENABLED": "true",
