@@ -291,6 +291,11 @@
       "app": "hm-joark-listener",
       "namespace": "teamdigihot",
       "cluster": "prod-gcp"
+    },
+    {
+      "app": "melosys",
+      "namespace": "teammelosys",
+      "cluster": "prod-fss"
     }
   ]
 }
