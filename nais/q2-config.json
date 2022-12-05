@@ -202,6 +202,16 @@
       "app": "eux-neessi-q2",
       "namespace": "eessibasis",
       "cluster": "dev-gcp"
+    },  
+    {
+      "app": "eux-fagmodul-journalfoering-q2",
+      "namespace": "eessibasis",
+      "cluster": "dev-fss"
+    },
+    {
+      "app": "eux-fagmodul-journalfoering-q2",
+      "namespace": "eessibasis",
+      "cluster": "dev-gcp"
     },
     {
       "app": "eessi-pensjon-fagmodul-q2",
