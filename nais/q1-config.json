@@ -364,6 +364,11 @@
       "cluster": "dev-gcp"
     },
     {
+      "app": "hm-saksbehandling",
+      "namespace": "teamdigihot",
+      "cluster": "dev-gcp"
+    },
+    {
       "app": "pensjon-pen-q1",
       "namespace": "teampensjon",
       "cluster": "dev-fss",

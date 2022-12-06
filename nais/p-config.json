@@ -299,6 +299,11 @@
       "cluster": "prod-gcp"
     },
     {
+      "app": "hm-saksbehandling",
+      "namespace": "teamdigihot",
+      "cluster": "prod-gcp"
+    },
+    {
       "app": "melosys",
       "namespace": "teammelosys",
       "cluster": "prod-fss"
