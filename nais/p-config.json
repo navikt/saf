@@ -183,6 +183,12 @@
       "cluster": "prod-gcp"
     },
     {
+      "app": "pensjon-pen",
+      "namespace": "pensjondeployer",
+      "cluster": "prod-fss",
+      "roles": ["tema_pen", "tema_ufo"]
+    },
+    {
       "app": "pensjon-psak",
       "namespace": "pensjondeployer",
       "cluster": "prod-fss"
