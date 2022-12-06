@@ -377,6 +377,11 @@
       "app": "hm-joark-listener",
       "namespace": "teamdigihot",
       "cluster": "dev-gcp"
+    },
+    {
+      "app": "hm-saksbehandling",
+      "namespace": "teamdigihot",
+      "cluster": "dev-gcp"
     }
   ]
 }
