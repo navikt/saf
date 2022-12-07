@@ -221,8 +221,7 @@
     {
       "app": "pensjon-pen-q2",
       "namespace": "teampensjon",
-      "cluster": "dev-fss",
-      "roles": ["tema_pen", "tema_ufo"]
+      "cluster": "dev-fss"
     },
     {
       "app": "pensjon-psak-q2",

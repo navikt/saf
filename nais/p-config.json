@@ -185,8 +185,7 @@
     {
       "app": "pensjon-pen",
       "namespace": "pensjondeployer",
-      "cluster": "prod-fss",
-      "roles": ["tema_pen", "tema_ufo"]
+      "cluster": "prod-fss"
     },
     {
       "app": "pensjon-psak",
