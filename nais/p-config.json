@@ -326,6 +326,11 @@
       "app": "k9-fordel",
       "namespace": "k9saksbehandling",
       "cluster": "prod-fss"
+    },
+    {
+      "app": "dokarkiv",
+      "namespace": "teamdokumenthandtering",
+      "cluster": "prod-fss"
     }
   ]
 }
