@@ -99,6 +99,11 @@
       "cluster": "dev-gcp"
     },
     {
+      "app": "trygderetten-vedlegg-q2",
+      "namespace": "isa",
+      "cluster": "dev-gcp"
+    },
+    {
       "app": "salesforce",
       "namespace": "teamcrm",
       "cluster": "dev-external"
