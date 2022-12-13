@@ -178,6 +178,26 @@
       "roles": ["tema_far"]
     },
     {
+      "app": "eux-neessi",
+      "namespace": "eessibasis",
+      "cluster": "prod-fss"
+    },
+    {
+      "app": "eux-neessi",
+      "namespace": "eessibasis",
+      "cluster": "prod-gcp"
+    },
+    {
+      "app": "eux-fagmodul-journalfoering",
+      "namespace": "eessibasis",
+      "cluster": "prod-fss"
+    },
+    {
+      "app": "eux-fagmodul-journalfoering",
+      "namespace": "eessibasis",
+      "cluster": "prod-gcp"
+    },
+    {
       "app": "eessi-pensjon-fagmodul",
       "namespace": "eessipensjon",
       "cluster": "prod-gcp"
