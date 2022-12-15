@@ -7,12 +7,14 @@ import no.nav.saf.anticorruptionlayer.joark.domain.kode.FagsystemCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.JournalStatusCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.JournalpostTypeCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.SkjermingTypeCode;
+import no.nav.saf.anticorruptionlayer.joark.domain.kode.UtsendingsKanalCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.VariantFormatCode;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.dto.DokumentInfoDto;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.dto.JournalpostDto;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.dto.LogiskVedleggDto;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.dto.SaksrelasjonDto;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.dto.TilleggsopplysningDto;
+import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.dto.UtsendingsInfoDto;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.dto.VariantDto;
 import no.nav.saf.domain.visningsmodell.AvsenderMottakerIdType;
 
@@ -73,8 +75,19 @@ public class JournalpostDtoTestObjects {
 	static final String KANAL_REFERANSE_ID = "KANAL REFERANSE ID";
 	static final String FILTYPE_1 = "PDFA";
 	static final String FILTYPE_2 = "PDF";
+	public static final String ADRESSELINJE1 = "adresselinje1";
+	public static final String ADRESSELINJE2 = "adresselinje2";
+	public static final String ADRESSELINJE3 = "adresselinje3";
+	public static final String POSTNUMMER = "postnummer";
+	public static final String POSTSTED = "poststed";
+	public static final String LANDKODE = "landkode";
+	public static final String DIGITALKONTAKT_INFORMASJON = "{\n          \"epost\": \"epostaddress3@nav.no\",\n          \"sms\": \"11111111\"\n        }";
+	public static final String VARSELTEKST = "{\n          \"epost\": \"Du har fått brev fra NAV\",\n          \"sms\": \"Du har fått brev fra NAV\"\n        }";
+	public static final String DIGITALPOSTKASSEADRESSE = "0000487236";
+	public static final String DIGITALPOSTKASSELEVERANDOR = "123456789";
 
-	static JournalpostDto buildJournalpostDtoUtgaaendeType(JournalStatusCode journalStatusCode) {
+
+	static JournalpostDto buildJournalpostDtoUtgaaendeType(JournalStatusCode journalStatusCode, UtsendingsInfoDto utsendingsInfoDto, UtsendingsKanalCode kanalCode) {
 		return baseJournalpostDto()
 				.journalposttype(JournalpostTypeCode.U)
 				.saksrelasjon(new SaksrelasjonDto(SAKS_ID, false, FAKSYSTEM_CODE, null, null,
@@ -87,6 +100,8 @@ public class JournalpostDtoTestObjects {
 				.sendtPrintDato(SENDT_PRINT_DATO)
 				.ekspedertDato(EKSPEDERT_DATO)
 				.antallRetur(ANTALL_RETUR)
+				.utsendingskanal(kanalCode)
+				.utsendingsInfo(utsendingsInfoDto)
 				.build();
 	}
 
@@ -170,6 +185,37 @@ public class JournalpostDtoTestObjects {
 										.filtype(JournalpostDtoTestObjects.FILTYPE_2)
 										.build()))
 						.build());
+	}
+
+	public static UtsendingsInfoDto createFysiskPostadresseDto() {
+		return UtsendingsInfoDto.builder()
+				.fysiskPostadresse(UtsendingsInfoDto.FysiskPostadresseDto.builder()
+						.adresselinje1(ADRESSELINJE1)
+						.adresselinje2(ADRESSELINJE2)
+						.adresselinje3(ADRESSELINJE3)
+						.postnummer(POSTNUMMER)
+						.poststed(POSTSTED)
+						.landkode(LANDKODE)
+						.build())
+				.build();
+	}
+
+	public static UtsendingsInfoDto createDitttNavVarsel() {
+		return UtsendingsInfoDto.builder()
+				.navNoVarsling(UtsendingsInfoDto.NavNoVarslingDto.builder()
+						.kontaktinformasjon(DIGITALKONTAKT_INFORMASJON)
+						.varslingstekst(VARSELTEKST)
+						.build())
+				.build();
+	}
+
+	public static UtsendingsInfoDto createDigitalPostadresse() {
+		return UtsendingsInfoDto.builder()
+				.digitalPostadresse(UtsendingsInfoDto.DigitalPostadresseDto.builder()
+						.postkasseLeverandor(DIGITALPOSTKASSELEVERANDOR)
+						.adresse(DIGITALPOSTKASSEADRESSE)
+						.build())
+				.build();
 	}
 
 	private static List<LogiskVedleggDto> logiskeVedlegg() {

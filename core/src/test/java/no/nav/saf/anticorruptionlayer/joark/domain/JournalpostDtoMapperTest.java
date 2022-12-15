@@ -10,7 +10,6 @@ import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.dto.SaksrelasjonD
 import no.nav.saf.cache.KeyGeneratorLocalCaching;
 import no.nav.saf.domain.Arkivsak;
 import no.nav.saf.domain.kode.Arkivsakssystem;
-import no.nav.saf.domain.kode.Datotype;
 import no.nav.saf.domain.kode.Dokumentstatus;
 import no.nav.saf.domain.kode.Journalposttype;
 import no.nav.saf.domain.kode.Skjerming;
@@ -33,6 +32,9 @@ import java.time.ZoneId;
 import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
 import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoMapper.FILTYPE_PDF;
+import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.ADRESSELINJE1;
+import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.ADRESSELINJE2;
+import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.ADRESSELINJE3;
 import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.AKTOER_ID;
 import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.ANTALL_RETUR;
 import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.ARKIVSAK_NR;
@@ -48,6 +50,9 @@ import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObje
 import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.BRUKER_ID_PERSON;
 import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.DATO_FERDIGSTILT;
 import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.DATO_OPPRETTET;
+import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.DIGITALKONTAKT_INFORMASJON;
+import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.DIGITALPOSTKASSEADRESSE;
+import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.DIGITALPOSTKASSELEVERANDOR;
 import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.DOKUMENT_DATO;
 import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.DOKUMENT_INFO_ID;
 import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.EKSPEDERT_DATO;
@@ -59,12 +64,15 @@ import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObje
 import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.JOURNALPOST_ID;
 import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.JOURNAL_DATO;
 import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.KANAL_REFERANSE_ID;
+import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.LANDKODE;
 import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.LEST_DATO;
 import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.LOGISK_VEDLEGG_ID;
 import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.LOGISK_VEDLEGG_TITTEL;
 import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.MOTTAT_DATO;
 import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.OPPRETTET_AV_NAVN;
 import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.ORG_NR;
+import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.POSTNUMMER;
+import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.POSTSTED;
 import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.SAKS_ID;
 import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.SENDT_PRINT_DATO;
 import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.SKJERMING_TYPE_CODE_POL;
@@ -72,9 +80,17 @@ import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObje
 import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.TILLEGGSOPPLYSNING_VERDI;
 import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.VARIANT_FORMAT_CODE_ARKIV;
 import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.VARIANT_FORMAT_CODE_SLADDET;
+import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.VARSELTEKST;
+import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.buildJournalpostDtoUtgaaendeType;
+import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.createDigitalPostadresse;
+import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.createDitttNavVarsel;
+import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.createFysiskPostadresseDto;
 import static no.nav.saf.anticorruptionlayer.joark.domain.kode.JournalStatusCode.E;
 import static no.nav.saf.anticorruptionlayer.joark.domain.kode.JournalStatusCode.M;
 import static no.nav.saf.anticorruptionlayer.joark.domain.kode.JournalpostTypeCode.U;
+import static no.nav.saf.anticorruptionlayer.joark.domain.kode.UtsendingsKanalCode.NAV_NO;
+import static no.nav.saf.anticorruptionlayer.joark.domain.kode.UtsendingsKanalCode.S;
+import static no.nav.saf.anticorruptionlayer.joark.domain.kode.UtsendingsKanalCode.SDP;
 import static no.nav.saf.domain.DomainConstants.ORGANISASJON;
 import static no.nav.saf.domain.DomainConstants.PERSON;
 import static no.nav.saf.domain.DomainConstants.TILGANG_BRUKER;
@@ -120,7 +136,7 @@ class JournalpostDtoMapperTest {
 
 	@Test
 	void shouldMapJournalpostDtoWithUtgaaendeJournalpost() {
-		JournalpostDto journalpostDto = JournalpostDtoTestObjects.buildJournalpostDtoUtgaaendeType(E);
+		JournalpostDto journalpostDto = buildJournalpostDtoUtgaaendeType(E, createFysiskPostadresseDto(), S);
 		RequestCache requestCache = pep5RequestCache();
 
 		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, requestCache);
@@ -139,6 +155,65 @@ class JournalpostDtoMapperTest {
 		assertThat(journalpost.getRelevanteDatoer(), hasItem(new RelevantDato(EKSPEDERT_DATO, DATO_EKSPEDERT)));
 		assertThat(journalpost.getRelevanteDatoer(), hasItem(new RelevantDato(LEST_DATO, DATO_LEST)));
 		assertThat(journalpost.getRelevanteDatoer(), not(hasItem(new RelevantDato(MOTTAT_DATO, DATO_REGISTRERT))));
+		assertEquals(ADRESSELINJE1, journalpost.getUtsendingsInfo().getFysiskPostadresse().getAdresselinje1());
+		assertEquals(ADRESSELINJE2, journalpost.getUtsendingsInfo().getFysiskPostadresse().getAdresselinje2());
+		assertEquals(ADRESSELINJE3, journalpost.getUtsendingsInfo().getFysiskPostadresse().getAdresselinje3());
+		assertEquals(POSTNUMMER, journalpost.getUtsendingsInfo().getFysiskPostadresse().getPostnummer());
+		assertEquals(POSTSTED, journalpost.getUtsendingsInfo().getFysiskPostadresse().getPoststed());
+		assertEquals(LANDKODE, journalpost.getUtsendingsInfo().getFysiskPostadresse().getLandkode());
+	}
+
+	@Test
+	void shouldMapJournalpostUtsendingInfoWhenUtsendingsKanalErNAV_NO() {
+		JournalpostDto journalpostDto = buildJournalpostDtoUtgaaendeType(E, createDitttNavVarsel(), NAV_NO);
+		RequestCache requestCache = pep5RequestCache();
+
+		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, requestCache);
+
+		assertCommonMetadata(journalpost);
+
+		assertNull(journalpost.getUtsendingsInfo().getFysiskPostadresse());
+		assertNull(journalpost.getUtsendingsInfo().getDigitalPostadresse());
+		assertEquals(VARSELTEKST, journalpost.getUtsendingsInfo().getNavNoVarsling().getVarslingstekst());
+		assertEquals(DIGITALKONTAKT_INFORMASJON, journalpost.getUtsendingsInfo().getNavNoVarsling().getKontaktinformasjon());
+	}
+
+	@Test
+	void shouldMapJournalpostUtsendingInfoWhenUtsendingsKanalErSDP() {
+		JournalpostDto journalpostDto = buildJournalpostDtoUtgaaendeType(E, createDigitalPostadresse(), SDP);
+		RequestCache requestCache = pep5RequestCache();
+
+		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, requestCache);
+
+		assertCommonMetadata(journalpost);
+
+		assertNull(journalpost.getUtsendingsInfo().getFysiskPostadresse());
+		assertNull(journalpost.getUtsendingsInfo().getNavNoVarsling());
+		assertEquals(DIGITALPOSTKASSELEVERANDOR, journalpost.getUtsendingsInfo().getDigitalPostadresse().getPostkasseLeverandor());
+		assertEquals(DIGITALPOSTKASSEADRESSE, journalpost.getUtsendingsInfo().getDigitalPostadresse().getAdresse());
+	}
+
+	@Test
+	void shouldReturnNullUtsendingInfoWhenUtsendingsKanalErUkjent() {
+		JournalpostDto journalpostDto = buildJournalpostDtoUtgaaendeType(E, createDigitalPostadresse(), null);
+		RequestCache requestCache = pep5RequestCache();
+
+		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, requestCache);
+
+		assertCommonMetadata(journalpost);
+
+		assertNull(journalpost.getUtsendingsInfo());
+	}
+
+	@Test
+	void shouldReturnNullUtsendingInfoWhenJournalpostTypeErUtgående() {
+		JournalpostDto journalpostDto = JournalpostDtoTestObjects.buildJournalpostDtoInngaaendeType();
+
+		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, pep5RequestCache());
+
+		assertCommonMetadata(journalpost);
+
+		assertNull(journalpost.getUtsendingsInfo());
 	}
 
 	@Test
@@ -207,7 +282,7 @@ class JournalpostDtoMapperTest {
 
 	@Test
 	void shouldMapJournalpostManglendeUtsendingskanalFerdigOgSentral() {
-		JournalpostDto journalpostDto = JournalpostDtoTestObjects.buildJournalpostDtoUtgaaendeType(JournalStatusCode.FS);
+		JournalpostDto journalpostDto = buildJournalpostDtoUtgaaendeType(JournalStatusCode.FS, null, null);
 		RequestCache requestCache = createTilgangBrukerRequestCache();
 
 		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, requestCache);
@@ -217,7 +292,7 @@ class JournalpostDtoMapperTest {
 
 	@Test
 	void shouldMapJournalpostManglendeUtsendingskanalFerdigOgLokal() {
-		JournalpostDto journalpostDto = JournalpostDtoTestObjects.buildJournalpostDtoUtgaaendeType(JournalStatusCode.FL);
+		JournalpostDto journalpostDto = buildJournalpostDtoUtgaaendeType(JournalStatusCode.FL, null, null);
 		RequestCache requestCache = createTilgangBrukerRequestCache();
 
 		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, requestCache);
@@ -250,7 +325,7 @@ class JournalpostDtoMapperTest {
 
 	@Test
 	void shouldMapJournalpostOrgNr() {
-		JournalpostDto journalpostDto = JournalpostDtoTestObjects.buildJournalpostDtoUtgaaendeType(E);
+		JournalpostDto journalpostDto = buildJournalpostDtoUtgaaendeType(E, null, null);
 		RequestCache requestCache = createTilgangBrukerCacheWithOrganisasjonSak();
 
 		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, requestCache);
@@ -260,7 +335,7 @@ class JournalpostDtoMapperTest {
 
 	@Test
 	void shouldMapJournalpostWithKasserDokument() {
-		JournalpostDto journalpostDto = JournalpostDtoTestObjects.buildJournalpostDtoUtgaaendeType(E);
+		JournalpostDto journalpostDto = buildJournalpostDtoUtgaaendeType(E, null, null);
 		journalpostDto.getDokumenter().get(0).setKassert(true);
 		RequestCache requestCache = pep5RequestCache();
 
@@ -271,7 +346,7 @@ class JournalpostDtoMapperTest {
 
 	@Test
 	void shouldMapJournalpostWithNullDokumentStatus() {
-		JournalpostDto journalpostDto = JournalpostDtoTestObjects.buildJournalpostDtoUtgaaendeType(E);
+		JournalpostDto journalpostDto = buildJournalpostDtoUtgaaendeType(E, null, null);
 		journalpostDto.getDokumenter().get(0).setDokumentstatus(null);
 		journalpostDto.getDokumenter().get(0).setKassert(null);
 		RequestCache requestCache = pep5RequestCache();
@@ -462,7 +537,7 @@ class JournalpostDtoMapperTest {
 
 	@Test
 	void shouldMapDokumenttypeIdAsBrevkodeWhenJournalpostIsUtgaaende() {
-		JournalpostDto journalpostDto = JournalpostDtoTestObjects.buildJournalpostDtoUtgaaendeType(E);
+		JournalpostDto journalpostDto = buildJournalpostDtoUtgaaendeType(E, null, null);
 
 		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, pep5RequestCache());
 
@@ -471,7 +546,7 @@ class JournalpostDtoMapperTest {
 
 	@Test
 	void shouldMapBrevkodeAsBrevkodeWhenJournalpostIsUtgaaendeAndDokumenttypeIdNotSet() {
-		JournalpostDto journalpostDto = JournalpostDtoTestObjects.buildJournalpostDtoUtgaaendeType(E);
+		JournalpostDto journalpostDto = buildJournalpostDtoUtgaaendeType(E, null, null);
 		journalpostDto.getDokumenter().get(0).setDokumenttypeId(null);
 
 		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, pep5RequestCache());
@@ -482,7 +557,7 @@ class JournalpostDtoMapperTest {
 	// Se https://jira.adeo.no/browse/MMA-3076
 	@Test
 	void shouldMapFromFagomradeOKOToTemaSTO() {
-		JournalpostDto journalpostDto = JournalpostDtoTestObjects.buildJournalpostDtoUtgaaendeType(E);
+		JournalpostDto journalpostDto = buildJournalpostDtoUtgaaendeType(E, createDitttNavVarsel(), NAV_NO);
 		journalpostDto.setFagomrade(FagomradeCode.OKO);
 
 		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, pep5RequestCache());
@@ -543,7 +618,7 @@ class JournalpostDtoMapperTest {
 
 	@Test
 	void shouldMapJournalstatusFeilregistrertWhenJournalfoertAndIsFeilregistrert() {
-		JournalpostDto journalpostDto = JournalpostDtoTestObjects.buildJournalpostDtoUtgaaendeType(JournalStatusCode.J);
+		JournalpostDto journalpostDto = buildJournalpostDtoUtgaaendeType(JournalStatusCode.J, null, null);
 		journalpostDto.getSaksrelasjon().setFeilregistrert(true);
 		RequestCache requestCache = createTilgangBrukerRequestCache();
 
@@ -554,7 +629,7 @@ class JournalpostDtoMapperTest {
 
 	@Test
 	void shouldMapJournalstatusUtgaarWhenUtgaarAndIsFeilregistrert() {
-		JournalpostDto journalpostDto = JournalpostDtoTestObjects.buildJournalpostDtoUtgaaendeType(JournalStatusCode.U);
+		JournalpostDto journalpostDto = buildJournalpostDtoUtgaaendeType(JournalStatusCode.U, createFysiskPostadresseDto(), S);
 		journalpostDto.getSaksrelasjon().setFeilregistrert(true);
 		RequestCache requestCache = createTilgangBrukerRequestCache();
 

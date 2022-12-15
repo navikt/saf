@@ -5,10 +5,12 @@ import no.nav.saf.anticorruptionlayer.joark.domain.kode.FagomradeCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.FagsystemCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.JournalpostTypeCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.Sakstype;
+import no.nav.saf.anticorruptionlayer.joark.domain.kode.UtsendingsKanalCode;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.dto.BrukerDto;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.dto.DokumentInfoDto;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.dto.JournalpostDto;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.dto.SaksrelasjonDto;
+import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.dto.UtsendingsInfoDto;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.dto.VariantDto;
 import no.nav.saf.domain.Arkivsak;
 import no.nav.saf.domain.DomainConstants;
@@ -28,6 +30,7 @@ import no.nav.saf.domain.visningsmodell.LogiskVedlegg;
 import no.nav.saf.domain.visningsmodell.RelevantDato;
 import no.nav.saf.domain.visningsmodell.Sak;
 import no.nav.saf.domain.visningsmodell.Tilleggsopplysning;
+import no.nav.saf.domain.visningsmodell.UtsendingsInfo;
 import no.nav.saf.tilgangskontroll.RequestCache;
 import org.springframework.stereotype.Component;
 
@@ -35,8 +38,11 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static java.util.Objects.isNull;
+import static no.nav.saf.anticorruptionlayer.joark.domain.kode.JournalpostTypeCode.U;
 import static no.nav.saf.cache.KeyGeneratorLocalCaching.getKeyForPep2d;
 import static no.nav.saf.cache.KeyGeneratorLocalCaching.getKeyForPep5;
 import static no.nav.saf.cache.KeyGeneratorLocalCaching.getKeyForPep6d;
@@ -94,6 +100,7 @@ public class JournalpostDtoMapper {
 				.tilleggsopplysninger(mapTilleggsopplysninger(journalpostDto))
 				.antallRetur(mapAntallRetur(journalpostDto))
 				.eksternReferanseId(journalpostDto.getKanalReferanseId())
+				.utsendingsInfo(getUtgaaendeJournalpostUtsendingsInfo(journalpostDto))
 				.build();
 		List<DokumentInfo> dokumenter = journalpostDto.getDokumenter().stream()
 				.filter(dokumentInfoDto -> shouldMapDokumentInfo(journalpostId, dokumentInfoDto.getDokumentInfoId(), requestCache))
@@ -139,7 +146,7 @@ public class JournalpostDtoMapper {
 	}
 
 	private String mapAntallRetur(JournalpostDto journalpostDto) {
-		if (JournalpostTypeCode.U.equals(journalpostDto.getJournalposttype())) {
+		if (U.equals(journalpostDto.getJournalposttype())) {
 			return journalpostDto.getAntallRetur();
 		} else {
 			return null;
@@ -368,6 +375,71 @@ public class JournalpostDtoMapper {
 		} else {
 			return null;
 		}
+	}
+
+	private UtsendingsInfo getUtgaaendeJournalpostUtsendingsInfo(JournalpostDto journalpostDto) {
+		if (isNull(journalpostDto.getUtsendingskanal())) {
+			return null;
+		}
+
+		if (U.equals(journalpostDto.getJournalposttype())) {
+			return mapUtsendingsInfo(journalpostDto.getUtsendingsInfo(), journalpostDto.getUtsendingskanal())
+					.orElse(null);
+		}
+		return null;
+	}
+
+	private Optional<UtsendingsInfo> mapUtsendingsInfo(UtsendingsInfoDto utsendingsInfoDto, UtsendingsKanalCode utsendingsKanalCode) {
+		if (isNull(utsendingsInfoDto)) {
+			return Optional.empty();
+		}
+
+		switch (utsendingsKanalCode) {
+			case NAV_NO -> {
+				return Optional.of(UtsendingsInfo.builder()
+						.navNoVarsling(mapNavNoVarsling(utsendingsInfoDto.getNavNoVarsling()))
+						.build());
+			}
+			case S -> {
+				return Optional.ofNullable(UtsendingsInfo.builder()
+						.fysiskPostadresse(mapFysiskPostadresse(utsendingsInfoDto.getFysiskPostadresse()))
+						.build());
+			}
+			case SDP -> {
+				return Optional.of(UtsendingsInfo.builder()
+						.digitalPostadresse(mapDigitalPostadresse(utsendingsInfoDto.getDigitalPostadresse()))
+						.build());
+			}
+			default -> {
+				return null;
+			}
+		}
+	}
+
+	private UtsendingsInfo.FysiskPostadresse mapFysiskPostadresse(UtsendingsInfoDto.FysiskPostadresseDto fysiskPostadresse) {
+		return isNull(fysiskPostadresse) ? null : UtsendingsInfo.FysiskPostadresse.builder()
+				.adresselinje1(fysiskPostadresse.getAdresselinje1())
+				.adresselinje2(fysiskPostadresse.getAdresselinje2())
+				.adresselinje3(fysiskPostadresse.getAdresselinje3())
+				.postnummer(fysiskPostadresse.getPostnummer())
+				.poststed(fysiskPostadresse.getPoststed())
+				.landkode(fysiskPostadresse.getLandkode())
+				.build();
+	}
+
+	private UtsendingsInfo.DigitalPostadresse mapDigitalPostadresse(UtsendingsInfoDto.DigitalPostadresseDto digitalPostadresseDto) {
+		return digitalPostadresseDto == null ? null : UtsendingsInfo.DigitalPostadresse.builder()
+				.adresse(digitalPostadresseDto.getAdresse())
+				.postkasseLeverandor(digitalPostadresseDto.getPostkasseLeverandor())
+				.build();
+	}
+
+	private UtsendingsInfo.NavNoVarsling mapNavNoVarsling(UtsendingsInfoDto.NavNoVarslingDto navNoVarslingDto) {
+		return navNoVarslingDto == null ? null :
+				UtsendingsInfo.NavNoVarsling.builder()
+						.kontaktinformasjon(navNoVarslingDto.getKontaktinformasjon())
+						.varslingstekst(navNoVarslingDto.getVarslingstekst())
+						.build();
 	}
 
 	private boolean determineSaksbehandlerTilgang(Journalpost journalpost, DokumentInfoDto dokumentInfoDto, VariantDto variantDto, RequestCache requestCache) {
