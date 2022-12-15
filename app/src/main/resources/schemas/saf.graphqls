@@ -293,6 +293,9 @@ type Journalpost {
     # Liste over dokumentinfo tilknyttet journalposten.
     # * Dokumentene returneres i følgende sorteringsrekkefølge: Hoveddokumentet først, deretter vedleggene i tilfeldig rekkefølge.
     dokumenter: [DokumentInfo]
+
+    # Brukers digital/fysisk  kontaktinformasjon
+    utsendingsInfo: UtsendingsInfo
 }
 
 # Dato som kan være relevant for en journalpost. De ulike journalposttypene (inngående, utgående og notat) får returnert ulike relevante datoer.
@@ -366,6 +369,34 @@ type AvsenderMottaker {
     # Angir hvorvidt bruker er lik avsender/mottaker av journalposten.
     # * Informasjonen er ikke garantert korrekt, da tjenesten sammenlikner avsenderMottaker med bruker tilknyttet journalposten, ikke bruker tilknyttet saken.
     erLikBruker: Boolean!
+}
+
+type UtsendingsInfo {
+    fysiskPostadresse: FysiskPostadresse
+    digitalPostadresse: DigitalPostadresse
+    navNoVarsling: NavNoVarsling
+
+}
+
+type FysiskPostadresse {
+    adresselinje1: String
+    adresselinje2: String
+    adresselinje3: String
+    postnummer: String
+    poststed: String
+    landkode: String
+}
+
+type DigitalPostadresse {
+    adresse: String
+    postkasseLeverandor: String
+}
+
+type NavNoVarsling {
+    # Kontaktinformasjon
+    kontaktinformasjon: String
+    # varseling tekst som har sendt til bruker i epost eller phonenummer
+    varslingstekst: String
 }
 
 # Metadata tilknyttet et bestemt dokument i Joark (evt til flere varianter av samme dokument).
