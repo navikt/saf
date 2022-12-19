@@ -8,9 +8,7 @@ import lombok.Value;
 public class UtsendingsInfo {
 
 	FysiskPostadresse fysiskPostadresse;
-
 	DigitalPostadresse digitalPostadresse;
-
 	NavNoVarsling navNoVarsling;
 
 	@Value
@@ -27,7 +25,7 @@ public class UtsendingsInfo {
 	@Value
 	@Builder
 	public static class DigitalPostadresse {
-		String adresse;
+		String digitalpostkasseAdresse;
 		String postkasseLeverandor;
 	}
 

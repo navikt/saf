@@ -371,6 +371,7 @@ type AvsenderMottaker {
     erLikBruker: Boolean!
 }
 
+# Innholder mottaker distribusjonsadresse og hvilken digital elle fysisk adresse har brukt til å distribuere forsendelser.
 type UtsendingsInfo {
     fysiskPostadresse: FysiskPostadresse
     digitalPostadresse: DigitalPostadresse
@@ -388,15 +389,16 @@ type FysiskPostadresse {
 }
 
 type DigitalPostadresse {
-    adresse: String
+    digitalpostkasseAdresse: String
     postkasseLeverandor: String
 }
 
+# Metadata tilknyttet et varsel som sendt til mottaker for forsendelser som er distribuetert ved NAV.no
 type NavNoVarsling {
-    # Kontaktinformasjon
-    kontaktinformasjon: String
-    # varseling tekst som har sendt til bruker i epost eller phonenummer
-    varslingstekst: String
+    # JSON-string som inneholder informasjon om hvor varsel er sendt. epost eller sms kan være null.
+    varselSendtTil: String
+    # JSON-string som inneholder informasjon om hvilken varslingstekst som ble sendt til mottaker. epost eller sms kan være null.
+    varseltekst: String
 }
 
 # Metadata tilknyttet et bestemt dokument i Joark (evt til flere varianter av samme dokument).

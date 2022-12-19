@@ -190,7 +190,7 @@ class JournalpostDtoMapperTest {
 		assertNull(journalpost.getUtsendingsInfo().getFysiskPostadresse());
 		assertNull(journalpost.getUtsendingsInfo().getNavNoVarsling());
 		assertEquals(DIGITALPOSTKASSELEVERANDOR, journalpost.getUtsendingsInfo().getDigitalPostadresse().getPostkasseLeverandor());
-		assertEquals(DIGITALPOSTKASSEADRESSE, journalpost.getUtsendingsInfo().getDigitalPostadresse().getAdresse());
+		assertEquals(DIGITALPOSTKASSEADRESSE, journalpost.getUtsendingsInfo().getDigitalPostadresse().getDigitalpostkasseAdresse());
 	}
 
 	@Test

@@ -30,14 +30,14 @@ public class UtsendingsInfoDto {
 	@Value
 	@Builder
 	public static class DigitalPostadresseDto {
-		String adresse;
+		String digitalpostkasseAdresse;
 		String postkasseLeverandor;
 	}
 
 	@Value
 	@Builder
 	public static class NavNoVarslingDto {
-		String kontaktinformasjon;
-		String varslingstekst;
+		String varselSendtTil;
+		String varseltekst;
 	}
 }

@@ -203,8 +203,8 @@ public class JournalpostDtoTestObjects {
 	public static UtsendingsInfoDto createDitttNavVarsel() {
 		return UtsendingsInfoDto.builder()
 				.navNoVarsling(UtsendingsInfoDto.NavNoVarslingDto.builder()
-						.kontaktinformasjon(DIGITALKONTAKT_INFORMASJON)
-						.varslingstekst(VARSELTEKST)
+						.varselSendtTil(DIGITALKONTAKT_INFORMASJON)
+						.varseltekst(VARSELTEKST)
 						.build())
 				.build();
 	}
@@ -213,7 +213,7 @@ public class JournalpostDtoTestObjects {
 		return UtsendingsInfoDto.builder()
 				.digitalPostadresse(UtsendingsInfoDto.DigitalPostadresseDto.builder()
 						.postkasseLeverandor(DIGITALPOSTKASSELEVERANDOR)
-						.adresse(DIGITALPOSTKASSEADRESSE)
+						.digitalpostkasseAdresse(DIGITALPOSTKASSEADRESSE)
 						.build())
 				.build();
 	}

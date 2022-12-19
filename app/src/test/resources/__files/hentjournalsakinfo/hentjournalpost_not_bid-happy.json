@@ -15,6 +15,12 @@
     "mottakskanal": null,
     "utsendingskanal": "SDP",
     "journalposttype": "U",
+    "utsendingsInfo": {
+      "digitalPostadresse": {
+        "digitalpostkasseAdresse": "0000487236",
+        "postkasseLeverandor": "123456789"
+      }
+    },
     "saksrelasjon": {
       "sakId": "100000000",
       "feilregistrert": null,

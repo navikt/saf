@@ -63,5 +63,23 @@
                 filtype
             }
         }
+        utsendingsInfo {
+            digitalPostadresse {
+                digitalpostkasseAdresse
+                postkasseLeverandor
+              }
+            navNoVarsling {
+                varselSendtTil
+                varseltekst
+            }
+            fysiskPostadresse {
+                adresselinje1
+                adresselinje2
+                adresselinje3
+                postnummer
+                poststed
+                landkode
+            }
+        }
     }
 }

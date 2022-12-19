@@ -11,6 +11,7 @@ import no.nav.saf.domain.kode.Tema;
 import no.nav.saf.domain.visningsmodell.BrukerIdType;
 import no.nav.saf.domain.visningsmodell.DokumentInfo;
 import no.nav.saf.domain.visningsmodell.Journalpost;
+import no.nav.saf.domain.visningsmodell.UtsendingsInfo;
 import no.nav.saf.endpoints.AbstractItest;
 import no.nav.saf.endpoints.graphql.GraphQLRequest;
 import no.nav.saf.endpoints.graphql.GraphQLResponse;
@@ -47,7 +48,9 @@ import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.hasSize;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -120,6 +123,11 @@ class JournalpostIT extends AbstractItest {
 		assertThat(dokumentInfo1.getDokumentvarianter().get(0).getFiltype(), is("PDF"));
 		assertThat(dokumentInfo1.getDokumentvarianter().get(0).getFilnavn(), is("filNavn"));
 		assertThat(dokumentInfo1.getDokumentvarianter().get(0).getFiluuid(), is("0c0bacf-c233-4a54-96fc-e205b79862d9"));
+		UtsendingsInfo  utsendingsInfo = journalpost.getUtsendingsInfo();
+		assertEquals("0000487236",utsendingsInfo.getDigitalPostadresse().getDigitalpostkasseAdresse());
+		assertEquals("123456789",utsendingsInfo.getDigitalPostadresse().getPostkasseLeverandor());
+		assertNull(utsendingsInfo.getNavNoVarsling());
+		assertNull(utsendingsInfo.getFysiskPostadresse());
 	}
 
 	@Test

@@ -42,6 +42,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 import static no.nav.saf.anticorruptionlayer.joark.domain.kode.JournalpostTypeCode.U;
 import static no.nav.saf.cache.KeyGeneratorLocalCaching.getKeyForPep2d;
 import static no.nav.saf.cache.KeyGeneratorLocalCaching.getKeyForPep5;
@@ -378,11 +379,7 @@ public class JournalpostDtoMapper {
 	}
 
 	private UtsendingsInfo getUtgaaendeJournalpostUtsendingsInfo(JournalpostDto journalpostDto) {
-		if (isNull(journalpostDto.getUtsendingskanal())) {
-			return null;
-		}
-
-		if (U.equals(journalpostDto.getJournalposttype())) {
+		if (U.equals(journalpostDto.getJournalposttype()) && nonNull(journalpostDto.getUtsendingskanal())) {
 			return mapUtsendingsInfo(journalpostDto.getUtsendingsInfo(), journalpostDto.getUtsendingskanal())
 					.orElse(null);
 		}
@@ -429,7 +426,7 @@ public class JournalpostDtoMapper {
 
 	private UtsendingsInfo.DigitalPostadresse mapDigitalPostadresse(UtsendingsInfoDto.DigitalPostadresseDto digitalPostadresseDto) {
 		return digitalPostadresseDto == null ? null : UtsendingsInfo.DigitalPostadresse.builder()
-				.adresse(digitalPostadresseDto.getAdresse())
+				.digitalpostkasseAdresse(digitalPostadresseDto.getDigitalpostkasseAdresse())
 				.postkasseLeverandor(digitalPostadresseDto.getPostkasseLeverandor())
 				.build();
 	}
@@ -437,8 +434,8 @@ public class JournalpostDtoMapper {
 	private UtsendingsInfo.NavNoVarsling mapNavNoVarsling(UtsendingsInfoDto.NavNoVarslingDto navNoVarslingDto) {
 		return navNoVarslingDto == null ? null :
 				UtsendingsInfo.NavNoVarsling.builder()
-						.kontaktinformasjon(navNoVarslingDto.getKontaktinformasjon())
-						.varslingstekst(navNoVarslingDto.getVarslingstekst())
+						.kontaktinformasjon(navNoVarslingDto.getVarselSendtTil())
+						.varslingstekst(navNoVarslingDto.getVarseltekst())
 						.build();
 	}
 
