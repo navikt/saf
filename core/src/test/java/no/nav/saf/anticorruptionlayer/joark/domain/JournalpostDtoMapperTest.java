@@ -155,12 +155,12 @@ class JournalpostDtoMapperTest {
 		assertThat(journalpost.getRelevanteDatoer(), hasItem(new RelevantDato(EKSPEDERT_DATO, DATO_EKSPEDERT)));
 		assertThat(journalpost.getRelevanteDatoer(), hasItem(new RelevantDato(LEST_DATO, DATO_LEST)));
 		assertThat(journalpost.getRelevanteDatoer(), not(hasItem(new RelevantDato(MOTTAT_DATO, DATO_REGISTRERT))));
-		assertEquals(ADRESSELINJE1, journalpost.getUtsendingsInfo().getFysiskPostadresse().getAdresselinje1());
-		assertEquals(ADRESSELINJE2, journalpost.getUtsendingsInfo().getFysiskPostadresse().getAdresselinje2());
-		assertEquals(ADRESSELINJE3, journalpost.getUtsendingsInfo().getFysiskPostadresse().getAdresselinje3());
-		assertEquals(POSTNUMMER, journalpost.getUtsendingsInfo().getFysiskPostadresse().getPostnummer());
-		assertEquals(POSTSTED, journalpost.getUtsendingsInfo().getFysiskPostadresse().getPoststed());
-		assertEquals(LANDKODE, journalpost.getUtsendingsInfo().getFysiskPostadresse().getLandkode());
+		assertEquals(ADRESSELINJE1, journalpost.getUtsendingsinfo().getAdresselinje1());
+		assertEquals(ADRESSELINJE2, journalpost.getUtsendingsinfo().getAdresselinje2());
+		assertEquals(ADRESSELINJE3, journalpost.getUtsendingsinfo().getAdresselinje3());
+		assertEquals(POSTNUMMER, journalpost.getUtsendingsinfo().getPostnummer());
+		assertEquals(POSTSTED, journalpost.getUtsendingsinfo().getPoststed());
+		assertEquals(LANDKODE, journalpost.getUtsendingsinfo().getLandkode());
 	}
 
 	@Test
@@ -172,10 +172,10 @@ class JournalpostDtoMapperTest {
 
 		assertCommonMetadata(journalpost);
 
-		assertNull(journalpost.getUtsendingsInfo().getFysiskPostadresse());
-		assertNull(journalpost.getUtsendingsInfo().getDigitalPostadresse());
-		assertEquals(VARSELTEKST, journalpost.getUtsendingsInfo().getNavNoVarsling().getVarslingstekst());
-		assertEquals(DIGITALKONTAKT_INFORMASJON, journalpost.getUtsendingsInfo().getNavNoVarsling().getKontaktinformasjon());
+		assertNull(journalpost.getUtsendingsinfo().getPostnummer());
+		assertNull(journalpost.getUtsendingsinfo().getDigitalpostkasseAdresse());
+		assertEquals(VARSELTEKST, journalpost.getUtsendingsinfo().getVarseltekst());
+		assertEquals(DIGITALKONTAKT_INFORMASJON, journalpost.getUtsendingsinfo().getVarselSendtTil());
 	}
 
 	@Test
@@ -187,10 +187,9 @@ class JournalpostDtoMapperTest {
 
 		assertCommonMetadata(journalpost);
 
-		assertNull(journalpost.getUtsendingsInfo().getFysiskPostadresse());
-		assertNull(journalpost.getUtsendingsInfo().getNavNoVarsling());
-		assertEquals(DIGITALPOSTKASSELEVERANDOR, journalpost.getUtsendingsInfo().getDigitalPostadresse().getPostkasseLeverandor());
-		assertEquals(DIGITALPOSTKASSEADRESSE, journalpost.getUtsendingsInfo().getDigitalPostadresse().getDigitalpostkasseAdresse());
+		assertNull(journalpost.getUtsendingsinfo().getAdresselinje1());
+		assertNull(journalpost.getUtsendingsinfo().getVarseltekst());
+		assertEquals(DIGITALPOSTKASSEADRESSE, journalpost.getUtsendingsinfo().getDigitalpostkasseAdresse());
 	}
 
 	@Test
@@ -202,7 +201,7 @@ class JournalpostDtoMapperTest {
 
 		assertCommonMetadata(journalpost);
 
-		assertNull(journalpost.getUtsendingsInfo());
+		assertNull(journalpost.getUtsendingsinfo());
 	}
 
 	@Test
@@ -213,7 +212,7 @@ class JournalpostDtoMapperTest {
 
 		assertCommonMetadata(journalpost);
 
-		assertNull(journalpost.getUtsendingsInfo());
+		assertNull(journalpost.getUtsendingsinfo());
 	}
 
 	@Test

@@ -11,7 +11,7 @@ import no.nav.saf.domain.kode.Tema;
 import no.nav.saf.domain.visningsmodell.BrukerIdType;
 import no.nav.saf.domain.visningsmodell.DokumentInfo;
 import no.nav.saf.domain.visningsmodell.Journalpost;
-import no.nav.saf.domain.visningsmodell.UtsendingsInfo;
+import no.nav.saf.domain.visningsmodell.Utsendingsinfo;
 import no.nav.saf.endpoints.AbstractItest;
 import no.nav.saf.endpoints.graphql.GraphQLRequest;
 import no.nav.saf.endpoints.graphql.GraphQLResponse;
@@ -123,11 +123,10 @@ class JournalpostIT extends AbstractItest {
 		assertThat(dokumentInfo1.getDokumentvarianter().get(0).getFiltype(), is("PDF"));
 		assertThat(dokumentInfo1.getDokumentvarianter().get(0).getFilnavn(), is("filNavn"));
 		assertThat(dokumentInfo1.getDokumentvarianter().get(0).getFiluuid(), is("0c0bacf-c233-4a54-96fc-e205b79862d9"));
-		UtsendingsInfo  utsendingsInfo = journalpost.getUtsendingsInfo();
-		assertEquals("0000487236",utsendingsInfo.getDigitalPostadresse().getDigitalpostkasseAdresse());
-		assertEquals("123456789",utsendingsInfo.getDigitalPostadresse().getPostkasseLeverandor());
-		assertNull(utsendingsInfo.getNavNoVarsling());
-		assertNull(utsendingsInfo.getFysiskPostadresse());
+		Utsendingsinfo utsendingsInfo = journalpost.getUtsendingsinfo();
+		assertEquals("0000487236",utsendingsInfo.getDigitalpostkasseAdresse());
+		assertNull(utsendingsInfo.getVarseltekst());
+		assertNull(utsendingsInfo.getPoststed());
 	}
 
 	@Test

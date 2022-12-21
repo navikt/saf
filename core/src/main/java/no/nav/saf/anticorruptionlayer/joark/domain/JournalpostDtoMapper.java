@@ -30,7 +30,7 @@ import no.nav.saf.domain.visningsmodell.LogiskVedlegg;
 import no.nav.saf.domain.visningsmodell.RelevantDato;
 import no.nav.saf.domain.visningsmodell.Sak;
 import no.nav.saf.domain.visningsmodell.Tilleggsopplysning;
-import no.nav.saf.domain.visningsmodell.UtsendingsInfo;
+import no.nav.saf.domain.visningsmodell.Utsendingsinfo;
 import no.nav.saf.tilgangskontroll.RequestCache;
 import org.springframework.stereotype.Component;
 
@@ -101,7 +101,7 @@ public class JournalpostDtoMapper {
 				.tilleggsopplysninger(mapTilleggsopplysninger(journalpostDto))
 				.antallRetur(mapAntallRetur(journalpostDto))
 				.eksternReferanseId(journalpostDto.getKanalReferanseId())
-				.utsendingsInfo(getUtgaaendeJournalpostUtsendingsInfo(journalpostDto))
+				.utsendingsinfo(getUtgaaendeJournalpostUtsendingsInfo(journalpostDto))
 				.build();
 		List<DokumentInfo> dokumenter = journalpostDto.getDokumenter().stream()
 				.filter(dokumentInfoDto -> shouldMapDokumentInfo(journalpostId, dokumentInfoDto.getDokumentInfoId(), requestCache))
@@ -134,7 +134,7 @@ public class JournalpostDtoMapper {
 						.logiskeVedlegg(dokumentInfoDto.getLogiske().stream()
 								.map(logiskVedleggDto -> new LogiskVedlegg(logiskVedleggDto.getVedleggId(), logiskVedleggDto.getTittel()))
 								.collect(Collectors.toList()))
-						.build()).collect(Collectors.toList());
+						.build()).toList();
 		journalpost.getDokumenter().addAll(dokumenter);
 		return journalpost;
 	}
@@ -155,14 +155,11 @@ public class JournalpostDtoMapper {
 	}
 
 	private String mapBrevkode(JournalpostDto journalpostDto, DokumentInfoDto dokumentInfoDto) {
-		switch (journalpostDto.getJournalposttype()) {
-			case U:
-				return isBlank(dokumentInfoDto.getDokumenttypeId()) ? dokumentInfoDto.getBrevkode() : dokumentInfoDto.getDokumenttypeId();
-			case I:
-			case N:
-			default:
-				return dokumentInfoDto.getBrevkode();
-		}
+		return switch (journalpostDto.getJournalposttype()) {
+			case U -> isBlank(dokumentInfoDto.getDokumenttypeId()) ? dokumentInfoDto.getBrevkode() : dokumentInfoDto.getDokumenttypeId();
+			case I, N -> dokumentInfoDto.getBrevkode();
+			default -> dokumentInfoDto.getBrevkode();
+		};
 	}
 
 	private Tema mapTema(JournalpostDto journalpostDto, RequestCache requestCache) {
@@ -321,16 +318,11 @@ public class JournalpostDtoMapper {
 	}
 
 	private Kanal mapManglendeUtsendingskanal(JournalpostDto journalpostDto) {
-		switch (journalpostDto.getJournalstatus()) {
-			case FL:
-				return Kanal.LOKAL_UTSKRIFT;
-			case FS:
-				return Kanal.SENTRAL_UTSKRIFT;
-			case E:
-				return Kanal.SENTRAL_UTSKRIFT;
-			default:
-				return null;
-		}
+		return switch (journalpostDto.getJournalstatus()) {
+			case FL -> Kanal.LOKAL_UTSKRIFT;
+			case FS, E -> Kanal.SENTRAL_UTSKRIFT;
+			default -> null;
+		};
 	}
 
 	private String mapJoarkFagsystem(FagsystemCode joarkFagsystem) {
@@ -378,7 +370,7 @@ public class JournalpostDtoMapper {
 		}
 	}
 
-	private UtsendingsInfo getUtgaaendeJournalpostUtsendingsInfo(JournalpostDto journalpostDto) {
+	private Utsendingsinfo getUtgaaendeJournalpostUtsendingsInfo(JournalpostDto journalpostDto) {
 		if (U.equals(journalpostDto.getJournalposttype()) && nonNull(journalpostDto.getUtsendingskanal())) {
 			return mapUtsendingsInfo(journalpostDto.getUtsendingsInfo(), journalpostDto.getUtsendingskanal())
 					.orElse(null);
@@ -386,35 +378,29 @@ public class JournalpostDtoMapper {
 		return null;
 	}
 
-	private Optional<UtsendingsInfo> mapUtsendingsInfo(UtsendingsInfoDto utsendingsInfoDto, UtsendingsKanalCode utsendingsKanalCode) {
+	private Optional<Utsendingsinfo> mapUtsendingsInfo(UtsendingsInfoDto utsendingsInfoDto, UtsendingsKanalCode utsendingsKanalCode) {
 		if (isNull(utsendingsInfoDto)) {
 			return Optional.empty();
 		}
 
 		switch (utsendingsKanalCode) {
 			case NAV_NO -> {
-				return Optional.of(UtsendingsInfo.builder()
-						.navNoVarsling(mapNavNoVarsling(utsendingsInfoDto.getNavNoVarsling()))
-						.build());
+				return Optional.of(mapNavNoVarsling(utsendingsInfoDto.getNavNoVarsling()));
 			}
 			case S -> {
-				return Optional.ofNullable(UtsendingsInfo.builder()
-						.fysiskPostadresse(mapFysiskPostadresse(utsendingsInfoDto.getFysiskPostadresse()))
-						.build());
+				return Optional.ofNullable(mapFysiskPostadresse(utsendingsInfoDto.getFysiskPostadresse()));
 			}
 			case SDP -> {
-				return Optional.of(UtsendingsInfo.builder()
-						.digitalPostadresse(mapDigitalPostadresse(utsendingsInfoDto.getDigitalPostadresse()))
-						.build());
+				return Optional.of(mapDigitalPostadresse(utsendingsInfoDto.getDigitalPostadresse()));
 			}
 			default -> {
-				return null;
+				return Optional.empty();
 			}
 		}
 	}
 
-	private UtsendingsInfo.FysiskPostadresse mapFysiskPostadresse(UtsendingsInfoDto.FysiskPostadresseDto fysiskPostadresse) {
-		return isNull(fysiskPostadresse) ? null : UtsendingsInfo.FysiskPostadresse.builder()
+	private Utsendingsinfo mapFysiskPostadresse(UtsendingsInfoDto.FysiskPostadresseDto fysiskPostadresse) {
+		return isNull(fysiskPostadresse) ? null : Utsendingsinfo.builder()
 				.adresselinje1(fysiskPostadresse.getAdresselinje1())
 				.adresselinje2(fysiskPostadresse.getAdresselinje2())
 				.adresselinje3(fysiskPostadresse.getAdresselinje3())
@@ -424,18 +410,17 @@ public class JournalpostDtoMapper {
 				.build();
 	}
 
-	private UtsendingsInfo.DigitalPostadresse mapDigitalPostadresse(UtsendingsInfoDto.DigitalPostadresseDto digitalPostadresseDto) {
-		return digitalPostadresseDto == null ? null : UtsendingsInfo.DigitalPostadresse.builder()
+	private Utsendingsinfo mapDigitalPostadresse(UtsendingsInfoDto.DigitalPostadresseDto digitalPostadresseDto) {
+		return digitalPostadresseDto == null ? null : Utsendingsinfo.builder()
 				.digitalpostkasseAdresse(digitalPostadresseDto.getDigitalpostkasseAdresse())
-				.postkasseLeverandor(digitalPostadresseDto.getPostkasseLeverandor())
 				.build();
 	}
 
-	private UtsendingsInfo.NavNoVarsling mapNavNoVarsling(UtsendingsInfoDto.NavNoVarslingDto navNoVarslingDto) {
+	private Utsendingsinfo mapNavNoVarsling(UtsendingsInfoDto.NavNoVarslingDto navNoVarslingDto) {
 		return navNoVarslingDto == null ? null :
-				UtsendingsInfo.NavNoVarsling.builder()
-						.kontaktinformasjon(navNoVarslingDto.getVarselSendtTil())
-						.varslingstekst(navNoVarslingDto.getVarseltekst())
+				Utsendingsinfo.builder()
+						.varselSendtTil(navNoVarslingDto.getVarselSendtTil())
+						.varseltekst(navNoVarslingDto.getVarseltekst())
 						.build();
 	}
 

@@ -294,8 +294,11 @@ type Journalpost {
     # * Dokumentene returneres i følgende sorteringsrekkefølge: Hoveddokumentet først, deretter vedleggene i tilfeldig rekkefølge.
     dokumenter: [DokumentInfo]
 
-    # Brukers digital/fysisk  kontaktinformasjon
-    utsendingsInfo: UtsendingsInfo
+    # Metadata om distribusjon av utgående journalpost.
+    # * Forteller hvilken adresse en utgående forsendelse er distribuert til (digitalt eller fysisk),
+    # * eller til hvilket epost/telefonnummer varsel om dokument er sendt.
+    # * returneres for utgående journalposter
+    utsendingsinfo: Utsendingsinfo
 }
 
 # Dato som kan være relevant for en journalpost. De ulike journalposttypene (inngående, utgående og notat) får returnert ulike relevante datoer.
@@ -371,33 +374,38 @@ type AvsenderMottaker {
     erLikBruker: Boolean!
 }
 
-# Innholder mottaker distribusjonsadresse og hvilken digital elle fysisk adresse har brukt til å distribuere forsendelser.
-type UtsendingsInfo {
-    fysiskPostadresse: FysiskPostadresse
-    digitalPostadresse: DigitalPostadresse
-    navNoVarsling: NavNoVarsling
-
-}
-
-type FysiskPostadresse {
+# Metadata om distribusjon av utgående journalpost.
+# * Forteller hvilken adresse en utgående forsendelse er distribuert til (digitalt eller fysisk),
+# * eller til hvilket epost/telefonnummer varsel om dokument er sendt.
+type Utsendingsinfo {
+    # Settes kun (men ikke alltid) ved distribusjon gjennom sentral print.
     adresselinje1: String
+
+    # Settes kun (men ikke alltid) ved distribusjon gjennom sentral print.
     adresselinje2: String
+
+    # Settes kun (men ikke alltid) ved distribusjon gjennom sentral print.
     adresselinje3: String
+
+    # Postnummer forsendelsen er sendt til. Settes kun ved distribusjon gjennom sentral print.
     postnummer: String
+
+    # Sted forsendelsen er sendt til. Settes kun ved distribusjon gjennom sentral print.
     poststed: String
+
+    # Landkodet(alpha-2) forsendelsen er sendt til. Settes kun ved distribusjon gjennom sentral print.
     landkode: String
-}
 
-type DigitalPostadresse {
+    # Digital postkasse er fra Digipost eller e-Boks. Brukeren velg selv leverandør og tildelt postkasse til å kommunisere digital.
+    # * Settes ved distribusjon til DPI (Digital Postkasse Innbygger).
     digitalpostkasseAdresse: String
-    postkasseLeverandor: String
-}
 
-# Metadata tilknyttet et varsel som sendt til mottaker for forsendelser som er distribuetert ved NAV.no
-type NavNoVarsling {
     # JSON-string som inneholder informasjon om hvor varsel er sendt. epost eller sms kan være null.
+    # * Settes ved distribusjon gjennom nav.no
     varselSendtTil: String
+
     # JSON-string som inneholder informasjon om hvilken varslingstekst som ble sendt til mottaker. epost eller sms kan være null.
+    # * Settes ved distribusjon gjennom nav.no
     varseltekst: String
 }
 
