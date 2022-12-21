@@ -48,8 +48,7 @@
     ],
     "utsendingsInfo": {
       "digitalPostadresse": {
-        "digitalpostkasseAdresse": "0000487236",
-        "postkasseLeverandor": "123456789"
+        "digitalpostkasseAdresse": "0000487236"
       }
     },
     "dokumenter": [

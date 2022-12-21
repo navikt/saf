@@ -84,8 +84,6 @@ public class JournalpostDtoTestObjects {
 	public static final String DIGITALKONTAKT_INFORMASJON = "{\n          \"epost\": \"epostaddress3@nav.no\",\n          \"sms\": \"11111111\"\n        }";
 	public static final String VARSELTEKST = "{\n          \"epost\": \"Du har fått brev fra NAV\",\n          \"sms\": \"Du har fått brev fra NAV\"\n        }";
 	public static final String DIGITALPOSTKASSEADRESSE = "0000487236";
-	public static final String DIGITALPOSTKASSELEVERANDOR = "123456789";
-
 
 	static JournalpostDto buildJournalpostDtoUtgaaendeType(JournalStatusCode journalStatusCode, UtsendingsInfoDto utsendingsInfoDto, UtsendingsKanalCode kanalCode) {
 		return baseJournalpostDto()
@@ -212,7 +210,6 @@ public class JournalpostDtoTestObjects {
 	public static UtsendingsInfoDto createDigitalPostadresse() {
 		return UtsendingsInfoDto.builder()
 				.digitalPostadresse(UtsendingsInfoDto.DigitalPostadresseDto.builder()
-						.postkasseLeverandor(DIGITALPOSTKASSELEVERANDOR)
 						.digitalpostkasseAdresse(DIGITALPOSTKASSEADRESSE)
 						.build())
 				.build();

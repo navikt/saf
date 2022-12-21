@@ -52,7 +52,6 @@ import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObje
 import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.DATO_OPPRETTET;
 import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.DIGITALKONTAKT_INFORMASJON;
 import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.DIGITALPOSTKASSEADRESSE;
-import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.DIGITALPOSTKASSELEVERANDOR;
 import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.DOKUMENT_DATO;
 import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.DOKUMENT_INFO_ID;
 import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.EKSPEDERT_DATO;

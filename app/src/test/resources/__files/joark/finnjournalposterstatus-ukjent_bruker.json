@@ -353,8 +353,7 @@
       "kanalReferanseId": "KANAL REFERANSE ID",
       "utsendingsInfo": {
         "digitalPostadresse": {
-          "digitalpostkasseAdresse": "tom.tom#2541",
-          "postkasseLeverandor": "123456789"
+          "digitalpostkasseAdresse": "tom.tom#2541"
         }
       }
     }
