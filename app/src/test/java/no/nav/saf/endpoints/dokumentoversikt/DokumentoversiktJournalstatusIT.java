@@ -53,7 +53,7 @@ class DokumentoversiktJournalstatusIT extends AbstractItest {
 		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
 
 		assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-		assertEquals(4, dokumentoversikt.getJournalposter().size()); // 1 feilregistrert journalpost filterers bort
+		assertEquals(5, dokumentoversikt.getJournalposter().size()); // 1 feilregistrert journalpost filterers bort
 		assertEquals("453221424", dokumentoversikt.getJournalposter().get(0).getJournalpostId());
 		assertEquals(Journalstatus.UKJENT_BRUKER, dokumentoversikt.getJournalposter().get(0).getJournalstatus());
 		assertEquals("453211096", dokumentoversikt.getJournalposter().get(1).getJournalpostId());
@@ -66,8 +66,9 @@ class DokumentoversiktJournalstatusIT extends AbstractItest {
 		assertEquals(KANAL_REFERANSE_ID, dokumentoversikt.getJournalposter().get(1).getEksternReferanseId());
 		assertEquals(KANAL_REFERANSE_ID, dokumentoversikt.getJournalposter().get(2).getEksternReferanseId());
 		assertEquals(KANAL_REFERANSE_ID, dokumentoversikt.getJournalposter().get(3).getEksternReferanseId());
+		assertEquals("tom.tom#2541", dokumentoversikt.getJournalposter().get(4).getUtsendingsinfo().getDigitalpostkasseAdresse());
 
-		assertEquals(base64("452929051"), dokumentoversikt.getSideInfo().getSluttpeker());
+		assertEquals(base64("429812712"), dokumentoversikt.getSideInfo().getSluttpeker());
 		assertTrue(dokumentoversikt.getSideInfo().isFinnesNesteSide());
 
 		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposterstatus"))
