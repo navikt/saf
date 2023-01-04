@@ -66,7 +66,7 @@ class DokumentoversiktJournalstatusIT extends AbstractItest {
 		assertEquals(KANAL_REFERANSE_ID, dokumentoversikt.getJournalposter().get(1).getEksternReferanseId());
 		assertEquals(KANAL_REFERANSE_ID, dokumentoversikt.getJournalposter().get(2).getEksternReferanseId());
 		assertEquals(KANAL_REFERANSE_ID, dokumentoversikt.getJournalposter().get(3).getEksternReferanseId());
-		assertEquals("tom.tom#2541", dokumentoversikt.getJournalposter().get(4).getUtsendingsinfo().getDigitalpostkasseAdresse());
+		assertEquals("tom.tom#2541", dokumentoversikt.getJournalposter().get(4).getUtsendingsinfo().getDigitalpostSendt().getAdresse());
 
 		assertEquals(base64("429812712"), dokumentoversikt.getSideInfo().getSluttpeker());
 		assertTrue(dokumentoversikt.getSideInfo().isFinnesNesteSide());

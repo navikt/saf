@@ -6,13 +6,38 @@ import lombok.Value;
 @Value
 @Builder
 public class Utsendingsinfo {
-	String adresselinje1;
-	String adresselinje2;
-	String adresselinje3;
-	String postnummer;
-	String poststed;
-	String landkode;
-	String digitalpostkasseAdresse;
-	String varselSendtTil;
-	String varseltekst;
+
+	EpostSendt epostSendt;
+	SmsSendt smsSendt;
+	FysiskpostSendt fysiskpostSendt;
+	DigitalpostSendt digitalpostSendt;
+
+	@Value
+	@Builder
+	public static class EpostSendt {
+		String tittle;
+		String adresse;
+		String varslingstekst;
+	}
+
+	@Value
+	@Builder
+	public static class SmsSendt {
+		String adresse;
+		String varslingstekst;
+	}
+
+	@Value
+	@Builder
+	public static class FysiskpostSendt {
+		String adressetekstKonvolutt;
+	}
+
+	@Value
+	@Builder
+	public static class DigitalpostSendt {
+		String adresse;
+		String leverandoer;
+		String varslingstekst;
+	}
 }

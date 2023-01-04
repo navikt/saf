@@ -1,5 +1,6 @@
 package no.nav.saf.anticorruptionlayer.joark.domain;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.FagomradeCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.FagsystemCode;
@@ -31,15 +32,21 @@ import no.nav.saf.domain.visningsmodell.RelevantDato;
 import no.nav.saf.domain.visningsmodell.Sak;
 import no.nav.saf.domain.visningsmodell.Tilleggsopplysning;
 import no.nav.saf.domain.visningsmodell.Utsendingsinfo;
+import no.nav.saf.domain.visningsmodell.VarselMelding;
+import no.nav.saf.exceptions.SafTechnicalException;
 import no.nav.saf.tilgangskontroll.RequestCache;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
@@ -52,6 +59,8 @@ import static no.nav.saf.domain.DomainConstants.TILGANG_BRUKER;
 import static no.nav.saf.domain.visningsmodell.RelevantDato.INVALID_DATE;
 import static org.apache.commons.lang3.BooleanUtils.isTrue;
 import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.apache.commons.lang3.StringUtils.substringsBetween;
 import static org.apache.commons.lang3.StringUtils.trim;
 
 /**
@@ -385,13 +394,20 @@ public class JournalpostDtoMapper {
 
 		switch (utsendingsKanalCode) {
 			case NAV_NO -> {
-				return Optional.of(mapNavNoVarsling(utsendingsInfoDto.getNavNoVarsling()));
+				return Optional.of(Utsendingsinfo.builder()
+						.epostSendt(mapEpostSendt(utsendingsInfoDto.getNavNoVarsling()))
+						.smsSendt(mapSmsSendt(utsendingsInfoDto.getNavNoVarsling()))
+						.build());
 			}
 			case S -> {
-				return Optional.ofNullable(mapFysiskPostadresse(utsendingsInfoDto.getFysiskPostadresse()));
+				return Optional.ofNullable(Utsendingsinfo.builder()
+						.fysiskpostSendt(mapFysiskPostadresse(utsendingsInfoDto.getFysiskPostadresse()))
+						.build());
 			}
 			case SDP -> {
-				return Optional.of(mapDigitalPostadresse(utsendingsInfoDto.getDigitalPostadresse()));
+				return Optional.of(Utsendingsinfo.builder()
+						.digitalpostSendt(mapDigitalPostadresse(utsendingsInfoDto.getDigitalPostadresse()))
+						.build());
 			}
 			default -> {
 				return Optional.empty();
@@ -399,29 +415,57 @@ public class JournalpostDtoMapper {
 		}
 	}
 
-	private Utsendingsinfo mapFysiskPostadresse(UtsendingsInfoDto.FysiskPostadresseDto fysiskPostadresse) {
-		return isNull(fysiskPostadresse) ? null : Utsendingsinfo.builder()
-				.adresselinje1(fysiskPostadresse.getAdresselinje1())
-				.adresselinje2(fysiskPostadresse.getAdresselinje2())
-				.adresselinje3(fysiskPostadresse.getAdresselinje3())
-				.postnummer(fysiskPostadresse.getPostnummer())
-				.poststed(fysiskPostadresse.getPoststed())
-				.landkode(fysiskPostadresse.getLandkode())
+	private Utsendingsinfo.FysiskpostSendt mapFysiskPostadresse(UtsendingsInfoDto.FysiskPostadresseDto fysiskPostadresse) {
+		return isNull(fysiskPostadresse) ? null : Utsendingsinfo.FysiskpostSendt.builder()
+				.adressetekstKonvolutt(filterPostadresse(fysiskPostadresse))
 				.build();
 	}
 
-	private Utsendingsinfo mapDigitalPostadresse(UtsendingsInfoDto.DigitalPostadresseDto digitalPostadresseDto) {
-		return digitalPostadresseDto == null ? null : Utsendingsinfo.builder()
-				.digitalpostkasseAdresse(digitalPostadresseDto.getDigitalpostkasseAdresse())
+	private Utsendingsinfo.DigitalpostSendt mapDigitalPostadresse(UtsendingsInfoDto.DigitalPostadresseDto digitalPostadresseDto) {
+		return digitalPostadresseDto == null ? null : Utsendingsinfo.DigitalpostSendt.builder()
+				.adresse(digitalPostadresseDto.getDigitalpostkasseAdresse())
+				.leverandoer(digitalPostadresseDto.getPostkasseLeverandor())
 				.build();
 	}
 
-	private Utsendingsinfo mapNavNoVarsling(UtsendingsInfoDto.NavNoVarslingDto navNoVarslingDto) {
+	private Utsendingsinfo.SmsSendt mapSmsSendt(UtsendingsInfoDto.NavNoVarslingDto navNoVarslingDto) {
+		VarselMelding varselInfo = getVarselKontaktInfo(navNoVarslingDto);
+		VarselMelding varseltekst = getVarseltekst(navNoVarslingDto);
+
 		return navNoVarslingDto == null ? null :
-				Utsendingsinfo.builder()
-						.varselSendtTil(navNoVarslingDto.getVarselSendtTil())
-						.varseltekst(navNoVarslingDto.getVarseltekst())
+				Utsendingsinfo.SmsSendt.builder()
+						.adresse(varselInfo.getSms())
+						.varslingstekst(varseltekst.getSms())
 						.build();
+	}
+
+	private Utsendingsinfo.EpostSendt mapEpostSendt(UtsendingsInfoDto.NavNoVarslingDto navNoVarslingDto) {
+		VarselMelding varselInfo = getVarselKontaktInfo(navNoVarslingDto);
+		VarselMelding varseltekst = getVarseltekst(navNoVarslingDto);
+
+		return navNoVarslingDto == null ? null :
+				Utsendingsinfo.EpostSendt.builder()
+						.tittle(parseString(varseltekst.getEpost(), "<title>", "</title>"))
+						.adresse(varselInfo.getEpost())
+						.varslingstekst(parseString(varseltekst.getEpost(), "<p>", "</p>"))
+						.build();
+	}
+
+	private VarselMelding getVarselKontaktInfo(UtsendingsInfoDto.NavNoVarslingDto varslingDto) {
+		return jsonStringToObject(varslingDto.getVarselSendtTil(), VarselMelding.class);
+	}
+
+	private VarselMelding getVarseltekst(UtsendingsInfoDto.NavNoVarslingDto varslingDto) {
+		return jsonStringToObject(varslingDto.getVarseltekst(), VarselMelding.class);
+	}
+
+	public static <T> T jsonStringToObject(String jsonString, Class<T> tClass) {
+		ObjectMapper mapper = new ObjectMapper();
+		try {
+			return mapper.readValue(jsonString, tClass);
+		} catch (IOException e) {
+			throw new SafTechnicalException(e.getMessage(), e);
+		}
 	}
 
 	private boolean determineSaksbehandlerTilgang(Journalpost journalpost, DokumentInfoDto dokumentInfoDto, VariantDto variantDto, RequestCache requestCache) {
@@ -439,7 +483,6 @@ public class JournalpostDtoMapper {
 					getDecisionFromPep7d(journalpost.getSak().getArkivsaksystem(), journalpost.getSak().getArkivsaksnummer(), requestCache);
 		}
 	}
-
 
 	private boolean getDecisionFromPep2d(Tema tema, RequestCache requestCache) {
 		String tilgangKeyPep2dLocalCaching = getKeyForPep2d(tema.name());
@@ -466,5 +509,22 @@ public class JournalpostDtoMapper {
 
 	private boolean getCachedDecision(RequestCache requestCache, String tilgangKey) {
 		return requestCache.getObject(tilgangKey) == null ? false : requestCache.getObject(tilgangKey);
+	}
+
+	private String filterPostadresse(UtsendingsInfoDto.FysiskPostadresseDto fysiskPostadresse) {
+		return Stream.of(fysiskPostadresse.getAdresselinje1(),
+						fysiskPostadresse.getAdresselinje2(),
+						fysiskPostadresse.getAdresselinje3(),
+						fysiskPostadresse.getPostnummer(),
+						fysiskPostadresse.getPoststed(),
+						fysiskPostadresse.getLandkode())
+				.filter(StringUtils::isNotBlank)
+				.collect(Collectors.joining("\n"));
+	}
+
+	private String parseString(String htmlString, String startWith, String endWith) {
+		return Arrays.stream(substringsBetween(htmlString, startWith, endWith))
+				.distinct()
+				.collect(Collectors.joining("\n"));
 	}
 }

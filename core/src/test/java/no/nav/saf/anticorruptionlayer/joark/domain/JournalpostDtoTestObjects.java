@@ -17,11 +17,16 @@ import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.dto.Tilleggsopply
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.dto.UtsendingsInfoDto;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.dto.VariantDto;
 import no.nav.saf.domain.visningsmodell.AvsenderMottakerIdType;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 /**
  * @author Joakim Bjørnstad, Jbit AS
@@ -82,8 +87,10 @@ public class JournalpostDtoTestObjects {
 	public static final String POSTSTED = "poststed";
 	public static final String LANDKODE = "landkode";
 	public static final String DIGITALKONTAKT_INFORMASJON = "{\n          \"epost\": \"epostaddress3@nav.no\",\n          \"sms\": \"11111111\"\n        }";
-	public static final String VARSELTEKST = "{\n          \"epost\": \"Du har fått brev fra NAV\",\n          \"sms\": \"Du har fått brev fra NAV\"\n        }";
-	public static final String DIGITALPOSTKASSEADRESSE = "0000487236";
+	public static final String VARSELTEKST = "{\"epost\":\"Tittel Vedtak fra NAV, Tekst <!DOCTYPE html><html><head>" +
+			"<title>Vedtak fra NAV</title></head><body><!DOCTYPE html>\\n<html>\\n\\t<head>\\n\\t\\t<title>Vedtak fra NAV</title>\\n\\t</head>\\n\\t<body>\\n\\t\\t<p>Hei!</p>\\n\\t\\t<p>Du har fått et vedtak fra NAV.</p>\\n\\t\\t<p>Logg inn på nav.no for å lese det.</p>\\n\\t\\t<p>Vennlig hilsen</p>\\n\\t\\t<p>NAV</p>\\n\\t</body>\\n</html></body></html>\\n\",\"sms\":null}";
+	public static final String DIGITALPOSTKASSEADRESSE = "tom.tom#2541";
+	public static final String DIGITALPOSTKASSE_LEVERANDØR = "0000487236";
 
 	static JournalpostDto buildJournalpostDtoUtgaaendeType(JournalStatusCode journalStatusCode, UtsendingsInfoDto utsendingsInfoDto, UtsendingsKanalCode kanalCode) {
 		return baseJournalpostDto()
@@ -190,7 +197,6 @@ public class JournalpostDtoTestObjects {
 				.fysiskPostadresse(UtsendingsInfoDto.FysiskPostadresseDto.builder()
 						.adresselinje1(ADRESSELINJE1)
 						.adresselinje2(ADRESSELINJE2)
-						.adresselinje3(ADRESSELINJE3)
 						.postnummer(POSTNUMMER)
 						.poststed(POSTSTED)
 						.landkode(LANDKODE)
@@ -211,6 +217,7 @@ public class JournalpostDtoTestObjects {
 		return UtsendingsInfoDto.builder()
 				.digitalPostadresse(UtsendingsInfoDto.DigitalPostadresseDto.builder()
 						.digitalpostkasseAdresse(DIGITALPOSTKASSEADRESSE)
+						.postkasseLeverandor(DIGITALPOSTKASSE_LEVERANDØR)
 						.build())
 				.build();
 	}
@@ -220,6 +227,18 @@ public class JournalpostDtoTestObjects {
 		logiskVedleggDto.setVedleggId(JournalpostDtoTestObjects.LOGISK_VEDLEGG_ID);
 		logiskVedleggDto.setTittel(JournalpostDtoTestObjects.LOGISK_VEDLEGG_TITTEL);
 		return Collections.singletonList(logiskVedleggDto);
+	}
+
+	public static String fysiskPostadresse() {
+		UtsendingsInfoDto.FysiskPostadresseDto fysiskPostadresse = createFysiskPostadresseDto().getFysiskPostadresse();
+		return Stream.of(fysiskPostadresse.getAdresselinje1(),
+						fysiskPostadresse.getAdresselinje2(),
+						fysiskPostadresse.getAdresselinje3(),
+						fysiskPostadresse.getPostnummer(),
+						fysiskPostadresse.getPoststed(),
+						fysiskPostadresse.getLandkode())
+				.filter(StringUtils::isNotBlank)
+				.collect(Collectors.joining("\n"));
 	}
 
 }

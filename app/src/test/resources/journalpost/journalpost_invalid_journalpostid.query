@@ -64,15 +64,23 @@
             }
         }
         utsendingsinfo {
-            digitalpostkasseAdresse
-            varselSendtTil
-            varseltekst
-            adresselinje1
-            adresselinje2
-            adresselinje3
-            postnummer
-            poststed
-            landkode
+            digitalpostSendt {
+                adresse
+                leverandoer
+                varslingstekst
+            }
+            fysiskpostSendt {
+                adressetekstKonvolutt
+            }
+            smsSendt {
+                adresse
+                varslingstekst
+            }
+            epostSendt {
+                tittle
+                adresse
+                varslingstekst
+            }
         }
     }
 }

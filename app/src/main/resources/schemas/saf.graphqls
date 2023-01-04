@@ -160,12 +160,12 @@ type Query {
         tilknytning: Tilknytning!
     ): [Journalpost]!
 
-     # * Query returnerer alle saker for bruker med angitt fnr / aktoerID.
-        saker(
+    # * Query returnerer alle saker for bruker med angitt fnr / aktoerID.
+    saker(
         # ID til bruker man ønsker å hente saker for.
         # * Hvis argumentet ikke er angitt så returneres en feil.
         brukerId: BrukerIdInput!
-        ): [Sak]!
+    ): [Sak]!
 }
 
 # Dokumentoversikt er en liste av journalposter som tilfredstiller query kriteriene.
@@ -378,35 +378,66 @@ type AvsenderMottaker {
 # * Forteller hvilken adresse en utgående forsendelse er distribuert til (digitalt eller fysisk),
 # * eller til hvilket epost/telefonnummer varsel om dokument er sendt.
 type Utsendingsinfo {
-    # Settes kun (men ikke alltid) ved distribusjon gjennom sentral print.
-    adresselinje1: String
 
-    # Settes kun (men ikke alltid) ved distribusjon gjennom sentral print.
-    adresselinje2: String
+    # Informasjon om distribusjon til Digital postkasse til Innbyggere(DPI)
+    # Settes ved distribusjon til DPI
+    digitalpostSendt: DigitalpostSendt
 
-    # Settes kun (men ikke alltid) ved distribusjon gjennom sentral print.
-    adresselinje3: String
+    # Informasjon om distribusjon til fysisk post gjennom Posten Norge
+    # Settes kun ved distribusjon gjennom sentral print.
+    fysiskpostSendt: FysiskpostSendt
 
-    # Postnummer forsendelsen er sendt til. Settes kun ved distribusjon gjennom sentral print.
-    postnummer: String
+    # SMS varsel sendt til bruker ved distribusjon til nav.no
+    # Settes ved distribusjon gjennom nav.no
+    smsSendt: SmsSendt
 
-    # Sted forsendelsen er sendt til. Settes kun ved distribusjon gjennom sentral print.
-    poststed: String
+    # Epostvarsel sendt til bruker ved distribusjon til nav.no
+    # Settes ved distribusjon gjennom nav.no
+    epostSendt: EpostSendt
+}
 
-    # Landkodet(alpha-2) forsendelsen er sendt til. Settes kun ved distribusjon gjennom sentral print.
-    landkode: String
+# Informasjon om distribusjon til Digital postkasse til Innbyggere
+# Vil kun være satt hvis brevet er distribuert til DPI
+type DigitalpostSendt {
+    # DPI leverandør sin adresse som brevet ble sendt til.
+    adresse: String
 
-    # Digital postkasse er fra Digipost eller e-Boks. Brukeren velg selv leverandør og tildelt postkasse til å kommunisere digital.
-    # * Settes ved distribusjon til DPI (Digital Postkasse Innbygger).
-    digitalpostkasseAdresse: String
+    # Navn på DPI leverandør.
+    leverandoer: String
 
-    # JSON-string som inneholder informasjon om hvor varsel er sendt. epost eller sms kan være null.
-    # * Settes ved distribusjon gjennom nav.no
-    varselSendtTil: String
+    #Teksten i varselet gjennom DPI.
+    varslingstekst: String
+}
 
-    # JSON-string som inneholder informasjon om hvilken varslingstekst som ble sendt til mottaker. epost eller sms kan være null.
-    # * Settes ved distribusjon gjennom nav.no
-    varseltekst: String
+# Informasjon om distribusjon til fysisk post gjennom Posten Norge
+# Vil kun være satt hvis brevet er distribuert som fysisk post gjennom sentral utskrift
+type FysiskpostSendt {
+
+    # Adressen som stod på eller i konvolutten som ble sendt til bruker.
+    adressetekstKonvolutt: String
+}
+
+# SMS varsel sendt til bruker ved distribusjon til nav.no
+# Vil kun være satt hvis brevet er distribuert til nav.no
+type SmsSendt {
+    # Mobilnummeret som varselet ble sendt til.
+    adresse: String
+
+    #Teksten i varselet.
+    varslingstekst: String
+}
+
+# Epostvarsel sendt til bruker ved distribusjon til nav.no
+# Vil kun være satt hvis brevet er distribuert til nav.no
+type EpostSendt {
+    # Tittel på eposten som ble sendt til bruker.
+    tittle: String
+
+    # Epostadressen som varselet ble sendt til.
+    adresse: String
+
+    # Teksten i varslet. Kan inneholde HTML.
+    varslingstekst: String
 }
 
 # Metadata tilknyttet et bestemt dokument i Joark (evt til flere varianter av samme dokument).

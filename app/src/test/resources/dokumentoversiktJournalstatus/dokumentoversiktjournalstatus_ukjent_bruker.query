@@ -49,16 +49,24 @@
           filtype
         }
       }
-     utsendingsinfo {
-        adresselinje1
-        adresselinje2
-        adresselinje3
-        postnummer
-        poststed
-        landkode
-        digitalpostkasseAdresse
-        varselSendtTil
-        varseltekst
+      utsendingsinfo {
+        digitalpostSendt {
+            adresse
+            leverandoer
+            varslingstekst
+        }
+        fysiskpostSendt {
+            adressetekstKonvolutt
+        }
+        smsSendt {
+            adresse
+            varslingstekst
+        }
+        epostSendt {
+            tittle
+            adresse
+            varslingstekst
+        }
       }
     }
     sideInfo {

@@ -32,9 +32,6 @@ import java.time.ZoneId;
 import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
 import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoMapper.FILTYPE_PDF;
-import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.ADRESSELINJE1;
-import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.ADRESSELINJE2;
-import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.ADRESSELINJE3;
 import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.AKTOER_ID;
 import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.ANTALL_RETUR;
 import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.ARKIVSAK_NR;
@@ -50,8 +47,8 @@ import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObje
 import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.BRUKER_ID_PERSON;
 import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.DATO_FERDIGSTILT;
 import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.DATO_OPPRETTET;
-import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.DIGITALKONTAKT_INFORMASJON;
 import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.DIGITALPOSTKASSEADRESSE;
+import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.DIGITALPOSTKASSE_LEVERANDØR;
 import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.DOKUMENT_DATO;
 import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.DOKUMENT_INFO_ID;
 import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.EKSPEDERT_DATO;
@@ -63,15 +60,12 @@ import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObje
 import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.JOURNALPOST_ID;
 import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.JOURNAL_DATO;
 import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.KANAL_REFERANSE_ID;
-import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.LANDKODE;
 import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.LEST_DATO;
 import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.LOGISK_VEDLEGG_ID;
 import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.LOGISK_VEDLEGG_TITTEL;
 import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.MOTTAT_DATO;
 import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.OPPRETTET_AV_NAVN;
 import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.ORG_NR;
-import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.POSTNUMMER;
-import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.POSTSTED;
 import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.SAKS_ID;
 import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.SENDT_PRINT_DATO;
 import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.SKJERMING_TYPE_CODE_POL;
@@ -79,11 +73,11 @@ import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObje
 import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.TILLEGGSOPPLYSNING_VERDI;
 import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.VARIANT_FORMAT_CODE_ARKIV;
 import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.VARIANT_FORMAT_CODE_SLADDET;
-import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.VARSELTEKST;
 import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.buildJournalpostDtoUtgaaendeType;
 import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.createDigitalPostadresse;
 import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.createDitttNavVarsel;
 import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.createFysiskPostadresseDto;
+import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.fysiskPostadresse;
 import static no.nav.saf.anticorruptionlayer.joark.domain.kode.JournalStatusCode.E;
 import static no.nav.saf.anticorruptionlayer.joark.domain.kode.JournalStatusCode.M;
 import static no.nav.saf.anticorruptionlayer.joark.domain.kode.JournalpostTypeCode.U;
@@ -154,12 +148,7 @@ class JournalpostDtoMapperTest {
 		assertThat(journalpost.getRelevanteDatoer(), hasItem(new RelevantDato(EKSPEDERT_DATO, DATO_EKSPEDERT)));
 		assertThat(journalpost.getRelevanteDatoer(), hasItem(new RelevantDato(LEST_DATO, DATO_LEST)));
 		assertThat(journalpost.getRelevanteDatoer(), not(hasItem(new RelevantDato(MOTTAT_DATO, DATO_REGISTRERT))));
-		assertEquals(ADRESSELINJE1, journalpost.getUtsendingsinfo().getAdresselinje1());
-		assertEquals(ADRESSELINJE2, journalpost.getUtsendingsinfo().getAdresselinje2());
-		assertEquals(ADRESSELINJE3, journalpost.getUtsendingsinfo().getAdresselinje3());
-		assertEquals(POSTNUMMER, journalpost.getUtsendingsinfo().getPostnummer());
-		assertEquals(POSTSTED, journalpost.getUtsendingsinfo().getPoststed());
-		assertEquals(LANDKODE, journalpost.getUtsendingsinfo().getLandkode());
+		assertEquals(fysiskPostadresse(), journalpost.getUtsendingsinfo().getFysiskpostSendt().getAdressetekstKonvolutt());
 	}
 
 	@Test
@@ -171,10 +160,10 @@ class JournalpostDtoMapperTest {
 
 		assertCommonMetadata(journalpost);
 
-		assertNull(journalpost.getUtsendingsinfo().getPostnummer());
-		assertNull(journalpost.getUtsendingsinfo().getDigitalpostkasseAdresse());
-		assertEquals(VARSELTEKST, journalpost.getUtsendingsinfo().getVarseltekst());
-		assertEquals(DIGITALKONTAKT_INFORMASJON, journalpost.getUtsendingsinfo().getVarselSendtTil());
+		assertNull(journalpost.getUtsendingsinfo().getFysiskpostSendt());
+		assertNull(journalpost.getUtsendingsinfo().getDigitalpostSendt());
+		assertEquals("Vedtak fra NAV", journalpost.getUtsendingsinfo().getEpostSendt().getTittle());
+		assertEquals("epostaddress3@nav.no", journalpost.getUtsendingsinfo().getEpostSendt().getAdresse());
 	}
 
 	@Test
@@ -186,9 +175,10 @@ class JournalpostDtoMapperTest {
 
 		assertCommonMetadata(journalpost);
 
-		assertNull(journalpost.getUtsendingsinfo().getAdresselinje1());
-		assertNull(journalpost.getUtsendingsinfo().getVarseltekst());
-		assertEquals(DIGITALPOSTKASSEADRESSE, journalpost.getUtsendingsinfo().getDigitalpostkasseAdresse());
+		assertNull(journalpost.getUtsendingsinfo().getEpostSendt());
+		assertNull(journalpost.getUtsendingsinfo().getSmsSendt());
+		assertEquals(DIGITALPOSTKASSEADRESSE, journalpost.getUtsendingsinfo().getDigitalpostSendt().getAdresse());
+		assertEquals(DIGITALPOSTKASSE_LEVERANDØR, journalpost.getUtsendingsinfo().getDigitalpostSendt().getLeverandoer());
 	}
 
 	@Test
