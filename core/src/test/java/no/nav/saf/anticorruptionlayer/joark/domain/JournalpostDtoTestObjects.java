@@ -17,16 +17,11 @@ import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.dto.Tilleggsopply
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.dto.UtsendingsInfoDto;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.dto.VariantDto;
 import no.nav.saf.domain.visningsmodell.AvsenderMottakerIdType;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 /**
  * @author Joakim Bjørnstad, Jbit AS
@@ -86,9 +81,48 @@ public class JournalpostDtoTestObjects {
 	public static final String POSTNUMMER = "postnummer";
 	public static final String POSTSTED = "poststed";
 	public static final String LANDKODE = "landkode";
+	public static final String ADRESSETEKST_KONVOLUTT = """
+			adresselinje1
+			adresselinje2
+			postnummer poststed
+			landkode""";
 	public static final String DIGITALKONTAKT_INFORMASJON = "{\n          \"epost\": \"epostaddress3@nav.no\",\n          \"sms\": \"11111111\"\n        }";
-	public static final String VARSELTEKST = "{\"epost\":\"Tittel Vedtak fra NAV, Tekst <!DOCTYPE html><html><head>" +
+	public static final String VARSEL_TITTEL1 = "Tittel Vedtak fra NAV";
+	public static final String VARSEL_TEKST1 = "Tekst <!DOCTYPE html><html><head><title>Vedtak fra NAV</title></head><body><!DOCTYPE html>\n" +
+			"<html>\n" +
+			"\t<head>\n" +
+			"\t\t<title>Vedtak fra NAV</title>\n" +
+			"\t</head>\n" +
+			"\t<body>\n" +
+			"\t\t<p>Hei!</p>\n" +
+			"\t\t<p>Du har fått et vedtak fra NAV.</p>\n" +
+			"\t\t<p>Logg inn på nav.no for å lese det.</p>\n" +
+			"\t\t<p>Vennlig hilsen</p>\n" +
+			"\t\t<p>NAV</p>\n" +
+			"\t</body>\n" +
+			"</html></body></html>";
+	public static final String VARSEL_MELDING1 = "{\"epost\":\"Tittel Vedtak fra NAV, Tekst <!DOCTYPE html><html><head>" +
 			"<title>Vedtak fra NAV</title></head><body><!DOCTYPE html>\\n<html>\\n\\t<head>\\n\\t\\t<title>Vedtak fra NAV</title>\\n\\t</head>\\n\\t<body>\\n\\t\\t<p>Hei!</p>\\n\\t\\t<p>Du har fått et vedtak fra NAV.</p>\\n\\t\\t<p>Logg inn på nav.no for å lese det.</p>\\n\\t\\t<p>Vennlig hilsen</p>\\n\\t\\t<p>NAV</p>\\n\\t</body>\\n</html></body></html>\\n\",\"sms\":null}";
+
+	public static final String VARSEL_MELDING2 = "{\"epost\":\"Tittel Melding fra NAV, Tekst <!DOCTYPE html><html><head><title>Melding fra NAV</title></head><body><!DOCTYPE html>\\n<html>\\n    <head>\\n        <title>Melding fra NAV</title>\\n    </head>\\n    <body>\\n        <p>Hei!</p>\\n        <p>Du har fått en melding fra NAV.</p>\\n        <p>Logg inn på nav.no for å lese den.</p>\\n        <p>Vennlig hilsen</p>\\n        <p>NAV</p>\\n    </body>\\n</html></body></html>\\n\",\"sms\":null}";
+	public static final String VARSEL_TITTEL2 = "Tittel Melding fra NAV";
+	public static final String VARSEL_TEKST2 = "Tekst <!DOCTYPE html><html><head><title>Melding fra NAV</title></head><body><!DOCTYPE html>\n" +
+			"<html>\n" +
+			"    <head>\n" +
+			"        <title>Melding fra NAV</title>\n" +
+			"    </head>\n" +
+			"    <body>\n" +
+			"        <p>Hei!</p>\n" +
+			"        <p>Du har fått en melding fra NAV.</p>\n" +
+			"        <p>Logg inn på nav.no for å lese den.</p>\n" +
+			"        <p>Vennlig hilsen</p>\n" +
+			"        <p>NAV</p>\n" +
+			"    </body>\n" +
+			"</html></body></html>";
+	public static final String VARSEL_MELDING3 = "{\"epost\":null,\"sms\":\"Hei! Du har fått en melding fra NAV. Logg inn på nav.no for å lese den. Vennlig hilsen NAV\"}";
+	public static final String VARSEL_KONTAKTINFO_3 = "{\"epost\":null,\"sms\":\"12345678\"}";
+	public static final String PHONENUMMER = "12345678";
+	public static final String SMS_VARSELTEKST = "Hei! Du har fått en melding fra NAV. Logg inn på nav.no for å lese den. Vennlig hilsen NAV";
 	public static final String DIGITALPOSTKASSEADRESSE = "tom.tom#2541";
 
 	static JournalpostDto buildJournalpostDtoUtgaaendeType(JournalStatusCode journalStatusCode, UtsendingsInfoDto utsendingsInfoDto, UtsendingsKanalCode kanalCode) {
@@ -203,11 +237,11 @@ public class JournalpostDtoTestObjects {
 				.build();
 	}
 
-	public static UtsendingsInfoDto createDitttNavVarsel() {
+	public static UtsendingsInfoDto createDitttNavVarsel(String varseltekst, String varselKontaktInfo) {
 		return UtsendingsInfoDto.builder()
 				.navNoVarsling(UtsendingsInfoDto.NavNoVarslingDto.builder()
-						.varselSendtTil(DIGITALKONTAKT_INFORMASJON)
-						.varseltekst(VARSELTEKST)
+						.varselSendtTil(varselKontaktInfo)
+						.varseltekst(varseltekst)
 						.build())
 				.build();
 	}
@@ -226,17 +260,4 @@ public class JournalpostDtoTestObjects {
 		logiskVedleggDto.setTittel(JournalpostDtoTestObjects.LOGISK_VEDLEGG_TITTEL);
 		return Collections.singletonList(logiskVedleggDto);
 	}
-
-	public static String fysiskPostadresse() {
-		UtsendingsInfoDto.FysiskPostadresseDto fysiskPostadresse = createFysiskPostadresseDto().getFysiskPostadresse();
-		return Stream.of(fysiskPostadresse.getAdresselinje1(),
-						fysiskPostadresse.getAdresselinje2(),
-						fysiskPostadresse.getAdresselinje3(),
-						fysiskPostadresse.getPostnummer(),
-						fysiskPostadresse.getPoststed(),
-						fysiskPostadresse.getLandkode())
-				.filter(StringUtils::isNotBlank)
-				.collect(Collectors.joining("\n"));
-	}
-
 }

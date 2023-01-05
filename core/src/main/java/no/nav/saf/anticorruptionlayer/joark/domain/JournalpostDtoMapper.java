@@ -59,7 +59,6 @@ import static no.nav.saf.domain.DomainConstants.TILGANG_BRUKER;
 import static no.nav.saf.domain.visningsmodell.RelevantDato.INVALID_DATE;
 import static org.apache.commons.lang3.BooleanUtils.isTrue;
 import static org.apache.commons.lang3.StringUtils.isBlank;
-import static org.apache.commons.lang3.StringUtils.substringsBetween;
 import static org.apache.commons.lang3.StringUtils.trim;
 
 /**
@@ -416,7 +415,7 @@ public class JournalpostDtoMapper {
 
 	private Utsendingsinfo.FysiskpostSendt mapFysiskPostadresse(UtsendingsInfoDto.FysiskPostadresseDto fysiskPostadresse) {
 		return isNull(fysiskPostadresse) ? null : Utsendingsinfo.FysiskpostSendt.builder()
-				.adressetekstKonvolutt(filterPostadresse(fysiskPostadresse))
+				.adressetekstKonvolutt(buildAdressetekstKonvolutt(fysiskPostadresse))
 				.build();
 	}
 
@@ -430,22 +429,22 @@ public class JournalpostDtoMapper {
 		VarselMelding varselInfo = getVarselKontaktInfo(navNoVarslingDto);
 		VarselMelding varseltekst = getVarseltekst(navNoVarslingDto);
 
-		return navNoVarslingDto == null ? null :
-				Utsendingsinfo.SmsVarselSendt.builder()
-						.adresse(varselInfo.getSms())
-						.varslingstekst(varseltekst.getSms())
-						.build();
+		return Utsendingsinfo.SmsVarselSendt.builder()
+				.adresse(isBlank(varselInfo.getSms()) ? null : varselInfo.getSms())
+				.varslingstekst(isBlank(varseltekst.getSms()) ? null : varseltekst.getSms())
+				.build();
 	}
 
 	private Utsendingsinfo.EpostVarselSendt mapEpostVarselSendt(UtsendingsInfoDto.NavNoVarslingDto navNoVarslingDto) {
 		VarselMelding varselInfo = getVarselKontaktInfo(navNoVarslingDto);
 		VarselMelding varseltekst = getVarseltekst(navNoVarslingDto);
 
-		return navNoVarslingDto == null ? null :
+		List<String> varselList = parseString(varseltekst.getEpost());
+		return varselList == null ? null :
 				Utsendingsinfo.EpostVarselSendt.builder()
-						.tittel(parseString(varseltekst.getEpost(), "<title>", "</title>"))
+						.tittel(varselList.size() > 1 ? varselList.get(0) : null)
 						.adresse(varselInfo.getEpost())
-						.varslingstekst(parseString(varseltekst.getEpost(), "<p>", "</p>"))
+						.varslingstekst(varselList.size() > 1 ? varselList.get(1).strip() : varselList.get(0).strip())
 						.build();
 	}
 
@@ -509,20 +508,17 @@ public class JournalpostDtoMapper {
 		return requestCache.getObject(tilgangKey) == null ? false : requestCache.getObject(tilgangKey);
 	}
 
-	private String filterPostadresse(UtsendingsInfoDto.FysiskPostadresseDto fysiskPostadresse) {
+	private String buildAdressetekstKonvolutt(UtsendingsInfoDto.FysiskPostadresseDto fysiskPostadresse) {
 		return Stream.of(fysiskPostadresse.getAdresselinje1(),
 						fysiskPostadresse.getAdresselinje2(),
 						fysiskPostadresse.getAdresselinje3(),
-						fysiskPostadresse.getPostnummer(),
-						fysiskPostadresse.getPoststed(),
+						fysiskPostadresse.getPostnummer() + " " + fysiskPostadresse.getPoststed(),
 						fysiskPostadresse.getLandkode())
 				.filter(StringUtils::isNotBlank)
-				.collect(Collectors.joining("\n"));
+				.collect(Collectors.joining("\n")).strip();
 	}
 
-	private String parseString(String htmlString, String startWith, String endWith) {
-		return Arrays.stream(substringsBetween(htmlString, startWith, endWith))
-				.distinct()
-				.collect(Collectors.joining("\n"));
+	private List<String> parseString(String varseltekst) {
+		return isBlank(varseltekst) ? null : Arrays.stream(varseltekst.split(",", 2)).toList();
 	}
 }

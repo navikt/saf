@@ -52,7 +52,6 @@
       utsendingsinfo {
         digitalpostSendt {
             adresse
-            varslingstekst
         }
         fysiskpostSendt {
             adressetekstKonvolutt

@@ -37,6 +37,5 @@ public class Utsendingsinfo {
 	@Builder
 	public static class DigitalpostSendt {
 		String adresse;
-		String varslingstekst;
 	}
 }
