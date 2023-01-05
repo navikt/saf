@@ -162,8 +162,8 @@ class JournalpostDtoMapperTest {
 
 		assertNull(journalpost.getUtsendingsinfo().getFysiskpostSendt());
 		assertNull(journalpost.getUtsendingsinfo().getDigitalpostSendt());
-		assertEquals("Vedtak fra NAV", journalpost.getUtsendingsinfo().getEpostSendt().getTittle());
-		assertEquals("epostaddress3@nav.no", journalpost.getUtsendingsinfo().getEpostSendt().getAdresse());
+		assertEquals("Vedtak fra NAV", journalpost.getUtsendingsinfo().getEpostVarselSendt().getTittle());
+		assertEquals("epostaddress3@nav.no", journalpost.getUtsendingsinfo().getEpostVarselSendt().getAdresse());
 	}
 
 	@Test
@@ -175,8 +175,8 @@ class JournalpostDtoMapperTest {
 
 		assertCommonMetadata(journalpost);
 
-		assertNull(journalpost.getUtsendingsinfo().getEpostSendt());
-		assertNull(journalpost.getUtsendingsinfo().getSmsSendt());
+		assertNull(journalpost.getUtsendingsinfo().getEpostVarselSendt());
+		assertNull(journalpost.getUtsendingsinfo().getSmsVarselSendt());
 		assertEquals(DIGITALPOSTKASSEADRESSE, journalpost.getUtsendingsinfo().getDigitalpostSendt().getAdresse());
 		assertEquals(DIGITALPOSTKASSE_LEVERANDØR, journalpost.getUtsendingsinfo().getDigitalpostSendt().getLeverandoer());
 	}

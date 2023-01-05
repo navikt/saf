@@ -389,11 +389,11 @@ type Utsendingsinfo {
 
     # SMS varsel sendt til bruker ved distribusjon til nav.no
     # Settes ved distribusjon gjennom nav.no
-    smsSendt: SmsSendt
+    smsVarselSendt: SmsVarselSendt
 
     # Epostvarsel sendt til bruker ved distribusjon til nav.no
     # Settes ved distribusjon gjennom nav.no
-    epostSendt: EpostSendt
+    epostVarselSendt: EpostVarselSendt
 }
 
 # Informasjon om distribusjon til Digital postkasse til Innbyggere
@@ -419,7 +419,7 @@ type FysiskpostSendt {
 
 # SMS varsel sendt til bruker ved distribusjon til nav.no
 # Vil kun være satt hvis brevet er distribuert til nav.no
-type SmsSendt {
+type SmsVarselSendt {
     # Mobilnummeret som varselet ble sendt til.
     adresse: String
 
@@ -429,7 +429,7 @@ type SmsSendt {
 
 # Epostvarsel sendt til bruker ved distribusjon til nav.no
 # Vil kun være satt hvis brevet er distribuert til nav.no
-type EpostSendt {
+type EpostVarselSendt {
     # Tittel på eposten som ble sendt til bruker.
     tittle: String
 

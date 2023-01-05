@@ -7,14 +7,14 @@ import lombok.Value;
 @Builder
 public class Utsendingsinfo {
 
-	EpostSendt epostSendt;
-	SmsSendt smsSendt;
+	EpostVarselSendt epostVarselSendt;
+	SmsVarselSendt smsVarselSendt;
 	FysiskpostSendt fysiskpostSendt;
 	DigitalpostSendt digitalpostSendt;
 
 	@Value
 	@Builder
-	public static class EpostSendt {
+	public static class EpostVarselSendt {
 		String tittle;
 		String adresse;
 		String varslingstekst;
@@ -22,7 +22,7 @@ public class Utsendingsinfo {
 
 	@Value
 	@Builder
-	public static class SmsSendt {
+	public static class SmsVarselSendt {
 		String adresse;
 		String varslingstekst;
 	}

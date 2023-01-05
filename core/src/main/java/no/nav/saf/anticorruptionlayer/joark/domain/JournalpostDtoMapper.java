@@ -59,7 +59,6 @@ import static no.nav.saf.domain.DomainConstants.TILGANG_BRUKER;
 import static no.nav.saf.domain.visningsmodell.RelevantDato.INVALID_DATE;
 import static org.apache.commons.lang3.BooleanUtils.isTrue;
 import static org.apache.commons.lang3.StringUtils.isBlank;
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.apache.commons.lang3.StringUtils.substringsBetween;
 import static org.apache.commons.lang3.StringUtils.trim;
 
@@ -395,8 +394,8 @@ public class JournalpostDtoMapper {
 		switch (utsendingsKanalCode) {
 			case NAV_NO -> {
 				return Optional.of(Utsendingsinfo.builder()
-						.epostSendt(mapEpostSendt(utsendingsInfoDto.getNavNoVarsling()))
-						.smsSendt(mapSmsSendt(utsendingsInfoDto.getNavNoVarsling()))
+						.epostVarselSendt(mapEpostVarselSendt(utsendingsInfoDto.getNavNoVarsling()))
+						.smsVarselSendt(mapSmsVarselSendt(utsendingsInfoDto.getNavNoVarsling()))
 						.build());
 			}
 			case S -> {
@@ -428,23 +427,23 @@ public class JournalpostDtoMapper {
 				.build();
 	}
 
-	private Utsendingsinfo.SmsSendt mapSmsSendt(UtsendingsInfoDto.NavNoVarslingDto navNoVarslingDto) {
+	private Utsendingsinfo.SmsVarselSendt mapSmsVarselSendt(UtsendingsInfoDto.NavNoVarslingDto navNoVarslingDto) {
 		VarselMelding varselInfo = getVarselKontaktInfo(navNoVarslingDto);
 		VarselMelding varseltekst = getVarseltekst(navNoVarslingDto);
 
 		return navNoVarslingDto == null ? null :
-				Utsendingsinfo.SmsSendt.builder()
+				Utsendingsinfo.SmsVarselSendt.builder()
 						.adresse(varselInfo.getSms())
 						.varslingstekst(varseltekst.getSms())
 						.build();
 	}
 
-	private Utsendingsinfo.EpostSendt mapEpostSendt(UtsendingsInfoDto.NavNoVarslingDto navNoVarslingDto) {
+	private Utsendingsinfo.EpostVarselSendt mapEpostVarselSendt(UtsendingsInfoDto.NavNoVarslingDto navNoVarslingDto) {
 		VarselMelding varselInfo = getVarselKontaktInfo(navNoVarslingDto);
 		VarselMelding varseltekst = getVarseltekst(navNoVarslingDto);
 
 		return navNoVarslingDto == null ? null :
-				Utsendingsinfo.EpostSendt.builder()
+				Utsendingsinfo.EpostVarselSendt.builder()
 						.tittle(parseString(varseltekst.getEpost(), "<title>", "</title>"))
 						.adresse(varselInfo.getEpost())
 						.varslingstekst(parseString(varseltekst.getEpost(), "<p>", "</p>"))

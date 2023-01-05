@@ -125,7 +125,7 @@ class JournalpostIT extends AbstractItest {
 		assertThat(dokumentInfo1.getDokumentvarianter().get(0).getFiluuid(), is("0c0bacf-c233-4a54-96fc-e205b79862d9"));
 		Utsendingsinfo utsendingsInfo = journalpost.getUtsendingsinfo();
 		assertEquals("tom.tom#2541", utsendingsInfo.getDigitalpostSendt().getAdresse());
-		assertNull(utsendingsInfo.getSmsSendt());
+		assertNull(utsendingsInfo.getSmsVarselSendt());
 		assertNull(utsendingsInfo.getFysiskpostSendt());
 	}
 

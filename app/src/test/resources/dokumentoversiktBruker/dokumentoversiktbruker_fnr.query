@@ -8,6 +8,25 @@
           saksbehandlerHarTilgang
         }
       }
+      utsendingsinfo {
+          digitalpostSendt {
+              adresse
+              leverandoer
+              varslingstekst
+          }
+          fysiskpostSendt {
+              adressetekstKonvolutt
+          }
+          smsVarselSendt {
+              adresse
+              varslingstekst
+          }
+          epostVarselSendt {
+              tittle
+              adresse
+              varslingstekst
+          }
+      }
     }
   }
 }

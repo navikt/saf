@@ -58,11 +58,11 @@
         fysiskpostSendt {
             adressetekstKonvolutt
         }
-        smsSendt {
+        smsVarselSendt {
             adresse
             varslingstekst
         }
-        epostSendt {
+        epostVarselSendt {
             tittle
             adresse
             varslingstekst
