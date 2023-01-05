@@ -423,7 +423,6 @@ public class JournalpostDtoMapper {
 	private Utsendingsinfo.DigitalpostSendt mapDigitalPostadresse(UtsendingsInfoDto.DigitalPostadresseDto digitalPostadresseDto) {
 		return digitalPostadresseDto == null ? null : Utsendingsinfo.DigitalpostSendt.builder()
 				.adresse(digitalPostadresseDto.getDigitalpostkasseAdresse())
-				.leverandoer(digitalPostadresseDto.getPostkasseLeverandor())
 				.build();
 	}
 

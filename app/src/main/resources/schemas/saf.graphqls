@@ -402,9 +402,6 @@ type DigitalpostSendt {
     # DPI leverandør sin adresse som brevet ble sendt til.
     adresse: String
 
-    # Navn på DPI leverandør.
-    leverandoer: String
-
     #Teksten i varselet gjennom DPI.
     varslingstekst: String
 }

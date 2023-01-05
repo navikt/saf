@@ -48,7 +48,6 @@ import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObje
 import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.DATO_FERDIGSTILT;
 import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.DATO_OPPRETTET;
 import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.DIGITALPOSTKASSEADRESSE;
-import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.DIGITALPOSTKASSE_LEVERANDØR;
 import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.DOKUMENT_DATO;
 import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.DOKUMENT_INFO_ID;
 import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.EKSPEDERT_DATO;
@@ -178,7 +177,6 @@ class JournalpostDtoMapperTest {
 		assertNull(journalpost.getUtsendingsinfo().getEpostVarselSendt());
 		assertNull(journalpost.getUtsendingsinfo().getSmsVarselSendt());
 		assertEquals(DIGITALPOSTKASSEADRESSE, journalpost.getUtsendingsinfo().getDigitalpostSendt().getAdresse());
-		assertEquals(DIGITALPOSTKASSE_LEVERANDØR, journalpost.getUtsendingsinfo().getDigitalpostSendt().getLeverandoer());
 	}
 
 	@Test

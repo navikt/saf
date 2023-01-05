@@ -90,7 +90,6 @@ public class JournalpostDtoTestObjects {
 	public static final String VARSELTEKST = "{\"epost\":\"Tittel Vedtak fra NAV, Tekst <!DOCTYPE html><html><head>" +
 			"<title>Vedtak fra NAV</title></head><body><!DOCTYPE html>\\n<html>\\n\\t<head>\\n\\t\\t<title>Vedtak fra NAV</title>\\n\\t</head>\\n\\t<body>\\n\\t\\t<p>Hei!</p>\\n\\t\\t<p>Du har fått et vedtak fra NAV.</p>\\n\\t\\t<p>Logg inn på nav.no for å lese det.</p>\\n\\t\\t<p>Vennlig hilsen</p>\\n\\t\\t<p>NAV</p>\\n\\t</body>\\n</html></body></html>\\n\",\"sms\":null}";
 	public static final String DIGITALPOSTKASSEADRESSE = "tom.tom#2541";
-	public static final String DIGITALPOSTKASSE_LEVERANDØR = "0000487236";
 
 	static JournalpostDto buildJournalpostDtoUtgaaendeType(JournalStatusCode journalStatusCode, UtsendingsInfoDto utsendingsInfoDto, UtsendingsKanalCode kanalCode) {
 		return baseJournalpostDto()
@@ -217,7 +216,6 @@ public class JournalpostDtoTestObjects {
 		return UtsendingsInfoDto.builder()
 				.digitalPostadresse(UtsendingsInfoDto.DigitalPostadresseDto.builder()
 						.digitalpostkasseAdresse(DIGITALPOSTKASSEADRESSE)
-						.postkasseLeverandor(DIGITALPOSTKASSE_LEVERANDØR)
 						.build())
 				.build();
 	}
