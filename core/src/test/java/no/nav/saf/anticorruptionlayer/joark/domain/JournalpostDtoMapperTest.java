@@ -161,7 +161,7 @@ class JournalpostDtoMapperTest {
 
 		assertNull(journalpost.getUtsendingsinfo().getFysiskpostSendt());
 		assertNull(journalpost.getUtsendingsinfo().getDigitalpostSendt());
-		assertEquals("Vedtak fra NAV", journalpost.getUtsendingsinfo().getEpostVarselSendt().getTittle());
+		assertEquals("Vedtak fra NAV", journalpost.getUtsendingsinfo().getEpostVarselSendt().getTittel());
 		assertEquals("epostaddress3@nav.no", journalpost.getUtsendingsinfo().getEpostVarselSendt().getAdresse());
 	}
 

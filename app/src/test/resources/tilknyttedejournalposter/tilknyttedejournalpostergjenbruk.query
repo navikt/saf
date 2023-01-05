@@ -72,7 +72,7 @@
             varslingstekst
         }
         epostVarselSendt {
-            tittle
+            tittel
             adresse
             varslingstekst
         }

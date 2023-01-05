@@ -443,7 +443,7 @@ public class JournalpostDtoMapper {
 
 		return navNoVarslingDto == null ? null :
 				Utsendingsinfo.EpostVarselSendt.builder()
-						.tittle(parseString(varseltekst.getEpost(), "<title>", "</title>"))
+						.tittel(parseString(varseltekst.getEpost(), "<title>", "</title>"))
 						.adresse(varselInfo.getEpost())
 						.varslingstekst(parseString(varseltekst.getEpost(), "<p>", "</p>"))
 						.build();

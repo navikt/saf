@@ -15,7 +15,7 @@ public class Utsendingsinfo {
 	@Value
 	@Builder
 	public static class EpostVarselSendt {
-		String tittle;
+		String tittel;
 		String adresse;
 		String varslingstekst;
 	}

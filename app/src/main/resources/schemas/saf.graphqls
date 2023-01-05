@@ -428,7 +428,7 @@ type SmsVarselSendt {
 # Vil kun være satt hvis brevet er distribuert til nav.no
 type EpostVarselSendt {
     # Tittel på eposten som ble sendt til bruker.
-    tittle: String
+    tittel: String
 
     # Epostadressen som varselet ble sendt til.
     adresse: String
