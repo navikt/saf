@@ -392,7 +392,7 @@ public class JournalpostDtoMapper {
 
 		switch (utsendingsKanalCode) {
 			case NAV_NO -> {
-				return mapVarselSendt(utsendingsInfoDto.getNavNoVarsling());
+				return isNull(utsendingsInfoDto.getNavNoVarsling()) ? Optional.empty() : mapVarselSendt(utsendingsInfoDto.getNavNoVarsling());
 			}
 			case S -> {
 				return isNull(utsendingsInfoDto.getFysiskPostadresse()) ? Optional.empty() : Optional.ofNullable(Utsendingsinfo.builder()
