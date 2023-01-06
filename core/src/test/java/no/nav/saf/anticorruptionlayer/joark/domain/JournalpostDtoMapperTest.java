@@ -80,6 +80,7 @@ import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObje
 import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.VARSEL_MELDING1;
 import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.VARSEL_MELDING2;
 import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.VARSEL_MELDING3;
+import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.VARSEL_MELDING4;
 import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.VARSEL_TEKST1;
 import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.VARSEL_TEKST2;
 import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.VARSEL_TITTEL1;
@@ -577,6 +578,16 @@ class JournalpostDtoMapperTest {
 		assertNull(journalpost.getUtsendingsinfo().getEpostVarselSendt());
 		assertNull(journalpost.getUtsendingsinfo().getDigitalpostSendt());
 		assertThat(journalpost.getTema(), is(Tema.STO));
+	}
+
+	@Test
+	void shouldMapNullNavVarselSendt() {
+		JournalpostDto journalpostDto = buildJournalpostDtoUtgaaendeType(E, createDitttNavVarsel(VARSEL_MELDING4, VARSEL_MELDING4), NAV_NO);
+		journalpostDto.setFagomrade(FagomradeCode.OKO);
+
+		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, pep5RequestCache());
+
+		assertNull(journalpost.getUtsendingsinfo());
 	}
 
 	@Test

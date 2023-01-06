@@ -125,6 +125,8 @@ public class JournalpostDtoTestObjects {
 	public static final String SMS_VARSELTEKST = "Hei! Du har fått en melding fra NAV. Logg inn på nav.no for å lese den. Vennlig hilsen NAV";
 	public static final String DIGITALPOSTKASSEADRESSE = "tom.tom#2541";
 
+	public static final String VARSEL_MELDING4 = "{\"epost\":null,\"sms\":null}";
+
 	static JournalpostDto buildJournalpostDtoUtgaaendeType(JournalStatusCode journalStatusCode, UtsendingsInfoDto utsendingsInfoDto, UtsendingsKanalCode kanalCode) {
 		return baseJournalpostDto()
 				.journalposttype(JournalpostTypeCode.U)

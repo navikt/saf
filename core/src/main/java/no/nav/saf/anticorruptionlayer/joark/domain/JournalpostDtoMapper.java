@@ -392,18 +392,15 @@ public class JournalpostDtoMapper {
 
 		switch (utsendingsKanalCode) {
 			case NAV_NO -> {
-				return Optional.of(Utsendingsinfo.builder()
-						.epostVarselSendt(mapEpostVarselSendt(utsendingsInfoDto.getNavNoVarsling()))
-						.smsVarselSendt(mapSmsVarselSendt(utsendingsInfoDto.getNavNoVarsling()))
-						.build());
+				return mapVarselSendt(utsendingsInfoDto.getNavNoVarsling());
 			}
 			case S -> {
-				return Optional.ofNullable(Utsendingsinfo.builder()
+				return isNull(utsendingsInfoDto.getFysiskPostadresse()) ? Optional.empty() : Optional.ofNullable(Utsendingsinfo.builder()
 						.fysiskpostSendt(mapFysiskPostadresse(utsendingsInfoDto.getFysiskPostadresse()))
 						.build());
 			}
 			case SDP -> {
-				return Optional.of(Utsendingsinfo.builder()
+				return isNull(utsendingsInfoDto.getDigitalPostadresse()) ? Optional.empty() : Optional.of(Utsendingsinfo.builder()
 						.digitalpostSendt(mapDigitalPostadresse(utsendingsInfoDto.getDigitalPostadresse()))
 						.build());
 			}
@@ -425,20 +422,35 @@ public class JournalpostDtoMapper {
 				.build();
 	}
 
-	private Utsendingsinfo.SmsVarselSendt mapSmsVarselSendt(UtsendingsInfoDto.NavNoVarslingDto navNoVarslingDto) {
+	private Optional<Utsendingsinfo> mapVarselSendt(UtsendingsInfoDto.NavNoVarslingDto navNoVarslingDto) {
 		VarselMelding varselInfo = getVarselKontaktInfo(navNoVarslingDto);
 		VarselMelding varseltekst = getVarseltekst(navNoVarslingDto);
+		if (isNull(varselInfo) || isNull(varseltekst)) {
+			return Optional.empty();
+		}
 
-		return Utsendingsinfo.SmsVarselSendt.builder()
-				.adresse(isBlank(varselInfo.getSms()) ? null : varselInfo.getSms())
-				.varslingstekst(isBlank(varseltekst.getSms()) ? null : varseltekst.getSms())
+		Utsendingsinfo.EpostVarselSendt epostVarselSendt = mapEpostVarselSendt(varselInfo, varseltekst);
+		Utsendingsinfo.SmsVarselSendt smsVarselSendt = mapSmsVarselSendt(varselInfo, varseltekst);
+
+		if (isSmsVarselNull(smsVarselSendt) && isEpostVarselNull(epostVarselSendt)) {
+			Optional.empty();
+		}
+
+		Utsendingsinfo varselSendtUtsendingsinfo = Utsendingsinfo.builder()
+				.epostVarselSendt(epostVarselSendt)
+				.smsVarselSendt(smsVarselSendt)
+				.build();
+		return isVarselSendtNull(varselSendtUtsendingsinfo) ? Optional.empty() : Optional.of(varselSendtUtsendingsinfo);
+	}
+
+	private Utsendingsinfo.SmsVarselSendt mapSmsVarselSendt(VarselMelding varselInfo, VarselMelding varseltekst) {
+		return isBlank(varselInfo.getSms()) || isBlank(varseltekst.getSms()) ? null : Utsendingsinfo.SmsVarselSendt.builder()
+				.adresse(varselInfo.getSms())
+				.varslingstekst(varseltekst.getSms())
 				.build();
 	}
 
-	private Utsendingsinfo.EpostVarselSendt mapEpostVarselSendt(UtsendingsInfoDto.NavNoVarslingDto navNoVarslingDto) {
-		VarselMelding varselInfo = getVarselKontaktInfo(navNoVarslingDto);
-		VarselMelding varseltekst = getVarseltekst(navNoVarslingDto);
-
+	private Utsendingsinfo.EpostVarselSendt mapEpostVarselSendt(VarselMelding varselInfo, VarselMelding varseltekst) {
 		List<String> varselList = parseString(varseltekst.getEpost());
 		return varselList == null ? null :
 				Utsendingsinfo.EpostVarselSendt.builder()
@@ -520,5 +532,17 @@ public class JournalpostDtoMapper {
 
 	private List<String> parseString(String varseltekst) {
 		return isBlank(varseltekst) ? null : Arrays.stream(varseltekst.split(",", 2)).toList();
+	}
+
+	private boolean isEpostVarselNull(Utsendingsinfo.EpostVarselSendt epostVarselSendt) {
+		return isNull(epostVarselSendt) || (isBlank(epostVarselSendt.getAdresse()) && isBlank(epostVarselSendt.getVarslingstekst()));
+	}
+
+	private boolean isSmsVarselNull(Utsendingsinfo.SmsVarselSendt smsVarselSendt) {
+		return isNull(smsVarselSendt) || (isBlank(smsVarselSendt.getAdresse()) && isBlank(smsVarselSendt.getVarslingstekst()));
+	}
+
+	private boolean isVarselSendtNull(Utsendingsinfo utsendingsinfo) {
+		return isNull(utsendingsinfo.getEpostVarselSendt()) && isNull(utsendingsinfo.getSmsVarselSendt());
 	}
 }
