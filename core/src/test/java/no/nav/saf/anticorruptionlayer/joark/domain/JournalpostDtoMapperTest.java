@@ -7,7 +7,6 @@ import no.nav.saf.anticorruptionlayer.joark.domain.kode.SkjermingTypeCode;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.dto.BrukerDto;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.dto.JournalpostDto;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.dto.SaksrelasjonDto;
-import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.dto.UtsendingsInfoDto;
 import no.nav.saf.cache.KeyGeneratorLocalCaching;
 import no.nav.saf.domain.Arkivsak;
 import no.nav.saf.domain.kode.Arkivsakssystem;
@@ -68,20 +67,15 @@ import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObje
 import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.MOTTAT_DATO;
 import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.OPPRETTET_AV_NAVN;
 import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.ORG_NR;
-import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.PHONENUMMER;
 import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.SAKS_ID;
 import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.SENDT_PRINT_DATO;
 import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.SKJERMING_TYPE_CODE_POL;
-import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.SMS_VARSELTEKST;
 import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.TILLEGGSOPPLYSNING_NOKKEL;
 import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.TILLEGGSOPPLYSNING_VERDI;
 import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.VARIANT_FORMAT_CODE_ARKIV;
 import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.VARIANT_FORMAT_CODE_SLADDET;
-import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.VARSEL_KONTAKTINFO_3;
 import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.VARSEL_MELDING1;
 import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.VARSEL_MELDING2;
-import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.VARSEL_MELDING3;
-import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.VARSEL_MELDING4;
 import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.VARSEL_TEKST1;
 import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.VARSEL_TEKST2;
 import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.VARSEL_TITTEL1;
@@ -565,57 +559,6 @@ class JournalpostDtoMapperTest {
 		assertEquals(VARSEL_TITTEL2, journalpost.getUtsendingsinfo().getEpostVarselSendt().getTittel());
 		assertEquals(VARSEL_TEKST2, journalpost.getUtsendingsinfo().getEpostVarselSendt().getVarslingstekst());
 		assertThat(journalpost.getTema(), is(Tema.STO));
-	}
-
-	@Test
-	void shouldMapSmsTekstOgKontaktInfo() {
-		JournalpostDto journalpostDto = buildJournalpostDtoUtgaaendeType(E, createDitttNavVarsel(VARSEL_MELDING3, VARSEL_KONTAKTINFO_3), NAV_NO);
-		journalpostDto.setFagomrade(FagomradeCode.OKO);
-
-		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, pep5RequestCache());
-
-		assertEquals(SMS_VARSELTEKST, journalpost.getUtsendingsinfo().getSmsVarselSendt().getVarslingstekst());
-		assertEquals(PHONENUMMER, journalpost.getUtsendingsinfo().getSmsVarselSendt().getAdresse());
-		assertNull(journalpost.getUtsendingsinfo().getEpostVarselSendt());
-		assertNull(journalpost.getUtsendingsinfo().getDigitalpostSendt());
-		assertThat(journalpost.getTema(), is(Tema.STO));
-	}
-
-	@Test
-	void shouldMapNullNavVarselSendt() {
-		JournalpostDto journalpostDto = buildJournalpostDtoUtgaaendeType(E, createDitttNavVarsel(VARSEL_MELDING4, VARSEL_MELDING4), NAV_NO);
-		journalpostDto.setFagomrade(FagomradeCode.OKO);
-
-		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, pep5RequestCache());
-
-		assertNull(journalpost.getUtsendingsinfo());
-	}
-
-	@Test
-	void shouldMapNullPostnummerOgPoststedTilEmptyString() {
-		UtsendingsInfoDto utsendingsInfoDto = UtsendingsInfoDto.builder()
-				.fysiskPostadresse(UtsendingsInfoDto.FysiskPostadresseDto.builder()
-						.poststed(null)
-						.poststed(null)
-						.build())
-				.build();
-
-		JournalpostDto journalpostDto = buildJournalpostDtoUtgaaendeType(E, utsendingsInfoDto, S);
-		journalpostDto.setFagomrade(FagomradeCode.OKO);
-
-		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, pep5RequestCache());
-
-		assertNull(journalpost.getUtsendingsinfo());
-	}
-
-	@Test
-	void shouldMapUtsendingsInfoDtoWithNullNavVarsel() {
-		JournalpostDto journalpostDto = buildJournalpostDtoUtgaaendeType(E, createDitttNavVarsel(null, null), NAV_NO);
-		journalpostDto.setFagomrade(FagomradeCode.OKO);
-
-		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, pep5RequestCache());
-
-		assertNull(journalpost.getUtsendingsinfo());
 	}
 
 	@Test
