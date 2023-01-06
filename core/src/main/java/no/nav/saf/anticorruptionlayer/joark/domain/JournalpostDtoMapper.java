@@ -395,9 +395,7 @@ public class JournalpostDtoMapper {
 				return isVarselDtoNull(utsendingsInfoDto.getNavNoVarsling()) ? Optional.empty() : mapVarselSendt(utsendingsInfoDto.getNavNoVarsling());
 			}
 			case S -> {
-				return isNull(utsendingsInfoDto.getFysiskPostadresse()) ? Optional.empty() : Optional.ofNullable(Utsendingsinfo.builder()
-						.fysiskpostSendt(mapFysiskPostadresse(utsendingsInfoDto.getFysiskPostadresse()))
-						.build());
+				return mapFysiskPostadresse(utsendingsInfoDto.getFysiskPostadresse());
 			}
 			case SDP -> {
 				return isNull(utsendingsInfoDto.getDigitalPostadresse()) ? Optional.empty() : Optional.of(Utsendingsinfo.builder()
@@ -410,14 +408,22 @@ public class JournalpostDtoMapper {
 		}
 	}
 
-	private Utsendingsinfo.FysiskpostSendt mapFysiskPostadresse(UtsendingsInfoDto.FysiskPostadresseDto fysiskPostadresse) {
-		return isNull(fysiskPostadresse) ? null : Utsendingsinfo.FysiskpostSendt.builder()
-				.adressetekstKonvolutt(buildAdressetekstKonvolutt(fysiskPostadresse))
-				.build();
+	private Optional<Utsendingsinfo> mapFysiskPostadresse(UtsendingsInfoDto.FysiskPostadresseDto fysiskPostadresse) {
+		if (isNull(fysiskPostadresse)) {
+			return Optional.empty();
+		}
+
+		String adressetekstKonvolutt = isBlank(buildAdressetekstKonvolutt(fysiskPostadresse)) ? null : buildAdressetekstKonvolutt(fysiskPostadresse);
+
+		return isBlank(adressetekstKonvolutt) ? Optional.empty() :
+				Optional.of(Utsendingsinfo.builder()
+						.fysiskpostSendt(Utsendingsinfo.FysiskpostSendt.builder()
+								.adressetekstKonvolutt(adressetekstKonvolutt)
+								.build()).build());
 	}
 
 	private Utsendingsinfo.DigitalpostSendt mapDigitalPostadresse(UtsendingsInfoDto.DigitalPostadresseDto digitalPostadresseDto) {
-		return digitalPostadresseDto == null ? null : Utsendingsinfo.DigitalpostSendt.builder()
+		return isNull(digitalPostadresseDto) || isBlank(digitalPostadresseDto.getDigitalpostkasseAdresse()) ? null : Utsendingsinfo.DigitalpostSendt.builder()
 				.adresse(digitalPostadresseDto.getDigitalpostkasseAdresse())
 				.build();
 	}
@@ -521,13 +527,17 @@ public class JournalpostDtoMapper {
 	}
 
 	private String buildAdressetekstKonvolutt(UtsendingsInfoDto.FysiskPostadresseDto fysiskPostadresse) {
-		return Stream.of(fysiskPostadresse.getAdresselinje1(),
+		String postnummer = isBlank(fysiskPostadresse.getPostnummer()) ? "" : fysiskPostadresse.getPostnummer();
+		String poststed = isBlank(fysiskPostadresse.getPoststed()) ? "" : fysiskPostadresse.getPoststed();
+
+		String postadresse = Stream.of(fysiskPostadresse.getAdresselinje1(),
 						fysiskPostadresse.getAdresselinje2(),
 						fysiskPostadresse.getAdresselinje3(),
-						fysiskPostadresse.getPostnummer() + " " + fysiskPostadresse.getPoststed(),
+						postnummer + " " + poststed,
 						fysiskPostadresse.getLandkode())
 				.filter(StringUtils::isNotBlank)
 				.collect(Collectors.joining("\n")).strip();
+		return isBlank(postadresse) ? null : postadresse;
 	}
 
 	private List<String> parseString(String varseltekst) {

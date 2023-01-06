@@ -7,6 +7,7 @@ import no.nav.saf.anticorruptionlayer.joark.domain.kode.SkjermingTypeCode;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.dto.BrukerDto;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.dto.JournalpostDto;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.dto.SaksrelasjonDto;
+import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.dto.UtsendingsInfoDto;
 import no.nav.saf.cache.KeyGeneratorLocalCaching;
 import no.nav.saf.domain.Arkivsak;
 import no.nav.saf.domain.kode.Arkivsakssystem;
@@ -583,6 +584,23 @@ class JournalpostDtoMapperTest {
 	@Test
 	void shouldMapNullNavVarselSendt() {
 		JournalpostDto journalpostDto = buildJournalpostDtoUtgaaendeType(E, createDitttNavVarsel(VARSEL_MELDING4, VARSEL_MELDING4), NAV_NO);
+		journalpostDto.setFagomrade(FagomradeCode.OKO);
+
+		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, pep5RequestCache());
+
+		assertNull(journalpost.getUtsendingsinfo());
+	}
+
+	@Test
+	void shouldMapNullPostnummerOgPoststedTilEmptyString() {
+		UtsendingsInfoDto utsendingsInfoDto = UtsendingsInfoDto.builder()
+				.fysiskPostadresse(UtsendingsInfoDto.FysiskPostadresseDto.builder()
+						.poststed(null)
+						.poststed(null)
+						.build())
+				.build();
+
+		JournalpostDto journalpostDto = buildJournalpostDtoUtgaaendeType(E, utsendingsInfoDto, S);
 		journalpostDto.setFagomrade(FagomradeCode.OKO);
 
 		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, pep5RequestCache());
