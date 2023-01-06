@@ -7,7 +7,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.7.2</version>
+		<version>2.7.6</version>
 	</parent>
 
 	<groupId>no.nav.saf</groupId>
@@ -29,11 +29,11 @@
 	<properties>
 		<java.version>17</java.version>
 
-		<graphql-java.version>19.0</graphql-java.version>
+		<graphql-java.version>20.0</graphql-java.version>
 		<resilience4j.version>1.7.1</resilience4j.version>
-		<token-support.version>2.1.2</token-support.version>
-		<commons-text.version>1.9</commons-text.version>
-		<springdoc-openapi-ui.version>1.6.9</springdoc-openapi-ui.version>
+		<token-support.version>2.1.9</token-support.version>
+		<commons-text.version>1.10.0</commons-text.version>
+		<springdoc-openapi-ui.version>1.6.14</springdoc-openapi-ui.version>
 		<logstash-logback-encoder.version>7.2</logstash-logback-encoder.version>
 		<logback-syslog4j.version>1.0.0</logback-syslog4j.version>
 
@@ -43,7 +43,6 @@
 		<!-- Versjonen over 3.0.3 gir trøbbel - blir problem med mock-oauth2-dep.
 		En test i DokumentoversiktBrukerIT feiler når flere testklasser blir kjørt samtidig -->
 		<spring-cloud-starter-contract-stub-runner.version>3.0.3</spring-cloud-starter-contract-stub-runner.version>
-		<okhttp3.version>4.10.0</okhttp3.version>
 
 		<!-- Plugins -->
 		<maven-toolchains-plugin.version>3.1.0</maven-toolchains-plugin.version>
@@ -157,12 +156,6 @@
 				<version>${token-support.version}</version>
 				<scope>test</scope>
 			</dependency>
-			<dependency>
-				<groupId>com.squareup.okhttp3</groupId>
-				<artifactId>okhttp</artifactId>
-				<version>${okhttp3.version}</version>
-				<scope>test</scope>
-			</dependency>
 		</dependencies>
 	</dependencyManagement>
 
@@ -188,7 +181,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-toolchains-plugin</artifactId>
-				<version>3.1.0</version>
+				<version>${maven-toolchains-plugin.version}</version>
 				<executions>
 					<execution>
 						<goals>
@@ -199,7 +192,7 @@
 				<configuration>
 					<toolchains>
 						<jdk>
-							<version>17</version>
+							<version>${java.version}</version>
 							<vendor>openjdk</vendor>
 						</jdk>
 					</toolchains>
