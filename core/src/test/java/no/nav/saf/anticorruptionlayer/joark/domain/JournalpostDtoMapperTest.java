@@ -591,6 +591,16 @@ class JournalpostDtoMapperTest {
 	}
 
 	@Test
+	void shouldMapUtsendingsInfoDtoWithNullNavVarsel() {
+		JournalpostDto journalpostDto = buildJournalpostDtoUtgaaendeType(E, createDitttNavVarsel(null, null), NAV_NO);
+		journalpostDto.setFagomrade(FagomradeCode.OKO);
+
+		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, pep5RequestCache());
+
+		assertNull(journalpost.getUtsendingsinfo());
+	}
+
+	@Test
 	void shouldMapToBrukerInJournalpostWhenNoSakstilknytningForPerson() {
 		JournalpostDto journalpostDto = JournalpostDtoTestObjects.baseJournalpostDto()
 				.journalposttype(JournalpostTypeCode.I)

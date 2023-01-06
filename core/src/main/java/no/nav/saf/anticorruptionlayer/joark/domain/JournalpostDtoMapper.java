@@ -392,7 +392,7 @@ public class JournalpostDtoMapper {
 
 		switch (utsendingsKanalCode) {
 			case NAV_NO -> {
-				return isNull(utsendingsInfoDto.getNavNoVarsling()) ? Optional.empty() : mapVarselSendt(utsendingsInfoDto.getNavNoVarsling());
+				return isVarselDtoNull(utsendingsInfoDto.getNavNoVarsling()) ? Optional.empty() : mapVarselSendt(utsendingsInfoDto.getNavNoVarsling());
 			}
 			case S -> {
 				return isNull(utsendingsInfoDto.getFysiskPostadresse()) ? Optional.empty() : Optional.ofNullable(Utsendingsinfo.builder()
@@ -544,5 +544,9 @@ public class JournalpostDtoMapper {
 
 	private boolean isVarselSendtNull(Utsendingsinfo utsendingsinfo) {
 		return isNull(utsendingsinfo.getEpostVarselSendt()) && isNull(utsendingsinfo.getSmsVarselSendt());
+	}
+
+	private boolean isVarselDtoNull(UtsendingsInfoDto.NavNoVarslingDto varslingDto) {
+		return isNull(varslingDto) || (isBlank(varslingDto.getVarselSendtTil()) && isBlank(varslingDto.getVarseltekst()));
 	}
 }
