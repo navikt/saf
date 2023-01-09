@@ -1,46 +1,5 @@
-#Maven
-target
+# Maven
+target/
 
-#IntelliJ
-*.iml
-*.iws
-*.idea
+# IntelliJ
 *.idea/
-atlassian-ide-plugin.xml
-
-#Eclipse
-.classpath
-.project
-.settings
-
-*.tm*.epoch
-*.lck
-*.log
-testDb.properties
-APP_LOG_HOME_IS_UNDEFINED
-
-### STS ###
-.apt_generated
-.classpath
-.factorypath
-.project
-.settings
-.springBeans
-.sts4-cache
-
-### IntelliJ IDEA ###
-.idea
-*.iws
-*.iml
-*.ipr
-
-### NetBeans ###
-/nbproject/private/
-/build/
-/nbbuild/
-/dist/
-/nbdist/
-/.nb-gradle/
-
-#macos
-.DS_Store
