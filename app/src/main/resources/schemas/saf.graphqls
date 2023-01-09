@@ -401,30 +401,30 @@ type Utsendingsinfo {
 # Vil kun være satt hvis brevet er distribuert til nav.no
 type EpostVarselSendt {
     # Tittel på eposten som ble sendt til bruker.
-    tittel: String
+    tittel: String!
 
     # Epostadressen som varselet ble sendt til.
-    adresse: String
+    adresse: String!
 
     # Teksten i varslet. Kan inneholde HTML.
-    varslingstekst: String
+    varslingstekst: String!
 }
 
 # SMS varsel sendt til bruker ved distribusjon til nav.no
 # Vil kun være satt hvis brevet er distribuert til nav.no
 type SmsVarselSendt {
     # Mobilnummeret som varselet ble sendt til.
-    adresse: String
+    adresse: String!
 
     #Teksten i varselet.
-    varslingstekst: String
+    varslingstekst: String!
 }
 
 # Informasjon om distribusjon til fysisk post gjennom Posten Norge
 # Vil kun være satt hvis brevet er distribuert som fysisk post gjennom sentral utskrift
 type FysiskpostSendt {
     # Adressen som stod på eller i konvolutten som ble sendt til bruker.
-    adressetekstKonvolutt: String
+    adressetekstKonvolutt: String!
 }
 
 # Informasjon om distribusjon til Digital postkasse til Innbyggere
