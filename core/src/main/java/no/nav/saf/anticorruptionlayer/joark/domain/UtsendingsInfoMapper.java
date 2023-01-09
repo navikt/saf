@@ -17,9 +17,13 @@ import java.util.stream.Stream;
 
 import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.substringAfter;
+import static org.apache.commons.lang3.StringUtils.substringsBetween;
 
 
 public class UtsendingsInfoMapper {
+
+	private static final String TEKST = "Tekst";
 
 	public Optional<Utsendingsinfo> mapUtsendingsInfo(UtsendingsInfoDto utsendingsInfoDto, UtsendingsKanalCode utsendingsKanalCode) {
 		if (isNull(utsendingsInfoDto)) {
@@ -96,9 +100,9 @@ public class UtsendingsInfoMapper {
 		List<String> varselList = parseString(varseltekst.getEpost());
 		return varselList == null ? null :
 				Utsendingsinfo.EpostVarselSendt.builder()
-						.tittel(varselList.size() > 1 ? varselList.get(0) : null)
+						.tittel(varselList.get(0))
 						.adresse(varselInfo.getEpost())
-						.varslingstekst(varselList.size() > 1 ? varselList.get(1).strip() : varselList.get(0).strip())
+						.varslingstekst(isBlank(varseltekst.getEpost()) ? null : substringAfter(varseltekst.getEpost(), TEKST).strip())
 						.build();
 	}
 
@@ -134,7 +138,7 @@ public class UtsendingsInfoMapper {
 	}
 
 	private List<String> parseString(String varseltekst) {
-		return isBlank(varseltekst) ? null : Arrays.stream(varseltekst.split(",", 2)).toList();
+		return isBlank(varseltekst) ? null : Arrays.stream(substringsBetween(varseltekst, "Tittel", TEKST)).map(String::strip).toList();
 	}
 
 	private boolean isEpostVarselNull(Utsendingsinfo.EpostVarselSendt epostVarselSendt) {

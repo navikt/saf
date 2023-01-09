@@ -33,12 +33,10 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class UtsendingsInfoMapperTest {
 
-	private UtsendingsInfoMapper mapper = new UtsendingsInfoMapper();
+	private final UtsendingsInfoMapper mapper = new UtsendingsInfoMapper();
 
 	@Test
 	void shouldMapSmsAndEpostVarsel() {
-		JournalpostDto journalpostDto = buildJournalpostDtoUtgaaendeType(E, createDitttNavVarsel(VARSEL_MELDING1, DIGITALKONTAKT_INFORMASJON), NAV_NO);
-
 		Utsendingsinfo utsendingsinfo = mapper.mapUtsendingsInfo(createDitttNavVarsel(VARSEL_MELDING5, VARSEL_KONTAKTINFO_5), NAV_NO)
 				.orElse(null);
 
