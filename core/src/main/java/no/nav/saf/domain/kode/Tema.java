@@ -35,6 +35,7 @@ public enum Tema {
 	IAR("Inkluderende arbeidsliv"),
 	IND("Tiltakspenger"),
 	KON("Kontantstøtte"),
+	KLL("Klage lønnsgaranti"),
 	KTA("Kontroll anmeldelse"),
 	KTR("Kontroll"),
 	MED("Medlemskap"),
