@@ -250,10 +250,34 @@ public enum FagomradeCode {
 	 * Kompensasjon for selvstendig næringsdrivende/frilansere
 	 */
 	FRI,
-	/** Barnepensjon */
+	/**
+	 * Barnepensjon
+	 */
 	EYB,
-	/** Omstillingsstønad */
-	EYO;
+	/**
+	 * Omstillingsstønad
+	 */
+	EYO,
+	/**
+	 * Kontroll anmeldelse
+	 */
+	KTA,
+	/**
+	 * Fiskerpensjon
+	 */
+	FIP,
+	/**
+	 * Arbeidsrådgivning skjermet
+	 */
+	ARS,
+	/**
+	 * Arbeidsrådgivning psykologtester
+	 */
+	ARP,
+	/**
+	 * Klage lønnsgaranti
+	 */
+	KLL;
 
 	// Vennligst se https://jira.adeo.no/browse/MMA-3142
 	// Tema CON har data i joark men temaet skal ikke vises.
@@ -269,7 +293,7 @@ public enum FagomradeCode {
 
 	public static Tema toSafTema(FagomradeCode joarkFagomradeCode) {
 		// Vennligst se https://jira.adeo.no/browse/MMA-3076 . Tema OKO korrigeres til Tema STO
-		if(joarkFagomradeCode == OKO) {
+		if (joarkFagomradeCode == OKO) {
 			return Tema.STO;
 		}
 		// Hvis tema er null så faller man tilbake til UKJ
