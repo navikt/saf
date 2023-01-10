@@ -88,37 +88,41 @@ public class JournalpostDtoTestObjects {
 			landkode""";
 	public static final String DIGITALKONTAKT_INFORMASJON = "{\n          \"epost\": \"epostaddress3@nav.no\",\n          \"sms\": \"11111111\"\n        }";
 	public static final String VARSEL_TITTEL1 = "Vedtak fra NAV,";
-	public static final String VARSEL_TEKST1 = "<!DOCTYPE html><html><head><title>Vedtak fra NAV</title></head><body><!DOCTYPE html>\n" +
-			"<html>\n" +
-			"\t<head>\n" +
-			"\t\t<title>Vedtak fra NAV</title>\n" +
-			"\t</head>\n" +
-			"\t<body>\n" +
-			"\t\t<p>Hei!</p>\n" +
-			"\t\t<p>Du har fått et vedtak fra NAV.</p>\n" +
-			"\t\t<p>Logg inn på nav.no for å lese det.</p>\n" +
-			"\t\t<p>Vennlig hilsen</p>\n" +
-			"\t\t<p>NAV</p>\n" +
-			"\t</body>\n" +
-			"</html></body></html>";
+	public static final String VARSEL_TEKST1 = """
+			<!DOCTYPE html><html><head><title>Vedtak fra NAV</title></head><body><!DOCTYPE html>
+			<html>
+				<head>
+					<title>Vedtak fra NAV</title>
+				</head>
+				<body>
+					<p>Hei!</p>
+					<p>Du har fått et vedtak fra NAV.</p>
+					<p>Logg inn på nav.no for å lese det.</p>
+					<p>Vennlig hilsen</p>
+					<p>NAV</p>
+				</body>
+			</html></body></html>
+			""";
 	public static final String VARSEL_MELDING1 = "{\"epost\":\"Tittel Vedtak fra NAV, Tekst <!DOCTYPE html><html><head>" +
 			"<title>Vedtak fra NAV</title></head><body><!DOCTYPE html>\\n<html>\\n\\t<head>\\n\\t\\t<title>Vedtak fra NAV</title>\\n\\t</head>\\n\\t<body>\\n\\t\\t<p>Hei!</p>\\n\\t\\t<p>Du har fått et vedtak fra NAV.</p>\\n\\t\\t<p>Logg inn på nav.no for å lese det.</p>\\n\\t\\t<p>Vennlig hilsen</p>\\n\\t\\t<p>NAV</p>\\n\\t</body>\\n</html></body></html>\\n\",\"sms\":null}";
 
 	public static final String VARSEL_MELDING2 = "{\"epost\":\"Tittel Melding fra NAV, Tekst <!DOCTYPE html><html><head><title>Melding fra NAV</title></head><body><!DOCTYPE html>\\n<html>\\n    <head>\\n        <title>Melding fra NAV</title>\\n    </head>\\n    <body>\\n        <p>Hei!</p>\\n        <p>Du har fått en melding fra NAV.</p>\\n        <p>Logg inn på nav.no for å lese den.</p>\\n        <p>Vennlig hilsen</p>\\n        <p>NAV</p>\\n    </body>\\n</html></body></html>\\n\",\"sms\":null}";
 	public static final String VARSEL_TITTEL2 = "Melding fra NAV,";
-	public static final String VARSEL_TEKST2 = "<!DOCTYPE html><html><head><title>Melding fra NAV</title></head><body><!DOCTYPE html>\n" +
-			"<html>\n" +
-			"    <head>\n" +
-			"        <title>Melding fra NAV</title>\n" +
-			"    </head>\n" +
-			"    <body>\n" +
-			"        <p>Hei!</p>\n" +
-			"        <p>Du har fått en melding fra NAV.</p>\n" +
-			"        <p>Logg inn på nav.no for å lese den.</p>\n" +
-			"        <p>Vennlig hilsen</p>\n" +
-			"        <p>NAV</p>\n" +
-			"    </body>\n" +
-			"</html></body></html>";
+	public static final String VARSEL_TEKST2 = """
+			<!DOCTYPE html><html><head><title>Melding fra NAV</title></head><body><!DOCTYPE html>
+			<html>
+			    <head>
+			        <title>Melding fra NAV</title>
+			    </head>
+			    <body>
+			        <p>Hei!</p>
+			        <p>Du har fått en melding fra NAV.</p>
+			        <p>Logg inn på nav.no for å lese den.</p>
+			        <p>Vennlig hilsen</p>
+			        <p>NAV</p>
+			    </body>
+			</html></body></html>
+			""";
 	public static final String VARSEL_MELDING3 = "{\"epost\":null,\"sms\":\"Hei! Du har fått en melding fra NAV. Logg inn på nav.no for å lese den. Vennlig hilsen NAV\"}";
 	public static final String VARSEL_KONTAKTINFO_3 = "{\"epost\":null,\"sms\":\"12345678\"}";
 	public static final String PHONENUMMER = "12345678";

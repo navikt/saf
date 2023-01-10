@@ -44,7 +44,7 @@ public class UtsendingsInfoMapperTest {
 		assertNull(utsendingsinfo.getFysiskpostSendt());
 		assertNull(utsendingsinfo.getDigitalpostSendt());
 		assertEquals(VARSEL_TITTEL1, utsendingsinfo.getEpostVarselSendt().getTittel());
-		assertEquals(VARSEL_TEKST1, utsendingsinfo.getEpostVarselSendt().getVarslingstekst());
+		assertEquals(VARSEL_TEKST1.strip(), utsendingsinfo.getEpostVarselSendt().getVarslingstekst());
 		assertEquals("epostaddress3@nav.no", utsendingsinfo.getEpostVarselSendt().getAdresse());
 		assertEquals(SMS_VARSELTEKST, utsendingsinfo.getSmsVarselSendt().getVarslingstekst());
 		assertEquals(PHONENUMMER, utsendingsinfo.getSmsVarselSendt().getAdresse());
@@ -59,7 +59,7 @@ public class UtsendingsInfoMapperTest {
 		assertNull(utsendingsinfo.getFysiskpostSendt());
 		assertNull(utsendingsinfo.getDigitalpostSendt());
 		assertEquals(VARSEL_TITTEL1, utsendingsinfo.getEpostVarselSendt().getTittel());
-		assertEquals(VARSEL_TEKST1, utsendingsinfo.getEpostVarselSendt().getVarslingstekst());
+		assertEquals(VARSEL_TEKST1.strip(), utsendingsinfo.getEpostVarselSendt().getVarslingstekst());
 		assertEquals("epostaddress3@nav.no", utsendingsinfo.getEpostVarselSendt().getAdresse());
 	}
 
@@ -69,7 +69,7 @@ public class UtsendingsInfoMapperTest {
 				.orElse(null);
 
 		assertEquals(VARSEL_TITTEL2, utsendingsinfo.getEpostVarselSendt().getTittel());
-		assertEquals(VARSEL_TEKST2, utsendingsinfo.getEpostVarselSendt().getVarslingstekst());
+		assertEquals(VARSEL_TEKST2.strip(), utsendingsinfo.getEpostVarselSendt().getVarslingstekst());
 		assertNull(utsendingsinfo.getSmsVarselSendt());
 		assertNull(utsendingsinfo.getDigitalpostSendt());
 		assertNull(utsendingsinfo.getFysiskpostSendt());

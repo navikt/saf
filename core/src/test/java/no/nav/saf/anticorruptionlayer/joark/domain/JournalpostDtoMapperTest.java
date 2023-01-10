@@ -169,7 +169,7 @@ class JournalpostDtoMapperTest {
 		assertNull(journalpost.getUtsendingsinfo().getFysiskpostSendt());
 		assertNull(journalpost.getUtsendingsinfo().getDigitalpostSendt());
 		assertEquals(VARSEL_TITTEL1, journalpost.getUtsendingsinfo().getEpostVarselSendt().getTittel());
-		assertEquals(VARSEL_TEKST1, journalpost.getUtsendingsinfo().getEpostVarselSendt().getVarslingstekst());
+		assertEquals(VARSEL_TEKST1.strip(), journalpost.getUtsendingsinfo().getEpostVarselSendt().getVarslingstekst());
 		assertEquals("epostaddress3@nav.no", journalpost.getUtsendingsinfo().getEpostVarselSendt().getAdresse());
 	}
 
@@ -557,7 +557,7 @@ class JournalpostDtoMapperTest {
 		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, pep5RequestCache());
 
 		assertEquals(VARSEL_TITTEL2, journalpost.getUtsendingsinfo().getEpostVarselSendt().getTittel());
-		assertEquals(VARSEL_TEKST2, journalpost.getUtsendingsinfo().getEpostVarselSendt().getVarslingstekst());
+		assertEquals(VARSEL_TEKST2.strip(), journalpost.getUtsendingsinfo().getEpostVarselSendt().getVarslingstekst());
 		assertThat(journalpost.getTema(), is(Tema.STO));
 	}
 
