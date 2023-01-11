@@ -48,6 +48,11 @@
       "app": "pensjon-psak-q5",
       "namespace": "teampensjon",
       "cluster": "dev-fss"
+    },
+    {
+      "app": "ida",
+      "namespace": "traktor",
+      "cluster": "prod-fss"
     }
   ]
 }
