@@ -1,34 +1,40 @@
 package no.nav.saf.anticorruptionlayer.joark.domain;
 
-import no.nav.saf.anticorruptionlayer.joark.domain.kode.FagomradeCode;
-import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.dto.JournalpostDto;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.dto.UtsendingsInfoDto;
 import no.nav.saf.domain.visningsmodell.Utsendingsinfo;
 import org.junit.jupiter.api.Test;
 
-import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.ADRESSELINJE1;
-import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.ADRESSELINJE2;
-import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.ADRESSELINJE3;
-import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.DIGITALKONTAKT_INFORMASJON;
-import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.PHONENUMMER;
-import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.SMS_VARSELTEKST;
-import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.VARSEL_KONTAKTINFO_3;
-import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.VARSEL_KONTAKTINFO_5;
-import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.VARSEL_MELDING1;
-import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.VARSEL_MELDING2;
-import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.VARSEL_MELDING3;
-import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.VARSEL_MELDING4;
-import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.VARSEL_MELDING5;
-import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.VARSEL_TEKST1;
-import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.VARSEL_TEKST2;
-import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.VARSEL_TITTEL1;
-import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.VARSEL_TITTEL2;
-import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.buildJournalpostDtoUtgaaendeType;
-import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.createDitttNavVarsel;
-import static no.nav.saf.anticorruptionlayer.joark.domain.kode.JournalStatusCode.E;
+import static no.nav.saf.anticorruptionlayer.joark.domain.UtsendingsInfoDtoTestObjects.ADRESSELINJE1;
+import static no.nav.saf.anticorruptionlayer.joark.domain.UtsendingsInfoDtoTestObjects.ADRESSELINJE2;
+import static no.nav.saf.anticorruptionlayer.joark.domain.UtsendingsInfoDtoTestObjects.ADRESSELINJE3;
+import static no.nav.saf.anticorruptionlayer.joark.domain.UtsendingsInfoDtoTestObjects.EPOST_MELDING_MED_KOMMA_FORVENTET_ADRESSE;
+import static no.nav.saf.anticorruptionlayer.joark.domain.UtsendingsInfoDtoTestObjects.EPOST_MELDING_MED_KOMMA_FORVENTET_TITTEL;
+import static no.nav.saf.anticorruptionlayer.joark.domain.UtsendingsInfoDtoTestObjects.EPOST_MELDING_MED_KOMMA_FORVENTET_VARSLINGSTEKST;
+import static no.nav.saf.anticorruptionlayer.joark.domain.UtsendingsInfoDtoTestObjects.EPOST_MELDING_MED_KOMMA_INPUT_DIGITAL_KONTAKTINFO;
+import static no.nav.saf.anticorruptionlayer.joark.domain.UtsendingsInfoDtoTestObjects.EPOST_MELDING_MED_KOMMA_INPUT_VARSLINGSTEKST;
+import static no.nav.saf.anticorruptionlayer.joark.domain.UtsendingsInfoDtoTestObjects.EPOST_VEDTAK_FORVENTET_ADRESSE;
+import static no.nav.saf.anticorruptionlayer.joark.domain.UtsendingsInfoDtoTestObjects.EPOST_VEDTAK_FORVENTET_TITTEL;
+import static no.nav.saf.anticorruptionlayer.joark.domain.UtsendingsInfoDtoTestObjects.EPOST_VEDTAK_FORVENTET_VARSLINGSTEKST;
+import static no.nav.saf.anticorruptionlayer.joark.domain.UtsendingsInfoDtoTestObjects.EPOST_VEDTAK_INPUT_DIGITAL_KONTAKTINFO;
+import static no.nav.saf.anticorruptionlayer.joark.domain.UtsendingsInfoDtoTestObjects.EPOST_VEDTAK_INPUT_VARSLINGSTEKST;
+import static no.nav.saf.anticorruptionlayer.joark.domain.UtsendingsInfoDtoTestObjects.FORVENTET_ADRESSETEKST_KONVOLUTT;
+import static no.nav.saf.anticorruptionlayer.joark.domain.UtsendingsInfoDtoTestObjects.INGEN_POSTNUMMER_POSTSTED_FORVENTET_ADRESSETEKST_KONVOLUTT;
+import static no.nav.saf.anticorruptionlayer.joark.domain.UtsendingsInfoDtoTestObjects.KUN_POSTNUMMER_POSTSTED_LANDKODE_FORVENTET_ADRESSETEKST_KONVOLUTT;
+import static no.nav.saf.anticorruptionlayer.joark.domain.UtsendingsInfoDtoTestObjects.LANDKODE;
+import static no.nav.saf.anticorruptionlayer.joark.domain.UtsendingsInfoDtoTestObjects.POSTNUMMER;
+import static no.nav.saf.anticorruptionlayer.joark.domain.UtsendingsInfoDtoTestObjects.POSTSTED;
+import static no.nav.saf.anticorruptionlayer.joark.domain.UtsendingsInfoDtoTestObjects.SMS_OG_EPOST_AVVIK_NULL_INPUT_DIGITAL_KONTAKTINFO;
+import static no.nav.saf.anticorruptionlayer.joark.domain.UtsendingsInfoDtoTestObjects.SMS_OG_EPOST_AVVIK_NULL_INPUT_VARSLINGSTEKST;
+import static no.nav.saf.anticorruptionlayer.joark.domain.UtsendingsInfoDtoTestObjects.SMS_OG_EPOST_VEDTAK_INPUT_ADRESSE;
+import static no.nav.saf.anticorruptionlayer.joark.domain.UtsendingsInfoDtoTestObjects.SMS_OG_EPOST_VEDTAK_INPUT_VARSLINGSTEKST;
+import static no.nav.saf.anticorruptionlayer.joark.domain.UtsendingsInfoDtoTestObjects.SMS_VEDTAK_FORVENTET_ADRESSE;
+import static no.nav.saf.anticorruptionlayer.joark.domain.UtsendingsInfoDtoTestObjects.SMS_VEDTAK_FORVENTET_VARSLINGSTEKST;
+import static no.nav.saf.anticorruptionlayer.joark.domain.UtsendingsInfoDtoTestObjects.SMS_VEDTAK_INPUT_DIGITAL_KONTAKTINFO;
+import static no.nav.saf.anticorruptionlayer.joark.domain.UtsendingsInfoDtoTestObjects.SMS_VEDTAK_INPUT_VARSLINGSTEKST;
+import static no.nav.saf.anticorruptionlayer.joark.domain.UtsendingsInfoDtoTestObjects.createUtsendingsInfoDtoWithNavNoVarsling;
 import static no.nav.saf.anticorruptionlayer.joark.domain.kode.UtsendingsKanalCode.NAV_NO;
 import static no.nav.saf.anticorruptionlayer.joark.domain.kode.UtsendingsKanalCode.S;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class UtsendingsInfoMapperTest {
@@ -36,54 +42,110 @@ public class UtsendingsInfoMapperTest {
 	private final UtsendingsInfoMapper mapper = new UtsendingsInfoMapper();
 
 	@Test
-	void shouldMapSmsAndEpostVarsel() {
-		Utsendingsinfo utsendingsinfo = mapper.mapUtsendingsInfo(createDitttNavVarsel(VARSEL_MELDING5, VARSEL_KONTAKTINFO_5), NAV_NO)
+	void shouldMapSmsAndEpostVedtakVarsel() {
+		Utsendingsinfo utsendingsinfo = mapper.mapUtsendingsInfo(createUtsendingsInfoDtoWithNavNoVarsling(SMS_OG_EPOST_VEDTAK_INPUT_VARSLINGSTEKST, SMS_OG_EPOST_VEDTAK_INPUT_ADRESSE), NAV_NO)
 				.orElse(null);
 
-
-		assertNull(utsendingsinfo.getFysiskpostSendt());
-		assertNull(utsendingsinfo.getDigitalpostSendt());
-		assertEquals(VARSEL_TITTEL1, utsendingsinfo.getEpostVarselSendt().getTittel());
-		assertEquals(VARSEL_TEKST1.strip(), utsendingsinfo.getEpostVarselSendt().getVarslingstekst());
-		assertEquals("epostaddress3@nav.no", utsendingsinfo.getEpostVarselSendt().getAdresse());
-		assertEquals(SMS_VARSELTEKST, utsendingsinfo.getSmsVarselSendt().getVarslingstekst());
-		assertEquals(PHONENUMMER, utsendingsinfo.getSmsVarselSendt().getAdresse());
+		assertThat(utsendingsinfo).isNotNull();
+		assertThat(utsendingsinfo.getFysiskpostSendt()).isNull();
+		assertThat(utsendingsinfo.getDigitalpostSendt()).isNull();
+		Utsendingsinfo.EpostVarselSendt epostVarselSendt = utsendingsinfo.getEpostVarselSendt();
+		assertThat(epostVarselSendt.getAdresse()).isEqualTo(EPOST_VEDTAK_FORVENTET_ADRESSE);
+		assertThat(epostVarselSendt.getTittel()).isEqualTo(EPOST_VEDTAK_FORVENTET_TITTEL);
+		assertThat(epostVarselSendt.getVarslingstekst()).isEqualToIgnoringWhitespace(EPOST_VEDTAK_FORVENTET_VARSLINGSTEKST);
+		Utsendingsinfo.SmsVarselSendt smsVarselSendt = utsendingsinfo.getSmsVarselSendt();
+		assertThat(smsVarselSendt.getAdresse()).isEqualTo(SMS_VEDTAK_FORVENTET_ADRESSE);
+		assertThat(smsVarselSendt.getVarslingstekst()).isEqualTo(SMS_VEDTAK_FORVENTET_VARSLINGSTEKST);
 	}
 
 	@Test
-	void shouldMapUtsendingsKanalErNAV_NO() {
-		Utsendingsinfo utsendingsinfo = mapper.mapUtsendingsInfo(createDitttNavVarsel(VARSEL_MELDING1, DIGITALKONTAKT_INFORMASJON), NAV_NO)
+	void shouldMapEpostVedtak() {
+		Utsendingsinfo utsendingsinfo = mapper.mapUtsendingsInfo(createUtsendingsInfoDtoWithNavNoVarsling(EPOST_VEDTAK_INPUT_VARSLINGSTEKST, EPOST_VEDTAK_INPUT_DIGITAL_KONTAKTINFO), NAV_NO)
 				.orElse(null);
 
-
-		assertNull(utsendingsinfo.getFysiskpostSendt());
-		assertNull(utsendingsinfo.getDigitalpostSendt());
-		assertEquals(VARSEL_TITTEL1, utsendingsinfo.getEpostVarselSendt().getTittel());
-		assertEquals(VARSEL_TEKST1.strip(), utsendingsinfo.getEpostVarselSendt().getVarslingstekst());
-		assertEquals("epostaddress3@nav.no", utsendingsinfo.getEpostVarselSendt().getAdresse());
+		assertThat(utsendingsinfo).isNotNull();
+		assertThat(utsendingsinfo.getFysiskpostSendt()).isNull();
+		assertThat(utsendingsinfo.getDigitalpostSendt()).isNull();
+		Utsendingsinfo.EpostVarselSendt epostVarselSendt = utsendingsinfo.getEpostVarselSendt();
+		assertThat(epostVarselSendt.getAdresse()).isEqualTo(EPOST_VEDTAK_FORVENTET_ADRESSE);
+		assertThat(epostVarselSendt.getTittel()).isEqualTo(EPOST_VEDTAK_FORVENTET_TITTEL);
+		assertThat(epostVarselSendt.getVarslingstekst()).isEqualToIgnoringWhitespace(EPOST_VEDTAK_FORVENTET_VARSLINGSTEKST);
 	}
 
 	@Test
-	void shouldMapEpostVarsel() {
-		Utsendingsinfo utsendingsinfo = mapper.mapUtsendingsInfo(createDitttNavVarsel(VARSEL_MELDING2, DIGITALKONTAKT_INFORMASJON), NAV_NO)
+	void shouldMapEpostMeldingMedKommaITittelOgVarslingstekst() {
+		Utsendingsinfo utsendingsinfo = mapper.mapUtsendingsInfo(createUtsendingsInfoDtoWithNavNoVarsling(EPOST_MELDING_MED_KOMMA_INPUT_VARSLINGSTEKST, EPOST_MELDING_MED_KOMMA_INPUT_DIGITAL_KONTAKTINFO), NAV_NO)
 				.orElse(null);
 
-		assertEquals(VARSEL_TITTEL2, utsendingsinfo.getEpostVarselSendt().getTittel());
-		assertEquals(VARSEL_TEKST2.strip(), utsendingsinfo.getEpostVarselSendt().getVarslingstekst());
+		assertThat(utsendingsinfo).isNotNull();
+		Utsendingsinfo.EpostVarselSendt epostVarselSendt = utsendingsinfo.getEpostVarselSendt();
+		assertThat(epostVarselSendt.getAdresse()).isEqualTo(EPOST_MELDING_MED_KOMMA_FORVENTET_ADRESSE);
+		assertThat(epostVarselSendt.getTittel()).isEqualTo(EPOST_MELDING_MED_KOMMA_FORVENTET_TITTEL);
+		assertThat(epostVarselSendt.getVarslingstekst()).isEqualToIgnoringWhitespace(EPOST_MELDING_MED_KOMMA_FORVENTET_VARSLINGSTEKST);
 		assertNull(utsendingsinfo.getSmsVarselSendt());
 		assertNull(utsendingsinfo.getDigitalpostSendt());
 		assertNull(utsendingsinfo.getFysiskpostSendt());
 	}
 
 	@Test
-	void shouldMapNullNavVarselSendt() {
-		JournalpostDto journalpostDto = buildJournalpostDtoUtgaaendeType(E, createDitttNavVarsel(VARSEL_MELDING4, VARSEL_MELDING4), NAV_NO);
-		journalpostDto.setFagomrade(FagomradeCode.OKO);
-
-		Utsendingsinfo utsendingsinfo = mapper.mapUtsendingsInfo(journalpostDto.getUtsendingsInfo(), NAV_NO)
+	void shouldMapKunEpostVarsel() {
+		Utsendingsinfo utsendingsinfo = mapper.mapUtsendingsInfo(createUtsendingsInfoDtoWithNavNoVarsling(EPOST_VEDTAK_INPUT_VARSLINGSTEKST, EPOST_VEDTAK_INPUT_DIGITAL_KONTAKTINFO), NAV_NO)
 				.orElse(null);
 
-		assertNull(utsendingsinfo);
+		assertThat(utsendingsinfo).isNotNull();
+		Utsendingsinfo.EpostVarselSendt epostVarselSendt = utsendingsinfo.getEpostVarselSendt();
+		assertThat(epostVarselSendt.getAdresse()).isEqualTo(EPOST_VEDTAK_FORVENTET_ADRESSE);
+		assertThat(epostVarselSendt.getTittel()).isEqualTo(EPOST_VEDTAK_FORVENTET_TITTEL);
+		assertThat(epostVarselSendt.getVarslingstekst()).isEqualToIgnoringWhitespace(EPOST_VEDTAK_FORVENTET_VARSLINGSTEKST);
+		assertNull(utsendingsinfo.getSmsVarselSendt());
+		assertNull(utsendingsinfo.getDigitalpostSendt());
+		assertNull(utsendingsinfo.getFysiskpostSendt());
+	}
+
+	@Test
+	void shouldMapKunSmsVarsel() {
+		Utsendingsinfo utsendingsinfo = mapper.mapUtsendingsInfo(createUtsendingsInfoDtoWithNavNoVarsling(SMS_VEDTAK_INPUT_VARSLINGSTEKST, SMS_VEDTAK_INPUT_DIGITAL_KONTAKTINFO), NAV_NO)
+				.orElse(null);
+
+		assertThat(utsendingsinfo).isNotNull();
+		Utsendingsinfo.SmsVarselSendt smsVarselSendt = utsendingsinfo.getSmsVarselSendt();
+		assertThat(smsVarselSendt.getAdresse()).isEqualTo(SMS_VEDTAK_FORVENTET_ADRESSE);
+		assertThat(smsVarselSendt.getVarslingstekst()).isEqualTo(SMS_VEDTAK_FORVENTET_VARSLINGSTEKST);
+		assertNull(utsendingsinfo.getEpostVarselSendt());
+		assertNull(utsendingsinfo.getDigitalpostSendt());
+		assertNull(utsendingsinfo.getFysiskpostSendt());
+	}
+
+	@Test
+	void shouldMapNullNavVarselSendtWhenInputHasAvvik() {
+		Utsendingsinfo utsendingsinfo = mapper.mapUtsendingsInfo(createUtsendingsInfoDtoWithNavNoVarsling(SMS_OG_EPOST_AVVIK_NULL_INPUT_VARSLINGSTEKST, SMS_OG_EPOST_AVVIK_NULL_INPUT_DIGITAL_KONTAKTINFO), NAV_NO)
+				.orElse(null);
+
+		assertThat(utsendingsinfo).isNull();
+	}
+
+	@Test
+	void shouldMapFysiskPostadresse() {
+		UtsendingsInfoDto utsendingsInfoDto = UtsendingsInfoDto.builder()
+				.fysiskPostadresse(UtsendingsInfoDto.FysiskPostadresseDto.builder()
+						.adresselinje1(ADRESSELINJE1)
+						.adresselinje2(ADRESSELINJE2)
+						.adresselinje3(ADRESSELINJE3)
+						.postnummer(POSTNUMMER)
+						.poststed(POSTSTED)
+						.landkode(LANDKODE)
+						.build())
+				.build();
+
+		Utsendingsinfo utsendingsinfo = mapper.mapUtsendingsInfo(utsendingsInfoDto, S)
+				.orElse(null);
+
+		assertThat(utsendingsinfo).isNotNull();
+		Utsendingsinfo.FysiskpostSendt fysiskpostSendt = utsendingsinfo.getFysiskpostSendt();
+		assertThat(fysiskpostSendt.getAdressetekstKonvolutt()).isEqualTo(FORVENTET_ADRESSETEKST_KONVOLUTT);
+		assertThat(utsendingsinfo.getEpostVarselSendt()).isNull();
+		assertThat(utsendingsinfo.getSmsVarselSendt()).isNull();
+		assertThat(utsendingsinfo.getDigitalpostSendt()).isNull();
 	}
 
 	@Test
@@ -93,39 +155,65 @@ public class UtsendingsInfoMapperTest {
 						.adresselinje1(ADRESSELINJE1)
 						.adresselinje2(ADRESSELINJE2)
 						.adresselinje3(ADRESSELINJE3)
+						.postnummer(null)
 						.poststed(null)
-						.poststed(null)
+						.landkode(LANDKODE)
 						.build())
 				.build();
 
 		Utsendingsinfo utsendingsinfo = mapper.mapUtsendingsInfo(utsendingsInfoDto, S)
 				.orElse(null);
 
-		assertEquals(ADRESSELINJE1 + "\n" + ADRESSELINJE2 + "\n" + ADRESSELINJE3, utsendingsinfo.getFysiskpostSendt().getAdressetekstKonvolutt());
-		assertNull(utsendingsinfo.getDigitalpostSendt());
+		assertThat(utsendingsinfo).isNotNull();
+		Utsendingsinfo.FysiskpostSendt fysiskpostSendt = utsendingsinfo.getFysiskpostSendt();
+		assertThat(fysiskpostSendt.getAdressetekstKonvolutt()).isEqualTo(INGEN_POSTNUMMER_POSTSTED_FORVENTET_ADRESSETEKST_KONVOLUTT);
+		assertThat(utsendingsinfo.getEpostVarselSendt()).isNull();
+		assertThat(utsendingsinfo.getSmsVarselSendt()).isNull();
+		assertThat(utsendingsinfo.getDigitalpostSendt()).isNull();
+	}
+
+	@Test
+	void shouldOnlyConcatenatePostnummerPoststedWhenOtherFieldsAreNull() {
+		UtsendingsInfoDto utsendingsInfoDto = UtsendingsInfoDto.builder()
+				.fysiskPostadresse(UtsendingsInfoDto.FysiskPostadresseDto.builder()
+						.adresselinje1(null)
+						.adresselinje2(null)
+						.adresselinje3(null)
+						.postnummer(POSTNUMMER)
+						.poststed(POSTSTED)
+						.landkode(LANDKODE)
+						.build())
+				.build();
+
+		Utsendingsinfo utsendingsinfo = mapper.mapUtsendingsInfo(utsendingsInfoDto, S)
+				.orElse(null);
+
+		assertThat(utsendingsinfo).isNotNull();
+		Utsendingsinfo.FysiskpostSendt fysiskpostSendt = utsendingsinfo.getFysiskpostSendt();
+		assertThat(fysiskpostSendt.getAdressetekstKonvolutt()).isEqualTo(KUN_POSTNUMMER_POSTSTED_LANDKODE_FORVENTET_ADRESSETEKST_KONVOLUTT);
+		assertThat(utsendingsinfo.getEpostVarselSendt()).isNull();
+		assertThat(utsendingsinfo.getSmsVarselSendt()).isNull();
+		assertThat(utsendingsinfo.getDigitalpostSendt()).isNull();
 	}
 
 	@Test
 	void shouldReturnUtsendingsInfoNullWhenNavNoVarselTekstOgInfoIsNull() {
-		JournalpostDto journalpostDto = buildJournalpostDtoUtgaaendeType(E, createDitttNavVarsel(null, null), NAV_NO);
-		journalpostDto.setFagomrade(FagomradeCode.OKO);
-
-		Utsendingsinfo utsendingsinfo = mapper.mapUtsendingsInfo(createDitttNavVarsel(null, null), NAV_NO)
+		Utsendingsinfo utsendingsinfo = mapper.mapUtsendingsInfo(createUtsendingsInfoDtoWithNavNoVarsling(null, null), NAV_NO)
 				.orElse(null);
 
-		assertNull(utsendingsinfo);
+		assertThat(utsendingsinfo).isNull();
 	}
 
 	@Test
-	void shouldMapSmsTekstOgKontaktInfo() {
-		JournalpostDto journalpostDto = buildJournalpostDtoUtgaaendeType(E, createDitttNavVarsel(VARSEL_MELDING3, VARSEL_KONTAKTINFO_3), NAV_NO);
-		journalpostDto.setFagomrade(FagomradeCode.OKO);
+	void shouldMapSmsVedtak() {
+		Utsendingsinfo utsendingsinfo = mapper.mapUtsendingsInfo(createUtsendingsInfoDtoWithNavNoVarsling(SMS_VEDTAK_INPUT_VARSLINGSTEKST, SMS_VEDTAK_INPUT_DIGITAL_KONTAKTINFO), NAV_NO).orElse(null);
 
-		Utsendingsinfo utsendingsinfo = mapper.mapUtsendingsInfo(createDitttNavVarsel(VARSEL_MELDING3, VARSEL_KONTAKTINFO_3), NAV_NO).orElse(null);
-
-		assertEquals(SMS_VARSELTEKST, utsendingsinfo.getSmsVarselSendt().getVarslingstekst());
-		assertEquals(PHONENUMMER, utsendingsinfo.getSmsVarselSendt().getAdresse());
-		assertNull(utsendingsinfo.getEpostVarselSendt());
-		assertNull(utsendingsinfo.getDigitalpostSendt());
+		assertThat(utsendingsinfo).isNotNull();
+		Utsendingsinfo.SmsVarselSendt smsVarselSendt = utsendingsinfo.getSmsVarselSendt();
+		assertThat(smsVarselSendt.getAdresse()).isEqualTo(SMS_VEDTAK_FORVENTET_ADRESSE);
+		assertThat(smsVarselSendt.getVarslingstekst()).isEqualToIgnoringWhitespace(SMS_VEDTAK_FORVENTET_VARSLINGSTEKST);
+		assertThat(utsendingsinfo.getEpostVarselSendt()).isNull();
+		assertThat(utsendingsinfo.getFysiskpostSendt()).isNull();
+		assertThat(utsendingsinfo.getDigitalpostSendt()).isNull();
 	}
 }

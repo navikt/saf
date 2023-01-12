@@ -9,21 +9,19 @@ import no.nav.saf.exceptions.SafTechnicalException;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;
-import static org.apache.commons.lang3.StringUtils.substringAfter;
-import static org.apache.commons.lang3.StringUtils.substringsBetween;
 
 
 public class UtsendingsInfoMapper {
 
-	private static final String TEKST = "Tekst";
+	Pattern EPOST_VARSLINGSTEKST_PATTERN = Pattern.compile("Tittel\\s(?<epostTittel>.*),\\sTekst\\s(?<epostVarslingstekst>.*)", Pattern.DOTALL);
 
 	public Optional<Utsendingsinfo> mapUtsendingsInfo(UtsendingsInfoDto utsendingsInfoDto, UtsendingsKanalCode utsendingsKanalCode) {
 		if (isNull(utsendingsInfoDto)) {
@@ -97,13 +95,24 @@ public class UtsendingsInfoMapper {
 	}
 
 	private Utsendingsinfo.EpostVarselSendt mapEpostVarselSendt(VarselMelding varselInfo, VarselMelding varseltekst) {
-		List<String> varselList = parseString(varseltekst.getEpost());
-		return varselList == null ? null :
-				Utsendingsinfo.EpostVarselSendt.builder()
-						.tittel(varselList.get(0))
-						.adresse(varselInfo.getEpost())
-						.varslingstekst(isBlank(varseltekst.getEpost()) ? null : substringAfter(varseltekst.getEpost(), TEKST).strip())
-						.build();
+		if(isBlank(varselInfo.getEpost()) || isBlank(varseltekst.getEpost())) {
+			return null;
+		}
+		Matcher matcher = EPOST_VARSLINGSTEKST_PATTERN.matcher(varseltekst.getEpost());
+		if (matcher.find()) {
+			String epostTittel = matcher.group("epostTittel");
+			String epostVarslingstekst = matcher.group("epostVarslingstekst");
+			if (isBlank(epostTittel) || isBlank(epostVarslingstekst)) {
+				return null;
+			}
+			return Utsendingsinfo.EpostVarselSendt.builder()
+					.tittel(epostTittel)
+					.adresse(varselInfo.getEpost())
+					.varslingstekst(epostVarslingstekst)
+					.build();
+		}
+		return null;
+
 	}
 
 	private VarselMelding getVarselKontaktInfo(UtsendingsInfoDto.NavNoVarslingDto varslingDto) {
@@ -135,10 +144,6 @@ public class UtsendingsInfoMapper {
 				.filter(StringUtils::isNotBlank)
 				.collect(Collectors.joining("\n")).strip();
 		return isBlank(postadresse) ? null : postadresse;
-	}
-
-	private List<String> parseString(String varseltekst) {
-		return isBlank(varseltekst) ? null : Arrays.stream(substringsBetween(varseltekst, "Tittel", TEKST)).map(String::strip).toList();
 	}
 
 	private boolean isEpostVarselNull(Utsendingsinfo.EpostVarselSendt epostVarselSendt) {
