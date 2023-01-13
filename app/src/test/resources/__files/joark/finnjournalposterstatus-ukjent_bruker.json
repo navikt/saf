@@ -308,6 +308,55 @@
           "logiske": []
         }
       ]
+    },
+    {
+      "journalpostId": 429812712,
+      "prevJournalpostId": 429812815,
+      "nextJournalpostId": 429812713,
+      "totaltAntall": 18,
+      "skjerming": null,
+      "journalForendeEnhetId": "9999",
+      "innhold": "SØKNAD_FORELDREPENGER_FØDSEL",
+      "fagomrade": "FOR",
+      "journalstatus": "FS",
+      "avsenderMottakerNavn": "LOLNES JENNY PIKENES",
+      "journalfortAvNavn": "TMOT010",
+      "mottakskanal": null,
+      "utsendingskanal": "SDP",
+      "journalposttype": "U",
+      "saksrelasjon": {
+        "sakId": "135737721",
+        "feilregistrert": null,
+        "fagsystem": "FS22"
+      },
+      "datoOpprettet": "2018-12-03T09:31:32.022+0000",
+      "mottattDato": "2018-11-22T16:35:08.000+0000",
+      "journalDato": "2018-12-03T09:31:32.010+0000",
+      "sendtPrintDato": null,
+      "ekspedertDato": null,
+      "dokumenter": [
+        {
+          "skjerming": null,
+          "dokumentInfoId": 441803683,
+          "dokumentstatus": null,
+          "brevkode": null,
+          "varianter": [
+            {
+              "variantf": "ARKIV",
+              "skjerming": null
+            }
+          ],
+          "tittel": "Søknad om foreldrepenger ved fødsel",
+          "logiske": []
+        }
+      ],
+      "kanalReferanseId": "KANAL REFERANSE ID",
+      "utsendingsInfo": {
+        "digitalPostadresse": {
+          "digitalpostkasseAdresse": "tom.tom#2541",
+          "postkasseLeverandor": "984661185"
+        }
+      }
     }
   ]
 }

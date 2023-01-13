@@ -288,7 +288,7 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikFagsakGsak();
 		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
 
-		assertEquals(3, dokumentoversikt.getJournalposter().size());
+		assertEquals(4, dokumentoversikt.getJournalposter().size());
 		assertNull(dokumentoversikt.getSideInfo());
 		verifyabacDenyPep1gAndHttpStatusCode(OK, responseEntity.getStatusCode());
 	}

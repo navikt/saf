@@ -7,12 +7,14 @@ import no.nav.saf.anticorruptionlayer.joark.domain.kode.FagsystemCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.JournalStatusCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.JournalpostTypeCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.SkjermingTypeCode;
+import no.nav.saf.anticorruptionlayer.joark.domain.kode.UtsendingsKanalCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.VariantFormatCode;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.dto.DokumentInfoDto;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.dto.JournalpostDto;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.dto.LogiskVedleggDto;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.dto.SaksrelasjonDto;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.dto.TilleggsopplysningDto;
+import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.dto.UtsendingsInfoDto;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.dto.VariantDto;
 import no.nav.saf.domain.visningsmodell.AvsenderMottakerIdType;
 
@@ -74,7 +76,7 @@ public class JournalpostDtoTestObjects {
 	static final String FILTYPE_1 = "PDFA";
 	static final String FILTYPE_2 = "PDF";
 
-	static JournalpostDto buildJournalpostDtoUtgaaendeType(JournalStatusCode journalStatusCode) {
+	static JournalpostDto buildJournalpostDtoUtgaaendeType(JournalStatusCode journalStatusCode, UtsendingsInfoDto utsendingsInfoDto, UtsendingsKanalCode kanalCode) {
 		return baseJournalpostDto()
 				.journalposttype(JournalpostTypeCode.U)
 				.saksrelasjon(new SaksrelasjonDto(SAKS_ID, false, FAKSYSTEM_CODE, null, null,
@@ -87,6 +89,8 @@ public class JournalpostDtoTestObjects {
 				.sendtPrintDato(SENDT_PRINT_DATO)
 				.ekspedertDato(EKSPEDERT_DATO)
 				.antallRetur(ANTALL_RETUR)
+				.utsendingskanal(kanalCode)
+				.utsendingsInfo(utsendingsInfoDto)
 				.build();
 	}
 
@@ -178,5 +182,4 @@ public class JournalpostDtoTestObjects {
 		logiskVedleggDto.setTittel(JournalpostDtoTestObjects.LOGISK_VEDLEGG_TITTEL);
 		return Collections.singletonList(logiskVedleggDto);
 	}
-
 }
