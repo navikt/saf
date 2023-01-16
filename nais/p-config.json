@@ -356,6 +356,11 @@
       "app": "dokarkiv",
       "namespace": "teamdokumenthandtering",
       "cluster": "prod-fss"
+    },
+    {
+      "app": "syk-dig-oppgavelytter",
+      "namespace": "teamsykmelding",
+      "cluster": "prod-gcp"
     }
   ]
 }

@@ -382,6 +382,11 @@
       "app": "ida",
       "namespace": "traktor",
       "cluster": "prod-fss"
+    },
+    {
+      "app": "syk-dig-oppgavelytter",
+      "namespace": "teamsykmelding",
+      "cluster": "dev-gcp"
     }
   ]
 }
