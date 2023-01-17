@@ -63,5 +63,22 @@
                 filtype
             }
         }
+        utsendingsinfo {
+            digitalpostSendt {
+                adresse
+            }
+            fysiskpostSendt {
+                adressetekstKonvolutt
+            }
+            smsVarselSendt {
+                adresse
+                varslingstekst
+            }
+            epostVarselSendt {
+                tittel
+                adresse
+                varslingstekst
+            }
+        }
     }
 }

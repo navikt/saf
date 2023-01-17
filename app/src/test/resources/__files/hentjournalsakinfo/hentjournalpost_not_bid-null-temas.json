@@ -46,6 +46,11 @@
         "verdi": "min_verdi"
       }
     ],
+    "utsendingsInfo": {
+      "digitalPostadresse": {
+        "digitalpostkasseAdresse": "0000487236"
+      }
+    },
     "dokumenter": [
       {
         "dokumentInfoId": 500000000,

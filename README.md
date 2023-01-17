@@ -1,93 +1,34 @@
-## saf
-================
-
-Saf (sak og arkivfasade) er en løsning for å tilby les-tjenester imot NAV sin database Joark, med korrekt og effektiv tilgangsstyring til metadata og dokumenter. Punktvis oppsummert har saf-applikasjonen har som mål å: 
-- Tilby raske søk mot Joark med korrekt tilgangsstyring
-- Muliggjøre at fagsystemene (Gosys, Modia, Ditt NAV, Arena, Bisys ...) kan velge å søke på bruker, tema, sak, journalpost eller dokument. 
-- Håndtere kommunikasjon mot GSAK/PSAK, slik at fagsystemene ikke lenger behøver å forholde seg til arkivsak.
+# Saf
+Saf (sak og arkivfasade) er en løsning for å tilby les-tjenester mot NAV sin database Joark, med korrekt og effektiv tilgangsstyring til metadata og dokumenter. Punktvis oppsummert har saf-applikasjonen som mål å: 
+- Tilby raske søk mot Joark med korrekt tilgangsstyring.
+- Muliggjøre at fagsystemene (Gosys, Modia, Min side, Arena, Bisys etc.) kan velge å søke på bruker, tema, sak, journalpost eller dokument. 
+- Håndtere kommunikasjon mot GSAK/PSAK, slik at fagsystemene ikke behøver å forholde seg til arkivsak.
 - Videreføre tilgangsbeslutninger til ABAC. Fagsystemene kan sanere egen tilgangskontroll knyttet til visning av dokumenter, da SAF kun returnerer metadata/dokumenter som konsument har eksplisitt tilgang til.
-- Sikre god ytelse ved å ta beslutninger knyttet til tilgangskontroll på et så tidlig tidspunkt som mulig, slik at ikke unødvendig mye data må innhentes.
+- Sikre god ytelse ved å ta beslutninger knyttet til tilgangskontroll på et så tidlig tidspunkt som mulig, slik at det ikke innhentes unødvendig mye data.
 
-----------
-
-## Kom i gang
-
-Disse instruksjonene gir deg en kopi av applikasjonen og kommer deg i gang med utvikling. Det antas i disse stegene at java 8 eller nyere, git, og et byggverktøy slik som maven eller gradle satt opp på maskinen.
-
-1. Hent koden
-Først må applikasjonskoden skaffes, dette kan gjøres ved "git clone <url>", hvor <url> kan bli funnet på kode-repositoriet du ønsker å hente saf sin applikasjonskode fra.
-
-
-2. Bygg koden
-Neste steg er å bygge java-prosjektet med ditt ønskede byggeverktøy, her er maven valgt som et eksempel. Dette kan gjøres med et 
-utvikler-IDE som Intellij eller eclipse, men kan også gjøres kommandoen med følgende kommando kjørt fra saf-mappen som ble hentet i forrige steg.
-```bash
-mvn package
-``` 
-
-
-3. Test koden
-For å kjøre saf-applikasjonens tester kan man deretter kjøre.
-```bash
-mvn clean verify
-``` 
-
-
-4. Sjekk instillinger
-For å kjøre saf lokalt må man tilføre en rekke instillinger. Se i "Lokal utvikling" seksjonen for mer detaljer om disse.
-
-
-5. Kjør koden
-Prosjektet skal nå kunne kjøres lokalt ved kommandoen
-```bash
-java [options] [builtproject.jar]
-```
-hvor options inneholder instillingene nevnt i forrige steg.
-
-
-----------
-
-### Avhengigheter
-
-- Java 8 +
-- Maven 3.6.0
-
-----------
-
-## Lokal utvikling
-
+## Kjøring av saf lokalt
 For å kjøre saf lokalt er det nødvendig å hente en truststore, sette profil til nais, tilføre en servicebruker og sette miljøvariabler.
 
  1. [truststore](fasit.adeo.no)
  2. [servicebruker](https://vault.adeo.no/ui/vault/secrets/serviceuser/show/dev/srvsaf)
  3. [miljøvariabler](https://vault.adeo.no/ui/vault/secrets/secret/show/dokument/saf)
-----------
-
-## Deploy
-
-Deploy av saf-koden til miljø gjøres vha. Github Actions.
-
-
-----------
 
 ## Tilgangsstyring
-Ved behov for tilgang til Saf kan andre team selv gjøre nødvendige kodeendringer:
+Ved behov for tilgang til Saf kan andre team selv gjøre nødvendige kodeendringer.
 
 For Azure tokens: 
-- Lag en ny branch hvor dere legger til et innslag for appen deres i ```AZURE_IAC_RULES```\
-&emsp; - [dev](https://github.com/navikt/saf/blob/master/nais/q2-config.json) (gjelder alle q-miljø) \
-&emsp; - [produksjon](https://github.com/navikt/saf/blob/master/nais/p-config.json)
+- Lag en ny branch hvor dere legger til et innslag for appen deres i `AZURE_IAC_RULES`
+  - [dev](https://github.com/navikt/saf/blob/master/nais/q2-config.json) (gjelder alle q-miljø)
+  - [produksjon](https://github.com/navikt/saf/blob/master/nais/p-config.json)
 - Push endringene og lag en pull request.
 - Pull requesten vil bli gått gjennom og merget av noen i Team Dokumentløsninger.
 
 For Rest sts eller OpenAm:
 - Lag en ny branch med endringene du ønsker for tilgang. Endringene må legges til i alle ønskede miljø i filene: /nais/<miljø>-config.json.
-- Legg til audience i ```NO_NAV_SECURITY_JWT_ISSUER_OPENAM_ACCEPTED_AUDIENCE``` eller ```NO_NAV_SECURITY_JWT_ISSUER_RESTSTS_ACCEPTED_AUDIENCE```, avhengig om du bruker OpenAm eller Rest sts.
+- Legg til audience i `NO_NAV_SECURITY_JWT_ISSUER_OPENAM_ACCEPTED_AUDIENCE` eller `NO_NAV_SECURITY_JWT_ISSUER_RESTSTS_ACCEPTED_AUDIENCE`, avhengig om du bruker OpenAm eller Rest sts.
 - Push endringene og lag en pull request. 
 - Pull requesten vil bli gått gjennom og merget av noen i Team Dokumentløsninger.
 
-----------
+### Henvendelser
+Spørsmål om koden eller prosjektet kan rettes til [Slack-kanalen for \#Team Dokumentløsninger](https://nav-it.slack.com/archives/C6W9E5GPJ)
 
-## Henvendelser
-Spørsmål om koden eller prosjektet kan rettes til Team Dokumentløsninger på:
-[\#Team Dokumentløsninger](https://nav-it.slack.com/client/T5LNAMWNA/C6W9E5GPJ)

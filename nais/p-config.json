@@ -62,6 +62,11 @@
       "cluster": "prod-gcp"
     },
     {
+      "app": "trygderetten-vedlegg",
+      "namespace": "isa",
+      "cluster": "prod-gcp"
+    },
+    {
       "app": "jfr-infotrygd",
       "namespace": "isa",
       "cluster": "prod-fss"
@@ -176,6 +181,26 @@
       "namespace": "bidrag",
       "cluster": "prod-fss",
       "roles": ["tema_far"]
+    },
+    {
+      "app": "eux-neessi",
+      "namespace": "eessibasis",
+      "cluster": "prod-fss"
+    },
+    {
+      "app": "eux-neessi",
+      "namespace": "eessibasis",
+      "cluster": "prod-gcp"
+    },
+    {
+      "app": "eux-fagmodul-journalfoering",
+      "namespace": "eessibasis",
+      "cluster": "prod-fss"
+    },
+    {
+      "app": "eux-fagmodul-journalfoering",
+      "namespace": "eessibasis",
+      "cluster": "prod-gcp"
     },
     {
       "app": "eessi-pensjon-fagmodul",
@@ -331,6 +356,11 @@
       "app": "dokarkiv",
       "namespace": "teamdokumenthandtering",
       "cluster": "prod-fss"
+    },
+    {
+      "app": "syk-dig-oppgavelytter",
+      "namespace": "teamsykmelding",
+      "cluster": "prod-gcp"
     }
   ]
 }

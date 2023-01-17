@@ -60,6 +60,16 @@
       "app": "pensjon-psak-q0",
       "namespace": "teampensjon",
       "cluster": "dev-fss"
+    },
+    {
+      "app": "modiapersonoversikt-api-q0",
+      "namespace": "personoversikt",
+      "cluster": "dev-fss"
+    },
+    {
+      "app": "ida",
+      "namespace": "traktor",
+      "cluster": "prod-fss"
     }
   ]
 }

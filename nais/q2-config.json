@@ -99,6 +99,11 @@
       "cluster": "dev-gcp"
     },
     {
+      "app": "trygderetten-vedlegg-q2",
+      "namespace": "isa",
+      "cluster": "dev-gcp"
+    },
+    {
       "app": "salesforce",
       "namespace": "teamcrm",
       "cluster": "dev-external"
@@ -368,11 +373,6 @@
       "cluster": "dev-fss"
     },
     {
-      "app": "modiapersonoversikt-api-q1",
-      "namespace": "personoversikt",
-      "cluster": "dev-fss"
-    },
-    {
       "app": "hm-joark-listener",
       "namespace": "teamdigihot",
       "cluster": "dev-gcp"
@@ -381,6 +381,11 @@
       "app": "hm-saksbehandling",
       "namespace": "teamdigihot",
       "cluster": "dev-gcp"
+    },
+    {
+      "app": "ida",
+      "namespace": "traktor",
+      "cluster": "prod-fss"
     }
   ]
 }

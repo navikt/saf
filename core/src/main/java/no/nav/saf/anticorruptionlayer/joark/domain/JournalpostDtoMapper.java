@@ -28,6 +28,7 @@ import no.nav.saf.domain.visningsmodell.LogiskVedlegg;
 import no.nav.saf.domain.visningsmodell.RelevantDato;
 import no.nav.saf.domain.visningsmodell.Sak;
 import no.nav.saf.domain.visningsmodell.Tilleggsopplysning;
+import no.nav.saf.domain.visningsmodell.Utsendingsinfo;
 import no.nav.saf.tilgangskontroll.RequestCache;
 import org.springframework.stereotype.Component;
 
@@ -37,6 +38,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static java.util.Objects.nonNull;
+import static no.nav.saf.anticorruptionlayer.joark.domain.kode.JournalpostTypeCode.U;
 import static no.nav.saf.cache.KeyGeneratorLocalCaching.getKeyForPep2d;
 import static no.nav.saf.cache.KeyGeneratorLocalCaching.getKeyForPep5;
 import static no.nav.saf.cache.KeyGeneratorLocalCaching.getKeyForPep6d;
@@ -54,6 +57,7 @@ import static org.apache.commons.lang3.StringUtils.trim;
 @Component
 public class JournalpostDtoMapper {
 	private final AvsenderMottakerMapper avsenderMottakerMapper = new AvsenderMottakerMapper();
+	private final UtsendingsInfoMapper utsendingsInfoMapper = new UtsendingsInfoMapper();
 	static final String FILTYPE_PDF = "PDF";
 	static final String FILTYPE_PDFA = "PDFA";
 
@@ -94,6 +98,7 @@ public class JournalpostDtoMapper {
 				.tilleggsopplysninger(mapTilleggsopplysninger(journalpostDto))
 				.antallRetur(mapAntallRetur(journalpostDto))
 				.eksternReferanseId(journalpostDto.getKanalReferanseId())
+				.utsendingsinfo(getUtgaaendeJournalpostUtsendingsInfo(journalpostDto))
 				.build();
 		List<DokumentInfo> dokumenter = journalpostDto.getDokumenter().stream()
 				.filter(dokumentInfoDto -> shouldMapDokumentInfo(journalpostId, dokumentInfoDto.getDokumentInfoId(), requestCache))
@@ -126,7 +131,7 @@ public class JournalpostDtoMapper {
 						.logiskeVedlegg(dokumentInfoDto.getLogiske().stream()
 								.map(logiskVedleggDto -> new LogiskVedlegg(logiskVedleggDto.getVedleggId(), logiskVedleggDto.getTittel()))
 								.collect(Collectors.toList()))
-						.build()).collect(Collectors.toList());
+						.build()).toList();
 		journalpost.getDokumenter().addAll(dokumenter);
 		return journalpost;
 	}
@@ -139,7 +144,7 @@ public class JournalpostDtoMapper {
 	}
 
 	private String mapAntallRetur(JournalpostDto journalpostDto) {
-		if (JournalpostTypeCode.U.equals(journalpostDto.getJournalposttype())) {
+		if (U.equals(journalpostDto.getJournalposttype())) {
 			return journalpostDto.getAntallRetur();
 		} else {
 			return null;
@@ -147,14 +152,11 @@ public class JournalpostDtoMapper {
 	}
 
 	private String mapBrevkode(JournalpostDto journalpostDto, DokumentInfoDto dokumentInfoDto) {
-		switch (journalpostDto.getJournalposttype()) {
-			case U:
-				return isBlank(dokumentInfoDto.getDokumenttypeId()) ? dokumentInfoDto.getBrevkode() : dokumentInfoDto.getDokumenttypeId();
-			case I:
-			case N:
-			default:
-				return dokumentInfoDto.getBrevkode();
-		}
+		return switch (journalpostDto.getJournalposttype()) {
+			case U -> isBlank(dokumentInfoDto.getDokumenttypeId()) ? dokumentInfoDto.getBrevkode() : dokumentInfoDto.getDokumenttypeId();
+			case I, N -> dokumentInfoDto.getBrevkode();
+			default -> dokumentInfoDto.getBrevkode();
+		};
 	}
 
 	private Tema mapTema(JournalpostDto journalpostDto, RequestCache requestCache) {
@@ -313,16 +315,11 @@ public class JournalpostDtoMapper {
 	}
 
 	private Kanal mapManglendeUtsendingskanal(JournalpostDto journalpostDto) {
-		switch (journalpostDto.getJournalstatus()) {
-			case FL:
-				return Kanal.LOKAL_UTSKRIFT;
-			case FS:
-				return Kanal.SENTRAL_UTSKRIFT;
-			case E:
-				return Kanal.SENTRAL_UTSKRIFT;
-			default:
-				return null;
-		}
+		return switch (journalpostDto.getJournalstatus()) {
+			case FL -> Kanal.LOKAL_UTSKRIFT;
+			case FS, E -> Kanal.SENTRAL_UTSKRIFT;
+			default -> null;
+		};
 	}
 
 	private String mapJoarkFagsystem(FagsystemCode joarkFagsystem) {
@@ -370,6 +367,14 @@ public class JournalpostDtoMapper {
 		}
 	}
 
+	private Utsendingsinfo getUtgaaendeJournalpostUtsendingsInfo(JournalpostDto journalpostDto) {
+		if (U.equals(journalpostDto.getJournalposttype()) && nonNull(journalpostDto.getUtsendingskanal())) {
+			return utsendingsInfoMapper.mapUtsendingsInfo(journalpostDto.getUtsendingsInfo(), journalpostDto.getUtsendingskanal())
+					.orElse(null);
+		}
+		return null;
+	}
+
 	private boolean determineSaksbehandlerTilgang(Journalpost journalpost, DokumentInfoDto dokumentInfoDto, VariantDto variantDto, RequestCache requestCache) {
 		if (journalpost.getJournalstatus() == Journalstatus.MOTTATT || journalpost.getSak() == null) {
 			// Midlertidige journalposter skal ikke ha tilgangskontroll på tema. Her skal saksbehandler ha tilgang uansett.
@@ -385,7 +390,6 @@ public class JournalpostDtoMapper {
 					getDecisionFromPep7d(journalpost.getSak().getArkivsaksystem(), journalpost.getSak().getArkivsaksnummer(), requestCache);
 		}
 	}
-
 
 	private boolean getDecisionFromPep2d(Tema tema, RequestCache requestCache) {
 		String tilgangKeyPep2dLocalCaching = getKeyForPep2d(tema.name());
