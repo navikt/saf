@@ -71,6 +71,7 @@ public class Pep2Impl extends Pep<TilgangSak> {
 
 	@Override
 	public AbacAnswer verifyAzureClientCredentialFlowAccess(TilgangSak ressurs, SafRequestContext safRequestContext) {
+		log.info(String.format("VACCFA, tema: %s og fnr" , ressurs.getTema().toString(), ressurs.getFoedselsnummer()));
 		if (ressurs == null) {
 			log.info("Pep2(tema-farskap) mangler data om sak. Tilgang gis likevel for at system skal kunne knytte dokument til sak og bruker. Azure ccf.");
 			return permit();
