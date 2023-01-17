@@ -53,7 +53,18 @@ public class Pep2Impl extends Pep<TilgangSak> {
 			traceLogPepFinished(PEP2, ressurs);
 
 			return response;
-		} else {
+		} else if (isKontrollAnmeldelse(ressurs)){
+			XacmlRequest request = SafXacmlRequestFactory.create(safRequestContext.getSecurityContext());
+			request.resource(RESOURCE_FELLES_RESOURCE_TYPE, RESOURCE_SAF_SAK_JP_METADATA);
+			request.resource(RESOURCE_FELLES_TEMA, KTA.name());
+
+			traceLogPepStarted(PEP2, ressurs);
+			XacmlResponse response = abacService.evaluate(request);
+			traceLogPepFinished(PEP2, ressurs);
+
+			return response;
+		}
+		else {
 			return XacmlResponse.permit();
 		}
 	}
