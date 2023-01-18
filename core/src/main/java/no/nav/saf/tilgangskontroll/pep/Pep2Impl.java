@@ -46,7 +46,7 @@ public class Pep2Impl extends Pep<TilgangSak> {
 			if(null != ressurs.getTema() && null != ressurs.getFoedselsnummer()) {
 				log.info(String.format("VAPD, tema: %s og fnr %s", ressurs.getTema().getTemanavn(), ressurs.getFoedselsnummer()));
 			}else if (null != ressurs.getTema())
-				log.info("VAPD, tema: %s");
+				log.info("VAPD, tema: {}", ressurs.getTema());
 			else
 				log.info("Bare VAPD");
 		}
