@@ -43,8 +43,12 @@ public class Pep2Impl extends Pep<TilgangSak> {
 			return XacmlResponse.permit();
 		}
 		else {
-			if(null != ressurs.getTema() && null != ressurs.getFoedselsnummer())
-			log.info(String.format("VAPD, tema: %s og fnr %s", ressurs.getTema().getTemanavn(), ressurs.getFoedselsnummer()));
+			if(null != ressurs.getTema() && null != ressurs.getFoedselsnummer()) {
+				log.info(String.format("VAPD, tema: %s og fnr %s", ressurs.getTema().getTemanavn(), ressurs.getFoedselsnummer()));
+			}else if (null != ressurs.getTema())
+				log.info("VAPD, tema: %s");
+			else
+				log.info("Bare VAPD");
 		}
 
 		if (isFarskapSak(ressurs)) {
