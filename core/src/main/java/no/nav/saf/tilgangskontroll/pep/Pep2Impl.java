@@ -9,6 +9,8 @@ import no.nav.saf.tilgangskontroll.abac.service.AbacService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Random;
+
 import static no.nav.saf.domain.DomainConstants.PEP2;
 import static no.nav.saf.domain.kode.Tema.FAR;
 import static no.nav.saf.domain.kode.Tema.KTA;
@@ -62,7 +64,8 @@ public class Pep2Impl extends Pep<TilgangSak> {
 
 			return response;
 		} else if (isKontrollAnmeldelse(ressurs)){
-			log.info("VAPD-KTA");
+			int id = new Random().nextInt();
+			log.info("VAPD-KTA {}", id);
 			XacmlRequest request = SafXacmlRequestFactory.create(safRequestContext.getSecurityContext());
 			request.resource(RESOURCE_FELLES_RESOURCE_TYPE, RESOURCE_SAF_SAK_JP_METADATA);
 			request.resource(RESOURCE_FELLES_TEMA, KTA.name());
@@ -70,6 +73,7 @@ public class Pep2Impl extends Pep<TilgangSak> {
 			traceLogPepStarted(PEP2, ressurs);
 			XacmlResponse response = abacService.evaluate(request);
 			traceLogPepFinished(PEP2, ressurs);
+			log.info("VAPD-KTA {} response: {}", id, response.getDecision());
 
 			return response;
 		}
