@@ -42,6 +42,10 @@ public class Pep2Impl extends Pep<TilgangSak> {
 			log.info("Pep2(tema-farskap) mangler data om sak. Tilgang gis likevel for at saksbehandler skal kunne knytte dokument til sak og bruker.");
 			return XacmlResponse.permit();
 		}
+		else {
+			if(null != ressurs.getTema() && null != ressurs.getFoedselsnummer())
+			log.info(String.format("VAPD, tema: %s og fnr %s", ressurs.getTema().getTemanavn(), ressurs.getFoedselsnummer()));
+		}
 
 		if (isFarskapSak(ressurs)) {
 			XacmlRequest request = SafXacmlRequestFactory.create(safRequestContext.getSecurityContext());
@@ -53,7 +57,8 @@ public class Pep2Impl extends Pep<TilgangSak> {
 			traceLogPepFinished(PEP2, ressurs);
 
 			return response;
-		} else if (isKontrollAnmeldelse(ressurs)){
+		}
+		else if (isKontrollAnmeldelse(ressurs)) {
 			XacmlRequest request = SafXacmlRequestFactory.create(safRequestContext.getSecurityContext());
 			request.resource(RESOURCE_FELLES_RESOURCE_TYPE, RESOURCE_SAF_SAK_JP_METADATA);
 			request.resource(RESOURCE_FELLES_TEMA, KTA.name());
@@ -64,19 +69,21 @@ public class Pep2Impl extends Pep<TilgangSak> {
 
 			return response;
 		}
-		else {
+		else {us
 			return XacmlResponse.permit();
 		}
 	}
 
 	@Override
 	public AbacAnswer verifyAzureClientCredentialFlowAccess(TilgangSak ressurs, SafRequestContext safRequestContext) {
-		log.info(String.format("VACCFA, tema: %s og fnr" , ressurs.getTema().toString(), ressurs.getFoedselsnummer()));
 		if (ressurs == null) {
 			log.info("Pep2(tema-farskap) mangler data om sak. Tilgang gis likevel for at system skal kunne knytte dokument til sak og bruker. Azure ccf.");
 			return permit();
 		}
-		if (isFarskapSak(ressurs) || isKontrollAnmeldelse(ressurs)) {
+		else {
+			log.info(String.format("VACCFA, tema: %s og fnr %s", ressurs.getTema().toString(), ressurs.getFoedselsnummer()));
+		}
+		if (isFarskapSak(ressurs) ){ //|| isKontrollAnmeldelse(ressurs)) {
 			String tema = ressurs.getTema().name().toLowerCase();
 			if (isFarskapSak(ressurs)) {
 				return safRequestContext.getSecurityContext().hasTemaAureRole(tema) ?
