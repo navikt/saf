@@ -62,6 +62,7 @@ public class Pep2Impl extends Pep<TilgangSak> {
 
 			return response;
 		} else if (isKontrollAnmeldelse(ressurs)){
+			log.info("VAPD-KTA");
 			XacmlRequest request = SafXacmlRequestFactory.create(safRequestContext.getSecurityContext());
 			request.resource(RESOURCE_FELLES_RESOURCE_TYPE, RESOURCE_SAF_SAK_JP_METADATA);
 			request.resource(RESOURCE_FELLES_TEMA, KTA.name());
