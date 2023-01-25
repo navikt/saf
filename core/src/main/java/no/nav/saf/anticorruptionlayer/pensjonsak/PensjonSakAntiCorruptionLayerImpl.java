@@ -1,12 +1,12 @@
 package no.nav.saf.anticorruptionlayer.pensjonsak;
 
 import lombok.extern.slf4j.Slf4j;
+import no.nav.saf.anticorruptionlayer.pensjonsak.domain.SakSammendrag;
 import no.nav.saf.anticorruptionlayer.pensjonsak.hentbrukerforsak.PensjonSakRestConsumer;
 import no.nav.saf.domain.Arkivsak;
 import no.nav.saf.domain.kode.Arkivsakssystem;
 import no.nav.saf.domain.kode.Tema;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
-import no.nav.saf.anticorruptionlayer.pensjonsak.domain.SakSammendrag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -81,10 +81,13 @@ public class PensjonSakAntiCorruptionLayerImpl implements PensjonSakAntiCorrupti
 	}
 
 	private Tema mapToTema(String tema) {
+		if(tema == null) {
+			return Tema.PEN;
+		}
 		try {
 			return Tema.valueOf(tema);
 		} catch (Exception e) {
-			return null;
+			return Tema.PEN;
 		}
 	}
 
