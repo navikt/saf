@@ -44,18 +44,8 @@ public class Pep2Impl extends Pep<TilgangSak> {
 			log.info("Pep2(tema-farskap) mangler data om sak. Tilgang gis likevel for at saksbehandler skal kunne knytte dokument til sak og bruker.");
 			return XacmlResponse.permit();
 		}
-		else {  //todo <!--
-			if(null != ressurs.getTema() && null != ressurs.getFoedselsnummer()) {
-				log.info(String.format("VAPD, tema: %s og fnr %s", ressurs.getTema().getTemanavn(), ressurs.getFoedselsnummer()));
-			}else if (null != ressurs.getTema())
-				log.info("VAPD, tema: {}", ressurs.getTema());
-			else
-				log.info("Bare VAPD");
-		}  //todo -->
 
 		if (isFarskapSak(ressurs)) {
-			int id = new Random().nextInt(); //todo
-			log.info("VAPD-FAR {}", id); //todo
 			XacmlRequest request = SafXacmlRequestFactory.create(safRequestContext.getSecurityContext());
 			request.resource(RESOURCE_FELLES_RESOURCE_TYPE, RESOURCE_SAF_SAK_JP_METADATA);
 			request.resource(RESOURCE_FELLES_TEMA, FAR.name());
@@ -63,13 +53,10 @@ public class Pep2Impl extends Pep<TilgangSak> {
 			traceLogPepStarted(PEP2, ressurs);
 			XacmlResponse response = abacService.evaluate(request);
 			traceLogPepFinished(PEP2, ressurs);
-			log.info("VAPD-FAR {} response: {}", id, response.getDecision()); //todo
 
 			return response;
 
 		} else if (isKontrollAnmeldelse(ressurs)){
-			int id = new Random().nextInt(); //todo
-			log.info("VAPD-KTA {}", id); //todo
 			XacmlRequest request = SafXacmlRequestFactory.create(safRequestContext.getSecurityContext());
 			request.resource(RESOURCE_FELLES_RESOURCE_TYPE, RESOURCE_SAF_SAK_JP_METADATA);
 			request.resource(RESOURCE_FELLES_TEMA, KTA.name());
@@ -77,7 +64,6 @@ public class Pep2Impl extends Pep<TilgangSak> {
 			traceLogPepStarted(PEP2, ressurs);
 			XacmlResponse response = abacService.evaluate(request);
 			traceLogPepFinished(PEP2, ressurs);
-			log.info("VAPD-KTA {} response: {}", id, response.getDecision()); //todo
 
 			return response;
 		}
@@ -88,13 +74,9 @@ public class Pep2Impl extends Pep<TilgangSak> {
 
 	@Override
 	public AbacAnswer verifyAzureClientCredentialFlowAccess(TilgangSak ressurs, SafRequestContext safRequestContext) {
-		log.info(String.format("VACCFA, tema: %s og fnr" , ressurs.getTema().toString(), ressurs.getFoedselsnummer()));
 		if (ressurs == null) {
 			log.info("Pep2(tema-farskap) mangler data om sak. Tilgang gis likevel for at system skal kunne knytte dokument til sak og bruker. Azure ccf.");
 			return permit();
-		}
-		else {
-			log.info(String.format("VACCFA, tema: %s og fnr %s", ressurs.getTema().toString(), ressurs.getFoedselsnummer()));
 		}
 		if (isFarskapSak(ressurs) || isKontrollAnmeldelse(ressurs)) {
 			String tema = ressurs.getTema().name().toLowerCase();
