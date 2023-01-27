@@ -387,6 +387,11 @@
       "app": "syk-dig-oppgavelytter",
       "namespace": "teamsykmelding",
       "cluster": "dev-gcp"
+    },
+    {
+      "app": "routing",
+      "namespace": "aap",
+      "cluster": "dev-gcp"
     }
   ]
 }
