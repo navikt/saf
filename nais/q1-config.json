@@ -391,7 +391,8 @@
     {
       "app": "routing",
       "namespace": "aap",
-      "cluster": "dev-gcp"
+      "cluster": "dev-gcp",
+      "roles": ["tema_aap"]
     }
   ]
 }
