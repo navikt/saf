@@ -71,7 +71,7 @@ class Pep2ImplTest extends AbstractPepTest {
 		assertFalse(hasAccess);
 	}
 	@Test
-	void shouldPermitWhenTemaKta() {
+	void shouldPermitWhenTemaKtaWhenEvaluateIsPermit() {
 		when(abacService.evaluate(any(XacmlRequest.class))).thenReturn(new XacmlResponse(Decision.PERMIT, null, null, null));
 
 		ArgumentCaptor<XacmlRequest> request = ArgumentCaptor.forClass(XacmlRequest.class);
@@ -89,7 +89,7 @@ class Pep2ImplTest extends AbstractPepTest {
 		assertThat(capturedRequest.getResources(), hasItem(new XacmlAttribute(RESOURCE_FELLES_TEMA, Tema.KTA.name())));
 	}
 	@Test
-	void shouldDenyKTA() {
+	void shouldDenyKTAWhenEvaluateIsFalse() {
 		when(abacService.evaluate(any(XacmlRequest.class))).thenReturn(new XacmlResponse(Decision.DENY, null, null, null));
 
 		boolean hasAccess = pep2.hasAccess(TilgangSak.builder()

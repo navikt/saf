@@ -39,7 +39,7 @@ public class Pep2Impl extends Pep<TilgangSak> {
 	@Override
 	public XacmlResponse verifyAbacPdpDecision(TilgangSak ressurs, SafRequestContext safRequestContext) {
 		if (ressurs == null) {
-			log.info("Pep2(tema-farskap)/Pep2(tema-KTA) mangler data om sak. Tilgang gis likevel for at saksbehandler skal kunne knytte dokument til sak og bruker.");
+			log.info("Pep2(tema-{}) mangler data om sak. Tilgang gis likevel for at saksbehandler skal kunne knytte dokument til sak og bruker.", ressurs.getTema().name());
 			return XacmlResponse.permit();
 		}
 
@@ -62,7 +62,7 @@ public class Pep2Impl extends Pep<TilgangSak> {
 	@Override
 	public AbacAnswer verifyAzureClientCredentialFlowAccess(TilgangSak ressurs, SafRequestContext safRequestContext) {
 		if (ressurs == null) {
-			log.info("Pep2(tema-farskap)/Pep2(tema-KTA) mangler data om sak. Tilgang gis likevel for at system skal kunne knytte dokument til sak og bruker. Azure ccf.");
+			log.info("Pep2(tema-{}) mangler data om sak. Tilgang gis likevel for at system skal kunne knytte dokument til sak og bruker. Azure ccf.", ressurs.getTema().name());
 			return permit();
 		}
 		if (isFarskapSak(ressurs) || isKontrollAnmeldelse(ressurs)) {
