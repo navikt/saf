@@ -9,7 +9,6 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static no.nav.saf.domain.DomainConstants.SAF;
-import static no.nav.saf.tilgangskontroll.SafAttributter.ENVIRONMENT_FELLES_AZURE_JWT_TOKEN_BODY;
 import static no.nav.saf.tilgangskontroll.SafAttributter.ENVIRONMENT_FELLES_OIDC_TOKEN_BODY;
 import static no.nav.saf.tilgangskontroll.SafAttributter.ENVIRONMENT_FELLES_PEP_ID;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_DOMENE;
@@ -32,7 +31,6 @@ class SafXacmlRequestFactoryTest {
 	void shouldPopulateDefaultXacmlRequest() {
 		SafSecurityContext safSecurityContext = Mockito.mock(SafSecurityContext.class);
 		when(safSecurityContext.getCachedJwtPayload()).thenReturn(AZURE_TOKEN);
-		when(safSecurityContext.isJwtIssuedByAzure()).thenReturn(false);
 		XacmlRequest request = SafXacmlRequestFactory.create(safSecurityContext);
 
 		assertThat(request.getEnvironments(), hasItem(new XacmlAttribute(ENVIRONMENT_FELLES_PEP_ID, SAF)));
@@ -44,7 +42,6 @@ class SafXacmlRequestFactoryTest {
 	void shouldPopulateFellesOidcTokenBodyWhenNotAzureToken() {
 		SafSecurityContext safSecurityContext = Mockito.mock(SafSecurityContext.class);
 		when(safSecurityContext.getCachedJwtPayload()).thenReturn(NON_AZURE_TOKEN);
-		when(safSecurityContext.isJwtIssuedByAzure()).thenReturn(false);
 		XacmlRequest request = SafXacmlRequestFactory.create(safSecurityContext);
 
 		assertThat(request.getEnvironments(), hasItem(new XacmlAttribute(ENVIRONMENT_FELLES_OIDC_TOKEN_BODY, NON_AZURE_TOKEN)));
@@ -54,9 +51,8 @@ class SafXacmlRequestFactoryTest {
 	void shouldPopulateAzureTokenBodyWhenAzureToken() {
 		SafSecurityContext safSecurityContext = Mockito.mock(SafSecurityContext.class);
 		when(safSecurityContext.getCachedJwtPayload()).thenReturn(AZURE_TOKEN);
-		when(safSecurityContext.isJwtIssuedByAzure()).thenReturn(true);
 		XacmlRequest request = SafXacmlRequestFactory.create(safSecurityContext);
 
-		assertThat(request.getEnvironments(), hasItem(new XacmlAttribute(ENVIRONMENT_FELLES_AZURE_JWT_TOKEN_BODY, AZURE_TOKEN)));
+		assertThat(request.getEnvironments(), hasItem(new XacmlAttribute(ENVIRONMENT_FELLES_OIDC_TOKEN_BODY, AZURE_TOKEN)));
 	}
 }
