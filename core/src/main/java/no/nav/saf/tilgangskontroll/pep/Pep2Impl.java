@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 
 import static no.nav.saf.domain.DomainConstants.PEP2;
 import static no.nav.saf.domain.kode.Tema.FAR;
+import static no.nav.saf.domain.kode.Tema.KTA;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_RESOURCE_TYPE;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_TEMA;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_SAF_SAK_JP_METADATA;
@@ -38,20 +39,21 @@ public class Pep2Impl extends Pep<TilgangSak> {
 	@Override
 	public XacmlResponse verifyAbacPdpDecision(TilgangSak ressurs, SafRequestContext safRequestContext) {
 		if (ressurs == null) {
-			log.info("Pep2(tema-farskap) mangler data om sak. Tilgang gis likevel for at saksbehandler skal kunne knytte dokument til sak og bruker.");
+			log.info("Pep2 (tema FAR eller KTA) mangler data om sak. Tilgang gis likevel for at saksbehandler skal kunne knytte dokument til sak og bruker.");
 			return XacmlResponse.permit();
 		}
 
-		if (isFarskapSak(ressurs)) {
+		if (isFarskapSak(ressurs) || isKontrollAnmeldelse(ressurs)) {
 			XacmlRequest request = SafXacmlRequestFactory.create(safRequestContext.getSecurityContext());
 			request.resource(RESOURCE_FELLES_RESOURCE_TYPE, RESOURCE_SAF_SAK_JP_METADATA);
-			request.resource(RESOURCE_FELLES_TEMA, FAR.name());
+			request.resource(RESOURCE_FELLES_TEMA, ressurs.getTema().name());
 
 			traceLogPepStarted(PEP2, ressurs);
 			XacmlResponse response = abacService.evaluate(request);
 			traceLogPepFinished(PEP2, ressurs);
 
 			return response;
+
 		} else {
 			return XacmlResponse.permit();
 		}
@@ -60,15 +62,22 @@ public class Pep2Impl extends Pep<TilgangSak> {
 	@Override
 	public AbacAnswer verifyAzureClientCredentialFlowAccess(TilgangSak ressurs, SafRequestContext safRequestContext) {
 		if (ressurs == null) {
-			log.info("Pep2(tema-farskap) mangler data om sak. Tilgang gis likevel for at system skal kunne knytte dokument til sak og bruker. Azure ccf.");
+			log.info("Pep2 (tema FAR eller KTA) mangler data om sak. Tilgang gis likevel for at system skal kunne knytte dokument til sak og bruker. Azure ccf.");
 			return permit();
 		}
-		if (isFarskapSak(ressurs)) {
+		if (isFarskapSak(ressurs) || isKontrollAnmeldelse(ressurs)) {
 			String tema = ressurs.getTema().name().toLowerCase();
-			return safRequestContext.getSecurityContext().hasTemaAureRole(tema) ?
-					permit() : deny(AbacAnswer.AbacDenyReason.builder()
-					.cause("ingen_tilgang_farskap").policy("saf_pep2").rule("clientid_mangler_far_rolle")
-					.build());
+			if (isFarskapSak(ressurs)) {
+				return safRequestContext.getSecurityContext().hasTemaAureRole(tema) ?
+						permit() : deny(AbacAnswer.AbacDenyReason.builder()
+						.cause("ingen_tilgang_farskap").policy("saf_pep2").rule("clientid_mangler_far_rolle")
+						.build());
+			} else {
+				return safRequestContext.getSecurityContext().hasTemaAureRole(tema) ?
+						permit() : deny(AbacAnswer.AbacDenyReason.builder()
+						.cause("ingen_tilgang_kontroll_anmeldelse").policy("saf_pep2").rule("clientid_mangler_kta_rolle")
+						.build());
+			}
 		} else {
 			return permit();
 		}
@@ -76,6 +85,10 @@ public class Pep2Impl extends Pep<TilgangSak> {
 
 	private boolean isFarskapSak(TilgangSak ressurs) {
 		return FAR.equals(ressurs.getTema());
+	}
+
+	private boolean isKontrollAnmeldelse(TilgangSak ressurs) {
+		return KTA.equals(ressurs.getTema());
 	}
 
 }

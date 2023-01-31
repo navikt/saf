@@ -716,6 +716,12 @@ enum Tema {
     # Ajourhold - Grunnopplysninger
     AGR
 
+    # Arbeidsrådgivning psykologtester
+    ARP
+
+    # Arbeidsrådgivning skjermet
+    ARS
+
     # Barnetrygd
     BAR
 
@@ -745,6 +751,9 @@ enum Tema {
 
     # Feilutbetaling
     FEI
+
+    # Fiskerpensjon
+    FIP
 
     # Foreldre- og svangerskapspenger
     FOR
@@ -781,6 +790,12 @@ enum Tema {
 
     # Kontantstøtte
     KON
+
+    # Klage lønnsgaranti
+    KLL
+
+    # Kontroll anmeldelse
+    KTA
 
     # Kontroll
     KTR
