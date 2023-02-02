@@ -45,11 +45,6 @@
     {
       "app": "etterlatte-brev-api",
       "namespace": "etterlatte",
-      "cluster": "dev-gcp"
-    },
-    {
-      "app": "etterlatte-brev-distribusjon",
-      "namespace": "etterlatte",
       "cluster": "dev-gcp",
       "roles": ["tema_pen", "tema_eyb", "tema_eyo"]
     },

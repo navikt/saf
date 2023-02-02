@@ -361,6 +361,12 @@
       "app": "syk-dig-oppgavelytter",
       "namespace": "teamsykmelding",
       "cluster": "prod-gcp"
+    },
+    {
+      "app": "etterlatte-brev-api",
+      "namespace": "etterlatte",
+      "cluster": "prod-gcp",
+      "roles": ["tema_pen", "tema_eyb", "tema_eyo"]
     }
   ]
 }
