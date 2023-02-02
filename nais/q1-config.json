@@ -393,7 +393,6 @@
       "app": "spberegning",
       "namespace": "helsearbeidsgiver",
       "cluster": "dev-fss"
-    },
-   
+    }
   ]
 }
