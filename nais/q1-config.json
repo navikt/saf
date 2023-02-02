@@ -388,6 +388,12 @@
       "namespace": "aap",
       "cluster": "dev-gcp",
       "roles": ["tema_aap"]
-    }
+    },
+     {
+      "app": "spberegning",
+      "namespace": "helsearbeidsgiver",
+      "cluster": "dev-fss"
+    },
+   
   ]
 }
