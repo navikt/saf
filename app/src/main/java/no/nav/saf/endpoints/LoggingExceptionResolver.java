@@ -8,9 +8,6 @@ import org.springframework.web.servlet.handler.AbstractHandlerExceptionResolver;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-/**
- * @author Joakim Bjørnstad, Jbit AS
- */
 @Component
 public class LoggingExceptionResolver extends AbstractHandlerExceptionResolver {
 	@Override

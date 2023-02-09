@@ -36,11 +36,6 @@ import static no.nav.saf.headers.NavHeaders.NAV_USER_ID;
 import static no.nav.saf.headers.NavHeaders.X_CORRELATION_ID;
 import static no.nav.saf.util.MDCUtility.addMdcData;
 
-/**
- * GraphQL endepunktet til applikasjonen.
- *
- * @author Ugur Alpay Cenar, Visma Consulting.
- */
 @Hidden
 @RestController
 @Slf4j

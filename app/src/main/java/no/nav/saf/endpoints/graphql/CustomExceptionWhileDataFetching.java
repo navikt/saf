@@ -16,11 +16,6 @@ import java.util.Map;
 import static graphql.Assert.assertNotNull;
 import static java.lang.String.format;
 
-/**
- * Copy of @ExceptionWhileDataFetching
- *
- * @author Ugur Alpay Cenar, Visma Consulting.
- */
 @ToString
 @Getter
 public class CustomExceptionWhileDataFetching implements GraphQLError {

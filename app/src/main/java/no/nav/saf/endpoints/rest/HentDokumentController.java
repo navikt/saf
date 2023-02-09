@@ -38,8 +38,6 @@ import static no.nav.saf.util.MDCUtility.addMdcData;
 /**
  * Endepunktet til hentDokument, som returnerer et dokument fra joark basert på journalpostId, dokumentInfoId og variantFormat.
  * Tjenesten er sikret med Oauth2 flyt tokens.
- *
- * @author Sigurd Midttun, Visma Consulting.
  */
 @Tag(name="saf REST API", description = "Lesemodellen til fagarkivet. Henter dokumenter.")
 @Protected

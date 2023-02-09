@@ -17,13 +17,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-/**
- * Implementerer NAIS kontraktene for
- * - readiness
- * - aliveness
- *
- * @author Joakim Bjørnstad, Jbit AS
- */
 @Hidden
 @Slf4j
 @RestController
