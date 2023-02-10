@@ -5,9 +5,6 @@ import java.util.UUID;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.apache.commons.lang3.StringUtils.trim;
 
-/**
- * @author Joakim Bjørnstad, Jbit AS
- */
 public final class HeaderUtils {
 	private HeaderUtils() {
 		// noop

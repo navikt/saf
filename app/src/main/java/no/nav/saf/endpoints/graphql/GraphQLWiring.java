@@ -23,9 +23,6 @@ import org.springframework.stereotype.Component;
 
 import static graphql.schema.idl.TypeRuntimeWiring.newTypeWiring;
 
-/**
- * @author Joakim Bjørnstad, Jbit AS
- */
 @Component
 @Slf4j
 public class GraphQLWiring {

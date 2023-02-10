@@ -10,9 +10,6 @@ import graphql.schema.GraphQLScalarType;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 
-/**
- * @author Joakim Bjørnstad, Jbit AS
- */
 final class DateScalar {
 	static final GraphQLScalarType DATE = GraphQLScalarType.newScalar()
 			.name("Date")

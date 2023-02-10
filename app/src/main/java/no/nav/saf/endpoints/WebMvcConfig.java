@@ -8,9 +8,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.util.List;
 
-/**
- * @author Joakim Bjørnstad, Jbit AS
- */
 @Configuration
 public class WebMvcConfig implements WebMvcConfigurer {
 	@Override
