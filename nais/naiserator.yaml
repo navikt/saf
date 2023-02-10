@@ -61,7 +61,7 @@ spec:
     - {{ this }}
     {{/each}}
   liveness:
-    path: /actuator/liveness
+    path: /actuator/health/liveness
     port: 8080
     initialDelay: 30
     failureThreshold: 10
@@ -70,7 +70,7 @@ spec:
     enabled: true
     path: /actuator/prometheus
   readiness:
-    path: /actuator/readiness
+    path: /actuator/health/readiness
     port: 8080
     initialDelay: 30
     timeout: 3
