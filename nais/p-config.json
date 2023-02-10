@@ -107,6 +107,11 @@
       "cluster": "prod-gcp"
     },
     {
+      "app": "kabin-api",
+      "namespace": "klage",
+      "cluster": "prod-gcp"
+    },
+    {
       "app": "salesforce",
       "namespace": "teamcrm",
       "cluster": "prod-external"
