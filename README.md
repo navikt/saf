@@ -18,7 +18,7 @@ Ved behov for tilgang til Saf kan andre team selv gjøre nødvendige kodeendring
 
 For Azure tokens: 
 - Lag en ny branch hvor dere legger til et innslag for appen deres i `AZURE_IAC_RULES`
-  - [dev](https://github.com/navikt/saf/blob/master/nais/q2-config.json) (gjelder alle q-miljø)
+  - [dev](https://github.com/navikt/saf/blob/master/nais/) (legg til i respektiv *-config.json fil for alle miljøer appen ønsker tilgang)
   - [produksjon](https://github.com/navikt/saf/blob/master/nais/p-config.json)
 - Push endringene og lag en pull request.
 - Pull requesten vil bli gått gjennom og merget av noen i Team Dokumentløsninger.
