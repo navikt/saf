@@ -365,7 +365,8 @@
     {
       "app": "dokarkiv",
       "namespace": "teamdokumenthandtering",
-      "cluster": "dev-fss"
+      "cluster": "dev-fss",
+      "roles": ["tema_alle"]
     },
     {
       "app": "dokumenter",

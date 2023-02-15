@@ -37,7 +37,8 @@
     {
       "app": "dokarkiv-q5",
       "namespace": "teamdokumenthandtering",
-      "cluster": "dev-fss"
+      "cluster": "dev-fss",
+      "roles": ["tema_alle"]
     },
     {
       "app": "pensjon-pen-q5",
