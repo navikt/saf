@@ -11,7 +11,6 @@
   "NO_NAV_SECURITY_JWT_ISSUER_AZUREV1_DISCOVERYURL": "https://login.microsoftonline.com/966ac572-f5b7-4bbe-aa88-c76419c0f851/.well-known/openid-configuration",
   "NO_NAV_SECURITY_JWT_ISSUER_AZUREV2_DISCOVERYURL": "https://login.microsoftonline.com/966ac572-f5b7-4bbe-aa88-c76419c0f851/v2.0/.well-known/openid-configuration",
   "NO_NAV_SECURITY_JWT_ISSUER_RESTSTS_DISCOVERYURL": "https://security-token-service.dev.adeo.no/rest/v1/sts/.well-known/openid-configuration",
-  "NO_NAV_SECURITY_JWT_ISSUER_OPENAM_DISCOVERYURL": "https://isso-q.adeo.no:443/isso/oauth2/.well-known/openid-configuration",
   "INGRESSES": [
     "https://saf-q4.nais.preprod.local",
     "https://saf-q4.dev.adeo.no",
@@ -19,7 +18,6 @@
   ],
   "SRVSAF": "/serviceuser/data/dev/srvsaf",
   "NO_NAV_SECURITY_JWT_ISSUER_AZUREV1_ACCEPTED_AUDIENCE": "38e07d31-659d-4595-939a-f18dce3446c5",
-  "NO_NAV_SECURITY_JWT_ISSUER_OPENAM_ACCEPTED_AUDIENCE": "gosys-dokument-auth-proxy-q4,gosys-localhost,gosys-nais-q4,gosys-q4,joarkadmin-localhost,joarkadmin-q4,modiabrukerdialog-q4,veilarblogin-q4,ida-q,eessi-pensjon-frontend-api-fss-q4,gosys-dokument-auth-proxy-q4,eux-helloeu-app-q4,k9-fordel-q4,pensjon-dokdist-localhost,pensjon-dokdist-q4,bisys-q4,bidrag-ui-q4,bidrag-q-localhost,pensjon-psak-q4,psak-localhost",
   "NO_NAV_SECURITY_JWT_ISSUER_RESTSTS_ACCEPTED_AUDIENCE": "srvpensjon,srvpselv,srvdagpenger-joark,srvdp-graphql,srvinfotrygd-joark,srvjfr-manuell-opp,srvjfr-filter,srvsyfosmpapirmottak,srveux-app,srvdokdisteformidl,srvdokdistfordeling,srvmelosys,srvfamilie-ks-opps,srvmedlemskap,srvpensr,srvcoronapenger,srvjfr-automatisk,srvpermref-journalf,srvdolly,srvregpapirsm,srvdokproduksjon",
   "SAF_PRIVILEGIEDSERVICEUSERS": "srvdokdistfordeling,srvdokdisteformidling,srvdokarkivproxy,srvtilbakemeldings,srvomsitramme,srvmelosys,srvdolly,srvdolly_u,srvdokproduksjon",
   "BIDRAG_SAK_URL": "https://bidrag-sak.dev.adeo.no/bidrag-sak/pip/sak/",

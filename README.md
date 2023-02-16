@@ -23,9 +23,9 @@ For Azure tokens:
 - Push endringene og lag en pull request.
 - Pull requesten vil bli gått gjennom og merget av noen i Team Dokumentløsninger.
 
-For Rest sts eller OpenAm:
+For REST-STS:
 - Lag en ny branch med endringene du ønsker for tilgang. Endringene må legges til i alle ønskede miljø i filene: /nais/<miljø>-config.json.
-- Legg til audience i `NO_NAV_SECURITY_JWT_ISSUER_OPENAM_ACCEPTED_AUDIENCE` eller `NO_NAV_SECURITY_JWT_ISSUER_RESTSTS_ACCEPTED_AUDIENCE`, avhengig om du bruker OpenAm eller Rest sts.
+- Legg til audience i `NO_NAV_SECURITY_JWT_ISSUER_RESTSTS_ACCEPTED_AUDIENCE` om du bruker REST-STS.
 - Push endringene og lag en pull request. 
 - Pull requesten vil bli gått gjennom og merget av noen i Team Dokumentløsninger.
 
