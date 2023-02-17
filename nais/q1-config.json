@@ -397,6 +397,11 @@
       "app": "spberegning",
       "namespace": "helsearbeidsgiver",
       "cluster": "dev-fss"
+    },
+    {
+      "app": "testnav-saf-proxy-trygdeetaten",
+      "namespace": "dolly",
+      "cluster": "dev-fss"
     }
   ]
 }
