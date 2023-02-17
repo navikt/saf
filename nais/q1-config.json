@@ -401,7 +401,8 @@
     {
       "app": "testnav-saf-proxy-trygdeetaten",
       "namespace": "dolly",
-      "cluster": "dev-fss"
+      "cluster": "dev-fss",
+      "roles": ["tema_alle"]
     }
   ]
 }
