@@ -390,6 +390,11 @@
       "app": "ida",
       "namespace": "traktor",
       "cluster": "prod-fss"
+    },
+    {
+      "app": "testnav-saf-proxy-trygdeetaten",
+      "namespace": "dolly",
+      "cluster": "dev-fss"
     }
   ]
 }
