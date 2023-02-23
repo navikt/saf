@@ -372,10 +372,15 @@
       "cluster": "prod-gcp",
       "roles": ["tema_pen", "tema_eyb", "tema_eyo"]
     },
-     {
+    {
       "app": "spberegning",
       "namespace": "helsearbeidsgiver",
       "cluster": "prod-fss"
+    },
+    {
+      "app": "innsending-api",
+      "namespace": "team-soknad",
+      "cluster": "prod-gcp"
     }
   ]
 }
