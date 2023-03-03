@@ -15,13 +15,9 @@ import java.util.concurrent.TimeUnit;
 import static no.nav.saf.cache.LokalCacheConfig.AZURE_CLIENT_CREDENTIAL_TOKEN_CACHE;
 import static no.nav.saf.cache.LokalCacheConfig.BIDRAG_SAK_BY_SAKID_CACHE;
 import static no.nav.saf.cache.LokalCacheConfig.FPSAK_RELEVANTE_PARTER_BY_SAKID_CACHE;
-import static no.nav.saf.cache.LokalCacheConfig.PENSJON_SAK_SAMMENDRAG_LISTE_CACHE;
 import static no.nav.saf.cache.LokalCacheConfig.REST_STS_CACHE;
 import static no.nav.saf.cache.LokalCacheConfig.TILGANGSMODELL_REPO_BRUKER_CACHE;
 
-/**
- * @author Sigurd Midttun, Visma Consulting.
- */
 @Configuration
 @Profile("itest")
 public class LokalCacheTestConfig {
@@ -31,10 +27,6 @@ public class LokalCacheTestConfig {
 		SimpleCacheManager manager = new SimpleCacheManager();
 		manager.setCaches(Arrays.asList(
 				new CaffeineCache(TILGANGSMODELL_REPO_BRUKER_CACHE, Caffeine.newBuilder()
-						.expireAfterWrite(0, TimeUnit.MINUTES)
-						.maximumSize(0)
-						.build()),
-				new CaffeineCache(PENSJON_SAK_SAMMENDRAG_LISTE_CACHE, Caffeine.newBuilder()
 						.expireAfterWrite(0, TimeUnit.MINUTES)
 						.maximumSize(0)
 						.build()),
