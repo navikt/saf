@@ -384,7 +384,8 @@
     {
       "app": "hm-saksbehandling",
       "namespace": "teamdigihot",
-      "cluster": "dev-gcp"
+      "cluster": "dev-gcp",
+      "roles": ["tema_hje"]
     },
     {
       "app": "ida",
