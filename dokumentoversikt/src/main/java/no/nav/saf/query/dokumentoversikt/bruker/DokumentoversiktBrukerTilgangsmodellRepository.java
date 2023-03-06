@@ -9,7 +9,6 @@ import no.nav.saf.anticorruptionlayer.fpsak.FpsakAntiCorruptionLayer;
 import no.nav.saf.anticorruptionlayer.gsak.GsakAntiCorruptionLayer;
 import no.nav.saf.anticorruptionlayer.k9.K9AntiCorruptionLayer;
 import no.nav.saf.anticorruptionlayer.pensjonsak.PensjonSakAntiCorruptionLayer;
-import no.nav.saf.cache.LokalCacheConfig;
 import no.nav.saf.domain.Arkivsak;
 import no.nav.saf.domain.BidragSak;
 import no.nav.saf.domain.kode.Tema;
@@ -27,6 +26,8 @@ import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
+
+import static no.nav.saf.cache.LokalCacheConfig.TILGANGSMODELL_REPO_BRUKER_CACHE;
 
 /**
  * @author Joakim Bjørnstad, Jbit AS
@@ -60,7 +61,7 @@ class DokumentoversiktBrukerTilgangsmodellRepository {
 		this.k9AntiCorruptionLayer = k9AntiCorruptionLayer;
 	}
 
-	@Cacheable(cacheNames = LokalCacheConfig.TILGANGSMODELL_REPO_BRUKER_CACHE)
+	@Cacheable(cacheNames = TILGANGSMODELL_REPO_BRUKER_CACHE)
 	public TilgangBruker findTilgangBruker(BrukerIdInput brukerIdInput) {
 		try {
 			switch (brukerIdInput.getType()) {
