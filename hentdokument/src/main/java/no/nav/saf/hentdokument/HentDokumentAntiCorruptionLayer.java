@@ -9,6 +9,7 @@ import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark901.HentTil
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark901.TilgangBrukerDto;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark901.TilgangDokumentInfoDto;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark901.TilgangJournalpostDto;
+import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark901.TilgangSakDto;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark920.HentDokumentResponseTo;
 import no.nav.saf.domain.Arkivsak;
 import no.nav.saf.domain.HentDokument;
@@ -37,9 +38,6 @@ import static no.nav.saf.domain.DomainConstants.PERSON;
 import static no.nav.saf.domain.DomainConstants.RJOARK901_TILGANG_JOURNALPOST_DTO;
 import static no.nav.saf.util.MimetypeFileextensionMapper.toFileextension;
 
-/**
- * @author Joakim Bjørnstad, Jbit AS
- */
 @Slf4j
 @Component
 public class HentDokumentAntiCorruptionLayer {
@@ -62,12 +60,9 @@ public class HentDokumentAntiCorruptionLayer {
 	public TilgangSak hentTilgangSakFromSafRequestContext(SafRequestContext safRequestContext, TilgangBruker tilgangBruker) {
 		final TilgangJournalpostDto tilgangJournalpostDto = safRequestContext.getRequestCache()
 				.getObject(RJOARK901_TILGANG_JOURNALPOST_DTO);
-		if (tilgangJournalpostDto == null || tilgangJournalpostDto.getSak() == null || tilgangJournalpostDto.getBruker() == null
-				|| tilgangJournalpostDto.getBruker().getBrukerId() == null) {
-			log.info("Dokumentet har ingen sakstilknytning. JournalpostId={}",
-					tilgangJournalpostDto == null ? null : tilgangJournalpostDto.getJournalpostId());
-			return null;
-		} else {
+		if (tilgangJournalpostDto == null) {
+			throw new IllegalStateException("journalpost metadata for tilgangskontroll ligger ikke i requestCache. Dette er en ugyldig tilstand og en teknisk feil");
+		} else if (tilgangJournalpostDto.isTilknyttetSak() && tilgangBruker != null) {
 			return TilgangSak.builder()
 					.foedselsnummer(tilgangBruker.getFoedselsnr())
 					.arkivsaksnummer(tilgangJournalpostDto.getSak().getSakId())
@@ -75,6 +70,11 @@ public class HentDokumentAntiCorruptionLayer {
 							.getFagsystem(), tilgangJournalpostDto.getJournalpostId()))
 					.tema(FagomradeCode.toSafTema(tilgangJournalpostDto.getFagomrade()))
 					.relevanteTredjeparter(new ArrayList<>())
+					.build();
+		} else {
+			log.info("Dokumentet har ingen sakstilknytning. journalpostId={}", tilgangJournalpostDto.getJournalpostId());
+			return TilgangSak.builder()
+					.tema(FagomradeCode.toSafTema(tilgangJournalpostDto.getFagomrade()))
 					.build();
 		}
 	}
@@ -84,7 +84,7 @@ public class HentDokumentAntiCorruptionLayer {
 				.getObject(RJOARK901_TILGANG_JOURNALPOST_DTO);
 
 		if (tilgangJournalpostDto == null || tilgangJournalpostDto.getBruker() == null
-				|| tilgangJournalpostDto.getBruker().getBrukerType() == null) {
+			|| tilgangJournalpostDto.getBruker().getBrukerType() == null) {
 			return null;
 		}
 		final TilgangBrukerDto tilgangBruker = tilgangJournalpostDto.getBruker();
@@ -123,30 +123,30 @@ public class HentDokumentAntiCorruptionLayer {
 
 	public Arkivsak hentArkivsakAndCacheJournalpostDto(String journalpostId, String dokumentInfoId, String variantFormat, SafRequestContext safRequestContex) {
 		HentTilgangJournalpostResponseTo hentTilgangJournalpostResponseTo;
-		try {
-			hentTilgangJournalpostResponseTo = hentJournalsakinfo.hentTilgangJournalpost(journalpostId, dokumentInfoId, variantFormat);
-		} catch (Exception e) {
-			log.warn("Kunne ikke hente tilgangJournalpost. journalpostId={}, dokumentInfoId={}, variantFormat={}", journalpostId, dokumentInfoId, variantFormat, e);
-			return null;
+		hentTilgangJournalpostResponseTo = hentJournalsakinfo.hentTilgangJournalpost(journalpostId, dokumentInfoId, variantFormat);
+		TilgangJournalpostDto tilgangJournalpostDto = hentTilgangJournalpostResponseTo.getTilgangJournalpostDto();
+		safRequestContex.getRequestCache().putObject(RJOARK901_TILGANG_JOURNALPOST_DTO, tilgangJournalpostDto);
+		if (tilgangJournalpostDto.isTilknyttetSak()) {
+			TilgangSakDto sak = tilgangJournalpostDto.getSak();
+			return Arkivsak.builder()
+					.arkivsaksnummer(sak.getSakId())
+					.arkivsaksystem(mapJoarkFagsystemToArkivsakssystemCode(
+							sak.getFagsystem(),
+							tilgangJournalpostDto.getJournalpostId()))
+					.fagsakId(sak.getFagsakNr())
+					.fagsaksystem(sak.getApplikasjon())
+					.orgnummer(sak.getOrgnr())
+					.aktoerId(sak.getAktoerId())
+					.tema(Arkivsak.mapTema(sak.getTema()))
+					.datoOpprettet(Optional.ofNullable(sak.getOpprettetTidspunkt())
+							.map(ZonedDateTime::toLocalDateTime)
+							.orElse(null))
+					.build();
+		} else {
+			return Arkivsak.builder()
+					.tema(FagomradeCode.toSafTema(tilgangJournalpostDto.getFagomrade()))
+					.build();
 		}
-		safRequestContex.getRequestCache()
-				.putObject(RJOARK901_TILGANG_JOURNALPOST_DTO, hentTilgangJournalpostResponseTo.getTilgangJournalpostDto());
-		return Optional.ofNullable(hentTilgangJournalpostResponseTo.getTilgangJournalpostDto().getSak())
-				.map(sak -> Arkivsak.builder()
-						.arkivsaksnummer(sak.getSakId())
-						.arkivsaksystem(mapJoarkFagsystemToArkivsakssystemCode(
-								sak.getFagsystem(),
-								hentTilgangJournalpostResponseTo.getTilgangJournalpostDto().getJournalpostId()))
-						.fagsakId(sak.getFagsakNr())
-						.fagsaksystem(sak.getApplikasjon())
-						.orgnummer(sak.getOrgnr())
-						.aktoerId(sak.getAktoerId())
-						.tema(Arkivsak.mapTema(sak.getTema()))
-						.datoOpprettet(Optional.ofNullable(sak.getOpprettetTidspunkt())
-								.map(ZonedDateTime::toLocalDateTime)
-								.orElse(null))
-						.build())
-				.orElse(null);
 	}
 
 	private TilgangJournalpost mapTilgangJournalpost(TilgangJournalpostDto dto) {

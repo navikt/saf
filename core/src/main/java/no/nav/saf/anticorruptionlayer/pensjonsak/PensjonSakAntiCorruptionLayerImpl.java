@@ -32,7 +32,7 @@ public class PensjonSakAntiCorruptionLayerImpl implements PensjonSakAntiCorrupti
 
 	@Override
 	public List<Arkivsak> findArkivsaker(final TilgangBruker tilgangBruker, final List<Tema> tema) {
-		if (tilgangBruker.getFoedselsnr() == null || tema.isEmpty()) {
+		if (tilgangBruker == null || tilgangBruker.getFoedselsnr() == null || tema.isEmpty()) {
 			return emptyList();
 		} else {
 			Predicate<SakSammendrag> selectForTema = sakSammendrag -> tema.contains(mapToTema(sakSammendrag.arkivtema()));

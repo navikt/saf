@@ -8,6 +8,7 @@ import no.nav.saf.domain.kode.Variantformat;
 import no.nav.saf.exceptions.DokumentIkkeFunnetException;
 import no.nav.saf.exceptions.HentdokumentTilgangskontrollException;
 import no.nav.saf.exceptions.JournalpostIkkeFunnetException;
+import no.nav.saf.exceptions.UgyldigInputException;
 import no.nav.saf.hentdokument.HentDokumentDomainCoordinator;
 import no.nav.saf.metrics.AudienceCounter;
 import no.nav.saf.metrics.Monitor;
@@ -34,12 +35,13 @@ import static no.nav.saf.headers.NavHeaders.NAV_CALLID;
 import static no.nav.saf.headers.NavHeaders.NAV_USER_ID;
 import static no.nav.saf.headers.NavHeaders.X_CORRELATION_ID;
 import static no.nav.saf.util.MDCUtility.addMdcData;
+import static org.apache.commons.lang3.StringUtils.isNumeric;
 
 /**
  * Endepunktet til hentDokument, som returnerer et dokument fra joark basert på journalpostId, dokumentInfoId og variantFormat.
  * Tjenesten er sikret med Oauth2 flyt tokens.
  */
-@Tag(name="saf REST API", description = "Lesemodellen til fagarkivet. Henter dokumenter.")
+@Tag(name = "saf REST API", description = "Lesemodellen til fagarkivet. Henter dokumenter.")
 @Protected
 @RestController
 @RequestMapping("rest/")
@@ -72,6 +74,7 @@ public class HentDokumentController {
 			@Parameter(name = NAV_USER_ID, description = "(Valgfri) NAV ident som overstyrer sporing for kall fra servicebrukere.") @RequestHeader(value = NAV_USER_ID, required = false) String navUserId,
 			@Parameter(name = X_CORRELATION_ID, description = "@Deprecated. Bruk " + NAV_CALLID, hidden = true) @RequestHeader(value = X_CORRELATION_ID, required = false) String xCorrelationId
 	) {
+		validateInput(journalpostId, dokumentInfoId);
 		final SafRequestContext safRequestContext = new SafRequestContext(createNavCallid(navCallid, xCorrelationId),
 				navUserId,
 				tokenValidationContextHolder.getTokenValidationContext(),
@@ -93,6 +96,9 @@ public class HentDokumentController {
 					.contentType(response.getMediaType())
 					.header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=" + dokumentInfoId + "_" + variantFormat + response.getExtension())
 					.body(response.getDokument());
+		} catch (UgyldigInputException e) {
+			log.warn("hentDokument hentet ikke dokument. journalpostId={}, dokumentInfoId={}, variantFormat={}. Ugyldig input til tjenesten: " + e.getMessage(), journalpostId, dokumentInfoId, variantFormat);
+			throw e;
 		} catch (HentdokumentTilgangskontrollException e) {
 			log.warn("hentDokument hentet ikke dokument. journalpostId={}, dokumentInfoId={}, variantFormat={}. Tilgang ble avvist av grunn: " + e.getMessage(), journalpostId, dokumentInfoId, variantFormat);
 			throw e;
@@ -107,6 +113,15 @@ public class HentDokumentController {
 		}
 	}
 
+	private void validateInput(String journalpostId, String dokumentInfoId) {
+		if (!isNumeric(journalpostId)) {
+			throw new UgyldigInputException("journalpostId må være et tall. journalpostId=" + journalpostId);
+		}
+		if (!isNumeric(dokumentInfoId)) {
+			throw new UgyldigInputException("dokumentInfoId må være et tall. dokumentInfoId=" + dokumentInfoId);
+		}
+	}
+
 	private void validateServiceUserAccess(SafRequestContext safRequestContext, String variantFormat) {
 		SafSecurityContext securityContext = safRequestContext.getSecurityContext();
 		if (securityContext.isPrivilegiedServiceUserWithArkivVariantAccess() || securityContext.isJwtAzureClientCredentialFlow()) {
@@ -116,8 +131,8 @@ public class HentDokumentController {
 		if (securityContext.isSystem() && !Variantformat.ORIGINAL.name().equals(variantFormat)) {
 			throw new HentdokumentTilgangskontrollException(
 					"Servicebruker forsøker å hente dokument med variantFormat=" +
-							variantFormat + ". Servicebrukere har kun tilgang til variantFormat=" + Variantformat.ORIGINAL +
-							" med mindre man har en avtale med Team Dokumentløsninger. Snakk med oss om behov.");
+					variantFormat + ". Servicebrukere har kun tilgang til variantFormat=" + Variantformat.ORIGINAL +
+					" med mindre man har en avtale med Team Dokumentløsninger. Snakk med oss om behov.");
 		}
 	}
 }

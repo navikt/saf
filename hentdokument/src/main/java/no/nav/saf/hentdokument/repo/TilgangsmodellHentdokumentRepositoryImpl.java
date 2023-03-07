@@ -24,9 +24,6 @@ import static no.nav.saf.domain.kode.Arkivsakssystem.PSAK;
 import static no.nav.saf.domain.kode.Tema.PEN;
 import static no.nav.saf.domain.kode.Tema.UFO;
 
-/**
- * @author Sigurd Midttun, Visma Consulting.
- */
 @Slf4j
 @Repository
 public class TilgangsmodellHentdokumentRepositoryImpl implements TilgangsmodellHentdokumentRepository {
@@ -126,7 +123,7 @@ public class TilgangsmodellHentdokumentRepositoryImpl implements TilgangsmodellH
 	@Override
 	public TilgangSak findTilgangSak(Arkivsak arkivsak, TilgangBruker tilgangBruker, SafRequestContext safRequestContext) {
 		try {
-			if (arkivsak == null || tilgangBruker == null) {
+			if (arkivsak == null) {
 				return null;
 			}
 

@@ -8,6 +8,8 @@ import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlRequest;
 import no.nav.saf.tilgangskontroll.abac.dto.response.Decision;
 import no.nav.saf.tilgangskontroll.abac.dto.response.XacmlResponse;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.mockito.ArgumentCaptor;
 import org.springframework.cache.support.NoOpCache;
 import org.springframework.cache.support.SimpleCacheManager;
@@ -22,13 +24,9 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-/**
- * @author Sigurd Midttun, Visma Consulting.
- */
 class Pep2dImplTest extends AbstractPepTest {
 
 	private Pep2dImpl pep2d;
@@ -59,28 +57,17 @@ class Pep2dImplTest extends AbstractPepTest {
 		assertCommonXacmlRequestResources(capturedRequest);
 	}
 
-	@Test
-	void shouldDenyIfTemaIsNull() {
-
-		boolean hasAccess = pep2d.hasAccess(TilgangSak.builder()
-				.aktoerId(AKTOER_ID)
-				.tema(null)
-				.build(), createSafRequestContext());
-
-		verify(abacService, never()).evaluate(any());
-		assertTrue(hasAccess);
-	}
-
 	private void assertCommonXacmlRequestResources(XacmlRequest capturedRequest) {
 		assertThat(capturedRequest.getResources(), hasItem(new XacmlAttribute(RESOURCE_FELLES_RESOURCE_TYPE, RESOURCE_SAF_SAK_DOKUMENT)));
 		assertThat(capturedRequest.getResources(), hasItem(new XacmlAttribute(RESOURCE_FELLES_TEMA, TEMA_BID.name())));
 	}
 
-	@Test
-	void shouldDenyWhenAbacDenies() {
+	@ParameterizedTest
+	@EnumSource(value = Tema.class, names = {"FAR", "KTA"})
+	void shouldDenyWhenAbacDenies(Tema tema) {
 		when(abacService.evaluate(any(XacmlRequest.class))).thenReturn(new XacmlResponse(Decision.DENY, null, null, null));
 		boolean hasAccess = pep2d.hasAccess(TilgangSak.builder()
-				.tema(Tema.FAR)
+				.tema(tema)
 				.build(), createSafRequestContext());
 
 		assertFalse(hasAccess);

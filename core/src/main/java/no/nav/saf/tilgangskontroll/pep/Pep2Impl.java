@@ -22,8 +22,6 @@ import static no.nav.saf.tilgangskontroll.pep.AbacAnswer.permit;
  * Dekker følgende policies i saf:
  * <p>
  * https://confluence.adeo.no/display/ABAC/Tilgang+til+farskapssaker
- *
- * @author Joakim Bjørnstad, Jbit AS
  */
 @Slf4j
 @Component(PEP2)
@@ -39,11 +37,11 @@ public class Pep2Impl extends Pep<TilgangSak> {
 	@Override
 	public XacmlResponse verifyAbacPdpDecision(TilgangSak ressurs, SafRequestContext safRequestContext) {
 		if (ressurs == null) {
-			log.info("Pep2 (tema FAR eller KTA) mangler data om sak. Tilgang gis likevel for at saksbehandler skal kunne knytte dokument til sak og bruker.");
-			return XacmlResponse.permit();
+			log.error("Pep2 (tema FAR eller KTA) mangler data om journalposten. Den må ha tema for å gjøre tilgangskontroll. Dette er forårsaket av en teknisk feil");
+			return XacmlResponse.deny();
 		}
 
-		if (isFarskapSak(ressurs) || isKontrollAnmeldelse(ressurs)) {
+		if (isFarskap(ressurs) || isKontrollAnmeldelse(ressurs)) {
 			XacmlRequest request = SafXacmlRequestFactory.create(safRequestContext.getSecurityContext());
 			request.resource(RESOURCE_FELLES_RESOURCE_TYPE, RESOURCE_SAF_SAK_JP_METADATA);
 			request.resource(RESOURCE_FELLES_TEMA, ressurs.getTema().name());
@@ -62,28 +60,28 @@ public class Pep2Impl extends Pep<TilgangSak> {
 	@Override
 	public AbacAnswer verifyAzureClientCredentialFlowAccess(TilgangSak ressurs, SafRequestContext safRequestContext) {
 		if (ressurs == null) {
-			log.info("Pep2 (tema FAR eller KTA) mangler data om sak. Tilgang gis likevel for at system skal kunne knytte dokument til sak og bruker. Azure ccf.");
-			return permit();
+			log.error("Pep2 (tema FAR eller KTA) mangler data om journalposten. Den må ha tema for å gjøre tilgangskontroll. Dette er forårsaket av en teknisk feil");
+			return deny(AbacAnswer.AbacDenyReason.builder()
+					.cause("ingen_tilgang_sensitive_tema").policy("saf_pep2").rule("mangler_tema")
+					.build());
 		}
-		if (isFarskapSak(ressurs) || isKontrollAnmeldelse(ressurs)) {
-			String tema = ressurs.getTema().name().toLowerCase();
-			if (isFarskapSak(ressurs)) {
-				return safRequestContext.getSecurityContext().hasTemaAureRole(tema) ?
-						permit() : deny(AbacAnswer.AbacDenyReason.builder()
-						.cause("ingen_tilgang_farskap").policy("saf_pep2").rule("clientid_mangler_far_rolle")
-						.build());
-			} else {
-				return safRequestContext.getSecurityContext().hasTemaAureRole(tema) ?
-						permit() : deny(AbacAnswer.AbacDenyReason.builder()
-						.cause("ingen_tilgang_kontroll_anmeldelse").policy("saf_pep2").rule("clientid_mangler_kta_rolle")
-						.build());
-			}
+		String tema = ressurs.getTema().name().toLowerCase();
+		if (isFarskap(ressurs)) {
+			return safRequestContext.getSecurityContext().hasTemaAureRole(tema) ?
+					permit() : deny(AbacAnswer.AbacDenyReason.builder()
+					.cause("ingen_tilgang_farskap").policy("saf_pep2").rule("clientid_mangler_far_rolle")
+					.build());
+		} else if (isKontrollAnmeldelse(ressurs)) {
+			return safRequestContext.getSecurityContext().hasTemaAureRole(tema) ?
+					permit() : deny(AbacAnswer.AbacDenyReason.builder()
+					.cause("ingen_tilgang_kontroll_anmeldelse").policy("saf_pep2").rule("clientid_mangler_kta_rolle")
+					.build());
 		} else {
 			return permit();
 		}
 	}
 
-	private boolean isFarskapSak(TilgangSak ressurs) {
+	private boolean isFarskap(TilgangSak ressurs) {
 		return FAR.equals(ressurs.getTema());
 	}
 

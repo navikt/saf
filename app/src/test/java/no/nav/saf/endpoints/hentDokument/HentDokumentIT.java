@@ -4,6 +4,7 @@ import com.github.tomakehurst.wiremock.client.BasicCredentials;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.VariantFormatCode;
 import no.nav.saf.endpoints.AbstractItest;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -20,9 +21,12 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static no.nav.saf.anticorruptionlayer.joark.domain.kode.VariantFormatCode.ARKIV;
 import static no.nav.saf.anticorruptionlayer.joark.domain.kode.VariantFormatCode.SLADDET;
+import static no.nav.saf.tilgangskontroll.pep.DenyReasonFactory.PEP2_DENY_REASON;
 import static org.apache.http.HttpHeaders.AUTHORIZATION;
 import static org.apache.http.HttpHeaders.CONTENT_TYPE;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
@@ -31,9 +35,6 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.http.MediaType.APPLICATION_PDF;
 import static org.springframework.http.MediaType.APPLICATION_PDF_VALUE;
 
-/**
- * @author Sigurd Midttun, Visma Consulting.
- */
 class HentDokumentIT extends AbstractItest {
 
 	private static final String DOKUMENT_ID = "123";
@@ -298,7 +299,7 @@ class HentDokumentIT extends AbstractItest {
 						.withStatus(INTERNAL_SERVER_ERROR.value())));
 
 		ResponseEntity<String> responseEntity = callHentDokument();
-		assertEquals(NOT_FOUND, responseEntity.getStatusCode());
+		assertEquals(INTERNAL_SERVER_ERROR, responseEntity.getStatusCode());
 	}
 
 	@Test
@@ -330,7 +331,7 @@ class HentDokumentIT extends AbstractItest {
 						.withBodyFile("hentsak/hentsakbysaksid-happy.json")));
 
 		ResponseEntity<String> responseEntity = callHentDokument();
-		assertEquals(NOT_FOUND, responseEntity.getStatusCode());
+		assertEquals(BAD_REQUEST, responseEntity.getStatusCode());
 	}
 
 	@Test
@@ -367,6 +368,21 @@ class HentDokumentIT extends AbstractItest {
 
 		ResponseEntity<String> responseEntity = callHentDokument();
 		verifyabacDenyPep2AndHttpStatusCode(FORBIDDEN, responseEntity.getStatusCode());
+	}
+
+	@Test
+	@DisplayName("Skal ikke hente farskap dokument hvis journalpost ikke har sakstilknytning eller bruker")
+	void shouldGetUnauthorizedFromPep2WhenMidlertidigJournalpost() {
+		abacDenyPep2MidlertidigJournalpost();
+		stubFor(get("/hentjournalsakinfo/henttilgangjournalpost/" + JOURNALPOST_ID + "/" + DOKUMENT_ID + "/" + VARIANTFORMAT)
+				.willReturn(aResponse()
+						.withStatus(OK.value())
+						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("hentjournalsakinfo/henttilgangjournalpost_far_midlertidig.json")));
+
+		ResponseEntity<String> responseEntity = callHentDokument();
+		assertEquals(FORBIDDEN, responseEntity.getStatusCode());
+		assertThat(responseEntity.getBody()).contains(PEP2_DENY_REASON);
 	}
 
 	@Test

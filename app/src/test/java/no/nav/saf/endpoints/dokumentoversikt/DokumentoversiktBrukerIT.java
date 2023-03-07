@@ -448,6 +448,33 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 	}
 
 	@Test
+	void shouldGetUnauthorizedFromPep2WhenIngenSakstilknytning() throws IOException, URISyntaxException {
+		abacDenyPep2();
+		stubFor(post("/pdl")
+				.willReturn(aResponse().withStatus(OK.value())
+						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("pdl/hentPdlDataForIdent-happy.json")));
+		stubFor(get("/gsak?aktoerId=" + AKTOER_ID)
+				.willReturn(aResponse().withStatus(OK.value())
+						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
+						.withBodyFile("gsak/gsak-sakerBySaksId-empty.json")));
+		stubFor(post("/hentjournalsakinfo/finnjournalposter")
+				.willReturn(aResponse().withStatus(OK.value())
+						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
+						.withBodyFile("joark/finnjournalposter-far-kta.json")));
+		stubFor(get("/pen/springapi/sak/sammendrag")
+				.willReturn(aResponse().withStatus(OK.value())
+						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
+						.withBodyFile("psak/psak-hentSakSammendragListe-happy-empty.json")));
+
+		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikBrukerWithAktoerIdInkluderMidlertidige();
+		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
+
+		verifyEmptyJournalpostListeAndNullSideInfo(dokumentoversikt);
+		assertEquals(OK, responseEntity.getStatusCode());
+	}
+
+	@Test
 	void shouldGetUnauthorizedFromPep2d() throws IOException, URISyntaxException {
 		abacDenyPep2dSkipPep2();
 		stubFor(post("/pdl")
@@ -641,6 +668,12 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 
 	private ResponseEntity<LinkedHashMap> callDokumentOversikBrukerWithAktoerId() throws IOException, URISyntaxException {
 		GraphQLRequest request = new GraphQLRequest(stringFromClasspath("dokumentoversiktBruker/dokumentoversiktbruker_aktoerid.query"), null, null);
+		RequestEntity<GraphQLRequest> requestEntity = new RequestEntity<>(request, createHeaders(), HttpMethod.POST, new URI("/graphql"));
+		return restTemplate.exchange(requestEntity, LinkedHashMap.class);
+	}
+
+	private ResponseEntity<LinkedHashMap> callDokumentOversikBrukerWithAktoerIdInkluderMidlertidige() throws IOException, URISyntaxException {
+		GraphQLRequest request = new GraphQLRequest(stringFromClasspath("dokumentoversiktBruker/dokumentoversiktbruker_aktoerid_midlertidig.query"), null, null);
 		RequestEntity<GraphQLRequest> requestEntity = new RequestEntity<>(request, createHeaders(), HttpMethod.POST, new URI("/graphql"));
 		return restTemplate.exchange(requestEntity, LinkedHashMap.class);
 	}

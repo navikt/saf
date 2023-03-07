@@ -35,9 +35,6 @@ import static no.nav.saf.domain.DomainConstants.ORGANISASJON;
 import static no.nav.saf.domain.DomainConstants.PERSON;
 import static no.nav.saf.domain.DomainConstants.RJOARK902_JOURNALPOST_DTO;
 
-/**
- * @author Joakim Bjørnstad, Jbit AS
- */
 @Slf4j
 @Component
 class JournalpostAntiCorruptionLayer {
@@ -60,12 +57,9 @@ class JournalpostAntiCorruptionLayer {
 
 	public TilgangSak hentTilgangSakFromSafRequestContext(SafRequestContext safRequestContext, TilgangBruker tilgangBruker) {
 		final JournalpostDto journalpostDto = safRequestContext.getRequestCache().getObject(RJOARK902_JOURNALPOST_DTO);
-		if (journalpostDto == null || journalpostDto.getSaksrelasjon() == null || journalpostDto.getBruker() == null
-				|| journalpostDto.getBruker().getBrukerId() == null) {
-			log.info("Journalposten har ingen sakstilknytning. JournalpostId={}",
-					journalpostDto == null ? null : journalpostDto.getJournalpostId());
-			return null;
-		} else {
+		if (journalpostDto == null) {
+			throw new IllegalStateException("journalpost ligger ikke i requestCache. Dette er en ugyldig tilstand og en teknisk feil");
+		} else if (journalpostDto.isTilknyttetSak() && tilgangBruker != null) {
 			return TilgangSak.builder()
 					.foedselsnummer(tilgangBruker.getFoedselsnr())
 					.arkivsaksnummer(journalpostDto.getSaksrelasjon().getSakId())
@@ -73,6 +67,11 @@ class JournalpostAntiCorruptionLayer {
 							.getFagsystem(), journalpostDto.getJournalpostId()))
 					.tema(FagomradeCode.toSafTema(journalpostDto.getFagomrade()))
 					.relevanteTredjeparter(new ArrayList<>())
+					.build();
+		} else {
+			log.info("Journalposten har ingen sakstilknytning. journalpostId={}", journalpostDto.getJournalpostId());
+			return TilgangSak.builder()
+					.tema(FagomradeCode.toSafTema(journalpostDto.getFagomrade()))
 					.build();
 		}
 	}
@@ -82,7 +81,7 @@ class JournalpostAntiCorruptionLayer {
 				.getObject(RJOARK902_JOURNALPOST_DTO);
 
 		if (tilgangJournalpostDto == null || tilgangJournalpostDto.getBruker() == null
-				|| tilgangJournalpostDto.getBruker().getBrukerIdType() == null) {
+			|| tilgangJournalpostDto.getBruker().getBrukerIdType() == null) {
 			return null;
 		}
 		final BrukerDto tilgangBruker = tilgangJournalpostDto.getBruker();
@@ -101,7 +100,9 @@ class JournalpostAntiCorruptionLayer {
 				return null;
 		}
 	}
-	public Arkivsak hentArkivsakAndCacheJournalpostDto(String journalpostId, SafRequestContext safRequestContex) { HentJournalpostResponseTo hentJournalpostResponseTo;
+
+	public Arkivsak hentArkivsakAndCacheJournalpostDto(String journalpostId, SafRequestContext safRequestContex) {
+		HentJournalpostResponseTo hentJournalpostResponseTo;
 		hentJournalpostResponseTo = hentJournalsakinfo.hentJournalpost(journalpostId);
 		JournalpostDto hentJournalpostDto = hentJournalpostResponseTo.getHentJournalpostDto();
 		safRequestContex.getRequestCache().putObject(RJOARK902_JOURNALPOST_DTO, hentJournalpostDto);

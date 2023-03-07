@@ -43,6 +43,7 @@ class Pep7dImplTest extends AbstractPepTest {
 		TilgangSak tilgangSak = TilgangSak.builder()
 				.arkivsaksystem(Arkivsakssystem.GSAK)
 				.arkivsaksnummer("100000000")
+				.tema(FOR)
 				.build();
 		boolean hasAccess = pep7d.hasAccess(tilgangSak, createSafRequestContext());
 		verify(abacService, never()).evaluate(any());
@@ -54,6 +55,7 @@ class Pep7dImplTest extends AbstractPepTest {
 		TilgangSak tilgangSak = TilgangSak.builder()
 				.arkivsaksystem(null)
 				.arkivsaksnummer(null)
+				.tema(FOR)
 				.build();
 		boolean hasAccess = pep7d.hasAccess(tilgangSak, createSafRequestContext());
 		verify(abacService, never()).evaluate(any());

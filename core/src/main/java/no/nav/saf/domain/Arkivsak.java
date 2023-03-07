@@ -1,7 +1,5 @@
 package no.nav.saf.domain;
 
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
-
 import lombok.Builder;
 import lombok.Value;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.FagomradeCode;
@@ -10,6 +8,8 @@ import no.nav.saf.domain.kode.Tema;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
+
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 /**
  * @author Joakim Bjørnstad, Jbit AS
@@ -51,7 +51,7 @@ public class Arkivsak {
 				.map(t -> Tema.STO)
 				.orElseGet(() -> {
 					try {
-						return tema.map(Tema::valueOf).orElse(null);
+						return tema.map(Tema::valueOf).orElse(Tema.UKJ);
 					} catch (Exception e) {
 						return null;
 					}

@@ -10,9 +10,6 @@ import no.nav.saf.anticorruptionlayer.joark.domain.kode.SkjermingTypeCode;
 
 import java.time.LocalDateTime;
 
-/**
- * @author Sigurd Midttun, Visma Consulting.
- */
 @Data
 @NoArgsConstructor
 public class TilgangJournalpostDto {
@@ -28,4 +25,8 @@ public class TilgangJournalpostDto {
 	private TilgangSakDto sak;
 	private SkjermingTypeCode skjerming;
 	private TilgangDokumentInfoDto dokument;
+
+	public boolean isTilknyttetSak() {
+		return sak != null && sak.getSakId() != null;
+	}
 }

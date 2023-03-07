@@ -1,15 +1,13 @@
 package no.nav.saf.domain.tilgangsmodell;
 
 import lombok.Builder;
+import lombok.NonNull;
 import lombok.Value;
 import no.nav.saf.domain.kode.Arkivsakssystem;
 import no.nav.saf.domain.kode.Tema;
 
 import java.util.List;
 
-/**
- * @author Joakim Bjørnstad, Jbit AS
- */
 @Value
 @Builder
 public class TilgangSak {
@@ -17,6 +15,7 @@ public class TilgangSak {
 	String aktoerId;
 	String foedselsnummer;
 	String orgnummer;
+	@NonNull
 	Tema tema;
 	String fagsaksystem;
 
