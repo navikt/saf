@@ -32,22 +32,27 @@ public class LokalCacheConfig {
 				new CaffeineCache(TILGANGSMODELL_REPO_BRUKER_CACHE, Caffeine.newBuilder()
 						.expireAfterWrite(10, TimeUnit.MINUTES)
 						.maximumSize(500)
+						.recordStats()
 						.build()),
 				new CaffeineCache(BIDRAG_SAK_BY_SAKID_CACHE, Caffeine.newBuilder()
 						.expireAfterWrite(10, TimeUnit.MINUTES)
 						.maximumSize(500)
+						.recordStats()
 						.build()),
 				new CaffeineCache(FPSAK_RELEVANTE_PARTER_BY_SAKID_CACHE, Caffeine.newBuilder()
 						.expireAfterWrite(10, TimeUnit.MINUTES)
 						.maximumSize(500)
+						.recordStats()
 						.build()),
 				new CaffeineCache(REST_STS_CACHE, Caffeine.newBuilder()
 						.expireAfterWrite(50, TimeUnit.MINUTES)
 						.maximumSize(1)
+						.recordStats()
 						.build()),
 				new CaffeineCache(AZURE_CLIENT_CREDENTIAL_TOKEN_CACHE, Caffeine.newBuilder()
 						.expireAfterWrite(50, TimeUnit.MINUTES)
 						.maximumSize(10)
+						.recordStats()
 						.build())
 		));
 		return manager;

@@ -381,6 +381,12 @@
       "app": "innsending-api",
       "namespace": "team-soknad",
       "cluster": "prod-gcp"
+    },
+    {
+      "app": "routing",
+      "namespace": "aap",
+      "cluster": "prod-gcp",
+      "roles": ["tema_aap"]
     }
   ]
 }
