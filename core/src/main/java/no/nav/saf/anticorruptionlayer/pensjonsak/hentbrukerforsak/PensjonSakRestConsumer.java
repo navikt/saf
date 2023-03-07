@@ -3,15 +3,13 @@ package no.nav.saf.anticorruptionlayer.pensjonsak.hentbrukerforsak;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.retry.annotation.Retry;
 import lombok.extern.slf4j.Slf4j;
-import no.nav.saf.cache.LokalCacheConfig;
+import no.nav.saf.anticorruptionlayer.pensjonsak.domain.SakSammendrag;
 import no.nav.saf.config.SafProperties;
 import no.nav.saf.exceptions.SafFunctionalException;
 import no.nav.saf.exceptions.SafTechnicalException;
 import no.nav.saf.integration.azure.TokenConsumer;
-import no.nav.saf.anticorruptionlayer.pensjonsak.domain.SakSammendrag;
 import no.nav.saf.metrics.Monitor;
 import org.springframework.boot.web.client.RestTemplateBuilder;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -83,7 +81,6 @@ public class PensjonSakRestConsumer {
 
 	@Retry(name = PENSJON_SAK_REST_INSTANCE)
 	@CircuitBreaker(name = PENSJON_SAK_REST_INSTANCE)
-	@Cacheable(cacheNames = LokalCacheConfig.PENSJON_SAK_SAMMENDRAG_LISTE_CACHE, key = "#personident", condition = "#p0 != null")
 	@Monitor(value = "dok_consumer", extraTags = {"process", "hentSakSammendragListe"}, histogram = true)
 	public List<SakSammendrag> hentSakSammendragListe(String personident) {
 		if (isBlank(personident)) {
