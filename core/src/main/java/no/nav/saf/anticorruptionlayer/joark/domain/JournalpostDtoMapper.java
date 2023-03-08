@@ -369,7 +369,7 @@ public class JournalpostDtoMapper {
 
 	private Utsendingsinfo getUtgaaendeJournalpostUtsendingsInfo(JournalpostDto journalpostDto) {
 		if (U.equals(journalpostDto.getJournalposttype()) && nonNull(journalpostDto.getUtsendingskanal())) {
-			return utsendingsInfoMapper.mapUtsendingsInfo(journalpostDto.getUtsendingsInfo(), journalpostDto.getUtsendingskanal())
+			return UtsendingsInfoMapper.mapUtsendingsInfo(journalpostDto.getUtsendingsInfo(), journalpostDto.getUtsendingskanal())
 					.orElse(null);
 		}
 		return null;

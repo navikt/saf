@@ -9,122 +9,204 @@ import no.nav.saf.exceptions.SafTechnicalException;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.util.Objects.isNull;
+import static java.util.Optional.empty;
+import static java.util.function.Predicate.not;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 
 public class UtsendingsInfoMapper {
 
-	Pattern EPOST_VARSLINGSTEKST_PATTERN = Pattern.compile("Tittel\\s(?<epostTittel>.*),\\sTekst\\s(?<epostVarslingstekst>.*)", Pattern.DOTALL);
+	private final static ObjectMapper mapper = new ObjectMapper();
+	private static final Pattern EPOST_VARSLINGSTEKST_PATTERN = Pattern.compile("Tittel\\s(?<epostTittel>.*),\\sTekst\\s(?<epostVarslingstekst>.*)", Pattern.DOTALL);
 
-	public Optional<Utsendingsinfo> mapUtsendingsInfo(UtsendingsInfoDto utsendingsInfoDto, UtsendingsKanalCode utsendingsKanalCode) {
+	public static Optional<Utsendingsinfo> mapUtsendingsInfo(UtsendingsInfoDto utsendingsInfoDto, UtsendingsKanalCode utsendingsKanalCode) {
 		if (isNull(utsendingsInfoDto)) {
-			return Optional.empty();
+			return empty();
 		}
 
 		switch (utsendingsKanalCode) {
 			case NAV_NO -> {
-				return isVarselDtoNull(utsendingsInfoDto.getNavNoVarsling()) ? Optional.empty() : mapVarselSendt(utsendingsInfoDto.getNavNoVarsling());
+				return mapNavNoVarsel(utsendingsInfoDto);
 			}
 			case S -> {
 				return mapFysiskPostadresse(utsendingsInfoDto.getFysiskPostadresse());
 			}
 			case SDP -> {
-				return isNull(utsendingsInfoDto.getDigitalPostadresse()) ? Optional.empty() : Optional.of(Utsendingsinfo.builder()
-						.digitalpostSendt(mapDigitalPostadresse(utsendingsInfoDto.getDigitalPostadresse()))
-						.build());
+				return mapDigitalPostadresse(utsendingsInfoDto);
 			}
 			default -> {
-				return Optional.empty();
+				return empty();
 			}
 		}
 	}
 
-	private Optional<Utsendingsinfo> mapFysiskPostadresse(UtsendingsInfoDto.FysiskPostadresseDto fysiskPostadresse) {
+	private static Optional<Utsendingsinfo> mapFysiskPostadresse(UtsendingsInfoDto.FysiskPostadresseDto fysiskPostadresse) {
 		if (isNull(fysiskPostadresse)) {
-			return Optional.empty();
+			return empty();
 		}
 
-		String adressetekstKonvolutt = isBlank(buildAdressetekstKonvolutt(fysiskPostadresse)) ? null : buildAdressetekstKonvolutt(fysiskPostadresse);
-
-		return isBlank(adressetekstKonvolutt) ? Optional.empty() :
-				Optional.of(Utsendingsinfo.builder()
-						.fysiskpostSendt(Utsendingsinfo.FysiskpostSendt.builder()
-								.adressetekstKonvolutt(adressetekstKonvolutt)
-								.build()).build());
+		String adressetekstKonvolutt = buildAdressetekstKonvolutt(fysiskPostadresse);
+		if (isBlank(adressetekstKonvolutt)) {
+			return empty();
+		}
+		return Optional.of(Utsendingsinfo.builder()
+				.fysiskpostSendt(Utsendingsinfo.FysiskpostSendt.builder()
+						.adressetekstKonvolutt(adressetekstKonvolutt)
+						.build())
+				.build());
 	}
 
-	private Utsendingsinfo.DigitalpostSendt mapDigitalPostadresse(UtsendingsInfoDto.DigitalPostadresseDto digitalPostadresseDto) {
-		return isNull(digitalPostadresseDto) || isBlank(digitalPostadresseDto.getDigitalpostkasseAdresse()) ? null : Utsendingsinfo.DigitalpostSendt.builder()
-				.adresse(digitalPostadresseDto.getDigitalpostkasseAdresse())
-				.build();
+	private static Optional<Utsendingsinfo> mapDigitalPostadresse(UtsendingsInfoDto utsendingsInfoDto) {
+		UtsendingsInfoDto.DigitalPostadresseDto digitalPostadresseDto = utsendingsInfoDto.getDigitalPostadresse();
+
+		if (isNull(digitalPostadresseDto) || isBlank(digitalPostadresseDto.getDigitalpostkasseAdresse()))
+			return empty();
+		return Optional.of(Utsendingsinfo.builder()
+				.digitalpostSendt(Utsendingsinfo.DigitalpostSendt.builder()
+						.adresse(digitalPostadresseDto.getDigitalpostkasseAdresse())
+						.build())
+				.varselSendt(mapVarselSendt(utsendingsInfoDto).toList())
+				.build());
 	}
 
-	private Optional<Utsendingsinfo> mapVarselSendt(UtsendingsInfoDto.NavNoVarslingDto navNoVarslingDto) {
-		VarselMelding varselInfo = getVarselKontaktInfo(navNoVarslingDto);
-		VarselMelding varseltekst = getVarseltekst(navNoVarslingDto);
-		if (isNull(varselInfo) || isNull(varseltekst)) {
-			return Optional.empty();
+	private static Optional<Utsendingsinfo> mapNavNoVarsel(UtsendingsInfoDto utsendingsInfoDto) {
+		UtsendingsInfoDto.NavNoVarslingDto navNoVarslingDto = utsendingsInfoDto.getNavNoVarsling();
+		Optional<Utsendingsinfo.EpostVarselSendt> epostVarselSendt;
+		Optional<Utsendingsinfo.SmsVarselSendt> smsVarselSendt;
+
+		if (!isVarselDtoNull(navNoVarslingDto)) {
+			VarselMelding varselInfo = getVarselKontaktInfo(navNoVarslingDto);
+			VarselMelding varseltekst = getVarseltekst(navNoVarslingDto);
+
+			epostVarselSendt = mapEpostVarselSendtOld(varselInfo, varseltekst).filter(not(UtsendingsInfoMapper::isEpostVarselNull));
+			smsVarselSendt = mapSmsVarselSendtOld(varselInfo, varseltekst).filter(not(UtsendingsInfoMapper::isSmsVarselNull));
+		} else {
+			epostVarselSendt = empty();
+			smsVarselSendt = empty();
 		}
 
-		Utsendingsinfo.EpostVarselSendt epostVarselSendt = mapEpostVarselSendt(varselInfo, varseltekst);
-		Utsendingsinfo.SmsVarselSendt smsVarselSendt = mapSmsVarselSendt(varselInfo, varseltekst);
+		// map gamle og nye data til nye felter
+		List<Utsendingsinfo.VarselSendt> varselSendtListe = Stream.concat(
+				mapVarselSendtOldToNew(epostVarselSendt, smsVarselSendt),
+				mapVarselSendt(utsendingsInfoDto)
+		).toList();
 
-		if (isSmsVarselNull(smsVarselSendt) && isEpostVarselNull(epostVarselSendt)) {
-			return Optional.empty();
+		Utsendingsinfo.UtsendingsinfoBuilder varselSendtUtsendingsinfoBuilder = Utsendingsinfo.builder();
+
+		// map nye data til gamle felter om de ikke er matet med gamle data allerede
+		epostVarselSendt
+				.or(mapFromNewVarselSendtToOld(varselSendtListe, "EPOST",
+						epostVarsel -> Utsendingsinfo.EpostVarselSendt.builder()
+								.tittel(epostVarsel.getTittel())
+								.varslingstekst(epostVarsel.getVarslingstekst())
+								.adresse(epostVarsel.getAdresse())
+								.build()))
+				.ifPresent(varselSendtUtsendingsinfoBuilder::epostVarselSendt);
+
+		smsVarselSendt
+				.or(mapFromNewVarselSendtToOld(varselSendtListe, "SMS",
+						smsVarsel -> Utsendingsinfo.SmsVarselSendt.builder()
+								.varslingstekst(smsVarsel.getVarslingstekst())
+								.adresse(smsVarsel.getAdresse())
+								.build()))
+				.ifPresent(varselSendtUtsendingsinfoBuilder::smsVarselSendt);
+
+		Utsendingsinfo varselSendtUtsendingsinfo = varselSendtUtsendingsinfoBuilder.varselSendt(varselSendtListe).build();
+		if (varselSendtUtsendingsinfo.getEpostVarselSendt() == null && varselSendtUtsendingsinfo.getSmsVarselSendt() == null) {
+			return empty();
 		}
-
-		Utsendingsinfo varselSendtUtsendingsinfo = Utsendingsinfo.builder()
-				.epostVarselSendt(epostVarselSendt)
-				.smsVarselSendt(smsVarselSendt)
-				.build();
-		return isVarselSendtNull(varselSendtUtsendingsinfo) ? Optional.empty() : Optional.of(varselSendtUtsendingsinfo);
+		return Optional.of(varselSendtUtsendingsinfo);
 	}
 
-	private Utsendingsinfo.SmsVarselSendt mapSmsVarselSendt(VarselMelding varselInfo, VarselMelding varseltekst) {
-		return isBlank(varselInfo.getSms()) || isBlank(varseltekst.getSms()) ? null : Utsendingsinfo.SmsVarselSendt.builder()
+	private static <T> Supplier<Optional<T>> mapFromNewVarselSendtToOld(List<Utsendingsinfo.VarselSendt> varselSendtCompound, String varselType, Function<Utsendingsinfo.VarselSendt, T> epostMapper) {
+		return () -> varselSendtCompound.stream()
+				.filter(v -> v.getType().equalsIgnoreCase(varselType))
+				.max((Comparator.comparing(Utsendingsinfo.VarselSendt::getVarslingstidspunkt)))
+				.map(epostMapper);
+	}
+
+	private static Stream<Utsendingsinfo.VarselSendt> mapVarselSendtOldToNew(Optional<Utsendingsinfo.EpostVarselSendt> epostVarselSendt, Optional<Utsendingsinfo.SmsVarselSendt> smsVarselSendt) {
+		return Stream.concat(
+				epostVarselSendt.stream()
+						.map(epostVarsel -> Utsendingsinfo.VarselSendt.epost()
+								.tittel(epostVarsel.getTittel())
+								.adresse(epostVarsel.getAdresse())
+								.varslingstekst(epostVarsel.getVarslingstekst())
+								.build()),
+				smsVarselSendt.stream()
+						.map(smsVarsel -> Utsendingsinfo.VarselSendt.sms()
+								.adresse(smsVarsel.getAdresse())
+								.varslingstekst(smsVarsel.getVarslingstekst())
+								.build()));
+	}
+
+	private static Stream<Utsendingsinfo.VarselSendt> mapVarselSendt(UtsendingsInfoDto utsendingsInfoDto) {
+		return Stream.concat(
+				utsendingsInfoDto.getEpostVarsel() == null ? Stream.empty() :
+						utsendingsInfoDto.getEpostVarsel().stream()
+								.map(epostVarsel -> Utsendingsinfo.VarselSendt.epost()
+										.tittel(epostVarsel.getTittel())
+										.adresse(epostVarsel.getEpostadresse())
+										.varslingstekst(epostVarsel.getTekst())
+										.varslingstidspunkt(epostVarsel.getVarslingstidspunkt())
+										.build()),
+				utsendingsInfoDto.getSmsVarsel() == null ? Stream.empty() :
+						utsendingsInfoDto.getSmsVarsel().stream()
+								.map(smsVarsel -> Utsendingsinfo.VarselSendt.sms()
+										.adresse(smsVarsel.getMobilnummer())
+										.varslingstekst(smsVarsel.getTekst())
+										.varslingstidspunkt(smsVarsel.getVarslingstidspunkt())
+										.build())
+		);
+	}
+
+	private static Optional<Utsendingsinfo.SmsVarselSendt> mapSmsVarselSendtOld(VarselMelding varselInfo, VarselMelding varseltekst) {
+		return isBlank(varselInfo.getSms()) || isBlank(varseltekst.getSms()) ? empty() : Optional.of(Utsendingsinfo.SmsVarselSendt.builder()
 				.adresse(varselInfo.getSms())
 				.varslingstekst(varseltekst.getSms())
-				.build();
+				.build());
 	}
 
-	private Utsendingsinfo.EpostVarselSendt mapEpostVarselSendt(VarselMelding varselInfo, VarselMelding varseltekst) {
-		if(isBlank(varselInfo.getEpost()) || isBlank(varseltekst.getEpost())) {
-			return null;
+	private static Optional<Utsendingsinfo.EpostVarselSendt> mapEpostVarselSendtOld(VarselMelding varselInfo, VarselMelding varseltekst) {
+		if (isBlank(varselInfo.getEpost()) || isBlank(varseltekst.getEpost())) {
+			return empty();
 		}
 		Matcher matcher = EPOST_VARSLINGSTEKST_PATTERN.matcher(varseltekst.getEpost());
 		if (matcher.find()) {
 			String epostTittel = matcher.group("epostTittel");
 			String epostVarslingstekst = matcher.group("epostVarslingstekst");
 			if (isBlank(epostTittel) || isBlank(epostVarslingstekst)) {
-				return null;
+				return empty();
 			}
-			return Utsendingsinfo.EpostVarselSendt.builder()
+			return Optional.of(Utsendingsinfo.EpostVarselSendt.builder()
 					.tittel(epostTittel)
 					.adresse(varselInfo.getEpost())
 					.varslingstekst(epostVarslingstekst)
-					.build();
+					.build());
 		}
-		return null;
-
+		return empty();
 	}
 
-	private VarselMelding getVarselKontaktInfo(UtsendingsInfoDto.NavNoVarslingDto varslingDto) {
+	private static VarselMelding getVarselKontaktInfo(UtsendingsInfoDto.NavNoVarslingDto varslingDto) {
 		return jsonStringToObject(varslingDto.getVarselSendtTil(), VarselMelding.class);
 	}
 
-	private VarselMelding getVarseltekst(UtsendingsInfoDto.NavNoVarslingDto varslingDto) {
+	private static VarselMelding getVarseltekst(UtsendingsInfoDto.NavNoVarslingDto varslingDto) {
 		return jsonStringToObject(varslingDto.getVarseltekst(), VarselMelding.class);
 	}
 
 	public static <T> T jsonStringToObject(String jsonString, Class<T> tClass) {
-		ObjectMapper mapper = new ObjectMapper();
 		try {
 			return mapper.readValue(jsonString, tClass);
 		} catch (IOException e) {
@@ -132,33 +214,28 @@ public class UtsendingsInfoMapper {
 		}
 	}
 
-	private String buildAdressetekstKonvolutt(UtsendingsInfoDto.FysiskPostadresseDto fysiskPostadresse) {
+	private static String buildAdressetekstKonvolutt(UtsendingsInfoDto.FysiskPostadresseDto fysiskPostadresse) {
 		String postnummer = isBlank(fysiskPostadresse.getPostnummer()) ? "" : fysiskPostadresse.getPostnummer();
 		String poststed = isBlank(fysiskPostadresse.getPoststed()) ? "" : fysiskPostadresse.getPoststed();
 
-		String postadresse = Stream.of(fysiskPostadresse.getAdresselinje1(),
+		return Stream.of(fysiskPostadresse.getAdresselinje1(),
 						fysiskPostadresse.getAdresselinje2(),
 						fysiskPostadresse.getAdresselinje3(),
 						postnummer + " " + poststed,
 						fysiskPostadresse.getLandkode())
 				.filter(StringUtils::isNotBlank)
 				.collect(Collectors.joining("\n")).strip();
-		return isBlank(postadresse) ? null : postadresse;
 	}
 
-	private boolean isEpostVarselNull(Utsendingsinfo.EpostVarselSendt epostVarselSendt) {
+	private static boolean isEpostVarselNull(Utsendingsinfo.EpostVarselSendt epostVarselSendt) {
 		return isNull(epostVarselSendt) || (isBlank(epostVarselSendt.getAdresse()) && isBlank(epostVarselSendt.getVarslingstekst()));
 	}
 
-	private boolean isSmsVarselNull(Utsendingsinfo.SmsVarselSendt smsVarselSendt) {
+	private static boolean isSmsVarselNull(Utsendingsinfo.SmsVarselSendt smsVarselSendt) {
 		return isNull(smsVarselSendt) || (isBlank(smsVarselSendt.getAdresse()) && isBlank(smsVarselSendt.getVarslingstekst()));
 	}
 
-	private boolean isVarselSendtNull(Utsendingsinfo utsendingsinfo) {
-		return isNull(utsendingsinfo.getEpostVarselSendt()) && isNull(utsendingsinfo.getSmsVarselSendt());
-	}
-
-	private boolean isVarselDtoNull(UtsendingsInfoDto.NavNoVarslingDto varslingDto) {
+	private static boolean isVarselDtoNull(UtsendingsInfoDto.NavNoVarslingDto varslingDto) {
 		return isNull(varslingDto) || (isBlank(varslingDto.getVarselSendtTil()) && isBlank(varslingDto.getVarseltekst()));
 	}
 }
