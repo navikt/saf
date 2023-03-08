@@ -27,6 +27,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+import static java.lang.String.format;
 import static no.nav.saf.headers.NavHeaders.NAV_CALLID;
 import static no.nav.saf.util.MDCUtility.getCallId;
 import static org.apache.commons.lang3.StringUtils.isBlank;
@@ -66,15 +67,15 @@ public class PensjonSakRestConsumer {
 			HentBrukerForSakResponseTo hentBrukerForSakResponseTo = restTemplate.exchange(pensjonBrukerForSakURI, HttpMethod.GET, new HttpEntity<>(headers), HentBrukerForSakResponseTo.class)
 					.getBody();
 			if (hentBrukerForSakResponseTo == null || hentBrukerForSakResponseTo.getFnr() == null || hentBrukerForSakResponseTo.getFnr().isEmpty()) {
-				throw new SafFunctionalException(String.format("hentBrukerForSak returnerte tomt fødselsnummer for sakId=%s. Dette betyr at saken ikke finnes eller at ingen personer er tilknyttet denne saken", sakId));
+				throw new SafFunctionalException(format("hentBrukerForSak returnerte tomt fødselsnummer for sakId=%s. Dette betyr at saken ikke finnes eller at ingen personer er tilknyttet denne saken", sakId));
 			} else {
 				return hentBrukerForSakResponseTo;
 			}
 		} catch (HttpServerErrorException e) {
-			throw new SafTechnicalException(String.format("hentBrukerForSak feilet teknisk med statusKode=%s. Feilmelding=%s", e
+			throw new SafTechnicalException(format("hentBrukerForSak feilet teknisk med statusKode=%s. Feilmelding=%s", e
 					.getStatusCode(), e.getMessage()), e, e.getStatusCode());
 		} catch (HttpClientErrorException e) {
-			throw new SafFunctionalException(String.format("hentBrukerForSak feilet funksjonelt med statusKode=%s. Feilmelding=%s", e
+			throw new SafFunctionalException(format("hentBrukerForSak feilet funksjonelt med statusKode=%s. Feilmelding=%s", e
 					.getStatusCode(), e.getMessage()), e, e.getStatusCode());
 		}
 	}
@@ -105,16 +106,16 @@ public class PensjonSakRestConsumer {
 			}
 			return result;
 		} catch (UnknownContentTypeException e) {
-			throw new SafTechnicalException(String.format("hentSakSammendrag feilet teknisk. Feilmelding=%s", e.getMessage()), e);
+			throw new SafTechnicalException(format("hentSakSammendrag feilet teknisk. Feilmelding=%s", e.getMessage()), e);
 		} catch (HttpServerErrorException e) {
-			throw new SafTechnicalException(String.format("hentSakSammendrag feilet teknisk med statusKode=%s. Feilmelding=%s", e
+			throw new SafTechnicalException(format("hentSakSammendrag feilet teknisk med statusKode=%s. Feilmelding=%s", e
 					.getStatusCode(), e.getMessage()), e, e.getStatusCode());
 		} catch (HttpClientErrorException e) {
 			if (e.getStatusCode() == HttpStatus.NOT_FOUND) {
-				throw new SafFunctionalException(String.format("hentSakSammendrag feilet funksjonelt (person ikke funnet). StatusKode=%s. Feilmelding=%s", e
-						.getStatusCode(), e.getMessage()), e, e.getStatusCode());
+				throw new PersonIngenPensjonssakerException(format("hentSakSammendrag feilet funksjonelt (pensjon har ingen saker på denne personen). StatusKode=%s. Feilmelding=%s", e.getStatusCode(), e.getMessage()),
+						e.getStatusCode());
 			}
-			throw new SafFunctionalException(String.format("hentSakSammendrag feilet funksjonelt med statusKode=%s. Feilmelding=%s", e
+			throw new SafFunctionalException(format("hentSakSammendrag feilet funksjonelt med statusKode=%s. Feilmelding=%s", e
 					.getStatusCode(), e.getMessage()), e, e.getStatusCode());
 		}
 	}

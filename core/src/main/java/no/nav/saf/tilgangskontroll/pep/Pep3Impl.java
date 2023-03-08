@@ -11,7 +11,7 @@ import no.nav.saf.tilgangskontroll.abac.service.AbacService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.List;
 
 import static no.nav.saf.domain.DomainConstants.FAGSAKSYSTEM_BISYS;
@@ -33,6 +33,7 @@ import static no.nav.saf.tilgangskontroll.pep.AbacAnswer.permit;
 @Component(PEP3)
 public class Pep3Impl extends Pep<TilgangSak> {
 
+	private static final EnumSet<Tema> RELEVANTE_TEMA = EnumSet.of(BID, FAR);
 	private final AbacService abacService;
 
 	@Autowired
@@ -40,12 +41,10 @@ public class Pep3Impl extends Pep<TilgangSak> {
 		this.abacService = abacService;
 	}
 
-	private final List<Tema> relevanteTema = Arrays.asList(BID, FAR);
-
 	@Override
 	public XacmlResponse verifyAbacPdpDecision(TilgangSak ressurs, SafRequestContext safRequestContext) {
 
-		if (ressurs != null && relevanteTema.contains(ressurs.getTema()) && FAGSAKSYSTEM_BISYS.equals(ressurs.getFagsaksystem())) {
+		if (ressurs != null && RELEVANTE_TEMA.contains(ressurs.getTema()) && FAGSAKSYSTEM_BISYS.equals(ressurs.getFagsaksystem())) {
 
 			if (ressurs.getRelevanteTredjeparter() == null || ressurs.getRelevanteTredjeparter().isEmpty()) {
 				log.info("Pep3(relevante-parter) har ingen relevante parter. Tilgang gis.");
