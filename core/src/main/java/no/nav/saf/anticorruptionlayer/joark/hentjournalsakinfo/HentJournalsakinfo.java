@@ -33,11 +33,9 @@ import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
+import static no.nav.saf.headers.NavHeaders.NAV_CALLID;
 import static no.nav.saf.util.MDCConstants.CALL_ID;
 
-/**
- * @author Joakim Bjørnstad, Jbit AS
- */
 @Service
 public class HentJournalsakinfo {
 	private static final String JOARK_HENTDOKUMENT = "joarkhentdokument";
@@ -115,7 +113,7 @@ public class HentJournalsakinfo {
 	public HentJournalpostResponseTo hentJournalpost(final String journalpostId) {
 		try {
 			String uri = hentjournalsakinfoUrl + "/hentjournalpost/{journalpostId}";
-			return restTemplate.exchange(uri, HttpMethod.GET, new HttpEntity<>(createCorrelationIdHeader()), HentJournalpostResponseTo.class, journalpostId).getBody();
+			return restTemplate.exchange(uri, HttpMethod.GET, new HttpEntity<>(createNavHeaders()), HentJournalpostResponseTo.class, journalpostId).getBody();
 		} catch (HttpServerErrorException e) {
 			throw new SafTechnicalException(String.format("Henting av journalpostId=%s feilet teknisk. Status=%s. Feilmelding=%s",
 					journalpostId, e.getStatusCode(), e.getMessage()), e, e.getStatusCode());
@@ -134,7 +132,7 @@ public class HentJournalsakinfo {
 	public TilknyttedeJournalposterResponse tilknyttedeJournalposter(final String dokumentInfoId, final TilknytningUriParam tilknytning) {
 		try {
 			String uri = hentjournalsakinfoUrl + "/tilknyttedejournalposter/{dokumentInfoId}/{tilknytning}";
-			return restTemplate.exchange(uri, HttpMethod.GET, new HttpEntity<>(createCorrelationIdHeader()), TilknyttedeJournalposterResponse.class, dokumentInfoId, tilknytning.name()).getBody();
+			return restTemplate.exchange(uri, HttpMethod.GET, new HttpEntity<>(createNavHeaders()), TilknyttedeJournalposterResponse.class, dokumentInfoId, tilknytning.name()).getBody();
 		} catch (HttpServerErrorException e) {
 			throw new SafTechnicalException(String.format("tilknyttedeJournalposter feilet teknisk med statusKode=%s. Feilmelding=%s", e
 					.getStatusCode(), e.getMessage()), e, e.getStatusCode());
@@ -146,33 +144,33 @@ public class HentJournalsakinfo {
 		}
 	}
 
-	private HttpHeaders createCorrelationIdHeader() {
-		HttpHeaders headers = new HttpHeaders();
-		if (MDC.get(CALL_ID) != null) {
-			headers.set("X-Correlation-ID", MDC.get(CALL_ID));
-		}
-		return headers;
-	}
-
 	private ResponseEntity<FinnJournalposterResponseTo> callFinnJournalposter(FinnJournalposterRequestTo requestTo) {
 		String uri = hentjournalsakinfoUrl + "/finnjournalposter";
-		HttpEntity<FinnJournalposterRequestTo> requestEntity = new HttpEntity<>(requestTo, createCorrelationIdHeader());
+		HttpEntity<FinnJournalposterRequestTo> requestEntity = new HttpEntity<>(requestTo, createNavHeaders());
 		return restTemplate.exchange(uri, HttpMethod.POST, requestEntity, FinnJournalposterResponseTo.class);
 	}
 
 	private ResponseEntity<FinnJournalposterStatusResponseTo> callFinnJournalposterStatus(FinnJournalposterStatusRequestTo requestTo) {
 		String uri = hentjournalsakinfoUrl + "/finnjournalposterstatus";
-		HttpEntity<FinnJournalposterStatusRequestTo> requestEntity = new HttpEntity<>(requestTo, createCorrelationIdHeader());
+		HttpEntity<FinnJournalposterStatusRequestTo> requestEntity = new HttpEntity<>(requestTo, createNavHeaders());
 		return restTemplate.exchange(uri, HttpMethod.POST, requestEntity, FinnJournalposterStatusResponseTo.class);
 	}
 
 	private ResponseEntity<HentTilgangJournalpostResponseTo> callHentTilgangJournalpost(String journalpostId, String dokumentInfoId, String variantFormat) {
 		String uri = hentjournalsakinfoUrl + "/henttilgangjournalpost/{journalpostId}/{dokumentInfoId}/{variantFormat}";
-		return restTemplate.exchange(uri, HttpMethod.GET, new HttpEntity<>(createCorrelationIdHeader()), HentTilgangJournalpostResponseTo.class, journalpostId, dokumentInfoId, variantFormat);
+		return restTemplate.exchange(uri, HttpMethod.GET, new HttpEntity<>(createNavHeaders()), HentTilgangJournalpostResponseTo.class, journalpostId, dokumentInfoId, variantFormat);
 	}
 
 	private ResponseEntity<String> callHentDokument(String dokumentInfoId, String variantFormat) {
 		String uri = hentjournalsakinfoUrl + "/hentdokument/{dokumentInfoId}/{variantFormat}";
-		return restTemplate.exchange(uri, HttpMethod.GET, new HttpEntity<>(createCorrelationIdHeader()), String.class, dokumentInfoId, variantFormat);
+		return restTemplate.exchange(uri, HttpMethod.GET, new HttpEntity<>(createNavHeaders()), String.class, dokumentInfoId, variantFormat);
+	}
+
+	private HttpHeaders createNavHeaders() {
+		HttpHeaders headers = new HttpHeaders();
+		if (MDC.get(CALL_ID) != null) {
+			headers.set(NAV_CALLID, MDC.get(CALL_ID));
+		}
+		return headers;
 	}
 }
