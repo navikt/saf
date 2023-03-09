@@ -54,10 +54,6 @@ import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
-
-/**
- * @author Sigurd Midttun, Visma Consulting.
- */
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = {AbstractItest.TestConfig.class, ApplicationConfig.class},
 		webEnvironment = RANDOM_PORT,
@@ -539,6 +535,13 @@ public abstract class AbstractItest {
 		stubFor(post(urlEqualTo("/abac"))
 				.inScenario(SCENARIO_ABAC)
 				.whenScenarioStateIs(STATE_PEP2)
+				.willReturn(aResponse().withStatus(OK.value())
+						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("abac/abac-deny.json")));
+	}
+
+	protected void abacDenyPep2MidlertidigJournalpost() {
+		stubFor(post(urlEqualTo("/abac"))
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("abac/abac-deny.json")));

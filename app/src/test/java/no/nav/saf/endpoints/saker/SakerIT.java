@@ -40,7 +40,7 @@ import static org.hamcrest.Matchers.is;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
-class SakIT extends AbstractItest {
+class SakerIT extends AbstractItest {
 
 	private static final String AKTOER_ID = "1912374211459";
 	private static final ObjectMapper objectMapper = new ObjectMapper();

@@ -202,6 +202,19 @@ class JournalpostIT extends AbstractItest {
 	}
 
 	@Test
+	void shouldReturnNullJournalpostWhenDenyOnPep2AndMidlertidigJournalpost() {
+		abacDenyPep2MidlertidigJournalpost();
+		stubFor(get("/hentjournalsakinfo/hentjournalpost/" + JOURNALPOST_ID)
+				.willReturn(aResponse().withStatus(OK.value())
+						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("hentjournalsakinfo/hentjournalpost_far-midlertidig.json")));
+
+		GraphQLResponse graphQLResponse = journalpostQuery();
+		assertErrorWithCode(graphQLResponse, FORBIDDEN.getText());
+		assertErrorWithMessage(graphQLResponse, PEP2_DENY_REASON);
+	}
+
+	@Test
 	void shouldReturnSaksbehandlerTilgangFalseWhenDenyOnPep2d() {
 		abacDenyPep2dSkipPep2();
 		stubFor(get("/hentjournalsakinfo/hentjournalpost/" + JOURNALPOST_ID)

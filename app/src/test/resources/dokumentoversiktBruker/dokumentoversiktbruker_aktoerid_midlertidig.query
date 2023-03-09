@@ -1,0 +1,13 @@
+{
+  dokumentoversiktBruker(brukerId: {id: "1912374211459", type: AKTOERID}, journalstatuser:[], foerste: 3) {
+    journalposter {
+      journalpostId
+      eksternReferanseId
+      dokumenter {
+        dokumentvarianter {
+          saksbehandlerHarTilgang
+        }
+      }
+    }
+  }
+}

@@ -6,9 +6,6 @@ import no.nav.saf.domain.tilgangsmodell.TilgangJournalpost;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 
-/**
- * @author Joakim Bjørnstad, Jbit AS
- */
 interface JournalpostTilgangRepository {
 	TilgangJournalpost findTilgangJournalpostFromSafRequestContext(SafRequestContext safRequestContext, TilgangSak tilgangSak);
 

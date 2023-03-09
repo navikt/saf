@@ -3,6 +3,7 @@ package no.nav.saf.anticorruptionlayer.pensjonsak;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.anticorruptionlayer.pensjonsak.domain.SakSammendrag;
 import no.nav.saf.anticorruptionlayer.pensjonsak.hentbrukerforsak.PensjonSakRestConsumer;
+import no.nav.saf.anticorruptionlayer.pensjonsak.hentbrukerforsak.PersonIngenPensjonssakerException;
 import no.nav.saf.domain.Arkivsak;
 import no.nav.saf.domain.kode.Arkivsakssystem;
 import no.nav.saf.domain.kode.Tema;
@@ -32,7 +33,7 @@ public class PensjonSakAntiCorruptionLayerImpl implements PensjonSakAntiCorrupti
 
 	@Override
 	public List<Arkivsak> findArkivsaker(final TilgangBruker tilgangBruker, final List<Tema> tema) {
-		if (tilgangBruker.getFoedselsnr() == null || tema.isEmpty()) {
+		if (tilgangBruker == null || tilgangBruker.getFoedselsnr() == null || tema.isEmpty()) {
 			return emptyList();
 		} else {
 			Predicate<SakSammendrag> selectForTema = sakSammendrag -> tema.contains(mapToTema(sakSammendrag.arkivtema()));
@@ -64,6 +65,9 @@ public class PensjonSakAntiCorruptionLayerImpl implements PensjonSakAntiCorrupti
 								.build())
 						.collect(Collectors.toList());
 			}
+		} catch (PersonIngenPensjonssakerException e) {
+			log.info("Person har ingen pensjonssaker", e);
+			return emptyList();
 		} catch (Exception e) {
 			log.warn("Klarte ikke hente pensjonssaker for fødselsnummer={}", "*****", e);
 			return emptyList();
@@ -81,7 +85,7 @@ public class PensjonSakAntiCorruptionLayerImpl implements PensjonSakAntiCorrupti
 	}
 
 	private Tema mapToTema(String tema) {
-		if(tema == null) {
+		if (tema == null) {
 			return Tema.PEN;
 		}
 		try {

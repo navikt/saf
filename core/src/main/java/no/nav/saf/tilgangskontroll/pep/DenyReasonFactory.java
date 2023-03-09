@@ -53,7 +53,7 @@ public final class DenyReasonFactory {
 	}
 
 	public static String createPep2dDenyReason(SafRequestContext safRequestContext, TilgangSak tilgangSak) {
-		if (tilgangSak == null || tilgangSak.getTema() == null) {
+		if (tilgangSak == null) {
 			return DENY_PREFIX + (safRequestContext.getSecurityContext().isSystem() ? PEP2D_DENY_SYSTEM_INFO.formatted("ukjent") : PEP2D_DENY_SAKSBEHANDLER_INFO.formatted("UKJENT")) + CONTACT_US_SUFFIX;
 		}
 		Tema tema = tilgangSak.getTema();

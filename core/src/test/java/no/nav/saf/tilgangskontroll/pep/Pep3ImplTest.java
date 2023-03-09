@@ -28,9 +28,6 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-/**
- * @author Sigurd Midttun, Visma Consulting.
- */
 class Pep3ImplTest extends AbstractPepTest {
 
 	@InjectMocks
@@ -56,7 +53,7 @@ class Pep3ImplTest extends AbstractPepTest {
 
 	@Test
 	void shouldPermitWhenNoResource() {
-		boolean hasAccess = pep3.hasAccess(TilgangSak.builder().build(), createSafRequestContext());
+		boolean hasAccess = pep3.hasAccess(TilgangSak.builder().tema(PEN).build(), createSafRequestContext());
 		verify(abacService, never()).evaluate(any());
 		assertTrue(hasAccess);
 	}

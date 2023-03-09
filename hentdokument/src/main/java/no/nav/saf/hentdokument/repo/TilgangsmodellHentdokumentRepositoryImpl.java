@@ -24,9 +24,6 @@ import static no.nav.saf.domain.kode.Arkivsakssystem.PSAK;
 import static no.nav.saf.domain.kode.Tema.PEN;
 import static no.nav.saf.domain.kode.Tema.UFO;
 
-/**
- * @author Sigurd Midttun, Visma Consulting.
- */
 @Slf4j
 @Repository
 public class TilgangsmodellHentdokumentRepositoryImpl implements TilgangsmodellHentdokumentRepository {
@@ -113,7 +110,7 @@ public class TilgangsmodellHentdokumentRepositoryImpl implements TilgangsmodellH
 				return null;
 			}
 		} catch (Exception e) {
-			log.warn("findTilgangBrukerBySakId feilet ved oppslag på sakId={} og arkivsaksystem={}. Feilmelding={}", arkivsak.getArkivsaksnummer(), arkivsak.getArkivsaksystem(), e);
+			log.warn("findTilgangBrukerByArkivsak feilet ved oppslag på sakId={} og arkivsaksystem={}. Feilmelding={}", arkivsak.getArkivsaksnummer(), arkivsak.getArkivsaksystem(), e.getMessage(), e);
 			return null;
 		}
 	}
@@ -126,7 +123,7 @@ public class TilgangsmodellHentdokumentRepositoryImpl implements TilgangsmodellH
 	@Override
 	public TilgangSak findTilgangSak(Arkivsak arkivsak, TilgangBruker tilgangBruker, SafRequestContext safRequestContext) {
 		try {
-			if (arkivsak == null || tilgangBruker == null) {
+			if (arkivsak == null) {
 				return null;
 			}
 
@@ -163,7 +160,7 @@ public class TilgangsmodellHentdokumentRepositoryImpl implements TilgangsmodellH
 			}
 			return hentDokumentAntiCorruptionLayer.hentTilgangSakFromSafRequestContext(safRequestContext, tilgangBruker);
 		} catch (Exception e) {
-			log.warn("findTilgangBrukerBySakId feilet ved oppslag på sakId={} og arkivsaksystem={}. Feilmelding={}", arkivsak.getArkivsaksnummer(), arkivsak.getArkivsaksystem(), e);
+			log.warn("findTilgangSak feilet ved oppslag på sakId={} og arkivsaksystem={}. Feilmelding={}", arkivsak.getArkivsaksnummer(), arkivsak.getArkivsaksystem(), e.getMessage(), e);
 			return null;
 		}
 	}

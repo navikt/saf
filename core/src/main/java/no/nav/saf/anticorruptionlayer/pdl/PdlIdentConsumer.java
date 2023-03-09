@@ -18,7 +18,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import static java.util.Objects.requireNonNull;
-import static no.nav.saf.headers.NavHeaders.NAV_CALLID;
+import static no.nav.saf.headers.NavHeaders.PDL_NAV_CALLID;
 import static no.nav.saf.util.MDCUtility.getCallId;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
@@ -27,8 +27,6 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 /**
  * PDL implementasjon av {@link IdentConsumer}
- *
- * @author Joakim Bjørnstad, Jbit AS
  */
 @Component
 class PdlIdentConsumer implements IdentConsumer {
@@ -86,7 +84,7 @@ class PdlIdentConsumer implements IdentConsumer {
 		StsResponse clientCredentialToken = stsRestConsumer.getStsToken();
 		return RequestEntity.post(pdlUri)
 				.accept(APPLICATION_JSON)
-				.header(NAV_CALLID, getCallId())
+				.header(PDL_NAV_CALLID, getCallId())
 				.header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 				.header(AUTHORIZATION, "Bearer " + clientCredentialToken.getAccess_token())
 				.header(HEADER_PDL_NAV_CONSUMER_TOKEN, "Bearer " + clientCredentialToken.getAccess_token());
