@@ -380,6 +380,9 @@ type AvsenderMottaker {
 # * Returneres kun for utgående journalposter
 type Utsendingsinfo {
 
+    # Varsler sendt til bruker ved distribusjon til nav.no eller DPI
+    varselSendt: [VarselSendt!]
+
     # Epostvarsel sendt til bruker ved distribusjon til nav.no
     # Vil kun være satt hvis brevet er distribuert til nav.no
     epostVarselSendt: EpostVarselSendt
@@ -395,6 +398,25 @@ type Utsendingsinfo {
     # Informasjon om distribusjon til Digital postkasse til Innbyggere(DPI)
     # Vil kun være satt hvis brevet er distribuert til DPI
     digitalpostSendt: DigitalpostSendt
+}
+
+# Varsel sendt til bruker ved distribusjon
+# Vil kun være satt hvis brevet er distribuert til nav.no eller DPI
+type VarselSendt {
+    # Type varsel
+    type: String!
+
+    # Tittel på eposten som ble sendt til bruker.
+    tittel: String
+
+    # Adressen som varselet ble sendt til. Epostadresse eller mobilnummer.
+    adresse: String!
+
+    # Teksten i varslet. Kan inneholde HTML.
+    varslingstekst: String!
+
+    # Tidpunkt varselet ble sendt
+    varslingstidspunkt: DateTime
 }
 
 # Epostvarsel sendt til bruker ved distribusjon til nav.no
