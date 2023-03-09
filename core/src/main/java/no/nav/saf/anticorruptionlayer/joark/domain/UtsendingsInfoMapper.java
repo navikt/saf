@@ -70,8 +70,9 @@ public class UtsendingsInfoMapper {
 	private static Optional<Utsendingsinfo> mapDigitalPostadresse(UtsendingsInfoDto utsendingsInfoDto) {
 		UtsendingsInfoDto.DigitalPostadresseDto digitalPostadresseDto = utsendingsInfoDto.getDigitalPostadresse();
 
-		if (isNull(digitalPostadresseDto) || isBlank(digitalPostadresseDto.getDigitalpostkasseAdresse()))
+		if (isNull(digitalPostadresseDto) || isBlank(digitalPostadresseDto.getDigitalpostkasseAdresse())) {
 			return empty();
+		}
 		return Optional.of(Utsendingsinfo.builder()
 				.digitalpostSendt(Utsendingsinfo.DigitalpostSendt.builder()
 						.adresse(digitalPostadresseDto.getDigitalpostkasseAdresse())
