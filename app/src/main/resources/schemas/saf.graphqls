@@ -381,6 +381,7 @@ type AvsenderMottaker {
 type Utsendingsinfo {
 
     # Informasjon om varsel som er sendt til mottaker ved digital distribusjon.
+    # Sortert slik at nyeste varsel kommer først
     varselSendt: [VarselSendt!]!
 
     # Epostvarsel sendt til bruker ved distribusjon til nav.no
@@ -424,6 +425,7 @@ type VarselSendt {
 
 # Epostvarsel sendt til bruker ved distribusjon til nav.no
 # Vil kun være satt hvis brevet er distribuert til nav.no
+# Deprecated: bruk VarselSendt
 type EpostVarselSendt {
     # Tittel på eposten som ble sendt til bruker.
     tittel: String!
@@ -437,6 +439,7 @@ type EpostVarselSendt {
 
 # SMS varsel sendt til bruker ved distribusjon til nav.no
 # Vil kun være satt hvis brevet er distribuert til nav.no
+# Deprecated: bruk VarselSendt
 type SmsVarselSendt {
     # Mobilnummeret som varselet ble sendt til.
     adresse: String!

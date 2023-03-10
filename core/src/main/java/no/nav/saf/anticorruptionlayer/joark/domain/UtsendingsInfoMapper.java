@@ -97,11 +97,12 @@ public class UtsendingsInfoMapper {
 			smsVarselSendt = empty();
 		}
 
-		// map gamle og nye data til nye felter
+		// map gamle og nye data til nye felter. Sorter så nyligste varsel er først i lista
 		List<Utsendingsinfo.VarselSendt> varselSendtListe = Stream.concat(
-				mapVarselSendtOldToNew(epostVarselSendt, smsVarselSendt),
-				mapVarselSendt(utsendingsInfoDto)
-		).toList();
+						mapVarselSendtOldToNew(epostVarselSendt, smsVarselSendt),
+						mapVarselSendt(utsendingsInfoDto)
+				).sorted(UtsendingsInfoMapper::sorterVarselSendtNullsLast)
+				.toList();
 
 		Utsendingsinfo.UtsendingsinfoBuilder varselSendtUtsendingsinfoBuilder = Utsendingsinfo.builder();
 
@@ -130,10 +131,19 @@ public class UtsendingsInfoMapper {
 		return Optional.of(varselSendtUtsendingsinfo);
 	}
 
+	private static int sorterVarselSendtNullsLast(Utsendingsinfo.VarselSendt v1, Utsendingsinfo.VarselSendt v2) {
+		if (v1.getVarslingstidspunkt() == null) {
+			return 1;
+		} else if (v2.getVarslingstidspunkt() == null) {
+			return -1;
+		}
+		return v2.getVarslingstidspunkt().compareTo(v1.getVarslingstidspunkt());
+	}
+
 	private static <T> Supplier<Optional<T>> mapFromNewVarselSendtToOld(List<Utsendingsinfo.VarselSendt> varselSendtCompound, String varselType, Function<Utsendingsinfo.VarselSendt, T> epostMapper) {
 		return () -> varselSendtCompound.stream()
 				.filter(v -> v.getType().equalsIgnoreCase(varselType))
-				.max((Comparator.comparing(Utsendingsinfo.VarselSendt::getVarslingstidspunkt)))
+				.findFirst()
 				.map(epostMapper);
 	}
 
