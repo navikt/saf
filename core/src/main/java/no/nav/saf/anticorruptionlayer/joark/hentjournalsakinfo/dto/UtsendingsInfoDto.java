@@ -6,6 +6,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.Value;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -15,6 +18,8 @@ public class UtsendingsInfoDto {
 	FysiskPostadresseDto fysiskPostadresse;
 	DigitalPostadresseDto digitalPostadresse;
 	NavNoVarslingDto navNoVarsling;
+	List<EpostVarselDto> epostVarsel;
+	List<SmsVarselDto> smsVarsel;
 
 	@Value
 	@Builder
@@ -39,5 +44,22 @@ public class UtsendingsInfoDto {
 	public static class NavNoVarslingDto {
 		String varselSendtTil;
 		String varseltekst;
+	}
+
+	@Value
+	@Builder
+	public static class EpostVarselDto {
+		String tittel;
+		String tekst;
+		String epostadresse;
+		LocalDateTime varslingstidspunkt;
+	}
+
+	@Value
+	@Builder
+	public static class SmsVarselDto {
+		String tekst;
+		String mobilnummer;
+		LocalDateTime varslingstidspunkt;
 	}
 }

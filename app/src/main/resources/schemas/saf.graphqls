@@ -380,13 +380,19 @@ type AvsenderMottaker {
 # * Returneres kun for utgående journalposter
 type Utsendingsinfo {
 
+    # Informasjon om varsel som er sendt til mottaker ved digital distribusjon.
+    # Sortert slik at nyeste varsel kommer først
+    varselSendt: [VarselSendt!]!
+
     # Epostvarsel sendt til bruker ved distribusjon til nav.no
     # Vil kun være satt hvis brevet er distribuert til nav.no
-    epostVarselSendt: EpostVarselSendt
+    # Dette feltet vil fjernes og erstattes med varselSendt
+    epostVarselSendt: EpostVarselSendt @deprecated(reason: "alle epost-varsler kommer nå i feltet varselSendt")
 
     # SMS varsel sendt til bruker ved distribusjon til nav.no
     # Vil kun være satt hvis brevet er distribuert til nav.no
-    smsVarselSendt: SmsVarselSendt
+    # Dette feltet vil fjernes og erstattes med varselSendt
+    smsVarselSendt: SmsVarselSendt @deprecated(reason: "alle sms-varsler kommer nå i feltet varselSendt")
 
     # Informasjon om distribusjon til fysisk post gjennom Posten Norge
     # Vil kun være satt hvis brevet er distribuert som fysisk post gjennom sentral utskrift
@@ -397,8 +403,29 @@ type Utsendingsinfo {
     digitalpostSendt: DigitalpostSendt
 }
 
+# Informasjon om sms- og epost-varsel som er sendt til mottaker ved digital distribusjon
+type VarselSendt {
+    # Type varsel som er sendt til mottaker.
+    # "EPOST" dersom epost-varsel eller "SMS" dersom sms-varsel
+    type: String!
+
+    # Tittel på epost hvis epost-varsel. Vil være null hvis sms-varsel.
+    tittel: String
+
+    # Adressen varsel ble sendt til.
+    # Kan være en epostadresse (hvis epostvarsel) eller et telefonnummer (hvis smsvarsel).
+    adresse: String!
+
+    # Innhold i varsel som er sendt til mottaker. Kan inneholde HTML.
+    varslingstekst: String!
+
+    # Tidspunkt når varselet ble sendt. Lokal norsk tid.
+    varslingstidspunkt: DateTime
+}
+
 # Epostvarsel sendt til bruker ved distribusjon til nav.no
 # Vil kun være satt hvis brevet er distribuert til nav.no
+# Deprecated: bruk VarselSendt
 type EpostVarselSendt {
     # Tittel på eposten som ble sendt til bruker.
     tittel: String!
@@ -412,6 +439,7 @@ type EpostVarselSendt {
 
 # SMS varsel sendt til bruker ved distribusjon til nav.no
 # Vil kun være satt hvis brevet er distribuert til nav.no
+# Deprecated: bruk VarselSendt
 type SmsVarselSendt {
     # Mobilnummeret som varselet ble sendt til.
     adresse: String!

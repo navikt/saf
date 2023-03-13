@@ -83,9 +83,9 @@ import static no.nav.saf.anticorruptionlayer.joark.domain.UtsendingsInfoDtoTestO
 import static no.nav.saf.anticorruptionlayer.joark.domain.UtsendingsInfoDtoTestObjects.EPOST_VEDTAK_INPUT_DIGITAL_KONTAKTINFO;
 import static no.nav.saf.anticorruptionlayer.joark.domain.UtsendingsInfoDtoTestObjects.EPOST_VEDTAK_INPUT_VARSLINGSTEKST;
 import static no.nav.saf.anticorruptionlayer.joark.domain.UtsendingsInfoDtoTestObjects.FORVENTET_ADRESSETEKST_KONVOLUTT;
-import static no.nav.saf.anticorruptionlayer.joark.domain.UtsendingsInfoDtoTestObjects.createUtsendingsInfoDtoWithDigitalPostadresse;
+import static no.nav.saf.anticorruptionlayer.joark.domain.UtsendingsInfoDtoTestObjects.createUtsendingsInfoDtoWithDigitalPostadresseOldVarselStructure;
 import static no.nav.saf.anticorruptionlayer.joark.domain.UtsendingsInfoDtoTestObjects.createUtsendingsInfoDtoWithFysiskPostadresse;
-import static no.nav.saf.anticorruptionlayer.joark.domain.UtsendingsInfoDtoTestObjects.createUtsendingsInfoDtoWithNavNoVarsling;
+import static no.nav.saf.anticorruptionlayer.joark.domain.UtsendingsInfoDtoTestObjects.createUtsendingsInfoDtoWithNavNoVarslingOldVarselStructure;
 import static no.nav.saf.anticorruptionlayer.joark.domain.kode.JournalStatusCode.E;
 import static no.nav.saf.anticorruptionlayer.joark.domain.kode.JournalStatusCode.M;
 import static no.nav.saf.anticorruptionlayer.joark.domain.kode.JournalpostTypeCode.U;
@@ -157,7 +157,7 @@ class JournalpostDtoMapperTest {
 
 	@Test
 	void shouldMapJournalpostUtsendingInfoWhenUtsendingsKanalErNAV_NO() {
-		JournalpostDto journalpostDto = buildJournalpostDtoUtgaaendeType(E, createUtsendingsInfoDtoWithNavNoVarsling(EPOST_VEDTAK_INPUT_VARSLINGSTEKST, EPOST_VEDTAK_INPUT_DIGITAL_KONTAKTINFO), NAV_NO);
+		JournalpostDto journalpostDto = buildJournalpostDtoUtgaaendeType(E, createUtsendingsInfoDtoWithNavNoVarslingOldVarselStructure(EPOST_VEDTAK_INPUT_VARSLINGSTEKST, EPOST_VEDTAK_INPUT_DIGITAL_KONTAKTINFO), NAV_NO);
 		RequestCache requestCache = pep5RequestCache();
 
 		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, requestCache);
@@ -175,7 +175,7 @@ class JournalpostDtoMapperTest {
 
 	@Test
 	void shouldMapJournalpostUtsendingInfoWhenUtsendingsKanalErSDP() {
-		JournalpostDto journalpostDto = buildJournalpostDtoUtgaaendeType(E, createUtsendingsInfoDtoWithDigitalPostadresse(), SDP);
+		JournalpostDto journalpostDto = buildJournalpostDtoUtgaaendeType(E, createUtsendingsInfoDtoWithDigitalPostadresseOldVarselStructure(), SDP);
 		RequestCache requestCache = pep5RequestCache();
 
 		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, requestCache);
@@ -189,7 +189,7 @@ class JournalpostDtoMapperTest {
 
 	@Test
 	void shouldReturnNullUtsendingInfoWhenUtsendingsKanalErUkjent() {
-		JournalpostDto journalpostDto = buildJournalpostDtoUtgaaendeType(E, createUtsendingsInfoDtoWithDigitalPostadresse(), null);
+		JournalpostDto journalpostDto = buildJournalpostDtoUtgaaendeType(E, createUtsendingsInfoDtoWithDigitalPostadresseOldVarselStructure(), null);
 		RequestCache requestCache = pep5RequestCache();
 
 		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, requestCache);
@@ -551,7 +551,7 @@ class JournalpostDtoMapperTest {
 	// Se https://jira.adeo.no/browse/MMA-3076
 	@Test
 	void shouldMapFromFagomradeOKOToTemaSTO() {
-		JournalpostDto journalpostDto = buildJournalpostDtoUtgaaendeType(E, createUtsendingsInfoDtoWithNavNoVarsling(EPOST_MELDING_MED_KOMMA_INPUT_VARSLINGSTEKST, EPOST_VEDTAK_INPUT_DIGITAL_KONTAKTINFO), NAV_NO);
+		JournalpostDto journalpostDto = buildJournalpostDtoUtgaaendeType(E, createUtsendingsInfoDtoWithNavNoVarslingOldVarselStructure(EPOST_MELDING_MED_KOMMA_INPUT_VARSLINGSTEKST, EPOST_VEDTAK_INPUT_DIGITAL_KONTAKTINFO), NAV_NO);
 		journalpostDto.setFagomrade(FagomradeCode.OKO);
 
 		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, pep5RequestCache());

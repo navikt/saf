@@ -2,6 +2,11 @@ package no.nav.saf.anticorruptionlayer.joark.domain;
 
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.dto.UtsendingsInfoDto;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
+import static java.util.Collections.emptyList;
+
 public class UtsendingsInfoDtoTestObjects {
 	public static final String ADRESSELINJE1 = "adresselinje1";
 	public static final String ADRESSELINJE2 = "adresselinje2";
@@ -75,6 +80,7 @@ public class UtsendingsInfoDtoTestObjects {
 	public static final String SMS_OG_EPOST_AVVIK_NULL_INPUT_VARSLINGSTEKST = "{\"epost\":null,\"sms\":null}";
 
 	public static final String DIGITALPOSTKASSE_ADRESSE = "tom.tom#2541";
+	public static final LocalDateTime VARSLINGSTIDSPUNKT = LocalDateTime.now();
 
 	public static UtsendingsInfoDto createUtsendingsInfoDtoWithFysiskPostadresse() {
 		return UtsendingsInfoDto.builder()
@@ -89,7 +95,7 @@ public class UtsendingsInfoDtoTestObjects {
 				.build();
 	}
 
-	public static UtsendingsInfoDto createUtsendingsInfoDtoWithNavNoVarsling(String varseltekst, String varselKontaktInfo) {
+	public static UtsendingsInfoDto createUtsendingsInfoDtoWithNavNoVarslingOldVarselStructure(String varseltekst, String varselKontaktInfo) {
 		return UtsendingsInfoDto.builder()
 				.navNoVarsling(UtsendingsInfoDto.NavNoVarslingDto.builder()
 						.varselSendtTil(varselKontaktInfo)
@@ -98,11 +104,52 @@ public class UtsendingsInfoDtoTestObjects {
 				.build();
 	}
 
-	public static UtsendingsInfoDto createUtsendingsInfoDtoWithDigitalPostadresse() {
+	public static UtsendingsInfoDto createUtsendingsInfoDtoWithDigitalPostadresseOldVarselStructure() {
 		return UtsendingsInfoDto.builder()
 				.digitalPostadresse(UtsendingsInfoDto.DigitalPostadresseDto.builder()
 						.digitalpostkasseAdresse(DIGITALPOSTKASSE_ADRESSE)
 						.build())
+				.build();
+	}
+
+	public static UtsendingsInfoDto createUtsendingsInfoDtoWithNavNoVarsling(String epostadresse, String tittel, String epostTekst, String mobilnummer, String smstekst, LocalDateTime varslingstidspunkt) {
+		return UtsendingsInfoDto.builder()
+				.navNoVarsling(UtsendingsInfoDto.NavNoVarslingDto.builder()
+						.build())
+				.epostVarsel(epostadresse == null ? emptyList() :
+						List.of(UtsendingsInfoDto.EpostVarselDto.builder()
+								.epostadresse(epostadresse)
+								.tittel(tittel)
+								.tekst(epostTekst)
+								.varslingstidspunkt(varslingstidspunkt)
+								.build()))
+				.smsVarsel(mobilnummer == null ? emptyList() :
+						List.of(UtsendingsInfoDto.SmsVarselDto.builder()
+								.mobilnummer(mobilnummer)
+								.tekst(smstekst)
+								.varslingstidspunkt(varslingstidspunkt)
+								.build()))
+				.build();
+	}
+
+	public static UtsendingsInfoDto createUtsendingsInfoDtoWithDigitalPostadresse(String epostadresse, String tittel, String epostTekst, String mobilnummer, String smstekst, LocalDateTime varslingstidspunkt) {
+		return UtsendingsInfoDto.builder()
+				.digitalPostadresse(UtsendingsInfoDto.DigitalPostadresseDto.builder()
+						.digitalpostkasseAdresse(DIGITALPOSTKASSE_ADRESSE)
+						.build())
+				.epostVarsel(epostadresse == null ? emptyList() :
+						List.of(UtsendingsInfoDto.EpostVarselDto.builder()
+								.epostadresse(epostadresse)
+								.tittel(tittel)
+								.tekst(epostTekst)
+										.varslingstidspunkt(varslingstidspunkt)
+								.build()))
+				.smsVarsel(mobilnummer == null ? emptyList() :
+						List.of(UtsendingsInfoDto.SmsVarselDto.builder()
+								.mobilnummer(mobilnummer)
+								.tekst(smstekst)
+								.varslingstidspunkt(varslingstidspunkt)
+								.build()))
 				.build();
 	}
 }
