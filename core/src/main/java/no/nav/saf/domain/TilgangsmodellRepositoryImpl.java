@@ -63,9 +63,9 @@ public class TilgangsmodellRepositoryImpl implements TilgangsmodellRepository {
 				List<String> arkivsaksId = tilgangSakList.stream()
 						.map(TilgangSak::getArkivsaksnummer)
 						.collect(Collectors.toList());
-				log.warn("finnJournalposter feilet ved henting av journalposter på arkivsaker={}.", arkivsaksId, e);
+				log.error("finnJournalposter feilet ved henting av journalposter på arkivsaker={}.", arkivsaksId, e);
 			} else {
-				log.warn("finnJournalposter feilet ved henting av journalposter på arkivsaker. Det var flere enn 1000 arkivsaker. Disse logges ikke da så lange logglinjer ikke støttes i logstash.", e);
+				log.error("finnJournalposter feilet ved henting av journalposter på arkivsaker. Det var flere enn 1000 arkivsaker. Disse logges ikke da så lange logglinjer ikke støttes i logstash.", e);
 			}
 			return new ArrayList<>();
 		}
