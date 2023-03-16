@@ -158,6 +158,11 @@
       "roles": ["tema_opp"]
     },
     {
+      "app": "yrkesskade-melding-api",
+      "namespace": "yrkesskade",
+      "cluster": "prod-gcp"
+    },
+    {
       "app": "yrkesskade-melding-mottak",
       "namespace": "yrkesskade",
       "cluster": "prod-gcp"
