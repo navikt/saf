@@ -155,6 +155,11 @@
       "cluster": "dev-gcp"
     },
     {
+      "app": "yrkesskade-melding-api",
+      "namespace": "yrkesskade",
+      "cluster": "dev-gcp"
+    },
+    {
       "app": "yrkesskade-melding-mottak",
       "namespace": "yrkesskade",
       "cluster": "dev-gcp"
