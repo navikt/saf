@@ -173,6 +173,11 @@
       "cluster": "prod-gcp"
     },
     {
+      "app": "yrkesskade-uttrekk",
+      "namespace": "yrkesskade",
+      "cluster": "prod-gcp"
+    },
+    {
       "app": "yrkesskade-brevutsending",
       "namespace": "yrkesskade",
       "cluster": "prod-gcp",
