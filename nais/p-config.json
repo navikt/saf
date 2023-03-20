@@ -175,7 +175,8 @@
     {
       "app": "yrkesskade-uttrekk",
       "namespace": "yrkesskade",
-      "cluster": "prod-gcp"
+      "cluster": "prod-gcp",
+      "roles": ["tema_yrk"]
     },
     {
       "app": "yrkesskade-brevutsending",
