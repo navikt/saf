@@ -421,6 +421,11 @@
       "app": "innsending-api",
       "namespace": "team-soknad",
       "cluster": "dev-gcp"
+    },
+    {
+      "app": "tilbakemeldingsmottak-api",
+      "namespace": "teamserviceklage",
+      "cluster": "dev-gcp"
     }
   ]
 }
