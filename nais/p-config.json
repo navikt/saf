@@ -34,11 +34,6 @@
   "AZURE_APP_TOKEN_URL": "https://login.microsoftonline.com/62366534-1ec3-4962-8869-9b5535279d0b/oauth2/v2.0/token",
   "AZURE_IAC_RULES": [
     {
-      "app": "etterlatte-brev-api",
-      "namespace": "etterlatte",
-      "cluster": "prod-gcp"
-    },
-    {
       "app": "familie-integrasjoner",
       "namespace": "teamfamilie",
       "cluster": "prod-fss"
