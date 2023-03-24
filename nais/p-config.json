@@ -336,7 +336,8 @@
     {
       "app": "hm-saksbehandling",
       "namespace": "teamdigihot",
-      "cluster": "prod-gcp"
+      "cluster": "prod-gcp",
+      "roles": ["tema_hje"]
     },
     {
       "app": "melosys",
