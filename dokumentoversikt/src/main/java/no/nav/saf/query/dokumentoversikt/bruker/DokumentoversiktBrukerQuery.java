@@ -1,7 +1,7 @@
 package no.nav.saf.query.dokumentoversikt.bruker;
 
-import io.reactivex.Flowable;
-import io.reactivex.schedulers.Schedulers;
+import io.reactivex.rxjava3.core.Flowable;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.FagomradeCode;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.dto.JournalpostDto;
@@ -94,7 +94,7 @@ class DokumentoversiktBrukerQuery {
 		final Flowable<TilgangSak> tilgangSakFlow = dokumentoversiktBrukerTilgangsmodellRepository.findTilgangSaker(tilgangBruker, dokumentoversiktBrukerArguments
 				.getFilters().getTema(), safRequestContext);
 		List<TilgangSak> filteredTilgangSakList = tilgangSakFlow
-				.onErrorResumeNext(Flowable.empty())
+				.onErrorResumeWith(Flowable.empty())
 				.parallel(10)
 				.runOn(Schedulers.io())
 				.doOnNext(ts -> addMdcData(safRequestContext))

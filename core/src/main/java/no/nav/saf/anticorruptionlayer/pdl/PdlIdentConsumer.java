@@ -14,9 +14,11 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.List;
 
+import static java.time.Duration.ofSeconds;
 import static java.util.Objects.requireNonNull;
 import static no.nav.saf.headers.NavHeaders.PDL_NAV_CALLID;
 import static no.nav.saf.util.MDCUtility.getCallId;
@@ -44,6 +46,7 @@ class PdlIdentConsumer implements IdentConsumer {
 							final ClientHttpRequestFactory clientHttpRequestFactory) {
 		this.restTemplate = restTemplateBuilder
 				.requestFactory(() -> clientHttpRequestFactory)
+				.setReadTimeout(ofSeconds(20))
 				.build();
 		this.pdlUri = UriComponentsBuilder.fromHttpUrl(safProperties.getEndpoints().getPdl()).build().toUri();
 		this.stsRestConsumer = stsRestConsumer;

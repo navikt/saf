@@ -14,8 +14,10 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.Duration;
 import java.util.Collections;
 
+import static java.time.Duration.ofSeconds;
 import static no.nav.saf.cache.LokalCacheConfig.REST_STS_CACHE;
 
 
@@ -33,6 +35,7 @@ public class StsRestConsumer {
 		this.ststokenurl = ststokenurl;
 		this.restTemplate = restTemplateBuilder
 				.requestFactory(() -> clientHttpRequestFactory)
+				.setReadTimeout(ofSeconds(20))
 				.basicAuthentication(serviceuserAlias.getUsername(), serviceuserAlias.getPassword())
 				.build();
 	}

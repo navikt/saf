@@ -1,6 +1,6 @@
 package no.nav.saf.config;
 
-import org.apache.http.HttpHost;
+import org.apache.hc.core5.http.HttpHost;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import java.util.Optional;

@@ -13,6 +13,9 @@ import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.Duration;
+
+import static java.time.Duration.ofSeconds;
 import static no.nav.saf.cache.LokalCacheConfig.BIDRAG_SAK_BY_SAKID_CACHE;
 
 @Slf4j
@@ -30,6 +33,7 @@ public class BidragSakConsumer {
 		this.bidragSakApiUrl = bidragSakApiUrl;
 		this.restTemplate = restTemplateBuilder
 				.requestFactory(() -> clientHttpRequestFactory)
+				.setReadTimeout(ofSeconds(20))
 				.basicAuthentication(serviceuserAlias.getUsername(), serviceuserAlias.getPassword()).build();
 	}
 
@@ -39,17 +43,15 @@ public class BidragSakConsumer {
 	public BidragSakTo hentBidragSak(final String sakId) {
 		log.info("Henter relevante parter fra Bisys for sak={}", sakId);
 		ResponseEntity<BidragSakTo> response = restTemplate.getForEntity(bidragSakApiUrl + "/{sakId}", BidragSakTo.class, sakId);
-		switch (response.getStatusCode()) {
-			case OK:
+		switch (response.getStatusCode().value()) {
+			case 200: //OK
 				return response.getBody();
-			case NO_CONTENT:
+			case 204: // NO_CONTENT
 				throw new SafFunctionalException(String.format("hentBidragSak fikk tilbake tom respons. Ingen innslag funnet på sakId=%s", sakId));
-			case NOT_FOUND:
-				throw new SafTechnicalException(String.format("hentBidragSak kunne ikke kontakte bidrag-pip. sakId=%s", sakId), response
-						.getStatusCode());
-			case BAD_REQUEST:
-				throw new SafTechnicalException(String.format("hentBidragSak feilet. SakId=%s er ikke 7 tegn", sakId), response
-						.getStatusCode());
+			case 400: //BAD_REQUEST
+				throw new SafTechnicalException(String.format("hentBidragSak feilet. SakId=%s er ikke 7 tegn", sakId), response.getStatusCode());
+			case 404: //NOT_FOUND
+				throw new SafTechnicalException(String.format("hentBidragSak kunne ikke kontakte bidrag-pip. sakId=%s", sakId), response.getStatusCode());
 			default:
 				throw new SafTechnicalException(String.format("hentBidragSak feilet teknisk med statusKode=%s. Responsebody=%s", response
 						.getStatusCode(), response.getBody()), response.getStatusCode());

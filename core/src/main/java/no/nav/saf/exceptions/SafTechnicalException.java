@@ -5,6 +5,7 @@ import graphql.GraphQLError;
 import graphql.language.SourceLocation;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,26 +13,26 @@ import java.util.List;
 
 @Getter
 public class SafTechnicalException extends RuntimeException implements GraphQLError {
-	private final HttpStatus httpStatus;
+	private final HttpStatusCode httpStatusCode;
 
 	public SafTechnicalException(HttpStatus httpStatus) {
 		super();
-		this.httpStatus = httpStatus;
+		this.httpStatusCode = httpStatus;
 	}
 
-	public SafTechnicalException(String message, HttpStatus httpStatus) {
+	public SafTechnicalException(String message, HttpStatusCode httpStatus) {
 		super(message);
-		this.httpStatus = httpStatus;
+		this.httpStatusCode = httpStatus;
 	}
 
-	public SafTechnicalException(String message, Throwable cause, HttpStatus httpStatus) {
+	public SafTechnicalException(String message, Throwable cause, HttpStatusCode httpStatus) {
 		super(message, cause);
-		this.httpStatus = httpStatus;
+		this.httpStatusCode = httpStatus;
 	}
 
 	public SafTechnicalException(String message, Throwable cause) {
 		super(message, cause);
-		this.httpStatus = null;
+		this.httpStatusCode = null;
 	}
 
 	@Override

@@ -5,6 +5,7 @@ import graphql.GraphQLError;
 import graphql.language.SourceLocation;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +13,7 @@ import java.util.List;
 
 @Getter
 public class SafFunctionalException extends RuntimeException implements GraphQLError {
-	private final HttpStatus httpStatus;
+	private final HttpStatusCode httpStatus;
 
 	public SafFunctionalException() {
 		super();
@@ -29,12 +30,12 @@ public class SafFunctionalException extends RuntimeException implements GraphQLE
 		this.httpStatus = httpStatus;
 	}
 
-	public SafFunctionalException(String message, HttpStatus httpStatus) {
+	public SafFunctionalException(String message, HttpStatusCode httpStatus) {
 		super(message);
 		this.httpStatus = httpStatus;
 	}
 
-	public SafFunctionalException(String message, Throwable cause, HttpStatus httpStatus) {
+	public SafFunctionalException(String message, Throwable cause, HttpStatusCode httpStatus) {
 		super(message, cause);
 		this.httpStatus = httpStatus;
 	}

@@ -33,8 +33,13 @@ import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.Duration;
+
+import static java.time.Duration.ofSeconds;
 import static no.nav.saf.headers.NavHeaders.NAV_CALLID;
 import static no.nav.saf.util.MDCConstants.CALL_ID;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @Service
 public class HentJournalsakinfo {
@@ -51,6 +56,7 @@ public class HentJournalsakinfo {
 		restTemplate = restTemplateBuilder
 				.requestFactory(() -> hentJournalsakInfoClientHttpRequestFactory)
 				.rootUri(hentjournalsakinfoUrl)
+				.setReadTimeout(ofSeconds(180))
 				.basicAuthentication(serviceuserAlias.getUsername(), serviceuserAlias.getPassword())
 				.build();
 		this.hentjournalsakinfoUrl = hentjournalsakinfoUrl;
@@ -76,11 +82,11 @@ public class HentJournalsakinfo {
 			throw new SafTechnicalException(String.format("henttilgangjournalpost feilet teknisk med statusKode=%s. Feilmelding=%s", e
 					.getStatusCode(), e.getMessage()), e, e.getStatusCode());
 		} catch (HttpClientErrorException e) {
-			switch (e.getStatusCode()) {
-				case NOT_FOUND:
+			switch (e.getStatusCode().value()) {
+				case 404: // NOT_FOUND
 					throw new DokumentIkkeFunnetException(String.format("Journalpost med journalpostId=%s og tilknyttet dokumentInfoId=%s og variantFormat=%s ikke funnet i Joark.",
 							journalpostId, dokumentInfoId, variantFormat));
-				case BAD_REQUEST:
+				case 400: //BAD_REQUEST
 					throw new UgyldigInputException(String.format("Ugyldig input: journalpostId=%s, dokumentInfoId=%s, variantFormat=%s. JournalpostId og dokumentInfoId må være tall og variantFormat må være en gyldig kodeverk-verdi, eg. ARKIV, ORIGINAL, SLADDET mfl.",
 							journalpostId, dokumentInfoId, variantFormat));
 				default:
@@ -118,7 +124,7 @@ public class HentJournalsakinfo {
 			throw new SafTechnicalException(String.format("Henting av journalpostId=%s feilet teknisk. Status=%s. Feilmelding=%s",
 					journalpostId, e.getStatusCode(), e.getMessage()), e, e.getStatusCode());
 		} catch (HttpClientErrorException e) {
-			if (e.getStatusCode() == HttpStatus.NOT_FOUND) {
+			if (e.getStatusCode() == NOT_FOUND) {
 				throw new JournalpostIkkeFunnetException("Journalpost med journalpostId=" + journalpostId + " ikke funnet.");
 			}
 			throw new SafFunctionalException(String.format("Henting av journalpostId=%s feilet funksjonelt. Status=%s. Feilmelding=%s",
@@ -137,7 +143,7 @@ public class HentJournalsakinfo {
 			throw new SafTechnicalException(String.format("tilknyttedeJournalposter feilet teknisk med statusKode=%s. Feilmelding=%s", e
 					.getStatusCode(), e.getMessage()), e, e.getStatusCode());
 		} catch (HttpClientErrorException e) {
-			if (e.getStatusCode() == HttpStatus.NOT_FOUND) {
+			if (e.getStatusCode() == NOT_FOUND) {
 				throw new JournalpostIkkeFunnetException("Tilknyttede Journalposter for dokumentInfoId=" + dokumentInfoId + " ikke funnet.");
 			}
 			throw new SafFunctionalException(String.format("tilknyttedeJournalposter feilet funksjonelt. dokumentInfoId=%s, feilmelding=%s", dokumentInfoId, e.getMessage()));

@@ -7,7 +7,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.7.11</version>
+		<version>3.0.5</version>
 	</parent>
 
 	<groupId>no.nav.saf</groupId>
@@ -30,7 +30,7 @@
 
 		<graphql-java.version>20.3</graphql-java.version>
 		<resilience4j.version>2.0.2</resilience4j.version>
-		<token-support.version>2.1.9</token-support.version>
+		<token-support.version>3.0.8</token-support.version>
 		<commons-text.version>1.10.0</commons-text.version>
 		<springdoc-openapi-ui.version>1.7.0</springdoc-openapi-ui.version>
 		<logstash-logback-encoder.version>7.3</logstash-logback-encoder.version>
@@ -41,7 +41,7 @@
 		<!-- test -->
 		<!-- Versjonen over 3.0.3 gir trøbbel - blir problem med mock-oauth2-dep.
 		En test i DokumentoversiktBrukerIT feiler når flere testklasser blir kjørt samtidig -->
-		<spring-cloud-starter-contract-stub-runner.version>3.0.3</spring-cloud-starter-contract-stub-runner.version>
+		<spring-cloud-starter-contract-stub-runner.version>4.0.1</spring-cloud-starter-contract-stub-runner.version>
 
 		<!-- Plugins -->
 		<maven-toolchains-plugin.version>3.1.0</maven-toolchains-plugin.version>

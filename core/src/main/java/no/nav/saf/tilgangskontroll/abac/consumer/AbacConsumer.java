@@ -19,6 +19,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.Duration;
+
+import static java.time.Duration.ofSeconds;
 import static java.util.Collections.singletonList;
 
 @Slf4j
@@ -41,6 +44,7 @@ public class AbacConsumer {
         this.url = url;
         this.restTemplate = restTemplateBuilder
                 .requestFactory(() -> clientHttpRequestFactory)
+                .setReadTimeout(ofSeconds(20))
                 .basicAuthentication(serviceuserAlias.getUsername(), serviceuserAlias.getPassword())
                 .build();
         this.abacRequestMapper = abacRequestMapper;
