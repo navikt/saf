@@ -49,7 +49,6 @@ public class GsakConsumer {
 		this.gsakApiUrl = gsakApiUrl;
 		this.restTemplate = restTemplateBuilder
 				.requestFactory(() -> clientHttpRequestFactory)
-				.setReadTimeout(ofSeconds(20))
 				.basicAuthentication(serviceuserAlias.getUsername(), serviceuserAlias.getPassword())
 				.build();
 	}

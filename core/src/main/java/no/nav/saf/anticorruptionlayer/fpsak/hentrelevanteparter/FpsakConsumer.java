@@ -42,7 +42,6 @@ public class FpsakConsumer {
 		this.fpsakUrl = fpsakUrl;
 		this.restTemplate = restTemplateBuilder
 				.requestFactory(() -> clientHttpRequestFactory)
-				.setReadTimeout(ofSeconds(20))
 				.build();
 		this.stsRestConsumer = stsRestConsumer;
 	}

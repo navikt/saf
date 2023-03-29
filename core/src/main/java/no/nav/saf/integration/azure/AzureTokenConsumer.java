@@ -36,7 +36,6 @@ public class AzureTokenConsumer implements TokenConsumer {
 							  @Qualifier("azureTokenHttpRequestFactory") ClientHttpRequestFactory clientHttpRequestFactory) {
 		this.restTemplate = restTemplateBuilder
 				.requestFactory(() -> clientHttpRequestFactory)
-				//.setReadTimeout(ofSeconds(20))
 				.build();
 		this.azureProperties = azureProperties;
 	}

@@ -55,7 +55,6 @@ public class PensjonSakRestConsumer {
 		this.pensjonSakScope = safProperties.getEndpoints().getPenScope();
 		this.restTemplate = restTemplateBuilder
 				.requestFactory(() -> clientHttpRequestFactory)
-				.setReadTimeout(ofSeconds(20))
 				.build();
 		this.pensjonBrukerForSakURI = safProperties.getEndpoints().getPenBrukerForSakURI();
 		this.pensjonSakSammendragURI = safProperties.getEndpoints().getPenSakSammendragURI();

@@ -46,7 +46,6 @@ class PdlIdentConsumer implements IdentConsumer {
 							final ClientHttpRequestFactory clientHttpRequestFactory) {
 		this.restTemplate = restTemplateBuilder
 				.requestFactory(() -> clientHttpRequestFactory)
-				.setReadTimeout(ofSeconds(20))
 				.build();
 		this.pdlUri = UriComponentsBuilder.fromHttpUrl(safProperties.getEndpoints().getPdl()).build().toUri();
 		this.stsRestConsumer = stsRestConsumer;

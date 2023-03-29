@@ -10,6 +10,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.hc.client5.http.classic.HttpClient;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager;
+import org.apache.hc.core5.http.io.SocketConfig;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -25,6 +26,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import static org.apache.hc.core5.util.Timeout.ofSeconds;
 
 @EnableAspectJAutoProxy
 @ComponentScan
@@ -43,9 +46,12 @@ public class ApplicationConfig {
 
 	@Bean
 	HttpClient httpClient() {
+		var readTimeout = SocketConfig.custom().setSoTimeout(ofSeconds(20)).build();
 		PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager();
 		connectionManager.setMaxTotal(400);
 		connectionManager.setDefaultMaxPerRoute(100);
+		connectionManager.setDefaultSocketConfig(readTimeout);
+
 		return HttpClients.custom()
 				.setConnectionManager(connectionManager)
 				.build();
@@ -60,9 +66,12 @@ public class ApplicationConfig {
 
 	@Bean
 	HttpClient hentJournalsakInfoHttpClient() {
+		var readTimeout = SocketConfig.custom().setSoTimeout(ofSeconds(180)).build();
 		PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager();
 		connectionManager.setMaxTotal(200);
 		connectionManager.setDefaultMaxPerRoute(200);
+		connectionManager.setDefaultSocketConfig(readTimeout);
+		
 		return HttpClients.custom()
 				.setConnectionManager(connectionManager)
 				.build();
@@ -70,9 +79,12 @@ public class ApplicationConfig {
 
 	@Bean
 	public ClientHttpRequestFactory azureTokenHttpRequestFactory(WebProxyProperties webProxyProperties) {
+		var readTimeout = SocketConfig.custom().setSoTimeout(ofSeconds(20)).build();
 		var connectionManager = new PoolingHttpClientConnectionManager();
 		connectionManager.setMaxTotal(40);
 		connectionManager.setDefaultMaxPerRoute(10);
+		connectionManager.setDefaultSocketConfig(readTimeout);
+
 
 		var httpClient = webProxyProperties.getProxy()
 				.map(proxy -> HttpClients.custom()

@@ -56,7 +56,6 @@ public class HentJournalsakinfo {
 		restTemplate = restTemplateBuilder
 				.requestFactory(() -> hentJournalsakInfoClientHttpRequestFactory)
 				.rootUri(hentjournalsakinfoUrl)
-				.setReadTimeout(ofSeconds(180))
 				.basicAuthentication(serviceuserAlias.getUsername(), serviceuserAlias.getPassword())
 				.build();
 		this.hentjournalsakinfoUrl = hentjournalsakinfoUrl;

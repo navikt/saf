@@ -42,7 +42,6 @@ public class K9Consumer {
 		this.k9Url = k9Url;
 		this.restTemplate = restTemplateBuilder
 				.requestFactory(() -> clientHttpRequestFactory)
-				.setReadTimeout(ofSeconds(20))
 				.build();
 		this.stsRestConsumer = stsRestConsumer;
 	}

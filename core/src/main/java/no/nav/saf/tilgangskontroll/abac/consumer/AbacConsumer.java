@@ -44,7 +44,6 @@ public class AbacConsumer {
         this.url = url;
         this.restTemplate = restTemplateBuilder
                 .requestFactory(() -> clientHttpRequestFactory)
-                .setReadTimeout(ofSeconds(20))
                 .basicAuthentication(serviceuserAlias.getUsername(), serviceuserAlias.getPassword())
                 .build();
         this.abacRequestMapper = abacRequestMapper;

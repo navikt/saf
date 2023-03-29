@@ -33,7 +33,6 @@ public class BidragSakConsumer {
 		this.bidragSakApiUrl = bidragSakApiUrl;
 		this.restTemplate = restTemplateBuilder
 				.requestFactory(() -> clientHttpRequestFactory)
-				.setReadTimeout(ofSeconds(20))
 				.basicAuthentication(serviceuserAlias.getUsername(), serviceuserAlias.getPassword()).build();
 	}
 
