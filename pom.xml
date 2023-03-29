@@ -38,9 +38,7 @@
 		<bcprov-jdk15on.version>1.70</bcprov-jdk15on.version>
 		<snakeyaml.version>2.0</snakeyaml.version>
 
-		<!-- test -->
-		<!-- Versjonen over 3.0.3 gir trøbbel - blir problem med mock-oauth2-dep.
-		En test i DokumentoversiktBrukerIT feiler når flere testklasser blir kjørt samtidig -->
+		<!-- Test -->
 		<spring-cloud-starter-contract-stub-runner.version>4.0.1</spring-cloud-starter-contract-stub-runner.version>
 
 		<!-- Plugins -->
