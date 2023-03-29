@@ -65,7 +65,7 @@ public class GraphQLController {
 		this.privilegiedServiceusers = privilegiedServiceusers;
 	}
 
-	@PostMapping(value = "/graphql", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(value =  {"/graphql", "/graphql/"}, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	public Map<String, Object> graphQLRequest(@RequestHeader(value = X_CORRELATION_ID, required = false) String xCorrelationId,
 											  @RequestHeader(value = NAV_CALLID, required = false) String navCallid,
