@@ -124,7 +124,7 @@ public class HentJournalsakinfo {
 			throw new SafTechnicalException(String.format("Henting av journalpostId=%s feilet teknisk. Status=%s. Feilmelding=%s",
 					journalpostId, e.getStatusCode(), e.getMessage()), e, e.getStatusCode());
 		} catch (HttpClientErrorException e) {
-			if (e.getStatusCode() == NOT_FOUND) {
+			if (e.getStatusCode().value() == NOT_FOUND.value()) {
 				throw new JournalpostIkkeFunnetException("Journalpost med journalpostId=" + journalpostId + " ikke funnet.");
 			}
 			throw new SafFunctionalException(String.format("Henting av journalpostId=%s feilet funksjonelt. Status=%s. Feilmelding=%s",
@@ -143,7 +143,7 @@ public class HentJournalsakinfo {
 			throw new SafTechnicalException(String.format("tilknyttedeJournalposter feilet teknisk med statusKode=%s. Feilmelding=%s", e
 					.getStatusCode(), e.getMessage()), e, e.getStatusCode());
 		} catch (HttpClientErrorException e) {
-			if (e.getStatusCode() == NOT_FOUND) {
+			if (e.getStatusCode().value() == NOT_FOUND.value()) {
 				throw new JournalpostIkkeFunnetException("Tilknyttede Journalposter for dokumentInfoId=" + dokumentInfoId + " ikke funnet.");
 			}
 			throw new SafFunctionalException(String.format("tilknyttedeJournalposter feilet funksjonelt. dokumentInfoId=%s, feilmelding=%s", dokumentInfoId, e.getMessage()));

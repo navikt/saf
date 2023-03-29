@@ -1,4 +1,4 @@
-name: Build #, deploy dev feature
+name: Build, deploy dev feature
 
 on:
   push:
@@ -9,6 +9,5 @@ on:
 
 jobs:
   build:
-    uses: navikt/dok-workflows/.github/workflows/build-app.yml@main
+    uses: navikt/dok-workflows/.github/workflows/build-deploy-feature.yml@main
     secrets: inherit
-    #uses: navikt/dok-workflows/.github/workflows/build-deploy-feature.yml@main

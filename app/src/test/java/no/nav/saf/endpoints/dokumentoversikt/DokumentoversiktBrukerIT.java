@@ -42,10 +42,6 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
-/**
- * @author Sigurd Midttun, Visma Consulting.
- */
-@DirtiesContext
 class DokumentoversiktBrukerIT extends AbstractItest {
 
 	private static final String AKTOER_ID = "1912374211459";
@@ -382,8 +378,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 		assertEquals(OK, responseEntity.getStatusCode());
 		verifyEmptyJournalpostListeAndNullSideInfo(dokumentoversikt);
 		verify(postRequestedFor(urlEqualTo("/pdl")).withRequestBody(matchingJsonPath("$.variables.ident", equalTo(AKTOER_ID))));
-		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter")).withRequestBody(matchingJsonPath("$.gsakSakIds", containing(""))));
-		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter")).withRequestBody(matchingJsonPath("$.psakSakIds", containing(""))));
+		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter")).withRequestBody(containing("{\"gsakSakIds\":[\"135695442\"],\"psakSakIds\":[]")));
 		verify(postRequestedFor(urlEqualTo("/reststs")));
 		verify(postRequestedFor(urlEqualTo("/azure_token")));
 		verify(getRequestedFor(urlEqualTo("/pen/springapi/sak/sammendrag")).withHeader("fnr", new EqualToPattern(FNR)));
