@@ -396,6 +396,12 @@
       "namespace": "aap",
       "cluster": "prod-gcp",
       "roles": ["tema_aap"]
+    },
+    {
+      "app": "tilbakemeldingsmottak-api",
+      "namespace": "teamserviceklage",
+      "cluster": "prod-gcp",
+      "roles": ["tema_ser"]
     }
   ]
 }
