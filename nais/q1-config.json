@@ -426,7 +426,8 @@
     {
       "app": "tilbakemeldingsmottak-api",
       "namespace": "teamserviceklage",
-      "cluster": "dev-gcp"
+      "cluster": "dev-gcp",
+      "roles": ["tema_ser"]
     }
   ]
 }
