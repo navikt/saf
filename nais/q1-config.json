@@ -429,10 +429,5 @@
       "cluster": "dev-gcp",
       "roles": ["tema_ser"]
     }
-    {
-      "app": "rpa-medlemskap-og-avgift,
-      "namespace": "team-rpa",
-      "cluster": "dev-fss"
-    }
   ]
 }
