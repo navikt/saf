@@ -95,6 +95,8 @@ public class GraphiQLController {
 		String endpoint = graphqlEndpoint;
 		for (Map.Entry<String, String> param : params.entrySet()) {
 			endpoint = endpoint.replaceAll("\\{" + param.getKey() + "}", param.getValue());
+
+			endpoint = endpoint.replaceAll("\\{" + param.getKey() + "}", param.getValue());
 		}
 		return endpoint;
 	}
