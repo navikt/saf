@@ -428,6 +428,12 @@
       "namespace": "teamserviceklage",
       "cluster": "dev-gcp",
       "roles": ["tema_ser"]
+    },
+    {
+      "app": "rpa-medlemskap-og-avgift",
+      "namespace": "team-rpa",
+      "cluster": "dev-fss",
+      "roles":["tema_ind","tema_til"]
     }
   ]
 }
