@@ -49,6 +49,11 @@
       "cluster": "prod-fss"
     },
     {
+      "app": "journalforing-frontend",
+      "namespace": "isa",
+      "cluster": "prod-gcp"
+    },
+    {
       "app": "notat-administrasjon",
       "namespace": "isa",
       "cluster": "prod-gcp"
