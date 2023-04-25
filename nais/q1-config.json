@@ -440,6 +440,6 @@
       "namespace": "teamdagpenger",
       "cluster": "dev-gcp",
       "roles": ["tema_dag"]
-    },
+    }
   ]
 }
