@@ -42,7 +42,7 @@
 		<!-- test -->
 		<!-- Versjonen over 3.0.3 gir trøbbel - blir problem med mock-oauth2-dep.
 		En test i DokumentoversiktBrukerIT feiler når flere testklasser blir kjørt samtidig -->
-		<spring-cloud-starter-contract-stub-runner.version>3.0.3</spring-cloud-starter-contract-stub-runner.version>
+		<spring-cloud-starter-contract-stub-runner.version>4.0.2</spring-cloud-starter-contract-stub-runner.version>
 
 		<!-- Plugins -->
 		<maven-toolchains-plugin.version>3.1.0</maven-toolchains-plugin.version>
