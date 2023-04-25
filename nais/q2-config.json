@@ -400,7 +400,7 @@
       "namespace": "dolly",
       "cluster": "dev-fss",
       "roles": ["tema_alle"]
-    }
+    },
     {
       "app": "rpa-medlemskap-og-avgift",
       "namespace": "team-rpa",
