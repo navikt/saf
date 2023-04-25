@@ -438,7 +438,7 @@
     {
       "app": "dp-saksbehandling-frontend",
       "namespace": "teamdagpenger",
-      "cluster": "dev-gcp"
+      "cluster": "dev-gcp",
       "roles": ["tema_dag"]
     },
   ]
