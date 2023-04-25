@@ -434,6 +434,12 @@
       "namespace": "team-rpa",
       "cluster": "dev-fss",
       "roles":["tema_ind","tema_til"]
+    },
+    {
+      "app": "dp-saksbehandling-frontend",
+      "namespace": "teamdagpenger",
+      "cluster": "dev-gcp",
+      "roles": ["tema_dag"]
     }
   ]
 }
