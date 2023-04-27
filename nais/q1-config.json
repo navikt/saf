@@ -440,6 +440,11 @@
       "namespace": "teamdagpenger",
       "cluster": "dev-gcp",
       "roles": ["tema_dag"]
+    },
+    {
+      "app": "macgyver",
+      "namespace": "teamsykmelding",
+      "cluster": "dev-gcp"
     }
   ]
 }
