@@ -339,6 +339,12 @@
       "cluster": "prod-gcp"
     },
     {
+      "app": "hm-joark-sink",
+      "namespace": "teamdigihot",
+      "cluster": "dev-gcp",
+      "roles": ["tema_hje"]
+    },
+    {
       "app": "hm-saksbehandling",
       "namespace": "teamdigihot",
       "cluster": "prod-gcp",
