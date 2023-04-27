@@ -407,6 +407,11 @@
       "namespace": "teamserviceklage",
       "cluster": "prod-gcp",
       "roles": ["tema_ser"]
+    },
+    {
+      "app": "macgyver",
+      "namespace": "teamsykmelding",
+      "cluster": "prod-gcp"
     }
   ]
 }
