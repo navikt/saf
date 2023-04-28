@@ -33,7 +33,7 @@
 		<resilience4j.version>2.0.2</resilience4j.version>
 		<token-support.version>2.1.9</token-support.version>
 		<commons-text.version>1.10.0</commons-text.version>
-		<springdoc-openapi-ui.version>1.6.14</springdoc-openapi-ui.version>
+		<springdoc-openapi-ui.version>1.7.0</springdoc-openapi-ui.version>
 		<logstash-logback-encoder.version>7.3</logstash-logback-encoder.version>
 		<logback-syslog4j.version>1.0.0</logback-syslog4j.version>
 		<bcprov-jdk15on.version>1.70</bcprov-jdk15on.version>
