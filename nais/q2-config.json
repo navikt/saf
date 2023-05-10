@@ -411,7 +411,7 @@
       "app": "rpa-medlemskap-og-avgift",
       "namespace": "team-rpa",
       "cluster": "dev-fss",
-      "roles":["tema_ind", "tema_til"]
+      "roles": ["tema_ind", "tema_til", "tema_aap"]
     }
   ]
 }
