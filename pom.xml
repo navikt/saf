@@ -37,7 +37,7 @@
 		<logstash-logback-encoder.version>7.3</logstash-logback-encoder.version>
 		<logback-syslog4j.version>1.0.0</logback-syslog4j.version>
 		<bcprov-jdk15on.version>1.70</bcprov-jdk15on.version>
-		<snakeyaml.version>1.33</snakeyaml.version>
+		<snakeyaml.version>2.0</snakeyaml.version>
 
 		<!-- test -->
 		<!-- Versjonen over 3.0.3 gir trøbbel - blir problem med mock-oauth2-dep.
