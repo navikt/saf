@@ -9,9 +9,8 @@ Saf (sak og arkivfasade) er en løsning for å tilby les-tjenester mot NAV sin d
 ## Kjøring av saf lokalt
 For å kjøre saf lokalt er det nødvendig å hente en truststore, sette profil til nais, tilføre en servicebruker og sette miljøvariabler.
 
- 1. [truststore](fasit.adeo.no)
- 2. [servicebruker](https://vault.adeo.no/ui/vault/secrets/serviceuser/show/dev/srvsaf)
- 3. [miljøvariabler](https://vault.adeo.no/ui/vault/secrets/secret/show/dokument/saf)
+  1. [servicebruker](https://vault.adeo.no/ui/vault/secrets/serviceuser/show/dev/srvsaf)
+  2. [miljøvariabler](https://vault.adeo.no/ui/vault/secrets/secret/show/dokument/saf)
 
 ## Tilgangsstyring
 Ved behov for tilgang til Saf kan andre team selv gjøre nødvendige kodeendringer.
