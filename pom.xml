@@ -31,7 +31,7 @@
 
 		<graphql-java.version>20.2</graphql-java.version>
 		<resilience4j.version>2.0.2</resilience4j.version>
-		<token-support.version>2.1.9</token-support.version>
+		<token-support.version>3.0.12</token-support.version>
 		<commons-text.version>1.10.0</commons-text.version>
 		<springdoc-openapi-ui.version>1.7.0</springdoc-openapi-ui.version>
 		<logstash-logback-encoder.version>7.3</logstash-logback-encoder.version>
