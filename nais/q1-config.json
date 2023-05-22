@@ -263,7 +263,8 @@
     {
       "app": "dokopp-q1",
       "namespace": "teamdokumenthandtering",
-      "cluster": "dev-fss"
+      "cluster": "dev-fss",
+      "roles": ["tema_far"]
     },
     {
       "app": "omsorgspenger-journalforing",
