@@ -419,6 +419,12 @@
       "app": "macgyver",
       "namespace": "teamsykmelding",
       "cluster": "prod-gcp"
+    },
+    {
+      "app": "rpa-saf-tiltakspenger",
+      "namespace": "team-rpa",
+      "cluster": "prod-fss",
+      "roles": ["tema_ind"]
     }
   ]
 }
