@@ -408,6 +408,12 @@
       "namespace": "team-rpa",
       "cluster": "dev-fss",
       "roles": ["tema_ind", "tema_til", "tema_aap"]
+    },
+    {
+      "app": "rpa-saf-tiltakspenger",
+      "namespace": "team-rpa",
+      "cluster": "dev-fss",
+      "roles": ["tema_ind"]
     }
   ]
 }
