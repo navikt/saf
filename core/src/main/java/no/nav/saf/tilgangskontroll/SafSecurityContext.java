@@ -30,7 +30,6 @@ public class SafSecurityContext {
 
 	private static final String ISSUER_REST_STS = "reststs";
 	private static final String ISSUER_OPENAM = "openam";
-	private static final String ISSUER_AZUREV1 = "azurev1";
 	private static final String ISSUER_AZUREV2 = "azurev2";
 	// JWT claims. https://datatracker.ietf.org/doc/html/rfc7519#section-4.1
 	static final String JWT_CLAIM_AUD = "aud";
@@ -86,7 +85,7 @@ public class SafSecurityContext {
 		} else {
 			throw new AuthorizationException("Kun SignedJWT er støttet i saf.");
 		}
-		this.jwtIssuedByAzure = tokenValidationContext.hasTokenFor(ISSUER_AZUREV1) || tokenValidationContext.hasTokenFor(ISSUER_AZUREV2);
+		this.jwtIssuedByAzure = tokenValidationContext.hasTokenFor(ISSUER_AZUREV2);
 		this.jwtAzureClientCredentialFlow = isClientCredentialFlowToken(jwtToken);
 		if (jwtIssuedByAzure && jwtAzureClientCredentialFlow) {
 			this.jwtAzureRoles = findAzureRoles(jwtToken);

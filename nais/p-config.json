@@ -8,7 +8,6 @@
   "K9SAK_URL": "http://k9-sak.k9saksbehandling/k9/sak/api/pip/aktoer-for-sak",
   "GRAPHIQL_ENABLED": "false",
   "SPRINGDOC_ENABLED": "false",
-  "NO_NAV_SECURITY_JWT_ISSUER_AZUREV1_DISCOVERYURL": "https://login.microsoftonline.com/62366534-1ec3-4962-8869-9b5535279d0b/.well-known/openid-configuration",
   "NO_NAV_SECURITY_JWT_ISSUER_AZUREV2_DISCOVERYURL": "https://login.microsoftonline.com/62366534-1ec3-4962-8869-9b5535279d0b/v2.0/.well-known/openid-configuration",
   "NO_NAV_SECURITY_JWT_ISSUER_RESTSTS_DISCOVERYURL": "https://security-token-service.nais.adeo.no/rest/v1/sts/.well-known/openid-configuration",
   "INGRESSES": [
@@ -17,7 +16,6 @@
     "https://saf.intern.nav.no"
   ],
   "SRVSAF": "/serviceuser/data/prod/srvsaf",
-  "NO_NAV_SECURITY_JWT_ISSUER_AZUREV1_ACCEPTED_AUDIENCE": "9b4e07a3-4f4c-4bab-b866-87f62dff480d",
   "NO_NAV_SECURITY_JWT_ISSUER_RESTSTS_ACCEPTED_AUDIENCE": "srvpensjon,srvpselv,srvdokdistdpi,srvdokdistdpi-2,srvdokdisteformidl,srvdokdistfordeling,srveux-app,srvfamilie-ks-opps,srvfamilie-ks-mottak,srvjfr-enhancer,srvjfr-infotrygd,srvjfr-arena,srvjfr-manuell-opp,srvjfr-filter,srvpensr,srvsyfosmpapirmottak,srvmelosys,srvmelosys-eessi,srvcoronapenger,srvjfr-automatisk,srvk9formidling,srvmedlemskap,srvk9sak,srvk9klage,srvfpfordel,srvengangsstonad,srvdp-oppslag-henven,srvskjermingsbrev,srvpermref-journalf,srvomsitramme,srvdp-filter-permit,srvklage-dittnav,srvfpabakus,srv-sif-innsyn-mtk,srvsupstonad,srvarena-dokgen,srvregpapirsm,srv-digihotProxy,srvk9-fordel,srvtiltakrefusjon,srvdp-proxy,srvklage-saksbeh,srv-oms-proxy,srvsyfoinntektsmel,srvisproxy,srvccmarkivogdist,srvhenvendelseapi,srvbdarkiv,srvbdarkivering,srvfpfordel,srvengangsstonad,srvfpformidling,srvfptilbake,srvinnsending-api,srvk9-tilbake,srvspberegning,srvdokproduksjon,srvdokumentfordeling",
   "SAF_PRIVILEGIEDSERVICEUSERS": "srvdokdistfordeling,srvdokdisteformidling,srvtilbakemeldings,srvomsitramme,srvmelosys,srvdokproduksjon",
   "BIDRAG_SAK_URL": "https://bidrag-sak.nais.adeo.no/bidrag-sak/pip/sak/",
