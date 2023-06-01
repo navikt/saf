@@ -19,7 +19,6 @@
 		<module>app</module>
 		<module>core</module>
 		<module>dokumentoversikt</module>
-		<module>graphiql</module>
 		<module>hentdokument</module>
 		<module>journalpost</module>
 		<module>tilknyttedejournalposter</module>
@@ -73,11 +72,6 @@
 			<dependency>
 				<groupId>no.nav.saf</groupId>
 				<artifactId>hentdokument</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>no.nav.saf</groupId>
-				<artifactId>graphiql</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>

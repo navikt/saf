@@ -15,8 +15,6 @@ spec:
       value: {{ FPSAK_URL }}
     - name: K9SAK_URL
       value: {{ K9SAK_URL }}
-    - name: GRAPHIQL_ENABLED
-      value: "{{ GRAPHIQL_ENABLED }}"
     - name: SPRINGDOC_ENABLED
       value: "{{ SPRINGDOC_ENABLED }}"
     - name: NO_NAV_SECURITY_JWT_ISSUER_AZUREV2_DISCOVERYURL

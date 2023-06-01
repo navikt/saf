@@ -30,10 +30,6 @@
 		</dependency>
 		<dependency>
 			<groupId>no.nav.saf</groupId>
-			<artifactId>graphiql</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>no.nav.saf</groupId>
 			<artifactId>sak</artifactId>
 		</dependency>
 

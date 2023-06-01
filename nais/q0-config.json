@@ -6,7 +6,6 @@
   "SAK_SAKER_URL": "https://sak-q0.dev.intern.nav.no/api/v1/saker",
   "FPSAK_URL": "https://fpsak-api.dev.intern.nav.no/fpsak/api/pip/aktoer-for-sak",
   "K9SAK_URL": "http://k9-sak.k9saksbehandling/k9/sak/api/pip/aktoer-for-sak",
-  "GRAPHIQL_ENABLED": "true",
   "SPRINGDOC_ENABLED": "true",
   "NO_NAV_SECURITY_JWT_ISSUER_AZUREV2_DISCOVERYURL": "https://login.microsoftonline.com/966ac572-f5b7-4bbe-aa88-c76419c0f851/v2.0/.well-known/openid-configuration",
   "NO_NAV_SECURITY_JWT_ISSUER_RESTSTS_DISCOVERYURL": "https://security-token-service.dev.adeo.no/rest/v1/sts/.well-known/openid-configuration",
