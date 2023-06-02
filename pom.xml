@@ -7,7 +7,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.0.5</version>
+		<version>3.1.0</version>
 	</parent>
 
 	<groupId>no.nav.saf</groupId>
@@ -39,7 +39,7 @@
 		<snakeyaml.version>2.0</snakeyaml.version>
 
 		<!-- Test -->
-		<spring-cloud-starter-contract-stub-runner.version>4.0.1</spring-cloud-starter-contract-stub-runner.version>
+		<spring-cloud-starter-contract-stub-runner.version>4.0.3</spring-cloud-starter-contract-stub-runner.version>
 
 		<!-- Plugins -->
 		<maven-toolchains-plugin.version>3.1.0</maven-toolchains-plugin.version>
@@ -124,17 +124,13 @@
 				<artifactId>token-validation-spring</artifactId>
 				<version>${token-support.version}</version>
 			</dependency>
-			<dependency>
-				<groupId>no.nav.security</groupId>
-				<artifactId>token-validation-core</artifactId>
-				<version>${token-support.version}</version>
-			</dependency>
 			<!-- overrider transitive avhengigheter -->
 			<dependency>
 				<groupId>org.bouncycastle</groupId>
 				<artifactId>bcprov-jdk15on</artifactId>
 				<version>${bcprov-jdk15on.version}</version>
 			</dependency>
+
 			<!-- test -->
 			<dependency>
 				<groupId>org.springframework.cloud</groupId>

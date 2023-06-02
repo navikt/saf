@@ -73,7 +73,7 @@
 		</dependency>
 		<dependency>
 			<groupId>no.nav.security</groupId>
-			<artifactId>token-validation-core</artifactId>
+			<artifactId>token-validation-spring</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.httpcomponents.client5</groupId>
