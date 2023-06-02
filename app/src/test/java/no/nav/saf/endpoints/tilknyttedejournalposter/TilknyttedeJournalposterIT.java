@@ -33,19 +33,16 @@ import static no.nav.saf.domain.kode.Kanal.SDP;
 import static no.nav.saf.domain.kode.Tema.FOR;
 import static no.nav.saf.domain.kode.Variantformat.ARKIV;
 import static no.nav.saf.domain.visningsmodell.BrukerIdType.AKTOERID;
-import static org.apache.http.HttpHeaders.CONTENT_TYPE;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
-/**
- * @author Joakim Bjørnstad, Jbit AS
- */
 class TilknyttedeJournalposterIT extends AbstractItest {
 	private final String JOURNALPOST_ID = "400000000";
 	private final String DOKUMENT_INFO_ID = "500000000";

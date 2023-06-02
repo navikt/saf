@@ -46,17 +46,16 @@ import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static com.github.tomakehurst.wiremock.core.Options.DYNAMIC_PORT;
 import static com.github.tomakehurst.wiremock.stubbing.Scenario.STARTED;
 import static java.util.Objects.requireNonNull;
-import static org.apache.http.client.utils.URLEncodedUtils.CONTENT_TYPE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
+import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
-@ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = {AbstractItest.TestConfig.class, ApplicationConfig.class},
 		webEnvironment = RANDOM_PORT,
 		properties = {"spring.main.allow-bean-definition-overriding=true"})
@@ -64,6 +63,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 @EnableMockOAuth2Server
 @AutoConfigureWireMock(port = DYNAMIC_PORT)
 public abstract class AbstractItest {
+
 	private static final String SCENARIO_ABAC = "state_abac";
 	private static final String STATE_PERMIT = "state_permit";
 	private static final String STATE_PEP2 = "state_pep2";
@@ -76,8 +76,9 @@ public abstract class AbstractItest {
 
 	protected static void setupHappyPathRestSTS() {
 		stubFor(post("/reststs")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(org.apache.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
+				.willReturn(aResponse()
+						.withStatus(OK.value())
+						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("sts/sts-token.json")));
 	}
 
@@ -85,7 +86,7 @@ public abstract class AbstractItest {
 		stubFor(post("/azure_token")
 				.willReturn(aResponse()
 						.withStatus(OK.value())
-						.withHeader(org.apache.http.HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("azure/token_response_dummy.json")));
 	}
 
@@ -586,22 +587,22 @@ public abstract class AbstractItest {
 						.withBodyFile("abac/abac-deny.json")));
 	}
 
-	protected void verifyabacDenyPep7dSkipPep2Pep3Pep4Pep5Pep6dAndHttpStatusCode(HttpStatus expectedHttpStatus, HttpStatusCode actualHttpStatus) {
+	protected void verifyabacDenyPep7dSkipPep2Pep3Pep4Pep5Pep6dAndHttpStatusCode(HttpStatusCode expectedHttpStatus, HttpStatusCode actualHttpStatus) {
 		verify(3, postRequestedFor(urlEqualTo("/abac")));
 		assertEquals(expectedHttpStatus, actualHttpStatus);
 	}
 
-	protected void verifyabacDenyPep1gAndHttpStatusCode(HttpStatus expectedHttpStatus, HttpStatusCode actualHttpStatus) {
+	protected void verifyabacDenyPep1gAndHttpStatusCode(HttpStatusCode expectedHttpStatus, HttpStatusCode actualHttpStatus) {
 		verify(1, postRequestedFor(urlEqualTo("/abac")));
 		assertEquals(expectedHttpStatus, actualHttpStatus);
 	}
 
-	protected void verifyabacDenyPep2AndHttpStatusCode(HttpStatus expectedHttpStatus, HttpStatusCode actualHttpStatus) {
+	protected void verifyabacDenyPep2AndHttpStatusCode(HttpStatusCode expectedHttpStatus, HttpStatusCode actualHttpStatus) {
 		verify(2, postRequestedFor(urlEqualTo("/abac")));
 		assertEquals(expectedHttpStatus, actualHttpStatus);
 	}
 
-	protected void verifyabacDenyPep2dAndHttpStatusCode(boolean isDokumentoversikt, HttpStatus expectedHttpStatus, HttpStatusCode actualHttpStatus) {
+	protected void verifyabacDenyPep2dAndHttpStatusCode(boolean isDokumentoversikt, HttpStatusCode expectedHttpStatus, HttpStatusCode actualHttpStatus) {
 		if (isDokumentoversikt) {
 			verify(6, postRequestedFor(urlEqualTo("/abac")));
 		} else {
@@ -610,27 +611,27 @@ public abstract class AbstractItest {
 		assertEquals(expectedHttpStatus, actualHttpStatus);
 	}
 
-	protected void verifyabacDenyPep3ASkipPep2AndHttpStatusCode(HttpStatus expectedHttpStatus, HttpStatusCode actualHttpStatus) {
+	protected void verifyabacDenyPep3ASkipPep2AndHttpStatusCode(HttpStatusCode expectedHttpStatus, HttpStatusCode actualHttpStatus) {
 		verify(3, postRequestedFor(urlEqualTo("/abac")));
 		assertEquals(expectedHttpStatus, actualHttpStatus);
 	}
 
-	protected void verifyabacDenyPep3SkipPep2AndPep2dAndHttpStatusCode(HttpStatus expectedHttpStatus, HttpStatusCode actualHttpStatus) {
+	protected void verifyabacDenyPep3SkipPep2AndPep2dAndHttpStatusCode(HttpStatusCode expectedHttpStatus, HttpStatusCode actualHttpStatus) {
 		verify(2, postRequestedFor(urlEqualTo("/abac")));
 		assertEquals(expectedHttpStatus, actualHttpStatus);
 	}
 
-	protected void verifyabacDenyPep4SkipPep2OrPep3AndHttpStatusCode(HttpStatus expectedHttpStatus, HttpStatusCode actualHttpStatus) {
+	protected void verifyabacDenyPep4SkipPep2OrPep3AndHttpStatusCode(HttpStatusCode expectedHttpStatus, HttpStatusCode actualHttpStatus) {
 		verify(4, postRequestedFor(urlEqualTo("/abac")));
 		assertEquals(expectedHttpStatus, actualHttpStatus);
 	}
 
-	protected void verifyabacDenyPep4SkipPep2Pep3AndHttpStatusCode(HttpStatus expectedHttpStatus, HttpStatusCode actualHttpStatus) {
+	protected void verifyabacDenyPep4SkipPep2Pep3AndHttpStatusCode(HttpStatusCode expectedHttpStatus, HttpStatusCode actualHttpStatus) {
 		verify(3, postRequestedFor(urlEqualTo("/abac")));
 		assertEquals(expectedHttpStatus, actualHttpStatus);
 	}
 
-	protected void verifyabacDenyPep5SkipPep2OrPep3AndHttpStatusCode(boolean isDokumentoversikt, HttpStatus expectedHttpStatus, HttpStatusCode actualHttpStatus) {
+	protected void verifyabacDenyPep5SkipPep2OrPep3AndHttpStatusCode(boolean isDokumentoversikt, HttpStatusCode expectedHttpStatus, HttpStatusCode actualHttpStatus) {
 		if (isDokumentoversikt) {
 			verify(6, postRequestedFor(urlEqualTo("/abac")));
 		} else {
@@ -639,12 +640,12 @@ public abstract class AbstractItest {
 		assertEquals(expectedHttpStatus, actualHttpStatus);
 	}
 
-	protected void verifyabacDenyPep6dSkipPep2AndHttpStatusCode(HttpStatus expectedHttpStatus, HttpStatusCode actualHttpStatus) {
+	protected void verifyabacDenyPep6dSkipPep2AndHttpStatusCode(HttpStatusCode expectedHttpStatus, HttpStatusCode actualHttpStatus) {
 		verify(6, postRequestedFor(urlEqualTo("/abac")));
 		assertEquals(expectedHttpStatus, actualHttpStatus);
 	}
 
-	protected void verifyabacDenyPep6dSkipPep2Pep3AndHttpStatusCode(HttpStatus expectedHttpStatus, HttpStatusCode actualHttpStatus) {
+	protected void verifyabacDenyPep6dSkipPep2Pep3AndHttpStatusCode(HttpStatusCode expectedHttpStatus, HttpStatusCode actualHttpStatus) {
 		verify(5, postRequestedFor(urlEqualTo("/abac")));
 		assertEquals(expectedHttpStatus, actualHttpStatus);
 	}

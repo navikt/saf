@@ -16,13 +16,10 @@ import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.security.token.support.core.api.Protected;
 import no.nav.security.token.support.core.context.TokenValidationContextHolder;
 import org.slf4j.MDC;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.InputStreamReader;
@@ -34,7 +31,9 @@ import static no.nav.saf.endpoints.HeaderUtils.createNavCallid;
 import static no.nav.saf.headers.NavHeaders.NAV_CALLID;
 import static no.nav.saf.headers.NavHeaders.NAV_USER_ID;
 import static no.nav.saf.headers.NavHeaders.X_CORRELATION_ID;
+import static no.nav.saf.tilgangskontroll.SafRequestContext.KEY;
 import static no.nav.saf.util.MDCUtility.addMdcData;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @Hidden
 @RestController
@@ -47,7 +46,6 @@ public class GraphQLController {
 	private final AudienceCounter audienceCounter;
 	private final Map<String, Boolean> privilegiedServiceusers;
 
-	@Autowired
 	public GraphQLController(@Qualifier("privilegiedServiceusers") Map<String, Boolean> privilegiedServiceusers,
 							 GraphQLWiring graphQLWiring,
 							 GraphQLExceptionHandler graphQLExceptionHandler,
@@ -65,8 +63,7 @@ public class GraphQLController {
 		this.privilegiedServiceusers = privilegiedServiceusers;
 	}
 
-	@PostMapping(value =  {"/graphql", "/graphql/"}, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	@ResponseBody
+	@PostMapping(value =  {"/graphql", "/graphql/"}, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
 	public Map<String, Object> graphQLRequest(@RequestHeader(value = X_CORRELATION_ID, required = false) String xCorrelationId,
 											  @RequestHeader(value = NAV_CALLID, required = false) String navCallid,
 											  @RequestHeader(value = NAV_USER_ID, required = false) String navUserId,
@@ -92,7 +89,7 @@ public class GraphQLController {
 									.query(request.getQuery())
 									.operationName(request.getOperationName())
 									.variables(request.getVariables() == null ? Collections.emptyMap() : request.getVariables())
-									.graphQLContext((c) -> c.put(SafRequestContext.KEY, safRequestContext))
+									.graphQLContext((c) -> c.put(KEY, safRequestContext))
 									.build());
 			return executionResult.toSpecification();
 		} finally {

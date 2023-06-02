@@ -4,21 +4,16 @@ import graphql.ErrorType;
 import graphql.GraphQLError;
 import graphql.language.SourceLocation;
 import lombok.Getter;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static graphql.ErrorType.DataFetchingException;
 
 @Getter
 public class SafTechnicalException extends RuntimeException implements GraphQLError {
 	private final HttpStatusCode httpStatusCode;
-
-	public SafTechnicalException(HttpStatus httpStatus) {
-		super();
-		this.httpStatusCode = httpStatus;
-	}
 
 	public SafTechnicalException(String message, HttpStatusCode httpStatus) {
 		super(message);
@@ -42,7 +37,7 @@ public class SafTechnicalException extends RuntimeException implements GraphQLEr
 
 	@Override
 	public ErrorType getErrorType() {
-		return ErrorType.DataFetchingException;
+		return DataFetchingException;
 	}
 
 }

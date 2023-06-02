@@ -4,45 +4,41 @@ import graphql.ErrorType;
 import graphql.GraphQLError;
 import graphql.language.SourceLocation;
 import lombok.Getter;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static graphql.ErrorType.DataFetchingException;
+
 
 @Getter
 public class SafFunctionalException extends RuntimeException implements GraphQLError {
-	private final HttpStatusCode httpStatus;
+	private final HttpStatusCode httpStatusCode;
 
 	public SafFunctionalException() {
 		super();
-		httpStatus = null;
+		httpStatusCode = null;
 	}
 
 	public SafFunctionalException(String message) {
 		super(message);
-		this.httpStatus = null;
+		this.httpStatusCode = null;
 	}
 
-	public SafFunctionalException(HttpStatus httpStatus) {
-		super();
-		this.httpStatus = httpStatus;
-	}
-
-	public SafFunctionalException(String message, HttpStatusCode httpStatus) {
+	public SafFunctionalException(String message, HttpStatusCode httpStatusCode) {
 		super(message);
-		this.httpStatus = httpStatus;
+		this.httpStatusCode = httpStatusCode;
 	}
 
-	public SafFunctionalException(String message, Throwable cause, HttpStatusCode httpStatus) {
+	public SafFunctionalException(String message, Throwable cause, HttpStatusCode httpStatusCode) {
 		super(message, cause);
-		this.httpStatus = httpStatus;
+		this.httpStatusCode = httpStatusCode;
 	}
 
 	public SafFunctionalException(String message, Throwable cause) {
 		super(message, cause);
-		this.httpStatus = null;
+		this.httpStatusCode = null;
 	}
 
 	@Override
@@ -52,6 +48,6 @@ public class SafFunctionalException extends RuntimeException implements GraphQLE
 
 	@Override
 	public ErrorType getErrorType() {
-		return ErrorType.DataFetchingException;
+		return DataFetchingException;
 	}
 }
