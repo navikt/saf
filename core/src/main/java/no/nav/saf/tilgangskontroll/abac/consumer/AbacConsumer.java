@@ -19,6 +19,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.Duration;
+
+import static java.time.Duration.ofSeconds;
 import static java.util.Collections.singletonList;
 
 @Slf4j

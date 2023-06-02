@@ -1,6 +1,6 @@
 package no.nav.saf.query.sak.repo;
 
-import io.reactivex.Flowable;
+import io.reactivex.rxjava3.core.Flowable;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 import no.nav.saf.tilgangskontroll.SafRequestContext;

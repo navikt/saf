@@ -7,9 +7,10 @@ import no.nav.saf.config.ServiceuserAlias;
 import no.nav.saf.config.WebProxyProperties;
 import no.nav.saf.metrics.DokMonitoringAspect;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.client.HttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
+import org.apache.hc.client5.http.classic.HttpClient;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager;
+import org.apache.hc.core5.http.io.SocketConfig;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -26,6 +27,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static org.apache.hc.core5.util.Timeout.ofSeconds;
+
 @EnableAspectJAutoProxy
 @ComponentScan
 @Configuration
@@ -38,15 +41,17 @@ public class ApplicationConfig {
 		// Default timeouts for alle restklienter som bruker denne requestFactory.
 		// RestTemplate som behøver egne timeouts må konstruere en ny ClientHttpRequestFactory.
 		httpComponentsClientHttpRequestFactory.setConnectTimeout(5_000);
-		httpComponentsClientHttpRequestFactory.setReadTimeout(20_000);
 		return httpComponentsClientHttpRequestFactory;
 	}
 
 	@Bean
 	HttpClient httpClient() {
+		var readTimeout = SocketConfig.custom().setSoTimeout(ofSeconds(20)).build();
 		PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager();
 		connectionManager.setMaxTotal(400);
 		connectionManager.setDefaultMaxPerRoute(100);
+		connectionManager.setDefaultSocketConfig(readTimeout);
+
 		return HttpClients.custom()
 				.setConnectionManager(connectionManager)
 				.build();
@@ -56,15 +61,17 @@ public class ApplicationConfig {
 	ClientHttpRequestFactory hentJournalsakInfoClientHttpRequestFactory(HttpClient hentJournalsakInfoHttpClient) {
 		HttpComponentsClientHttpRequestFactory httpComponentsClientHttpRequestFactory = new HttpComponentsClientHttpRequestFactory(hentJournalsakInfoHttpClient);
 		httpComponentsClientHttpRequestFactory.setConnectTimeout(5_000);
-		httpComponentsClientHttpRequestFactory.setReadTimeout(180_000);
 		return httpComponentsClientHttpRequestFactory;
 	}
 
 	@Bean
 	HttpClient hentJournalsakInfoHttpClient() {
+		var readTimeout = SocketConfig.custom().setSoTimeout(ofSeconds(180)).build();
 		PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager();
 		connectionManager.setMaxTotal(200);
 		connectionManager.setDefaultMaxPerRoute(200);
+		connectionManager.setDefaultSocketConfig(readTimeout);
+		
 		return HttpClients.custom()
 				.setConnectionManager(connectionManager)
 				.build();
@@ -72,9 +79,12 @@ public class ApplicationConfig {
 
 	@Bean
 	public ClientHttpRequestFactory azureTokenHttpRequestFactory(WebProxyProperties webProxyProperties) {
+		var readTimeout = SocketConfig.custom().setSoTimeout(ofSeconds(20)).build();
 		var connectionManager = new PoolingHttpClientConnectionManager();
 		connectionManager.setMaxTotal(40);
 		connectionManager.setDefaultMaxPerRoute(10);
+		connectionManager.setDefaultSocketConfig(readTimeout);
+
 
 		var httpClient = webProxyProperties.getProxy()
 				.map(proxy -> HttpClients.custom()
@@ -87,7 +97,6 @@ public class ApplicationConfig {
 
 		var clientHttpRequestFactory = new HttpComponentsClientHttpRequestFactory(httpClient);
 		clientHttpRequestFactory.setConnectTimeout(5_000);
-		clientHttpRequestFactory.setReadTimeout(20_000);
 
 		return clientHttpRequestFactory;
 	}

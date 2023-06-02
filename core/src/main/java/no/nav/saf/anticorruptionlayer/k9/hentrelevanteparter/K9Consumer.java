@@ -14,8 +14,10 @@ import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.Duration;
 import java.util.List;
 
+import static java.time.Duration.ofSeconds;
 import static no.nav.saf.headers.NavHeaders.NAV_CALLID;
 import static no.nav.saf.util.MDCUtility.getCallId;
 import static org.springframework.http.HttpMethod.GET;

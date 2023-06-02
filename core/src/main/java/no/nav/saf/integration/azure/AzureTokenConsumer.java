@@ -15,8 +15,10 @@ import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.Duration;
 import java.util.Collections;
 
+import static java.time.Duration.ofSeconds;
 import static no.nav.saf.cache.LokalCacheConfig.AZURE_CLIENT_CREDENTIAL_TOKEN_CACHE;
 import static org.springframework.http.HttpMethod.POST;
 import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED;

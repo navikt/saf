@@ -23,11 +23,13 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.client.UnknownContentTypeException;
 
 import java.net.URI;
+import java.time.Duration;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
 import static java.lang.String.format;
+import static java.time.Duration.ofSeconds;
 import static no.nav.saf.headers.NavHeaders.NAV_CALLID;
 import static no.nav.saf.util.MDCUtility.getCallId;
 import static org.apache.commons.lang3.StringUtils.isBlank;

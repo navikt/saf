@@ -7,7 +7,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.7.11</version>
+		<version>3.1.0</version>
 	</parent>
 
 	<groupId>no.nav.saf</groupId>
@@ -30,18 +30,16 @@
 
 		<graphql-java.version>20.3</graphql-java.version>
 		<resilience4j.version>2.0.2</resilience4j.version>
-		<token-support.version>2.1.9</token-support.version>
+		<token-support.version>3.1.0</token-support.version>
 		<commons-text.version>1.10.0</commons-text.version>
-		<springdoc-openapi-ui.version>1.7.0</springdoc-openapi-ui.version>
+		<springdoc-openapi-starter-webmvc-ui.version>2.1.0</springdoc-openapi-starter-webmvc-ui.version>
 		<logstash-logback-encoder.version>7.3</logstash-logback-encoder.version>
 		<logback-syslog4j.version>1.0.0</logback-syslog4j.version>
 		<bcprov-jdk15on.version>1.70</bcprov-jdk15on.version>
 		<snakeyaml.version>2.0</snakeyaml.version>
 
-		<!-- test -->
-		<!-- Versjonen over 3.0.3 gir trøbbel - blir problem med mock-oauth2-dep.
-		En test i DokumentoversiktBrukerIT feiler når flere testklasser blir kjørt samtidig -->
-		<spring-cloud-starter-contract-stub-runner.version>3.0.3</spring-cloud-starter-contract-stub-runner.version>
+		<!-- Test -->
+		<spring-cloud-starter-contract-stub-runner.version>4.0.3</spring-cloud-starter-contract-stub-runner.version>
 
 		<!-- Plugins -->
 		<maven-toolchains-plugin.version>3.1.0</maven-toolchains-plugin.version>
@@ -113,8 +111,8 @@
 			</dependency>
 			<dependency>
 				<groupId>org.springdoc</groupId>
-				<artifactId>springdoc-openapi-ui</artifactId>
-				<version>${springdoc-openapi-ui.version}</version>
+				<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+				<version>${springdoc-openapi-starter-webmvc-ui.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.commons</groupId>
@@ -126,17 +124,13 @@
 				<artifactId>token-validation-spring</artifactId>
 				<version>${token-support.version}</version>
 			</dependency>
-			<dependency>
-				<groupId>no.nav.security</groupId>
-				<artifactId>token-validation-core</artifactId>
-				<version>${token-support.version}</version>
-			</dependency>
 			<!-- overrider transitive avhengigheter -->
 			<dependency>
 				<groupId>org.bouncycastle</groupId>
 				<artifactId>bcprov-jdk15on</artifactId>
 				<version>${bcprov-jdk15on.version}</version>
 			</dependency>
+
 			<!-- test -->
 			<dependency>
 				<groupId>org.springframework.cloud</groupId>
