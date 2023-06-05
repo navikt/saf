@@ -9,7 +9,7 @@ import no.nav.saf.exceptions.SafTechnicalException;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
-import java.util.Comparator;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
@@ -61,6 +61,7 @@ public class UtsendingsInfoMapper {
 			return empty();
 		}
 		return Optional.of(Utsendingsinfo.builder()
+				.varselSendt(Collections.emptyList())
 				.fysiskpostSendt(Utsendingsinfo.FysiskpostSendt.builder()
 						.adressetekstKonvolutt(adressetekstKonvolutt)
 						.build())
