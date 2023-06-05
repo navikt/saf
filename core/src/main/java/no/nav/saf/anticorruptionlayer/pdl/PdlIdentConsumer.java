@@ -14,13 +14,10 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
-import java.time.Duration;
 import java.util.HashMap;
 import java.util.List;
 
-import static java.time.Duration.ofSeconds;
 import static java.util.Objects.requireNonNull;
-import static no.nav.saf.headers.NavHeaders.PDL_NAV_CALLID;
 import static no.nav.saf.util.MDCUtility.getCallId;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
@@ -33,8 +30,12 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 @Component
 class PdlIdentConsumer implements IdentConsumer {
 	private static final String PDL_INSTANCE = "pdl";
-	private static final String HEADER_PDL_NAV_CONSUMER_TOKEN = "Nav-Consumer-Token";
 	private static final String PERSON_IKKE_FUNNET_CODE = "not_found";
+	private static final String HEADER_PDL_NAV_CALL_ID = "Nav-Call-Id";
+	// https://pdldocs-navno.msappproxy.net/ekstern/index.html#_dokumenter_hjemmel_vha_tema
+	private static final String HEADER_PDL_BEHANDLINGSNUMMER = "behandlingsnummer";
+	// https://behandlingskatalog.nais.adeo.no/process/purpose/ARKIVPLEIE/756fd557-b95e-4b20-9de9-6179fb8317e6
+	private static final String ARKIVPLEIE_BEHANDLINGSNUMMER = "B315";
 
 	private final RestTemplate restTemplate;
 	private final URI pdlUri;
@@ -83,12 +84,12 @@ class PdlIdentConsumer implements IdentConsumer {
 	}
 
 	private RequestEntity.BodyBuilder baseRequest() {
-		StsResponse clientCredentialToken = stsRestConsumer.getStsToken();
+		StsResponse restStsToken = stsRestConsumer.getStsToken();
 		return RequestEntity.post(pdlUri)
 				.accept(APPLICATION_JSON)
-				.header(PDL_NAV_CALLID, getCallId())
 				.header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-				.header(AUTHORIZATION, "Bearer " + clientCredentialToken.getAccess_token())
-				.header(HEADER_PDL_NAV_CONSUMER_TOKEN, "Bearer " + clientCredentialToken.getAccess_token());
+				.header(AUTHORIZATION, "Bearer " + restStsToken.getAccess_token())
+				.header(HEADER_PDL_NAV_CALL_ID, getCallId())
+				.header(HEADER_PDL_BEHANDLINGSNUMMER, ARKIVPLEIE_BEHANDLINGSNUMMER);
 	}
 }
