@@ -308,7 +308,8 @@
     {
       "app": "fpformidling",
       "namespace": "teamforeldrepenger",
-      "cluster": "dev-fss"
+      "cluster": "dev-fss",
+      "roles": ["tema_for"]
     },
     {
       "app": "fpsak",
@@ -331,7 +332,8 @@
     {
       "app": "fptilbake",
       "namespace": "teamforeldrepenger",
-      "cluster": "dev-fss"
+      "cluster": "dev-fss",
+      "roles": ["tema_for"]
     },
     {
       "app": "k9-sak",
