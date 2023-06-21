@@ -348,7 +348,8 @@
     {
       "app": "k9-tilbake",
       "namespace": "k9saksbehandling",
-      "cluster": "dev-fss"
+      "cluster": "dev-fss",
+      "roles": ["tema_oms"]
     },
     {
       "app": "dokarkiv-q1",
