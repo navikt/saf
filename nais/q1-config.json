@@ -336,6 +336,12 @@
       "roles": ["tema_for"]
     },
     {
+      "app": "fpoversikt",
+      "namespace": "teamforeldrepenger",
+      "cluster": "dev-gcp",
+      "roles": ["tema_for"]
+    },
+    {
       "app": "k9-sak",
       "namespace": "k9saksbehandling",
       "cluster": "dev-fss"
