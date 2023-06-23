@@ -21,6 +21,20 @@ public final class MDCConstants {
 	 */
 	public static final String CONSUMER_ID = "consumerId";
 
+	/**
+	 * JournalpostId det gjelder (journalpost query, hentdokument)
+	 *
+	 * For sporing på abac logging
+	 */
+	public static final String JOURNALPOST_ID = "journalpostId";
+
+	/**
+	 * JournalpostId det gjelder (hentdokument)
+	 *
+	 * For sporing på abac logging
+	 */
+	public static final String DOKUMENT_INFO_ID = "dokumentInfoId";
+
 	private MDCConstants() {
 
 	}

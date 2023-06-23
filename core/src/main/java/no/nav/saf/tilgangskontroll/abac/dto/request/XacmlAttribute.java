@@ -5,5 +5,5 @@ import lombok.Value;
 @Value
 public class XacmlAttribute {
     String attributeId;
-    Object value;
+    String value;
 }

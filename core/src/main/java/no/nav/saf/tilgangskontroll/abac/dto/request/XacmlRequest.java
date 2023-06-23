@@ -31,22 +31,22 @@ public class XacmlRequest {
         bias = xacmlRequest.getBias();
     }
 
-    public XacmlRequest resource(String id, Object value) {
+    public XacmlRequest resource(String id, String value) {
         resources.add(new XacmlAttribute(id, value));
         return this;
     }
 
-    public XacmlRequest accessSubject(String id, Object value) {
+    public XacmlRequest accessSubject(String id, String value) {
         accessSubjects.add(new XacmlAttribute(id, value));
         return this;
     }
 
-    public XacmlRequest action(String id, Object value) {
+    public XacmlRequest action(String id, String value) {
         actions.add(new XacmlAttribute(id, value));
         return this;
     }
 
-    public XacmlRequest environment(String id, Object value) {
+    public XacmlRequest environment(String id, String value) {
         environments.add(new XacmlAttribute(id, value));
         return this;
     }

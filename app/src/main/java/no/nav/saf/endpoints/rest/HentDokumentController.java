@@ -34,6 +34,8 @@ import static no.nav.saf.endpoints.HeaderUtils.createNavCallid;
 import static no.nav.saf.headers.NavHeaders.NAV_CALLID;
 import static no.nav.saf.headers.NavHeaders.NAV_USER_ID;
 import static no.nav.saf.headers.NavHeaders.X_CORRELATION_ID;
+import static no.nav.saf.util.MDCConstants.DOKUMENT_INFO_ID;
+import static no.nav.saf.util.MDCConstants.JOURNALPOST_ID;
 import static no.nav.saf.util.MDCUtility.addMdcData;
 import static org.apache.commons.lang3.StringUtils.isNumeric;
 
@@ -83,6 +85,7 @@ public class HentDokumentController {
 		addMdcData(safRequestContext);
 		log.info("hentDokument har mottatt kall. journalpostId={}, dokumentInfoId={}, variantFormat={}", journalpostId, dokumentInfoId, variantFormat);
 		try {
+			mdcSporing(journalpostId, dokumentInfoId);
 			audienceCounter.increment(
 					safRequestContext.getSecurityContext().getIssuer(),
 					safRequestContext.getSecurityContext().getAudience()
@@ -120,6 +123,11 @@ public class HentDokumentController {
 		if (!isNumeric(dokumentInfoId)) {
 			throw new UgyldigInputException("dokumentInfoId må være et tall. dokumentInfoId=" + dokumentInfoId);
 		}
+	}
+
+	private void mdcSporing(String journalpostId, String dokumentInfoId) {
+		MDC.put(JOURNALPOST_ID, journalpostId);
+		MDC.put(DOKUMENT_INFO_ID, dokumentInfoId);
 	}
 
 	private void validateServiceUserAccess(SafRequestContext safRequestContext, String variantFormat) {
