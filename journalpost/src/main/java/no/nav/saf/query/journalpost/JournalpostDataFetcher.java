@@ -8,16 +8,15 @@ import no.nav.saf.domain.visningsmodell.Journalpost;
 import no.nav.saf.exceptions.SafTechnicalException;
 import no.nav.saf.graphql.GraphQLException;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
+import org.slf4j.MDC;
 import org.springframework.stereotype.Component;
 
 import static no.nav.saf.graphql.ErrorCode.BAD_REQUEST;
 import static no.nav.saf.graphql.ErrorCode.SERVER_ERROR;
+import static no.nav.saf.util.MDCConstants.JOURNALPOST_ID;
 import static no.nav.saf.util.MDCUtility.addMdcData;
 import static org.apache.commons.lang3.StringUtils.isNumeric;
 
-/**
- * @author Joakim Bjørnstad, Jbit AS
- */
 @Slf4j
 @Component
 public class JournalpostDataFetcher implements DataFetcher<DataFetcherResult<Journalpost>> {
@@ -32,26 +31,27 @@ public class JournalpostDataFetcher implements DataFetcher<DataFetcherResult<Jou
 	public DataFetcherResult<Journalpost> get(DataFetchingEnvironment environment) throws Exception {
 		SafRequestContext safRequestContext = environment.getGraphQlContext().get(SafRequestContext.KEY);
 		addMdcData(safRequestContext);
+		final String journalpostId = environment.getArgument("journalpostId");
 		try {
-			final String journalpostId = environment.getArgument("journalpostId");
+			mdcSporing(journalpostId);
 			validateJournalpostId(journalpostId, environment);
 			log.info("query journalpost. journalpostId={}", journalpostId);
 			Journalpost journalpost = journalpostQuery.hentJournalpost(journalpostId, safRequestContext, environment);
-			log.info("journalpost hentet. journalpostId={}", journalpostId);
+			log.info("query journalpost hentet. journalpostId={}", journalpostId);
 			return DataFetcherResult.<Journalpost>newResult()
 					.data(journalpost)
 					.build();
 		} catch (GraphQLException e) {
-			log.warn("query journalpost feilet: " + e.getError().getMessage());
+			log.warn("query journalpost(journalpostId={}) feilet. melding={}", journalpostId, e.getError().getMessage());
 			return e.toDataFetcherResult();
 		} catch (SafTechnicalException e) {
-			log.error("query journalpost teknisk feil: " + e.getMessage(), e);
+			log.error("query journalpost(journalpostId={}) teknisk feil. melding={}", journalpostId, e.getMessage(), e);
 			return DataFetcherResult.<Journalpost>newResult()
 					.error(SERVER_ERROR.construct(environment,
 							"Teknisk feil. Prøv igjen senere."))
 					.build();
 		} catch (Exception e) {
-			log.error("query journalpost ukjent teknisk feil:" + e.getMessage(), e);
+			log.error("query journalpost(journalpostId={}) ukjent teknisk feil. melding={}", journalpostId, e.getMessage(), e);
 			return DataFetcherResult.<Journalpost>newResult()
 					.error(SERVER_ERROR.construct(environment,
 							"Ukjent teknisk feil. Meld fra til #team_dokumentløsninger på Slack."))
@@ -59,8 +59,12 @@ public class JournalpostDataFetcher implements DataFetcher<DataFetcherResult<Jou
 		}
 	}
 
+	private static void mdcSporing(String journalpostId) {
+		MDC.put(JOURNALPOST_ID, journalpostId);
+	}
+
 	private void validateJournalpostId(String journalpostId, DataFetchingEnvironment environment) {
-		if(!isNumeric(journalpostId)) {
+		if (!isNumeric(journalpostId)) {
 			throw GraphQLException.of(BAD_REQUEST, environment, "journalpostId er en ikke-numerisk verdi.");
 		}
 	}

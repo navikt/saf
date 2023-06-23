@@ -5,17 +5,14 @@ import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlRequest;
 import no.nav.saf.tilgangskontroll.abac.dto.response.XacmlResponse;
 import org.springframework.stereotype.Component;
 
-/**
- * @author Joakim Bjørnstad, Jbit AS
- */
 @Component("applikasjonslogg")
 @Slf4j
 public class ApplikasjonsLogger extends AbacLogger {
 	public void logAbacDeny(final XacmlRequest xacmlRequest, final XacmlResponse xacmlResponse) {
-		log.info("{}. {};", sanitizeFnr(mapRequest(xacmlRequest)), sanitizeFnr(mapResponse(xacmlResponse)));
+		log.info("{}. {};", mapRequest(xacmlRequest), mapResponse(xacmlResponse));
 	}
 
 	public void logAbacPermit(final XacmlRequest xacmlRequest, final XacmlResponse xacmlResponse) {
-		log.debug("{}. {};", sanitizeFnr(mapRequest(xacmlRequest)), sanitizeFnr(mapResponse(xacmlResponse)));
+		log.debug("{}. {};", mapRequest(xacmlRequest), mapResponse(xacmlResponse));
 	}
 }

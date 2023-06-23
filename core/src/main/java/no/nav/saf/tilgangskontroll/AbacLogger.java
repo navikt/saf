@@ -13,7 +13,6 @@ import static org.apache.commons.lang3.StringUtils.substringAfterLast;
 public abstract class AbacLogger {
 
 	private static final String SEPARATOR = ".";
-	private static final String FNR_REGEX = "fnr=\\d{11}";
 
 	public abstract void logAbacDeny(final XacmlRequest xacmlRequest, final XacmlResponse xacmlResponse);
 
@@ -23,8 +22,7 @@ public abstract class AbacLogger {
 		return "Authorization Request: " +
 			   xacmlRequest.getResources()
 					   .stream()
-					   .map(xacmlAttribute -> substringAfterLast(xacmlAttribute.getAttributeId(), SEPARATOR) + "=" + xacmlAttribute
-							   .getValue())
+					   .map(xacmlAttribute -> substringAfterLast(xacmlAttribute.getAttributeId(), SEPARATOR) + "=" + maskValue(xacmlAttribute.getValue()))
 					   .collect(Collectors.joining(", "));
 	}
 
@@ -41,7 +39,11 @@ public abstract class AbacLogger {
 			   );
 	}
 
-	String sanitizeFnr(final String message) {
-		return message.replaceAll(FNR_REGEX, "fnr=****");
+	private static String maskValue(String value) {
+		return switch (value.length()) {
+			case 11 -> "***********";
+			case 13 -> "*************";
+			default -> value;
+		};
 	}
 }
