@@ -56,19 +56,4 @@ class AbacLoggerTest {
 		resources.forEach(p -> xacmlRequest.resource(p.getKey(), p.getValue()));
 		return xacmlRequest;
 	}
-//
-//	@Test
-//	void shouldSanitizeAktoerId() {
-//		final String scrubbed = abacLogger.sanitizeFnr("Authorization Request: domene=saf, resource_type=no.nav.abac.attributter.resource.saf.person, aktoerId_resource=2222222222222.  Authorization Response: decision=Deny, cause=cause-0002-ikketilgangtilNAVbrukersenhet, deny_policy=fp4_geografi, deny_rule=ingen_tilgang_enhet;");
-//		assertEquals("Authorization Request: domene=saf, resource_type=no.nav.abac.attributter.resource.saf.person, aktoerId_resource=*************.  Authorization Response: decision=Deny, cause=cause-0002-ikketilgangtilNAVbrukersenhet, deny_policy=fp4_geografi, deny_rule=ingen_tilgang_enhet;", scrubbed);
-//	}
-//
-//	@Test
-//	void shouldNotSanitizeStringNotContainingFnrMatch() {
-//		final String message = "Authorization Request: domene=saf, resource_type=no.nav.abac.attributter.resource.saf.organisasjon, orgnr=999999999.  Authorization Response: decision=Deny, cause=cause-0002-ikketilgangtilNAVbrukersenhet, deny_policy=fp4_geografi, deny_rule=ingen_tilgang_enhet;";
-//		final String scrubbed = abacLogger.sanitizeFnr(message);
-//		assertEquals(message, scrubbed);
-//	}
-
-	//  Authorization Response: decision=Deny, cause=cause-0002-ikketilgangtilNAVbrukersenhet, deny_policy=fp4_geografi, deny_rule=ingen_tilgang_enhet;
 }
