@@ -314,7 +314,7 @@
       "roles": ["tema_for"]
     },
     {
-      "app": "fptilbake",
+      "app": "fpoversikt",
       "namespace": "teamforeldrepenger",
       "cluster": "prod-gcp",
       "roles": ["tema_for"]
