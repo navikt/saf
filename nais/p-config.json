@@ -314,6 +314,12 @@
       "roles": ["tema_for"]
     },
     {
+      "app": "fpoversikt",
+      "namespace": "teamforeldrepenger",
+      "cluster": "prod-gcp",
+      "roles": ["tema_for"]
+    },
+    {
       "app": "joarkadmin",
       "namespace": "teamdokumenthandtering",
       "cluster": "prod-fss"
