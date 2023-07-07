@@ -424,6 +424,12 @@
       "namespace": "team-rpa",
       "cluster": "dev-fss",
       "roles": ["tema_ind"]
+    },
+    {
+      "app": "skribenten-backend-lokal",
+      "namespace": "pensjonsbrev",
+      "cluster": "dev-gcp",
+      "roles": ["tema_pen", "tema_ufo"]
     }
   ]
 }
