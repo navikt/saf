@@ -7,7 +7,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.1.0</version>
+		<version>3.1.1</version>
 	</parent>
 
 	<groupId>no.nav.saf</groupId>
@@ -31,12 +31,10 @@
 		<graphql-java.version>20.4</graphql-java.version>
 		<resilience4j.version>2.1.0</resilience4j.version>
 		<token-support.version>3.1.0</token-support.version>
-		<commons-text.version>1.10.0</commons-text.version>
 		<springdoc-openapi-starter-webmvc-ui.version>2.1.0</springdoc-openapi-starter-webmvc-ui.version>
 		<logstash-logback-encoder.version>7.4</logstash-logback-encoder.version>
 		<logback-syslog4j.version>1.0.0</logback-syslog4j.version>
 		<bcprov-jdk15on.version>1.70</bcprov-jdk15on.version>
-		<snakeyaml.version>2.0</snakeyaml.version>
 
 		<!-- Test -->
 		<spring-cloud-starter-contract-stub-runner.version>4.0.3</spring-cloud-starter-contract-stub-runner.version>
@@ -80,7 +78,7 @@
 
 			<dependency>
 				<groupId>io.github.resilience4j</groupId>
-				<artifactId>resilience4j-spring-boot2</artifactId>
+				<artifactId>resilience4j-spring-boot3</artifactId>
 				<version>${resilience4j.version}</version>
 			</dependency>
 			<dependency>
@@ -113,11 +111,6 @@
 				<groupId>org.springdoc</groupId>
 				<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
 				<version>${springdoc-openapi-starter-webmvc-ui.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.commons</groupId>
-				<artifactId>commons-text</artifactId>
-				<version>${commons-text.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>no.nav.security</groupId>
