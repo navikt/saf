@@ -60,7 +60,8 @@
     {
       "app": "ezbrev-backend-q4",
       "namespace": "teamdokumenthandtering",
-      "cluster": "dev-fss"
+      "cluster": "dev-fss",
+      "roles": ["tema_alle"]
     },
     {
       "app": "testnav-saf-proxy-trygdeetaten",
