@@ -414,6 +414,11 @@
       "roles": ["tema_alle"]
     },
     {
+      "app": "ezbrev-backend-q4",
+      "namespace": "teamdokumenthandtering",
+      "cluster": "dev-fss"
+    },
+    {
       "app": "rpa-medlemskap-og-avgift",
       "namespace": "team-rpa",
       "cluster": "dev-fss",

@@ -51,6 +51,11 @@
       "cluster": "prod-fss"
     },
     {
+      "app": "ezbrev-backend-q4",
+      "namespace": "teamdokumenthandtering",
+      "cluster": "dev-fss"
+    },
+    {
       "app": "testnav-saf-proxy-trygdeetaten",
       "namespace": "dolly",
       "cluster": "dev-fss",

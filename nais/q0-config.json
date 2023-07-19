@@ -63,6 +63,11 @@
       "cluster": "dev-fss"
     },
     {
+      "app": "ezbrev-backend-q4",
+      "namespace": "teamdokumenthandtering",
+      "cluster": "dev-fss"
+    },
+    {
       "app": "ida",
       "namespace": "traktor",
       "cluster": "prod-fss"
