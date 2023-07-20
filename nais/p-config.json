@@ -23,12 +23,13 @@
   "SAF_ENDPOINTS_PEN_SAK_SAMMENDRAG": "https://pensjon-pen.nais.adeo.no/pen/springapi/sak/sammendrag",
   "SAF_ENDPOINTS_PEN_BRUKER_FOR_SAK": "https://pensjon-pen.nais.adeo.no/pen/api/pip/hentBrukerOgEnhetstilgangerForSak/v1",
   "SAF_ENDPOINTS_PEN_SCOPE": "api://prod-fss.pensjondeployer.pensjon-pen/.default",
+  "SAF_ENDPOINTS_DOKARKIV_URL": "https://dokarkiv.intern.nav.no/rest/internal/safintern",
+  "SAF_ENDPOINTS_DOKARKIV_SCOPE": "api://prod-fss.teamdokumenthandtering.dokarkiv/.default",
   "SAF_REDIS_HOSTNAME":  "saf-redis",
   "RESTSECURITYTOKENSERVICE_URL": "https://security-token-service.nais.adeo.no/rest/v1/sts/token",
   "APPDYNAMICS": "/apikey/appdynamics/prod",
   "APPD_NAME": "saf",
   "APP_NAME": "saf",
-  "AZURE_APP_TOKEN_URL": "https://login.microsoftonline.com/62366534-1ec3-4962-8869-9b5535279d0b/oauth2/v2.0/token",
   "AZURE_IAC_RULES": [
     {
       "app": "familie-integrasjoner",

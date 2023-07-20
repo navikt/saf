@@ -14,10 +14,8 @@ import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
-import java.time.Duration;
 import java.util.List;
 
-import static java.time.Duration.ofSeconds;
 import static no.nav.saf.headers.NavHeaders.NAV_CALLID;
 import static no.nav.saf.util.MDCUtility.getCallId;
 import static org.springframework.http.HttpMethod.GET;
@@ -27,6 +25,8 @@ import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 
+// Ved evt overgang til WebClient, pass på proxy og kubernetes service discover endpoint url
+// Kan hende den forsøker kalle med webproxy pga endepunkt ikke ligger inne i default noProxy config
 @Component
 public class K9Consumer {
 	private static final String K9_INSTANCE = "k9sak";

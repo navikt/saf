@@ -1,6 +1,5 @@
 package no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo;
 
-import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.FinnJournalposterRequestTo;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.FinnJournalposterResponseTo;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark901.HentTilgangJournalpostResponseTo;
@@ -9,7 +8,6 @@ import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark903.Tilknyt
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark903.TilknyttedeJournalposterResponse;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark904.FinnJournalposterStatusRequestTo;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark904.FinnJournalposterStatusResponseTo;
-import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark920.HentDokumentResponseTo;
 import no.nav.saf.config.ServiceuserAlias;
 import no.nav.saf.exceptions.DokumentIkkeFunnetException;
 import no.nav.saf.exceptions.JournalpostIkkeFunnetException;
@@ -24,7 +22,6 @@ import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
@@ -33,12 +30,8 @@ import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
-import java.time.Duration;
-
-import static java.time.Duration.ofSeconds;
 import static no.nav.saf.headers.NavHeaders.NAV_CALLID;
 import static no.nav.saf.util.MDCConstants.CALL_ID;
-import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @Service
@@ -92,25 +85,6 @@ public class HentJournalsakinfo {
 					throw new SafFunctionalException(String.format("hentTilgangJournalpost feilet funksjonelt. journalpostId=%s, dokumentInfoId=%s og variantFormat=%s. Feilmelding=%s",
 							journalpostId, dokumentInfoId, variantFormat, e.getMessage()));
 			}
-		}
-	}
-
-	@Monitor(value = "dok_consumer", extraTags = {"process", "hentDokument"}, histogram = true)
-	@CircuitBreaker(name = JOARK_HENTDOKUMENT)
-	public HentDokumentResponseTo hentDokument(String dokumentInfoId, String variantFormat) {
-		try {
-			ResponseEntity<String> response = callHentDokument(dokumentInfoId, variantFormat);
-
-			return HentDokumentResponseTo.builder()
-					.dokument(response.getBody())
-					.mediaType(response.getHeaders().getContentType())
-					.build();
-		} catch (HttpServerErrorException e) {
-			throw new SafTechnicalException(String.format("Henting av dokument fra fagarkivet feilet teknisk. Status=%s. Feilmelding=%s",
-					e.getStatusCode(), e.getMessage()), e, e.getStatusCode());
-		} catch (HttpClientErrorException e) {
-			throw new DokumentIkkeFunnetException(String.format("Dokument med dokumentInfoId=%s og variantFormat=%s ikke funnet. Feilmelding=%s",
-					dokumentInfoId, variantFormat, e.getMessage()));
 		}
 	}
 

@@ -23,12 +23,13 @@
   "SAF_ENDPOINTS_PEN_SAK_SAMMENDRAG": "https://pensjon-pen-q0.nais.preprod.local/pen/springapi/sak/sammendrag",
   "SAF_ENDPOINTS_PEN_BRUKER_FOR_SAK": "https://pensjon-pen-q0.nais.preprod.local/pen/api/pip/hentBrukerOgEnhetstilgangerForSak/v1",
   "SAF_ENDPOINTS_PEN_SCOPE": "api://dev-fss.teampensjon.pensjon-pen-q0/.default",
+  "SAF_ENDPOINTS_DOKARKIV_URL": "https://dokarkiv-q0.dev.intern.nav.no/rest/internal/safintern",
+  "SAF_ENDPOINTS_DOKARKIV_SCOPE": "api://dev-fss.teamdokumenthandtering.dokarkiv-q0/.default",
   "SAF_REDIS_HOSTNAME":  "saf-redis-q0",
   "RESTSECURITYTOKENSERVICE_URL": "https://security-token-service.dev.adeo.no/rest/v1/sts/token",
   "APPDYNAMICS": "/apikey/appdynamics/dev",
   "APPD_NAME": "saf_q0",
   "APP_NAME": "saf-q0",
-  "AZURE_APP_TOKEN_URL": "https://login.microsoftonline.com/966ac572-f5b7-4bbe-aa88-c76419c0f851/oauth2/v2.0/token",
   "AZURE_IAC_RULES": [
     {
       "app": "dokarkiv-q0",

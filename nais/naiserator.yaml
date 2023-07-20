@@ -37,14 +37,16 @@ spec:
       value: {{SAF_ENDPOINTS_PEN_BRUKER_FOR_SAK}}
     - name: SAF_ENDPOINTS_PEN_SCOPE
       value: {{SAF_ENDPOINTS_PEN_SCOPE}}
+    - name: SAF_ENDPOINTS_DOKARKIV_URL
+      value: {{SAF_ENDPOINTS_DOKARKIV_URL}}
+    - name: SAF_ENDPOINTS_DOKARKIV_SCOPE
+      value: {{SAF_ENDPOINTS_DOKARKIV_SCOPE}}
     - name: RESTSECURITYTOKENSERVICE_URL
       value: {{ RESTSECURITYTOKENSERVICE_URL }}
     - name: APPD_NAME
       value: {{ APPD_NAME }}
     - name: SAF_REDIS_HOSTNAME
       value: {{ SAF_REDIS_HOSTNAME }}
-    - name: AZURE_APP_TOKEN_URL
-      value: {{ AZURE_APP_TOKEN_URL }}
   image: {{ image }}
   ingresses:
     {{#each INGRESSES}}
