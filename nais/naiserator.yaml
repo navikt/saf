@@ -47,8 +47,6 @@ spec:
       value: {{ APPD_NAME }}
     - name: SAF_REDIS_HOSTNAME
       value: {{ SAF_REDIS_HOSTNAME }}
-    - name: AZURE_APP_TOKEN_URL
-      value: {{ AZURE_APP_TOKEN_URL }}
   image: {{ image }}
   ingresses:
     {{#each INGRESSES}}

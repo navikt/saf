@@ -31,7 +31,6 @@
   "APPDYNAMICS": "/apikey/appdynamics/dev",
   "APPD_NAME": "saf_q1",
   "APP_NAME": "saf-q1",
-  "AZURE_APP_TOKEN_URL": "https://login.microsoftonline.com/966ac572-f5b7-4bbe-aa88-c76419c0f851/oauth2/v2.0/token",
   "AZURE_IAC_RULES": [
     {
       "app": "pensjon-journalforing",
