@@ -454,6 +454,12 @@
       "roles": ["tema_dag"]
     },
     {
+      "app": "ezbrev-backend-q4",
+      "namespace": "teamdokumenthandtering",
+      "cluster": "dev-fss",
+      "roles": ["tema_alle"]
+    },
+    {
       "app": "macgyver",
       "namespace": "teamsykmelding",
       "cluster": "dev-gcp"
