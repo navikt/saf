@@ -1,7 +1,7 @@
 package no.nav.saf;
 
 import io.micrometer.core.instrument.MeterRegistry;
-import no.nav.saf.config.AzureProperties;
+import no.nav.saf.azure.AzureProperties;
 import no.nav.saf.config.SafProperties;
 import no.nav.saf.config.ServiceuserAlias;
 import no.nav.saf.config.WebProxyProperties;

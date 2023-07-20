@@ -1,10 +1,11 @@
 package no.nav.saf.config;
 
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.validation.annotation.Validated;
 
-import jakarta.validation.constraints.NotEmpty;
 import java.net.URI;
 
 @Data
@@ -52,6 +53,27 @@ public class SafProperties {
 		public URI getPenBrukerForSakURI() {
 			return URI.create(penBrukerForSak);
 		}
+
+		/**
+		 * URL til safintern oppslagstjenesten i dokarkiv.
+		 */
+		@NotNull
+		private AzureEndpoint dokarkiv;
+	}
+
+	@Data
+	@Validated
+	public static class AzureEndpoint {
+		/**
+		 * Url til tjeneste som har azure autorisasjon
+		 */
+		@NotEmpty
+		private String url;
+		/**
+		 * Scope til azure client credential flow
+		 */
+		@NotEmpty
+		private String scope;
 	}
 
 	@Data

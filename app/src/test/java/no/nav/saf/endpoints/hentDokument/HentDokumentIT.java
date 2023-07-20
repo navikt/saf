@@ -1,6 +1,5 @@
 package no.nav.saf.endpoints.hentDokument;
 
-import com.github.tomakehurst.wiremock.client.BasicCredentials;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.VariantFormatCode;
 import no.nav.saf.endpoints.AbstractItest;
 import org.junit.jupiter.api.BeforeEach;
@@ -9,8 +8,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-
-import java.util.Base64;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
@@ -53,7 +50,7 @@ class HentDokumentIT extends AbstractItest {
 	@Test
 	void hentGsakDokumentHappyPath() {
 		abacPermit();
-		setupHappycaseHentjournalsakinfoHentdokument();
+		stubHappyHentDokument();
 		stubFor(get("/hentjournalsakinfo/henttilgangjournalpost/" + JOURNALPOST_ID + "/" + DOKUMENT_ID + "/" + VARIANTFORMAT)
 				.willReturn(aResponse()
 						.withStatus(OK.value())
@@ -63,13 +60,13 @@ class HentDokumentIT extends AbstractItest {
 		ResponseEntity<String> responseEntity = callHentDokument();
 
 		assertOkArkivResponse(responseEntity);
-		verify(getRequestedFor(urlEqualTo("/hentjournalsakinfo/hentdokument/" + DOKUMENT_ID + "/" + VARIANTFORMAT)).withBasicAuth(new BasicCredentials("srvsaf", "srvsafpw")));
+		verify(getRequestedFor(urlEqualTo("/dokarkiv/hentdokument/" + DOKUMENT_ID + "/" + VARIANTFORMAT)));
 	}
 
 	@Test
 	void hentGsakDokumentHappyPathBrukerOrganisasjon() {
 		abacPermit();
-		setupHappycaseHentjournalsakinfoHentdokument();
+		stubHappyHentDokument();
 		stubFor(get("/hentjournalsakinfo/henttilgangjournalpost/" + JOURNALPOST_ID + "/" + DOKUMENT_ID + "/" + VARIANTFORMAT)
 				.willReturn(aResponse()
 						.withStatus(OK.value())
@@ -79,14 +76,14 @@ class HentDokumentIT extends AbstractItest {
 		ResponseEntity<String> responseEntity = callHentDokument();
 
 		assertOkArkivResponse(responseEntity);
-		verify(getRequestedFor(urlEqualTo("/hentjournalsakinfo/hentdokument/" + DOKUMENT_ID + "/" + VARIANTFORMAT)).withBasicAuth(new BasicCredentials("srvsaf", "srvsafpw")));
+		verify(getRequestedFor(urlEqualTo("/dokarkiv/hentdokument/" + DOKUMENT_ID + "/" + VARIANTFORMAT)));
 	}
 
 
 	@Test
 	void hentPsakDokumentHappyPath() {
 		abacPermit();
-		setupHappycaseHentjournalsakinfoHentdokument();
+		stubHappyHentDokument();
 		stubFor(get("/hentjournalsakinfo/henttilgangjournalpost/" + JOURNALPOST_ID + "/" + DOKUMENT_ID + "/" + VARIANTFORMAT)
 				.willReturn(aResponse()
 						.withStatus(OK.value())
@@ -100,7 +97,7 @@ class HentDokumentIT extends AbstractItest {
 		ResponseEntity<String> responseEntity = callHentDokument();
 
 		assertOkArkivResponse(responseEntity);
-		verify(getRequestedFor(urlEqualTo("/hentjournalsakinfo/hentdokument/" + DOKUMENT_ID + "/" + VARIANTFORMAT)).withBasicAuth(new BasicCredentials("srvsaf", "srvsafpw")));
+		verify(getRequestedFor(urlEqualTo("/dokarkiv/hentdokument/" + DOKUMENT_ID + "/" + VARIANTFORMAT)));
 		verify(getRequestedFor(urlEqualTo("/pensjonsakrs")).withHeader(AUTHORIZATION, equalTo("Bearer AzureAccessToken")));
 		verify(getRequestedFor(urlEqualTo("/pensjonsakrs")).withHeader("sakId", equalTo("10672720")));
 	}
@@ -108,7 +105,7 @@ class HentDokumentIT extends AbstractItest {
 	@Test
 	void hentMidlertidigDokumentHappyPath() {
 		abacPermit();
-		setupHappycaseHentjournalsakinfoHentdokument();
+		stubHappyHentDokument();
 		stubFor(get("/hentjournalsakinfo/henttilgangjournalpost/" + JOURNALPOST_ID + "/" + DOKUMENT_ID + "/" + VARIANTFORMAT)
 				.willReturn(aResponse()
 						.withStatus(OK.value())
@@ -118,17 +115,16 @@ class HentDokumentIT extends AbstractItest {
 		ResponseEntity<String> responseEntity = callHentDokument();
 
 		assertOkArkivResponse(responseEntity);
-		verify(getRequestedFor(urlEqualTo("/hentjournalsakinfo/hentdokument/" + DOKUMENT_ID + "/" + VARIANTFORMAT))
-				.withBasicAuth(new BasicCredentials("srvsaf", "srvsafpw")));
+		verify(getRequestedFor(urlEqualTo("/dokarkiv/hentdokument/" + DOKUMENT_ID + "/" + VARIANTFORMAT)));
 	}
 
 	@Test
 	void hentGsakDokumentSladdet() {
 		abacPermit();
-		stubFor(get("/hentjournalsakinfo/hentdokument/" + DOKUMENT_ID + "/" + SLADDET_VARIANTFORMAT)
+		stubFor(get("/dokarkiv/hentdokument/" + DOKUMENT_ID + "/" + SLADDET_VARIANTFORMAT)
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_PDF_VALUE)
-						.withBody(Base64.getEncoder().encode(TEST_FILE_BYTES))));
+						.withBody(TEST_FILE_BYTES)));
 		stubFor(get("/hentjournalsakinfo/henttilgangjournalpost/" + JOURNALPOST_ID + "/" + DOKUMENT_ID + "/" + SLADDET_VARIANTFORMAT)
 				.willReturn(aResponse()
 						.withStatus(OK.value())
@@ -138,7 +134,7 @@ class HentDokumentIT extends AbstractItest {
 		ResponseEntity<String> responseEntity = callHentDokumentSladdetVariant();
 
 		assertOkSladdetResponse(responseEntity);
-		verify(getRequestedFor(urlEqualTo("/hentjournalsakinfo/hentdokument/" + DOKUMENT_ID + "/" + SLADDET_VARIANTFORMAT)).withBasicAuth(new BasicCredentials("srvsaf", "srvsafpw")));
+		verify(getRequestedFor(urlEqualTo("/dokarkiv/hentdokument/" + DOKUMENT_ID + "/" + SLADDET_VARIANTFORMAT)));
 	}
 
 	@Test
@@ -197,7 +193,7 @@ class HentDokumentIT extends AbstractItest {
 	@Test
 	void hentDokumentNotFound() {
 		abacPermit();
-		stubFor(get("/hentjournalsakinfo/hentdokument/" + DOKUMENT_ID + "/" + VARIANTFORMAT)
+		stubFor(get("/dokarkiv/hentdokument/" + DOKUMENT_ID + "/" + VARIANTFORMAT)
 				.willReturn(aResponse().withStatus(NOT_FOUND.value())));
 		stubFor(get("/hentjournalsakinfo/henttilgangjournalpost/" + JOURNALPOST_ID + "/" + DOKUMENT_ID + "/" + VARIANTFORMAT)
 				.willReturn(aResponse()
@@ -214,29 +210,9 @@ class HentDokumentIT extends AbstractItest {
 	}
 
 	@Test
-	void hentDokumentDecodeFail() {
-		byte[] decodeFailProvokerFile = "whitespace breaks base64 decode".getBytes();
-
-		abacPermit();
-		stubFor(get("/hentjournalsakinfo/hentdokument/" + DOKUMENT_ID + "/" + VARIANTFORMAT)
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_PDF_VALUE)
-						.withBody(decodeFailProvokerFile)));
-		stubFor(get("/hentjournalsakinfo/henttilgangjournalpost/" + JOURNALPOST_ID + "/" + DOKUMENT_ID + "/" + VARIANTFORMAT)
-				.willReturn(aResponse()
-						.withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("hentjournalsakinfo/henttilgangjournalpost_gsak-happy.json")));
-
-		ResponseEntity<String> responseEntity = callHentDokument();
-		assertEquals(INTERNAL_SERVER_ERROR, responseEntity.getStatusCode());
-	}
-
-
-	@Test
 	void hentDokumentJoarkTechnicalFail() {
 		abacPermit();
-		stubFor(get("/hentjournalsakinfo/hentdokument/" + DOKUMENT_ID + "/" + VARIANTFORMAT)
+		stubFor(get("/dokarkiv/hentdokument/" + DOKUMENT_ID + "/" + VARIANTFORMAT)
 				.willReturn(aResponse().withStatus(INTERNAL_SERVER_ERROR.value())));
 		stubFor(get("/hentjournalsakinfo/henttilgangjournalpost/" + JOURNALPOST_ID + "/" + DOKUMENT_ID + "/" + VARIANTFORMAT)
 				.willReturn(aResponse()
@@ -251,7 +227,7 @@ class HentDokumentIT extends AbstractItest {
 	@Test
 	void hentDokumentHentSakBySakId() {
 		abacPermit();
-		setupHappycaseHentjournalsakinfoHentdokument();
+		stubHappyHentDokument();
 		stubFor(get("/hentjournalsakinfo/henttilgangjournalpost/" + JOURNALPOST_ID + "/" + DOKUMENT_ID + "/" + VARIANTFORMAT)
 				.willReturn(aResponse()
 						.withStatus(OK.value())
@@ -265,7 +241,7 @@ class HentDokumentIT extends AbstractItest {
 	@Test
 	void hentDokumentHentSakBySakIdNoTechinalErrorForGsak() {
 		abacPermit();
-		setupHappycaseHentjournalsakinfoHentdokument();
+		stubHappyHentDokument();
 		stubFor(get("/hentjournalsakinfo/henttilgangjournalpost/" + JOURNALPOST_ID + "/" + DOKUMENT_ID + "/" + VARIANTFORMAT)
 				.willReturn(aResponse()
 						.withStatus(OK.value())
@@ -279,7 +255,7 @@ class HentDokumentIT extends AbstractItest {
 	@Test
 	void hentDokumentHentSakBySakIdFunctionalFail() {
 		abacPermit();
-		setupHappycaseHentjournalsakinfoHentdokument();
+		stubHappyHentDokument();
 		stubFor(get("/hentjournalsakinfo/henttilgangjournalpost/" + JOURNALPOST_ID + "/" + DOKUMENT_ID + "/" + VARIANTFORMAT)
 				.willReturn(aResponse()
 						.withStatus(OK.value())
@@ -293,7 +269,7 @@ class HentDokumentIT extends AbstractItest {
 	@Test
 	void hentDokumentHentTilgangJournalPostTechnicalFail() {
 		abacPermit();
-		setupHappycaseHentjournalsakinfoHentdokument();
+		stubHappyHentDokument();
 		stubFor(get("/hentjournalsakinfo/henttilgangjournalpost/" + JOURNALPOST_ID + "/" + DOKUMENT_ID + "/" + VARIANTFORMAT)
 				.willReturn(aResponse()
 						.withStatus(INTERNAL_SERVER_ERROR.value())));
@@ -305,7 +281,7 @@ class HentDokumentIT extends AbstractItest {
 	@Test
 	void hentDokumentHentTilgangJournalPostTechnicalFunctionalFailNotFound() {
 		abacPermit();
-		setupHappycaseHentjournalsakinfoHentdokument();
+		stubHappyHentDokument();
 		stubFor(get("/hentjournalsakinfo/henttilgangjournalpost/" + JOURNALPOST_ID + "/" + DOKUMENT_ID + "/" + VARIANTFORMAT)
 				.willReturn(aResponse()
 						.withStatus(NOT_FOUND.value())));
@@ -321,7 +297,7 @@ class HentDokumentIT extends AbstractItest {
 	@Test
 	void hentDokumentHentTilgangJournalPostTechnicalFunctionalFailBadRequest() {
 		abacPermit();
-		setupHappycaseHentjournalsakinfoHentdokument();
+		stubHappyHentDokument();
 		stubFor(get("/hentjournalsakinfo/henttilgangjournalpost/" + JOURNALPOST_ID + "/" + DOKUMENT_ID + "/" + VARIANTFORMAT)
 				.willReturn(aResponse()
 						.withStatus(HttpStatus.BAD_REQUEST.value())));
@@ -337,7 +313,7 @@ class HentDokumentIT extends AbstractItest {
 	@Test
 	void shouldGetUnauthorizedFromPep1g() {
 		abacDenyPep1g();
-		setupHappycaseHentjournalsakinfoHentdokument();
+		stubHappyHentDokument();
 		stubFor(get("/hentjournalsakinfo/henttilgangjournalpost/" + JOURNALPOST_ID + "/" + DOKUMENT_ID + "/" + VARIANTFORMAT)
 				.willReturn(aResponse()
 						.withStatus(OK.value())
@@ -355,7 +331,7 @@ class HentDokumentIT extends AbstractItest {
 	@Test
 	void shouldGetUnauthorizedFromPep2() {
 		abacDenyPep2();
-		setupHappycaseHentjournalsakinfoHentdokument();
+		stubHappyHentDokument();
 		stubFor(get("/hentjournalsakinfo/henttilgangjournalpost/" + JOURNALPOST_ID + "/" + DOKUMENT_ID + "/" + VARIANTFORMAT)
 				.willReturn(aResponse()
 						.withStatus(OK.value())
@@ -388,7 +364,7 @@ class HentDokumentIT extends AbstractItest {
 	@Test
 	void shouldGetUnauthorizedFromPep2d() {
 		abacDenyPep2d();
-		setupHappycaseHentjournalsakinfoHentdokument();
+		stubHappyHentDokument();
 		stubFor(get("/bidrag/765432")
 				.willReturn(aResponse()
 						.withStatus(OK.value())
@@ -411,7 +387,7 @@ class HentDokumentIT extends AbstractItest {
 	@Test
 	void shouldGetUnauthorizedFromPep3() {
 		abacDenyPep3SkipPep2dAndPep2();
-		setupHappycaseHentjournalsakinfoHentdokument();
+		stubHappyHentDokument();
 		stubFor(get("/bidrag/765432")
 				.willReturn(aResponse()
 						.withStatus(OK.value())
@@ -434,7 +410,7 @@ class HentDokumentIT extends AbstractItest {
 	@Test
 	void shouldGetUnauthorizedFromPep4() {
 		abacDenyPep4SkipPep2OrPep3();
-		setupHappycaseHentjournalsakinfoHentdokument();
+		stubHappyHentDokument();
 		stubFor(get("/bidrag/765432")
 				.willReturn(aResponse()
 						.withStatus(OK.value())
@@ -453,7 +429,7 @@ class HentDokumentIT extends AbstractItest {
 	@Test
 	void shouldGetUnauthorizedFromPep5() {
 		abacDenyPep5SkipPep2OrPep3();
-		setupHappycaseHentjournalsakinfoHentdokument();
+		stubHappyHentDokument();
 		stubFor(get("/bidrag/765432")
 				.willReturn(aResponse()
 						.withStatus(OK.value())
@@ -472,7 +448,7 @@ class HentDokumentIT extends AbstractItest {
 	@Test
 	void shouldGetUnauthorizedFromPep6d() {
 		abacDenyPep6dSkipPep3OrPep2();
-		setupHappycaseHentjournalsakinfoHentdokument();
+		stubHappyHentDokument();
 		stubFor(get("/bidrag/765432")
 				.willReturn(aResponse()
 						.withStatus(OK.value())
@@ -491,7 +467,7 @@ class HentDokumentIT extends AbstractItest {
 	@Test
 	void shouldGetUnauthorizedFromPep7ForFp() {
 		abacDenyPep7dSkipPep2Pep3Pep4Pep5Pep6d();
-		setupHappycaseHentjournalsakinfoHentdokument();
+		stubHappyHentDokument();
 		stubFor(get("/hentjournalsakinfo/henttilgangjournalpost/" + JOURNALPOST_ID + "/" + DOKUMENT_ID + "/" + VARIANTFORMAT)
 				.willReturn(aResponse()
 						.withStatus(OK.value())
@@ -510,7 +486,7 @@ class HentDokumentIT extends AbstractItest {
 	@Test
 	void shouldGetUnauthorizedFromPep7ForK9TemaFri() {
 		abacDenyPep7dSkipPep2Pep3Pep4Pep5Pep6d();
-		setupHappycaseHentjournalsakinfoHentdokument();
+		stubHappyHentDokument();
 		stubFor(get("/hentjournalsakinfo/henttilgangjournalpost/" + JOURNALPOST_ID + "/" + DOKUMENT_ID + "/" + VARIANTFORMAT)
 				.willReturn(aResponse()
 						.withStatus(OK.value())
@@ -529,7 +505,7 @@ class HentDokumentIT extends AbstractItest {
 	@Test
 	void shouldGetUnauthorizedFromPep7ForK9TemaOms() {
 		abacDenyPep7dSkipPep2Pep3Pep4Pep5Pep6d();
-		setupHappycaseHentjournalsakinfoHentdokument();
+		stubHappyHentDokument();
 		stubFor(get("/hentjournalsakinfo/henttilgangjournalpost/" + JOURNALPOST_ID + "/" + DOKUMENT_ID + "/" + VARIANTFORMAT)
 				.willReturn(aResponse()
 						.withStatus(OK.value())
@@ -545,11 +521,11 @@ class HentDokumentIT extends AbstractItest {
 		verifyabacDenyPep7dSkipPep2Pep3Pep4Pep5Pep6dAndHttpStatusCode(FORBIDDEN, responseEntity.getStatusCode());
 	}
 
-	private static void setupHappycaseHentjournalsakinfoHentdokument() {
-		stubFor(get("/hentjournalsakinfo/hentdokument/" + DOKUMENT_ID + "/" + VARIANTFORMAT)
+	private static void stubHappyHentDokument() {
+		stubFor(get("/dokarkiv/hentdokument/" + DOKUMENT_ID + "/" + VARIANTFORMAT)
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_PDF_VALUE)
-						.withBody(Base64.getEncoder().encode(TEST_FILE_BYTES))));
+						.withBody(TEST_FILE_BYTES)));
 	}
 
 	private void assertOkArkivResponse(ResponseEntity<String> responseEntity) {

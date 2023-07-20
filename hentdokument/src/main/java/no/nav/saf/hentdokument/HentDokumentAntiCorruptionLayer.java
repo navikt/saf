@@ -10,7 +10,8 @@ import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark901.Tilgang
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark901.TilgangDokumentInfoDto;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark901.TilgangJournalpostDto;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark901.TilgangSakDto;
-import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark920.HentDokumentResponseTo;
+import no.nav.saf.anticorruptionlayer.joark.safintern.DokarkivConsumer;
+import no.nav.saf.anticorruptionlayer.joark.safintern.hentdokument.HentDokumentResponseTo;
 import no.nav.saf.domain.Arkivsak;
 import no.nav.saf.domain.HentDokument;
 import no.nav.saf.domain.kode.Arkivsakssystem;
@@ -19,7 +20,6 @@ import no.nav.saf.domain.tilgangsmodell.TilgangDokumentInfo;
 import no.nav.saf.domain.tilgangsmodell.TilgangDokumentvariant;
 import no.nav.saf.domain.tilgangsmodell.TilgangJournalpost;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
-import no.nav.saf.exceptions.SafTechnicalException;
 import no.nav.saf.exceptions.UgyldigArkivsaksystemException;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +27,6 @@ import org.springframework.stereotype.Component;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.Collections;
 import java.util.Optional;
 
@@ -42,10 +41,13 @@ import static no.nav.saf.util.MimetypeFileextensionMapper.toFileextension;
 @Component
 public class HentDokumentAntiCorruptionLayer {
 	private final HentJournalsakinfo hentJournalsakinfo;
+	private final DokarkivConsumer dokarkivConsumer;
 
 	@Autowired
-	public HentDokumentAntiCorruptionLayer(HentJournalsakinfo hentJournalsakinfo) {
+	public HentDokumentAntiCorruptionLayer(HentJournalsakinfo hentJournalsakinfo,
+										   DokarkivConsumer dokarkivConsumer) {
 		this.hentJournalsakinfo = hentJournalsakinfo;
+		this.dokarkivConsumer = dokarkivConsumer;
 	}
 
 	public TilgangJournalpost hentTilgangJournalpostFromSafRequestContext(SafRequestContext safRequestContext) {
@@ -105,19 +107,12 @@ public class HentDokumentAntiCorruptionLayer {
 	}
 
 	public HentDokument hentDokument(String dokumentInfoId, String variantFormat) {
-		HentDokumentResponseTo responseTo = hentJournalsakinfo.hentDokument(dokumentInfoId, variantFormat);
-		byte[] dokumentByteArray;
-		try {
-			dokumentByteArray = Base64.getDecoder().decode(responseTo.getDokument());
-		} catch (Exception e) {
-			throw new SafTechnicalException(String.format("Kunne ikke dekode dokument, dokumentInfoId=%s, variantFormat=%s. Feilmelding=%s", dokumentInfoId, variantFormat, e
-					.getMessage()), e);
-		}
+		HentDokumentResponseTo responseTo = dokarkivConsumer.hentDokument(dokumentInfoId, variantFormat);
 
 		return HentDokument.builder()
-				.dokument(dokumentByteArray)
-				.mediaType(responseTo.getMediaType())
-				.extension(toFileextension(responseTo.getMediaType()))
+				.dokument(responseTo.dokument())
+				.mediaType(responseTo.mediaType())
+				.extension(toFileextension(responseTo.mediaType()))
 				.build();
 	}
 
