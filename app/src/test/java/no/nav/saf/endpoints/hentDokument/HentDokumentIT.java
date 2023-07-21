@@ -17,6 +17,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static no.nav.saf.anticorruptionlayer.joark.domain.kode.VariantFormatCode.ARKIV;
+import static no.nav.saf.anticorruptionlayer.joark.domain.kode.VariantFormatCode.ORIGINAL;
 import static no.nav.saf.anticorruptionlayer.joark.domain.kode.VariantFormatCode.SLADDET;
 import static no.nav.saf.tilgangskontroll.pep.DenyReasonFactory.PEP2_DENY_REASON;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -28,9 +29,12 @@ import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.OK;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.http.MediaType.APPLICATION_PDF;
 import static org.springframework.http.MediaType.APPLICATION_PDF_VALUE;
+import static org.springframework.http.MediaType.TEXT_XML;
+import static org.springframework.http.MediaType.TEXT_XML_VALUE;
 
 class HentDokumentIT extends AbstractItest {
 
@@ -61,6 +65,38 @@ class HentDokumentIT extends AbstractItest {
 
 		assertOkArkivResponse(responseEntity);
 		verify(getRequestedFor(urlEqualTo("/dokarkiv/hentdokument/" + DOKUMENT_ID + "/" + VARIANTFORMAT)));
+	}
+
+	@Test
+	void hentXmlOriginalHappy() {
+		abacPermit();
+		stubHappyHentDokumentXml();
+		stubFor(get("/hentjournalsakinfo/henttilgangjournalpost/" + JOURNALPOST_ID + "/" + DOKUMENT_ID + "/" + ORIGINAL)
+				.willReturn(aResponse()
+						.withStatus(OK.value())
+						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("hentjournalsakinfo/henttilgangjournalpost_gsak-happy.json")));
+
+		ResponseEntity<String> responseEntity = callHentDokument(ORIGINAL);
+
+		assertOkXmlOriginalResponse(responseEntity);
+		verify(getRequestedFor(urlEqualTo("/dokarkiv/hentdokument/" + DOKUMENT_ID + "/" + ORIGINAL)));
+	}
+
+	@Test
+	void hentJsonOriginalHappy() {
+		abacPermit();
+		stubHappyHentDokumentJson();
+		stubFor(get("/hentjournalsakinfo/henttilgangjournalpost/" + JOURNALPOST_ID + "/" + DOKUMENT_ID + "/" + ORIGINAL)
+				.willReturn(aResponse()
+						.withStatus(OK.value())
+						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("hentjournalsakinfo/henttilgangjournalpost_gsak-happy.json")));
+
+		ResponseEntity<String> responseEntity = callHentDokument(ORIGINAL);
+
+		assertOkJsonResponse(responseEntity);
+		verify(getRequestedFor(urlEqualTo("/dokarkiv/hentdokument/" + DOKUMENT_ID + "/" + ORIGINAL)));
 	}
 
 	@Test
@@ -528,6 +564,20 @@ class HentDokumentIT extends AbstractItest {
 						.withBody(TEST_FILE_BYTES)));
 	}
 
+	private static void stubHappyHentDokumentXml() {
+		stubFor(get("/dokarkiv/hentdokument/" + DOKUMENT_ID + "/" + ORIGINAL)
+				.willReturn(aResponse().withStatus(OK.value())
+						.withHeader(CONTENT_TYPE, TEXT_XML_VALUE)
+						.withBody(TEST_FILE_BYTES)));
+	}
+
+	private static void stubHappyHentDokumentJson() {
+		stubFor(get("/dokarkiv/hentdokument/" + DOKUMENT_ID + "/" + ORIGINAL)
+				.willReturn(aResponse().withStatus(OK.value())
+						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBody(TEST_FILE_BYTES)));
+	}
+
 	private void assertOkArkivResponse(ResponseEntity<String> responseEntity) {
 		assertEquals(DOKUMENT_ID + "_" + VARIANTFORMAT + ".pdf", responseEntity.getHeaders().getContentDisposition().getFilename());
 	}
@@ -544,8 +594,29 @@ class HentDokumentIT extends AbstractItest {
 		assertEquals(new String(TEST_FILE_BYTES), responseEntity.getBody());
 	}
 
+	private void assertOkXmlOriginalResponse(ResponseEntity<String> responseEntity) {
+		assertEquals(OK, responseEntity.getStatusCode());
+		assertEquals(TEXT_XML, responseEntity.getHeaders().getContentType());
+		assertEquals("inline", responseEntity.getHeaders().getContentDisposition().getType());
+		assertEquals(new String(TEST_FILE_BYTES), responseEntity.getBody());
+		assertEquals(DOKUMENT_ID + "_" + ORIGINAL + ".xml", responseEntity.getHeaders().getContentDisposition().getFilename());
+	}
+
+	private void assertOkJsonResponse(ResponseEntity<String> responseEntity) {
+		assertEquals(OK, responseEntity.getStatusCode());
+		assertEquals(APPLICATION_JSON, responseEntity.getHeaders().getContentType());
+		assertEquals("inline", responseEntity.getHeaders().getContentDisposition().getType());
+		assertEquals(new String(TEST_FILE_BYTES), responseEntity.getBody());
+		assertEquals(DOKUMENT_ID + "_" + ORIGINAL + ".json", responseEntity.getHeaders().getContentDisposition().getFilename());
+	}
+
 	private ResponseEntity<String> callHentDokument() {
 		String uri = "/rest/hentdokument/" + JOURNALPOST_ID + "/" + DOKUMENT_ID + "/" + VARIANTFORMAT;
+		return this.restTemplate.exchange(uri, HttpMethod.GET, createHttpEntity(), String.class);
+	}
+
+	private ResponseEntity<String> callHentDokument(VariantFormatCode variantFormat) {
+		String uri = "/rest/hentdokument/" + JOURNALPOST_ID + "/" + DOKUMENT_ID + "/" + variantFormat;
 		return this.restTemplate.exchange(uri, HttpMethod.GET, createHttpEntity(), String.class);
 	}
 
