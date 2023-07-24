@@ -17,6 +17,7 @@ public record AzureProperties(
 ) {
 	public static final String SPRING_DEFAULT_PRINCIPAL = "anonymousUser";
 	public static final String CLIENT_REGISTRATION_DOKARKIV = "azure-dokarkiv";
+	public static final String CLIENT_REGISTRATION_PDL = "azure-pdl";
 
 	public static OAuth2AuthorizeRequest getOAuth2AuthorizeRequestForAzure(String clientRegistrationId) {
 		return OAuth2AuthorizeRequest
