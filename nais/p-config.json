@@ -15,7 +15,7 @@
     "https://saf.intern.nav.no"
   ],
   "SRVSAF": "/serviceuser/data/prod/srvsaf",
-  "NO_NAV_SECURITY_JWT_ISSUER_RESTSTS_ACCEPTED_AUDIENCE": "srvpensjon,srvpselv,srvdokdistdpi,srvdokdistdpi-2,srvdokdisteformidl,srvdokdistfordeling,srveux-app,srvfamilie-ks-opps,srvfamilie-ks-mottak,srvjfr-enhancer,srvjfr-infotrygd,srvjfr-arena,srvjfr-manuell-opp,srvjfr-filter,srvpensr,srvsyfosmpapirmottak,srvmelosys,srvmelosys-eessi,srvcoronapenger,srvjfr-automatisk,srvk9formidling,srvmedlemskap,srvk9sak,srvk9klage,srvfpfordel,srvengangsstonad,srvdp-oppslag-henven,srvskjermingsbrev,srvpermref-journalf,srvomsitramme,srvdp-filter-permit,srvklage-dittnav,srvfpabakus,srv-sif-innsyn-mtk,srvsupstonad,srvarena-dokgen,srvregpapirsm,srv-digihotProxy,srvk9-fordel,srvtiltakrefusjon,srvdp-proxy,srvklage-saksbeh,srv-oms-proxy,srvsyfoinntektsmel,srvisproxy,srvccmarkivogdist,srvhenvendelseapi,srvbdarkiv,srvbdarkivering,srvfpfordel,srvengangsstonad,srvfpformidling,srvfptilbake,srvinnsending-api,srvk9-tilbake,srvspberegning,srvdokproduksjon,srvdokumentfordeling",
+  "NO_NAV_SECURITY_JWT_ISSUER_RESTSTS_ACCEPTED_AUDIENCE": "srvpensjon,srvpselv,srvdokdistdpi,srvdokdistdpi-2,srvdokdisteformidl,srvdokdistfordeling,srveux-app,srvfamilie-ks-opps,srvfamilie-ks-mottak,srvjfr-enhancer,srvjfr-infotrygd,srvjfr-arena,srvjfr-manuell-opp,srvjfr-filter,srvpensr,srvsyfosmpapirmottak,srvmelosys,srvmelosys-eessi,srvcoronapenger,srvjfr-automatisk,srvk9formidling,srvmedlemskap,srvk9sak,srvk9klage,srvfpfordel,srvengangsstonad,srvdp-oppslag-henven,srvskjermingsbrev,srvpermref-journalf,srvomsitramme,srvdp-filter-permit,srvklage-dittnav,srvfpabakus,srv-sif-innsyn-mtk,srvsupstonad,srvarena-dokgen,srvregpapirsm,srv-digihotProxy,srvk9-fordel,srvtiltakrefusjon,srvdp-proxy,srvklage-saksbeh,srv-oms-proxy,srvsyfoinntektsmel,srvisproxy,srvccmarkivogdist,srvhenvendelseapi,srvbdarkiv,srvbdarkivering,srvfpfordel,srvengangsstonad,srvfpformidling,srvfptilbake,srvinnsending-api,srvspberegning,srvdokproduksjon,srvdokumentfordeling",
   "SAF_PRIVILEGIEDSERVICEUSERS": "srvdokdistfordeling,srvdokdisteformidling,srvtilbakemeldings,srvomsitramme,srvmelosys,srvdokproduksjon",
   "BIDRAG_SAK_URL": "https://bidrag-sak.nais.adeo.no/bidrag-sak/pip/sak/",
   "HENTJOURNALSAKINFO_URL": "https://dokarkiv.intern.nav.no/hentjournalsakinfo",
@@ -376,7 +376,7 @@
       "app": "k9-tilbake",
       "namespace": "k9saksbehandling",
       "cluster": "prod-fss",
-      "roles": ["tema_oms"]
+      "roles": ["tema_oms", "tema_fri"]
     },
     {
       "app": "k9-klage",
