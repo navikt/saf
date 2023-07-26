@@ -41,9 +41,10 @@ public class DokumentoversiktBrukerDataFetcher implements DataFetcher<DataFetche
 					.data(dokumentoversikt)
 					.build();
 		} catch (GraphQLException e) {
-			log.warn("query dokumentoversiktBruker feilet. melding={}", e.getError().getMessage());
+			log.warn("query dokumentoversiktBruker feilet. melding={}", e.getError().getMessage(), e);
 			return e.toDataFetcherResult();
 		} catch (SafFunctionalException e) {
+			log.warn("query dokumentoversiktBruker feilet funksjonelt. melding={}", e.getMessage(), e);
 			return DataFetcherResult.<Dokumentoversikt>newResult()
 					.data(Dokumentoversikt.empty())
 					.error(e)
