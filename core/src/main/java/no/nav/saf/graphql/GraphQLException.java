@@ -12,12 +12,17 @@ import lombok.Value;
 @EqualsAndHashCode(callSuper = true)
 public class GraphQLException extends RuntimeException {
 	GraphQLError error;
+	Object data;
 
 	public <T> DataFetcherResult<T> toDataFetcherResult() {
-		return DataFetcherResult.<T>newResult().error(error).build();
+		return DataFetcherResult.<T>newResult().error(error).data((T) data).build();
 	}
 
 	public static GraphQLException of(ErrorCode code, DataFetchingEnvironment env, String message) {
-		return new GraphQLException(code.construct(env, message));
+		return of(code, env, message, null);
+	}
+
+	public static GraphQLException of(ErrorCode code, DataFetchingEnvironment env, String message, Object data) {
+		return new GraphQLException(code.construct(env, message), data);
 	}
 }

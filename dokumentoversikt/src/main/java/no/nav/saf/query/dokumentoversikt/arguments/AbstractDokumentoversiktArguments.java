@@ -2,9 +2,6 @@ package no.nav.saf.query.dokumentoversikt.arguments;
 
 import lombok.Data;
 
-/**
- * @author Joakim Bjørnstad, Jbit AS
- */
 @Data
 public abstract class AbstractDokumentoversiktArguments {
 	private final DokumentoversiktFilters filters;
