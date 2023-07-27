@@ -1,5 +1,6 @@
 package no.nav.saf.query.dokumentoversikt.bruker;
 
+import graphql.schema.DataFetchingEnvironment;
 import io.reactivex.rxjava3.core.Flowable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +15,7 @@ import no.nav.saf.domain.tilgangsmodell.TilgangJournalpost;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 import no.nav.saf.domain.visningsmodell.Dokumentoversikt;
 import no.nav.saf.domain.visningsmodell.Journalpost;
+import no.nav.saf.graphql.GraphQLException;
 import no.nav.saf.metrics.Monitor;
 import no.nav.saf.query.dokumentoversikt.DokumentoversiktVisningsmodellRepository;
 import no.nav.saf.query.dokumentoversikt.SideInfoMapper;
@@ -29,15 +31,15 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static no.nav.saf.domain.DomainConstants.TILGANG_BRUKER;
+import static no.nav.saf.graphql.ErrorCode.NOT_FOUND;
 import static no.nav.saf.util.MDCUtility.addMdcData;
 
-/**
- * @author Joakim Bjørnstad, Jbit AS
- */
 @Slf4j
 @Component
 class DokumentoversiktBrukerQuery {
 
+	public static final String PERSON_IKKE_FUNNET_REASON = """
+			Fant ikke bruker i Persondataløsningen (PDL). Kan derfor ikke slå opp dokumentoversikten til bruker. Hvis du ser dette i test, forsøk å gjenopprett brukeren i Dolly. Hvis det ikke hjelper, ta kontakt med #team_dokumentløsninger på slack""";
 	private final SideInfoMapper sideInfoMapper = new SideInfoMapper();
 	private final DokumentoversiktBrukerTilgangsmodellRepository dokumentoversiktBrukerTilgangsmodellRepository;
 	private final TilgangsmodellRepository tilgangsmodellRepository;
@@ -78,9 +80,13 @@ class DokumentoversiktBrukerQuery {
 	}
 
 	@Monitor(value = "dok_request", extraTags = {"process", "dokumentOversikt", "requestType", "bruker"}, histogram = true)
-	public Dokumentoversikt hentDokumentoversikt(DokumentoversiktBrukerArguments dokumentoversiktBrukerArguments, SafRequestContext safRequestContext) {
+	public Dokumentoversikt hentDokumentoversikt(DokumentoversiktBrukerArguments dokumentoversiktBrukerArguments,
+												 SafRequestContext safRequestContext,
+												 DataFetchingEnvironment environment) {
 		TilgangBruker tilgangBruker = dokumentoversiktBrukerTilgangsmodellRepository.findTilgangBruker(dokumentoversiktBrukerArguments.getBrukerIdInput());
-		if (tilgangBruker != null) {
+		if (tilgangBruker == null) {
+			throw GraphQLException.of(NOT_FOUND, environment, PERSON_IKKE_FUNNET_REASON, Dokumentoversikt.empty());
+		} else {
 			safRequestContext.getRequestCache().putObject(TILGANG_BRUKER, tilgangBruker);
 		}
 

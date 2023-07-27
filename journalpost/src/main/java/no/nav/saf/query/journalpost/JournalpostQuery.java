@@ -27,9 +27,6 @@ import static no.nav.saf.tilgangskontroll.pep.DenyReasonFactory.createPep2DenyRe
 import static no.nav.saf.tilgangskontroll.pep.DenyReasonFactory.createPep3DenyReason;
 import static no.nav.saf.tilgangskontroll.pep.DenyReasonFactory.createPep4DenyReason;
 
-/**
- * @author Joakim Bjørnstad, Jbit AS
- */
 @Component
 class JournalpostQuery {
 

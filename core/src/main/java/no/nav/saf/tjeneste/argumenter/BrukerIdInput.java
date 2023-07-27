@@ -3,17 +3,10 @@ package no.nav.saf.tjeneste.argumenter;
 import lombok.Value;
 import no.nav.saf.domain.visningsmodell.BrukerIdType;
 
-/**
- * @author Sigurd Midttun, Visma Consulting.
- */
 @Value
 public class BrukerIdInput {
 	String id;
 	BrukerIdType type;
-
-	public boolean isPersonBruker() {
-		return !type.equals(BrukerIdType.ORGNR);
-	}
 
 	@Override
 	public String toString() {
