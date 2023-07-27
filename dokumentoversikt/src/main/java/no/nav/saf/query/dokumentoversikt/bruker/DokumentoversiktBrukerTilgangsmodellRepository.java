@@ -8,6 +8,7 @@ import no.nav.saf.anticorruptionlayer.bisys.BisysAntiCorruptionLayer;
 import no.nav.saf.anticorruptionlayer.fpsak.FpsakAntiCorruptionLayer;
 import no.nav.saf.anticorruptionlayer.gsak.GsakAntiCorruptionLayer;
 import no.nav.saf.anticorruptionlayer.k9.K9AntiCorruptionLayer;
+import no.nav.saf.anticorruptionlayer.pdl.PersonIkkeFunnetException;
 import no.nav.saf.anticorruptionlayer.pensjonsak.PensjonSakAntiCorruptionLayer;
 import no.nav.saf.domain.Arkivsak;
 import no.nav.saf.domain.BidragSak;
@@ -29,9 +30,6 @@ import java.util.Set;
 
 import static no.nav.saf.cache.LokalCacheConfig.TILGANGSMODELL_REPO_BRUKER_CACHE;
 
-/**
- * @author Joakim Bjørnstad, Jbit AS
- */
 @Slf4j
 @Component
 class DokumentoversiktBrukerTilgangsmodellRepository {
@@ -64,22 +62,16 @@ class DokumentoversiktBrukerTilgangsmodellRepository {
 	@Cacheable(cacheNames = TILGANGSMODELL_REPO_BRUKER_CACHE)
 	public TilgangBruker findTilgangBruker(BrukerIdInput brukerIdInput) {
 		try {
-			switch (brukerIdInput.getType()) {
-				case AKTOERID:
-					return aktoerAntiCorruptionLayer.hentTilgangBrukerByAktoerId(brukerIdInput.getId());
-				case FNR:
-					return aktoerAntiCorruptionLayer.hentTilgangBrukerByFoedselsnummer(brukerIdInput.getId());
-				case ORGNR:
-					return TilgangBruker.builder()
-							.orgnummer(brukerIdInput.getId())
-							.build();
-				default:
-					return null;
-			}
-		} catch (Exception e) {
-			log.warn("findTilgangBruker feilet ved oppslag av id. type={}", brukerIdInput.getType(), e);
+			return switch (brukerIdInput.getType()) {
+				case AKTOERID -> aktoerAntiCorruptionLayer.hentTilgangBrukerByAktoerId(brukerIdInput.getId());
+				case FNR -> aktoerAntiCorruptionLayer.hentTilgangBrukerByFoedselsnummer(brukerIdInput.getId());
+				case ORGNR -> TilgangBruker.builder()
+						.orgnummer(brukerIdInput.getId())
+						.build();
+			};
+		} catch (PersonIkkeFunnetException e) {
+			return null;
 		}
-		return null;
 	}
 
 	public Flowable<TilgangSak> findTilgangSaker(final TilgangBruker tilgangBruker, final List<Tema> tema, final SafRequestContext safRequestContext) {
