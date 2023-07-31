@@ -89,8 +89,8 @@ public class RedisCacheConfig implements CachingConfigurer {
 		genericObjectPoolConfig.setMaxTotal(16);
 		genericObjectPoolConfig.setMaxIdle(8);
 		genericObjectPoolConfig.setMinIdle(8);
-		genericObjectPoolConfig.setTimeBetweenEvictionRuns(ofSeconds(10));
-		genericObjectPoolConfig.setMinEvictableIdleTime(ofSeconds(6));
+		genericObjectPoolConfig.setTimeBetweenEvictionRuns(ofSeconds(60));
+		genericObjectPoolConfig.setMinEvictableIdleTime(ofSeconds(30));
 		return genericObjectPoolConfig;
 	}
 
