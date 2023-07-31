@@ -8,7 +8,7 @@ import no.nav.saf.tilgangskontroll.abac.dto.response.XacmlResponse;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.CacheManager;
-import org.springframework.cache.annotation.CachingConfigurerSupport;
+import org.springframework.cache.annotation.CachingConfigurer;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.interceptor.CacheErrorHandler;
 import org.springframework.context.annotation.Bean;
@@ -26,15 +26,13 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 import java.time.Duration;
 import java.util.Collections;
 
+import static java.time.Duration.ofSeconds;
 import static org.springframework.data.redis.serializer.RedisSerializationContext.SerializationPair.fromSerializer;
 
-/**
- * @author Joakim Bjørnstad, Jbit AS
- */
 @Configuration
 @EnableCaching
 @Slf4j
-public class RedisCacheConfig extends CachingConfigurerSupport {
+public class RedisCacheConfig implements CachingConfigurer {
 	public static final String MANAGER_DISTRIBUTED = "distributed";
 	private static final Duration DEFAULT_TTL = Duration.ofHours(1L);
 	public static final String TILGANG_CACHE = "tilgang";
@@ -74,7 +72,6 @@ public class RedisCacheConfig extends CachingConfigurerSupport {
 				.poolConfig(getPoolConfig())
 				.clientOptions(ClientOptions.builder()
 						.autoReconnect(true)
-						.cancelCommandsOnReconnectFailure(true)
 						.pingBeforeActivateConnection(true)
 						.disconnectedBehavior(ClientOptions.DisconnectedBehavior.REJECT_COMMANDS)
 						.suspendReconnectOnProtocolFailure(false)
@@ -84,7 +81,7 @@ public class RedisCacheConfig extends CachingConfigurerSupport {
 	}
 
 	private GenericObjectPoolConfig<?> getPoolConfig() {
-		GenericObjectPoolConfig genericObjectPoolConfig = new GenericObjectPoolConfig();
+		GenericObjectPoolConfig<?> genericObjectPoolConfig = new GenericObjectPoolConfig<>();
 		genericObjectPoolConfig.setTestOnReturn(false);
 		genericObjectPoolConfig.setTestOnCreate(false);
 		genericObjectPoolConfig.setTestWhileIdle(false);
@@ -92,8 +89,8 @@ public class RedisCacheConfig extends CachingConfigurerSupport {
 		genericObjectPoolConfig.setMaxTotal(16);
 		genericObjectPoolConfig.setMaxIdle(8);
 		genericObjectPoolConfig.setMinIdle(8);
-		genericObjectPoolConfig.setTimeBetweenEvictionRunsMillis(10000);
-		genericObjectPoolConfig.setMinEvictableIdleTimeMillis(6000);
+		genericObjectPoolConfig.setTimeBetweenEvictionRuns(ofSeconds(60));
+		genericObjectPoolConfig.setMinEvictableIdleTime(ofSeconds(30));
 		return genericObjectPoolConfig;
 	}
 
