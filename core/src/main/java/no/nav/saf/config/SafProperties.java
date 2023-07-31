@@ -23,12 +23,6 @@ public class SafProperties {
 	@Validated
 	public static class Endpoints {
 		/**
-		 * URL til PDL (Persondataløsningen).
-		 */
-		@NotEmpty
-		private String pdl;
-
-		/**
 		 * URI til PEN: hent sak sammendrag (PESYS REST/ Pensjon).
 		 */
 		@NotEmpty
@@ -55,7 +49,13 @@ public class SafProperties {
 		}
 
 		/**
-		 * URL til safintern oppslagstjenesten i dokarkiv.
+		 * URL og scope til PDL
+		 */
+		@NotNull
+		private AzureEndpoint pdl;
+
+		/**
+		 * URL og scope til safintern oppslagstjenesten i dokarkiv.
 		 */
 		@NotNull
 		private AzureEndpoint dokarkiv;

@@ -90,7 +90,6 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 		verify(postRequestedFor(urlEqualTo("/pdl")).withRequestBody(matchingJsonPath("$.variables.ident", equalTo(AKTOER_ID))));
 		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter"))
 				.withRequestBody(containing("{\"gsakSakIds\":[\"135695442\"],\"psakSakIds\":[\"21998969\"],\"fraDato\":\"0001-01-01\",\"tilDato\":null,\"inkluderJournalStatus\":[\"FL\",\"FS\",\"J\",\"E\"],\"inkluderJournalpostType\":[\"I\",\"U\",\"N\"],\"visFeilregistrerte\":false,\"alleIdenter\":[\"11111111111\"],\"foerste\":3,\"etterPeker\":null}")));
-		verify(postRequestedFor(urlEqualTo("/reststs")));
 		verify(postRequestedFor(urlEqualTo("/azure_token")));
 		verify(getRequestedFor(urlEqualTo("/pen/springapi/sak/sammendrag")).withHeader("fnr", new EqualToPattern(FNR)));
 	}
@@ -129,7 +128,6 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 		verify(postRequestedFor(urlEqualTo("/pdl")).withRequestBody(matchingJsonPath("$.variables.ident", equalTo(FNR))));
 		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter"))
 				.withRequestBody(containing("{\"gsakSakIds\":[\"135695442\"],\"psakSakIds\":[\"21998969\"],\"fraDato\":\"0001-01-01\",\"tilDato\":null,\"inkluderJournalStatus\":[\"FL\",\"FS\",\"J\",\"E\"],\"inkluderJournalpostType\":[\"I\",\"U\",\"N\"],\"visFeilregistrerte\":false,\"alleIdenter\":[\"11111111111\"],\"foerste\":3,\"etterPeker\":null}")));
-		verify(postRequestedFor(urlEqualTo("/reststs")));
 		verify(postRequestedFor(urlEqualTo("/azure_token")));
 		verify(getRequestedFor(urlEqualTo("/pen/springapi/sak/sammendrag")).withHeader("fnr", new EqualToPattern(FNR)));
 	}
@@ -243,7 +241,6 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 		assertEquals(OK, responseEntity.getStatusCode());
 		assertEquals("429837417", dokumentoversikt.getJournalposter().get(0).getJournalpostId());
 		assertSaksbehandlerHarTilgang(dokumentoversikt);
-		verify(postRequestedFor(urlEqualTo("/reststs")));
 		verify(postRequestedFor(urlEqualTo("/azure_token")));
 		verify(getRequestedFor(urlEqualTo("/pen/springapi/sak/sammendrag")).withHeader("fnr", new EqualToPattern(FNR)));
 		verify(postRequestedFor(urlEqualTo("/pdl")).withRequestBody(matchingJsonPath("$.variables.ident", equalTo(AKTOER_ID))));
@@ -310,7 +307,6 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 		assertEquals(OK, responseEntity.getStatusCode());
 		verify(postRequestedFor(urlEqualTo("/pdl")).withRequestBody(matchingJsonPath("$.variables.ident", equalTo(AKTOER_ID))));
 		verify(1, postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter")));
-		verify(postRequestedFor(urlEqualTo("/reststs")));
 		verify(postRequestedFor(urlEqualTo("/azure_token")));
 		verify(getRequestedFor(urlEqualTo("/pen/springapi/sak/sammendrag")).withHeader("fnr", new EqualToPattern(FNR)));
 	}
@@ -343,7 +339,6 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 		assertEquals(OK, responseEntity.getStatusCode());
 		verify(postRequestedFor(urlEqualTo("/pdl")).withRequestBody(matchingJsonPath("$.variables.ident", equalTo(AKTOER_ID))));
 		verify(1, postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter")));
-		verify(postRequestedFor(urlEqualTo("/reststs")));
 		verify(postRequestedFor(urlEqualTo("/azure_token")));
 		verify(getRequestedFor(urlEqualTo("/pen/springapi/sak/sammendrag")).withHeader("fnr", new EqualToPattern(FNR)));
 	}
@@ -378,7 +373,6 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 		verifyEmptyJournalpostListeAndNullSideInfo(dokumentoversikt);
 		verify(postRequestedFor(urlEqualTo("/pdl")).withRequestBody(matchingJsonPath("$.variables.ident", equalTo(AKTOER_ID))));
 		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter")).withRequestBody(containing("{\"gsakSakIds\":[\"135695442\"],\"psakSakIds\":[]")));
-		verify(postRequestedFor(urlEqualTo("/reststs")));
 		verify(postRequestedFor(urlEqualTo("/azure_token")));
 		verify(getRequestedFor(urlEqualTo("/pen/springapi/sak/sammendrag")).withHeader("fnr", new EqualToPattern(FNR)));
 		verify(getRequestedFor(urlEqualTo("/bidrag/654321")));
