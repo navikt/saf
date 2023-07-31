@@ -8,22 +8,24 @@ import graphql.language.SourceLocation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import java.util.concurrent.CompletableFuture;
+
 @Slf4j
 @Component
 public class GraphQLExceptionHandler implements DataFetcherExceptionHandler {
 
 	@Override
-	public DataFetcherExceptionHandlerResult onException(DataFetcherExceptionHandlerParameters dataFetcherExceptionHandlerParameters) {
-		Throwable exception = dataFetcherExceptionHandlerParameters.getException();
-		SourceLocation sourceLocation = dataFetcherExceptionHandlerParameters.getSourceLocation();
-		ResultPath path = dataFetcherExceptionHandlerParameters.getPath();
+	public CompletableFuture<DataFetcherExceptionHandlerResult> handleException(DataFetcherExceptionHandlerParameters handlerParameters) {
+		Throwable exception = handlerParameters.getException();
+		SourceLocation sourceLocation = handlerParameters.getSourceLocation();
+		ResultPath path = handlerParameters.getPath();
 
 		CustomExceptionWhileDataFetching error = new CustomExceptionWhileDataFetching(path, exception, sourceLocation);
 		log.error("Kall til graphql feilet teknisk. path={}, errormsg={}", path, exception.getMessage(), exception);
 
-		return DataFetcherExceptionHandlerResult.newResult()
+		DataFetcherExceptionHandlerResult result = DataFetcherExceptionHandlerResult.newResult()
 				.error(error)
 				.build();
+		return CompletableFuture.completedFuture(result);
 	}
-
 }
