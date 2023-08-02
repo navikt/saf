@@ -58,6 +58,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 class JournalpostIT extends AbstractItest {
 	private final String JOURNALPOST_ID = "400000000";
 	private final String GSAK_ID = "100000000";
+	private final String EKSTERNREFERANSE_ID = "cd047c37-aaaf-4dda-83a3773ed636f452";
 
 	private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
@@ -123,6 +124,64 @@ class JournalpostIT extends AbstractItest {
 		assertThat(dokumentInfo1.getDokumentvarianter().get(0).getFiltype(), is("PDF"));
 		assertThat(dokumentInfo1.getDokumentvarianter().get(0).getFilnavn(), is("filNavn"));
 		assertThat(dokumentInfo1.getDokumentvarianter().get(0).getFiluuid(), is("0c0bacf-c233-4a54-96fc-e205b79862d9"));
+		Utsendingsinfo utsendingsInfo = journalpost.getUtsendingsinfo();
+		assertEquals("tom.tom#2541", utsendingsInfo.getDigitalpostSendt().getAdresse());
+		assertNull(utsendingsInfo.getSmsVarselSendt());
+		assertNull(utsendingsInfo.getFysiskpostSendt());
+	}
+
+	@Test
+	void shouldQueryJournalpostByEksternReferanseIdWhenAllAccessPermit() {
+		abacPermit();
+		stubFor(get("/hentjournalsakinfo/hentjournalpost/eksternreferanse/" + EKSTERNREFERANSE_ID)
+				.willReturn(aResponse().withStatus(OK.value())
+						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("hentjournalsakinfo/hentjournalpost_eksternreferenseid_bid_happy.json")));
+
+		Journalpost journalpost = parseJournalpost(journalpostQuery("journalpost_eksternreferense_id.query"));
+
+		assertThat(journalpost.getJournalpostId(), is(JOURNALPOST_ID));
+		assertThat(journalpost.getTittel(), is("En søknad om noe"));
+		assertThat(journalpost.getJournalposttype(), is(Journalposttype.U));
+		assertThat(journalpost.getJournalstatus(), is(Journalstatus.FERDIGSTILT));
+		assertThat(journalpost.getTema(), is(Tema.FOR));
+		assertThat(journalpost.getTemanavn(), is(Tema.FOR.getTemanavn()));
+		assertThat(journalpost.getBehandlingstema(), is("sok1"));
+		assertThat(journalpost.getBehandlingstemanavn(), is("En viktig søknad"));
+		assertThat(journalpost.getSak().getFagsakId(), is("abc123"));
+		assertThat(journalpost.getSak().getFagsaksystem(), is("K9"));
+		assertThat(journalpost.getSak().getDatoOpprettet(), notNullValue());
+		assertThat(journalpost.getSak().getSakstype(), is(Sakstype.FAGSAK));
+		assertThat(journalpost.getSak().getTema(), is(Tema.FOR));
+		assertThat(journalpost.getBruker().getId(), is("1900000000000"));
+		assertThat(journalpost.getBruker().getType(), is(BrukerIdType.AKTOERID));
+		assertThat(journalpost.getAvsenderMottaker().getId(), is("11111111111"));
+		assertThat(journalpost.getAvsenderMottaker().getNavn(), is("Bjarne Betjent"));
+		assertThat(journalpost.getAvsenderMottaker().getLand(), is("NO"));
+		assertTrue(journalpost.getAvsenderMottaker().isErLikBruker());
+		assertThat(journalpost.getAvsenderMottakerId(), is("11111111111"));
+		assertThat(journalpost.getAvsenderMottakerNavn(), is("Bjarne Betjent"));
+		assertThat(journalpost.getAvsenderMottakerLand(), is("NO"));
+		assertThat(journalpost.getJournalforendeEnhet(), is("2990"));
+		assertThat(journalpost.getJournalfoerendeEnhet(), is("2990"));
+		assertThat(journalpost.getJournalfortAvNavn(), is("Max Mekker"));
+		assertThat(journalpost.getOpprettetAvNavn(), is("Max Mekker"));
+		assertThat(journalpost.getKanal(), is(SDP));
+		assertThat(journalpost.getKanalnavn(), is(SDP.getKanalnavn()));
+		assertThat(journalpost.getDatoOpprettet(), notNullValue());
+		assertThat(journalpost.getRelevanteDatoer().get(0).getDatotype(), is(DATO_EKSPEDERT));
+		assertThat(journalpost.getRelevanteDatoer().get(1).getDatotype(), is(DATO_LEST));
+		assertThat(journalpost.getTilleggsopplysninger().get(0).getNokkel(), is("min_nokkel"));
+		assertThat(journalpost.getTilleggsopplysninger().get(0).getVerdi(), is("min_verdi"));
+		assertThat(journalpost.getEksternReferanseId(), is("cd047c37-aaaf-4dda-83a3773ed636f452"));
+		DokumentInfo dokumentInfo1 = journalpost.getDokumenter().get(0);
+		assertThat(dokumentInfo1.getDokumentInfoId(), is("500000000"));
+		assertThat(dokumentInfo1.getTittel(), is("Dokument1"));
+		assertThat(dokumentInfo1.getBrevkode(), is("for123"));
+		assertThat(dokumentInfo1.getDokumentstatus(), is(FERDIGSTILT));
+		assertThat(dokumentInfo1.getOriginalJournalpostId(), is(JOURNALPOST_ID));
+		assertThat(dokumentInfo1.getLogiskeVedlegg().get(0).getTittel(), is("Hei"));
+		assertThat(dokumentInfo1.getDokumentvarianter().get(0).getVariantformat(), is(ARKIV));
 		Utsendingsinfo utsendingsInfo = journalpost.getUtsendingsinfo();
 		assertEquals("tom.tom#2541", utsendingsInfo.getDigitalpostSendt().getAdresse());
 		assertNull(utsendingsInfo.getSmsVarselSendt());
