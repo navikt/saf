@@ -62,7 +62,9 @@ public class JournalpostDataFetcher implements DataFetcher<DataFetcherResult<Jou
 	}
 
 	private static void mdcSporing(String journalpostId) {
-		MDC.put(JOURNALPOST_ID, journalpostId);
+		if (isNotBlank(journalpostId)) {
+			MDC.put(JOURNALPOST_ID, journalpostId);
+		}
 	}
 
 	private void validateJournalpostId(String journalpostId, DataFetchingEnvironment environment) {
