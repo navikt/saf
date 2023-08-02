@@ -64,11 +64,11 @@ class JournalpostQuery {
 		this.pep7d = pep7d;
 	}
 
-	public Journalpost hentJournalpost(final String journalpostId,
+	public Journalpost hentJournalpost(final String journalpostId, String eksternReferanseId,
 									   final SafRequestContext safRequestContext,
 									   final DataFetchingEnvironment environment) {
 		try {
-			final Arkivsak arkivsak = journalpostTilgangRepository.findArkivsakAndCacheJournalpostDto(journalpostId, safRequestContext);
+			final Arkivsak arkivsak = journalpostTilgangRepository.findArkivsakAndCacheJournalpostDto(journalpostId, eksternReferanseId, safRequestContext);
 			final TilgangBruker tilgangBruker = journalpostTilgangRepository.findTilgangBruker(arkivsak, safRequestContext);
 
 			if (tilgangBruker != null) {

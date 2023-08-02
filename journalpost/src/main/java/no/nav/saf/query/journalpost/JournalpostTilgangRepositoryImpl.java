@@ -115,8 +115,8 @@ class JournalpostTilgangRepositoryImpl implements JournalpostTilgangRepository {
 	}
 
 	@Override
-	public Arkivsak findArkivsakAndCacheJournalpostDto(String journalpostId, SafRequestContext safRequestContext) {
-		return journalpostAntiCorruptionLayer.hentArkivsakAndCacheJournalpostDto(journalpostId, safRequestContext);
+	public Arkivsak findArkivsakAndCacheJournalpostDto(String journalpostId, String eksternReferanseId, SafRequestContext safRequestContext) {
+		return journalpostAntiCorruptionLayer.hentArkivsakAndCacheJournalpostDto(journalpostId, eksternReferanseId, safRequestContext);
 	}
 
 	@Override

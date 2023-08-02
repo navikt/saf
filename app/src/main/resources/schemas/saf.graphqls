@@ -143,8 +143,12 @@ type Query {
     # * Fysiske dokumentet tilknyttet journalposten kan hentes i saf - REST hentdokument
     journalpost(
         # ID til Journalposten man ønsker å hente detaljer for.
-        # * Hvis argumentet ikke er angitt så returneres en feil.
-        journalpostId: String!
+        # * Hvis journalpostId eller eksternReferanseId argumenter ikke er angitt så returneres en feil.
+        journalpostId: String
+
+        # Brukes for sporing og feilsøking på tvers av systemer.
+        # * Hvis eksternReferanseId eller journalpostId argumenter ikke er angitt så returneres en feil.
+        eksternReferanseId: String
     ): Journalpost
 
     # Henter metadata for en dokumentInfo (dokumentbeskrivelse) med tilknyttede journalposter.

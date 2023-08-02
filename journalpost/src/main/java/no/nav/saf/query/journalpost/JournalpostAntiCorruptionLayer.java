@@ -21,6 +21,7 @@ import no.nav.saf.domain.tilgangsmodell.TilgangJournalpost;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 import no.nav.saf.exceptions.UgyldigArkivsaksystemException;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -34,6 +35,7 @@ import static no.nav.saf.anticorruptionlayer.joark.domain.kode.FagsystemCode.PEN
 import static no.nav.saf.domain.DomainConstants.ORGANISASJON;
 import static no.nav.saf.domain.DomainConstants.PERSON;
 import static no.nav.saf.domain.DomainConstants.RJOARK902_JOURNALPOST_DTO;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 @Slf4j
 @Component
@@ -81,7 +83,7 @@ class JournalpostAntiCorruptionLayer {
 				.getObject(RJOARK902_JOURNALPOST_DTO);
 
 		if (tilgangJournalpostDto == null || tilgangJournalpostDto.getBruker() == null
-			|| tilgangJournalpostDto.getBruker().getBrukerIdType() == null) {
+				|| tilgangJournalpostDto.getBruker().getBrukerIdType() == null) {
 			return null;
 		}
 		final BrukerDto tilgangBruker = tilgangJournalpostDto.getBruker();
@@ -101,9 +103,18 @@ class JournalpostAntiCorruptionLayer {
 		}
 	}
 
-	public Arkivsak hentArkivsakAndCacheJournalpostDto(String journalpostId, SafRequestContext safRequestContex) {
+	public Arkivsak hentArkivsakAndCacheJournalpostDto(String journalpostId, String eksternReferanseId, SafRequestContext safRequestContex) {
 		HentJournalpostResponseTo hentJournalpostResponseTo;
-		hentJournalpostResponseTo = hentJournalsakinfo.hentJournalpost(journalpostId);
+		if (isBlank(journalpostId) && StringUtils.isNotBlank(eksternReferanseId)) {
+			log.info("query journalpost. eksternReferanseId={}", eksternReferanseId);
+			hentJournalpostResponseTo = hentJournalsakinfo.hentJournalpostByEksternReferanseId(eksternReferanseId);
+			log.info("query journalpost hentet. eksternReferanseId={}", eksternReferanseId);
+		} else {
+			log.info("query journalpost. journalpostId={}", journalpostId);
+			hentJournalpostResponseTo = hentJournalsakinfo.hentJournalpost(Long.valueOf(journalpostId));
+			log.info("query journalpost hentet. journalpostId={}", journalpostId);
+		}
+
 		JournalpostDto hentJournalpostDto = hentJournalpostResponseTo.getHentJournalpostDto();
 		safRequestContex.getRequestCache().putObject(RJOARK902_JOURNALPOST_DTO, hentJournalpostDto);
 		SaksrelasjonDto saksrelasjon = hentJournalpostDto.getSaksrelasjon();

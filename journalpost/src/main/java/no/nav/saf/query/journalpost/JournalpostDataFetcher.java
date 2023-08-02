@@ -15,6 +15,7 @@ import static no.nav.saf.graphql.ErrorCode.BAD_REQUEST;
 import static no.nav.saf.graphql.ErrorCode.SERVER_ERROR;
 import static no.nav.saf.util.MDCConstants.JOURNALPOST_ID;
 import static no.nav.saf.util.MDCUtility.addMdcData;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.apache.commons.lang3.StringUtils.isNumeric;
 
 @Slf4j
@@ -32,12 +33,13 @@ public class JournalpostDataFetcher implements DataFetcher<DataFetcherResult<Jou
 		SafRequestContext safRequestContext = environment.getGraphQlContext().get(SafRequestContext.KEY);
 		addMdcData(safRequestContext);
 		final String journalpostId = environment.getArgument("journalpostId");
+		final String eksternReferanseId = environment.getArgument("eksternReferanseId");
 		try {
 			mdcSporing(journalpostId);
 			validateJournalpostId(journalpostId, environment);
-			log.info("query journalpost. journalpostId={}", journalpostId);
-			Journalpost journalpost = journalpostQuery.hentJournalpost(journalpostId, safRequestContext, environment);
-			log.info("query journalpost hentet. journalpostId={}", journalpostId);
+
+			Journalpost journalpost = journalpostQuery.hentJournalpost(journalpostId, eksternReferanseId, safRequestContext, environment);
+
 			return DataFetcherResult.<Journalpost>newResult()
 					.data(journalpost)
 					.build();
@@ -64,7 +66,7 @@ public class JournalpostDataFetcher implements DataFetcher<DataFetcherResult<Jou
 	}
 
 	private void validateJournalpostId(String journalpostId, DataFetchingEnvironment environment) {
-		if (!isNumeric(journalpostId)) {
+		if (isNotBlank(journalpostId) && !isNumeric(journalpostId)) {
 			throw GraphQLException.of(BAD_REQUEST, environment, "journalpostId er en ikke-numerisk verdi.");
 		}
 	}
