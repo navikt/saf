@@ -1,7 +1,5 @@
 package no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo;
 
-import jakarta.validation.constraints.Positive;
-import jakarta.validation.constraints.Size;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.FinnJournalposterRequestTo;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.FinnJournalposterResponseTo;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark901.HentTilgangJournalpostResponseTo;
@@ -93,7 +91,7 @@ public class HentJournalsakinfo {
 	}
 
 	@Monitor(value = "dok_consumer", extraTags = {"process", "hentJournalpost"}, histogram = true)
-	public HentJournalpostResponseTo hentJournalpost(@Positive final Long journalpostId) {
+	public HentJournalpostResponseTo hentJournalpost(final Long journalpostId) {
 		try {
 			String uri = hentjournalsakinfoUrl + "/hentjournalpost/{journalpostId}";
 			return restTemplate.exchange(uri, HttpMethod.GET, new HttpEntity<>(createNavHeaders()), HentJournalpostResponseTo.class, journalpostId).getBody();
@@ -112,7 +110,7 @@ public class HentJournalsakinfo {
 	}
 
 	@Monitor(value = "dok_consumer", extraTags = {"process", "hentJournalpostByEksternReferanseId"}, histogram = true)
-	public HentJournalpostResponseTo hentJournalpostByEksternReferanseId(@Size(max = 200) final String eksternReferanseId) {
+	public HentJournalpostResponseTo hentJournalpostByEksternReferanseId(final String eksternReferanseId) {
 		try {
 			String uri = hentjournalsakinfoUrl + "/hentjournalpost/eksternreferanse/{eksternReferanseId}";
 			return restTemplate.exchange(uri, HttpMethod.GET, new HttpEntity<>(createNavHeaders()), HentJournalpostResponseTo.class, eksternReferanseId).getBody();

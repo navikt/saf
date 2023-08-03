@@ -26,6 +26,7 @@ import static no.nav.saf.tilgangskontroll.pep.DenyReasonFactory.createPep1gDenyR
 import static no.nav.saf.tilgangskontroll.pep.DenyReasonFactory.createPep2DenyReason;
 import static no.nav.saf.tilgangskontroll.pep.DenyReasonFactory.createPep3DenyReason;
 import static no.nav.saf.tilgangskontroll.pep.DenyReasonFactory.createPep4DenyReason;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 @Component
 class JournalpostQuery {
@@ -112,12 +113,16 @@ class JournalpostQuery {
 			return hentVisningsmodell(safRequestContext);
 		} catch (JournalpostIkkeFunnetException e) {
 			throw GraphQLException.of(NOT_FOUND, environment,
-					"Fant ikke journalpost i fagarkivet. journalpostId=" + journalpostId);
+					"Fant ikke journalpost i fagarkivet. " + errLog(journalpostId, eksternReferanseId));
 		}
 	}
 
 	private Journalpost hentVisningsmodell(SafRequestContext safRequestContext) {
 		final JournalpostDto journalpostDto = safRequestContext.getRequestCache().getObject(RJOARK902_JOURNALPOST_DTO);
 		return journalpostDtoMapper.mapJournalpostDto(journalpostDto, safRequestContext.getRequestCache());
+	}
+
+	private String errLog(String journalpostId, String eksternReferanseId) {
+		return (isBlank(journalpostId) ? "eksternReferanseId=" : "journalpostId=") + (isBlank(journalpostId) ? eksternReferanseId : journalpostId);
 	}
 }
