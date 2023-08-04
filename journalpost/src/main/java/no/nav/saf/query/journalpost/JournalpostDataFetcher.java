@@ -24,8 +24,6 @@ import static org.apache.commons.lang3.StringUtils.isNumeric;
 @Component
 public class JournalpostDataFetcher implements DataFetcher<DataFetcherResult<Journalpost>> {
 
-	private static final String QUERY_JOURNALPOST_ERROR_MELDING = "query journalpost(journalpostId={}, eksternReferanseId={}) ";
-
 	private final JournalpostQuery journalpostQuery;
 
 	public JournalpostDataFetcher(JournalpostQuery journalpostQuery) {
@@ -38,6 +36,7 @@ public class JournalpostDataFetcher implements DataFetcher<DataFetcherResult<Jou
 		addMdcData(safRequestContext);
 		final String journalpostId = environment.getArgument("journalpostId");
 		final String eksternReferanseId = environment.getArgument("eksternReferanseId");
+		LoggMelding loggMelding = new LoggMelding(journalpostId, eksternReferanseId);
 		try {
 			mdcSporing(journalpostId, eksternReferanseId);
 			validateJournalpostIdOgEksternReferanseId(journalpostId, eksternReferanseId, environment);
@@ -48,16 +47,16 @@ public class JournalpostDataFetcher implements DataFetcher<DataFetcherResult<Jou
 					.data(journalpost)
 					.build();
 		} catch (GraphQLException e) {
-			log.warn(QUERY_JOURNALPOST_ERROR_MELDING + "feilet. melding={}", journalpostId, eksternReferanseId, e.getError().getMessage());
+			loggMelding.exceptionLogg(e);
 			return e.toDataFetcherResult();
 		} catch (SafTechnicalException e) {
-			log.error(QUERY_JOURNALPOST_ERROR_MELDING + "teknisk feil. melding={}", journalpostId, eksternReferanseId, e.getMessage(), e);
+			loggMelding.exceptionLogg(e);
 			return DataFetcherResult.<Journalpost>newResult()
 					.error(SERVER_ERROR.construct(environment,
 							"Teknisk feil. Prøv igjen senere."))
 					.build();
 		} catch (Exception e) {
-			log.error(QUERY_JOURNALPOST_ERROR_MELDING + "ukjent teknisk feil. melding={}", journalpostId, eksternReferanseId, e.getMessage(), e);
+			loggMelding.exceptionLogg(e);
 			return DataFetcherResult.<Journalpost>newResult()
 					.error(SERVER_ERROR.construct(environment,
 							"Ukjent teknisk feil. Meld fra til #team_dokumentløsninger på Slack."))
@@ -90,3 +89,4 @@ public class JournalpostDataFetcher implements DataFetcher<DataFetcherResult<Jou
 		}
 	}
 }
+

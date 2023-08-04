@@ -29,14 +29,14 @@ public final class MDCConstants {
 	public static final String JOURNALPOST_ID = "journalpostId";
 
 	/**
-	 * eksternReferanseId det gjelder (journalpost query, hentdokument)
+	 * eksternReferanseId det gjelder (journalpost query)
 	 * <p>
 	 * For sporing på abac logging
 	 */
 	public static final String EKSTERNREFERANSE_ID = "eksternReferanseId";
 
 	/**
-	 * JournalpostId det gjelder (hentdokument)
+	 * dokumentInfoId det gjelder (hentdokument)
 	 * <p>
 	 * For sporing på abac logging
 	 */

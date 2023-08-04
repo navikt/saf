@@ -191,10 +191,6 @@ class JournalpostIT extends AbstractItest {
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("hentjournalsakinfo/hentjournalpost_not_bid-happy.json")));
-		stubFor(get("/hentjournalsakinfo/hentjournalpost/eksternreferanse/" + EKSTERNREFERANSE_ID)
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("hentjournalsakinfo/hentjournalpost_eksternreferanseid_bid_happy.json")));
 
 		Journalpost journalpost = parseJournalpost(journalpostQuery("journalpost_with_journalpostid_eksternreferanseid.query"));
 
@@ -244,9 +240,8 @@ class JournalpostIT extends AbstractItest {
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("hentjournalsakinfo/hentjournalpost_not_bid-happy.json")));
 
-		Journalpost journalpost = parseJournalpost(journalpostQuery("journalpost_with_null_journalpostid_og_eksternreferanseid.query"));
-
-		assertThat(journalpost, nullValue());
+		GraphQLResponse.Error error = parseJournalpostQueryError(journalpostQuery("journalpost_with_null_journalpostid_og_eksternreferanseid.query"));
+		assertThat(error.getMessage(), is(containsString("Invalid syntax with offending token")));
 
 	}
 
@@ -457,5 +452,9 @@ class JournalpostIT extends AbstractItest {
 
 	private Journalpost parseJournalpost(GraphQLResponse graphQLResponse) {
 		return graphQLResponse.getData() == null ? null : OBJECT_MAPPER.convertValue(graphQLResponse.getData().get("journalpost"), Journalpost.class);
+	}
+
+	private GraphQLResponse.Error parseJournalpostQueryError(GraphQLResponse graphQLResponse) {
+		return graphQLResponse.getErrors().stream().findAny().orElse(null);
 	}
 }
