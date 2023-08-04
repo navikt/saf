@@ -443,6 +443,11 @@
       "app": "dokdistdpv",
       "namespace": "teamdokumenthandtering",
       "cluster": "prod-fss"
+    },
+    {
+      "app": "pdl-web",
+      "namespace": "pdl",
+      "cluster": "prod-fss"
     }
   ]
 }
