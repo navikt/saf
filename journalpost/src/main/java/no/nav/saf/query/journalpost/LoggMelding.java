@@ -8,14 +8,13 @@ import no.nav.saf.graphql.GraphQLException;
 public record LoggMelding(String journalpostId, String eksternReferanseId) {
 	
 	public void exceptionLogg(Throwable e) {
-		if (e instanceof GraphQLException) {
-			log.warn("query journalpost(journalpostId={}, eksternReferanseId={}) feilet. melding={}", journalpostId, eksternReferanseId,
-					((GraphQLException) e).getError().getMessage());
-		} else if (e instanceof SafFunctionalException) {
+		if (e instanceof GraphQLException graphQLException) {
+			log.warn("query journalpost(journalpostId={}, eksternReferanseId={}) feilet. melding={}", journalpostId, eksternReferanseId, graphQLException.getError().getMessage());
+		} else if (e instanceof SafFunctionalException safException) {
 			log.error("query journalpost(journalpostId={}, eksternReferanseId={}) teknisk feil. melding={}", journalpostId, eksternReferanseId,
-					e.getMessage());
+					safException.getMessage());
 		} else {
-			log.error("query journalpost(journalpostId={}, eksternReferanseId={}) ukjent teknisk feil. melding={}",journalpostId, eksternReferanseId,
+			log.error("query journalpost(journalpostId={}, eksternReferanseId={}) ukjent teknisk feil. melding={}", journalpostId, eksternReferanseId,
 					e.getMessage());
 		}
 	}
