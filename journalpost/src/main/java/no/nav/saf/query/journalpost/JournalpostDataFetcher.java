@@ -13,8 +13,11 @@ import org.springframework.stereotype.Component;
 
 import static no.nav.saf.graphql.ErrorCode.BAD_REQUEST;
 import static no.nav.saf.graphql.ErrorCode.SERVER_ERROR;
+import static no.nav.saf.util.MDCConstants.EKSTERNREFERANSE_ID;
 import static no.nav.saf.util.MDCConstants.JOURNALPOST_ID;
 import static no.nav.saf.util.MDCUtility.addMdcData;
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.apache.commons.lang3.StringUtils.isNumeric;
 
 @Slf4j
@@ -32,26 +35,28 @@ public class JournalpostDataFetcher implements DataFetcher<DataFetcherResult<Jou
 		SafRequestContext safRequestContext = environment.getGraphQlContext().get(SafRequestContext.KEY);
 		addMdcData(safRequestContext);
 		final String journalpostId = environment.getArgument("journalpostId");
+		final String eksternReferanseId = environment.getArgument("eksternReferanseId");
+		LoggMelding loggMelding = new LoggMelding(journalpostId, eksternReferanseId);
 		try {
-			mdcSporing(journalpostId);
-			validateJournalpostId(journalpostId, environment);
-			log.info("query journalpost. journalpostId={}", journalpostId);
-			Journalpost journalpost = journalpostQuery.hentJournalpost(journalpostId, safRequestContext, environment);
-			log.info("query journalpost hentet. journalpostId={}", journalpostId);
+			mdcSporing(journalpostId, eksternReferanseId);
+			validateJournalpostIdOgEksternReferanseId(journalpostId, eksternReferanseId, environment);
+
+			Journalpost journalpost = journalpostQuery.hentJournalpost(journalpostId, eksternReferanseId, safRequestContext, environment);
+
 			return DataFetcherResult.<Journalpost>newResult()
 					.data(journalpost)
 					.build();
 		} catch (GraphQLException e) {
-			log.warn("query journalpost(journalpostId={}) feilet. melding={}", journalpostId, e.getError().getMessage());
+			loggMelding.exceptionLogg(e);
 			return e.toDataFetcherResult();
 		} catch (SafTechnicalException e) {
-			log.error("query journalpost(journalpostId={}) teknisk feil. melding={}", journalpostId, e.getMessage(), e);
+			loggMelding.exceptionLogg(e);
 			return DataFetcherResult.<Journalpost>newResult()
 					.error(SERVER_ERROR.construct(environment,
 							"Teknisk feil. Prøv igjen senere."))
 					.build();
 		} catch (Exception e) {
-			log.error("query journalpost(journalpostId={}) ukjent teknisk feil. melding={}", journalpostId, e.getMessage(), e);
+			loggMelding.exceptionLogg(e);
 			return DataFetcherResult.<Journalpost>newResult()
 					.error(SERVER_ERROR.construct(environment,
 							"Ukjent teknisk feil. Meld fra til #team_dokumentløsninger på Slack."))
@@ -59,13 +64,29 @@ public class JournalpostDataFetcher implements DataFetcher<DataFetcherResult<Jou
 		}
 	}
 
-	private static void mdcSporing(String journalpostId) {
-		MDC.put(JOURNALPOST_ID, journalpostId);
+	private static void mdcSporing(String journalpostId, String eksternReferanseId) {
+		if (isNotBlank(journalpostId)) {
+			MDC.put(JOURNALPOST_ID, journalpostId);
+		}
+		if (isNotBlank(journalpostId)) {
+			MDC.put(EKSTERNREFERANSE_ID, eksternReferanseId);
+		}
 	}
 
-	private void validateJournalpostId(String journalpostId, DataFetchingEnvironment environment) {
-		if (!isNumeric(journalpostId)) {
+	private void validateJournalpostIdOgEksternReferanseId(String journalpostId, String eksternReferanseId, DataFetchingEnvironment environment) {
+		if (isNotBlank(journalpostId) && !isNumeric(journalpostId)) {
 			throw GraphQLException.of(BAD_REQUEST, environment, "journalpostId er en ikke-numerisk verdi.");
+		}
+
+		if (isBlank(journalpostId)) {
+			if (isNotBlank(eksternReferanseId) && eksternReferanseId.length() > 200) {
+				throw GraphQLException.of(BAD_REQUEST, environment, "eksternReferanseId kan ha maks 200 tegn.");
+			}
+		}
+
+		if (isBlank(journalpostId) && isBlank(eksternReferanseId)) {
+			throw GraphQLException.of(BAD_REQUEST, environment, "journalpostId og eksternReferanseId kan ikke være tomt eller null.");
 		}
 	}
 }
+

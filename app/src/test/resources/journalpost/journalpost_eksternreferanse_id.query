@@ -1,0 +1,85 @@
+{
+    journalpost(eksternReferanseId: "cd047c37-aaaf-4dda-83a3773ed636f452") {
+        journalpostId
+        tittel
+        journalposttype
+        journalstatus
+        tema
+        temanavn
+        behandlingstema
+        behandlingstemanavn
+        avsenderMottaker {
+          id
+          navn
+          land
+          erLikBruker
+        }
+        avsenderMottakerId
+        avsenderMottakerNavn
+        avsenderMottakerLand
+        journalforendeEnhet
+        journalfoerendeEnhet
+        journalfortAvNavn
+        opprettetAvNavn
+        kanal
+        kanalnavn
+        datoOpprettet
+        eksternReferanseId
+        relevanteDatoer {
+            dato
+            datotype
+        }
+        tilleggsopplysninger {
+            nokkel
+            verdi
+        }
+        sak {
+            arkivsaksnummer
+            arkivsaksystem
+            datoOpprettet
+            fagsakId
+            fagsaksystem
+            sakstype
+            tema
+        }
+        bruker {
+            id
+            type
+        }
+        dokumenter {
+            dokumentInfoId
+            tittel
+            brevkode
+            dokumentstatus
+            originalJournalpostId
+            logiskeVedlegg {
+                tittel
+            }
+            dokumentvarianter {
+                variantformat
+                saksbehandlerHarTilgang
+                filuuid
+                filnavn
+                filtype
+            }
+        }
+        utsendingsinfo {
+            digitalpostSendt {
+                adresse
+            }
+            fysiskpostSendt {
+                adressetekstKonvolutt
+            }
+            smsVarselSendt {
+                adresse
+                varslingstekst
+            }
+            epostVarselSendt {
+                tittel
+                adresse
+                varslingstekst
+            }
+        }
+    }
+}
+
