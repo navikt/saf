@@ -1,6 +1,8 @@
 package no.nav.saf.endpoints;
 
+import com.nimbusds.jwt.SignedJWT;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.ApplicationConfig;
 import no.nav.saf.azure.AzureProperties;
 import no.nav.saf.domain.visningsmodell.Dokumentoversikt;
@@ -28,6 +30,7 @@ import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.nio.charset.StandardCharsets;
+import java.text.ParseException;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
@@ -52,6 +55,7 @@ import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
+@Slf4j
 @SpringBootTest(classes = {AbstractItest.TestConfig.class, ApplicationConfig.class},
 		webEnvironment = RANDOM_PORT,
 		properties = {"spring.main.allow-bean-definition-overriding=true"})
@@ -129,7 +133,7 @@ public abstract class AbstractItest {
 	protected String jwt(String subject, Map<String, Object> claims) {
 		String issuerId = "azurev2";
 		String audience = "gosys";
-		return server.issueToken(
+		SignedJWT signedJWT = server.issueToken(
 				issuerId,
 				"gosys-clientid",
 				new DefaultOAuth2TokenCallback(
@@ -140,7 +144,13 @@ public abstract class AbstractItest {
 						claims,
 						60
 				)
-		).serialize();
+		);
+		try {
+			log.info("issuer=" + signedJWT.getJWTClaimsSet().getIssuer());
+		} catch (ParseException e) {
+			throw new RuntimeException(e);
+		}
+		return signedJWT.serialize();
 	}
 
 	protected void abacPermit() {
