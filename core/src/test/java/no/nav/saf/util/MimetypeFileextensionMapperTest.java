@@ -1,19 +1,16 @@
 package no.nav.saf.util;
 
+import org.junit.jupiter.api.Test;
+
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.springframework.http.MediaType.APPLICATION_PDF;
 
-import org.junit.jupiter.api.Test;
-import org.springframework.http.MediaType;
-
-/**
- * @author Joakim Bjørnstad, Jbit AS
- */
 class MimetypeFileextensionMapperTest {
 
 	@Test
 	void shouldGetFileExtensionFromMediaType() {
-		String fileextension = MimetypeFileextensionMapper.toFileextension(MediaType.APPLICATION_PDF);
+		String fileextension = MimetypeFileextensionMapper.toFileextension(APPLICATION_PDF);
 		assertThat(fileextension, is(".pdf"));
 	}
 

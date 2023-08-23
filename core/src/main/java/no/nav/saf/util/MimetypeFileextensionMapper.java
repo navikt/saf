@@ -7,8 +7,6 @@ import java.util.Map;
 
 /**
  * Mapper fra mimetype til filendelse for filtyper som er kjent for fagarkivet til NAV.
- *
- * @author Joakim Bjørnstad, Jbit AS
  */
 public final class MimetypeFileextensionMapper {
 	private static final Map<String, String> mimetypeFileextensions = new HashMap<>();
@@ -21,6 +19,7 @@ public final class MimetypeFileextensionMapper {
 		mimetypeFileextensions.put("application/afp", "afp");
 		mimetypeFileextensions.put("application/dlf", "dlf");
 		mimetypeFileextensions.put("image/jpeg", "jpeg");
+		mimetypeFileextensions.put("image/png", "png");
 		mimetypeFileextensions.put("image/tiff", "tiff");
 		mimetypeFileextensions.put("application/msword", "doc");
 		mimetypeFileextensions.put("application/vnd.openxmlformats-officedocument.wordprocessingml.document", "docx");
