@@ -438,6 +438,11 @@
       "cluster": "dev-gcp"
     },
     {
+      "app": "soknadsarkiverer",
+      "namespace": "team-soknad",
+      "cluster": "dev-gcp"
+    },
+    {
       "app": "tilbakemeldingsmottak-api",
       "namespace": "teamserviceklage",
       "cluster": "dev-gcp",
