@@ -417,6 +417,11 @@
       "cluster": "prod-gcp"
     },
     {
+      "app": "soknadsarkiverer",
+      "namespace": "team-soknad",
+      "cluster": "prod-gcp"
+    },
+    {
       "app": "routing",
       "namespace": "aap",
       "cluster": "prod-gcp",
