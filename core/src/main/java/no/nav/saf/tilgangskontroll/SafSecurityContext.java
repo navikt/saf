@@ -22,14 +22,11 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 /**
  * Holder informasjon om token. Opprettes for hvert kall til saf.
- *
- * @author Joakim Bjørnstad, Jbit AS
  */
 @Slf4j
 public class SafSecurityContext {
 
 	private static final String ISSUER_REST_STS = "reststs";
-	private static final String ISSUER_OPENAM = "openam";
 	private static final String ISSUER_AZUREV2 = "azurev2";
 	// JWT claims. https://datatracker.ietf.org/doc/html/rfc7519#section-4.1
 	static final String JWT_CLAIM_AUD = "aud";
@@ -44,13 +41,11 @@ public class SafSecurityContext {
 
 	private static final String SERVICEUSER_PREFIX = "srv";
 	private static final String AUTH_ERRORMESSAGE = "Tilgang er avvist. " +
-			"Ingen gyldig token på Authorization header. Token må være utsted av NAV onprem security-token-service, openam eller azure.";
+			"Ingen gyldig token på Authorization header. Token må være utsted av NAV onprem security-token-service eller azure.";
 	private static final String UKJENT_CONSUMER_ID = "ukjentConsumerId";
 	private static final String UKJENT_USER_ID = "ukjentUserId";
 	@Deprecated
 	private static final String UKJENT_AUDIENCE = "ukjentAudience";
-	@Deprecated
-	private static final String OPENAM_UKJENT_AUDIENCE = "openamUkjentAudience";
 	static final String NAVIDENT_REGEX = "^[a-zA-Z]\\d{6}$";
 	static final Pattern NAVIDENT_PATTERN = Pattern.compile(NAVIDENT_REGEX);
 	public static final String AZURE_ROLE_ALLE_TEMA = "tema_alle";
@@ -178,12 +173,6 @@ public class SafSecurityContext {
 	protected String getConsumerId() {
 		if (isRestStsSystemToken()) {
 			return jwtToken.getSubject();
-		} else if (isOpenAmBrukerToken()) {
-			try {
-				return jwtToken.getJwtTokenClaims().getAsList(JWT_CLAIM_AUD).get(0);
-			} catch (Exception e) {
-				return OPENAM_UKJENT_AUDIENCE;
-			}
 		} else if (jwtAzureClientCredentialFlow || isOnBehalfOfFlowToken()) {
 			return findAzureAppnameClaim(jwtToken.getJwtTokenClaims());
 		}
@@ -203,7 +192,7 @@ public class SafSecurityContext {
 	}
 
 	private String getUserIdFromToken() {
-		if (isRestStsSystemToken() || isOpenAmBrukerToken()) {
+		if (isRestStsSystemToken()) {
 			return jwtToken.getSubject();
 		} else if (isClientCredentialFlowToken(jwtToken)) {
 			return findAzureAppnameClaim(jwtToken.getJwtTokenClaims());
@@ -220,10 +209,6 @@ public class SafSecurityContext {
 	protected boolean isRestStsSystemToken() {
 		return tokenValidationContext.hasTokenFor(ISSUER_REST_STS)
 				&& jwtToken.getSubject().toLowerCase().startsWith(SERVICEUSER_PREFIX);
-	}
-
-	protected boolean isOpenAmBrukerToken() {
-		return tokenValidationContext.hasTokenFor(ISSUER_OPENAM);
 	}
 
 	protected boolean isOnBehalfOfFlowToken() {

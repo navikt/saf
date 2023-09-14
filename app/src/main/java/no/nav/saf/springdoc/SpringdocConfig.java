@@ -32,7 +32,7 @@ public class SpringdocConfig {
 								Til autentisering brukes OIDC-token (JWT via OAuth 2.0). Følgende format må brukes i Authorize sitt input-felt "Value": <strong>Bearer {token}</strong>.
 								Eksempel på verdi i input-feltet: <strong> Bearer eYdmifml0ejugm</strong>. Et gyldig token kommer til å ha mange flere karakterer enn i eksempelet.
 								
-								Tokens for manuell test kan hentes fra <a href="https://ida.intern.nav.no/">IDA</a>. For maskinell test og produksjon kan tokens komme fra Azure V2, NAV REST-STS eller OpenAM.
+								Tokens for manuell test kan hentes fra <a href="https://ida.intern.nav.no/">IDA</a>. For maskinell test og produksjon kan tokens komme fra Azure V2 eller NAV REST-STS.
 								""")
 						.version(version))
 				.components(

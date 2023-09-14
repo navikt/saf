@@ -15,9 +15,6 @@ import java.util.Map;
 
 import static no.nav.saf.domain.kode.Tema.BID;
 
-/**
- * @author Sigurd Midttun, Visma Consulting.
- */
 @ExtendWith(SpringExtension.class)
 abstract class AbstractPepTest {
 
@@ -40,7 +37,7 @@ abstract class AbstractPepTest {
 		privilegiedServiceusers.put("srvsaf", true);
 		privilegiedServiceusers.put("srvdokopp", true);
 		Map<String, JwtToken> issuerValidated = new HashMap<>();
-		issuerValidated.put("openam", new JwtToken(OIDC_TOKEN_PERSON_USER_TEST));
+		issuerValidated.put("azurev2", new JwtToken(OIDC_TOKEN_PERSON_USER_TEST));
 		return new SafRequestContext(NAV_CALLID, null, new TokenValidationContext(issuerValidated), privilegiedServiceusers);
 	}
 }
