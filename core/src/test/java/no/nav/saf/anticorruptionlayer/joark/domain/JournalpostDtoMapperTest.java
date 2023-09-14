@@ -682,7 +682,7 @@ class JournalpostDtoMapperTest {
 						Dokumentvariant::getFiluuid,
 						Dokumentvariant::isSaksbehandlerHarTilgang,
 						Dokumentvariant::getSkjerming,
-						Dokumentvariant::getFilstorrelse,
+						Dokumentvariant::getFilstoerrelse,
 						Dokumentvariant::getFiltype)
 				.hasSize(2)
 				.containsExactlyInAnyOrder(
@@ -690,14 +690,14 @@ class JournalpostDtoMapperTest {
 								JournalpostDtoTestObjects.FILNAVN_1,
 								JournalpostDtoTestObjects.FILUUID_1, false,
 								POL,
-								"1024",
+								1024,
 								FILTYPE_PDF),
 						tuple(VARIANT_FORMAT_CODE_SLADDET.getSafVariantformat(),
 								JournalpostDtoTestObjects.FILNAVN_2,
 								JournalpostDtoTestObjects.FILUUID_2,
 								false,
 								null,
-								"2056",
+								2056,
 								FILTYPE_PDF));
 
 		assertEquals(Dokumentstatus.FERDIGSTILT, dokumentInfo1.getDokumentstatus());
