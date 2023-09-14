@@ -531,6 +531,9 @@ type Dokumentvariant {
     # * NB: Feltet skal kun brukes etter avtale med Team Dokument.
     filtype: String @deprecated(reason: "Feltet er deprekert og er kun til internt bruk. Feltet skal kun brukes etter avtale med Team Dokument.")
 
+    # Dokumentets filstorrelse i bytes.
+    filstorrelse: String
+
     # Sier hvorvidt saksbehandler som gjør oppslaget vil få tilgang til å åpne denne dokumentvarianten.
     # * Dersom verdien er false, vil tilgang bli avslått dersom saksbehandler forsøker å åpne dokumentet.
     saksbehandlerHarTilgang: Boolean!

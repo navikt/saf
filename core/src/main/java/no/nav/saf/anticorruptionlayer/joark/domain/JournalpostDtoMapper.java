@@ -126,6 +126,7 @@ public class JournalpostDtoMapper {
 										.filtype(mapFiltype(variantDto))
 										.skjerming(variantDto.getSkjerming() == null ? null : variantDto.getSkjerming()
 												.getSafSkjerming())
+										.filstorrelse(variantDto.getFilstorrelse())
 										.build())
 								.collect(Collectors.toList()))
 						.logiskeVedlegg(dokumentInfoDto.getLogiske().stream()

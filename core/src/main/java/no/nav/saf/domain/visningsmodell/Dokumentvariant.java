@@ -15,6 +15,7 @@ public class Dokumentvariant {
 	String filnavn;
 	String filuuid;
 	String filtype;
+	String filstorrelse;
 	boolean saksbehandlerHarTilgang;
 	Skjerming skjerming;
 }
