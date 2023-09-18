@@ -64,7 +64,8 @@
             "filuuid": "0c0bacf-c233-4a54-96fc-e205b79862d9",
             "filtype":  "PDF",
             "variantf": "ARKIV",
-            "skjerming": null
+            "skjerming": null,
+            "filstorrelse": "1024"
           }
         ],
         "tittel": "Dokument1",

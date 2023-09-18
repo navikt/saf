@@ -30,7 +30,6 @@ import no.nav.saf.domain.visningsmodell.Sak;
 import no.nav.saf.domain.visningsmodell.Tilleggsopplysning;
 import no.nav.saf.domain.visningsmodell.Utsendingsinfo;
 import no.nav.saf.tilgangskontroll.RequestCache;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -39,7 +38,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static java.lang.Integer.parseInt;
+import static java.lang.Integer.valueOf;
 import static java.util.Objects.nonNull;
 import static no.nav.saf.anticorruptionlayer.joark.domain.kode.JournalpostTypeCode.U;
 import static no.nav.saf.cache.KeyGeneratorLocalCaching.getKeyForPep2d;
@@ -128,7 +127,7 @@ public class JournalpostDtoMapper {
 										.filtype(mapFiltype(variantDto))
 										.skjerming(variantDto.getSkjerming() == null ? null : variantDto.getSkjerming()
 												.getSafSkjerming())
-										.filstoerrelse(isBlank(variantDto.getFilstorrelse()) ? 0 : parseInt(variantDto.getFilstorrelse()))
+										.filstoerrelse(isBlank(variantDto.getFilstorrelse()) ? 0 : valueOf(variantDto.getFilstorrelse()))
 										.build())
 								.collect(Collectors.toList()))
 						.logiskeVedlegg(dokumentInfoDto.getLogiske().stream()
@@ -156,7 +155,8 @@ public class JournalpostDtoMapper {
 
 	private String mapBrevkode(JournalpostDto journalpostDto, DokumentInfoDto dokumentInfoDto) {
 		return switch (journalpostDto.getJournalposttype()) {
-			case U -> isBlank(dokumentInfoDto.getDokumenttypeId()) ? dokumentInfoDto.getBrevkode() : dokumentInfoDto.getDokumenttypeId();
+			case U ->
+					isBlank(dokumentInfoDto.getDokumenttypeId()) ? dokumentInfoDto.getBrevkode() : dokumentInfoDto.getDokumenttypeId();
 			case I, N -> dokumentInfoDto.getBrevkode();
 			default -> dokumentInfoDto.getBrevkode();
 		};
