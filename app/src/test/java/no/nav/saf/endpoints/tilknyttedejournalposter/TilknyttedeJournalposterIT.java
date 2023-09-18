@@ -10,6 +10,7 @@ import no.nav.saf.domain.visningsmodell.DokumentInfo;
 import no.nav.saf.domain.visningsmodell.Journalpost;
 import no.nav.saf.endpoints.AbstractItest;
 import no.nav.saf.endpoints.graphql.GraphQLRequest;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.RequestEntity;
@@ -50,6 +51,11 @@ class TilknyttedeJournalposterIT extends AbstractItest {
 	private final String BIDRAG_SAK_ID = "abc123";
 
 	private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+
+	@BeforeEach
+	void setUp() {
+		setupHappyPathAzureToken();
+	}
 
 	static {
 		OBJECT_MAPPER.registerModule(new JavaTimeModule());
@@ -283,7 +289,8 @@ class TilknyttedeJournalposterIT extends AbstractItest {
 
 	private List<Journalpost> parseJournalpost(ResponseEntity<LinkedHashMap> responseEntity) {
 		Map<String, Object> responseEntityData = (Map<String, Object>) responseEntity.getBody().get("data");
-		return OBJECT_MAPPER.convertValue(responseEntityData.get("tilknyttedeJournalposter"), new TypeReference<List<Journalpost>>() {
+
+		return responseEntityData == null ? null : OBJECT_MAPPER.convertValue(responseEntityData.get("tilknyttedeJournalposter"), new TypeReference<List<Journalpost>>() {
 		});
 	}
 }
