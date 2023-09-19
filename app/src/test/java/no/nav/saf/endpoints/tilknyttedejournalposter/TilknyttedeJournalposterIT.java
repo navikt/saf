@@ -289,7 +289,8 @@ class TilknyttedeJournalposterIT extends AbstractItest {
 
 	private List<Journalpost> parseJournalpost(ResponseEntity<LinkedHashMap> responseEntity) {
 		Map<String, Object> responseEntityData = (Map<String, Object>) responseEntity.getBody().get("data");
-		return OBJECT_MAPPER.convertValue(responseEntityData.get("tilknyttedeJournalposter"), new TypeReference<List<Journalpost>>() {
+
+		return responseEntityData == null ? null : OBJECT_MAPPER.convertValue(responseEntityData.get("tilknyttedeJournalposter"), new TypeReference<List<Journalpost>>() {
 		});
 	}
 }
