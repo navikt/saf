@@ -26,8 +26,8 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static java.lang.String.valueOf;
 import static no.nav.saf.anticorruptionlayer.joark.domain.kode.JournalStatusCode.valueOf;
@@ -63,10 +63,8 @@ public class HentDokumentTilgangService {
 		ArkivJournalpost arkivJournalpost = hentDokumentAntiCorruptionLayer.hentDokumentTilgang(journalpostId, dokumentInfoId);
 		TilgangBruker tilgangBruker = mapTilgangBruker(arkivJournalpost);
 		TilgangSak tilgangSak = mapTilgangSak(tilgangBruker, arkivJournalpost);
-		TilgangJournalpost tilgangJournalpost = mapTilgangJournalpost(arkivJournalpost);
-		TilgangDokumentInfo tilgangDokumentInfo = tilgangJournalpost.getDokumenter()
-				.stream().filter(p -> VariantFormatCode.ARKIV.name().equals(variantFormat))
-				.findFirst().orElse(null);
+		TilgangJournalpost tilgangJournalpost = mapTilgangJournalpost(variantFormat, arkivJournalpost);
+		TilgangDokumentInfo tilgangDokumentInfo = tilgangJournalpost.getDokumenter().get(0);
 		return new HentDokumentTilgang(tilgangBruker, tilgangSak, tilgangJournalpost, tilgangDokumentInfo);
 	}
 
@@ -129,10 +127,10 @@ public class HentDokumentTilgangService {
 
 	private TilgangSak tilgangSakMedSakstilknytning(TilgangBruker tilgangBruker, ArkivJournalpost arkivJournalpost) {
 		ArkivSaksrelasjon arkivSaksrelasjon = arkivJournalpost.saksrelasjon();
-		Arkivsak arkivsak = mapArkivsak(arkivSaksrelasjon);
 		if (arkivSaksrelasjon.isPensjonsak()) {
-			return mapTilgangPensjonSak(tilgangBruker, arkivJournalpost, arkivsak);
+			return mapTilgangPensjonSak(tilgangBruker, arkivJournalpost);
 		} else {
+			Arkivsak arkivsak = mapArkivsak(arkivJournalpost);
 			return mapTilgangGsak(arkivsak);
 		}
 	}
@@ -154,9 +152,10 @@ public class HentDokumentTilgangService {
 				.build();
 	}
 
-	private TilgangSak mapTilgangPensjonSak(TilgangBruker tilgangBruker, ArkivJournalpost arkivJournalpost, Arkivsak arkivsak) {
+	private TilgangSak mapTilgangPensjonSak(TilgangBruker tilgangBruker, ArkivJournalpost arkivJournalpost) {
+		ArkivSaksrelasjon arkivSaksrelasjon = arkivJournalpost.saksrelasjon();
 		List<Arkivsak> arkivsaker = pensjonSakAntiCorruptionLayer.findArkivsaker(tilgangBruker, Arrays.asList(PEN, UFO));
-		return arkivsaker.stream().filter(p -> p.getArkivsaksnummer().equals(arkivsak.getArkivsaksnummer()))
+		return arkivsaker.stream().filter(p -> p.getArkivsaksnummer().equals(valueOf(arkivSaksrelasjon.sakId())))
 				.map(psakArkivsak -> TilgangSak.builder()
 						.aktoerId(psakArkivsak.getAktoerId())
 						.arkivsaksnummer(psakArkivsak.getArkivsaksnummer())
@@ -175,7 +174,8 @@ public class HentDokumentTilgangService {
 				.build();
 	}
 
-	private Arkivsak mapArkivsak(ArkivSaksrelasjon arkivSaksrelasjon) {
+	private Arkivsak mapArkivsak(ArkivJournalpost arkivJournalpost) {
+		ArkivSaksrelasjon arkivSaksrelasjon = arkivJournalpost.saksrelasjon();
 		ArkivSak arkivSak = arkivSaksrelasjon.sak();
 		return Arkivsak.builder()
 				.arkivsaksnummer(valueOf(arkivSaksrelasjon.sakId()))
@@ -188,31 +188,36 @@ public class HentDokumentTilgangService {
 				.build();
 	}
 
-	private TilgangJournalpost mapTilgangJournalpost(ArkivJournalpost arkivJournalpost) {
+	private TilgangJournalpost mapTilgangJournalpost(String variantFormat, ArkivJournalpost arkivJournalpost) {
 		ArkivDokumentinfo arkivDokumentinfoOpt = arkivJournalpost.dokumenter().get(0);
 		Long journalpostId = arkivJournalpost.journalpostId();
 		return TilgangJournalpost.builder()
 				.journalpostId(valueOf(journalpostId))
 				.journalstatus(valueOf(arkivJournalpost.status()).toSafJournalstatus())
 				.skjerming(arkivJournalpost.skjerming() == null ? null : SkjermingTypeCode.valueOf(arkivJournalpost.skjerming()).getSafSkjerming())
-				.dokumenter(mapTilgangDokumentInfo(journalpostId, arkivDokumentinfoOpt))
+				.dokumenter(mapTilgangDokumentInfo(journalpostId, variantFormat, arkivDokumentinfoOpt))
 				.build();
 	}
 
 	@NotNull
-	private static List<TilgangDokumentInfo> mapTilgangDokumentInfo(Long journalpostId, ArkivDokumentinfo arkivDokumentinfo) {
-		ArkivFildetaljer arkivFildetaljer = arkivDokumentinfo.fildetaljer().get(0);
+	private static List<TilgangDokumentInfo> mapTilgangDokumentInfo(Long journalpostId, String variantFormat, ArkivDokumentinfo arkivDokumentinfo) {
 		Long dokumentInfoId = arkivDokumentinfo.dokumentInfoId();
 		return List.of(TilgangDokumentInfo.builder()
 				.skjerming(arkivDokumentinfo.skjerming() == null ? null : SkjermingTypeCode.valueOf(arkivDokumentinfo.skjerming()).getSafSkjerming())
-				.tilgangDokumentvarianter(Collections.singletonList(TilgangDokumentvariant.builder()
+				.tilgangDokumentvarianter(mapTilgangDokumentvarianter(journalpostId, dokumentInfoId, variantFormat, arkivDokumentinfo.fildetaljer()))
+				.journalpostId(valueOf(journalpostId))
+				.dokumentInfoId(valueOf(dokumentInfoId))
+				.build());
+	}
+
+	private static List<TilgangDokumentvariant> mapTilgangDokumentvarianter(Long journalpostId, Long dokumentInfoId, String variantFormat, List<ArkivFildetaljer> fildetaljer) {
+		return fildetaljer.stream()
+				.filter(f -> variantFormat.equals(f.format()))
+				.map(arkivFildetaljer -> TilgangDokumentvariant.builder()
 						.skjerming(arkivFildetaljer.skjerming() == null ? null : SkjermingTypeCode.valueOf(arkivFildetaljer.skjerming()).getSafSkjerming())
 						.variantformat(VariantFormatCode.valueOf(arkivFildetaljer.format()).getSafVariantformat())
 						.journalpostId(valueOf(journalpostId))
 						.dokumentInfoId(valueOf(dokumentInfoId))
-						.build()))
-						.journalpostId(valueOf(journalpostId))
-						.dokumentInfoId(valueOf(dokumentInfoId))
-				.build());
+						.build()).collect(Collectors.toList());
 	}
 }

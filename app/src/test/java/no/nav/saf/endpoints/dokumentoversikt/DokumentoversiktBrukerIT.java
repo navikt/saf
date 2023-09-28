@@ -597,7 +597,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 
 	@Test
 	void shouldGetUnauthorizedFromPep6d() throws IOException, URISyntaxException {
-		abacDenyPep6dSkipPep2Pep3();
+		abacDenyPep6dSkipPep2Pep4Pep5();
 		stubFor(post("/pdl")
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)

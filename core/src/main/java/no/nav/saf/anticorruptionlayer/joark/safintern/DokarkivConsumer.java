@@ -101,7 +101,7 @@ public class DokarkivConsumer {
 		return webClient.get()
 				.uri(uriBuilder -> {
 					uriBuilder.pathSegment("journalpost", "journalpostId", "{journalpostId}", "dokumentInfoId", "{dokumentInfoId}");
-					if(!fields.isEmpty()) {
+					if (!fields.isEmpty()) {
 						uriBuilder.queryParam("fields", String.join(",", fields));
 					}
 					return uriBuilder
@@ -122,10 +122,16 @@ public class DokarkivConsumer {
 	private Consumer<Throwable> handleErrorHentJournalpost(String journalpostId, String dokumentInfoId) {
 		return error -> {
 			if (error instanceof WebClientResponseException.NotFound) {
+				throw new DokumentIkkeFunnetException(format("Journalpost med journalpostId=%s, dokumentInfoId=%s ikke funnet i Joark.",
+						journalpostId, dokumentInfoId));
 			}
 			if (error instanceof WebClientResponseException webException) {
 				if (webException.getStatusCode().is4xxClientError()) {
+					throw new SafFunctionalException(format("hentJournalpost feilet funksjonelt. status=%s, journalpostId=%s, dokumentInfoId=%s. Feilmelding=%s",
+							webException.getStatusCode(), journalpostId, dokumentInfoId, webException.getMessage()));
 				} else {
+					throw new SafTechnicalException(String.format("hentJournalpost feilet teknisk. status=%s, journalpostId=%s, dokumentInfoId=%s. Feilmelding=%s",
+							webException.getStatusCode(), journalpostId, dokumentInfoId, webException.getMessage()), webException, webException.getStatusCode());
 				}
 			}
 		};

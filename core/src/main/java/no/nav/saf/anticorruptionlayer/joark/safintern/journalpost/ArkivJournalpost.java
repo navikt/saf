@@ -9,4 +9,5 @@ public record ArkivJournalpost(Long journalpostId, String fagomraade, String sta
 	public boolean isTilknyttetSak() {
 		return saksrelasjon != null;
 	}
+
 }

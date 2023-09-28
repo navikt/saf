@@ -1,15 +1,15 @@
 {
   "journalpostId": 400000000,
-  "fagomraade": "HJE",
+  "fagomraade": "BID",
   "status": "J",
   "saksrelasjon": {
     "fagsystem": "FS22",
     "sak": {
       "aktoerId": "2000000000000",
-      "applikasjon": "HJELPEMIDLER",
-      "fagsakNr": "2514",
+      "applikasjon": "BISYS",
+      "fagsakNr": "BISYS2000",
       "opprettetTid": "2023-09-08T14:16:28.791052",
-      "tema": "HJE"
+      "tema": "BID"
     },
     "sakId": 140000000
   },
