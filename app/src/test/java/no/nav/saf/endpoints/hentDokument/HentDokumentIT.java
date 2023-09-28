@@ -19,6 +19,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static no.nav.saf.anticorruptionlayer.joark.domain.kode.VariantFormatCode.ARKIV;
 import static no.nav.saf.anticorruptionlayer.joark.domain.kode.VariantFormatCode.ORIGINAL;
 import static no.nav.saf.anticorruptionlayer.joark.domain.kode.VariantFormatCode.SLADDET;
+import static no.nav.saf.hentdokument.HentDokumentAntiCorruptionLayer.HENTDOKUMENT_TILGANG_FIELDS;
 import static no.nav.saf.tilgangskontroll.pep.DenyReasonFactory.PEP2_DENY_REASON;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -38,9 +39,9 @@ import static org.springframework.http.MediaType.TEXT_XML_VALUE;
 
 class HentDokumentIT extends AbstractItest {
 
-	private static final String DOKUMENT_ID = "123";
-	private static final String JOURNALPOST_ID = "123";
-	private static final String SAK_ID = "10672720";
+	private static final String JOURNALPOST_ID = "400000000";
+	private static final String DOKUMENT_ID = "500000000";
+	private static final String SAK_ID = "140000000";
 	private static final VariantFormatCode VARIANTFORMAT = ARKIV;
 	private static final VariantFormatCode SLADDET_VARIANTFORMAT = SLADDET;
 	private static final byte[] TEST_FILE_BYTES = "TestThis".getBytes();
@@ -55,11 +56,7 @@ class HentDokumentIT extends AbstractItest {
 	void hentGsakDokumentHappyPath() {
 		abacPermit();
 		stubHappyHentDokument();
-		stubFor(get("/hentjournalsakinfo/henttilgangjournalpost/" + JOURNALPOST_ID + "/" + DOKUMENT_ID + "/" + VARIANTFORMAT)
-				.willReturn(aResponse()
-						.withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("hentjournalsakinfo/henttilgangjournalpost_gsak-happy.json")));
+		stubDokarkivJournalpost("journalpost-dokumentinfo-gsak-happy.json");
 
 		ResponseEntity<String> responseEntity = callHentDokument();
 
@@ -71,11 +68,7 @@ class HentDokumentIT extends AbstractItest {
 	void hentXmlOriginalHappy() {
 		abacPermit();
 		stubHappyHentDokumentXml();
-		stubFor(get("/hentjournalsakinfo/henttilgangjournalpost/" + JOURNALPOST_ID + "/" + DOKUMENT_ID + "/" + ORIGINAL)
-				.willReturn(aResponse()
-						.withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("hentjournalsakinfo/henttilgangjournalpost_gsak-happy.json")));
+		stubDokarkivJournalpost("journalpost-dokumentinfo-gsak-happy.json");
 
 		ResponseEntity<String> responseEntity = callHentDokument(ORIGINAL);
 
@@ -87,11 +80,7 @@ class HentDokumentIT extends AbstractItest {
 	void hentJsonOriginalHappy() {
 		abacPermit();
 		stubHappyHentDokumentJson();
-		stubFor(get("/hentjournalsakinfo/henttilgangjournalpost/" + JOURNALPOST_ID + "/" + DOKUMENT_ID + "/" + ORIGINAL)
-				.willReturn(aResponse()
-						.withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("hentjournalsakinfo/henttilgangjournalpost_gsak-happy.json")));
+		stubDokarkivJournalpost("journalpost-dokumentinfo-gsak-happy.json");
 
 		ResponseEntity<String> responseEntity = callHentDokument(ORIGINAL);
 
@@ -576,6 +565,14 @@ class HentDokumentIT extends AbstractItest {
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBody(TEST_FILE_BYTES)));
+	}
+
+	private static void stubDokarkivJournalpost(String fil) {
+		stubFor(get("/dokarkiv/journalpost/journalpostId/" + JOURNALPOST_ID + "/dokumentInfoId/" + DOKUMENT_ID + "?fields=" + String.join(",", HENTDOKUMENT_TILGANG_FIELDS))
+				.willReturn(aResponse()
+						.withStatus(OK.value())
+						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("safintern/journalpostdokumentinfo/" + fil)));
 	}
 
 	private void assertOkArkivResponse(ResponseEntity<String> responseEntity) {

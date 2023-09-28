@@ -6,9 +6,6 @@ import no.nav.saf.domain.tilgangsmodell.TilgangJournalpost;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 
-/**
- * @author Sigurd Midttun, Visma Consulting.
- */
 public interface TilgangsmodellHentdokumentRepository {
 
 	TilgangJournalpost findTilgangJournalpostFromSafRequestContext(SafRequestContext safRequestContext);

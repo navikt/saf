@@ -3,6 +3,7 @@ package no.nav.saf.anticorruptionlayer.joark.safintern;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import no.nav.saf.anticorruptionlayer.CallIdExchangeFilterFunction;
 import no.nav.saf.anticorruptionlayer.joark.safintern.hentdokument.HentDokumentResponseTo;
+import no.nav.saf.anticorruptionlayer.joark.safintern.journalpost.ArkivJournalpost;
 import no.nav.saf.config.SafProperties;
 import no.nav.saf.exceptions.DokumentIkkeFunnetException;
 import no.nav.saf.exceptions.SafFunctionalException;
@@ -18,12 +19,14 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 import reactor.core.publisher.Mono;
 
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Consumer;
 
 import static java.lang.String.format;
 import static no.nav.saf.azure.AzureProperties.CLIENT_REGISTRATION_DOKARKIV;
 import static no.nav.saf.azure.AzureProperties.getOAuth2AuthorizeRequestForAzure;
 import static no.nav.saf.headers.NavHeaders.NAV_CALLID;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.http.MediaType.APPLICATION_PDF;
 import static org.springframework.security.oauth2.client.web.reactive.function.client.ServerOAuth2AuthorizedClientExchangeFilterFunction.oauth2AuthorizedClient;
 
@@ -85,6 +88,44 @@ public class DokarkivConsumer {
 				} else {
 					throw new SafTechnicalException(format("Henting av dokument fra fagarkivet feilet teknisk. dokumentInfoId=%s, variantFormat=%s, status=%s. feilmelding=%s",
 							dokumentInfoId, variantFormat, webException.getStatusCode(), error.getMessage()), error, webException.getStatusCode());
+				}
+			}
+		};
+	}
+
+	public ArkivJournalpost hentJournalpost(String journalpostId, String dokumentInfoId) {
+		return hentJournalpost(journalpostId, dokumentInfoId, Set.of());
+	}
+
+	public ArkivJournalpost hentJournalpost(String journalpostId, String dokumentInfoId, Set<String> fields) {
+		return webClient.get()
+				.uri(uriBuilder -> {
+					uriBuilder.pathSegment("journalpost", "journalpostId", "{journalpostId}", "dokumentInfoId", "{dokumentInfoId}");
+					if(!fields.isEmpty()) {
+						uriBuilder.queryParam("fields", String.join(",", fields));
+					}
+					return uriBuilder
+							.build(journalpostId, dokumentInfoId);
+				})
+				.attributes(getOAuth2AuthorizedClient())
+				.accept(APPLICATION_JSON)
+				.exchangeToMono(clientResponse -> {
+					if (clientResponse.statusCode().is2xxSuccessful()) {
+						return clientResponse.bodyToMono(ArkivJournalpost.class);
+					} else {
+						return clientResponse.createError();
+					}
+				}).doOnError(handleErrorHentJournalpost(journalpostId, dokumentInfoId))
+				.block();
+	}
+
+	private Consumer<Throwable> handleErrorHentJournalpost(String journalpostId, String dokumentInfoId) {
+		return error -> {
+			if (error instanceof WebClientResponseException.NotFound) {
+			}
+			if (error instanceof WebClientResponseException webException) {
+				if (webException.getStatusCode().is4xxClientError()) {
+				} else {
 				}
 			}
 		};

@@ -6,8 +6,6 @@ import lombok.Value;
 /**
  * Representerer en linje i sporingsloggen.
  * Typisk en linje per kall til hentdokument.
- *
- * @author Joakim Bjørnstad, Jbit AS
  */
 @Value
 @Builder
@@ -27,12 +25,12 @@ public class HentDokumentSporingLogglinje {
 	@Override
 	public String toString() {
 		return "brukerId=" + brukerId +
-				", navIdent=" + navIdent +
-				", tilgangsbeslutning=" + tilgangsbeslutning +
-				(BESLUTNING_DENY.equals(tilgangsbeslutning) ? ", begrunnelse=\"" + begrunnelse + "\"" : "") +
-				", journalpostId=" + journalpostId +
-				", dokumentInfoId=" + dokumentInfoId +
-				", variantformat=" + variantformat +
-				", tema=" + tema;
+			   ", navIdent=" + navIdent +
+			   ", tilgangsbeslutning=" + tilgangsbeslutning +
+			   (BESLUTNING_DENY.equals(tilgangsbeslutning) ? ", begrunnelse=\"" + begrunnelse + "\"" : "") +
+			   ", journalpostId=" + journalpostId +
+			   ", dokumentInfoId=" + dokumentInfoId +
+			   ", variantformat=" + variantformat +
+			   ", tema=" + tema;
 	}
 }
