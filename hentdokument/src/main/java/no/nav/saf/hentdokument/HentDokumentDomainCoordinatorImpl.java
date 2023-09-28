@@ -8,7 +8,6 @@ import no.nav.saf.domain.tilgangsmodell.TilgangDokumentvariant;
 import no.nav.saf.domain.tilgangsmodell.TilgangJournalpost;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 import no.nav.saf.exceptions.HentdokumentTilgangskontrollException;
-import no.nav.saf.hentdokument.repo.TilgangsmodellHentdokumentRepository;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.pep.AbacAnswer;
 import no.nav.saf.tilgangskontroll.pep.Pep;
@@ -27,7 +26,6 @@ import static no.nav.saf.tilgangskontroll.pep.DenyReasonFactory.createPep7dDenyR
 @Component
 public class HentDokumentDomainCoordinatorImpl implements HentDokumentDomainCoordinator {
 
-	private final TilgangsmodellHentdokumentRepository tilgangsmodellHentdokumentRepository;
 	private final HentDokumentAntiCorruptionLayer hentDokumentAntiCorruptionLayer;
 	private final HentDokumentTilgangService hentDokumentTilgangService;
 	private final Pep<TilgangBruker> pep1g;
@@ -41,8 +39,7 @@ public class HentDokumentDomainCoordinatorImpl implements HentDokumentDomainCoor
 	private final HentDokumentSporbarhetslogger hentDokumentSporbarhetslogger;
 
 	@Autowired
-	public HentDokumentDomainCoordinatorImpl(TilgangsmodellHentdokumentRepository tilgangsmodellHentdokumentRepository,
-											 HentDokumentAntiCorruptionLayer hentDokumentAntiCorruptionLayer,
+	public HentDokumentDomainCoordinatorImpl(HentDokumentAntiCorruptionLayer hentDokumentAntiCorruptionLayer,
 											 HentDokumentTilgangService hentDokumentTilgangService,
 											 @Autowired Pep<TilgangBruker> pep1g,
 											 @Autowired Pep<TilgangSak> pep2,
@@ -52,7 +49,6 @@ public class HentDokumentDomainCoordinatorImpl implements HentDokumentDomainCoor
 											 @Autowired Pep<TilgangDokumentInfo> pep5,
 											 @Autowired Pep<TilgangDokumentvariant> pep6d,
 											 @Autowired Pep<TilgangSak> pep7d) {
-		this.tilgangsmodellHentdokumentRepository = tilgangsmodellHentdokumentRepository;
 		this.hentDokumentAntiCorruptionLayer = hentDokumentAntiCorruptionLayer;
 		this.hentDokumentTilgangService = hentDokumentTilgangService;
 		this.pep1g = pep1g;
@@ -69,10 +65,6 @@ public class HentDokumentDomainCoordinatorImpl implements HentDokumentDomainCoor
 	@Override
 	public HentDokument hentDokument(final String journalpostId, final String dokumentInfoId, final String variantFormat, final SafRequestContext safRequestContext) {
 		HentDokumentTilgang hentDokumentTilgang = hentDokumentTilgangService.hentDokumentTilgang(journalpostId, dokumentInfoId, variantFormat);
-
-//		final Arkivsak arkivsak = tilgangsmodellHentdokumentRepository.findArkivsakAndCacheJournalpostDto(journalpostId, dokumentInfoId, variantFormat, safRequestContext);
-//		final TilgangBruker tilgangBruker = tilgangsmodellHentdokumentRepository.findTilgangBruker(arkivsak, safRequestContext);
-//		final TilgangSak tilgangSak = tilgangsmodellHentdokumentRepository.findTilgangSak(arkivsak, tilgangBruker, safRequestContext);
 
 		try {
 			doTilgangskontroll(hentDokumentTilgang, safRequestContext);
