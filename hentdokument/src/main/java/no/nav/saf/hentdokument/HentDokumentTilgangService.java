@@ -40,7 +40,7 @@ import static no.nav.saf.domain.kode.Tema.UFO;
 
 @Slf4j
 @Component
-public class HentDokumentTilgangService {
+class HentDokumentTilgangService {
 	private final HentDokumentAntiCorruptionLayer hentDokumentAntiCorruptionLayer;
 	private final PensjonSakAntiCorruptionLayer pensjonSakAntiCorruptionLayer;
 	private final BisysAntiCorruptionLayer bisysAntiCorruptionLayer;
@@ -64,8 +64,7 @@ public class HentDokumentTilgangService {
 		TilgangBruker tilgangBruker = mapTilgangBruker(arkivJournalpost);
 		TilgangSak tilgangSak = mapTilgangSak(tilgangBruker, arkivJournalpost);
 		TilgangJournalpost tilgangJournalpost = mapTilgangJournalpost(variantFormat, arkivJournalpost);
-		TilgangDokumentInfo tilgangDokumentInfo = tilgangJournalpost.getDokumenter().get(0);
-		return new HentDokumentTilgang(tilgangBruker, tilgangSak, tilgangJournalpost, tilgangDokumentInfo);
+		return new HentDokumentTilgang(tilgangBruker, tilgangSak, tilgangJournalpost);
 	}
 
 	private TilgangBruker mapTilgangBruker(ArkivJournalpost arkivJournalpost) {

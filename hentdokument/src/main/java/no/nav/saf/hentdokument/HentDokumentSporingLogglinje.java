@@ -9,18 +9,18 @@ import lombok.Value;
  */
 @Value
 @Builder
-public class HentDokumentSporingLogglinje {
+class HentDokumentSporingLogglinje {
 	public static final String BESLUTNING_PERMIT = "PERMIT";
 	public static final String BESLUTNING_DENY = "DENY";
 
-	private final String brukerId;
-	private final String navIdent;
-	private final String tilgangsbeslutning;
-	private final String begrunnelse;
-	private final String journalpostId;
-	private final String dokumentInfoId;
-	private final String variantformat;
-	private final String tema;
+	String brukerId;
+	String navIdent;
+	String tilgangsbeslutning;
+	String begrunnelse;
+	String journalpostId;
+	String dokumentInfoId;
+	String variantformat;
+	String tema;
 
 	@Override
 	public String toString() {

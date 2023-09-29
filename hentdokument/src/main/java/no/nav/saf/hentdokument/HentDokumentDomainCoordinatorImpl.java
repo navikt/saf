@@ -24,7 +24,7 @@ import static no.nav.saf.tilgangskontroll.pep.DenyReasonFactory.createPep6dDenyR
 import static no.nav.saf.tilgangskontroll.pep.DenyReasonFactory.createPep7dDenyReason;
 
 @Component
-public class HentDokumentDomainCoordinatorImpl implements HentDokumentDomainCoordinator {
+class HentDokumentDomainCoordinatorImpl implements HentDokumentDomainCoordinator {
 
 	private final HentDokumentAntiCorruptionLayer hentDokumentAntiCorruptionLayer;
 	private final HentDokumentTilgangService hentDokumentTilgangService;
@@ -77,10 +77,9 @@ public class HentDokumentDomainCoordinatorImpl implements HentDokumentDomainCoor
 	}
 
 	private void doTilgangskontroll(HentDokumentTilgang hentDokumentTilgang, SafRequestContext safRequestContext) {
-		TilgangBruker tilgangBruker = hentDokumentTilgang.tilgangBruker();
 		TilgangSak tilgangSak = hentDokumentTilgang.tilgangSak();
 		TilgangJournalpost tilgangJournalpost = hentDokumentTilgang.tilgangJournalpost();
-		AbacAnswer pep1gResponse = pep1g.hasAccessWithAnswer(tilgangBruker, safRequestContext);
+		AbacAnswer pep1gResponse = pep1g.hasAccessWithAnswer(hentDokumentTilgang.tilgangBruker(), safRequestContext);
 		if (pep1gResponse.isDeny()) {
 			throw new HentdokumentTilgangskontrollException(createPep1gDenyReason(safRequestContext), pep1gResponse.getDenyReasonSporing());
 		}
@@ -107,13 +106,12 @@ public class HentDokumentDomainCoordinatorImpl implements HentDokumentDomainCoor
 			throw new HentdokumentTilgangskontrollException(createPep4DenyReason(safRequestContext), pep4Response.getDenyReasonSporing());
 		}
 
-		final TilgangDokumentInfo tilgangDokumentInfo = tilgangJournalpost.getDokumenter().get(0);
-		AbacAnswer pep5Response = pep5.hasAccessWithAnswer(tilgangDokumentInfo, safRequestContext);
+		AbacAnswer pep5Response = pep5.hasAccessWithAnswer(hentDokumentTilgang.tilgangDokumentInfo(), safRequestContext);
 		if (pep5Response.isDeny()) {
 			throw new HentdokumentTilgangskontrollException(createPep5DenyReason(safRequestContext), pep5Response.getDenyReasonSporing());
 		}
 
-		AbacAnswer pep6dResponse = pep6d.hasAccessWithAnswer(tilgangDokumentInfo.getTilgangDokumentvarianter().get(0), safRequestContext);
+		AbacAnswer pep6dResponse = pep6d.hasAccessWithAnswer(hentDokumentTilgang.tilgangDokumentvariant(), safRequestContext);
 		if (pep6dResponse.isDeny()) {
 			throw new HentdokumentTilgangskontrollException(createPep6dDenyReason(safRequestContext), pep6dResponse.getDenyReasonSporing());
 		}

@@ -93,10 +93,6 @@ public class DokarkivConsumer {
 		};
 	}
 
-	public ArkivJournalpost hentJournalpost(String journalpostId, String dokumentInfoId) {
-		return hentJournalpost(journalpostId, dokumentInfoId, Set.of());
-	}
-
 	public ArkivJournalpost hentJournalpost(String journalpostId, String dokumentInfoId, Set<String> fields) {
 		return webClient.get()
 				.uri(uriBuilder -> {
