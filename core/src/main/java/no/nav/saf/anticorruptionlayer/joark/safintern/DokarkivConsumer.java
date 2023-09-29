@@ -32,7 +32,8 @@ import static org.springframework.security.oauth2.client.web.reactive.function.c
 
 @Service
 public class DokarkivConsumer {
-	private static final String JOARK_HENTDOKUMENT = "joarkhentdokument";
+	private static final String DOKARKIV_HENTDOKUMENT = "dokarkivhentdokument";
+	private static final String DOKARKIV_METADATA = "dokarkivmetadata";
 
 	private final WebClient webClient;
 	private final ReactiveOAuth2AuthorizedClientManager oAuth2AuthorizedClientManager;
@@ -55,7 +56,7 @@ public class DokarkivConsumer {
 		this.oAuth2AuthorizedClientManager = oAuth2AuthorizedClientManager;
 	}
 
-	@CircuitBreaker(name = JOARK_HENTDOKUMENT)
+	@CircuitBreaker(name = DOKARKIV_HENTDOKUMENT)
 	public HentDokumentResponseTo hentDokument(String dokumentInfoId, String variantFormat) {
 		return webClient.get()
 				.uri(uriBuilder -> uriBuilder.path("/hentdokument/{dokumentInfoId}/{variantFormat}")
@@ -93,7 +94,8 @@ public class DokarkivConsumer {
 		};
 	}
 
-	public ArkivJournalpost hentJournalpost(String journalpostId, String dokumentInfoId, Set<String> fields) {
+	@CircuitBreaker(name = DOKARKIV_METADATA)
+	public ArkivJournalpost journalpost(String journalpostId, String dokumentInfoId, Set<String> fields) {
 		return webClient.get()
 				.uri(uriBuilder -> {
 					uriBuilder.pathSegment("journalpost", "journalpostId", "{journalpostId}", "dokumentInfoId", "{dokumentInfoId}");
