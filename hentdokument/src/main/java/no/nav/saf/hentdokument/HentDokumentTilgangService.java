@@ -100,7 +100,7 @@ class HentDokumentTilgangService {
 
 	private static TilgangBruker mapTilgangBrukerUtenTilknyttetSak(ArkivJournalpost arkivJournalpost) {
 		ArkivBruker bruker = arkivJournalpost.bruker();
-		if (bruker == null) {
+		if (bruker == null || bruker.type() == null) {
 			return null;
 		}
 		return switch (bruker.type()) {
@@ -224,7 +224,7 @@ class HentDokumentTilgangService {
 	private static Skjerming mapSkjerming(String skjerming) {
 		try {
 			return skjerming == null ? null : SkjermingTypeCode.valueOf(skjerming).getSafSkjerming();
-		} catch(IllegalArgumentException e) {
+		} catch (IllegalArgumentException e) {
 			// I tilfelle det introduseres en ny kodeverdi her uten at denne appen er i synk
 			return Skjerming.FEIL;
 		}
