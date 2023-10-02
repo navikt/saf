@@ -8,10 +8,26 @@ import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 
 record HentDokumentTilgang(TilgangBruker tilgangBruker, TilgangSak tilgangSak, TilgangJournalpost tilgangJournalpost) {
 	TilgangDokumentInfo tilgangDokumentInfo() {
+		if(tilgangJournalpost.getDokumenter() == null) {
+			return null;
+		}
+		if (tilgangJournalpost.getDokumenter().isEmpty()) {
+			return null;
+		}
 		return tilgangJournalpost.getDokumenter().get(0);
 	}
 
 	TilgangDokumentvariant tilgangDokumentvariant() {
-		return tilgangDokumentInfo().getTilgangDokumentvarianter().get(0);
+		TilgangDokumentInfo tilgangDokumentInfo = tilgangDokumentInfo();
+		if (tilgangDokumentInfo == null) {
+			return null;
+		}
+		if (tilgangDokumentInfo.getTilgangDokumentvarianter() == null) {
+			return null;
+		}
+		if (tilgangDokumentInfo.getTilgangDokumentvarianter().isEmpty()) {
+			return null;
+		}
+		return tilgangDokumentInfo.getTilgangDokumentvarianter().get(0);
 	}
 }
