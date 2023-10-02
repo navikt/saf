@@ -137,6 +137,30 @@ class HentDokumentIT extends AbstractItest {
 	}
 
 	@Test
+	void shouldHentDokumentWhenMidlertidigAndBrukerTypeNull() {
+		abacPermit();
+		stubHappyHentDokument();
+		stubDokarkivJournalpost("journalpost-dokumentinfo-gsak-midlertidig-bruker-empty.json");
+
+		ResponseEntity<String> responseEntity = callHentDokument();
+
+		assertOkArkivResponse(responseEntity);
+		verify(getRequestedFor(urlEqualTo("/dokarkiv/hentdokument/" + DOKUMENT_ID + "/" + VARIANTFORMAT)));
+	}
+
+	@Test
+	void shouldHentDokumentWhenMidlertidigSaksrelasjonEmpty() {
+		abacPermit();
+		stubHappyHentDokument();
+		stubDokarkivJournalpost("journalpost-dokumentinfo-gsak-midlertidig-saksrelasjon-empty.json");
+
+		ResponseEntity<String> responseEntity = callHentDokument();
+
+		assertOkArkivResponse(responseEntity);
+		verify(getRequestedFor(urlEqualTo("/dokarkiv/hentdokument/" + DOKUMENT_ID + "/" + VARIANTFORMAT)));
+	}
+
+	@Test
 	void shouldHentDokumentWhenSladdet() {
 		abacPermit();
 		stubFor(get("/dokarkiv/hentdokument/" + DOKUMENT_ID + "/" + SLADDET_VARIANTFORMAT)

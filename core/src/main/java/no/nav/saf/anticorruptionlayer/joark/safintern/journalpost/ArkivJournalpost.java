@@ -7,7 +7,6 @@ public record ArkivJournalpost(Long journalpostId, String fagomraade, String sta
 							   ArkivSaksrelasjon saksrelasjon,
 							   List<ArkivDokumentinfo> dokumenter) {
 	public boolean isTilknyttetSak() {
-		return saksrelasjon != null;
+		return saksrelasjon != null && saksrelasjon.sakId() != null;
 	}
-
 }
