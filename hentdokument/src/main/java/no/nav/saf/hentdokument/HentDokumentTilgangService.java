@@ -15,6 +15,7 @@ import no.nav.saf.anticorruptionlayer.k9.K9AntiCorruptionLayer;
 import no.nav.saf.anticorruptionlayer.pensjonsak.PensjonSakAntiCorruptionLayer;
 import no.nav.saf.domain.Arkivsak;
 import no.nav.saf.domain.BidragSak;
+import no.nav.saf.domain.kode.Skjerming;
 import no.nav.saf.domain.kode.Tema;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.domain.tilgangsmodell.TilgangDokumentInfo;
@@ -193,7 +194,7 @@ class HentDokumentTilgangService {
 		return TilgangJournalpost.builder()
 				.journalpostId(valueOf(journalpostId))
 				.journalstatus(valueOf(arkivJournalpost.status()).toSafJournalstatus())
-				.skjerming(arkivJournalpost.skjerming() == null ? null : SkjermingTypeCode.valueOf(arkivJournalpost.skjerming()).getSafSkjerming())
+				.skjerming(mapSkjerming(arkivJournalpost.skjerming()))
 				.dokumenter(mapTilgangDokumentInfo(journalpostId, variantFormat, arkivDokumentinfoOpt))
 				.build();
 	}
@@ -202,7 +203,7 @@ class HentDokumentTilgangService {
 	private static List<TilgangDokumentInfo> mapTilgangDokumentInfo(Long journalpostId, String variantFormat, ArkivDokumentinfo arkivDokumentinfo) {
 		Long dokumentInfoId = arkivDokumentinfo.dokumentInfoId();
 		return List.of(TilgangDokumentInfo.builder()
-				.skjerming(arkivDokumentinfo.skjerming() == null ? null : SkjermingTypeCode.valueOf(arkivDokumentinfo.skjerming()).getSafSkjerming())
+				.skjerming(mapSkjerming(arkivDokumentinfo.skjerming()))
 				.tilgangDokumentvarianter(mapTilgangDokumentvarianter(journalpostId, dokumentInfoId, variantFormat, arkivDokumentinfo.fildetaljer()))
 				.journalpostId(valueOf(journalpostId))
 				.dokumentInfoId(valueOf(dokumentInfoId))
@@ -213,10 +214,19 @@ class HentDokumentTilgangService {
 		return fildetaljer.stream()
 				.filter(f -> variantFormat.equals(f.format()))
 				.map(arkivFildetaljer -> TilgangDokumentvariant.builder()
-						.skjerming(arkivFildetaljer.skjerming() == null ? null : SkjermingTypeCode.valueOf(arkivFildetaljer.skjerming()).getSafSkjerming())
+						.skjerming(mapSkjerming(arkivFildetaljer.skjerming()))
 						.variantformat(VariantFormatCode.valueOf(arkivFildetaljer.format()).getSafVariantformat())
 						.journalpostId(valueOf(journalpostId))
 						.dokumentInfoId(valueOf(dokumentInfoId))
 						.build()).collect(Collectors.toList());
+	}
+
+	private static Skjerming mapSkjerming(String skjerming) {
+		try {
+			return skjerming == null ? null : SkjermingTypeCode.valueOf(skjerming).getSafSkjerming();
+		} catch(IllegalArgumentException e) {
+			// I tilfelle det introduseres en ny kodeverdi her uten at denne appen er i synk
+			return Skjerming.FEIL;
+		}
 	}
 }
