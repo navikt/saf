@@ -13,9 +13,6 @@ import java.util.stream.Collectors;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
-/**
- * @author Joakim Bjørnstad, Jbit AS
- */
 @Value
 @Builder(toBuilder = true)
 public class TilgangBruker {
@@ -54,13 +51,16 @@ public class TilgangBruker {
 		return !isPerson() && !isOrganisasjon();
 	}
 
-	public List<String> hentAlleAktoerId() {
+	public List<String> getAlleAktoerIds() {
 		if (historiskeIdenter.isEmpty() && aktoerId != null) {
 			return Collections.singletonList(aktoerId);
 		} else if (historiskeIdenter.isEmpty()) {
-			return new ArrayList<>();
+			return List.of();
 		}
-		List<String> idents = historiskeIdenter.stream().filter(h -> IdentType.AKTOERID.equals(h.getIdentType())).map(TilgangIdent::getIdentifikator).collect(Collectors.toList());
+		List<String> idents = historiskeIdenter.stream()
+				.filter(h -> IdentType.AKTOERID == h.getIdentType())
+				.map(TilgangIdent::getIdentifikator)
+				.collect(Collectors.toList());
 		idents.add(aktoerId);
 		return idents;
 	}
