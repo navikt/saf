@@ -2,18 +2,15 @@ package no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo;
 
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.FinnJournalposterRequestTo;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.FinnJournalposterResponseTo;
-import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark901.HentTilgangJournalpostResponseTo;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark902.HentJournalpostResponseTo;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark903.TilknytningUriParam;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark903.TilknyttedeJournalposterResponse;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark904.FinnJournalposterStatusRequestTo;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark904.FinnJournalposterStatusResponseTo;
 import no.nav.saf.config.ServiceuserAlias;
-import no.nav.saf.exceptions.DokumentIkkeFunnetException;
 import no.nav.saf.exceptions.JournalpostIkkeFunnetException;
 import no.nav.saf.exceptions.SafFunctionalException;
 import no.nav.saf.exceptions.SafTechnicalException;
-import no.nav.saf.exceptions.UgyldigInputException;
 import no.nav.saf.metrics.Monitor;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,28 +63,6 @@ public class HentJournalsakinfo {
 	public FinnJournalposterStatusResponseTo finnJournalposterStatus(FinnJournalposterStatusRequestTo request) {
 		ResponseEntity<FinnJournalposterStatusResponseTo> response = callFinnJournalposterStatus(request);
 		return response.getBody();
-	}
-
-	@Monitor(value = "dok_consumer", extraTags = {"process", "hentTilgangJournalpost"}, histogram = true)
-	public HentTilgangJournalpostResponseTo hentTilgangJournalpost(String journalpostId, String dokumentInfoId, String variantFormat) {
-		try {
-			return callHentTilgangJournalpost(journalpostId, dokumentInfoId, variantFormat).getBody();
-		} catch (HttpServerErrorException e) {
-			throw new SafTechnicalException(String.format("henttilgangjournalpost feilet teknisk med statusKode=%s. Feilmelding=%s", e
-					.getStatusCode(), e.getMessage()), e, e.getStatusCode());
-		} catch (HttpClientErrorException e) {
-			switch (e.getStatusCode().value()) {
-				case 404: // NOT_FOUND
-					throw new DokumentIkkeFunnetException(String.format("Journalpost med journalpostId=%s og tilknyttet dokumentInfoId=%s og variantFormat=%s ikke funnet i Joark.",
-							journalpostId, dokumentInfoId, variantFormat));
-				case 400: //BAD_REQUEST
-					throw new UgyldigInputException(String.format("Ugyldig input: journalpostId=%s, dokumentInfoId=%s, variantFormat=%s. JournalpostId og dokumentInfoId må være tall og variantFormat må være en gyldig kodeverk-verdi, eg. ARKIV, ORIGINAL, SLADDET mfl.",
-							journalpostId, dokumentInfoId, variantFormat));
-				default:
-					throw new SafFunctionalException(String.format("hentTilgangJournalpost feilet funksjonelt. journalpostId=%s, dokumentInfoId=%s og variantFormat=%s. Feilmelding=%s",
-							journalpostId, dokumentInfoId, variantFormat, e.getMessage()));
-			}
-		}
 	}
 
 	@Monitor(value = "dok_consumer", extraTags = {"process", "hentJournalpost"}, histogram = true)
@@ -154,11 +129,6 @@ public class HentJournalsakinfo {
 		String uri = hentjournalsakinfoUrl + "/finnjournalposterstatus";
 		HttpEntity<FinnJournalposterStatusRequestTo> requestEntity = new HttpEntity<>(requestTo, createNavHeaders());
 		return restTemplate.exchange(uri, HttpMethod.POST, requestEntity, FinnJournalposterStatusResponseTo.class);
-	}
-
-	private ResponseEntity<HentTilgangJournalpostResponseTo> callHentTilgangJournalpost(String journalpostId, String dokumentInfoId, String variantFormat) {
-		String uri = hentjournalsakinfoUrl + "/henttilgangjournalpost/{journalpostId}/{dokumentInfoId}/{variantFormat}";
-		return restTemplate.exchange(uri, HttpMethod.GET, new HttpEntity<>(createNavHeaders()), HentTilgangJournalpostResponseTo.class, journalpostId, dokumentInfoId, variantFormat);
 	}
 
 	private HttpHeaders createNavHeaders() {

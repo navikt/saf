@@ -13,8 +13,6 @@ import static no.nav.saf.hentdokument.HentDokumentSporingLogglinje.BESLUTNING_PE
 /**
  * Sporingslogger til nais.audit.
  * https://confluence.adeo.no/display/BOA/saf+-+Sporingslogg+hentdokument
- *
- * @author Joakim Bjørnstad, Jbit AS
  */
 @Slf4j(topic = "hentdokument_sporbarhetslogg")
 class HentDokumentSporbarhetslogger {

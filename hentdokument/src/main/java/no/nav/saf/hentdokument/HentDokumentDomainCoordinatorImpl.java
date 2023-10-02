@@ -1,6 +1,5 @@
 package no.nav.saf.hentdokument;
 
-import no.nav.saf.domain.Arkivsak;
 import no.nav.saf.domain.HentDokument;
 import no.nav.saf.domain.kode.Journalstatus;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
@@ -9,9 +8,6 @@ import no.nav.saf.domain.tilgangsmodell.TilgangDokumentvariant;
 import no.nav.saf.domain.tilgangsmodell.TilgangJournalpost;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 import no.nav.saf.exceptions.HentdokumentTilgangskontrollException;
-import no.nav.saf.exceptions.JournalpostIkkeFunnetException;
-import no.nav.saf.hentdokument.repo.DokumentRepository;
-import no.nav.saf.hentdokument.repo.TilgangsmodellHentdokumentRepository;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.pep.AbacAnswer;
 import no.nav.saf.tilgangskontroll.pep.Pep;
@@ -28,10 +24,10 @@ import static no.nav.saf.tilgangskontroll.pep.DenyReasonFactory.createPep6dDenyR
 import static no.nav.saf.tilgangskontroll.pep.DenyReasonFactory.createPep7dDenyReason;
 
 @Component
-public class HentDokumentDomainCoordinatorImpl implements HentDokumentDomainCoordinator {
+class HentDokumentDomainCoordinatorImpl implements HentDokumentDomainCoordinator {
 
-	private final DokumentRepository dokumentRepository;
-	private final TilgangsmodellHentdokumentRepository tilgangsmodellHentdokumentRepository;
+	private final HentDokumentAntiCorruptionLayer hentDokumentAntiCorruptionLayer;
+	private final HentDokumentTilgangService hentDokumentTilgangService;
 	private final Pep<TilgangBruker> pep1g;
 	private final Pep<TilgangSak> pep2;
 	private final Pep<TilgangSak> pep2d;
@@ -43,8 +39,8 @@ public class HentDokumentDomainCoordinatorImpl implements HentDokumentDomainCoor
 	private final HentDokumentSporbarhetslogger hentDokumentSporbarhetslogger;
 
 	@Autowired
-	public HentDokumentDomainCoordinatorImpl(DokumentRepository dokumentRepository,
-											 TilgangsmodellHentdokumentRepository tilgangsmodellHentdokumentRepository,
+	public HentDokumentDomainCoordinatorImpl(HentDokumentAntiCorruptionLayer hentDokumentAntiCorruptionLayer,
+											 HentDokumentTilgangService hentDokumentTilgangService,
 											 @Autowired Pep<TilgangBruker> pep1g,
 											 @Autowired Pep<TilgangSak> pep2,
 											 @Autowired Pep<TilgangSak> pep2d,
@@ -53,8 +49,8 @@ public class HentDokumentDomainCoordinatorImpl implements HentDokumentDomainCoor
 											 @Autowired Pep<TilgangDokumentInfo> pep5,
 											 @Autowired Pep<TilgangDokumentvariant> pep6d,
 											 @Autowired Pep<TilgangSak> pep7d) {
-		this.dokumentRepository = dokumentRepository;
-		this.tilgangsmodellHentdokumentRepository = tilgangsmodellHentdokumentRepository;
+		this.hentDokumentAntiCorruptionLayer = hentDokumentAntiCorruptionLayer;
+		this.hentDokumentTilgangService = hentDokumentTilgangService;
 		this.pep1g = pep1g;
 		this.pep2 = pep2;
 		this.pep2d = pep2d;
@@ -68,22 +64,22 @@ public class HentDokumentDomainCoordinatorImpl implements HentDokumentDomainCoor
 
 	@Override
 	public HentDokument hentDokument(final String journalpostId, final String dokumentInfoId, final String variantFormat, final SafRequestContext safRequestContext) {
-		final Arkivsak arkivsak = tilgangsmodellHentdokumentRepository.findArkivsakAndCacheJournalpostDto(journalpostId, dokumentInfoId, variantFormat, safRequestContext);
-		final TilgangBruker tilgangBruker = tilgangsmodellHentdokumentRepository.findTilgangBruker(arkivsak, safRequestContext);
-		final TilgangSak tilgangSak = tilgangsmodellHentdokumentRepository.findTilgangSak(arkivsak, tilgangBruker, safRequestContext);
+		HentDokumentTilgang hentDokumentTilgang = hentDokumentTilgangService.hentDokumentTilgang(journalpostId, dokumentInfoId, variantFormat);
 
 		try {
-			doTilgangskontroll(journalpostId, dokumentInfoId, variantFormat, tilgangSak, tilgangBruker, safRequestContext);
-			hentDokumentSporbarhetslogger.logPermit(journalpostId, dokumentInfoId, variantFormat, tilgangSak, tilgangBruker, safRequestContext);
-			return dokumentRepository.findDokument(dokumentInfoId, variantFormat);
+			doTilgangskontroll(hentDokumentTilgang, safRequestContext);
+			hentDokumentSporbarhetslogger.logPermit(journalpostId, dokumentInfoId, variantFormat, hentDokumentTilgang.tilgangSak(), hentDokumentTilgang.tilgangBruker(), safRequestContext);
+			return hentDokumentAntiCorruptionLayer.hentDokument(dokumentInfoId, variantFormat);
 		} catch (HentdokumentTilgangskontrollException e) {
-			hentDokumentSporbarhetslogger.logDeny(journalpostId, dokumentInfoId, variantFormat, tilgangSak, tilgangBruker, safRequestContext, e);
+			hentDokumentSporbarhetslogger.logDeny(journalpostId, dokumentInfoId, variantFormat, hentDokumentTilgang.tilgangSak(), hentDokumentTilgang.tilgangBruker(), safRequestContext, e);
 			throw e;
 		}
 	}
 
-	private void doTilgangskontroll(String journalpostId, String dokumentInfoId, String variantFormat, TilgangSak tilgangSak, TilgangBruker tilgangBruker, SafRequestContext safRequestContext) {
-		AbacAnswer pep1gResponse = pep1g.hasAccessWithAnswer(tilgangBruker, safRequestContext);
+	private void doTilgangskontroll(HentDokumentTilgang hentDokumentTilgang, SafRequestContext safRequestContext) {
+		TilgangSak tilgangSak = hentDokumentTilgang.tilgangSak();
+		TilgangJournalpost tilgangJournalpost = hentDokumentTilgang.tilgangJournalpost();
+		AbacAnswer pep1gResponse = pep1g.hasAccessWithAnswer(hentDokumentTilgang.tilgangBruker(), safRequestContext);
 		if (pep1gResponse.isDeny()) {
 			throw new HentdokumentTilgangskontrollException(createPep1gDenyReason(safRequestContext), pep1gResponse.getDenyReasonSporing());
 		}
@@ -98,10 +94,6 @@ public class HentDokumentDomainCoordinatorImpl implements HentDokumentDomainCoor
 			throw new HentdokumentTilgangskontrollException(createPep3DenyReason(safRequestContext), pep3Response.getDenyReasonSporing());
 		}
 
-		final TilgangJournalpost tilgangJournalpost = tilgangsmodellHentdokumentRepository.findTilgangJournalpostFromSafRequestContext(safRequestContext);
-		if (tilgangJournalpost == null) {
-			throw new JournalpostIkkeFunnetException("Dokumentet tilnyttet journalpostId=" + journalpostId + ", dokumentInfoId=" + dokumentInfoId + ", variant=" + variantFormat + " ikke funnet.");
-		}
 		if (tilgangJournalpost.getJournalstatus() != Journalstatus.MOTTATT) {
 			AbacAnswer pep2dResponse = pep2d.hasAccessWithAnswer(tilgangSak, safRequestContext);
 			if (pep2dResponse.isDeny()) {
@@ -114,13 +106,12 @@ public class HentDokumentDomainCoordinatorImpl implements HentDokumentDomainCoor
 			throw new HentdokumentTilgangskontrollException(createPep4DenyReason(safRequestContext), pep4Response.getDenyReasonSporing());
 		}
 
-		final TilgangDokumentInfo tilgangDokumentInfo = tilgangJournalpost.getDokumenter().get(0);
-		AbacAnswer pep5Response = pep5.hasAccessWithAnswer(tilgangDokumentInfo, safRequestContext);
+		AbacAnswer pep5Response = pep5.hasAccessWithAnswer(hentDokumentTilgang.tilgangDokumentInfo(), safRequestContext);
 		if (pep5Response.isDeny()) {
 			throw new HentdokumentTilgangskontrollException(createPep5DenyReason(safRequestContext), pep5Response.getDenyReasonSporing());
 		}
 
-		AbacAnswer pep6dResponse = pep6d.hasAccessWithAnswer(tilgangDokumentInfo.getTilgangDokumentvarianter().get(0), safRequestContext);
+		AbacAnswer pep6dResponse = pep6d.hasAccessWithAnswer(hentDokumentTilgang.tilgangDokumentvariant(), safRequestContext);
 		if (pep6dResponse.isDeny()) {
 			throw new HentdokumentTilgangskontrollException(createPep6dDenyReason(safRequestContext), pep6dResponse.getDenyReasonSporing());
 		}

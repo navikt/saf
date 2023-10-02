@@ -1,0 +1,34 @@
+{
+  "journalpostId": 400000000,
+  "fagomraade": "PEN",
+  "status": "J",
+  "saksrelasjon": {
+    "fagsystem": "PEN",
+    "sak": null,
+    "sakId": 240000000
+  },
+  "bruker": {
+    "id": "12345678910",
+    "type": "PERSON"
+  },
+  "dokumenter": [
+    {
+      "fildetaljer": [
+        {
+          "format": "ARKIV",
+          "stoerrelse": "4721",
+          "type": "PDFA",
+          "uuid": "4b4d0d13-5c8c-4f6b-922c-4026f1679069"
+        },
+        {
+          "format": "ORIGINAL",
+          "stoerrelse": "100",
+          "type": "XML",
+          "uuid": "4b4d0d13-5c8c-4f6b-922c-4026f1679068"
+        }
+      ],
+      "logiskVedlegg": []
+    }
+  ],
+  "tilleggsopplysninger": {}
+}
