@@ -7,6 +7,7 @@ import no.nav.saf.domain.tilgangsmodell.TilgangDokumentInfo;
 import no.nav.saf.domain.tilgangsmodell.TilgangDokumentvariant;
 import no.nav.saf.domain.tilgangsmodell.TilgangJournalpost;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
+import no.nav.saf.exceptions.DokumentIkkeFunnetException;
 import no.nav.saf.exceptions.HentdokumentTilgangskontrollException;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.pep.AbacAnswer;
@@ -14,6 +15,7 @@ import no.nav.saf.tilgangskontroll.pep.Pep;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import static java.lang.String.format;
 import static no.nav.saf.tilgangskontroll.pep.DenyReasonFactory.createPep1gDenyReason;
 import static no.nav.saf.tilgangskontroll.pep.DenyReasonFactory.createPep2DenyReason;
 import static no.nav.saf.tilgangskontroll.pep.DenyReasonFactory.createPep2dDenyReason;
@@ -65,6 +67,10 @@ class HentDokumentDomainCoordinatorImpl implements HentDokumentDomainCoordinator
 	@Override
 	public HentDokument hentDokument(final String journalpostId, final String dokumentInfoId, final String variantFormat, final SafRequestContext safRequestContext) {
 		HentDokumentTilgang hentDokumentTilgang = hentDokumentTilgangService.hentDokumentTilgang(journalpostId, dokumentInfoId, variantFormat);
+		if (hentDokumentTilgang.tilgangDokumentvariant().isEmpty()) {
+			throw new DokumentIkkeFunnetException(format("Dokument med journalpostId=%s, dokumentInfoId=%s, variantFormat=%s ikke funnet i Joark.",
+					journalpostId, dokumentInfoId, variantFormat));
+		}
 
 		try {
 			doTilgangskontroll(hentDokumentTilgang, safRequestContext);
@@ -111,7 +117,7 @@ class HentDokumentDomainCoordinatorImpl implements HentDokumentDomainCoordinator
 			throw new HentdokumentTilgangskontrollException(createPep5DenyReason(safRequestContext), pep5Response.getDenyReasonSporing());
 		}
 
-		AbacAnswer pep6dResponse = pep6d.hasAccessWithAnswer(hentDokumentTilgang.tilgangDokumentvariant(), safRequestContext);
+		AbacAnswer pep6dResponse = pep6d.hasAccessWithAnswer(hentDokumentTilgang.tilgangDokumentvariant().orElse(null), safRequestContext);
 		if (pep6dResponse.isDeny()) {
 			throw new HentdokumentTilgangskontrollException(createPep6dDenyReason(safRequestContext), pep6dResponse.getDenyReasonSporing());
 		}
