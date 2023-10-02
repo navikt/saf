@@ -83,6 +83,36 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 	}
 
 	@Test
+	void shouldHentDokumentoversiktFagsakWhenGsakFagsakAndHistoriskFagsakAktoerId() throws IOException, URISyntaxException {
+		abacPermit();
+
+		stubFor(get("/gsak?fagsakNr=" + FAGSAK_ID + "&applikasjon=" + FAGSAK_SYSTEM)
+				.willReturn(aResponse().withStatus(OK.value())
+						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("gsak/gsak-sakerByFagsakIdAndFagsaksystem-happy.json")));
+		stubFor(post("/hentjournalsakinfo/finnjournalposter")
+				.withRequestBody(matchingJsonPath("$.gsakSakIds", containing("119185782")))
+				.willReturn(aResponse().withStatus(OK.value())
+						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("joark/finnjournalposter-happy.json")));
+		stubFor(post("/pdl")
+				.willReturn(aResponse().withStatus(OK.value())
+						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("pdl/pdl-fagsak-aktoerid-historisk.json")));
+
+		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikFagsakGsak();
+		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
+
+		assertEquals(OK, responseEntity.getStatusCode());
+		assertEquals("429837417", dokumentoversikt.getJournalposter().get(0).getJournalpostId());
+		assertEquals("429837329", dokumentoversikt.getJournalposter().get(1).getJournalpostId());
+		assertEquals("429812815", dokumentoversikt.getJournalposter().get(2).getJournalpostId());
+		assertEquals(KANAL_REFERANSE_ID, dokumentoversikt.getJournalposter().get(0).getEksternReferanseId());
+		assertEquals(KANAL_REFERANSE_ID, dokumentoversikt.getJournalposter().get(1).getEksternReferanseId());
+		assertEquals(KANAL_REFERANSE_ID, dokumentoversikt.getJournalposter().get(2).getEksternReferanseId());
+	}
+
+	@Test
 	void shouldHentDokumentoversiktFagsakWithFagsakIdPSAK() throws IOException, URISyntaxException {
 		abacPermit();
 

@@ -29,9 +29,6 @@ import static no.nav.saf.cache.LokalCacheConfig.TILGANGSMODELL_REPO_BRUKER_CACHE
 import static no.nav.saf.domain.DomainConstants.AKTOER_ID_LIST;
 import static no.nav.saf.domain.DomainConstants.ORGNR_LIST;
 
-/**
- * @author Joakim Bjørnstad, Jbit AS
- */
 @Slf4j
 @Component
 class DokumentoversiktFagsakTilgangsmodellRepository {
@@ -151,7 +148,7 @@ class DokumentoversiktFagsakTilgangsmodellRepository {
 	private List<String> extractAktoerIdListFromFilteredTilgangBrukerList(List<TilgangBruker> filteredTilgangBrukerList) {
 		return filteredTilgangBrukerList.stream()
 				.filter(TilgangBruker::isPerson)
-				.map(TilgangBruker::getAktoerId)
+				.flatMap(t -> t.getAlleAktoerIds().stream())
 				.collect(Collectors.toList());
 	}
 
