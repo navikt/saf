@@ -249,6 +249,16 @@ class HentDokumentIT extends AbstractItest {
 	}
 
 	@Test
+	void shouldReturnNotFoundWhenOriginalVariantDoesNotExist() {
+		abacPermit();
+		stubDokarkivJournalpost("journalpost-dokumentinfo-gsak-dokumentvariant-notmatched.json");
+
+		ResponseEntity<String> responseEntity = callHentDokument(ORIGINAL);
+
+		assertEquals(NOT_FOUND, responseEntity.getStatusCode());
+	}
+
+	@Test
 	void shouldReturnNotFoundWhenJournalpostMetadataNotFound() {
 		abacPermit();
 		stubDokarkivJournalpost(NOT_FOUND);

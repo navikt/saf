@@ -6,6 +6,8 @@ import no.nav.saf.domain.tilgangsmodell.TilgangDokumentvariant;
 import no.nav.saf.domain.tilgangsmodell.TilgangJournalpost;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 
+import java.util.Optional;
+
 record HentDokumentTilgang(TilgangBruker tilgangBruker, TilgangSak tilgangSak, TilgangJournalpost tilgangJournalpost) {
 	TilgangDokumentInfo tilgangDokumentInfo() {
 		if(tilgangJournalpost.getDokumenter() == null) {
@@ -17,17 +19,17 @@ record HentDokumentTilgang(TilgangBruker tilgangBruker, TilgangSak tilgangSak, T
 		return tilgangJournalpost.getDokumenter().get(0);
 	}
 
-	TilgangDokumentvariant tilgangDokumentvariant() {
+	Optional<TilgangDokumentvariant> tilgangDokumentvariant() {
 		TilgangDokumentInfo tilgangDokumentInfo = tilgangDokumentInfo();
 		if (tilgangDokumentInfo == null) {
-			return null;
+			return Optional.empty();
 		}
 		if (tilgangDokumentInfo.getTilgangDokumentvarianter() == null) {
-			return null;
+			return Optional.empty();
 		}
 		if (tilgangDokumentInfo.getTilgangDokumentvarianter().isEmpty()) {
-			return null;
+			return Optional.empty();
 		}
-		return tilgangDokumentInfo.getTilgangDokumentvarianter().get(0);
+		return Optional.of(tilgangDokumentInfo.getTilgangDokumentvarianter().get(0));
 	}
 }
