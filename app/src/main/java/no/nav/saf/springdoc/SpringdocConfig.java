@@ -27,12 +27,11 @@ public class SpringdocConfig {
 				.info(new Info()
 						.title("saf REST API")
 						.description("""
-								Her dokumenteres REST tjenestegrensesnittet til sak- og arkivfasade (SAF).
-								
-								Til autentisering brukes OIDC-token (JWT via OAuth 2.0). Følgende format må brukes i Authorize sitt input-felt "Value": <strong>Bearer {token}</strong>.
-								Eksempel på verdi i input-feltet: <strong> Bearer eYdmifml0ejugm</strong>. Et gyldig token kommer til å ha mange flere karakterer enn i eksempelet.
-								
-								Tokens for manuell test kan hentes fra <a href="https://ida.intern.nav.no/">IDA</a>. For maskinell test og produksjon kan tokens komme fra Azure V2 eller NAV REST-STS.
+								saf REST API tilbyr en tjeneste for å hente dokument fra fagarkivet.
+																
+								Klienter autoriseres med OAuth 2.0 access tokens. De kan være autorisert av NAV Onprem REST-STS, Azure client credential flow eller Azure on-behalf-of flow.
+																
+								Azure access tokens for manuell test som saksbehandler kan hentes fra <a href="https://ida.intern.nav.no/">IDA</a>.
 								""")
 						.version(version))
 				.components(
@@ -43,7 +42,7 @@ public class SpringdocConfig {
 												.scheme("Bearer")
 												.bearerFormat("JWT")
 												.in(HEADER)
-												.description("Eksempel på verdi som skal inn i Value-feltet (Bearer trengs altså ikke å oppgis): 'eyAidH...'")
+												.description("Bearer token for autorisasjon. Må være issued av NAV Onprem REST-STS, Azure client credential flow eller Azure on-behalf-of flow")
 												.name(AUTHORIZATION)
 								)
 				)

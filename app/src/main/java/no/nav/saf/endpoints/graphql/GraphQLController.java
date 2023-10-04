@@ -15,7 +15,6 @@ import no.nav.saf.metrics.AudienceCounter;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.security.token.support.core.api.Protected;
 import no.nav.security.token.support.core.context.TokenValidationContextHolder;
-import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -63,37 +62,33 @@ public class GraphQLController {
 		this.privilegiedServiceusers = privilegiedServiceusers;
 	}
 
-	@PostMapping(value =  {"/graphql", "/graphql/"}, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+	@PostMapping(value = {"/graphql", "/graphql/"}, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
 	public Map<String, Object> graphQLRequest(@RequestHeader(value = X_CORRELATION_ID, required = false) String xCorrelationId,
 											  @RequestHeader(value = NAV_CALLID, required = false) String navCallid,
 											  @RequestHeader(value = NAV_USER_ID, required = false) String navUserId,
 											  @RequestBody GraphQLRequest request) {
-		try {
-			final SafRequestContext safRequestContext = new SafRequestContext(
-					createNavCallid(navCallid, xCorrelationId),
-					navUserId,
-					tokenValidationContextHolder.getTokenValidationContext(),
-					privilegiedServiceusers
-			);
-			addMdcData(safRequestContext);
+		final SafRequestContext safRequestContext = new SafRequestContext(
+				createNavCallid(navCallid, xCorrelationId),
+				navUserId,
+				tokenValidationContextHolder.getTokenValidationContext(),
+				privilegiedServiceusers
+		);
+		addMdcData(safRequestContext);
 
-			audienceCounter.increment(
-					safRequestContext.getSecurityContext().getIssuer(),
-					safRequestContext.getSecurityContext().getAudience()
-			);
-			ExecutionResult executionResult =
-					GraphQL.newGraphQL(graphQLSchema)
-							.mutationExecutionStrategy(new AsyncSerialExecutionStrategy(graphQLExceptionHandler))
-							.queryExecutionStrategy(new AsyncExecutionStrategy(graphQLExceptionHandler))
-							.build().execute(ExecutionInput.newExecutionInput()
-									.query(request.getQuery())
-									.operationName(request.getOperationName())
-									.variables(request.getVariables() == null ? Collections.emptyMap() : request.getVariables())
-									.graphQLContext((c) -> c.put(KEY, safRequestContext))
-									.build());
-			return executionResult.toSpecification();
-		} finally {
-			MDC.clear();
-		}
+		audienceCounter.increment(
+				safRequestContext.getSecurityContext().getIssuer(),
+				safRequestContext.getSecurityContext().getAudience()
+		);
+		ExecutionResult executionResult =
+				GraphQL.newGraphQL(graphQLSchema)
+						.mutationExecutionStrategy(new AsyncSerialExecutionStrategy(graphQLExceptionHandler))
+						.queryExecutionStrategy(new AsyncExecutionStrategy(graphQLExceptionHandler))
+						.build().execute(ExecutionInput.newExecutionInput()
+								.query(request.getQuery())
+								.operationName(request.getOperationName())
+								.variables(request.getVariables() == null ? Collections.emptyMap() : request.getVariables())
+								.graphQLContext((c) -> c.put(KEY, safRequestContext))
+								.build());
+		return executionResult.toSpecification();
 	}
 }

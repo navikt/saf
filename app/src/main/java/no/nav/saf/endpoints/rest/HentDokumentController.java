@@ -111,8 +111,6 @@ public class HentDokumentController {
 		} catch (Exception e) {
 			log.error("hentDokument hentet ikke dokument. journalpostId={}, dokumentInfoId={}, variantFormat={}. Ukjent teknisk feil: " + e.getMessage(), journalpostId, dokumentInfoId, variantFormat, e);
 			throw e;
-		} finally {
-			MDC.clear();
 		}
 	}
 
