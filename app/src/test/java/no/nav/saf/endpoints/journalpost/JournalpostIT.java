@@ -31,7 +31,6 @@ import static no.nav.saf.domain.kode.Datotype.DATO_LEST;
 import static no.nav.saf.domain.kode.Dokumentstatus.FERDIGSTILT;
 import static no.nav.saf.domain.kode.Kanal.SDP;
 import static no.nav.saf.domain.kode.Tema.PEN;
-import static no.nav.saf.domain.kode.Tema.UKJ;
 import static no.nav.saf.domain.kode.Variantformat.ARKIV;
 import static no.nav.saf.graphql.ErrorCode.BAD_REQUEST;
 import static no.nav.saf.graphql.ErrorCode.FORBIDDEN;
@@ -262,18 +261,6 @@ class JournalpostIT extends AbstractItest {
 		assertThat(journalpost.getSak().getSakstype(), is(GENERELL_SAK));
 		assertThat(journalpost.getSak().getTema(), is(PEN));
 		assertThat(journalpost.getBruker(), nullValue());
-	}
-
-	@Test
-	void shouldQueryJournalpostAndFallbackToUkjentTemaWhenNoSakOrJournalpostTemaFound() {
-		abacPermit();
-		stubFor(get("/hentjournalsakinfo/hentjournalpost/" + JOURNALPOST_ID)
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("hentjournalsakinfo/hentjournalpost_not_bid-null-temas.json")));
-
-		Journalpost journalpost = parseJournalpost(journalpostQuery());
-		assertThat(journalpost.getTema(), is(UKJ));
 	}
 
 	@Test

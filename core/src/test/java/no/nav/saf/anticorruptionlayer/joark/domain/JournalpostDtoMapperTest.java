@@ -74,9 +74,6 @@ import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObje
 import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.VARIANT_FORMAT_CODE_SLADDET;
 import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.buildJournalpostDtoUtgaaendeType;
 import static no.nav.saf.anticorruptionlayer.joark.domain.UtsendingsInfoDtoTestObjects.DIGITALPOSTKASSE_ADRESSE;
-import static no.nav.saf.anticorruptionlayer.joark.domain.UtsendingsInfoDtoTestObjects.EPOST_MELDING_MED_KOMMA_FORVENTET_TITTEL;
-import static no.nav.saf.anticorruptionlayer.joark.domain.UtsendingsInfoDtoTestObjects.EPOST_MELDING_MED_KOMMA_FORVENTET_VARSLINGSTEKST;
-import static no.nav.saf.anticorruptionlayer.joark.domain.UtsendingsInfoDtoTestObjects.EPOST_MELDING_MED_KOMMA_INPUT_VARSLINGSTEKST;
 import static no.nav.saf.anticorruptionlayer.joark.domain.UtsendingsInfoDtoTestObjects.EPOST_VEDTAK_FORVENTET_ADRESSE;
 import static no.nav.saf.anticorruptionlayer.joark.domain.UtsendingsInfoDtoTestObjects.EPOST_VEDTAK_FORVENTET_TITTEL;
 import static no.nav.saf.anticorruptionlayer.joark.domain.UtsendingsInfoDtoTestObjects.EPOST_VEDTAK_FORVENTET_VARSLINGSTEKST;
@@ -546,19 +543,6 @@ class JournalpostDtoMapperTest {
 		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, pep5RequestCache());
 
 		assertThat(journalpost.getDokumenter().get(0).getBrevkode(), is(BREVKODE));
-	}
-
-	// Se https://jira.adeo.no/browse/MMA-3076
-	@Test
-	void shouldMapFromFagomradeOKOToTemaSTO() {
-		JournalpostDto journalpostDto = buildJournalpostDtoUtgaaendeType(E, createUtsendingsInfoDtoWithNavNoVarslingOldVarselStructure(EPOST_MELDING_MED_KOMMA_INPUT_VARSLINGSTEKST, EPOST_VEDTAK_INPUT_DIGITAL_KONTAKTINFO), NAV_NO);
-		journalpostDto.setFagomrade(FagomradeCode.OKO);
-
-		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, pep5RequestCache());
-
-		assertEquals(EPOST_MELDING_MED_KOMMA_FORVENTET_TITTEL, journalpost.getUtsendingsinfo().getEpostVarselSendt().getTittel());
-		assertEquals(EPOST_MELDING_MED_KOMMA_FORVENTET_VARSLINGSTEKST, journalpost.getUtsendingsinfo().getEpostVarselSendt().getVarslingstekst());
-		assertThat(journalpost.getTema(), is(Tema.STO));
 	}
 
 	@Test

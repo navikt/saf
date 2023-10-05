@@ -3,7 +3,6 @@ package no.nav.saf.anticorruptionlayer.gsak;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.anticorruptionlayer.gsak.hentgsaksaker.GsakConsumer;
 import no.nav.saf.anticorruptionlayer.gsak.hentgsaksaker.GsakSakerTo;
-import no.nav.saf.anticorruptionlayer.joark.domain.kode.FagomradeCode;
 import no.nav.saf.domain.Arkivsak;
 import no.nav.saf.domain.kode.Arkivsakssystem;
 import no.nav.saf.domain.kode.Tema;
@@ -19,9 +18,6 @@ import java.util.stream.Collectors;
 import static no.nav.saf.domain.DomainConstants.AKTOER_ID_LIST;
 import static no.nav.saf.domain.DomainConstants.ORGNR_LIST;
 
-/**
- * @author Joakim Bjørnstad, Jbit AS
- */
 @Slf4j
 @Component
 class GsakAntiCorruptionLayerImpl implements GsakAntiCorruptionLayer {
@@ -35,7 +31,7 @@ class GsakAntiCorruptionLayerImpl implements GsakAntiCorruptionLayer {
 	@Override
 	public List<Arkivsak> findArkivsakerByAktoerId(final List<String> aktoerIder, final List<Tema> tema) {
 		try {
-			if(aktoerIder.isEmpty() || tema.isEmpty()){
+			if (aktoerIder.isEmpty() || tema.isEmpty()) {
 				return new ArrayList<>();
 			}
 			List<GsakSakerTo> gsakSakerToFiltered = new ArrayList<>();
@@ -171,11 +167,6 @@ class GsakAntiCorruptionLayerImpl implements GsakAntiCorruptionLayer {
 	private Tema mapTema(String tema) {
 		if (tema == null) {
 			return null;
-		}
-
-		// Vennligst se https://jira.adeo.no/browse/MMA-3076 . Tema OKO korrigeres til Tema STO
-		if (FagomradeCode.OKO.name().equals(tema.trim())) {
-			return Tema.STO;
 		}
 		try {
 			return Tema.valueOf(tema.trim());
