@@ -2,9 +2,6 @@ package no.nav.saf.anticorruptionlayer.joark.domain.kode;
 
 import no.nav.saf.domain.kode.Tema;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public enum FagomradeCode {
 	/**
 	 * Bidrag
@@ -22,10 +19,6 @@ public enum FagomradeCode {
 	 * Skanning
 	 */
 	MOT,
-	/**
-	 * Okonomi
-	 */
-	OKO,
 	/**
 	 * Bidrag innkreving
 	 */
@@ -155,10 +148,6 @@ public enum FagomradeCode {
 	 */
 	HEL,
 	/**
-	 * Condictio indebiti
-	 */
-	CON,
-	/**
 	 * Medlemskap
 	 */
 	MED,
@@ -219,10 +208,6 @@ public enum FagomradeCode {
 	 */
 	SER,
 	/**
-	 * Sikkerhetstiltak
-	 */
-	SIK,
-	/**
 	 * Unntak fra medlemskap
 	 */
 	UFM,
@@ -279,35 +264,8 @@ public enum FagomradeCode {
 	 */
 	KLL;
 
-	// Vennligst se https://jira.adeo.no/browse/MMA-3142
-	// Tema CON har data i joark men temaet skal ikke vises.
-	private static Map<FagomradeCode, Boolean> INVALID_TEMA = new HashMap<>();
-
-	static {
-		INVALID_TEMA.put(FagomradeCode.CON, true);
-	}
-
-	public static boolean isValid(FagomradeCode joarkFagomradeCode) {
-		return !INVALID_TEMA.containsKey(joarkFagomradeCode);
-	}
-
 	public static Tema toSafTema(FagomradeCode joarkFagomradeCode) {
-		// Vennligst se https://jira.adeo.no/browse/MMA-3076 . Tema OKO korrigeres til Tema STO
-		if (joarkFagomradeCode == OKO) {
-			return Tema.STO;
-		}
 		// Hvis tema er null så faller man tilbake til UKJ
 		return joarkFagomradeCode == null ? Tema.UKJ : Tema.valueOf(joarkFagomradeCode.name());
-	}
-
-	public static FagomradeCode fromTema(Tema tema) {
-		if (tema == null) {
-			return null;
-		}
-		try {
-			return FagomradeCode.valueOf(tema.name());
-		} catch (IllegalArgumentException e) {
-			return null;
-		}
 	}
 }

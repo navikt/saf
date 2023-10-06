@@ -2,7 +2,6 @@ package no.nav.saf.anticorruptionlayer.joark;
 
 import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.anticorruptionlayer.joark.domain.SafToJoarkJournalstatusMapper;
-import no.nav.saf.anticorruptionlayer.joark.domain.kode.FagomradeCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.JournalStatusCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.JournalpostTypeCode;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.HentJournalsakinfo;
@@ -23,9 +22,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * @author Joakim Bjørnstad, Jbit AS
- */
 @Component
 @Slf4j
 class JoarkAntiCorruptionLayerImpl implements JoarkAntiCorruptionLayer {
@@ -65,9 +61,7 @@ class JoarkAntiCorruptionLayerImpl implements JoarkAntiCorruptionLayer {
 				.etterPeker(etterPeker)
 				.build());
 
-		return responseTo.getTilgangJournalposter().stream()
-				.filter(journalpostDto -> FagomradeCode.isValid(journalpostDto.getFagomrade()))
-				.collect(Collectors.toList());
+		return responseTo.getTilgangJournalposter();
 	}
 
 	@Override
@@ -90,8 +84,6 @@ class JoarkAntiCorruptionLayerImpl implements JoarkAntiCorruptionLayer {
 				.etterPeker(etterPeker)
 				.build());
 
-		return responseTo.getTilgangJournalposter().stream()
-				.filter(journalpostDto -> FagomradeCode.isValid(journalpostDto.getFagomrade()))
-				.collect(Collectors.toList());
+		return responseTo.getTilgangJournalposter();
 	}
 }

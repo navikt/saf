@@ -3,51 +3,8 @@ package no.nav.saf.anticorruptionlayer.joark.domain.kode;
 import no.nav.saf.domain.kode.Arkivsakssystem;
 
 public enum FagsystemCode {
-
-	/**
-	 * Arena
-	 */
-	AO01(null),
-	/**
-	 * Infotrygd
-	 */
-	IT01(null),
-	/**
-	 * Bidrag
-	 */
-	BID(null),
-	/**
-	 * Pensjon
-	 */
 	PEN(Arkivsakssystem.PSAK),
-	/**
-	 * Øvrig
-	 */
-	OVR(null),
-	/**
-	 * Skanning
-	 */
-	MOT(null),
-	/**
-	 * Okonomi
-	 */
-	OKO(null),
-	/**
-	 * Bidrag innkreving
-	 */
-	BII(null),
-	/**
-	 * GOSYS
-	 */
-	FS22(Arkivsakssystem.GSAK),
-	/**
-	 * GSAK
-	 */
-	FS19(null),
-	/**
-	 * Utbetalingsmeldinger (UR)
-	 */
-	OB36(null);
+	FS22(Arkivsakssystem.GSAK);
 
 	FagsystemCode(Arkivsakssystem safArkivsaksystem) {
 		this.safArkivsaksystem = safArkivsaksystem;
