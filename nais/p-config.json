@@ -240,6 +240,11 @@
       "cluster": "prod-gcp"
     },
     {
+      "app": "pensjon-pselv-borger",
+      "namespace": "pensjondeployer",
+      "cluster": "prod-gcp"
+    },
+    {
       "app": "arena",
       "namespace": "teamarenanais",
       "cluster": "prod-fss",

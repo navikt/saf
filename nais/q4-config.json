@@ -45,16 +45,6 @@
       "roles": ["tema_aap", "tema_dag", "tema_fei", "tema_ind", "tema_opp", "tema_sym", "tema_til", "tema_tso", "tema_tsr"]
     },
     {
-      "app": "pensjon-pen-q4",
-      "namespace": "teampensjon",
-      "cluster": "dev-fss"
-    },
-    {
-      "app": "pensjon-psak-q4",
-      "namespace": "teampensjon",
-      "cluster": "dev-fss"
-    },
-    {
       "app": "ida",
       "namespace": "traktor",
       "cluster": "prod-fss"
