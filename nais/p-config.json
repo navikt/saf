@@ -215,6 +215,11 @@
       "cluster": "prod-gcp"
     },
     {
+      "app": "eux-nav-rinasak-datasync",
+      "namespace": "eessibasis",
+      "cluster": "prod-gcp"
+    },
+    {
       "app": "eessi-pensjon-fagmodul",
       "namespace": "eessipensjon",
       "cluster": "prod-gcp"
