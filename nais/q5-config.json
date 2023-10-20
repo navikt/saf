@@ -22,7 +22,7 @@
   "SAF_ENDPOINTS_PDL_SCOPE": "api://dev-fss.pdl.pdl-api-q0/.default",
   "SAF_ENDPOINTS_PEN_SAK_SAMMENDRAG": "https://pensjon-pen-q5.dev.adeo.no/pen/springapi/sak/sammendrag",
   "SAF_ENDPOINTS_PEN_BRUKER_FOR_SAK": "https://pensjon-pen-q5.dev.adeo.no/pen/api/pip/hentBrukerOgEnhetstilgangerForSak/v1",
-  "SAF_ENDPOINTS_PEN_SCOPE": "api://dev-fss.teampensjon.pensjon-pen-q5/.default",
+  "SAF_ENDPOINTS_PEN_SCOPE": "api://dev-fss.pensjon-q5.pensjon-pen-q5/.default",
   "SAF_ENDPOINTS_DOKARKIV_URL": "https://dokarkiv-q5.dev.intern.nav.no/rest/internal/safintern",
   "SAF_ENDPOINTS_DOKARKIV_SCOPE": "api://dev-fss.teamdokumenthandtering.dokarkiv-q5/.default",
   "SAF_REDIS_HOSTNAME":  "saf-redis-q5",
