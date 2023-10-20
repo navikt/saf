@@ -25,7 +25,6 @@ public class XacmlResponse {
         return Decision.PERMIT.equals(decision);
     }
 
-
     public boolean isDeny() {
         return Decision.DENY.equals(decision);
     }

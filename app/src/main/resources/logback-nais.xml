@@ -17,23 +17,6 @@
 		</encoder>
 	</appender>
 
-	<appender name="sporbarhetslogg" class="com.papertrailapp.logback.Syslog4jAppender">
-		<layout class="ch.qos.logback.classic.PatternLayout">
-			<pattern>[%X{callId}] - %m%n</pattern>
-		</layout>
-
-		<syslogConfig class="org.productivity.java.syslog4j.impl.net.tcp.TCPNetSyslogConfig">
-			<host>audit.nais</host>
-			<port>6514</port>
-			<ident>saf_audit</ident>
-			<maxMessageLength>128000</maxMessageLength>
-		</syslogConfig>
-	</appender>
-
-	<logger level="INFO" name="sporbarhetslogg" additivity="false">
-		<appender-ref ref="sporbarhetslogg"/>
-	</logger>
-
 	<!--
 	 Timestamp blir generert av appenderen.
 	 Eksempel: 2019-06-07T07:21:20+02:00 <pod_navn> saf_audit_hentdokument: [callId] - message

@@ -11,10 +11,6 @@
 		<appender-ref ref="CONSOLE"/>
 	</logger>
 
-	<logger level="INFO" name="sporbarhetslogg" additivity="false">
-		<appender-ref ref="CONSOLE"/>
-	</logger>
-
 	<logger level="INFO" name="hentdokument_sporbarhetslogg" additivity="false">
 		<appender-ref ref="CONSOLE"/>
 	</logger>
