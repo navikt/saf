@@ -1,4 +1,4 @@
-{
+n{
   "NAMESPACE": "teamdokumenthandtering",
   "MIN_REPLICAS": 1,
   "MAX_REPLICAS": 2,
@@ -25,7 +25,7 @@
   "SAF_ENDPOINTS_PDL_SCOPE": "api://dev-fss.pdl.pdl-api/.default",
   "SAF_ENDPOINTS_PEN_SAK_SAMMENDRAG": "https://pensjon-pen-q2.dev.adeo.no/pen/springapi/sak/sammendrag",
   "SAF_ENDPOINTS_PEN_BRUKER_FOR_SAK": "https://pensjon-pen-q2.dev.adeo.no/pen/api/pip/hentBrukerOgEnhetstilgangerForSak/v1",
-  "SAF_ENDPOINTS_PEN_SCOPE": "api://dev-fss.teampensjon.pensjon-pen-q2/.default",
+  "SAF_ENDPOINTS_PEN_SCOPE": "api://dev-fss.pensjon-q2.pensjon-pen-q2/.default",
   "SAF_ENDPOINTS_DOKARKIV_URL": "https://dokarkiv.dev.intern.nav.no/rest/internal/safintern",
   "SAF_ENDPOINTS_DOKARKIV_SCOPE": "api://dev-fss.teamdokumenthandtering.dokarkiv/.default",
   "SAF_REDIS_HOSTNAME":  "saf-redis",
@@ -237,17 +237,7 @@
     },
     {
       "app": "pensjon-pen-q2",
-      "namespace": "teampensjon",
-      "cluster": "dev-fss"
-    },
-    {
-      "app": "pensjon-pen-q2",
       "namespace": "pensjon-q2",
-      "cluster": "dev-fss"
-    },
-    {
-      "app": "pensjon-psak-q2",
-      "namespace": "teampensjon",
       "cluster": "dev-fss"
     },
     {
