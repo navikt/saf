@@ -46,6 +46,12 @@
       "roles": ["tema_pen", "tema_eyb", "tema_eyo"]
     },
     {
+      "app": "etterlatte-hendelser-joark",
+      "namespace": "etterlatte",
+      "cluster": "dev-gcp",
+      "roles": ["tema_pen", "tema_eyb", "tema_eyo"]
+    },
+    {
       "app": "k9-punsj",
       "namespace": "k9saksbehandling",
       "cluster": "dev-fss"
