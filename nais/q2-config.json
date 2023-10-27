@@ -1,4 +1,4 @@
-n{
+{
   "NAMESPACE": "teamdokumenthandtering",
   "MIN_REPLICAS": 1,
   "MAX_REPLICAS": 2,
