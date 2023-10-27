@@ -417,6 +417,12 @@
       "roles": ["tema_pen", "tema_eyb", "tema_eyo"]
     },
     {
+      "app": "etterlatte-hendelser-joark",
+      "namespace": "etterlatte",
+      "cluster": "prod-gcp",
+      "roles": ["tema_pen", "tema_eyb", "tema_eyo"]
+    },
+    {
       "app": "spberegning",
       "namespace": "helsearbeidsgiver",
       "cluster": "prod-fss"
