@@ -13,8 +13,6 @@ import static no.nav.saf.tilgangskontroll.pep.AbacAnswer.permit;
  * Policy Enforcement Point for ABAC.
  * <p>
  * Evaluerer tilgang til en ressurs T.
- *
- * @author Joakim Bjørnstad, Jbit AS
  */
 @Slf4j
 public abstract class Pep<T> {
@@ -51,10 +49,14 @@ public abstract class Pep<T> {
 			return verifyAzureClientCredentialFlowAccess(ressurs, safRequestContext);
 		} else {
 			XacmlResponse response = verifyAbacPdpDecision(ressurs, safRequestContext);
-			return Decision.PERMIT.equals(response.getDecision()) ?
-					permit() :
-					deny(convertToString(response.getAdvices()));
+			return mapXacmlResponse(response);
 		}
+	}
+
+	protected AbacAnswer mapXacmlResponse(XacmlResponse xacmlResponse) {
+		return Decision.PERMIT.equals(xacmlResponse.getDecision()) ?
+				permit() :
+				deny(convertToString(xacmlResponse.getAdvices()));
 	}
 
 	void traceLogPepStarted(String pepName, Object ressurs) {

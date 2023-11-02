@@ -13,6 +13,7 @@ import no.nav.saf.domain.visningsmodell.Journalpost;
 import no.nav.saf.exceptions.JournalpostIkkeFunnetException;
 import no.nav.saf.graphql.GraphQLException;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
+import no.nav.saf.tilgangskontroll.pep.AbacAnswer;
 import no.nav.saf.tilgangskontroll.pep.Pep;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -76,9 +77,9 @@ class JournalpostQuery {
 				safRequestContext.getRequestCache().putObject(TILGANG_BRUKER, tilgangBruker);
 			}
 
-			boolean pep1Access = pep1g.hasAccess(tilgangBruker, safRequestContext);
-			if (!pep1Access) {
-				throw GraphQLException.of(FORBIDDEN, environment, createPep1gDenyReason(safRequestContext));
+			AbacAnswer pep1Access = pep1g.hasAccessWithAnswer(tilgangBruker, safRequestContext);
+			if (pep1Access.isDeny()) {
+				throw GraphQLException.of(FORBIDDEN, environment, createPep1gDenyReason(safRequestContext, pep1Access));
 			}
 
 			final TilgangSak tilgangSak = journalpostTilgangRepository.findTilgangSak(arkivsak, tilgangBruker, safRequestContext);

@@ -4,6 +4,8 @@ import no.nav.saf.domain.kode.Tema;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 
+import static no.nav.saf.tilgangskontroll.pep.Pep1gImpl.ORGANISASJON_ER_NAV_STAT_KREVER_EGEN_ANSATT_TILGANG;
+
 /**
  * Menneskelesbare grunner til deny fra PEP.
  */
@@ -19,9 +21,9 @@ public final class DenyReasonFactory {
 			" har ikke tilgang til tema ressursen tilhører eller på grunn av Forvaltningsloven § 19.";
 
 	private static final String PEP2D_DENY_SYSTEM_INFO = "System har ikke tilgang til tema ressursen tilhører. " +
-			"\"tema_%s\" må ligge i feltet \"roles\" i Azure IAC-konfigurasjonen for konsumenten i saf sin nais-konfigurasjon.";
+														 "\"tema_%s\" må ligge i feltet \"roles\" i Azure IAC-konfigurasjonen for konsumenten i saf sin nais-konfigurasjon.";
 	private static final String PEP2D_DENY_SAKSBEHANDLER_INFO = "Saksbehandler har ikke tilgang til tema ressursen tilhører eller geografisk område. " +
-			"Saksbehandler må ha tilgang til Enhet som brukeren er tilknyttet, med Fagområde=%s i AXSYS.";
+																"Saksbehandler må ha tilgang til Enhet som brukeren er tilknyttet, med Fagområde=%s i AXSYS.";
 
 	public static final String PEP3_DENY_REASON =
 			" har ikke tilgang til ressurs der en av partene i bidragssaken har kode 6/7 (strengt fortrolig/fortrolig adressesperre) eller egen ansatt.";
@@ -42,10 +44,28 @@ public final class DenyReasonFactory {
 		return isSystem ? "System" : "Saksbehandler";
 	}
 
-	public static String createPep1gDenyReason(SafRequestContext safRequestContext) {
+	public static String createPep1gDenyReasonDokumentoversikt(SafRequestContext safRequestContext, AbacAnswer abacAnswer) {
 		boolean isSystem = safRequestContext.getSecurityContext().isSystem();
-		return DENY_PREFIX + saksbehandlerEllerSystem(isSystem) + PEP1G_DENY_REASON +
-				(isSystem ? "" : PEP1G_DENY_SAKSBEHANDLER_INFO) + CONTACT_US_SUFFIX;
+		String consumerType = saksbehandlerEllerSystem(isSystem);
+		return switch (abacAnswer.getDenyReasonSporing()) {
+			case "saf_info=" + ORGANISASJON_ER_NAV_STAT_KREVER_EGEN_ANSATT_TILGANG ->
+					"Tilgang til dokumentoversikt for organisasjon ble avvist. " +
+					"Organisasjonen er underlagt NAV Stat og det krever egen ansatt behandling for oppslag på denne. " +
+					"NAV ansatt må være medlem av gruppen 0000-GA-Egne_ansatte";
+			default -> "Tilgang til dokumentoversikt ble avvist. " + consumerType + PEP1G_DENY_REASON +
+					   (isSystem ? "" : PEP1G_DENY_SAKSBEHANDLER_INFO) + CONTACT_US_SUFFIX;
+		};
+	}
+
+	public static String createPep1gDenyReason(SafRequestContext safRequestContext, AbacAnswer abacAnswer) {
+		boolean isSystem = safRequestContext.getSecurityContext().isSystem();
+		return switch (abacAnswer.getDenyReasonSporing()) {
+			case "saf_info=" + ORGANISASJON_ER_NAV_STAT_KREVER_EGEN_ANSATT_TILGANG -> DENY_PREFIX +
+																					  "Journalpost/dokument er knyttet til organisasjon underlagt NAV Stat og det krever egen ansatt behandling for oppslag på denne. " +
+																					  "NAV ansatt må være medlem av gruppen 0000-GA-Egne_ansatte";
+			default -> DENY_PREFIX + saksbehandlerEllerSystem(isSystem) + PEP1G_DENY_REASON +
+					   (isSystem ? "" : PEP1G_DENY_SAKSBEHANDLER_INFO) + CONTACT_US_SUFFIX;
+		};
 	}
 
 	public static String createPep2DenyReason(SafRequestContext safRequestContext) {

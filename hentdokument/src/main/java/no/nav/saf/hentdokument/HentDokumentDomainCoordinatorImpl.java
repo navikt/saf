@@ -87,7 +87,7 @@ class HentDokumentDomainCoordinatorImpl implements HentDokumentDomainCoordinator
 		TilgangJournalpost tilgangJournalpost = hentDokumentTilgang.tilgangJournalpost();
 		AbacAnswer pep1gResponse = pep1g.hasAccessWithAnswer(hentDokumentTilgang.tilgangBruker(), safRequestContext);
 		if (pep1gResponse.isDeny()) {
-			throw new HentdokumentTilgangskontrollException(createPep1gDenyReason(safRequestContext), pep1gResponse.getDenyReasonSporing());
+			throw new HentdokumentTilgangskontrollException(createPep1gDenyReason(safRequestContext, pep1gResponse), pep1gResponse.getDenyReasonSporing());
 		}
 
 		AbacAnswer pep2Response = pep2.hasAccessWithAnswer(tilgangSak, safRequestContext);

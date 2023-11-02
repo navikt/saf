@@ -19,9 +19,14 @@ public class SafProperties {
 	@NotEmpty
 	private String privilegiedserviceusers;
 
+	@NotEmpty
+	private String azureGroupEgenAnsattObjectId;
+
 	@Data
 	@Validated
 	public static class Endpoints {
+		private String overrideMsGraphServiceRoot;
+
 		/**
 		 * URI til PEN: hent sak sammendrag (PESYS REST/ Pensjon).
 		 */
@@ -47,6 +52,9 @@ public class SafProperties {
 		public URI getPenBrukerForSakURI() {
 			return URI.create(penBrukerForSak);
 		}
+
+		@NotEmpty
+		private String hrNavBedrift;
 
 		/**
 		 * URL og scope til PDL

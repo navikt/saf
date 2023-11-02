@@ -45,7 +45,6 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 
 	private static final String AKTOER_ID = "1912374211459";
 	private static final String FNR = "11111111111";
-	private static final String ORG_NR = "201545004";
 	private static final String KANAL_REFERANSE_ID = "KANAL REFERANSE ID";
 
 	private final ObjectMapper objectMapper = new ObjectMapper();
@@ -135,6 +134,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 	@Test
 	void shouldHentDokumentoversiktBrukerWithOrgNr() throws IOException, URISyntaxException {
 		abacPermit();
+		stubNavHrBedriftNei(ORG_NR);
 		stubFor(get("/gsak?orgnr=" + ORG_NR)
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
@@ -153,6 +153,44 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 		assertSaksbehandlerHarTilgang(dokumentoversikt);
 		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter")).withRequestBody(matchingJsonPath("$.gsakSakIds", containing("135695442"))));
 		verify(0, getRequestedFor(urlEqualTo("/pen/springapi/sak/sammendrag")));
+	}
+
+	@Test
+	void shouldNotHentDokumentoversiktBrukerWithNavStatOrgnummerWhenBrukerNotEgenAnsattBehandler() throws IOException, URISyntaxException {
+		abacPermit();
+		stubNavHrBedriftJa(ORG_NR);
+		stubMsGraphGetUser(NAV_IDENT_SAKSBEHANDLER);
+		stubMsGraphMemberOfNotEgenAnsatt(MS_ID_SAKSBEHANDLER);
+
+		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikBrukerWithOrgnr();
+		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
+
+		assertEquals(OK, responseEntity.getStatusCode());
+		verifyEmptyJournalpostListeAndNullSideInfo(dokumentoversikt);
+	}
+
+	@Test
+	void shouldHentDokumentoversiktBrukerWithNavStatOrgnummerWhenBrukerIsEgenAnsattBehandler() throws IOException, URISyntaxException {
+		abacPermit();
+		stubNavHrBedriftJa(ORG_NR);
+		stubMsGraphGetUser(NAV_IDENT_SAKSBEHANDLER);
+		stubMsGraphMemberOfEgenAnsatt(MS_ID_SAKSBEHANDLER);
+		stubFor(get("/gsak?orgnr=" + ORG_NR)
+				.willReturn(aResponse().withStatus(OK.value())
+						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
+						.withBodyFile("gsak/gsak-sakerBySaksId_not_bid-happy.json")));
+		stubFor(post("/hentjournalsakinfo/finnjournalposter")
+				.willReturn(aResponse().withStatus(OK.value())
+						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
+						.withBodyFile("joark/finnjournalposter_single_temaForNullskjerming-happy.json")));
+
+		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikBrukerWithOrgnr();
+		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
+
+		assertEquals(OK, responseEntity.getStatusCode());
+		assertEquals("429837417", dokumentoversikt.getJournalposter().get(0).getJournalpostId());
+		assertEquals(KANAL_REFERANSE_ID, dokumentoversikt.getJournalposter().get(0).getEksternReferanseId());
+		assertSaksbehandlerHarTilgang(dokumentoversikt);
 	}
 
 	@Test

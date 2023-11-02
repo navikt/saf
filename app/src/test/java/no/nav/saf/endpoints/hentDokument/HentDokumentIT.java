@@ -96,6 +96,7 @@ class HentDokumentIT extends AbstractItest {
 	@Test
 	void shouldHentDokumentHappyPathBrukerOrganisasjon() {
 		abacPermit();
+		stubNavHrBedriftNei(ORG_NR);
 		stubHappyHentDokument();
 		stubDokarkivJournalpost("journalpost-dokumentinfo-gsak-org-happy.json");
 
@@ -105,6 +106,34 @@ class HentDokumentIT extends AbstractItest {
 		verify(getRequestedFor(urlEqualTo("/dokarkiv/hentdokument/" + DOKUMENT_ID + "/" + VARIANTFORMAT)));
 	}
 
+	@Test
+	void shouldNotHentDokumentWhenBrukerErOrganisasjonAndNotEgenAnsatt() {
+		abacPermit();
+		stubNavHrBedriftJa(ORG_NR);
+		stubMsGraphGetUser(NAV_IDENT_SAKSBEHANDLER);
+		stubMsGraphMemberOfNotEgenAnsatt(MS_ID_SAKSBEHANDLER);
+		stubDokarkivJournalpost("journalpost-dokumentinfo-gsak-org-happy.json");
+
+		ResponseEntity<String> responseEntity = callHentDokument();
+
+		assertThat(responseEntity.getStatusCode()).isEqualTo(FORBIDDEN);
+		assertThat(responseEntity.getBody()).contains("Journalpost/dokument er knyttet til organisasjon underlagt NAV Stat og det krever egen ansatt behandling for oppslag på denne.");
+	}
+
+	@Test
+	void shouldHentDokumentWhenBrukerErOrganisasjonAndIsEgenAnsattBehandler() {
+		abacPermit();
+		stubNavHrBedriftJa(ORG_NR);
+		stubMsGraphGetUser(NAV_IDENT_SAKSBEHANDLER);
+		stubMsGraphMemberOfEgenAnsatt(MS_ID_SAKSBEHANDLER);
+		stubHappyHentDokument();
+		stubDokarkivJournalpost("journalpost-dokumentinfo-gsak-org-happy.json");
+
+		ResponseEntity<String> responseEntity = callHentDokument();
+
+		assertOkArkivResponse(responseEntity);
+		verify(getRequestedFor(urlEqualTo("/dokarkiv/hentdokument/" + DOKUMENT_ID + "/" + VARIANTFORMAT)));
+	}
 
 	@Test
 	void shouldHentDokumentWhenSakPsakHappy() {

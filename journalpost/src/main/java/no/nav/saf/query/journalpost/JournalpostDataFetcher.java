@@ -41,7 +41,10 @@ public class JournalpostDataFetcher implements DataFetcher<DataFetcherResult<Jou
 			mdcSporing(journalpostId, eksternReferanseId);
 			validateJournalpostIdOgEksternReferanseId(journalpostId, eksternReferanseId, environment);
 
+			String argumentName = argumentName(journalpostId, eksternReferanseId);
+			log.info("query journalpost. {}={}", argumentName, journalpostId);
 			Journalpost journalpost = journalpostQuery.hentJournalpost(journalpostId, eksternReferanseId, safRequestContext, environment);
+			log.info("query journalpost hentet. {}={}", argumentName, journalpostId);
 
 			return DataFetcherResult.<Journalpost>newResult()
 					.data(journalpost)
@@ -61,6 +64,14 @@ public class JournalpostDataFetcher implements DataFetcher<DataFetcherResult<Jou
 					.error(SERVER_ERROR.construct(environment,
 							"Ukjent teknisk feil. Meld fra til #team_dokumentløsninger på Slack."))
 					.build();
+		}
+	}
+
+	private String argumentName(String journalpostId, String eksternReferanseId) {
+		if (isBlank(journalpostId) && isNotBlank(eksternReferanseId)) {
+			return "eksternReferanseId";
+		} else {
+			return "journalpostId";
 		}
 	}
 
