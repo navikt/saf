@@ -1,13 +1,9 @@
 package no.nav.saf.anticorruptionlayer.nav;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.config.SafProperties;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.http.codec.json.Jackson2JsonDecoder;
 import org.springframework.stereotype.Component;
-import org.springframework.util.MimeTypeUtils;
-import org.springframework.web.reactive.function.client.ExchangeStrategies;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientException;
 import reactor.core.publisher.Mono;
@@ -22,14 +18,9 @@ public class NavHrBedriftConsumer {
 	private final WebClient webClient;
 
 	public NavHrBedriftConsumer(WebClient webClient,
-								ObjectMapper objectMapper,
 								SafProperties safProperties) {
 		this.webClient = webClient.mutate()
 				.baseUrl(safProperties.getEndpoints().getHrNavBedrift())
-				.exchangeStrategies(ExchangeStrategies.builder().codecs(clientCodecConfigurer ->
-								clientCodecConfigurer.customCodecs()
-										.register(new Jackson2JsonDecoder(objectMapper, MimeTypeUtils.APPLICATION_JSON)))
-						.build())
 				.build();
 	}
 
