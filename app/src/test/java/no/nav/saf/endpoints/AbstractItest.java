@@ -4,6 +4,7 @@ import lombok.SneakyThrows;
 import no.nav.saf.ApplicationConfig;
 import no.nav.saf.azure.AzureProperties;
 import no.nav.saf.domain.visningsmodell.Dokumentoversikt;
+import no.nav.saf.headers.NavHeaders;
 import no.nav.saf.integration.azure.AzureTokenConsumer;
 import no.nav.security.mock.oauth2.MockOAuth2Server;
 import no.nav.security.mock.oauth2.token.DefaultOAuth2TokenCallback;
@@ -112,6 +113,21 @@ public abstract class AbstractItest {
 		return headers;
 	}
 
+	protected HttpHeaders createHeadersNavUserId() {
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(APPLICATION_JSON);
+		headers.setBearerAuth(getClientCredentialToken());
+		headers.set(NavHeaders.NAV_USER_ID, NAV_IDENT_SAKSBEHANDLER);
+		return headers;
+	}
+
+	protected HttpHeaders createHeadersClientCredential() {
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(APPLICATION_JSON);
+		headers.setBearerAuth(getClientCredentialToken());
+		return headers;
+	}
+
 	private String getOnBehalfOfToken() {
 		return jwt(NAV_IDENT_SAKSBEHANDLER,
 				Map.of(
@@ -119,6 +135,18 @@ public abstract class AbstractItest {
 						"sub", UUID.randomUUID().toString(),
 						"azp_name", "dev-itest:isa:gosys",
 						"NAVident", NAV_IDENT_SAKSBEHANDLER
+				)
+		);
+	}
+
+	private String getClientCredentialToken() {
+		String oidSubEqual = UUID.randomUUID().toString();
+		return jwt("dev-itest:isa:gosys",
+				Map.of(
+						"oid", oidSubEqual,
+						"sub", oidSubEqual,
+						"azp_name", "dev-itest:isa:gosys",
+						"roles", List.of()
 				)
 		);
 	}

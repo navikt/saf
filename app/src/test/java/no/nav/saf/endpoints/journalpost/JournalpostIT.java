@@ -16,6 +16,7 @@ import no.nav.saf.endpoints.AbstractItest;
 import no.nav.saf.endpoints.graphql.GraphQLRequest;
 import no.nav.saf.endpoints.graphql.GraphQLResponse;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.RequestEntity;
@@ -310,6 +311,66 @@ class JournalpostIT extends AbstractItest {
 	}
 
 	@Test
+	void shouldQueryJournalpostByJournalpostIdWhenOrgnummerOnSakAndClientCredential() {
+		abacPermit();
+		stubNavHrBedriftNei(ORG_NR);
+		stubFor(get("/hentjournalsakinfo/hentjournalpost/" + JOURNALPOST_ID)
+				.willReturn(aResponse().withStatus(OK.value())
+						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("hentjournalsakinfo/hentjournalpost_orgnr-happy.json")));
+
+		GraphQLResponse graphQLResponse = journalpostQuery("journalpost.query", createHeadersClientCredential());
+		Journalpost journalpost = parseJournalpost(graphQLResponse);
+		assertThat(journalpost, notNullValue());
+	}
+
+	@Test
+	void shouldQueryJournalpostByJournalpostIdWhenOrgnummerOnSakAndNotNavBedriftAndNavUserIdHeader() {
+		abacPermit();
+		stubNavHrBedriftNei(ORG_NR);
+		stubFor(get("/hentjournalsakinfo/hentjournalpost/" + JOURNALPOST_ID)
+				.willReturn(aResponse().withStatus(OK.value())
+						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("hentjournalsakinfo/hentjournalpost_orgnr-happy.json")));
+
+		GraphQLResponse graphQLResponse = journalpostQueryNavUserId();
+		Journalpost journalpost = parseJournalpost(graphQLResponse);
+		assertThat(journalpost, notNullValue());
+	}
+
+	@Test
+	void shouldQueryJournalpostByJournalpostIdWhenOrgnummerOnSakAndIsNavBedriftAndIsEgenAnsattBehandlerAndNavUserIdHeader() {
+		abacPermit();
+		stubNavHrBedriftJa(ORG_NR);
+		stubMsGraphGetUser(NAV_IDENT_SAKSBEHANDLER);
+		stubMsGraphMemberOfEgenAnsatt(MS_ID_SAKSBEHANDLER);
+		stubFor(get("/hentjournalsakinfo/hentjournalpost/" + JOURNALPOST_ID)
+				.willReturn(aResponse().withStatus(OK.value())
+						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("hentjournalsakinfo/hentjournalpost_orgnr-happy.json")));
+
+		GraphQLResponse graphQLResponse = journalpostQueryNavUserId();
+		Journalpost journalpost = parseJournalpost(graphQLResponse);
+		assertThat(journalpost, notNullValue());
+	}
+
+	@Test
+	void shouldNotQueryJournalpostByJournalpostIdWhenOrgnummerOnSakAndIsNavBedriftAndIsNotEgenAnsattBehandlerAndNavUserIdHeader() {
+		abacPermit();
+		stubNavHrBedriftJa(ORG_NR);
+		stubMsGraphGetUser(NAV_IDENT_SAKSBEHANDLER);
+		stubMsGraphMemberOfNotEgenAnsatt(MS_ID_SAKSBEHANDLER);
+		stubFor(get("/hentjournalsakinfo/hentjournalpost/" + JOURNALPOST_ID)
+				.willReturn(aResponse().withStatus(OK.value())
+						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("hentjournalsakinfo/hentjournalpost_orgnr-happy.json")));
+
+		GraphQLResponse graphQLResponse = journalpostQueryNavUserId();
+		assertErrorWithCode(graphQLResponse, FORBIDDEN.getText());
+		assertErrorWithMessage(graphQLResponse, "Journalpost/dokument er knyttet til organisasjon underlagt NAV Stat og det krever egen ansatt behandling for oppslag på denne.");
+	}
+
+	@Test
 	void shouldReturnNullJournalpostWhenDenyOnPep1g() {
 		abacDenyPep1g();
 		stubFor(get("/hentjournalsakinfo/hentjournalpost/" + JOURNALPOST_ID)
@@ -467,8 +528,18 @@ class JournalpostIT extends AbstractItest {
 
 	@SneakyThrows
 	private GraphQLResponse journalpostQuery(String queryFile) {
+		return journalpostQuery(queryFile, createHeaders());
+	}
+
+	@SneakyThrows
+	private GraphQLResponse journalpostQueryNavUserId() {
+		return journalpostQuery("journalpost.query", createHeadersNavUserId());
+	}
+
+	@SneakyThrows
+	private GraphQLResponse journalpostQuery(String queryFile, HttpHeaders httpHeaders) {
 		GraphQLRequest request = new GraphQLRequest(stringFromClasspath("journalpost/" + queryFile), null, null);
-		RequestEntity<GraphQLRequest> requestEntity = new RequestEntity<>(request, createHeaders(), HttpMethod.POST, new URI("/graphql"));
+		RequestEntity<GraphQLRequest> requestEntity = new RequestEntity<>(request, httpHeaders, HttpMethod.POST, new URI("/graphql"));
 		return restTemplate.exchange(requestEntity, GraphQLResponse.class).getBody();
 	}
 
