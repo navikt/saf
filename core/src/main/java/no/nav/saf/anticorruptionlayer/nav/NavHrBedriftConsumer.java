@@ -12,7 +12,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientException;
 import reactor.core.publisher.Mono;
 
-import static no.nav.saf.anticorruptionlayer.nav.NavHrBedriftResponse.ja;
+import static no.nav.saf.anticorruptionlayer.nav.NavHrBedriftResponse.nei;
 import static no.nav.saf.cache.LokalCacheConfig.HR_NAV_BEDRIFT_CACHE;
 
 @Slf4j
@@ -47,10 +47,11 @@ public class NavHrBedriftConsumer {
 					}
 				})
 				.onErrorResume(WebClientException.class, e -> {
-					log.error("Kall til Hr/NAV_Bedrift feilet message={}", e.getMessage(), e);
+					log.error("Kall til Hr/NAV_Bedrift feilet message={}. Returnerer at organisasjonsnummer={} ikke er NAV bedrift",
+							e.getMessage(), organisasjonsnummer, e);
 					return Mono.empty();
 				})
-				.defaultIfEmpty(ja(organisasjonsnummer))
+				.defaultIfEmpty(nei(organisasjonsnummer))
 				.block();
 	}
 }
