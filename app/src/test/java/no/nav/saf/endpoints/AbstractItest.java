@@ -10,6 +10,7 @@ import no.nav.security.mock.oauth2.MockOAuth2Server;
 import no.nav.security.mock.oauth2.token.DefaultOAuth2TokenCallback;
 import no.nav.security.token.support.spring.test.EnableMockOAuth2Server;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.core5.http.ContentType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -75,6 +76,7 @@ public abstract class AbstractItest {
 	protected static final String NAV_IDENT_SAKSBEHANDLER = "Z123456";
 	protected static final String MS_ID_SAKSBEHANDLER = "11111111-2222-3333-4444-555555555555";
 	protected static final String ORG_NR = "894705922";
+	protected static final String AKTOER_ID = "1912374211459";
 
 	@Configuration
 	public static class TestConfig {
@@ -219,7 +221,68 @@ public abstract class AbstractItest {
 						.withBodyFile("nav/msgraph-memberof-not-egenansatt.json")));
 	}
 
-	protected void abacPermit() {
+	protected static void stubPdl() {
+		stubPdl("hentPdlDataForIdent-happy.json");
+	}
+
+	protected static void stubPdl(String filename) {
+		stubFor(post("/pdl")
+				.willReturn(aResponse().withStatus(OK.value())
+						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("pdl/" + filename)));
+	}
+
+	protected static void stubSak() {
+		stubSak("gsak-sakerBySaksId_not_bid-happy.json");
+	}
+
+	protected static void stubSak(String filename) {
+		stubFor(get("/gsak?aktoerId=" + AKTOER_ID)
+				.willReturn(aResponse().withStatus(OK.value())
+						.withHeader(CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType())
+						.withBodyFile("gsak/" + filename)));
+	}
+
+	protected static void stubSakOrgnr() {
+		stubFor(get("/gsak?orgnr=" + ORG_NR)
+				.willReturn(aResponse().withStatus(OK.value())
+						.withHeader(CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType())
+						.withBodyFile("gsak/gsak-sakerBySaksId_not_bid-happy.json")));
+	}
+
+	protected static void stubFinnjournalposter() {
+		stubFinnjournalposter("finnjournalposter-happy.json");
+	}
+
+	protected static void stubFinnjournalposter(String filename) {
+		stubFor(post("/hentjournalsakinfo/finnjournalposter")
+				.willReturn(aResponse().withStatus(OK.value())
+						.withHeader(CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType())
+						.withBodyFile("joark/" + filename)));
+	}
+
+	protected static void stubPensjonSakSammendrag() {
+		stubPensjonSakSammendrag("psak-hentSakSammendragListe-happy.json");
+	}
+
+	protected static void stubPensjonSakSammendrag(String filename) {
+		stubFor(get("/pen/springapi/sak/sammendrag")
+				.willReturn(aResponse().withStatus(OK.value())
+						.withHeader(CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType())
+						.withBodyFile("psak/" + filename)));
+	}
+
+	protected static void stubBidrag() {
+		stubBidrag("bidragsak-happy.json");
+	}
+
+	protected static void stubBidrag(String filename) {
+		stubFor(get("/bidrag/654321").willReturn(aResponse().withStatus(OK.value())
+				.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+				.withBodyFile("bidrag/" + filename)));
+	}
+
+	protected static void abacPermit() {
 		stubFor(post(urlEqualTo("/abac"))
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
