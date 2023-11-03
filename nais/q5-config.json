@@ -26,7 +26,7 @@
   "SAF_ENDPOINTS_PEN_SCOPE": "api://dev-fss.pensjon-q5.pensjon-pen-q5/.default",
   "SAF_ENDPOINTS_DOKARKIV_URL": "https://dokarkiv-q5.dev.intern.nav.no/rest/internal/safintern",
   "SAF_ENDPOINTS_DOKARKIV_SCOPE": "api://dev-fss.teamdokumenthandtering.dokarkiv-q5/.default",
-  "SAF_ENDPOINTS_HR_NAV_BEDRIFT": "https://tdv-ns.adeo.no/",
+  "SAF_ENDPOINTS_HR_NAV_BEDRIFT": "https://tdv-p.adeo.no/",
   "SAF_REDIS_HOSTNAME":  "saf-redis-q5",
   "RESTSECURITYTOKENSERVICE_URL": "https://security-token-service.dev.adeo.no/rest/v1/sts/token",
   "APPDYNAMICS": "/apikey/appdynamics/dev",
