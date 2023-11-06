@@ -194,7 +194,7 @@ public abstract class AbstractItest {
 	}
 
 	protected static void stubNavHrOrganisasjon(String organisasjonsnummer, String filename) {
-		stubFor(get("/hrnavorganisasjon/json/Hr/Nav_orgnummer/ER_NAV_ORGNUMMER?ORGNUMMER_INN=" + organisasjonsnummer)
+		stubFor(get("/hrnavorganisasjon/json/Hr/Nav_Orgnummer/ER_NAV_ORGNUMMER?ORGNUMMER_INN=" + organisasjonsnummer)
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("nav/" + filename)));
