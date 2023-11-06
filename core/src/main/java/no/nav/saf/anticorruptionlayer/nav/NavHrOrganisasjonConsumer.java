@@ -53,17 +53,17 @@ public class NavHrOrganisasjonConsumer {
 						return clientResponse.createError();
 					}
 				})
+				.switchIfEmpty(Mono.error(new DecodingException("Tom respons fra endepunkt")))
 				.onErrorResume(DecodingException.class, e -> {
 					log.error("Klarte ikke dekode payload fra HR NAV Orgnummer tjenesten. Returnerer at organisasjonsnummer={} ikke er NAV organisasjon. message={}",
-							organisasjonsnummer, e.getMessage(), e);
-					return Mono.empty();
+					organisasjonsnummer, e.getMessage(), e);
+					return Mono.just(nei(organisasjonsnummer));
 				})
 				.onErrorResume(WebClientException.class, e -> {
 					log.error("Kall til HR NAV Orgnummer tjenesten feilet. Returnerer at organisasjonsnummer={} ikke er NAV organisasjon. message={}",
-							organisasjonsnummer, e.getMessage(), e);
-					return Mono.empty();
+					organisasjonsnummer, e.getMessage(), e);
+					return Mono.just(nei(organisasjonsnummer));
 				})
-				.defaultIfEmpty(nei(organisasjonsnummer))
 				.block();
 	}
 }

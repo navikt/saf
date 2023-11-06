@@ -271,6 +271,17 @@ class JournalpostIT extends AbstractItest {
 	}
 
 	@Test
+	void shouldQueryJournalpostByJournalpostIdWhenOrgnummerOnSakAndNavBedriftEmptyResponse() {
+		abacPermit();
+		stubNavHrOrganisasjon(ORG_NR, "hr-nav-organisasjon-empty.json");
+		stubHentJournalpost("hentjournalpost_orgnr-happy.json");
+
+		GraphQLResponse graphQLResponse = journalpostQuery();
+		Journalpost journalpost = parseJournalpost(graphQLResponse);
+		assertThat(journalpost, notNullValue());
+	}
+
+	@Test
 	void shouldQueryJournalpostByJournalpostIdWhenOrgnummerOnSakAndIsNavBedriftAndIsEgenAnsattBehandler() {
 		abacPermit();
 		stubNavHrOrganisasjonJa(ORG_NR);
