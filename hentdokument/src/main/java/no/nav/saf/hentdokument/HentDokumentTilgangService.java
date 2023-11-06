@@ -38,6 +38,7 @@ import static no.nav.saf.domain.kode.Arkivsakssystem.GSAK;
 import static no.nav.saf.domain.kode.Arkivsakssystem.PSAK;
 import static no.nav.saf.domain.kode.Tema.PEN;
 import static no.nav.saf.domain.kode.Tema.UFO;
+import static org.apache.commons.lang3.StringUtils.trim;
 
 @Slf4j
 @Component
@@ -92,7 +93,7 @@ class HentDokumentTilgangService {
 			ArkivBruker arkivBruker = arkivJournalpost.bruker();
 			return TilgangBruker.builder()
 					.aktoerId(arkivSak.aktoerId())
-					.orgnummer(arkivSak.aktoerId() == null ? arkivSak.orgNr() : null)
+					.orgnummer(arkivSak.aktoerId() == null ? trim(arkivSak.orgNr()) : null)
 					.foedselsnr(arkivBruker != null && arkivBruker.isPerson() ? arkivBruker.id() : null)
 					.build();
 		}
@@ -108,7 +109,7 @@ class HentDokumentTilgangService {
 					.foedselsnr(bruker.id())
 					.build();
 			case ORGANISASJON -> TilgangBruker.builder()
-					.orgnummer(bruker.id())
+					.orgnummer(trim(bruker.id()))
 					.build();
 			default -> {
 				log.warn("Forventet bruker.type=(PERSON, ORGANISASJON) for journalpost uten sakstilknytning med journalpostId={}. Fikk bruker.type={}", arkivJournalpost.journalpostId(), bruker.type());
@@ -144,7 +145,7 @@ class HentDokumentTilgangService {
 				.arkivsaksnummer(arkivsak.getArkivsaksnummer())
 				.arkivsaksystem(GSAK)
 				.tema(arkivsak.getTema())
-				.orgnummer(arkivsak.getOrgnummer())
+				.orgnummer(trim(arkivsak.getOrgnummer()))
 				.relevanteTredjeparter(bidragSak == null ? null : new ArrayList<>(bidragSak.getRelevanteTredjeparter()))
 				.fagsaksystem(arkivsak.getFagsaksystem())
 				.fpAktoerIdList(fpsak)
@@ -161,7 +162,7 @@ class HentDokumentTilgangService {
 						.arkivsaksnummer(psakArkivsak.getArkivsaksnummer())
 						.arkivsaksystem(PSAK)
 						.tema(psakArkivsak.getTema())
-						.orgnummer(psakArkivsak.getOrgnummer())
+						.orgnummer(trim(psakArkivsak.getOrgnummer()))
 						.relevanteTredjeparter(new ArrayList<>())
 						.fagsaksystem(psakArkivsak.getFagsaksystem())
 						.build()).findFirst()
@@ -182,7 +183,7 @@ class HentDokumentTilgangService {
 				.arkivsaksystem(arkivSaksrelasjon.isPensjonsak() ? PSAK : GSAK)
 				.fagsakId(arkivSak.fagsakNr())
 				.fagsaksystem(arkivSak.applikasjon())
-				.orgnummer(arkivSak.orgNr())
+				.orgnummer(trim(arkivSak.orgNr()))
 				.aktoerId(arkivSak.aktoerId())
 				.tema(Arkivsak.mapTema(arkivSak.tema()))
 				.build();

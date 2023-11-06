@@ -136,6 +136,21 @@ class HentDokumentIT extends AbstractItest {
 	}
 
 	@Test
+	void shouldHentDokumentWhenBrukerErOrganisasjonAndIsEgenAnsattBehandlerAndOrgnrWhitespace() {
+		abacPermit();
+		stubNavHrOrganisasjonJa(ORG_NR);
+		stubMsGraphGetUser(NAV_IDENT_SAKSBEHANDLER);
+		stubMsGraphMemberOfEgenAnsatt(MS_ID_SAKSBEHANDLER);
+		stubHappyHentDokument();
+		stubDokarkivJournalpost("journalpost-dokumentinfo-gsak-org-whitespace.json");
+
+		ResponseEntity<String> responseEntity = callHentDokument();
+
+		assertOkArkivResponse(responseEntity);
+		verify(getRequestedFor(urlEqualTo("/dokarkiv/hentdokument/" + DOKUMENT_ID + "/" + VARIANTFORMAT)));
+	}
+
+	@Test
 	void shouldHentDokumentWhenSakPsakHappy() {
 		abacPermit();
 		stubHappyHentDokument();
