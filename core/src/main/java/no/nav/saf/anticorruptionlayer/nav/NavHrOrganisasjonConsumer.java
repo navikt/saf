@@ -39,7 +39,7 @@ public class NavHrOrganisasjonConsumer {
 		}
 
 		return webClient.get()
-				.uri(uriBuilder -> uriBuilder.path("/json/Hr/Nav_orgnummer/ER_NAV_ORGNUMMER")
+				.uri(uriBuilder -> uriBuilder.path("/json/Hr/Nav_Orgnummer/ER_NAV_ORGNUMMER")
 						.queryParam("ORGNUMMER_INN", organisasjonsnummer)
 						.build())
 				.httpRequest(httpRequest -> {

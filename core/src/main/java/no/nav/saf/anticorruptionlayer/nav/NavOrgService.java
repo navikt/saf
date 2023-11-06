@@ -33,7 +33,6 @@ public class NavOrgService {
 
 	public boolean isOrganisasjonsnummerNavBedrift(String organisasjonsnummer) {
 		NavHrOrganisasjonResponse navHrOrganisasjonResponse = navStatConsumer.getNavBedrift(organisasjonsnummer);
-		log.info("navHrOrganisasjonResponse={}", navHrOrganisasjonResponse);
 		return navHrOrganisasjonResponse.erNavOrgnummer().erNavOrganisasjon();
 	}
 }
