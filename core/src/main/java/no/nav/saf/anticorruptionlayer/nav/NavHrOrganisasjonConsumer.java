@@ -8,9 +8,11 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientException;
 import reactor.core.publisher.Mono;
+import reactor.netty.http.client.HttpClientRequest;
 
 import java.util.regex.Pattern;
 
+import static java.time.Duration.ofSeconds;
 import static no.nav.saf.anticorruptionlayer.nav.NavHrOrganisasjonResponse.nei;
 import static no.nav.saf.cache.LokalCacheConfig.HR_NAV_ORGANISASJON_CACHE;
 
@@ -40,6 +42,10 @@ public class NavHrOrganisasjonConsumer {
 				.uri(uriBuilder -> uriBuilder.path("/json/Hr/Nav_orgnummer/ER_NAV_ORGNUMMER")
 						.queryParam("ORGNUMMER_INN", organisasjonsnummer)
 						.build())
+				.httpRequest(httpRequest -> {
+					HttpClientRequest reactorRequest = httpRequest.getNativeRequest();
+					reactorRequest.responseTimeout(ofSeconds(5));
+				})
 				.exchangeToMono(clientResponse -> {
 					if (clientResponse.statusCode().is2xxSuccessful()) {
 						return clientResponse.bodyToMono(NavHrOrganisasjonResponse.class);

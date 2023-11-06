@@ -293,7 +293,7 @@ class JournalpostIT extends AbstractItest {
 
 		GraphQLResponse graphQLResponse = journalpostQuery();
 		assertErrorWithCode(graphQLResponse, FORBIDDEN.getText());
-		assertErrorWithMessage(graphQLResponse, "Journalpost/dokument er knyttet til organisasjon underlagt NAV Stat og det krever egen ansatt behandling for oppslag på denne.");
+		assertErrorWithMessage(graphQLResponse, "Journalpost/dokument er knyttet til organisasjon underlagt NAV og det krever egen ansatt behandling for oppslag på denne.");
 	}
 
 	@Test
@@ -341,7 +341,7 @@ class JournalpostIT extends AbstractItest {
 
 		GraphQLResponse graphQLResponse = journalpostQueryNavUserId();
 		assertErrorWithCode(graphQLResponse, FORBIDDEN.getText());
-		assertErrorWithMessage(graphQLResponse, "Journalpost/dokument er knyttet til organisasjon underlagt NAV Stat og det krever egen ansatt behandling for oppslag på denne.");
+		assertErrorWithMessage(graphQLResponse, "Journalpost/dokument er knyttet til organisasjon underlagt NAV og det krever egen ansatt behandling for oppslag på denne.");
 	}
 
 	@Test

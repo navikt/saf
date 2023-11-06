@@ -117,7 +117,7 @@ class HentDokumentIT extends AbstractItest {
 		ResponseEntity<String> responseEntity = callHentDokument();
 
 		assertThat(responseEntity.getStatusCode()).isEqualTo(FORBIDDEN);
-		assertThat(responseEntity.getBody()).contains("Journalpost/dokument er knyttet til organisasjon underlagt NAV Stat og det krever egen ansatt behandling for oppslag på denne.");
+		assertThat(responseEntity.getBody()).contains("Journalpost/dokument er knyttet til organisasjon underlagt NAV og det krever egen ansatt behandling for oppslag på denne.");
 	}
 
 	@Test

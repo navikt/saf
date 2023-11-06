@@ -50,7 +50,7 @@ public final class DenyReasonFactory {
 		return switch (abacAnswer.getDenyReasonSporing()) {
 			case "saf_info=" + ORGANISASJON_ER_NAV_STAT_KREVER_EGEN_ANSATT_TILGANG ->
 					"Tilgang til dokumentoversikt for organisasjon ble avvist. " +
-					"Organisasjonen er underlagt NAV Stat og det krever egen ansatt behandling for oppslag på denne. " +
+					"Organisasjonen er underlagt NAV og det krever egen ansatt behandling for oppslag på denne. " +
 					"NAV ansatt må være medlem av gruppen 0000-GA-Egne_ansatte";
 			default -> "Tilgang til dokumentoversikt ble avvist. " + consumerType + PEP1G_DENY_REASON +
 					   (isSystem ? "" : PEP1G_DENY_SAKSBEHANDLER_INFO) + CONTACT_US_SUFFIX;
@@ -61,7 +61,7 @@ public final class DenyReasonFactory {
 		boolean isSystem = safRequestContext.getSecurityContext().isSystem();
 		return switch (abacAnswer.getDenyReasonSporing()) {
 			case "saf_info=" + ORGANISASJON_ER_NAV_STAT_KREVER_EGEN_ANSATT_TILGANG -> DENY_PREFIX +
-																					  "Journalpost/dokument er knyttet til organisasjon underlagt NAV Stat og det krever egen ansatt behandling for oppslag på denne. " +
+																					  "Journalpost/dokument er knyttet til organisasjon underlagt NAV og det krever egen ansatt behandling for oppslag på denne. " +
 																					  "NAV ansatt må være medlem av gruppen 0000-GA-Egne_ansatte";
 			default -> DENY_PREFIX + saksbehandlerEllerSystem(isSystem) + PEP1G_DENY_REASON +
 					   (isSystem ? "" : PEP1G_DENY_SAKSBEHANDLER_INFO) + CONTACT_US_SUFFIX;

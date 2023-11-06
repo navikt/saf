@@ -1,11 +1,13 @@
 package no.nav.saf.anticorruptionlayer.nav;
 
 import com.microsoft.graph.models.User;
+import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.config.SafProperties;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
+@Slf4j
 @Component
 public class NavOrgService {
 	private final MsGraphConsumer msGraphConsumer;
@@ -31,6 +33,7 @@ public class NavOrgService {
 
 	public boolean isOrganisasjonsnummerNavBedrift(String organisasjonsnummer) {
 		NavHrOrganisasjonResponse navHrOrganisasjonResponse = navStatConsumer.getNavBedrift(organisasjonsnummer);
+		log.info("navHrOrganisasjonResponse={}", navHrOrganisasjonResponse);
 		return navHrOrganisasjonResponse.erNavOrgnummer().erNavOrganisasjon();
 	}
 }
