@@ -36,6 +36,7 @@ import static no.nav.saf.domain.DomainConstants.PERSON;
 import static no.nav.saf.domain.DomainConstants.RJOARK902_JOURNALPOST_DTO;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.apache.commons.lang3.StringUtils.trim;
 
 @Slf4j
 @Component
@@ -94,7 +95,7 @@ class JournalpostAntiCorruptionLayer {
 						.build();
 			case ORGANISASJON:
 				return TilgangBruker.builder()
-						.orgnummer(tilgangBruker.getBrukerId())
+						.orgnummer(trim(tilgangBruker.getBrukerId()))
 						.build();
 			default:
 				log.warn("Forventet brukerType=(PERSON, ORGANISASJON) for midlertidig journalpost med journalpostId={}. Fikk brukerType={}", tilgangJournalpostDto

@@ -24,6 +24,7 @@ import static no.nav.saf.domain.kode.Arkivsakssystem.GSAK;
 import static no.nav.saf.domain.kode.Arkivsakssystem.PSAK;
 import static no.nav.saf.domain.kode.Tema.PEN;
 import static no.nav.saf.domain.kode.Tema.UFO;
+import static org.apache.commons.lang3.StringUtils.trim;
 
 /**
  * @author Joakim Bjørnstad, Jbit AS
@@ -98,7 +99,7 @@ class JournalpostTilgangRepositoryImpl implements JournalpostTilgangRepository {
 			if (GSAK.equals(arkivsak.getArkivsaksystem())) {
 				return TilgangBruker.builder()
 						.aktoerId(arkivsak.getAktoerId())
-						.orgnummer(arkivsak.getAktoerId() == null ? arkivsak.getOrgnummer() : null)
+						.orgnummer(arkivsak.getAktoerId() == null ? trim(arkivsak.getOrgnummer()) : null)
 						.build();
 			} else if (PSAK.equals(arkivsak.getArkivsaksystem())) {
 				// Slår opp i PSAK for å finne fnr på bruker. Deretter opp i aktoerregister for fnr -> aktørId
