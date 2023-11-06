@@ -21,6 +21,9 @@ public class LokalCacheConfig {
 	public static final String TILGANGSMODELL_REPO_BRUKER_CACHE = "tilgangsmodellRepoBruker";
 	public static final String REST_STS_CACHE = "RESTSTS";
 	public static final String AZURE_CLIENT_CREDENTIAL_TOKEN_CACHE = "azureClientCredentialToken";
+	public static final String HR_NAV_ORGANISASJON_CACHE = "hrNavOrganisasjonCache";
+	public static final String MSGRAPH_USER_CACHE = "msGraphUserCache";
+	public static final String MSGRAPH_MEMBER_CACHE = "msGraphMemberCache";
 
 	@Bean
 	@Primary
@@ -52,6 +55,21 @@ public class LokalCacheConfig {
 				new CaffeineCache(AZURE_CLIENT_CREDENTIAL_TOKEN_CACHE, Caffeine.newBuilder()
 						.expireAfterWrite(50, TimeUnit.MINUTES)
 						.maximumSize(10)
+						.recordStats()
+						.build()),
+				new CaffeineCache(HR_NAV_ORGANISASJON_CACHE, Caffeine.newBuilder()
+						.expireAfterWrite(3, TimeUnit.HOURS)
+						.maximumSize(300)
+						.recordStats()
+						.build()),
+				new CaffeineCache(MSGRAPH_USER_CACHE, Caffeine.newBuilder()
+						.expireAfterWrite(1, TimeUnit.HOURS)
+						.maximumSize(1000)
+						.recordStats()
+						.build()),
+				new CaffeineCache(MSGRAPH_MEMBER_CACHE, Caffeine.newBuilder()
+						.expireAfterWrite(1, TimeUnit.HOURS)
+						.maximumSize(1000)
 						.recordStats()
 						.build())
 		));

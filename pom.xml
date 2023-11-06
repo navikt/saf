@@ -34,6 +34,8 @@
 		<springdoc-openapi-starter-webmvc-ui.version>2.2.0</springdoc-openapi-starter-webmvc-ui.version>
 		<logstash-logback-encoder.version>7.4</logstash-logback-encoder.version>
 		<logback-syslog4j.version>1.0.0</logback-syslog4j.version>
+		<microsoft-graph.version>5.75.0</microsoft-graph.version>
+		<azure-identity.version>1.2.5</azure-identity.version>
 		<bcprov-jdk15on.version>1.70</bcprov-jdk15on.version>
 
 		<!-- Test -->
@@ -75,7 +77,6 @@
 				<artifactId>sak</artifactId>
 				<version>${project.version}</version>
 			</dependency>
-
 			<dependency>
 				<groupId>io.github.resilience4j</groupId>
 				<artifactId>resilience4j-spring-boot3</artifactId>
@@ -86,7 +87,6 @@
 				<artifactId>graphql-java</artifactId>
 				<version>${graphql-java.version}</version>
 			</dependency>
-
 			<dependency>
 				<groupId>net.logstash.logback</groupId>
 				<artifactId>logstash-logback-encoder</artifactId>
@@ -116,6 +116,16 @@
 				<groupId>no.nav.security</groupId>
 				<artifactId>token-validation-spring</artifactId>
 				<version>${token-support.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.microsoft.graph</groupId>
+				<artifactId>microsoft-graph</artifactId>
+				<version>${microsoft-graph.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.azure</groupId>
+				<artifactId>azure-identity</artifactId>
+				<version>${azure-identity.version}</version>
 			</dependency>
 			<!-- overrider transitive avhengigheter -->
 			<dependency>

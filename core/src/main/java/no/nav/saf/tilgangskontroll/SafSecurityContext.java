@@ -47,7 +47,7 @@ public class SafSecurityContext {
 	@Deprecated
 	private static final String UKJENT_AUDIENCE = "ukjentAudience";
 	static final String NAVIDENT_REGEX = "^[a-zA-Z]\\d{6}$";
-	static final Pattern NAVIDENT_PATTERN = Pattern.compile(NAVIDENT_REGEX);
+	public static final Pattern NAVIDENT_PATTERN = Pattern.compile(NAVIDENT_REGEX);
 	public static final String AZURE_ROLE_ALLE_TEMA = "tema_alle";
 
 	private final TokenValidationContext tokenValidationContext;
@@ -189,6 +189,10 @@ public class SafSecurityContext {
 			return navUserId;
 		}
 		return getUserIdFromToken();
+	}
+
+	protected boolean isUserIdNavAnsatt() {
+		return NAVIDENT_PATTERN.matcher(getUserId()).matches();
 	}
 
 	private String getUserIdFromToken() {

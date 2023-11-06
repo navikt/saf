@@ -1,6 +1,7 @@
 package no.nav.saf.tilgangskontroll.pep;
 
 import lombok.extern.slf4j.Slf4j;
+import no.nav.saf.anticorruptionlayer.nav.NavOrgService;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlRequest;
@@ -22,18 +23,20 @@ import static no.nav.saf.tilgangskontroll.pep.AbacAnswer.permit;
  * https://confluence.adeo.no/display/ABAC/FP1%3A+Behandling+Kode+6+Brukere
  * https://confluence.adeo.no/display/ABAC/FP2%3A+Behandling+Kode+7+Brukere
  * https://confluence.adeo.no/display/ABAC/FP3%3A+Egen+ansatt
- *
- * @author Joakim Bjørnstad, Jbit AS
  */
 @Component(PEP1G)
 @Slf4j
 public class Pep1gImpl extends Pep<TilgangBruker> {
 
+	public static final String ORGANISASJON_ER_NAV_STAT_KREVER_EGEN_ANSATT_TILGANG = "organisasjon_er_nav_stat_krever_egen_ansatt_tilgang";
 	private final AbacService abacService;
+	private final NavOrgService navOrgService;
 
 	@Autowired
-	public Pep1gImpl(AbacService abacService) {
+	public Pep1gImpl(AbacService abacService,
+					 NavOrgService navOrgService) {
 		this.abacService = abacService;
+		this.navOrgService = navOrgService;
 	}
 
 	@Override
@@ -42,8 +45,7 @@ public class Pep1gImpl extends Pep<TilgangBruker> {
 			log.info("Pep1g(kode6/7, egen-ansatt, geografi) mangler data om bruker. Tilgang gis for å kunne identifisere bruker.");
 			return XacmlResponse.permit();
 		} else if (ressurs.isOrganisasjon()) {
-			log.info("Pep1g(kode6/7, egen-ansatt, geografi) validerer organisasjon. Tilgang gis siden bruker er en organisasjon.");
-			return XacmlResponse.permit();
+			return verifyTilgangOrganisasjon(ressurs.getOrgnummer(), safRequestContext);
 		}
 
 		XacmlRequest request = SafXacmlRequestFactory.create(safRequestContext.getSecurityContext());
@@ -65,6 +67,25 @@ public class Pep1gImpl extends Pep<TilgangBruker> {
 
 	@Override
 	public AbacAnswer verifyAzureClientCredentialFlowAccess(TilgangBruker ressurs, SafRequestContext safRequestContext) {
+		if (ressurs == null) {
+			return permit();
+		} else if (ressurs.isOrganisasjon()) {
+			return mapXacmlResponse(verifyTilgangOrganisasjon(ressurs.getOrgnummer(), safRequestContext));
+		}
 		return permit();
+	}
+
+	private XacmlResponse verifyTilgangOrganisasjon(String organisasjonsnummer, SafRequestContext safRequestContext) {
+		if (!safRequestContext.isUserIdNavAnsatt()) {
+			return XacmlResponse.permit();
+		}
+		if (navOrgService.isOrganisasjonsnummerNavBedrift(organisasjonsnummer)) {
+			log.info("Pep1g organisasjonsnummer={} er en NAV Organisasjon. Undersøker om NAV ansatt har tilgang.", organisasjonsnummer);
+			if (navOrgService.isNavIdentInEgenAnsattGroup(safRequestContext.getUserId())) {
+				return XacmlResponse.permit();
+			}
+			return XacmlResponse.denyWithInfo(ORGANISASJON_ER_NAV_STAT_KREVER_EGEN_ANSATT_TILGANG);
+		}
+		return XacmlResponse.permit();
 	}
 }

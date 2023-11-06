@@ -16,6 +16,7 @@ import no.nav.saf.endpoints.AbstractItest;
 import no.nav.saf.endpoints.graphql.GraphQLRequest;
 import no.nav.saf.endpoints.graphql.GraphQLResponse;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.RequestEntity;
@@ -55,9 +56,9 @@ import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 class JournalpostIT extends AbstractItest {
-	private final String JOURNALPOST_ID = "400000000";
 	private final String GSAK_ID = "100000000";
-	private final String EKSTERNREFERANSE_ID = "cd047c37-aaaf-4dda-83a3773ed636f452";
+	private static final String JOURNALPOST_ID = "400000000";
+	private static final String EKSTERNREFERANSE_ID = "cd047c37-aaaf-4dda-83a3773ed636f452";
 
 	private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
@@ -68,10 +69,7 @@ class JournalpostIT extends AbstractItest {
 	@Test
 	void shouldQueryJournalpostByJournalpostIdWhenAllAccessPermit() {
 		abacPermit();
-		stubFor(get("/hentjournalsakinfo/hentjournalpost/" + JOURNALPOST_ID)
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("hentjournalsakinfo/hentjournalpost_not_bid-happy.json")));
+		stubHentJournalpost();
 
 		Journalpost journalpost = parseJournalpost(journalpostQuery());
 
@@ -133,10 +131,7 @@ class JournalpostIT extends AbstractItest {
 	@Test
 	void shouldQueryJournalpostByEksternReferanseIdWhenAllAccessPermit() {
 		abacPermit();
-		stubFor(get("/hentjournalsakinfo/hentjournalpost/eksternreferanse/" + EKSTERNREFERANSE_ID)
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("hentjournalsakinfo/hentjournalpost_eksternreferanseid_bid_happy.json")));
+		stubHentJournalpostByEksternReferanseId("hentjournalpost_eksternreferanseid_bid_happy.json");
 
 		Journalpost journalpost = parseJournalpost(journalpostQuery("journalpost_eksternreferanse_id.query"));
 
@@ -187,10 +182,7 @@ class JournalpostIT extends AbstractItest {
 	@Test
 	void shouldQueryJournalpostByJournalpostIdWhenJournalpostIdOgEksternReferanseIdAreGiven() {
 		abacPermit();
-		stubFor(get("/hentjournalsakinfo/hentjournalpost/" + JOURNALPOST_ID)
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("hentjournalsakinfo/hentjournalpost_not_bid-happy.json")));
+		stubHentJournalpost();
 
 		Journalpost journalpost = parseJournalpost(journalpostQuery("journalpost_with_journalpostid_eksternreferanseid.query"));
 
@@ -235,23 +227,16 @@ class JournalpostIT extends AbstractItest {
 	@Test
 	void shouldReturnNullWhenJournalpostIdOgEksternReferanseIdNotGiven() {
 		abacPermit();
-		stubFor(get("/hentjournalsakinfo/hentjournalpost/" + JOURNALPOST_ID)
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("hentjournalsakinfo/hentjournalpost_not_bid-happy.json")));
+		stubHentJournalpost();
 
 		GraphQLResponse.Error error = parseJournalpostQueryError(journalpostQuery("journalpost_with_null_journalpostid_og_eksternreferanseid.query"));
 		assertThat(error.getMessage(), is(containsString("Invalid syntax with offending token")));
-
 	}
 
 	@Test
 	void shouldQueryJournalpostWhenSakNotFound() {
 		abacPermit();
-		stubFor(get("/hentjournalsakinfo/hentjournalpost/" + JOURNALPOST_ID)
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("hentjournalsakinfo/hentjournalpost_not_bid-null-user-and-sak-happy.json")));
+		stubHentJournalpost("hentjournalpost_not_bid-null-user-and-sak-happy.json");
 
 		Journalpost journalpost = parseJournalpost(journalpostQuery());
 		assertThat(journalpost.getTema(), is(PEN));
@@ -264,24 +249,116 @@ class JournalpostIT extends AbstractItest {
 	}
 
 	@Test
-	void shouldQueryJournalpostByJournalpostIdWhenAllExceptPep1AccessPermitWithSakOrgnr() {
+	void shouldQueryJournalpostByJournalpostIdWhenOrgnummerOnSakAndNotNavBedrift() {
 		abacPermit();
-		stubFor(get("/hentjournalsakinfo/hentjournalpost/" + JOURNALPOST_ID)
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("hentjournalsakinfo/hentjournalpost_orgnr-happy.json")));
+		stubNavHrOrganisasjonNei(ORG_NR);
+		stubHentJournalpost("hentjournalpost_orgnr-happy.json");
 
-		Journalpost journalpost = parseJournalpost(journalpostQuery());
+		GraphQLResponse graphQLResponse = journalpostQuery();
+		Journalpost journalpost = parseJournalpost(graphQLResponse);
 		assertThat(journalpost, notNullValue());
+	}
+
+	@Test
+	void shouldQueryJournalpostByJournalpostIdWhenOrgnummerOnSakAndNavBedriftUnknownResponse() {
+		abacPermit();
+		stubNavHrOrganisasjon(ORG_NR, "hr-nav-organisasjon-error.txt");
+		stubHentJournalpost("hentjournalpost_orgnr-happy.json");
+
+		GraphQLResponse graphQLResponse = journalpostQuery();
+		Journalpost journalpost = parseJournalpost(graphQLResponse);
+		assertThat(journalpost, notNullValue());
+	}
+
+	@Test
+	void shouldQueryJournalpostByJournalpostIdWhenOrgnummerOnSakAndNavBedriftEmptyResponse() {
+		abacPermit();
+		stubNavHrOrganisasjon(ORG_NR, "hr-nav-organisasjon-empty.json");
+		stubHentJournalpost("hentjournalpost_orgnr-happy.json");
+
+		GraphQLResponse graphQLResponse = journalpostQuery();
+		Journalpost journalpost = parseJournalpost(graphQLResponse);
+		assertThat(journalpost, notNullValue());
+	}
+
+	@Test
+	void shouldQueryJournalpostByJournalpostIdWhenOrgnummerOnSakAndIsNavBedriftAndIsEgenAnsattBehandler() {
+		abacPermit();
+		stubNavHrOrganisasjonJa(ORG_NR);
+		stubMsGraphGetUser(NAV_IDENT_SAKSBEHANDLER);
+		stubMsGraphMemberOfEgenAnsatt(MS_ID_SAKSBEHANDLER);
+		stubHentJournalpost("hentjournalpost_orgnr-happy.json");
+
+		GraphQLResponse graphQLResponse = journalpostQuery();
+		Journalpost journalpost = parseJournalpost(graphQLResponse);
+		assertThat(journalpost, notNullValue());
+	}
+
+	@Test
+	void shouldNotQueryJournalpostByJournalpostIdWhenOrgnummerOnSakAndIsNavBedriftAndIsNotEgenAnsattBehandler() {
+		abacPermit();
+		stubNavHrOrganisasjonJa(ORG_NR);
+		stubMsGraphGetUser(NAV_IDENT_SAKSBEHANDLER);
+		stubMsGraphMemberOfNotEgenAnsatt(MS_ID_SAKSBEHANDLER);
+		stubHentJournalpost("hentjournalpost_orgnr-happy.json");
+
+		GraphQLResponse graphQLResponse = journalpostQuery();
+		assertErrorWithCode(graphQLResponse, FORBIDDEN.getText());
+		assertErrorWithMessage(graphQLResponse, "Journalpost/dokument er knyttet til organisasjon underlagt NAV og det krever egen ansatt behandling for oppslag på denne.");
+	}
+
+	@Test
+	void shouldQueryJournalpostByJournalpostIdWhenOrgnummerOnSakAndClientCredential() {
+		abacPermit();
+		stubNavHrOrganisasjonNei(ORG_NR);
+		stubHentJournalpost("hentjournalpost_orgnr-happy.json");
+
+		GraphQLResponse graphQLResponse = journalpostQuery("journalpost.query", createHeadersClientCredential());
+		Journalpost journalpost = parseJournalpost(graphQLResponse);
+		assertThat(journalpost, notNullValue());
+	}
+
+	@Test
+	void shouldQueryJournalpostByJournalpostIdWhenOrgnummerOnSakAndNotNavBedriftAndNavUserIdHeader() {
+		abacPermit();
+		stubNavHrOrganisasjonNei(ORG_NR);
+		stubHentJournalpost("hentjournalpost_orgnr-happy.json");
+
+		GraphQLResponse graphQLResponse = journalpostQueryNavUserId();
+		Journalpost journalpost = parseJournalpost(graphQLResponse);
+		assertThat(journalpost, notNullValue());
+	}
+
+	@Test
+	void shouldQueryJournalpostByJournalpostIdWhenOrgnummerOnSakAndIsNavBedriftAndIsEgenAnsattBehandlerAndNavUserIdHeader() {
+		abacPermit();
+		stubNavHrOrganisasjonJa(ORG_NR);
+		stubMsGraphGetUser(NAV_IDENT_SAKSBEHANDLER);
+		stubMsGraphMemberOfEgenAnsatt(MS_ID_SAKSBEHANDLER);
+		stubHentJournalpost("hentjournalpost_orgnr-happy.json");
+
+		GraphQLResponse graphQLResponse = journalpostQueryNavUserId();
+		Journalpost journalpost = parseJournalpost(graphQLResponse);
+		assertThat(journalpost, notNullValue());
+	}
+
+	@Test
+	void shouldNotQueryJournalpostByJournalpostIdWhenOrgnummerOnSakAndIsNavBedriftAndIsNotEgenAnsattBehandlerAndNavUserIdHeader() {
+		abacPermit();
+		stubNavHrOrganisasjonJa(ORG_NR);
+		stubMsGraphGetUser(NAV_IDENT_SAKSBEHANDLER);
+		stubMsGraphMemberOfNotEgenAnsatt(MS_ID_SAKSBEHANDLER);
+		stubHentJournalpost("hentjournalpost_orgnr-happy.json");
+
+		GraphQLResponse graphQLResponse = journalpostQueryNavUserId();
+		assertErrorWithCode(graphQLResponse, FORBIDDEN.getText());
+		assertErrorWithMessage(graphQLResponse, "Journalpost/dokument er knyttet til organisasjon underlagt NAV og det krever egen ansatt behandling for oppslag på denne.");
 	}
 
 	@Test
 	void shouldReturnNullJournalpostWhenDenyOnPep1g() {
 		abacDenyPep1g();
-		stubFor(get("/hentjournalsakinfo/hentjournalpost/" + JOURNALPOST_ID)
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("hentjournalsakinfo/hentjournalpost_not_bid-happy.json")));
+		stubHentJournalpost();
 
 		GraphQLResponse graphQLResponse = journalpostQuery();
 		assertErrorWithCode(graphQLResponse, FORBIDDEN.getText());
@@ -291,10 +368,7 @@ class JournalpostIT extends AbstractItest {
 	@Test
 	void shouldReturnNullJournalpostWhenDenyOnPep2() {
 		abacDenyPep2();
-		stubFor(get("/hentjournalsakinfo/hentjournalpost/" + JOURNALPOST_ID)
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("hentjournalsakinfo/hentjournalpost_far-happy.json")));
+		stubHentJournalpost("hentjournalpost_far-happy.json");
 		stubFor(get("/gsak/" + GSAK_ID)
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
@@ -308,10 +382,7 @@ class JournalpostIT extends AbstractItest {
 	@Test
 	void shouldReturnNullJournalpostWhenDenyOnPep2AndMidlertidigJournalpost() {
 		abacDenyPep2MidlertidigJournalpost();
-		stubFor(get("/hentjournalsakinfo/hentjournalpost/" + JOURNALPOST_ID)
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("hentjournalsakinfo/hentjournalpost_far-midlertidig.json")));
+		stubHentJournalpost("hentjournalpost_far-midlertidig.json");
 
 		GraphQLResponse graphQLResponse = journalpostQuery();
 		assertErrorWithCode(graphQLResponse, FORBIDDEN.getText());
@@ -321,10 +392,7 @@ class JournalpostIT extends AbstractItest {
 	@Test
 	void shouldReturnSaksbehandlerTilgangFalseWhenDenyOnPep2d() {
 		abacDenyPep2dSkipPep2();
-		stubFor(get("/hentjournalsakinfo/hentjournalpost/" + JOURNALPOST_ID)
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("hentjournalsakinfo/hentjournalpost_not_bid-happy.json")));
+		stubHentJournalpost();
 		stubFor(get("/gsak/" + GSAK_ID)
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
@@ -338,10 +406,7 @@ class JournalpostIT extends AbstractItest {
 	@Test
 	void shouldReturnNullJournalpostWhenDenyOnPep3() {
 		abacDenyPep3SkipPep2();
-		stubFor(get("/hentjournalsakinfo/hentjournalpost/" + JOURNALPOST_ID)
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("hentjournalsakinfo/hentjournalpost_bid-happy.json")));
+		stubHentJournalpost("hentjournalpost_bid-happy.json");
 		stubFor(get("/bidrag/abc123").willReturn(aResponse().withStatus(OK.value())
 				.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 				.withBodyFile("bidrag/bidragsak-happy.json")));
@@ -354,10 +419,7 @@ class JournalpostIT extends AbstractItest {
 	@Test
 	void shouldReturnNullJournalpostWhenDenyOnPep4() {
 		abacDenyPep4SkipPep2Pep3();
-		stubFor(get("/hentjournalsakinfo/hentjournalpost/" + JOURNALPOST_ID)
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("hentjournalsakinfo/hentjournalpost_jp_pol_skjerming-happy.json")));
+		stubHentJournalpost("hentjournalpost_jp_pol_skjerming-happy.json");
 		stubFor(get("/gsak/" + GSAK_ID)
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
@@ -371,10 +433,7 @@ class JournalpostIT extends AbstractItest {
 	@Test
 	void shouldReturnJournalpostWithOneFilteredDokumentInfoWhenDenyOnPep5() {
 		abacDenyPep5SkipPep2Pep3Pep4();
-		stubFor(get("/hentjournalsakinfo/hentjournalpost/" + JOURNALPOST_ID)
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("hentjournalsakinfo/hentjournalpost_dokumentinfo_pol_skjerming-happy.json")));
+		stubHentJournalpost("hentjournalpost_dokumentinfo_pol_skjerming-happy.json");
 
 		Journalpost journalpost = parseJournalpost(journalpostQuery());
 		assertThat(journalpost.getDokumenter(), hasSize(1));
@@ -383,10 +442,7 @@ class JournalpostIT extends AbstractItest {
 	@Test
 	void shouldReturnSaksbehandlerTilgangFalseOnVariantWithDenyOnPep6d() {
 		abacDenyPep6dSkipPep2Pep3Pep4Pep5();
-		stubFor(get("/hentjournalsakinfo/hentjournalpost/" + JOURNALPOST_ID)
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("hentjournalsakinfo/hentjournalpost_variant_pol_skjerming-happy.json")));
+		stubHentJournalpost("hentjournalpost_variant_pol_skjerming-happy.json");
 
 		Journalpost journalpost = parseJournalpost(journalpostQuery());
 		DokumentInfo dokumentInfo1 = journalpost.getDokumenter().get(0);
@@ -433,8 +489,18 @@ class JournalpostIT extends AbstractItest {
 
 	@SneakyThrows
 	private GraphQLResponse journalpostQuery(String queryFile) {
+		return journalpostQuery(queryFile, createHeaders());
+	}
+
+	@SneakyThrows
+	private GraphQLResponse journalpostQueryNavUserId() {
+		return journalpostQuery("journalpost.query", createHeadersNavUserId());
+	}
+
+	@SneakyThrows
+	private GraphQLResponse journalpostQuery(String queryFile, HttpHeaders httpHeaders) {
 		GraphQLRequest request = new GraphQLRequest(stringFromClasspath("journalpost/" + queryFile), null, null);
-		RequestEntity<GraphQLRequest> requestEntity = new RequestEntity<>(request, createHeaders(), HttpMethod.POST, new URI("/graphql"));
+		RequestEntity<GraphQLRequest> requestEntity = new RequestEntity<>(request, httpHeaders, HttpMethod.POST, new URI("/graphql"));
 		return restTemplate.exchange(requestEntity, GraphQLResponse.class).getBody();
 	}
 
@@ -444,5 +510,27 @@ class JournalpostIT extends AbstractItest {
 
 	private GraphQLResponse.Error parseJournalpostQueryError(GraphQLResponse graphQLResponse) {
 		return graphQLResponse.getErrors().stream().findAny().orElse(null);
+	}
+
+	protected static void stubHentJournalpost() {
+		stubHentJournalpost("hentjournalpost_not_bid-happy.json");
+	}
+
+	protected static void stubHentJournalpost(String filename) {
+		stubFor(get("/hentjournalsakinfo/hentjournalpost/" + JOURNALPOST_ID)
+				.willReturn(aResponse().withStatus(OK.value())
+						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("hentjournalsakinfo/" + filename)));
+	}
+
+	protected static void stubHentJournalpostByEksternReferanseId() {
+		stubHentJournalpostByEksternReferanseId("hentjournalpost_not_bid-happy.json");
+	}
+
+	protected static void stubHentJournalpostByEksternReferanseId(String filename) {
+		stubFor(get("/hentjournalsakinfo/hentjournalpost/eksternreferanse/" + EKSTERNREFERANSE_ID)
+				.willReturn(aResponse().withStatus(OK.value())
+						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("hentjournalsakinfo/" + filename)));
 	}
 }

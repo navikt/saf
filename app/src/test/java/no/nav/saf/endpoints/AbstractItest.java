@@ -4,11 +4,13 @@ import lombok.SneakyThrows;
 import no.nav.saf.ApplicationConfig;
 import no.nav.saf.azure.AzureProperties;
 import no.nav.saf.domain.visningsmodell.Dokumentoversikt;
+import no.nav.saf.headers.NavHeaders;
 import no.nav.saf.integration.azure.AzureTokenConsumer;
 import no.nav.security.mock.oauth2.MockOAuth2Server;
 import no.nav.security.mock.oauth2.token.DefaultOAuth2TokenCallback;
 import no.nav.security.token.support.spring.test.EnableMockOAuth2Server;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.core5.http.ContentType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -29,11 +31,12 @@ import org.springframework.test.context.ActiveProfiles;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
@@ -70,24 +73,14 @@ public abstract class AbstractItest {
 	private static final String STATE_PEP6D = "state_pep6d";
 	private static final String STATE_PEP7D = "state_pep7d";
 
-	protected static void setupHappyPathRestSTS() {
-		stubFor(post("/reststs")
-				.willReturn(aResponse()
-						.withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("sts/sts-token.json")));
-	}
-
-	protected static void setupHappyPathAzureToken() {
-		stubFor(post("/azure_token")
-				.willReturn(aResponse()
-						.withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("azure/token_response_dummy.json")));
-	}
+	protected static final String NAV_IDENT_SAKSBEHANDLER = "Z123456";
+	protected static final String MS_ID_SAKSBEHANDLER = "11111111-2222-3333-4444-555555555555";
+	protected static final String ORG_NR = "894705922";
+	protected static final String AKTOER_ID = "1912374211459";
 
 	@Configuration
 	public static class TestConfig {
+
 		@Bean
 		@Primary
 		ClientHttpRequestFactory clientHttpRequestFactoryTest() {
@@ -118,17 +111,51 @@ public abstract class AbstractItest {
 	protected HttpHeaders createHeaders() {
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(APPLICATION_JSON);
-		headers.setBearerAuth(getHeaderToken());
+		headers.setBearerAuth(getOnBehalfOfToken());
 		return headers;
 	}
 
-	private String getHeaderToken() {
-		return jwt("saksbehandler", new HashMap<>());
+	protected HttpHeaders createHeadersNavUserId() {
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(APPLICATION_JSON);
+		headers.setBearerAuth(getClientCredentialToken());
+		headers.set(NavHeaders.NAV_USER_ID, NAV_IDENT_SAKSBEHANDLER);
+		return headers;
+	}
+
+	protected HttpHeaders createHeadersClientCredential() {
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(APPLICATION_JSON);
+		headers.setBearerAuth(getClientCredentialToken());
+		return headers;
+	}
+
+	private String getOnBehalfOfToken() {
+		return jwt(NAV_IDENT_SAKSBEHANDLER,
+				Map.of(
+						"oid", UUID.randomUUID().toString(),
+						"sub", UUID.randomUUID().toString(),
+						"azp_name", "dev-itest:isa:gosys",
+						"NAVident", NAV_IDENT_SAKSBEHANDLER
+				)
+		);
+	}
+
+	private String getClientCredentialToken() {
+		String oidSubEqual = UUID.randomUUID().toString();
+		return jwt("dev-itest:isa:gosys",
+				Map.of(
+						"oid", oidSubEqual,
+						"sub", oidSubEqual,
+						"azp_name", "dev-itest:isa:gosys",
+						"roles", List.of()
+				)
+		);
 	}
 
 	protected String jwt(String subject, Map<String, Object> claims) {
 		String issuerId = "azurev2";
-		String audience = "gosys";
+		String audience = "dev-itest:teamdokumenthandtering:saf";
 		return server.issueToken(
 				issuerId,
 				"gosys-clientid",
@@ -143,7 +170,119 @@ public abstract class AbstractItest {
 		).serialize();
 	}
 
-	protected void abacPermit() {
+	protected static void setupHappyPathRestSTS() {
+		stubFor(post("/reststs")
+				.willReturn(aResponse()
+						.withStatus(OK.value())
+						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("sts/sts-token.json")));
+	}
+
+	protected static void setupHappyPathAzureToken() {
+		stubFor(post("/azure_token")
+				.willReturn(aResponse()
+						.withStatus(OK.value())
+						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("azure/token_response_dummy.json")));
+	}
+
+	protected static void stubNavHrOrganisasjonJa(String organisasjonsnummer) {
+		stubNavHrOrganisasjon(organisasjonsnummer, "hr-nav-organisasjon-ja.json");	}
+
+	protected static void stubNavHrOrganisasjonNei(String organisasjonsnummer) {
+		stubNavHrOrganisasjon(organisasjonsnummer, "hr-nav-organisasjon-nei.json");
+	}
+
+	protected static void stubNavHrOrganisasjon(String organisasjonsnummer, String filename) {
+		stubFor(get("/hrnavorganisasjon/json/Hr/Nav_Orgnummer/ER_NAV_ORGNUMMER?ORGNUMMER_INN=" + organisasjonsnummer)
+				.willReturn(aResponse().withStatus(OK.value())
+						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("nav/" + filename)));
+	}
+
+	protected static void stubMsGraphGetUser(String navIdent) {
+		stubFor(get("/msgraph/users?%24filter=onPremisesSamAccountName%20eq%20%27" + navIdent + "%27&%24count=true&%24select=id")
+				.willReturn(aResponse().withStatus(OK.value())
+						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("nav/msgraph-users.json")));
+	}
+
+	protected static void stubMsGraphMemberOfEgenAnsatt(String msUserId) {
+		stubFor(get("/msgraph/users/" + msUserId + "/memberOf?%24filter=id%20eq%20%27f476f724-350b-4ff4-8e74-141cda9e824e%27&%24count=true&%24select=id")
+				.willReturn(aResponse().withStatus(OK.value())
+						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("nav/msgraph-memberof-egenansatt.json")));
+	}
+
+	protected static void stubMsGraphMemberOfNotEgenAnsatt(String msUserId) {
+		stubFor(get("/msgraph/users/" + msUserId + "/memberOf?%24filter=id%20eq%20%27f476f724-350b-4ff4-8e74-141cda9e824e%27&%24count=true&%24select=id")
+				.willReturn(aResponse().withStatus(OK.value())
+						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("nav/msgraph-memberof-not-egenansatt.json")));
+	}
+
+	protected static void stubPdl() {
+		stubPdl("hentPdlDataForIdent-happy.json");
+	}
+
+	protected static void stubPdl(String filename) {
+		stubFor(post("/pdl")
+				.willReturn(aResponse().withStatus(OK.value())
+						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("pdl/" + filename)));
+	}
+
+	protected static void stubSak() {
+		stubSak("gsak-sakerBySaksId_not_bid-happy.json");
+	}
+
+	protected static void stubSak(String filename) {
+		stubFor(get("/gsak?aktoerId=" + AKTOER_ID)
+				.willReturn(aResponse().withStatus(OK.value())
+						.withHeader(CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType())
+						.withBodyFile("gsak/" + filename)));
+	}
+
+	protected static void stubSakOrgnr() {
+		stubFor(get("/gsak?orgnr=" + ORG_NR)
+				.willReturn(aResponse().withStatus(OK.value())
+						.withHeader(CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType())
+						.withBodyFile("gsak/gsak-sakerBySaksId_not_bid-happy.json")));
+	}
+
+	protected static void stubFinnjournalposter() {
+		stubFinnjournalposter("finnjournalposter-happy.json");
+	}
+
+	protected static void stubFinnjournalposter(String filename) {
+		stubFor(post("/hentjournalsakinfo/finnjournalposter")
+				.willReturn(aResponse().withStatus(OK.value())
+						.withHeader(CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType())
+						.withBodyFile("joark/" + filename)));
+	}
+
+	protected static void stubPensjonSakSammendrag() {
+		stubPensjonSakSammendrag("psak-hentSakSammendragListe-happy.json");
+	}
+
+	protected static void stubPensjonSakSammendrag(String filename) {
+		stubFor(get("/pen/springapi/sak/sammendrag")
+				.willReturn(aResponse().withStatus(OK.value())
+						.withHeader(CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType())
+						.withBodyFile("psak/" + filename)));
+	}
+
+	protected static void stubBidrag() {
+		stubBidrag("bidragsak-happy.json");
+	}
+
+	protected static void stubBidrag(String filename) {
+		stubFor(get("/bidrag/654321").willReturn(aResponse().withStatus(OK.value())
+				.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+				.withBodyFile("bidrag/" + filename)));
+	}
+
+	protected static void abacPermit() {
 		stubFor(post(urlEqualTo("/abac"))
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)

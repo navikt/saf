@@ -5,11 +5,9 @@ import com.github.tomakehurst.wiremock.matching.EqualToPattern;
 import no.nav.saf.domain.visningsmodell.Dokumentoversikt;
 import no.nav.saf.endpoints.AbstractItest;
 import no.nav.saf.endpoints.graphql.GraphQLRequest;
-import org.apache.http.HttpHeaders;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 
@@ -26,12 +24,10 @@ import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.matchingJsonPath;
-import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
-import static org.apache.hc.core5.http.ContentType.APPLICATION_JSON;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -43,9 +39,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 class DokumentoversiktBrukerIT extends AbstractItest {
 
-	private static final String AKTOER_ID = "1912374211459";
 	private static final String FNR = "11111111111";
-	private static final String ORG_NR = "201545004";
 	private static final String KANAL_REFERANSE_ID = "KANAL REFERANSE ID";
 
 	private final ObjectMapper objectMapper = new ObjectMapper();
@@ -60,22 +54,10 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 	@Test
 	void shouldHentDokumentoversiktBrukerWithAktoerID() throws IOException, URISyntaxException {
 		abacPermit();
-		stubFor(post("/pdl")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("pdl/hentPdlDataForIdent-happy.json")));
-		stubFor(get("/gsak?aktoerId=" + AKTOER_ID)
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
-						.withBodyFile("gsak/gsak-sakerBySaksId_not_bid-happy.json")));
-		stubFor(post("/hentjournalsakinfo/finnjournalposter")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
-						.withBodyFile("joark/finnjournalposter-happy.json")));
-		stubFor(get("/pen/springapi/sak/sammendrag")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
-						.withBodyFile("psak/psak-hentSakSammendragListe-happy.json")));
+		stubPdl();
+		stubSak();
+		stubFinnjournalposter();
+		stubPensjonSakSammendrag();
 
 		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikBrukerWithAktoerId();
 		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
@@ -97,22 +79,10 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 	@Test
 	void shouldHentDokumentoversiktBrukerWithFNR() throws IOException, URISyntaxException {
 		abacPermit();
-		stubFor(post("/pdl")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("pdl/hentPdlDataForIdent-happy.json")));
-		stubFor(get("/gsak?aktoerId=" + AKTOER_ID)
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
-						.withBodyFile("gsak/gsak-sakerBySaksId_not_bid-happy.json")));
-		stubFor(post("/hentjournalsakinfo/finnjournalposter")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
-						.withBodyFile("joark/finnjournalposter-happy.json")));
-		stubFor(get("/pen/springapi/sak/sammendrag")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
-						.withBodyFile("psak/psak-hentSakSammendragListe-happy.json")));
+		stubPdl();
+		stubSak();
+		stubFinnjournalposter();
+		stubPensjonSakSammendrag();
 
 		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikBrukerWithFnr();
 		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
@@ -135,14 +105,9 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 	@Test
 	void shouldHentDokumentoversiktBrukerWithOrgNr() throws IOException, URISyntaxException {
 		abacPermit();
-		stubFor(get("/gsak?orgnr=" + ORG_NR)
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
-						.withBodyFile("gsak/gsak-sakerBySaksId_not_bid-happy.json")));
-		stubFor(post("/hentjournalsakinfo/finnjournalposter")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
-						.withBodyFile("joark/finnjournalposter_single_temaForNullskjerming-happy.json")));
+		stubNavHrOrganisasjonNei(ORG_NR);
+		stubSakOrgnr();
+		stubFinnjournalposter("finnjournalposter_single_temaForNullskjerming-happy.json");
 
 		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikBrukerWithOrgnr();
 		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
@@ -156,20 +121,43 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 	}
 
 	@Test
+	void shouldNotHentDokumentoversiktBrukerWithNavStatOrgnummerWhenBrukerNotEgenAnsattBehandler() throws IOException, URISyntaxException {
+		abacPermit();
+		stubNavHrOrganisasjonJa(ORG_NR);
+		stubMsGraphGetUser(NAV_IDENT_SAKSBEHANDLER);
+		stubMsGraphMemberOfNotEgenAnsatt(MS_ID_SAKSBEHANDLER);
+
+		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikBrukerWithOrgnr();
+		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
+
+		assertEquals(OK, responseEntity.getStatusCode());
+		verifyEmptyJournalpostListeAndNullSideInfo(dokumentoversikt);
+	}
+
+	@Test
+	void shouldHentDokumentoversiktBrukerWithNavStatOrgnummerWhenBrukerIsEgenAnsattBehandler() throws IOException, URISyntaxException {
+		abacPermit();
+		stubNavHrOrganisasjonJa(ORG_NR);
+		stubMsGraphGetUser(NAV_IDENT_SAKSBEHANDLER);
+		stubMsGraphMemberOfEgenAnsatt(MS_ID_SAKSBEHANDLER);
+		stubSakOrgnr();
+		stubFinnjournalposter("finnjournalposter_single_temaForNullskjerming-happy.json");
+
+		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikBrukerWithOrgnr();
+		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
+
+		assertEquals(OK, responseEntity.getStatusCode());
+		assertEquals("429837417", dokumentoversikt.getJournalposter().get(0).getJournalpostId());
+		assertEquals(KANAL_REFERANSE_ID, dokumentoversikt.getJournalposter().get(0).getEksternReferanseId());
+		assertSaksbehandlerHarTilgang(dokumentoversikt);
+	}
+
+	@Test
 	void shouldHentDokumentoversiktBrukerWithFraDato() throws IOException, URISyntaxException {
 		abacPermit();
-		stubFor(post("/pdl")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("pdl/hentPdlDataForIdent-happy.json")));
-		stubFor(get("/gsak?aktoerId=" + AKTOER_ID)
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
-						.withBodyFile("gsak/gsak-sakerBySaksId_not_bid-happy.json")));
-		stubFor(post("/hentjournalsakinfo/finnjournalposter")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
-						.withBodyFile("joark/finnjournalposter-happy.json")));
+		stubPdl();
+		stubSak();
+		stubFinnjournalposter();
 
 		Map<String, Object> variables = new HashMap<>();
 		variables.put("fnr", "11111111111");
@@ -185,22 +173,10 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 	@Test
 	void shouldHentDokumentoversiktBrukerWithAktoerIDMidlertidig() throws IOException, URISyntaxException {
 		abacPermit();
-		stubFor(post("/pdl")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("pdl/hentPdlDataForIdent-happy.json")));
-		stubFor(get("/gsak?aktoerId=" + AKTOER_ID)
-				.willReturn(aResponse().withStatus(NOT_FOUND.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
-						.withBodyFile("gsak/gsak-sakerBySaksId-empty.json")));
-		stubFor(post("/hentjournalsakinfo/finnjournalposter")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
-						.withBodyFile("joark/finnjournalposter-midlertidig-happy.json")));
-		stubFor(get("/pen/springapi/sak/sammendrag")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
-						.withBodyFile("psak/psak-hentSakSammendragListe-happy-empty.json")));
+		stubPdl();
+		stubSak("gsak-sakerBySaksId-empty.json");
+		stubFinnjournalposter("finnjournalposter-midlertidig-happy.json");
+		stubPensjonSakSammendrag("psak-hentSakSammendragListe-happy-empty.json");
 
 		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikBrukerWithAktoerId();
 		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
@@ -218,22 +194,10 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 	@Test
 	void shouldHentDokumentoversiktBrukerWithAktoerIDSladdet() throws IOException, URISyntaxException {
 		abacPermit();
-		stubFor(post("/pdl")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("pdl/hentPdlDataForIdent-happy.json")));
-		stubFor(get("/gsak?aktoerId=" + AKTOER_ID)
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
-						.withBodyFile("gsak/gsak-sakerBySaksId_not_bid-happy.json")));
-		stubFor(post("/hentjournalsakinfo/finnjournalposter")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
-						.withBodyFile("joark/finnjournalposter_single_sladdet-happy.json")));
-		stubFor(get("/pen/springapi/sak/sammendrag")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
-						.withBodyFile("psak/psak-hentSakSammendragListe-happy.json")));
+		stubPdl();
+		stubSak();
+		stubFinnjournalposter("finnjournalposter_single_sladdet-happy.json");
+		stubPensjonSakSammendrag();
 
 		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikBrukerWithAktoerId();
 		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
@@ -250,10 +214,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 
 	@Test
 	void hentIdentForAktoerIdTechnicalFail() throws IOException, URISyntaxException {
-		stubFor(post("/pdl")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("pdl/badRequest.json")));
+		stubPdl("badRequest.json");
 
 		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikBrukerWithAktoerId();
 		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
@@ -267,10 +228,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 
 	@Test
 	void hentIdentForAktoerIdFunctionalFail() throws IOException, URISyntaxException {
-		stubFor(post("/pdl")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("pdl/badRequest.json")));
+		stubPdl("badRequest.json");
 
 		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikBrukerWithAktoerId();
 		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
@@ -285,20 +243,11 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 	@Test
 	void HentSakerByAktoerIdGsakTechnicalFail() throws IOException, URISyntaxException {
 		abacPermit();
-		stubFor(post("/pdl")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("pdl/hentPdlDataForIdent-happy.json")));
+		stubPdl();
 		stubFor(get("/gsak?aktoerId=" + AKTOER_ID)
 				.willReturn(aResponse().withStatus(INTERNAL_SERVER_ERROR.value())));
-		stubFor(post("/hentjournalsakinfo/finnjournalposter")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
-						.withBodyFile("joark/finnjournalposter-empty.json")));
-		stubFor(get("/pen/springapi/sak/sammendrag")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
-						.withBodyFile("psak/psak-hentSakSammendragListe-happy.json")));
+		stubFinnjournalposter("finnjournalposter-empty.json");
+		stubPensjonSakSammendrag();
 
 		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikBrukerWithAktoerId();
 		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
@@ -314,20 +263,11 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 	@Test
 	void HentSakerByAktoerIdGsakFunctionalFail() throws IOException, URISyntaxException {
 		abacPermit();
-		stubFor(post("/pdl")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("pdl/hentPdlDataForIdent-happy.json")));
+		stubPdl();
 		stubFor(get("/gsak?aktoerId=" + AKTOER_ID)
 				.willReturn(aResponse().withStatus(NOT_FOUND.value())));
-		stubFor(post("/hentjournalsakinfo/finnjournalposter")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
-						.withBodyFile("joark/finnjournalposter-empty.json")));
-		stubFor(get("/pen/springapi/sak/sammendrag")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
-						.withBodyFile("psak/psak-hentSakSammendragListe-happy.json")));
+		stubFinnjournalposter("finnjournalposter-empty.json");
+		stubPensjonSakSammendrag();
 		stubFor(get("/bidrag/*").willReturn(aResponse()
 				.withStatus(OK.value())
 				.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)));
@@ -346,22 +286,10 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 	@Test
 	void bidragConsumerTechnicalError() throws IOException, URISyntaxException {
 		abacPermit();
-		stubFor(post("/pdl")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("pdl/hentPdlDataForIdent-happy.json")));
-		stubFor(get("/gsak?aktoerId=" + AKTOER_ID)
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
-						.withBodyFile("gsak/gsak-sakerBySaksId-happy.json")));
-		stubFor(post("/hentjournalsakinfo/finnjournalposter")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
-						.withBodyFile("joark/finnjournalposter-empty.json")));
-		stubFor(get("/pen/springapi/sak/sammendrag")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
-						.withBodyFile("psak/psak-hentSakSammendragListe-happy-empty.json")));
+		stubPdl();
+		stubSak("gsak-sakerBySaksId-happy.json");
+		stubFinnjournalposter("finnjournalposter-empty.json");
+		stubPensjonSakSammendrag("psak-hentSakSammendragListe-happy-empty.json");
 		stubFor(get("/bidrag/654321").willReturn(aResponse()
 				.withStatus(INTERNAL_SERVER_ERROR.value())
 				.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)));
@@ -381,25 +309,11 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 	@Test
 	void shouldGetUnauthorizedFromPep1g() throws IOException, URISyntaxException {
 		abacDenyPep1g();
-		stubFor(post("/pdl")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("pdl/hentPdlDataForIdent-happy.json")));
-		stubFor(get("/gsak?aktoerId=" + AKTOER_ID)
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
-						.withBodyFile("gsak/gsak-sakerBySaksId-happy.json")));
-		stubFor(post("/hentjournalsakinfo/finnjournalposter")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
-						.withBodyFile("joark/finnjournalposter-happy.json")));
-		stubFor(get("/pen/springapi/sak/sammendrag")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
-						.withBodyFile("psak/psak-hentSakSammendragListe-happy.json")));
-		stubFor(get("/bidrag/654321").willReturn(aResponse().withStatus(OK.value())
-				.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-				.withBodyFile("bidrag/bidragsak-happy.json")));
+		stubPdl();
+		stubSak("gsak-sakerBySaksId-happy.json");
+		stubFinnjournalposter();
+		stubPensjonSakSammendrag();
+		stubBidrag();
 
 		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikBrukerWithAktoerId();
 		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
@@ -411,22 +325,10 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 	@Test
 	void shouldGetUnauthorizedFromPep2() throws IOException, URISyntaxException {
 		abacDenyPep2();
-		stubFor(post("/pdl")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("pdl/hentPdlDataForIdent-happy.json")));
-		stubFor(get("/gsak?aktoerId=" + AKTOER_ID)
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
-						.withBodyFile("gsak/gsak-sakerByFagsakIdAndFagsaksystem-FAR-happy.json")));
-		stubFor(post("/hentjournalsakinfo/finnjournalposter")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
-						.withBodyFile("joark/finnjournalposter-empty.json")));
-		stubFor(get("/pen/springapi/sak/sammendrag")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
-						.withBodyFile("psak/psak-hentSakSammendragListe-happy-empty.json")));
+		stubPdl();
+		stubSak("gsak-sakerByFagsakIdAndFagsaksystem-FAR-happy.json");
+		stubFinnjournalposter("finnjournalposter-empty.json");
+		stubPensjonSakSammendrag("psak-hentSakSammendragListe-happy-empty.json");
 
 		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikBrukerWithAktoerId();
 		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
@@ -440,22 +342,10 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 	@Test
 	void shouldGetUnauthorizedFromPep2WhenIngenSakstilknytning() throws IOException, URISyntaxException {
 		abacDenyPep2();
-		stubFor(post("/pdl")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("pdl/hentPdlDataForIdent-happy.json")));
-		stubFor(get("/gsak?aktoerId=" + AKTOER_ID)
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
-						.withBodyFile("gsak/gsak-sakerBySaksId-empty.json")));
-		stubFor(post("/hentjournalsakinfo/finnjournalposter")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
-						.withBodyFile("joark/finnjournalposter-far-kta.json")));
-		stubFor(get("/pen/springapi/sak/sammendrag")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
-						.withBodyFile("psak/psak-hentSakSammendragListe-happy-empty.json")));
+		stubPdl();
+		stubSak("gsak-sakerBySaksId-empty.json");
+		stubFinnjournalposter("finnjournalposter-far-kta.json");
+		stubPensjonSakSammendrag("psak-hentSakSammendragListe-happy-empty.json");
 
 		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikBrukerWithAktoerIdInkluderMidlertidige();
 		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
@@ -467,25 +357,11 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 	@Test
 	void shouldGetUnauthorizedFromPep2d() throws IOException, URISyntaxException {
 		abacDenyPep2dSkipPep2();
-		stubFor(post("/pdl")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("pdl/hentPdlDataForIdent-happy.json")));
-		stubFor(get("/gsak?aktoerId=" + AKTOER_ID)
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
-						.withBodyFile("gsak/gsak-sakerBySaksId-happy.json")));
-		stubFor(post("/hentjournalsakinfo/finnjournalposter")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
-						.withBodyFile("joark/finnjournalposter_single_bidragAndSkjerming-happy.json")));
-		stubFor(get("/pen/springapi/sak/sammendrag")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
-						.withBodyFile("psak/psak-hentSakSammendragListe-happy-empty.json")));
-		stubFor(get("/bidrag/654321").willReturn(aResponse().withStatus(HttpStatus.OK.value())
-				.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
-				.withBodyFile("bidrag/bidragsak-happy.json")));
+		stubPdl();
+		stubSak("gsak-sakerBySaksId-happy.json");
+		stubFinnjournalposter("finnjournalposter_single_bidragAndSkjerming-happy.json");
+		stubPensjonSakSammendrag("psak-hentSakSammendragListe-happy-empty.json");
+		stubBidrag("bidragsak-happy.json");
 
 		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikBrukerWithAktoerId();
 		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
@@ -500,25 +376,11 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 	@Test
 	void shouldGetUnauthorizedFromPep3() throws IOException, URISyntaxException {
 		abacDenyPep3SkipPep2();
-		stubFor(post("/pdl")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("pdl/hentPdlDataForIdent-happy.json")));
-		stubFor(get("/gsak?aktoerId=" + AKTOER_ID)
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
-						.withBodyFile("gsak/gsak-sakerBySaksId-happy.json")));
-		stubFor(post("/hentjournalsakinfo/finnjournalposter")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
-						.withBodyFile("joark/finnjournalposter-empty.json")));
-		stubFor(get("/pen/springapi/sak/sammendrag")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
-						.withBodyFile("psak/psak-hentSakSammendragListe-happy-empty.json")));
-		stubFor(get("/bidrag/654321").willReturn(aResponse().withStatus(OK.value())
-				.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-				.withBodyFile("bidrag/bidragsak-happy.json")));
+		stubPdl();
+		stubSak("gsak-sakerBySaksId-happy.json");
+		stubFinnjournalposter("finnjournalposter-empty.json");
+		stubPensjonSakSammendrag("psak-hentSakSammendragListe-happy-empty.json");
+		stubBidrag();
 
 		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikBrukerWithAktoerId();
 		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
@@ -532,25 +394,11 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 	@Test
 	void shouldGetUnauthorizedFromPep4() throws IOException, URISyntaxException {
 		abacDenyPep4SkipPep2OrPep3();
-		stubFor(post("/pdl")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("pdl/hentPdlDataForIdent-happy.json")));
-		stubFor(get("/gsak?aktoerId=" + AKTOER_ID)
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
-						.withBodyFile("gsak/gsak-sakerBySaksId-happy.json")));
-		stubFor(post("/hentjournalsakinfo/finnjournalposter")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
-						.withBodyFile("joark/finnjournalposter_single_bidragAndSkjerming-happy.json")));
-		stubFor(get("/pen/springapi/sak/sammendrag")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
-						.withBodyFile("psak/psak-hentSakSammendragListe-happy-empty.json")));
-		stubFor(get("/bidrag/654321").willReturn(aResponse().withStatus(OK.value())
-				.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-				.withBodyFile("bidrag/bidragsak-happy.json")));
+		stubPdl();
+		stubSak("gsak-sakerBySaksId-happy.json");
+		stubFinnjournalposter("finnjournalposter_single_bidragAndSkjerming-happy.json");
+		stubPensjonSakSammendrag("psak-hentSakSammendragListe-happy-empty.json");
+		stubBidrag();
 
 		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikBrukerWithAktoerId();
 		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
@@ -564,25 +412,11 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 	@Test
 	void shouldGetUnauthorizedFromPep5() throws IOException, URISyntaxException {
 		abacDenyPep5SkipPep2OrPep3();
-		stubFor(post("/pdl")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("pdl/hentPdlDataForIdent-happy.json")));
-		stubFor(get("/gsak?aktoerId=" + AKTOER_ID)
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
-						.withBodyFile("gsak/gsak-sakerBySaksId-happy.json")));
-		stubFor(post("/hentjournalsakinfo/finnjournalposter")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
-						.withBodyFile("joark/finnjournalposter_single_bidragAndSkjerming-happy.json")));
-		stubFor(get("/pen/springapi/sak/sammendrag")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
-						.withBodyFile("psak/psak-hentSakSammendragListe-happy-empty.json")));
-		stubFor(get("/bidrag/654321").willReturn(aResponse().withStatus(OK.value())
-				.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-				.withBodyFile("bidrag/bidragsak-happy.json")));
+		stubPdl();
+		stubSak("gsak-sakerBySaksId-happy.json");
+		stubFinnjournalposter("finnjournalposter_single_bidragAndSkjerming-happy.json");
+		stubPensjonSakSammendrag("psak-hentSakSammendragListe-happy-empty.json");
+		stubBidrag();
 
 		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikBrukerWithAktoerId();
 		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
@@ -598,22 +432,10 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 	@Test
 	void shouldGetUnauthorizedFromPep6d() throws IOException, URISyntaxException {
 		abacDenyPep6dSkipPep2Pep4Pep5();
-		stubFor(post("/pdl")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("pdl/hentPdlDataForIdent-happy.json")));
-		stubFor(get("/gsak?aktoerId=" + AKTOER_ID)
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
-						.withBodyFile("gsak/gsak-sakerBySaksId_not_bid-happy.json")));
-		stubFor(post("/hentjournalsakinfo/finnjournalposter")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
-						.withBodyFile("joark/finnjournalposter_single_bidragAndSkjerming-happy.json")));
-		stubFor(get("/pen/springapi/sak/sammendrag")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
-						.withBodyFile("psak/psak-hentSakSammendragListe-happy-empty.json")));
+		stubPdl();
+		stubSak();
+		stubFinnjournalposter("finnjournalposter_single_bidragAndSkjerming-happy.json");
+		stubPensjonSakSammendrag("psak-hentSakSammendragListe-happy-empty.json");
 
 		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikBrukerWithAktoerId();
 		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
@@ -629,18 +451,9 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 	void shouldGetUnauthorizedFromPep7d() throws IOException, URISyntaxException {
 		String SAK_ID = "123456";
 		abacDenyPep7dSkipPep2Pep3Pep4Pep5Pep6d();
-		stubFor(post("/pdl")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("pdl/hentPdlDataForIdent-happy.json")));
-		stubFor(get("/gsak?aktoerId=" + AKTOER_ID)
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
-						.withBodyFile("gsak/gsak-sakerBySaksId_oms-happy.json")));
-		stubFor(post("/hentjournalsakinfo/finnjournalposter")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
-						.withBodyFile("joark/finnjournalposter_single_temaK9Nullskjerming-happy.json")));
+		stubPdl();
+		stubSak("gsak-sakerBySaksId_oms-happy.json");
+		stubFinnjournalposter("finnjournalposter_single_temaK9Nullskjerming-happy.json");
 		stubFor(get("/k9sak?saksnummer=" + SAK_ID).willReturn(aResponse()
 				.withStatus(OK.value())
 				.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)

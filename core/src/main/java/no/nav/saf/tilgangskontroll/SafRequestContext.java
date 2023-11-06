@@ -8,8 +8,6 @@ import java.util.Map;
 
 /**
  * Holder kontekst om kall inn til saf.
- *
- * @author Joakim Bjørnstad, Jbit AS
  */
 @Slf4j
 @Getter
@@ -37,5 +35,9 @@ public class SafRequestContext {
 	 */
 	public String getUserId() {
 		return securityContext.getUserId();
+	}
+
+	public boolean isUserIdNavAnsatt() {
+		return securityContext.isUserIdNavAnsatt();
 	}
 }

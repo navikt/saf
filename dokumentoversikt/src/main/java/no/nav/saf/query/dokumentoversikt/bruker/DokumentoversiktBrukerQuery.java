@@ -20,6 +20,7 @@ import no.nav.saf.metrics.Monitor;
 import no.nav.saf.query.dokumentoversikt.DokumentoversiktVisningsmodellRepository;
 import no.nav.saf.query.dokumentoversikt.SideInfoMapper;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
+import no.nav.saf.tilgangskontroll.pep.AbacAnswer;
 import no.nav.saf.tilgangskontroll.pep.Pep;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -31,7 +32,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static no.nav.saf.domain.DomainConstants.TILGANG_BRUKER;
+import static no.nav.saf.graphql.ErrorCode.FORBIDDEN;
 import static no.nav.saf.graphql.ErrorCode.NOT_FOUND;
+import static no.nav.saf.tilgangskontroll.pep.DenyReasonFactory.createPep1gDenyReasonDokumentoversikt;
 import static no.nav.saf.util.MDCUtility.addMdcData;
 
 @Slf4j
@@ -90,10 +93,9 @@ class DokumentoversiktBrukerQuery {
 			safRequestContext.getRequestCache().putObject(TILGANG_BRUKER, tilgangBruker);
 		}
 
-		boolean pep1gAccess = this.pep1g.hasAccess(tilgangBruker, safRequestContext);
-
-		if (!pep1gAccess) {
-			return Dokumentoversikt.empty();
+		AbacAnswer pep1gAnswer = this.pep1g.hasAccessWithAnswer(tilgangBruker, safRequestContext);
+		if (pep1gAnswer.isDeny()) {
+			throw GraphQLException.of(FORBIDDEN, environment, createPep1gDenyReasonDokumentoversikt(safRequestContext, pep1gAnswer), Dokumentoversikt.empty());
 		}
 
 		//  Resultat fra pep2d caches lokalt og brukes i JournalpostDtoMapper.java. Med bakgrunn i resultat fra pep2d, pep6d og pep7d settes feltet saksbehandlerHarTilgang=true/false.

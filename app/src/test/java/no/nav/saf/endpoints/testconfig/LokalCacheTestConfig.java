@@ -15,6 +15,9 @@ import java.util.concurrent.TimeUnit;
 import static no.nav.saf.cache.LokalCacheConfig.AZURE_CLIENT_CREDENTIAL_TOKEN_CACHE;
 import static no.nav.saf.cache.LokalCacheConfig.BIDRAG_SAK_BY_SAKID_CACHE;
 import static no.nav.saf.cache.LokalCacheConfig.FPSAK_RELEVANTE_PARTER_BY_SAKID_CACHE;
+import static no.nav.saf.cache.LokalCacheConfig.HR_NAV_ORGANISASJON_CACHE;
+import static no.nav.saf.cache.LokalCacheConfig.MSGRAPH_MEMBER_CACHE;
+import static no.nav.saf.cache.LokalCacheConfig.MSGRAPH_USER_CACHE;
 import static no.nav.saf.cache.LokalCacheConfig.REST_STS_CACHE;
 import static no.nav.saf.cache.LokalCacheConfig.TILGANGSMODELL_REPO_BRUKER_CACHE;
 
@@ -45,6 +48,21 @@ public class LokalCacheTestConfig {
 				new CaffeineCache(AZURE_CLIENT_CREDENTIAL_TOKEN_CACHE, Caffeine.newBuilder()
 						.expireAfterWrite(0, TimeUnit.MINUTES)
 						.maximumSize(0)
+						.build()),
+				new CaffeineCache(HR_NAV_ORGANISASJON_CACHE, Caffeine.newBuilder()
+						.expireAfterWrite(0, TimeUnit.HOURS)
+						.maximumSize(0)
+						.recordStats()
+						.build()),
+				new CaffeineCache(MSGRAPH_USER_CACHE, Caffeine.newBuilder()
+						.expireAfterWrite(0, TimeUnit.HOURS)
+						.maximumSize(0)
+						.recordStats()
+						.build()),
+				new CaffeineCache(MSGRAPH_MEMBER_CACHE, Caffeine.newBuilder()
+						.expireAfterWrite(0, TimeUnit.HOURS)
+						.maximumSize(0)
+						.recordStats()
 						.build())
 		));
 		return manager;

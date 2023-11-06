@@ -11,6 +11,7 @@ import org.springframework.validation.annotation.Validated;
 @ConfigurationProperties("azure")
 @Validated
 public record AzureProperties(
+		@NotEmpty String appTenantId,
 		@NotEmpty String appClientId,
 		@NotEmpty String appClientSecret,
 		@NotEmpty String openidConfigTokenEndpoint

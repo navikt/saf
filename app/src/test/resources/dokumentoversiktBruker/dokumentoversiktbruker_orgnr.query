@@ -1,5 +1,5 @@
 {
-  dokumentoversiktBruker(brukerId: {id: "201545004", type: ORGNR}, foerste: 3) {
+  dokumentoversiktBruker(brukerId: {id: "894705922", type: ORGNR}, foerste: 3) {
     journalposter {
       journalpostId
       eksternReferanseId
