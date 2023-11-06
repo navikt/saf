@@ -231,7 +231,6 @@ class JournalpostIT extends AbstractItest {
 
 		GraphQLResponse.Error error = parseJournalpostQueryError(journalpostQuery("journalpost_with_null_journalpostid_og_eksternreferanseid.query"));
 		assertThat(error.getMessage(), is(containsString("Invalid syntax with offending token")));
-
 	}
 
 	@Test
@@ -252,7 +251,18 @@ class JournalpostIT extends AbstractItest {
 	@Test
 	void shouldQueryJournalpostByJournalpostIdWhenOrgnummerOnSakAndNotNavBedrift() {
 		abacPermit();
-		stubNavHrBedriftNei(ORG_NR);
+		stubNavHrOrganisasjonNei(ORG_NR);
+		stubHentJournalpost("hentjournalpost_orgnr-happy.json");
+
+		GraphQLResponse graphQLResponse = journalpostQuery();
+		Journalpost journalpost = parseJournalpost(graphQLResponse);
+		assertThat(journalpost, notNullValue());
+	}
+
+	@Test
+	void shouldQueryJournalpostByJournalpostIdWhenOrgnummerOnSakAndNavBedriftUnknownResponse() {
+		abacPermit();
+		stubNavHrOrganisasjon(ORG_NR, "hr-nav-organisasjon-error.txt");
 		stubHentJournalpost("hentjournalpost_orgnr-happy.json");
 
 		GraphQLResponse graphQLResponse = journalpostQuery();
@@ -263,7 +273,7 @@ class JournalpostIT extends AbstractItest {
 	@Test
 	void shouldQueryJournalpostByJournalpostIdWhenOrgnummerOnSakAndIsNavBedriftAndIsEgenAnsattBehandler() {
 		abacPermit();
-		stubNavHrBedriftJa(ORG_NR);
+		stubNavHrOrganisasjonJa(ORG_NR);
 		stubMsGraphGetUser(NAV_IDENT_SAKSBEHANDLER);
 		stubMsGraphMemberOfEgenAnsatt(MS_ID_SAKSBEHANDLER);
 		stubHentJournalpost("hentjournalpost_orgnr-happy.json");
@@ -276,7 +286,7 @@ class JournalpostIT extends AbstractItest {
 	@Test
 	void shouldNotQueryJournalpostByJournalpostIdWhenOrgnummerOnSakAndIsNavBedriftAndIsNotEgenAnsattBehandler() {
 		abacPermit();
-		stubNavHrBedriftJa(ORG_NR);
+		stubNavHrOrganisasjonJa(ORG_NR);
 		stubMsGraphGetUser(NAV_IDENT_SAKSBEHANDLER);
 		stubMsGraphMemberOfNotEgenAnsatt(MS_ID_SAKSBEHANDLER);
 		stubHentJournalpost("hentjournalpost_orgnr-happy.json");
@@ -289,7 +299,7 @@ class JournalpostIT extends AbstractItest {
 	@Test
 	void shouldQueryJournalpostByJournalpostIdWhenOrgnummerOnSakAndClientCredential() {
 		abacPermit();
-		stubNavHrBedriftNei(ORG_NR);
+		stubNavHrOrganisasjonNei(ORG_NR);
 		stubHentJournalpost("hentjournalpost_orgnr-happy.json");
 
 		GraphQLResponse graphQLResponse = journalpostQuery("journalpost.query", createHeadersClientCredential());
@@ -300,7 +310,7 @@ class JournalpostIT extends AbstractItest {
 	@Test
 	void shouldQueryJournalpostByJournalpostIdWhenOrgnummerOnSakAndNotNavBedriftAndNavUserIdHeader() {
 		abacPermit();
-		stubNavHrBedriftNei(ORG_NR);
+		stubNavHrOrganisasjonNei(ORG_NR);
 		stubHentJournalpost("hentjournalpost_orgnr-happy.json");
 
 		GraphQLResponse graphQLResponse = journalpostQueryNavUserId();
@@ -311,7 +321,7 @@ class JournalpostIT extends AbstractItest {
 	@Test
 	void shouldQueryJournalpostByJournalpostIdWhenOrgnummerOnSakAndIsNavBedriftAndIsEgenAnsattBehandlerAndNavUserIdHeader() {
 		abacPermit();
-		stubNavHrBedriftJa(ORG_NR);
+		stubNavHrOrganisasjonJa(ORG_NR);
 		stubMsGraphGetUser(NAV_IDENT_SAKSBEHANDLER);
 		stubMsGraphMemberOfEgenAnsatt(MS_ID_SAKSBEHANDLER);
 		stubHentJournalpost("hentjournalpost_orgnr-happy.json");
@@ -324,7 +334,7 @@ class JournalpostIT extends AbstractItest {
 	@Test
 	void shouldNotQueryJournalpostByJournalpostIdWhenOrgnummerOnSakAndIsNavBedriftAndIsNotEgenAnsattBehandlerAndNavUserIdHeader() {
 		abacPermit();
-		stubNavHrBedriftJa(ORG_NR);
+		stubNavHrOrganisasjonJa(ORG_NR);
 		stubMsGraphGetUser(NAV_IDENT_SAKSBEHANDLER);
 		stubMsGraphMemberOfNotEgenAnsatt(MS_ID_SAKSBEHANDLER);
 		stubHentJournalpost("hentjournalpost_orgnr-happy.json");

@@ -80,6 +80,7 @@ public class Pep1gImpl extends Pep<TilgangBruker> {
 			return XacmlResponse.permit();
 		}
 		if (navOrgService.isOrganisasjonsnummerNavBedrift(organisasjonsnummer)) {
+			log.info("Pep1g organisasjonsnummer={} er en NAV Organisasjon. Undersøker om NAV ansatt har tilgang.", organisasjonsnummer);
 			if (navOrgService.isNavIdentInEgenAnsattGroup(safRequestContext.getUserId())) {
 				return XacmlResponse.permit();
 			}

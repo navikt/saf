@@ -27,7 +27,7 @@
   "SAF_ENDPOINTS_PEN_SCOPE": "api://prod-fss.pensjondeployer.pensjon-pen/.default",
   "SAF_ENDPOINTS_DOKARKIV_URL": "https://dokarkiv.intern.nav.no/rest/internal/safintern",
   "SAF_ENDPOINTS_DOKARKIV_SCOPE": "api://prod-fss.teamdokumenthandtering.dokarkiv/.default",
-  "SAF_ENDPOINTS_HR_NAV_BEDRIFT": "https://tdv-p.adeo.no/",
+  "SAF_ENDPOINTS_HR_NAV_URL": "https://tdv-p.adeo.no/",
   "SAF_REDIS_HOSTNAME":  "saf-redis",
   "RESTSECURITYTOKENSERVICE_URL": "https://security-token-service.nais.adeo.no/rest/v1/sts/token",
   "APPDYNAMICS": "/apikey/appdynamics/prod",

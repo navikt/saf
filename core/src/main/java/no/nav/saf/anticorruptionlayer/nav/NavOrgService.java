@@ -9,14 +9,14 @@ import java.util.Optional;
 @Component
 public class NavOrgService {
 	private final MsGraphConsumer msGraphConsumer;
-	private final NavHrBedriftConsumer navStatConsumer;
+	private final NavHrOrganisasjonConsumer navStatConsumer;
 	private final String azureGroupEgenAnsattObjectId;
 
 	public NavOrgService(SafProperties safProperties,
 						 MsGraphConsumer msGraphConsumer,
-						 NavHrBedriftConsumer navHrBedriftConsumer) {
+						 NavHrOrganisasjonConsumer navHrOrganisasjonConsumer) {
 		this.msGraphConsumer = msGraphConsumer;
-		this.navStatConsumer = navHrBedriftConsumer;
+		this.navStatConsumer = navHrOrganisasjonConsumer;
 		this.azureGroupEgenAnsattObjectId = safProperties.getAzureGroupEgenAnsattObjectId();
 	}
 
@@ -30,7 +30,7 @@ public class NavOrgService {
 	}
 
 	public boolean isOrganisasjonsnummerNavBedrift(String organisasjonsnummer) {
-		NavHrBedriftResponse navHrBedriftResponse = navStatConsumer.getNavBedrift(organisasjonsnummer);
-		return navHrBedriftResponse.hrNavBedrift().erNavBedrift();
+		NavHrOrganisasjonResponse navHrOrganisasjonResponse = navStatConsumer.getNavBedrift(organisasjonsnummer);
+		return navHrOrganisasjonResponse.erNavOrgnummer().erNavOrganisasjon();
 	}
 }

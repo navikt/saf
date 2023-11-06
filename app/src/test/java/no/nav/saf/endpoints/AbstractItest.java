@@ -186,18 +186,18 @@ public abstract class AbstractItest {
 						.withBodyFile("azure/token_response_dummy.json")));
 	}
 
-	protected static void stubNavHrBedriftJa(String organisasjonsnummer) {
-		stubFor(get("/hrnavbedrift/json/Hr/Nav_Bedrift/HR_NAV_BEDRIFT?BEDRIFTNR_INN=" + organisasjonsnummer)
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("nav/hr-nav-bedrift-ja.json")));
+	protected static void stubNavHrOrganisasjonJa(String organisasjonsnummer) {
+		stubNavHrOrganisasjon(organisasjonsnummer, "hr-nav-organisasjon-ja.json");	}
+
+	protected static void stubNavHrOrganisasjonNei(String organisasjonsnummer) {
+		stubNavHrOrganisasjon(organisasjonsnummer, "hr-nav-organisasjon-nei.json");
 	}
 
-	protected static void stubNavHrBedriftNei(String organisasjonsnummer) {
-		stubFor(get("/hrnavbedrift/json/Hr/Nav_Bedrift/HR_NAV_BEDRIFT?BEDRIFTNR_INN=" + organisasjonsnummer)
+	protected static void stubNavHrOrganisasjon(String organisasjonsnummer, String filename) {
+		stubFor(get("/hrnavorganisasjon/json/Hr/Nav_orgnummer/ER_NAV_ORGNUMMER?ORGNUMMER_INN=" + organisasjonsnummer)
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("nav/hr-nav-bedrift-nei.json")));
+						.withBodyFile("nav/" + filename)));
 	}
 
 	protected static void stubMsGraphGetUser(String navIdent) {

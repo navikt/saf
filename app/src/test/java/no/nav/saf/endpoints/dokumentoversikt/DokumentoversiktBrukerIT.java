@@ -105,7 +105,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 	@Test
 	void shouldHentDokumentoversiktBrukerWithOrgNr() throws IOException, URISyntaxException {
 		abacPermit();
-		stubNavHrBedriftNei(ORG_NR);
+		stubNavHrOrganisasjonNei(ORG_NR);
 		stubSakOrgnr();
 		stubFinnjournalposter("finnjournalposter_single_temaForNullskjerming-happy.json");
 
@@ -123,7 +123,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 	@Test
 	void shouldNotHentDokumentoversiktBrukerWithNavStatOrgnummerWhenBrukerNotEgenAnsattBehandler() throws IOException, URISyntaxException {
 		abacPermit();
-		stubNavHrBedriftJa(ORG_NR);
+		stubNavHrOrganisasjonJa(ORG_NR);
 		stubMsGraphGetUser(NAV_IDENT_SAKSBEHANDLER);
 		stubMsGraphMemberOfNotEgenAnsatt(MS_ID_SAKSBEHANDLER);
 
@@ -137,7 +137,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 	@Test
 	void shouldHentDokumentoversiktBrukerWithNavStatOrgnummerWhenBrukerIsEgenAnsattBehandler() throws IOException, URISyntaxException {
 		abacPermit();
-		stubNavHrBedriftJa(ORG_NR);
+		stubNavHrOrganisasjonJa(ORG_NR);
 		stubMsGraphGetUser(NAV_IDENT_SAKSBEHANDLER);
 		stubMsGraphMemberOfEgenAnsatt(MS_ID_SAKSBEHANDLER);
 		stubSakOrgnr();

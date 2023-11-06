@@ -1,0 +1,13 @@
+Unable to invoke procedure "{call "Hr"."Hr"."HR_NAV_BEDRIFT"(?,?,?)}".  [data-2911039]
+
+Unable to prepare procedure call.  SQL State =   SQL Error Code = 1908517  [data-2911040]
+
+Cause: An operation is being attempted on a closed connection.
+
+------------------------ Cause of Close ---------------------------------
+
+java.io.IOException: Communication error with 155.55.3.54:9401[jdbc-1908517]
+
+at cs.jdbc.driver.protocol.WireDecoder.processInput(WireDecoder.java:382)
+
+at cs.jdbc.driver.protocol.Channe

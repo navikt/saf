@@ -96,7 +96,7 @@ class HentDokumentIT extends AbstractItest {
 	@Test
 	void shouldHentDokumentHappyPathBrukerOrganisasjon() {
 		abacPermit();
-		stubNavHrBedriftNei(ORG_NR);
+		stubNavHrOrganisasjonNei(ORG_NR);
 		stubHappyHentDokument();
 		stubDokarkivJournalpost("journalpost-dokumentinfo-gsak-org-happy.json");
 
@@ -109,7 +109,7 @@ class HentDokumentIT extends AbstractItest {
 	@Test
 	void shouldNotHentDokumentWhenBrukerErOrganisasjonAndNotEgenAnsatt() {
 		abacPermit();
-		stubNavHrBedriftJa(ORG_NR);
+		stubNavHrOrganisasjonJa(ORG_NR);
 		stubMsGraphGetUser(NAV_IDENT_SAKSBEHANDLER);
 		stubMsGraphMemberOfNotEgenAnsatt(MS_ID_SAKSBEHANDLER);
 		stubDokarkivJournalpost("journalpost-dokumentinfo-gsak-org-happy.json");
@@ -123,7 +123,7 @@ class HentDokumentIT extends AbstractItest {
 	@Test
 	void shouldHentDokumentWhenBrukerErOrganisasjonAndIsEgenAnsattBehandler() {
 		abacPermit();
-		stubNavHrBedriftJa(ORG_NR);
+		stubNavHrOrganisasjonJa(ORG_NR);
 		stubMsGraphGetUser(NAV_IDENT_SAKSBEHANDLER);
 		stubMsGraphMemberOfEgenAnsatt(MS_ID_SAKSBEHANDLER);
 		stubHappyHentDokument();

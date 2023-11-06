@@ -53,8 +53,11 @@ public class SafProperties {
 			return URI.create(penBrukerForSak);
 		}
 
+		/**
+		 * Baseurl til NAV HR tjenestene
+		 */
 		@NotEmpty
-		private String hrNavBedrift;
+		private String hrNavUrl;
 
 		/**
 		 * URL og scope til PDL
