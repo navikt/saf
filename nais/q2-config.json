@@ -461,6 +461,11 @@
       "namespace": "pensjonsbrev",
       "cluster": "dev-gcp",
       "roles": ["tema_pen", "tema_ufo"]
+    },
+    {
+      "app": "oppgavebehandling-api",
+      "namespace": "oppgavehandtering",
+      "cluster": "dev-gcp"
     }
   ]
 }
