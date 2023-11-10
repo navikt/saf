@@ -36,11 +36,6 @@
   "APP_NAME": "saf-q1",
   "AZURE_IAC_RULES": [
     {
-      "app": "pensjon-journalforing",
-      "namespace": "pensjon-saksbehandling",
-      "cluster": "dev-gcp"
-    },
-    {
       "app": "esyfovarsel",
       "namespace": "team-esyfo",
       "cluster": "dev-gcp",
@@ -405,11 +400,6 @@
     },
     {
       "app": "pensjon-pen-q1",
-      "namespace": "pensjon-q1",
-      "cluster": "dev-fss"
-    },
-    {
-      "app": "pensjon-psak-q1",
       "namespace": "pensjon-q1",
       "cluster": "dev-fss"
     },

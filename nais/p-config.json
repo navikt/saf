@@ -237,11 +237,6 @@
       "cluster": "prod-fss"
     },
     {
-      "app": "pensjon-psak",
-      "namespace": "pensjondeployer",
-      "cluster": "prod-fss"
-    },
-    {
       "app": "pensjon-pselv",
       "namespace": "pensjondeployer",
       "cluster": "prod-gcp"
