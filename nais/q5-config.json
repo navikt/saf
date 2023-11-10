@@ -45,11 +45,6 @@
       "cluster": "dev-fss"
     },
     {
-      "app": "pensjon-psak-q5",
-      "namespace": "pensjon-q5",
-      "cluster": "dev-fss"
-    },
-    {
       "app": "ida",
       "namespace": "traktor",
       "cluster": "prod-fss"

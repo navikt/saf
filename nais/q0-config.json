@@ -57,11 +57,6 @@
       "cluster": "dev-fss"
     },
     {
-      "app": "pensjon-psak-q0",
-      "namespace": "pensjon-q0",
-      "cluster": "dev-fss"
-    },
-    {
       "app": "modiapersonoversikt-api-q0",
       "namespace": "personoversikt",
       "cluster": "dev-fss"
