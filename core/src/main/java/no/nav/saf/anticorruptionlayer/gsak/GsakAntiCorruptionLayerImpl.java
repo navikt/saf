@@ -127,7 +127,7 @@ class GsakAntiCorruptionLayerImpl implements GsakAntiCorruptionLayer {
 
 	private List<Arkivsak> mapToArkivsak(List<GsakSakerTo> gsakSakerToFiltered) {
 		return gsakSakerToFiltered.stream()
-				.peek(gsak -> log.info("gsakoppretttetidspunkt:{} med kovertering blir dett {} tidssonen er {}",gsak.getOpprettetTidspunkt(), gsak.getOpprettetTidspunkt().toLocalDateTime(), ZoneId.systemDefault()))
+				.peek(gsak -> log.info("gsakoppretttetidspunkt:{} med kovertering blir dett {} tidssonen er {}",gsak.getOpprettetTidspunkt(), gsak.getOpprettetTidspunkt().withZoneSameInstant(ZoneId.of("Europe/Oslo")).toLocalDateTime(), ZoneId.systemDefault()))
 				.map(gsak -> Arkivsak.builder()
 						.aktoerId(gsak.getAktoerId())
 						.orgnummer(gsak.getOrgnr())
@@ -136,7 +136,7 @@ class GsakAntiCorruptionLayerImpl implements GsakAntiCorruptionLayer {
 						.fagsakId(gsak.getFagsakNr())
 						.fagsaksystem(gsak.getApplikasjon())
 						.tema(mapTema(gsak.getTema()))
-						.datoOpprettet(gsak.getOpprettetTidspunkt().toLocalDateTime())
+						.datoOpprettet(gsak.getOpprettetTidspunkt().withZoneSameInstant(ZoneId.of("Europe/Oslo")).toLocalDateTime())
 						.build())
 				.collect(Collectors.toList());
 	}
