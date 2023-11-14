@@ -126,6 +126,7 @@ class GsakAntiCorruptionLayerImpl implements GsakAntiCorruptionLayer {
 
 	private List<Arkivsak> mapToArkivsak(List<GsakSakerTo> gsakSakerToFiltered) {
 		return gsakSakerToFiltered.stream()
+				.peek(gsak -> log.info("gsakoppretttetidspunkt:{} med kovertering blir dett {}",gsak.getOpprettetTidspunkt(), gsak.getOpprettetTidspunkt().toLocalDateTime()))
 				.map(gsak -> Arkivsak.builder()
 						.aktoerId(gsak.getAktoerId())
 						.orgnummer(gsak.getOrgnr())
