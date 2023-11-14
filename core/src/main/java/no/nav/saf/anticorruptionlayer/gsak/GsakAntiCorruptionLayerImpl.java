@@ -9,6 +9,7 @@ import no.nav.saf.domain.kode.Tema;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -126,7 +127,7 @@ class GsakAntiCorruptionLayerImpl implements GsakAntiCorruptionLayer {
 
 	private List<Arkivsak> mapToArkivsak(List<GsakSakerTo> gsakSakerToFiltered) {
 		return gsakSakerToFiltered.stream()
-				.peek(gsak -> log.info("gsakoppretttetidspunkt:{} med kovertering blir dett {}",gsak.getOpprettetTidspunkt(), gsak.getOpprettetTidspunkt().toLocalDateTime()))
+				.peek(gsak -> log.info("gsakoppretttetidspunkt:{} med kovertering blir dett {} tidssonen er {}",gsak.getOpprettetTidspunkt(), gsak.getOpprettetTidspunkt().toLocalDateTime(), ZoneId.systemDefault()))
 				.map(gsak -> Arkivsak.builder()
 						.aktoerId(gsak.getAktoerId())
 						.orgnummer(gsak.getOrgnr())
