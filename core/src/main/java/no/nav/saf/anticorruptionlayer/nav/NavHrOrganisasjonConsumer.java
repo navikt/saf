@@ -40,7 +40,7 @@ public class NavHrOrganisasjonConsumer {
 	}
 
 	@Cacheable(HR_NAV_ORGANISASJON_CACHE)
-	public NavHrOrganisasjonResponse getNavBedrift(String organisasjonsnummer) {
+	public NavHrOrganisasjonResponse getNavOrganisasjon(String organisasjonsnummer) {
 		if (organisasjonsnummer == null || !ORGNUMMER_PATTERN.matcher(organisasjonsnummer).matches()) {
 			log.error("organisasjonsnummer={} er ikke et orgnummer (9 siffer). Kan ikke slå opp i HR NAV Orgnummer tjenesten. Må undersøkes", organisasjonsnummer);
 			return nei(organisasjonsnummer);
@@ -54,25 +54,27 @@ public class NavHrOrganisasjonConsumer {
 					HttpClientRequest reactorRequest = httpRequest.getNativeRequest();
 					reactorRequest.responseTimeout(ofSeconds(5));
 				})
-				.exchangeToMono(clientResponse -> {
-					if (clientResponse.statusCode().is2xxSuccessful()) {
-						return clientResponse.bodyToMono(NavHrOrganisasjonResponse.class);
-					} else {
-						return clientResponse.createError();
-					}
-				})
+				.retrieve()
+				.bodyToMono(NavHrOrganisasjonResponse.class)
 				.transformDeferred(CircuitBreakerOperator.of(circuitBreaker))
 				.switchIfEmpty(Mono.error(new DecodingException("Tom respons fra endepunkt")))
-				.doOnError(DecodingException.class, e ->
-						log.error("Klarte ikke dekode payload fra HR NAV Orgnummer tjenesten. Returnerer at organisasjonsnummer={} ikke er NAV organisasjon. message={}",
-								organisasjonsnummer, e.getMessage(), e))
-				.doOnError(CallNotPermittedException.class, e ->
-						log.error("Circuitbreaker til HR NAV Orgnummer tjenesten har state={}. Returnerer at organisasjonsnummer={} ikke er NAV organisasjon. message={}",
-								circuitBreaker.getState(), organisasjonsnummer, e.getMessage(), e))
-				.doOnError(WebClientException.class, e ->
-						log.error("Kall til HR NAV Orgnummer tjenesten feilet. Returnerer at organisasjonsnummer={} ikke er NAV organisasjon. message={}",
-								organisasjonsnummer, e.getMessage(), e))
+				.doOnError(Throwable.class, e -> logError(organisasjonsnummer, circuitBreaker, e))
 				.onErrorReturn(nei(organisasjonsnummer))
 				.block();
+	}
+
+	private void logError(String organisasjonsnummer, CircuitBreaker circuitBreaker, Throwable e) {
+		if (e instanceof DecodingException) {
+			log.error("Klarte ikke dekode payload fra HR NAV Orgnummer tjenesten. Returnerer at organisasjonsnummer={} ikke er NAV organisasjon. message={}",
+					organisasjonsnummer, e.getMessage(), e);
+		} else if (e instanceof CallNotPermittedException) {
+			log.error("Circuitbreaker til HR NAV Orgnummer tjenesten har state={}. Returnerer at organisasjonsnummer={} ikke er NAV organisasjon. message={}",
+					circuitBreaker.getState(), organisasjonsnummer, e.getMessage(), e);
+		} else if (e instanceof WebClientException) {
+			log.error("Kall til HR NAV Orgnummer tjenesten feilet. Returnerer at organisasjonsnummer={} ikke er NAV organisasjon. message={}",
+					organisasjonsnummer, e.getMessage(), e);
+		} else {
+			log.error("Kall til HR NAV Orgnummer tjenesten feilet med en ukjent teknisk feil. message={}", e.getMessage(), e);
+		}
 	}
 }
