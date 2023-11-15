@@ -6,7 +6,6 @@ import lombok.Builder;
 import lombok.Value;
 
 import java.time.OffsetDateTime;
-import java.time.ZonedDateTime;
 
 @JsonDeserialize(builder = GsakSakerTo.GsakSakerToBuilder.class)
 @Value
@@ -19,7 +18,7 @@ public class GsakSakerTo {
 	private final String orgnr;
 	private final String fagsakNr;
 	private final String opprettetAv;
-	private final ZonedDateTime opprettetTidspunkt;
+	private final OffsetDateTime opprettetTidspunkt;
 
 	@JsonPOJOBuilder(withPrefix = "")
 	public static class GsakSakerToBuilder {
