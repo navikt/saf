@@ -72,7 +72,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 		verify(postRequestedFor(urlEqualTo("/pdl")).withRequestBody(matchingJsonPath("$.variables.ident", equalTo(AKTOER_ID))));
 		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter"))
 				.withRequestBody(containing("{\"gsakSakIds\":[\"135695442\"],\"psakSakIds\":[\"21998969\"],\"fraDato\":\"0001-01-01\",\"tilDato\":null,\"inkluderJournalStatus\":[\"FL\",\"FS\",\"J\",\"E\"],\"inkluderJournalpostType\":[\"I\",\"U\",\"N\"],\"visFeilregistrerte\":false,\"alleIdenter\":[\"11111111111\"],\"foerste\":3,\"etterPeker\":null}")));
-		verify(getRequestedFor(urlEqualTo("/pensjon/springapi/sak/sammendrag")).withHeader("fnr", new EqualToPattern(FNR)));
+		verify(getRequestedFor(urlEqualTo(PENSJON_SPRINGAPI_SAK_SAMMENDRAG_URL)).withHeader("fnr", new EqualToPattern(FNR)));
 	}
 
 	@Test
@@ -97,7 +97,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 		verify(postRequestedFor(urlEqualTo("/pdl")).withRequestBody(matchingJsonPath("$.variables.ident", equalTo(FNR))));
 		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter"))
 				.withRequestBody(containing("{\"gsakSakIds\":[\"135695442\"],\"psakSakIds\":[\"21998969\"],\"fraDato\":\"0001-01-01\",\"tilDato\":null,\"inkluderJournalStatus\":[\"FL\",\"FS\",\"J\",\"E\"],\"inkluderJournalpostType\":[\"I\",\"U\",\"N\"],\"visFeilregistrerte\":false,\"alleIdenter\":[\"11111111111\"],\"foerste\":3,\"etterPeker\":null}")));
-		verify(getRequestedFor(urlEqualTo("/pensjon/springapi/sak/sammendrag")).withHeader("fnr", new EqualToPattern(FNR)));
+		verify(getRequestedFor(urlEqualTo(PENSJON_SPRINGAPI_SAK_SAMMENDRAG_URL)).withHeader("fnr", new EqualToPattern(FNR)));
 	}
 
 	@Test
@@ -115,7 +115,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 		assertEquals(KANAL_REFERANSE_ID, dokumentoversikt.getJournalposter().get(0).getEksternReferanseId());
 		assertSaksbehandlerHarTilgang(dokumentoversikt);
 		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter")).withRequestBody(matchingJsonPath("$.gsakSakIds", containing("135695442"))));
-		verify(0, getRequestedFor(urlEqualTo("/pensjon/springapi/sak/sammendrag")));
+		verify(0, getRequestedFor(urlEqualTo(PENSJON_SPRINGAPI_SAK_SAMMENDRAG_URL)));
 	}
 
 	@Test
@@ -186,7 +186,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 		verify(postRequestedFor(urlEqualTo("/pdl")).withRequestBody(matchingJsonPath("$.variables.ident", equalTo(AKTOER_ID))));
 		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter"))
 				.withRequestBody(containing("{\"gsakSakIds\":[],\"psakSakIds\":[],\"fraDato\":\"0001-01-01\",\"tilDato\":null,\"inkluderJournalStatus\":[\"FL\",\"FS\",\"J\",\"E\"],\"inkluderJournalpostType\":[\"I\",\"U\",\"N\"],\"visFeilregistrerte\":false,\"alleIdenter\":[\"11111111111\"],\"foerste\":3,\"etterPeker\":null}")));
-		verify(getRequestedFor(urlEqualTo("/pensjon/springapi/sak/sammendrag")).withHeader("fnr", new EqualToPattern(FNR)));
+		verify(getRequestedFor(urlEqualTo(PENSJON_SPRINGAPI_SAK_SAMMENDRAG_URL)).withHeader("fnr", new EqualToPattern(FNR)));
 	}
 
 	@Test
@@ -203,7 +203,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 		assertEquals(OK, responseEntity.getStatusCode());
 		assertEquals("429837417", dokumentoversikt.getJournalposter().get(0).getJournalpostId());
 		assertSaksbehandlerHarTilgang(dokumentoversikt);
-		verify(getRequestedFor(urlEqualTo("/pensjon/springapi/sak/sammendrag")).withHeader("fnr", new EqualToPattern(FNR)));
+		verify(getRequestedFor(urlEqualTo(PENSJON_SPRINGAPI_SAK_SAMMENDRAG_URL)).withHeader("fnr", new EqualToPattern(FNR)));
 		verify(postRequestedFor(urlEqualTo("/pdl")).withRequestBody(matchingJsonPath("$.variables.ident", equalTo(AKTOER_ID))));
 		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter"))
 				.withRequestBody(containing("{\"gsakSakIds\":[\"135695442\"],\"psakSakIds\":[\"21998969\"],\"fraDato\":\"0001-01-01\",\"tilDato\":null,\"inkluderJournalStatus\":[\"FL\",\"FS\",\"J\",\"E\"],\"inkluderJournalpostType\":[\"I\",\"U\",\"N\"],\"visFeilregistrerte\":false,\"alleIdenter\":[\"11111111111\"],\"foerste\":3,\"etterPeker\":null}")));
@@ -220,7 +220,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 		verifyEmptyJournalpostListeAndNullSideInfo(dokumentoversikt);
 		verify(postRequestedFor(urlEqualTo("/pdl")).withRequestBody(matchingJsonPath("$.variables.ident", equalTo(AKTOER_ID))));
 		verify(0, postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter")));
-		verify(0, getRequestedFor(urlEqualTo("/pensjon/springapi/sak/sammendrag")));
+		verify(0, getRequestedFor(urlEqualTo(PENSJON_SPRINGAPI_SAK_SAMMENDRAG_URL)));
 	}
 
 	@Test
@@ -234,7 +234,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 		verifyEmptyJournalpostListeAndNullSideInfo(dokumentoversikt);
 		verify(postRequestedFor(urlEqualTo("/pdl")).withRequestBody(matchingJsonPath("$.variables.ident", equalTo(AKTOER_ID))));
 		verify(0, postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter")));
-		verify(0, getRequestedFor(urlEqualTo("/pensjon/springapi/sak/sammendrag")));
+		verify(0, getRequestedFor(urlEqualTo(PENSJON_SPRINGAPI_SAK_SAMMENDRAG_URL)));
 	}
 
 	@Test
@@ -253,7 +253,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 		assertEquals(OK, responseEntity.getStatusCode());
 		verify(postRequestedFor(urlEqualTo("/pdl")).withRequestBody(matchingJsonPath("$.variables.ident", equalTo(AKTOER_ID))));
 		verify(1, postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter")));
-		verify(getRequestedFor(urlEqualTo("/pensjon/springapi/sak/sammendrag")).withHeader("fnr", new EqualToPattern(FNR)));
+		verify(getRequestedFor(urlEqualTo(PENSJON_SPRINGAPI_SAK_SAMMENDRAG_URL)).withHeader("fnr", new EqualToPattern(FNR)));
 	}
 
 	@Test
@@ -275,7 +275,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 		assertEquals(OK, responseEntity.getStatusCode());
 		verify(postRequestedFor(urlEqualTo("/pdl")).withRequestBody(matchingJsonPath("$.variables.ident", equalTo(AKTOER_ID))));
 		verify(1, postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter")));
-		verify(getRequestedFor(urlEqualTo("/pensjon/springapi/sak/sammendrag")).withHeader("fnr", new EqualToPattern(FNR)));
+		verify(getRequestedFor(urlEqualTo(PENSJON_SPRINGAPI_SAK_SAMMENDRAG_URL)).withHeader("fnr", new EqualToPattern(FNR)));
 	}
 
 	@Test
@@ -296,7 +296,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 		verifyEmptyJournalpostListeAndNullSideInfo(dokumentoversikt);
 		verify(postRequestedFor(urlEqualTo("/pdl")).withRequestBody(matchingJsonPath("$.variables.ident", equalTo(AKTOER_ID))));
 		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter")).withRequestBody(containing("{\"gsakSakIds\":[\"135695442\"],\"psakSakIds\":[]")));
-		verify(getRequestedFor(urlEqualTo("/pensjon/springapi/sak/sammendrag")).withHeader("fnr", new EqualToPattern(FNR)));
+		verify(getRequestedFor(urlEqualTo(PENSJON_SPRINGAPI_SAK_SAMMENDRAG_URL)).withHeader("fnr", new EqualToPattern(FNR)));
 		verify(getRequestedFor(urlEqualTo("/bidrag/654321")));
 	}
 

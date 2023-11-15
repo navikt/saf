@@ -95,7 +95,7 @@ public class PensjonSakRestConsumer {
 	private Consumer<? super Throwable> handleHentSakSammendragErrors() {
 		return error -> {
 			if (error instanceof WebClientResponseException.NotFound notFound) {
-				throw new PersonIngenPensjonssakerException(format("hentSakSammendrag feilet funksjonelt (pensjon har ingen saker på denne personen). status=%s. Feilmelding=%s",
+				throw new PersonHarIngenPensjonssakerException(format("hentSakSammendrag feilet funksjonelt (pensjon har ingen saker på denne personen). status=%s. Feilmelding=%s",
 						notFound.getStatusCode(), notFound.getMessage()), notFound.getStatusCode());
 			}
 			if (error instanceof WebClientResponseException webClientResponseException) {

@@ -77,6 +77,8 @@ public abstract class AbstractItest {
 	protected static final String MS_ID_SAKSBEHANDLER = "11111111-2222-3333-4444-555555555555";
 	protected static final String ORG_NR = "894705922";
 	protected static final String AKTOER_ID = "1912374211459";
+	protected static final String PENSJON_SPRINGAPI_SAK_SAMMENDRAG_URL = "/pensjon/springapi/sak/sammendrag";
+	protected static final String PENSJON_API_PIP_HENT_BRUKER_OG_ENHETSTILGANGER_FOR_SAK_V1_URL = "/pensjon/api/pip/hentBrukerOgEnhetstilgangerForSak/v1";
 
 	@Configuration
 	public static class TestConfig {
@@ -266,7 +268,7 @@ public abstract class AbstractItest {
 	}
 
 	protected static void stubPensjonSakSammendrag(String filename) {
-		stubFor(get("/pensjon/springapi/sak/sammendrag")
+		stubFor(get(PENSJON_SPRINGAPI_SAK_SAMMENDRAG_URL)
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType())
 						.withBodyFile("psak/" + filename)));

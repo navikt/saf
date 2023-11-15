@@ -155,7 +155,7 @@ class HentDokumentIT extends AbstractItest {
 		abacPermit();
 		stubHappyHentDokument();
 		stubDokarkivJournalpost("journalpost-dokumentinfo-pensjon-happy.json");
-		stubFor(get("/pensjon/api/pip/hentBrukerOgEnhetstilgangerForSak/v1")
+		stubFor(get(PENSJON_API_PIP_HENT_BRUKER_OG_ENHETSTILGANGER_FOR_SAK_V1_URL)
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("psak/psak-hentBrukerForSak-happy.json")));
@@ -164,8 +164,8 @@ class HentDokumentIT extends AbstractItest {
 
 		assertOkArkivResponse(responseEntity);
 		verify(getRequestedFor(urlEqualTo("/dokarkiv/hentdokument/" + DOKUMENT_ID + "/" + VARIANTFORMAT)));
-		verify(getRequestedFor(urlEqualTo("/pensjon/api/pip/hentBrukerOgEnhetstilgangerForSak/v1")).withHeader(AUTHORIZATION, equalTo("Bearer AzureAccessToken")));
-		verify(getRequestedFor(urlEqualTo("/pensjon/api/pip/hentBrukerOgEnhetstilgangerForSak/v1")).withHeader("sakId", equalTo("240000000")));
+		verify(getRequestedFor(urlEqualTo(PENSJON_API_PIP_HENT_BRUKER_OG_ENHETSTILGANGER_FOR_SAK_V1_URL)).withHeader(AUTHORIZATION, equalTo("Bearer AzureAccessToken")));
+		verify(getRequestedFor(urlEqualTo(PENSJON_API_PIP_HENT_BRUKER_OG_ENHETSTILGANGER_FOR_SAK_V1_URL)).withHeader("sakId", equalTo("240000000")));
 	}
 
 	@Test
@@ -223,7 +223,7 @@ class HentDokumentIT extends AbstractItest {
 	void shouldNotReturnDokumentWhenPensjonHentBrukerForSakTechnicalError() {
 		abacPermit();
 		stubDokarkivJournalpost("journalpost-dokumentinfo-pensjon-happy.json");
-		stubFor(get("/pensjon/api/pip/hentBrukerOgEnhetstilgangerForSak/v1")
+		stubFor(get(PENSJON_API_PIP_HENT_BRUKER_OG_ENHETSTILGANGER_FOR_SAK_V1_URL)
 				.willReturn(aResponse().withStatus(INTERNAL_SERVER_ERROR.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)));
 
@@ -236,7 +236,7 @@ class HentDokumentIT extends AbstractItest {
 	void shouldNotReturnDokumentWhenPensjonHentBrukerForSakFunctionalErrorEmptyResponse() {
 		abacPermit();
 		stubDokarkivJournalpost("journalpost-dokumentinfo-pensjon-happy.json");
-		stubFor(get("/pensjon/api/pip/hentBrukerOgEnhetstilgangerForSak/v1")
+		stubFor(get(PENSJON_API_PIP_HENT_BRUKER_OG_ENHETSTILGANGER_FOR_SAK_V1_URL)
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("psak/psak-hentBrukerForSak-emptyResponse.json")));
@@ -250,7 +250,7 @@ class HentDokumentIT extends AbstractItest {
 	void shouldNotReturnDokumentWhenPensjonHentBrukerForSakFunctionalErrorUnauthorized() {
 		abacPermit();
 		stubDokarkivJournalpost("journalpost-dokumentinfo-pensjon-happy.json");
-		stubFor(get("/pensjon/api/pip/hentBrukerOgEnhetstilgangerForSak/v1")
+		stubFor(get(PENSJON_API_PIP_HENT_BRUKER_OG_ENHETSTILGANGER_FOR_SAK_V1_URL)
 				.willReturn(aResponse().withStatus(HttpStatus.UNAUTHORIZED.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)));
 
