@@ -266,7 +266,7 @@ public abstract class AbstractItest {
 	}
 
 	protected static void stubPensjonSakSammendrag(String filename) {
-		stubFor(get("/pen/springapi/sak/sammendrag")
+		stubFor(get("/pensjon/springapi/sak/sammendrag")
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType())
 						.withBodyFile("psak/" + filename)));

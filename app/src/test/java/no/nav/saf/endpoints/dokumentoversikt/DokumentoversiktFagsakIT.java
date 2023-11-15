@@ -117,7 +117,7 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 		abacPermit();
 
 		setupHappyPathAzureToken();
-		stubFor(get("/pensjonsakrs")
+		stubFor(get("/pensjon/api/pip/hentBrukerOgEnhetstilgangerForSak/v1")
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("psak/psak-hentBrukerForSak-happy.json")));
@@ -129,7 +129,7 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("pdl/hentPdlDataForIdent-happy.json")));
-		stubFor(get("/pen/springapi/sak/sammendrag")
+		stubFor(get("/pensjon/springapi/sak/sammendrag")
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
 						.withBodyFile("psak/psak-hentSakSammendragListe-happy.json")));
@@ -200,7 +200,7 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 	void shouldHentDokumentoversiktFagsakAktoerTechnicalFail() throws IOException, URISyntaxException {
 		abacPermit();
 
-		stubFor(get("/pensjonsakrs")
+		stubFor(get("/pensjon/api/pip/hentBrukerOgEnhetstilgangerForSak/v1")
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("psak/psak-hentBrukerForSak-happy.json")));
@@ -224,7 +224,7 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 	void shouldHentDokumentoversikHentSakSammendragListeTechnicalFail() throws IOException, URISyntaxException {
 		abacPermit();
 
-		stubFor(get("/pensjonsakrs")
+		stubFor(get("/pensjon/api/pip/hentBrukerOgEnhetstilgangerForSak/v1")
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("psak/psak-hentBrukerForSak-happy.json")));
@@ -232,7 +232,7 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("joark/finnjournalposter-empty.json")));
-		stubFor(get("/pen/springapi/sak/sammendrag")
+		stubFor(get("/pensjon/springapi/sak/sammendrag")
 				.willReturn(aResponse().withStatus(INTERNAL_SERVER_ERROR.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
 						.withBodyFile("psak-hentSakSammendragListe-technical.json")));
@@ -248,7 +248,7 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 	void shouldHentDokumentoversikHentSakSammendragListeFunctionalFail() throws IOException, URISyntaxException {
 		abacPermit();
 
-		stubFor(get("/pensjonsakrs")
+		stubFor(get("/pensjon/api/pip/hentBrukerOgEnhetstilgangerForSak/v1")
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("psak/psak-hentBrukerForSak-happy.json")));
@@ -256,7 +256,7 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("joark/finnjournalposter-empty.json")));
-		stubFor(get("/pen/springapi/sak/sammendrag")
+		stubFor(get("/pensjon/springapi/sak/sammendrag")
 				.willReturn(aResponse().withStatus(BAD_REQUEST.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
 						.withBodyFile("psak-hentSakSammendragListe-technical.json")));
