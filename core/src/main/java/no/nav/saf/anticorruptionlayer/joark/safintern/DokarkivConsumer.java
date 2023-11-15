@@ -1,6 +1,8 @@
 package no.nav.saf.anticorruptionlayer.joark.safintern;
 
-import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.circuitbreaker.CircuitBreaker;
+import io.github.resilience4j.circuitbreaker.CircuitBreakerRegistry;
+import io.github.resilience4j.reactor.circuitbreaker.operator.CircuitBreakerOperator;
 import no.nav.saf.anticorruptionlayer.CallIdExchangeFilterFunction;
 import no.nav.saf.anticorruptionlayer.joark.safintern.hentdokument.HentDokumentResponseTo;
 import no.nav.saf.anticorruptionlayer.joark.safintern.journalpost.ArkivJournalpost;
@@ -10,25 +12,20 @@ import no.nav.saf.exceptions.SafFunctionalException;
 import no.nav.saf.exceptions.SafTechnicalException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.codec.CodecProperties;
-import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
-import org.springframework.security.oauth2.client.ReactiveOAuth2AuthorizedClientManager;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.ExchangeStrategies;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
-import reactor.core.publisher.Mono;
 
-import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
 
 import static java.lang.String.format;
 import static no.nav.saf.azure.AzureProperties.CLIENT_REGISTRATION_DOKARKIV;
-import static no.nav.saf.azure.AzureProperties.getOAuth2AuthorizeRequestForAzure;
 import static no.nav.saf.headers.NavHeaders.NAV_CALLID;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.http.MediaType.APPLICATION_PDF;
-import static org.springframework.security.oauth2.client.web.reactive.function.client.ServerOAuth2AuthorizedClientExchangeFilterFunction.oauth2AuthorizedClient;
+import static org.springframework.security.oauth2.client.web.reactive.function.client.ServerOAuth2AuthorizedClientExchangeFilterFunction.clientRegistrationId;
 
 @Service
 public class DokarkivConsumer {
@@ -36,13 +33,14 @@ public class DokarkivConsumer {
 	private static final String DOKARKIV_METADATA = "dokarkivmetadata";
 
 	private final WebClient webClient;
-	private final ReactiveOAuth2AuthorizedClientManager oAuth2AuthorizedClientManager;
+	private final CircuitBreaker dokarkivHentdokumentCircuitBreaker;
+	private final CircuitBreaker dokarkivMetadataCircuitBreaker;
 
 	@Autowired
 	public DokarkivConsumer(final SafProperties safProperties,
 							final CodecProperties codecProperties,
 							final WebClient webClient,
-							final ReactiveOAuth2AuthorizedClientManager oAuth2AuthorizedClientManager) {
+							final CircuitBreakerRegistry circuitBreakerRegistry) {
 		this.webClient = webClient.mutate()
 				.baseUrl(safProperties.getEndpoints().getDokarkiv().getUrl())
 				.filter(new CallIdExchangeFilterFunction(NAV_CALLID))
@@ -53,15 +51,15 @@ public class DokarkivConsumer {
 						)
 						.build())
 				.build();
-		this.oAuth2AuthorizedClientManager = oAuth2AuthorizedClientManager;
+		this.dokarkivHentdokumentCircuitBreaker = circuitBreakerRegistry.circuitBreaker(DOKARKIV_HENTDOKUMENT);
+		this.dokarkivMetadataCircuitBreaker = circuitBreakerRegistry.circuitBreaker(DOKARKIV_METADATA);
 	}
 
-	@CircuitBreaker(name = DOKARKIV_HENTDOKUMENT)
 	public HentDokumentResponseTo hentDokument(String dokumentInfoId, String variantFormat) {
 		return webClient.get()
 				.uri(uriBuilder -> uriBuilder.path("/hentdokument/{dokumentInfoId}/{variantFormat}")
 						.build(dokumentInfoId, variantFormat))
-				.attributes(getOAuth2AuthorizedClient())
+				.attributes(clientRegistrationId(CLIENT_REGISTRATION_DOKARKIV))
 				.accept(APPLICATION_PDF)
 				.exchangeToMono(clientResponse -> {
 					if (clientResponse.statusCode().is2xxSuccessful()) {
@@ -72,6 +70,7 @@ public class DokarkivConsumer {
 						return clientResponse.createError();
 					}
 				})
+				.transformDeferred(CircuitBreakerOperator.of(dokarkivHentdokumentCircuitBreaker))
 				.doOnError(handleErrorHentDokument(dokumentInfoId, variantFormat))
 				.block();
 	}
@@ -94,7 +93,6 @@ public class DokarkivConsumer {
 		};
 	}
 
-	@CircuitBreaker(name = DOKARKIV_METADATA)
 	public ArkivJournalpost journalpost(String journalpostId, String dokumentInfoId, Set<String> fields) {
 		return webClient.get()
 				.uri(uriBuilder -> {
@@ -105,15 +103,12 @@ public class DokarkivConsumer {
 					return uriBuilder
 							.build(journalpostId, dokumentInfoId);
 				})
-				.attributes(getOAuth2AuthorizedClient())
+				.attributes(clientRegistrationId(CLIENT_REGISTRATION_DOKARKIV))
 				.accept(APPLICATION_JSON)
-				.exchangeToMono(clientResponse -> {
-					if (clientResponse.statusCode().is2xxSuccessful()) {
-						return clientResponse.bodyToMono(ArkivJournalpost.class);
-					} else {
-						return clientResponse.createError();
-					}
-				}).doOnError(handleErrorHentJournalpost(journalpostId, dokumentInfoId))
+				.retrieve()
+				.bodyToMono(ArkivJournalpost.class)
+				.transformDeferred(CircuitBreakerOperator.of(dokarkivMetadataCircuitBreaker))
+				.doOnError(handleErrorHentJournalpost(journalpostId, dokumentInfoId))
 				.block();
 	}
 
@@ -133,10 +128,5 @@ public class DokarkivConsumer {
 				}
 			}
 		};
-	}
-
-	private Consumer<Map<String, Object>> getOAuth2AuthorizedClient() {
-		Mono<OAuth2AuthorizedClient> clientMono = oAuth2AuthorizedClientManager.authorize(getOAuth2AuthorizeRequestForAzure(CLIENT_REGISTRATION_DOKARKIV));
-		return oauth2AuthorizedClient(clientMono.block());
 	}
 }
