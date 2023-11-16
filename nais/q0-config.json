@@ -22,9 +22,8 @@
   "HENTJOURNALSAKINFO_URL": "https://dokarkiv-q0.dev.intern.nav.no/hentjournalsakinfo",
   "SAF_ENDPOINTS_PDL_URL": "https://pdl-api-q0.dev.intern.nav.no/graphql",
   "SAF_ENDPOINTS_PDL_SCOPE": "api://dev-fss.pdl.pdl-api-q0/.default",
-  "SAF_ENDPOINTS_PEN_SAK_SAMMENDRAG": "https://pensjon-pen-q0.nais.preprod.local/pen/springapi/sak/sammendrag",
-  "SAF_ENDPOINTS_PEN_BRUKER_FOR_SAK": "https://pensjon-pen-q0.nais.preprod.local/pen/api/pip/hentBrukerOgEnhetstilgangerForSak/v1",
-  "SAF_ENDPOINTS_PEN_SCOPE": "api://dev-fss.pensjon-q0.pensjon-pen-q0/.default",
+  "SAF_ENDPOINTS_PENSJON_URL": "https://pensjon-pen-q0.nais.preprod.local",
+  "SAF_ENDPOINTS_PENSJON_SCOPE": "api://dev-fss.pensjon-q0.pensjon-pen-q0/.default",
   "SAF_ENDPOINTS_DOKARKIV_URL": "https://dokarkiv-q0.dev.intern.nav.no/rest/internal/safintern",
   "SAF_ENDPOINTS_DOKARKIV_SCOPE": "api://dev-fss.teamdokumenthandtering.dokarkiv-q0/.default",
   "SAF_ENDPOINTS_HR_NAV_URL": "https://tdv-p.adeo.no/",
@@ -53,11 +52,6 @@
     },
     {
       "app": "pensjon-pen-q0",
-      "namespace": "pensjon-q0",
-      "cluster": "dev-fss"
-    },
-    {
-      "app": "pensjon-psak-q0",
       "namespace": "pensjon-q0",
       "cluster": "dev-fss"
     },

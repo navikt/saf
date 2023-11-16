@@ -66,7 +66,7 @@ class SakerIT extends AbstractItest {
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
 						.withBodyFile("gsak/gsak-sakerBySaksId-happy-duplicates.json")));
-		stubFor(get("/pen/springapi/sak/sammendrag")
+		stubFor(get(PENSJON_SPRINGAPI_SAK_SAMMENDRAG_URL)
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
 						.withBodyFile("psak/psak-hentSakSammendragListe-happy-duplicates.json")));
@@ -98,7 +98,7 @@ class SakerIT extends AbstractItest {
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
 						.withBodyFile("gsak/gsak-sakerBySaksId-happy.json")));
-		stubFor(get("/pen/springapi/sak/sammendrag")
+		stubFor(get(PENSJON_SPRINGAPI_SAK_SAMMENDRAG_URL)
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
 						.withBodyFile("psak/psak-hentSakSammendragListe-happy.json")));
@@ -142,7 +142,7 @@ class SakerIT extends AbstractItest {
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
 						.withBodyFile("gsak/gsak-sakerByFagsakIdAndFagsaksystem-FAR-happy.json")));
-		stubFor(get("/pen/springapi/sak/sammendrag")
+		stubFor(get(PENSJON_SPRINGAPI_SAK_SAMMENDRAG_URL)
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
 						.withBodyFile("psak/psak-hentSakSammendragListe-happy-empty.json")));
@@ -164,7 +164,7 @@ class SakerIT extends AbstractItest {
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
 						.withBodyFile("gsak/gsak-sakerBySaksId-happy.json")));
-		stubFor(get("/pen/springapi/sak/sammendrag")
+		stubFor(get(PENSJON_SPRINGAPI_SAK_SAMMENDRAG_URL)
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
 						.withBodyFile("psak/psak/psak-hentSakSammendragListe-happy-empty.json")));

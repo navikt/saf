@@ -34,8 +34,8 @@
 		<springdoc-openapi-starter-webmvc-ui.version>2.2.0</springdoc-openapi-starter-webmvc-ui.version>
 		<logstash-logback-encoder.version>7.4</logstash-logback-encoder.version>
 		<logback-syslog4j.version>1.0.0</logback-syslog4j.version>
-		<microsoft-graph.version>5.75.0</microsoft-graph.version>
-		<azure-identity.version>1.2.5</azure-identity.version>
+		<microsoft-graph.version>5.76.0</microsoft-graph.version>
+		<azure-identity.version>1.11.0</azure-identity.version>
 		<bcprov-jdk15on.version>1.70</bcprov-jdk15on.version>
 
 		<!-- Test -->
@@ -79,8 +79,10 @@
 			</dependency>
 			<dependency>
 				<groupId>io.github.resilience4j</groupId>
-				<artifactId>resilience4j-spring-boot3</artifactId>
+				<artifactId>resilience4j-bom</artifactId>
 				<version>${resilience4j.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
 			</dependency>
 			<dependency>
 				<groupId>com.graphql-java</groupId>
@@ -191,5 +193,4 @@
 			</plugin>
 		</plugins>
 	</build>
-
 </project>
