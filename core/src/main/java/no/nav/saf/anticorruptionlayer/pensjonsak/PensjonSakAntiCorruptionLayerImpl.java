@@ -3,7 +3,7 @@ package no.nav.saf.anticorruptionlayer.pensjonsak;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.anticorruptionlayer.pensjonsak.domain.SakSammendrag;
 import no.nav.saf.anticorruptionlayer.pensjonsak.hentbrukerforsak.PensjonSakRestConsumer;
-import no.nav.saf.anticorruptionlayer.pensjonsak.hentbrukerforsak.PersonIngenPensjonssakerException;
+import no.nav.saf.anticorruptionlayer.pensjonsak.hentbrukerforsak.PersonHarIngenPensjonssakerException;
 import no.nav.saf.domain.Arkivsak;
 import no.nav.saf.domain.kode.Arkivsakssystem;
 import no.nav.saf.domain.kode.Tema;
@@ -65,7 +65,7 @@ public class PensjonSakAntiCorruptionLayerImpl implements PensjonSakAntiCorrupti
 								.build())
 						.collect(Collectors.toList());
 			}
-		} catch (PersonIngenPensjonssakerException e) {
+		} catch (PersonHarIngenPensjonssakerException e) {
 			log.info("Person har ingen pensjonssaker", e);
 			return emptyList();
 		} catch (Exception e) {
