@@ -37,6 +37,7 @@ import java.util.stream.Stream;
 
 import static no.nav.saf.anticorruptionlayer.joark.domain.kode.FagsystemCode.FS22;
 import static no.nav.saf.anticorruptionlayer.joark.domain.kode.FagsystemCode.PEN;
+import static no.nav.saf.domain.DomainConstants.LOKALTIDSSONE;
 import static no.nav.saf.domain.kode.Arkivsakssystem.GSAK;
 import static no.nav.saf.domain.kode.Arkivsakssystem.PSAK;
 
@@ -82,6 +83,7 @@ class TilknyttedeJournalposterTilgangRepository {
 								.aktoerId(saksrelasjon.getAktoerId())
 								.tema(Arkivsak.mapTema(saksrelasjon.getTema()))
 								.datoOpprettet(Optional.ofNullable(saksrelasjon.getOpprettetTidspunkt())
+										.map(o -> o.atZoneSameInstant(LOKALTIDSSONE))
 										.map(ZonedDateTime::toLocalDateTime)
 										.orElse(null))
 								.build();

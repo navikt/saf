@@ -17,6 +17,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import static no.nav.saf.domain.DomainConstants.AKTOER_ID_LIST;
+import static no.nav.saf.domain.DomainConstants.LOKALTIDSSONE;
 import static no.nav.saf.domain.DomainConstants.ORGNR_LIST;
 
 @Slf4j
@@ -127,11 +128,6 @@ class GsakAntiCorruptionLayerImpl implements GsakAntiCorruptionLayer {
 
 	private List<Arkivsak> mapToArkivsak(List<GsakSakerTo> gsakSakerToFiltered) {
 		return gsakSakerToFiltered.stream()
-				.peek(gsak -> log.info("gsakoppretttetidspunkt:{} med kovertering blir dett {} tidssonen er {}"
-						,gsak.getOpprettetTidspunkt()
-						,gsak.getOpprettetTidspunkt().atZoneSameInstant(
-								ZoneId.of("Europe/Oslo")).toLocalDateTime()
-						, ZoneId.systemDefault()))
 				.map(gsak -> Arkivsak.builder()
 						.aktoerId(gsak.getAktoerId())
 						.orgnummer(gsak.getOrgnr())
@@ -140,7 +136,7 @@ class GsakAntiCorruptionLayerImpl implements GsakAntiCorruptionLayer {
 						.fagsakId(gsak.getFagsakNr())
 						.fagsaksystem(gsak.getApplikasjon())
 						.tema(mapTema(gsak.getTema()))
-						.datoOpprettet(gsak.getOpprettetTidspunkt().atZoneSameInstant(ZoneId.of("Europe/Oslo")).toLocalDateTime())
+						.datoOpprettet(gsak.getOpprettetTidspunkt().atZoneSameInstant(LOKALTIDSSONE).toLocalDateTime())
 						.build())
 				.collect(Collectors.toList());
 	}

@@ -31,6 +31,7 @@ import java.util.stream.Collectors;
 
 import static no.nav.saf.anticorruptionlayer.joark.domain.kode.FagsystemCode.FS22;
 import static no.nav.saf.anticorruptionlayer.joark.domain.kode.FagsystemCode.PEN;
+import static no.nav.saf.domain.DomainConstants.LOKALTIDSSONE;
 import static no.nav.saf.domain.DomainConstants.ORGANISASJON;
 import static no.nav.saf.domain.DomainConstants.PERSON;
 import static no.nav.saf.domain.DomainConstants.RJOARK902_JOURNALPOST_DTO;
@@ -127,6 +128,7 @@ class JournalpostAntiCorruptionLayer {
 					.aktoerId(saksrelasjon.getAktoerId())
 					.tema(Arkivsak.mapTema(saksrelasjon.getTema()))
 					.datoOpprettet(Optional.ofNullable(saksrelasjon.getOpprettetTidspunkt())
+							.map(o -> o.atZoneSameInstant(LOKALTIDSSONE))
 							.map(ZonedDateTime::toLocalDateTime)
 							.orElse(null))
 					.build();
