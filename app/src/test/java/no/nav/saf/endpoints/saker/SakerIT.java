@@ -181,7 +181,7 @@ class SakerIT extends AbstractItest {
 	private void assertGsak(Sak gsak) {
 		assertThat(gsak.getArkivsaksnummer(), is("135695442"));
 		assertThat(gsak.getArkivsaksystem(), is(GSAK));
-		assertThat(gsak.getDatoOpprettet(), is(LocalDateTime.parse("2018-07-17T11:49:01", ISO_LOCAL_DATE_TIME)));
+		assertThat(gsak.getDatoOpprettet(), is(LocalDateTime.parse("2018-07-17T13:49:01", ISO_LOCAL_DATE_TIME)));
 		assertThat(gsak.getFagsaksystem(), is("BISYS"));
 		assertThat(gsak.getFagsakId(), is("654321"));
 		assertThat(gsak.getSakstype(), is(FAGSAK));

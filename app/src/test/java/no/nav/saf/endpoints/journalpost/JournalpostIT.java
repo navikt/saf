@@ -22,6 +22,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.RequestEntity;
 
 import java.net.URI;
+import java.time.LocalDateTime;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
@@ -85,7 +86,7 @@ class JournalpostIT extends AbstractItest {
 		assertThat(journalpost.getSak().getArkivsaksystem(), is(Arkivsakssystem.GSAK));
 		assertThat(journalpost.getSak().getFagsakId(), is("abc123"));
 		assertThat(journalpost.getSak().getFagsaksystem(), is("K9"));
-		assertThat(journalpost.getSak().getDatoOpprettet(), notNullValue());
+		assertThat(journalpost.getSak().getDatoOpprettet(), is(LocalDateTime.parse("2018-07-17T13:49:01")));
 		assertThat(journalpost.getSak().getSakstype(), is(Sakstype.FAGSAK));
 		assertThat(journalpost.getSak().getTema(), is(Tema.FOR));
 		assertThat(journalpost.getBruker().getId(), is("1900000000000"));

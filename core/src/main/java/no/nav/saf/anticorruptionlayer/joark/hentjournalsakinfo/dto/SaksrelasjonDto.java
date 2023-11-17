@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.FagsystemCode;
 
-import java.time.ZonedDateTime;
+import java.time.OffsetDateTime;
 
 /**
  * @author Joakim Bjørnstad, Jbit AS
@@ -23,5 +23,5 @@ public class SaksrelasjonDto {
 	private final String applikasjon;
 	private final String orgnr;
 	private final String opprettetAv;
-	private final ZonedDateTime opprettetTidspunkt;
+	private final OffsetDateTime opprettetTidspunkt;
 }
