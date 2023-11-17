@@ -24,8 +24,6 @@ import no.nav.saf.domain.visningsmodell.Utsendingsinfo;
 import no.nav.saf.tilgangskontroll.RequestCache;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -123,7 +121,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@ExtendWith(MockitoExtension.class)
 class JournalpostDtoMapperTest {
 
 	private final JournalpostDtoMapper mapper = new JournalpostDtoMapper();

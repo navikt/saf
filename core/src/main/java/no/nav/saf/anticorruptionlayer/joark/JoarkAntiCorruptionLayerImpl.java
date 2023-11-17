@@ -10,6 +10,7 @@ import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.FinnJou
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.FinnJournalposterResponseTo;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark904.FinnJournalposterStatusRequestTo;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark904.FinnJournalposterStatusResponseTo;
+import no.nav.saf.anticorruptionlayer.joark.safintern.DokarkivConsumer;
 import no.nav.saf.domain.kode.Arkivsakssystem;
 import no.nav.saf.domain.kode.Journalposttype;
 import no.nav.saf.domain.kode.Journalstatus;
@@ -26,11 +27,14 @@ import java.util.stream.Collectors;
 @Slf4j
 class JoarkAntiCorruptionLayerImpl implements JoarkAntiCorruptionLayer {
 	private final HentJournalsakinfo hentJournalsakinfo;
+	private final DokarkivConsumer dokarkivConsumer;
 	private final SafToJoarkJournalstatusMapper safToJoarkJournalstatusMapper;
 
 	@Autowired
-	public JoarkAntiCorruptionLayerImpl(HentJournalsakinfo hentJournalsakinfo) {
+	public JoarkAntiCorruptionLayerImpl(HentJournalsakinfo hentJournalsakinfo,
+										DokarkivConsumer dokarkivConsumer) {
 		this.hentJournalsakinfo = hentJournalsakinfo;
+		this.dokarkivConsumer = dokarkivConsumer;
 		this.safToJoarkJournalstatusMapper = new SafToJoarkJournalstatusMapper();
 	}
 

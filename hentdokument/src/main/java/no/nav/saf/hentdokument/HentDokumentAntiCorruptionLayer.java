@@ -25,7 +25,7 @@ public class HentDokumentAntiCorruptionLayer {
 	}
 
 	public ArkivJournalpost hentDokumentTilgang(String journalpostId, String dokumentInfoId) {
-		return dokarkivConsumer.journalpost(journalpostId, dokumentInfoId, HENTDOKUMENT_TILGANG_FIELDS);
+		return dokarkivConsumer.journalpostByIdAndDokumentInfoId(journalpostId, dokumentInfoId, HENTDOKUMENT_TILGANG_FIELDS);
 	}
 
 	public HentDokument hentDokument(String dokumentInfoId, String variantFormat) {

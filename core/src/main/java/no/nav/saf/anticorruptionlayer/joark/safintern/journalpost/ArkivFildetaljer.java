@@ -1,4 +1,16 @@
 package no.nav.saf.anticorruptionlayer.joark.safintern.journalpost;
 
-public record ArkivFildetaljer(String skjerming, String format) {
+import lombok.Builder;
+
+@Builder
+public record ArkivFildetaljer(
+		// tilgangskontroll
+		String skjerming,
+		String format,
+		//
+		String navn,
+		String stoerrelse,
+		String type,
+		String uuid
+) {
 }

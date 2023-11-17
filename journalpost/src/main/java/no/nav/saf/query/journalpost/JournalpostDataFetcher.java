@@ -41,10 +41,10 @@ public class JournalpostDataFetcher implements DataFetcher<DataFetcherResult<Jou
 			mdcSporing(journalpostId, eksternReferanseId);
 			validateJournalpostIdOgEksternReferanseId(journalpostId, eksternReferanseId, environment);
 
-			String argumentName = argumentName(journalpostId, eksternReferanseId);
-			log.info("query journalpost. {}={}", argumentName, journalpostId);
+			String argumentNameValue = argumentNameValue(journalpostId, eksternReferanseId);
+			log.info("query journalpost. {}", argumentNameValue);
 			Journalpost journalpost = journalpostQuery.hentJournalpost(journalpostId, eksternReferanseId, safRequestContext, environment);
-			log.info("query journalpost hentet. {}={}", argumentName, journalpostId);
+			log.info("query journalpost hentet. {}", argumentNameValue);
 
 			return DataFetcherResult.<Journalpost>newResult()
 					.data(journalpost)
@@ -67,11 +67,11 @@ public class JournalpostDataFetcher implements DataFetcher<DataFetcherResult<Jou
 		}
 	}
 
-	private String argumentName(String journalpostId, String eksternReferanseId) {
+	private String argumentNameValue(String journalpostId, String eksternReferanseId) {
 		if (isBlank(journalpostId) && isNotBlank(eksternReferanseId)) {
-			return "eksternReferanseId";
+			return "eksternReferanseId=" + eksternReferanseId;
 		} else {
-			return "journalpostId";
+			return "journalpostId=" + journalpostId;
 		}
 	}
 

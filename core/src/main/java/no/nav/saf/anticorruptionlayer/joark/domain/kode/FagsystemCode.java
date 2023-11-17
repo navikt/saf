@@ -20,4 +20,12 @@ public enum FagsystemCode {
 			return joarkFagsystemCode.safArkivsaksystem;
 		}
 	}
+
+	public static Arkivsakssystem toSafArkivsaksystem(String saksystem) {
+		if (saksystem == null) {
+			return null;
+		} else {
+			return FagsystemCode.valueOf(saksystem).safArkivsaksystem;
+		}
+	}
 }

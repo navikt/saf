@@ -11,9 +11,6 @@ import java.time.LocalTime;
 import java.time.ZoneId;
 import java.util.Date;
 
-/**
- * @author Joakim Bjørnstad, Jbit AS
- */
 @Data
 public class RelevantDato {
 	// Fallback for datoer som er påkrevd men av ukjente årsaker ikke finnes.
@@ -23,7 +20,12 @@ public class RelevantDato {
 	private final Datotype datotype;
 
 	@JsonCreator
-	public RelevantDato(@JsonProperty("dato") Date dato, @JsonProperty("datotype") Datotype datotype) {
+	public RelevantDato(@JsonProperty("dato") LocalDateTime dato, @JsonProperty("datotype") Datotype datotype) {
+		this.dato = dato;
+		this.datotype = datotype;
+	}
+
+	public RelevantDato(Date dato, Datotype datotype) {
 		this.dato = toLocalDateTime(dato);
 		this.datotype = datotype;
 	}

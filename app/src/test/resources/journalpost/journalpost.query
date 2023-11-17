@@ -11,6 +11,7 @@
         avsenderMottaker {
           id
           navn
+          type
           land
           erLikBruker
         }
@@ -53,6 +54,7 @@
             dokumentstatus
             originalJournalpostId
             logiskeVedlegg {
+                logiskVedleggId
                 tittel
             }
             dokumentvarianter {
@@ -79,6 +81,13 @@
                 tittel
                 adresse
                 varslingstekst
+            }
+            varselSendt {
+                type
+                tittel
+                adresse
+                varslingstekst
+                varslingstidspunkt
             }
         }
     }

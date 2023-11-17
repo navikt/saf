@@ -12,6 +12,8 @@ import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.dto.JournalpostDt
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.dto.SaksrelasjonDto;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.dto.VariantDto;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark902.HentJournalpostResponseTo;
+import no.nav.saf.anticorruptionlayer.joark.safintern.DokarkivConsumer;
+import no.nav.saf.anticorruptionlayer.joark.safintern.journalpost.ArkivJournalpost;
 import no.nav.saf.domain.Arkivsak;
 import no.nav.saf.domain.kode.Arkivsakssystem;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
@@ -21,20 +23,20 @@ import no.nav.saf.domain.tilgangsmodell.TilgangJournalpost;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 import no.nav.saf.exceptions.UgyldigArkivsaksystemException;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static no.nav.saf.anticorruptionlayer.joark.domain.kode.FagsystemCode.FS22;
 import static no.nav.saf.anticorruptionlayer.joark.domain.kode.FagsystemCode.PEN;
-import static no.nav.saf.domain.DomainConstants.TIDSSONE_NORGE;
 import static no.nav.saf.domain.DomainConstants.ORGANISASJON;
 import static no.nav.saf.domain.DomainConstants.PERSON;
 import static no.nav.saf.domain.DomainConstants.RJOARK902_JOURNALPOST_DTO;
+import static no.nav.saf.domain.DomainConstants.TIDSSONE_NORGE;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.apache.commons.lang3.StringUtils.trim;
@@ -44,10 +46,20 @@ import static org.apache.commons.lang3.StringUtils.trim;
 class JournalpostAntiCorruptionLayer {
 
 	private final HentJournalsakinfo hentJournalsakinfo;
+	private final DokarkivConsumer dokarkivConsumer;
 
-	@Autowired
-	JournalpostAntiCorruptionLayer(HentJournalsakinfo hentJournalsakinfo) {
+	JournalpostAntiCorruptionLayer(HentJournalsakinfo hentJournalsakinfo,
+								   DokarkivConsumer dokarkivConsumer) {
 		this.hentJournalsakinfo = hentJournalsakinfo;
+		this.dokarkivConsumer = dokarkivConsumer;
+	}
+
+	public ArkivJournalpost hentJournalpost(String journalpostId, String eksternReferanseId) {
+		if(isNotBlank(journalpostId)) {
+			return dokarkivConsumer.journalpostById(journalpostId, Set.of());
+		} else {
+			return dokarkivConsumer.journalpostByEksternReferanseId(eksternReferanseId, Set.of());
+		}
 	}
 
 	public TilgangJournalpost hentTilgangJournalpostFromSafRequestContext(SafRequestContext safRequestContext) {

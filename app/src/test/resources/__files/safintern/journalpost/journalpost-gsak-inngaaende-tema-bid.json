@@ -1,0 +1,69 @@
+{
+  "journalpostId": 400000000,
+  "type": "I",
+  "fagomraade": "BID",
+  "fagomraadenavn": "Bidrag",
+  "status": "J",
+  "saksrelasjon": {
+    "fagsystem": "FS22",
+    "sak": {
+      "aktoerId": "1912374211459",
+      "applikasjon": "BISYS",
+      "fagsakNr": "654321",
+      "opprettetTid": "2023-09-08T14:16:28.791052",
+      "tema": "BID"
+    },
+    "sakId": 140000000
+  },
+  "relevanteDatoer": {
+    "forsendelseMottatt": "2023-08-16T11:15:00.290+00:00",
+    "hoveddokument": "2023-08-16T11:15:00.290+00:00",
+    "journalfoert": "2023-09-12T13:42:13.647+00:00",
+    "opprettet": "2023-08-16T11:15:00.292+00:00"
+  },
+  "avsenderMottaker": {
+    "id": "07480966982",
+    "navn": "Sitrongul Ovn",
+    "type": "FNR",
+    "land": "NO"
+  },
+  "antallRetur": 1,
+  "behandlingstema": "ab0071",
+  "behandlingstemanavn": "Tilskudd",
+  "bruker": {
+    "id": "07480966982",
+    "type": "PERSON"
+  },
+  "dokumenter": [
+    {
+      "dokumentInfoId": 500000000,
+      "brevkode": "NAV 10-07.34",
+      "fildetaljer": [
+        {
+          "format": "ARKIV",
+          "navn": "tilskudd.pdf",
+          "stoerrelse": "4721",
+          "type": "PDFA",
+          "uuid": "4b4d0d13-5c8c-4f6b-922c-4026f1679069"
+        }
+      ],
+      "kategori": "IS",
+      "logiskVedlegg": [
+        {
+          "tittel": "Bidrag bekreftelse",
+          "vedleggId": 300000000
+        }
+      ],
+      "originalJournalpostId": 400000000,
+      "status": "FERDIGSTILT",
+      "tilknyttetSom": "HOVEDDOKUMENT",
+      "tittel": "Bekreftelse på bidrag"
+    }
+  ],
+  "innhold": "Bekreftelse på bidrag",
+  "kanalreferanseId": "d35c8412-7b98-4a66-8fdd-51f44ed6c632",
+  "journalfoerendeEnhet": "4710",
+  "journalfoertAvNavn": "Bjarne Betjent",
+  "mottakskanal": "SKAN_IM",
+  "opprettetAvNavn": "srvskanmotreferansenr"
+}
