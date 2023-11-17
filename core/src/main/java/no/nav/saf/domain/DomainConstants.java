@@ -18,7 +18,7 @@ public final class DomainConstants {
 	public static final String FAGSAKSYSTEM_FORELDREPENGELOSNING = "FS36";
 	public static final String FAGSAKSYSTEM_K9 = "K9";
 
-	public static final ZoneId LOKALTIDSSONE = ZoneId.of("Europe/Oslo");
+	public static final ZoneId TIDSSONE_NORGE = ZoneId.of("Europe/Oslo");
 
 
 	// PEP funksjonelt navn. Se https://confluence.adeo.no/display/BOA/saf+-+Tilgangskontroll

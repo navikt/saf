@@ -9,7 +9,6 @@ import no.nav.saf.domain.kode.Tema;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -17,7 +16,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import static no.nav.saf.domain.DomainConstants.AKTOER_ID_LIST;
-import static no.nav.saf.domain.DomainConstants.LOKALTIDSSONE;
+import static no.nav.saf.domain.DomainConstants.TIDSSONE_NORGE;
 import static no.nav.saf.domain.DomainConstants.ORGNR_LIST;
 
 @Slf4j
@@ -136,7 +135,7 @@ class GsakAntiCorruptionLayerImpl implements GsakAntiCorruptionLayer {
 						.fagsakId(gsak.getFagsakNr())
 						.fagsaksystem(gsak.getApplikasjon())
 						.tema(mapTema(gsak.getTema()))
-						.datoOpprettet(gsak.getOpprettetTidspunkt().atZoneSameInstant(LOKALTIDSSONE).toLocalDateTime())
+						.datoOpprettet(gsak.getOpprettetTidspunkt().atZoneSameInstant(TIDSSONE_NORGE).toLocalDateTime())
 						.build())
 				.collect(Collectors.toList());
 	}
