@@ -16,12 +16,8 @@ public class LoggingExceptionResolver extends AbstractHandlerExceptionResolver {
 			if (logger.isWarnEnabled()) {
 				logger.warn(ex.getMessage(), ex);
 			}
-		} else if(ex instanceof SafTechnicalException) {
+		} else if (ex instanceof SafTechnicalException) {
 			logger.error(ex.getMessage(), ex);
-		} else {
-			if (logger.isErrorEnabled()) {
-				logger.error("requestURI=" + request.getRequestURI() + "\n" + ex.getMessage(), ex);
-			}
 		}
 		return null;
 	}
