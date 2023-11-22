@@ -89,11 +89,6 @@
       "cluster": "dev-fss"
     },
     {
-      "app": "journalforing-frontend-q1",
-      "namespace": "isa",
-      "cluster": "dev-fss"
-    },
-    {
       "app": "jfr-infotrygd-q1",
       "namespace": "isa",
       "cluster": "dev-gcp"
