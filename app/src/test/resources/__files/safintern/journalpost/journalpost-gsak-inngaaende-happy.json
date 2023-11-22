@@ -27,7 +27,7 @@
     "type": "FNR",
     "land": "NO"
   },
-  "antallRetur": 1,
+  "antallRetur": null,
   "behandlingstema": "ab0071",
   "behandlingstemanavn": "Tilskudd",
   "bruker": {

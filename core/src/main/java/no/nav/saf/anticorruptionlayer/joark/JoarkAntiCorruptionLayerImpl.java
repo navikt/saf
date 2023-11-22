@@ -11,6 +11,7 @@ import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.FinnJou
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark904.FinnJournalposterStatusRequestTo;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark904.FinnJournalposterStatusResponseTo;
 import no.nav.saf.anticorruptionlayer.joark.safintern.DokarkivConsumer;
+import no.nav.saf.anticorruptionlayer.joark.safintern.journalpost.ArkivJournalpost;
 import no.nav.saf.domain.kode.Arkivsakssystem;
 import no.nav.saf.domain.kode.Journalposttype;
 import no.nav.saf.domain.kode.Journalstatus;
@@ -21,7 +22,10 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
+
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 @Component
 @Slf4j
@@ -89,5 +93,14 @@ class JoarkAntiCorruptionLayerImpl implements JoarkAntiCorruptionLayer {
 				.build());
 
 		return responseTo.getTilgangJournalposter();
+	}
+
+	@Override
+	public ArkivJournalpost hentJournalpost(String journalpostId, String eksternReferanseId) {
+		if(isNotBlank(journalpostId)) {
+			return dokarkivConsumer.journalpostById(journalpostId, Set.of());
+		} else {
+			return dokarkivConsumer.journalpostByEksternReferanseId(eksternReferanseId, Set.of());
+		}
 	}
 }

@@ -81,14 +81,14 @@ import static no.nav.saf.anticorruptionlayer.joark.domain.UtsendingsInfoDtoTestO
 import static no.nav.saf.anticorruptionlayer.joark.domain.UtsendingsInfoDtoTestObjects.createUtsendingsInfoDtoWithDigitalPostadresseOldVarselStructure;
 import static no.nav.saf.anticorruptionlayer.joark.domain.UtsendingsInfoDtoTestObjects.createUtsendingsInfoDtoWithFysiskPostadresse;
 import static no.nav.saf.anticorruptionlayer.joark.domain.UtsendingsInfoDtoTestObjects.createUtsendingsInfoDtoWithNavNoVarslingOldVarselStructure;
+import static no.nav.saf.anticorruptionlayer.joark.domain.kode.BrukerTypeCode.ORGANISASJON;
+import static no.nav.saf.anticorruptionlayer.joark.domain.kode.BrukerTypeCode.PERSON;
 import static no.nav.saf.anticorruptionlayer.joark.domain.kode.JournalStatusCode.E;
 import static no.nav.saf.anticorruptionlayer.joark.domain.kode.JournalStatusCode.M;
 import static no.nav.saf.anticorruptionlayer.joark.domain.kode.JournalpostTypeCode.U;
 import static no.nav.saf.anticorruptionlayer.joark.domain.kode.UtsendingsKanalCode.NAV_NO;
 import static no.nav.saf.anticorruptionlayer.joark.domain.kode.UtsendingsKanalCode.S;
 import static no.nav.saf.anticorruptionlayer.joark.domain.kode.UtsendingsKanalCode.SDP;
-import static no.nav.saf.domain.DomainConstants.ORGANISASJON;
-import static no.nav.saf.domain.DomainConstants.PERSON;
 import static no.nav.saf.domain.DomainConstants.TILGANG_BRUKER;
 import static no.nav.saf.domain.kode.Arkivsakssystem.PSAK;
 import static no.nav.saf.domain.kode.Datotype.DATO_AVS_RETUR;

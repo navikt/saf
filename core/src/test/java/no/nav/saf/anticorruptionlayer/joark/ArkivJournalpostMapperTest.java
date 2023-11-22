@@ -1,5 +1,6 @@
 package no.nav.saf.anticorruptionlayer.joark;
 
+import no.nav.saf.anticorruptionlayer.joark.domain.kode.BrukerTypeCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.FagomradeCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.FagsystemCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.JournalStatusCode;
@@ -11,7 +12,6 @@ import no.nav.saf.anticorruptionlayer.joark.safintern.journalpost.ArkivSak;
 import no.nav.saf.anticorruptionlayer.joark.safintern.journalpost.ArkivSaksrelasjon;
 import no.nav.saf.cache.KeyGeneratorLocalCaching;
 import no.nav.saf.domain.Arkivsak;
-import no.nav.saf.domain.DomainConstants;
 import no.nav.saf.domain.kode.Arkivsakssystem;
 import no.nav.saf.domain.kode.Dokumentstatus;
 import no.nav.saf.domain.kode.Journalposttype;
@@ -101,11 +101,11 @@ import static no.nav.saf.anticorruptionlayer.joark.ArkivUtsendingsInfoTestObject
 import static no.nav.saf.anticorruptionlayer.joark.ArkivUtsendingsInfoTestObjects.arkivUtsendingsInfoWithDigitalPostadresseOldVarselStructure;
 import static no.nav.saf.anticorruptionlayer.joark.ArkivUtsendingsInfoTestObjects.arkivUtsendingsInfoWithNavNoVarslingOldVarselStructure;
 import static no.nav.saf.anticorruptionlayer.joark.ArkivUtsendingsInfoTestObjects.utsendingsInfoDtoWithFysiskPostadresse;
+import static no.nav.saf.anticorruptionlayer.joark.domain.kode.BrukerTypeCode.ORGANISASJON;
 import static no.nav.saf.anticorruptionlayer.joark.domain.kode.JournalStatusCode.E;
 import static no.nav.saf.anticorruptionlayer.joark.domain.kode.UtsendingsKanalCode.NAV_NO;
 import static no.nav.saf.anticorruptionlayer.joark.domain.kode.UtsendingsKanalCode.S;
 import static no.nav.saf.anticorruptionlayer.joark.domain.kode.UtsendingsKanalCode.SDP;
-import static no.nav.saf.domain.DomainConstants.ORGANISASJON;
 import static no.nav.saf.domain.DomainConstants.TILGANG_BRUKER;
 import static no.nav.saf.domain.kode.Arkivsakssystem.PSAK;
 import static no.nav.saf.domain.kode.Datotype.DATO_AVS_RETUR;
@@ -250,7 +250,7 @@ class ArkivJournalpostMapperTest {
 	}
 
 	@Test
-	void shouldNotMapDokumentinfoIngenTilgangPep5() {
+	void shouldNotMapDokumentinfoWhenIngenTilgangPep5() {
 		ArkivJournalpost arkivJournalpost = inngaaendeArkivJournalpost();
 		RequestCache requestCache = createTilgangBrukerRequestCache();
 		String tilgangKeyPep5LocalCaching = KeyGeneratorLocalCaching.getKeyForPep5(String.valueOf(ARKIVJOURNALPOST_JOURNALPOST_ID), String.valueOf(ARKIVDOKUMENTINFO_DOKUMENT_INFO_ID));
@@ -264,7 +264,7 @@ class ArkivJournalpostMapperTest {
 	}
 
 	@Test
-	void shouldMapJournalpostIngenDistribusjon() {
+	void shouldMapJournalpostKanalIngenDistribusjonWhenNotat() {
 		ArkivJournalpost arkivJournalpost = notatArkivJournalpost();
 		RequestCache requestCache = createTilgangBrukerRequestCache();
 
@@ -274,7 +274,7 @@ class ArkivJournalpostMapperTest {
 	}
 
 	@Test
-	void shouldMapJournalpostManglendeUtsendingskanalFerdigOgSentral() {
+	void shouldMapJournalpostSentralUtskriftWhenNullUtsendingskanalAndFerdigstilt() {
 		ArkivJournalpost arkivJournalpost = utgaaendeArkivJournalpost(JournalStatusCode.FS, null, null);
 		RequestCache requestCache = createTilgangBrukerRequestCache();
 
@@ -284,7 +284,7 @@ class ArkivJournalpostMapperTest {
 	}
 
 	@Test
-	void shouldMapJournalpostManglendeUtsendingskanalFerdigOgLokal() {
+	void shouldMapJournalpostLokalUtskriftWhenNullUtsendingskanalAndFerdigstiltLokalt() {
 		ArkivJournalpost arkivJournalpost = utgaaendeArkivJournalpost(JournalStatusCode.FL, null, null);
 		RequestCache requestCache = createTilgangBrukerRequestCache();
 
@@ -361,7 +361,6 @@ class ArkivJournalpostMapperTest {
 
 		assertThat(journalpost.getDokumenter().get(0).getDokumentstatus()).isNull();
 	}
-
 
 	@Test
 	void shouldMapSaksbehandlerHarTilgang() {
@@ -565,7 +564,7 @@ class ArkivJournalpostMapperTest {
 		ArkivJournalpost journalpostDto = baseArkivJournalpost()
 				.type(JournalpostTypeCode.I.name())
 				.saksrelasjon(null)
-				.bruker(new ArkivBruker(BRUKER_ID_PERSON, DomainConstants.PERSON))
+				.bruker(new ArkivBruker(BRUKER_ID_PERSON, BrukerTypeCode.PERSON))
 				.build();
 
 		Journalpost journalpost = mapJournalpost(journalpostDto, new RequestCache());

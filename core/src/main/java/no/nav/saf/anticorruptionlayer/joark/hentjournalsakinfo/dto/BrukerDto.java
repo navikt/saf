@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import no.nav.saf.domain.DomainConstants;
+import no.nav.saf.anticorruptionlayer.joark.domain.kode.BrukerTypeCode;
 
 /**
  * @author Joakim Bjørnstad, Jbit AS
@@ -18,10 +18,10 @@ public class BrukerDto {
 	private String brukerIdType;
 
 	public boolean isPerson() {
-		return DomainConstants.PERSON.equals(brukerIdType);
+		return BrukerTypeCode.PERSON.equals(brukerIdType);
 	}
 
 	public boolean isOrganisasjon() {
-		return DomainConstants.ORGANISASJON.equals(brukerIdType);
+		return BrukerTypeCode.ORGANISASJON.equals(brukerIdType);
 	}
 }

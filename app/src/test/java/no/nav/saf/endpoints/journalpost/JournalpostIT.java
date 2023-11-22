@@ -106,6 +106,7 @@ class JournalpostIT extends AbstractItest {
 		assertThat(journalpost.getAvsenderMottakerId()).isEqualTo("07480966982");
 		assertThat(journalpost.getAvsenderMottakerNavn()).isEqualTo("Sitrongul Ovn");
 		assertThat(journalpost.getAvsenderMottakerLand()).isEqualTo("NO");
+		assertThat(journalpost.getAntallRetur()).isNull();
 		assertThat(journalpost.getJournalforendeEnhet()).isEqualTo("4710");
 		assertThat(journalpost.getJournalfoerendeEnhet()).isEqualTo("4710");
 		assertThat(journalpost.getJournalfortAvNavn()).isEqualTo("teamdigihot:hm-joark-sink");
@@ -185,6 +186,7 @@ class JournalpostIT extends AbstractItest {
 		assertThat(journalpost.getAvsenderMottakerId()).isEqualTo("23496940474");
 		assertThat(journalpost.getAvsenderMottakerNavn()).isEqualTo("SNÅL LOGARITME");
 		assertThat(journalpost.getAvsenderMottakerLand()).isNull();
+		assertThat(journalpost.getAntallRetur()).isEqualTo("1");
 		assertThat(journalpost.getJournalforendeEnhet()).isEqualTo("4489");
 		assertThat(journalpost.getJournalfoerendeEnhet()).isEqualTo("4489");
 		assertThat(journalpost.getJournalfortAvNavn()).isEqualTo("Bjarne Betjent");

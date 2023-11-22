@@ -1,7 +1,6 @@
 package no.nav.saf.query.journalpost;
 
 import graphql.schema.DataFetchingEnvironment;
-import no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoMapper;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.domain.tilgangsmodell.TilgangDokumentInfo;
 import no.nav.saf.domain.tilgangsmodell.TilgangDokumentvariant;
@@ -31,8 +30,6 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 class JournalpostQuery {
 
 	private final JournalpostService journalpostService;
-	private final JournalpostTilgangRepository journalpostTilgangRepository;
-	private final JournalpostDtoMapper journalpostDtoMapper;
 	private final Pep<TilgangBruker> pep1g;
 	private final Pep<TilgangSak> pep2;
 	private final Pep<TilgangSak> pep2d;
@@ -44,8 +41,6 @@ class JournalpostQuery {
 
 	public JournalpostQuery(
 			JournalpostService journalpostService,
-			JournalpostTilgangRepository journalpostTilgangRepository,
-			JournalpostDtoMapper journalpostDtoMapper,
 			@Autowired Pep<TilgangBruker> pep1g,
 			@Autowired Pep<TilgangSak> pep2,
 			@Autowired Pep<TilgangSak> pep2d,
@@ -55,8 +50,6 @@ class JournalpostQuery {
 			@Autowired Pep<TilgangDokumentvariant> pep6d,
 			@Autowired Pep<TilgangSak> pep7d) {
 		this.journalpostService = journalpostService;
-		this.journalpostTilgangRepository = journalpostTilgangRepository;
-		this.journalpostDtoMapper = journalpostDtoMapper;
 		this.pep1g = pep1g;
 		this.pep2 = pep2;
 		this.pep2d = pep2d;

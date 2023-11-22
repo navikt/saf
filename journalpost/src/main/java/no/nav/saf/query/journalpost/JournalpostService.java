@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.anticorruptionlayer.aktoer.PdlAntiCorruptionLayer;
 import no.nav.saf.anticorruptionlayer.bisys.BisysAntiCorruptionLayer;
 import no.nav.saf.anticorruptionlayer.fpsak.FpsakAntiCorruptionLayer;
+import no.nav.saf.anticorruptionlayer.joark.JoarkAntiCorruptionLayer;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.JournalStatusCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.SkjermingTypeCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.VariantFormatCode;
@@ -32,8 +33,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static java.lang.String.valueOf;
-import static no.nav.saf.domain.DomainConstants.ORGANISASJON;
-import static no.nav.saf.domain.DomainConstants.PERSON;
+import static no.nav.saf.anticorruptionlayer.joark.domain.kode.BrukerTypeCode.ORGANISASJON;
+import static no.nav.saf.anticorruptionlayer.joark.domain.kode.BrukerTypeCode.PERSON;
 import static no.nav.saf.domain.kode.Arkivsakssystem.GSAK;
 import static no.nav.saf.domain.kode.Arkivsakssystem.PSAK;
 import static no.nav.saf.domain.kode.Tema.PEN;
@@ -43,21 +44,21 @@ import static org.apache.commons.lang3.StringUtils.trim;
 @Slf4j
 @Component
 public class JournalpostService {
-	private final JournalpostAntiCorruptionLayer journalpostAntiCorruptionLayer;
+	private final JoarkAntiCorruptionLayer joarkAntiCorruptionLayer;
 	private final PensjonSakAntiCorruptionLayer pensjonSakAntiCorruptionLayer;
 	private final BisysAntiCorruptionLayer bisysAntiCorruptionLayer;
 	private final FpsakAntiCorruptionLayer fpsakAntiCorruptionLayer;
 	private final K9AntiCorruptionLayer k9AntiCorruptionLayer;
 	private final PdlAntiCorruptionLayer pdlAntiCorruptionLayer;
 
-	public JournalpostService(PensjonSakAntiCorruptionLayer pensjonSakAntiCorruptionLayer,
-							  JournalpostAntiCorruptionLayer journalpostAntiCorruptionLayer,
+	public JournalpostService(JoarkAntiCorruptionLayer joarkAntiCorruptionLayer,
+							  PensjonSakAntiCorruptionLayer pensjonSakAntiCorruptionLayer,
 							  BisysAntiCorruptionLayer bisysAntiCorruptionLayer,
 							  FpsakAntiCorruptionLayer fpsakAntiCorruptionLayer,
 							  K9AntiCorruptionLayer k9AntiCorruptionLayer,
 							  PdlAntiCorruptionLayer pdlAntiCorruptionLayer) {
+		this.joarkAntiCorruptionLayer = joarkAntiCorruptionLayer;
 		this.pensjonSakAntiCorruptionLayer = pensjonSakAntiCorruptionLayer;
-		this.journalpostAntiCorruptionLayer = journalpostAntiCorruptionLayer;
 		this.bisysAntiCorruptionLayer = bisysAntiCorruptionLayer;
 		this.fpsakAntiCorruptionLayer = fpsakAntiCorruptionLayer;
 		this.k9AntiCorruptionLayer = k9AntiCorruptionLayer;
@@ -65,7 +66,7 @@ public class JournalpostService {
 	}
 
 	JournalpostHolder hentJournalpost(String journalpostId, String eksternReferanseId, SafRequestContext safRequestContext) {
-		ArkivJournalpost arkivJournalpost = journalpostAntiCorruptionLayer.hentJournalpost(journalpostId, eksternReferanseId);
+		ArkivJournalpost arkivJournalpost = joarkAntiCorruptionLayer.hentJournalpost(journalpostId, eksternReferanseId);
 		TilgangBruker tilgangBruker = mapTilgangBruker(arkivJournalpost);
 		TilgangSak tilgangSak = mapTilgangSak(tilgangBruker, arkivJournalpost, safRequestContext);
 		TilgangJournalpost tilgangJournalpost = mapTilgangJournalpost(arkivJournalpost);

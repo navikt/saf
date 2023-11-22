@@ -1,12 +1,12 @@
 package no.nav.saf.anticorruptionlayer.joark.domain;
 
+import no.nav.saf.anticorruptionlayer.joark.domain.kode.BrukerTypeCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.FagomradeCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.FagsystemCode;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.dto.BrukerDto;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.dto.JournalpostDto;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.dto.SaksrelasjonDto;
 import no.nav.saf.domain.Arkivsak;
-import no.nav.saf.domain.DomainConstants;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -25,7 +25,7 @@ class ArkivsakMapperTest {
 	private static final String FAGSAKSYSTEM = "K9";
 	private static final String AKTOER_ID = "12312312312";
 	private static final String ORGNR = "123123123";
-	private static final String BRUKER_ID_TYPE = DomainConstants.PERSON;
+	private static final String BRUKER_ID_TYPE = BrukerTypeCode.PERSON;
 
 	private final ArkivsakMapper mapper = new ArkivsakMapper();
 
@@ -70,7 +70,7 @@ class ArkivsakMapperTest {
 	void shouldMapWithOrgnr() {
 		JournalpostDto journalpostDto = buildJournalpost();
 		journalpostDto.getBruker().setBrukerId(ORGNR);
-		journalpostDto.getBruker().setBrukerIdType(DomainConstants.ORGANISASJON);
+		journalpostDto.getBruker().setBrukerIdType(BrukerTypeCode.ORGANISASJON);
 		Arkivsak arkivsak = mapper.map(journalpostDto);
 
 		assertNull(arkivsak.getAktoerId());

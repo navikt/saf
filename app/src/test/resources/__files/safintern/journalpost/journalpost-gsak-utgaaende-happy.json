@@ -26,6 +26,7 @@
     "navn": "SNÅL LOGARITME",
     "type": "FNR"
   },
+  "antallRetur": 1,
   "behandlingstema": "ab0071",
   "behandlingstemanavn": "Overgangsstønad",
   "bruker": {

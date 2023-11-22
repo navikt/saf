@@ -1,5 +1,6 @@
 package no.nav.saf.anticorruptionlayer.joark;
 
+import no.nav.saf.anticorruptionlayer.joark.domain.kode.BrukerTypeCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.DokumentStatusCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.FagomradeCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.FagsystemCode;
@@ -18,7 +19,6 @@ import no.nav.saf.anticorruptionlayer.joark.safintern.journalpost.ArkivRelevante
 import no.nav.saf.anticorruptionlayer.joark.safintern.journalpost.ArkivSak;
 import no.nav.saf.anticorruptionlayer.joark.safintern.journalpost.ArkivSaksrelasjon;
 import no.nav.saf.domain.Arkivsak;
-import no.nav.saf.domain.DomainConstants;
 import no.nav.saf.domain.kode.Arkivsakssystem;
 import no.nav.saf.domain.kode.Datotype;
 import no.nav.saf.domain.kode.Dokumentstatus;
@@ -171,9 +171,9 @@ public class ArkivJournalpostMapper {
 			return null;
 		}
 
-		if (brukerType.equals(DomainConstants.PERSON)) {
+		if (brukerType.equals(BrukerTypeCode.PERSON)) {
 			return new Bruker(brukerId, BrukerIdType.FNR);
-		} else if (brukerType.equals(DomainConstants.ORGANISASJON)) {
+		} else if (brukerType.equals(BrukerTypeCode.ORGANISASJON)) {
 			return new Bruker(trim(brukerId), BrukerIdType.ORGNR);
 		} else {
 			return null;
@@ -347,7 +347,7 @@ public class ArkivJournalpostMapper {
 
 	private static String mapAntallRetur(ArkivJournalpost arkivJournalpost) {
 		if (U.name().equals(arkivJournalpost.type())) {
-			return String.valueOf(arkivJournalpost.antallRetur());
+			return arkivJournalpost.antallRetur() == null ? null : arkivJournalpost.antallRetur().toString();
 		} else {
 			return null;
 		}

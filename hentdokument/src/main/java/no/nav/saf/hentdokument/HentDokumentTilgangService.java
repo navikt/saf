@@ -30,9 +30,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static java.lang.String.valueOf;
+import static no.nav.saf.anticorruptionlayer.joark.domain.kode.BrukerTypeCode.ORGANISASJON;
+import static no.nav.saf.anticorruptionlayer.joark.domain.kode.BrukerTypeCode.PERSON;
 import static no.nav.saf.anticorruptionlayer.joark.domain.kode.JournalStatusCode.valueOf;
-import static no.nav.saf.domain.DomainConstants.ORGANISASJON;
-import static no.nav.saf.domain.DomainConstants.PERSON;
 import static no.nav.saf.domain.kode.Arkivsakssystem.GSAK;
 import static no.nav.saf.domain.kode.Arkivsakssystem.PSAK;
 import static no.nav.saf.domain.kode.Tema.PEN;

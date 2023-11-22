@@ -30,6 +30,7 @@
             dato
             datotype
         }
+        antallRetur
         tilleggsopplysninger {
             nokkel
             verdi
