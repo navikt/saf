@@ -2,7 +2,6 @@ package no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo;
 
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.FinnJournalposterRequestTo;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.FinnJournalposterResponseTo;
-import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark902.HentJournalpostResponseTo;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark903.TilknytningUriParam;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark903.TilknyttedeJournalposterResponse;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark904.FinnJournalposterStatusRequestTo;
@@ -25,7 +24,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
-import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import static no.nav.saf.headers.NavHeaders.NAV_CALLID;
@@ -63,44 +61,6 @@ public class HentJournalsakinfo {
 	public FinnJournalposterStatusResponseTo finnJournalposterStatus(FinnJournalposterStatusRequestTo request) {
 		ResponseEntity<FinnJournalposterStatusResponseTo> response = callFinnJournalposterStatus(request);
 		return response.getBody();
-	}
-
-	@Monitor(value = "dok_consumer", extraTags = {"process", "hentJournalpost"}, histogram = true)
-	public HentJournalpostResponseTo hentJournalpost(final Long journalpostId) {
-		try {
-			String uri = hentjournalsakinfoUrl + "/hentjournalpost/{journalpostId}";
-			return restTemplate.exchange(uri, HttpMethod.GET, new HttpEntity<>(createNavHeaders()), HentJournalpostResponseTo.class, journalpostId).getBody();
-		} catch (HttpServerErrorException e) {
-			throw new SafTechnicalException(String.format("Henting av journalpostId=%s feilet teknisk. Status=%s. Feilmelding=%s",
-					journalpostId, e.getStatusCode(), e.getMessage()), e, e.getStatusCode());
-		} catch (HttpClientErrorException e) {
-			if (e.getStatusCode().value() == NOT_FOUND.value()) {
-				throw new JournalpostIkkeFunnetException("Journalpost med journalpostId=" + journalpostId + " ikke funnet.");
-			}
-			throw new SafFunctionalException(String.format("Henting av journalpostId=%s feilet funksjonelt. Status=%s. Feilmelding=%s",
-					journalpostId, e.getStatusCode(), e.getMessage()), e, e.getStatusCode());
-		} catch (RestClientException e) {
-			throw new SafTechnicalException(String.format("Henting av journalpostId=%s feilet med ukjent teknisk feil.", journalpostId), e);
-		}
-	}
-
-	@Monitor(value = "dok_consumer", extraTags = {"process", "hentJournalpostByEksternReferanseId"}, histogram = true)
-	public HentJournalpostResponseTo hentJournalpostByEksternReferanseId(final String eksternReferanseId) {
-		try {
-			String uri = hentjournalsakinfoUrl + "/hentjournalpost/eksternreferanse/{eksternReferanseId}";
-			return restTemplate.exchange(uri, HttpMethod.GET, new HttpEntity<>(createNavHeaders()), HentJournalpostResponseTo.class, eksternReferanseId).getBody();
-		} catch (HttpServerErrorException e) {
-			throw new SafTechnicalException(String.format("Henting av eksternReferanseId=%s feilet teknisk. Status=%s. Feilmelding=%s",
-					eksternReferanseId, e.getStatusCode(), e.getMessage()), e, e.getStatusCode());
-		} catch (HttpClientErrorException e) {
-			if (e.getStatusCode().value() == NOT_FOUND.value()) {
-				throw new JournalpostIkkeFunnetException("Journalpost med eksternReferanseId=" + eksternReferanseId + " ikke funnet.");
-			}
-			throw new SafFunctionalException(String.format("Henting av eksternReferanseId=%s feilet funksjonelt. Status=%s. Feilmelding=%s",
-					eksternReferanseId, e.getStatusCode(), e.getMessage()), e, e.getStatusCode());
-		} catch (RestClientException e) {
-			throw new SafTechnicalException(String.format("Henting av eksternReferanseId=%s feilet med ukjent teknisk feil.", eksternReferanseId), e);
-		}
 	}
 
 	@Monitor(value = "dok_consumer", extraTags = {"process", "tilknyttedeJournalposter"}, histogram = true)
