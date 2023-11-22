@@ -83,6 +83,10 @@
 			<artifactId>micrometer-registry-prometheus</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>io.micrometer</groupId>
+			<artifactId>context-propagation</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>no.nav.security</groupId>
 			<artifactId>token-validation-spring</artifactId>
 		</dependency>
