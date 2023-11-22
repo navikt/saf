@@ -30,6 +30,7 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static java.lang.String.valueOf;
@@ -39,6 +40,7 @@ import static no.nav.saf.domain.kode.Arkivsakssystem.GSAK;
 import static no.nav.saf.domain.kode.Arkivsakssystem.PSAK;
 import static no.nav.saf.domain.kode.Tema.PEN;
 import static no.nav.saf.domain.kode.Tema.UFO;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.apache.commons.lang3.StringUtils.trim;
 
 @Slf4j
@@ -66,12 +68,20 @@ public class JournalpostService {
 	}
 
 	JournalpostHolder hentJournalpost(String journalpostId, String eksternReferanseId, SafRequestContext safRequestContext) {
-		ArkivJournalpost arkivJournalpost = joarkAntiCorruptionLayer.hentJournalpost(journalpostId, eksternReferanseId);
+		ArkivJournalpost arkivJournalpost = journalpostFromAcl(journalpostId, eksternReferanseId);
 		TilgangBruker tilgangBruker = mapTilgangBruker(arkivJournalpost);
 		TilgangSak tilgangSak = mapTilgangSak(tilgangBruker, arkivJournalpost, safRequestContext);
 		TilgangJournalpost tilgangJournalpost = mapTilgangJournalpost(arkivJournalpost);
 
 		return new JournalpostHolder(arkivJournalpost, new JournalpostTilgang(tilgangBruker, tilgangSak, tilgangJournalpost));
+	}
+
+	private ArkivJournalpost journalpostFromAcl(String journalpostId, String eksternReferanseId) {
+		if(isNotBlank(journalpostId)) {
+			return joarkAntiCorruptionLayer.hentJournalpostById(journalpostId, Set.of());
+		} else {
+			return joarkAntiCorruptionLayer.hentJournalpostByEksternReferanseId(eksternReferanseId, Set.of());
+		}
 	}
 
 	private TilgangBruker mapTilgangBruker(ArkivJournalpost arkivJournalpost) {

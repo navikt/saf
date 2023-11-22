@@ -16,6 +16,7 @@ import no.nav.saf.domain.kode.Arkivsakssystem;
 import no.nav.saf.domain.kode.Journalposttype;
 import no.nav.saf.domain.kode.Journalstatus;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
+import no.nav.saf.exceptions.SafTechnicalException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -25,11 +26,49 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static java.util.stream.Collectors.toSet;
+import static java.util.stream.Stream.concat;
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
 @Component
 @Slf4j
 class JoarkAntiCorruptionLayerImpl implements JoarkAntiCorruptionLayer {
+	private static final Set<String> SAFINTERN_FETCHPATHS_UTEN_DOKUMENTER = Set.of(
+			"journalpostId",
+			"fagomraade",
+			"fagomraadenavn",
+			"status",
+			"type",
+			"kanalreferanseId",
+			"mottakskanal",
+			"utsendingskanal",
+			"behandlingstema",
+			"behandlingstemanavn",
+			"innhold",
+			"journalfoerendeEnhet",
+			"journalfoertAvNavn",
+			"opprettetAvNavn",
+			"antallRetur",
+			"innsyn",
+			"skjerming",
+			"relevanteDatoer",
+			"avsenderMottaker",
+			"saksrelasjon",
+			"bruker",
+			"utsendingsInfo",
+			"tilleggsopplysninger"
+	);
+	private static final Set<String> SAFINTERN_FETCHPATHS_DOKUMENTER = Set.of(
+			"dokumenter",
+			"dokumenter.dokumentInfoId",
+			"dokumenter.tilknyttetSom",
+			"dokumenter.kassert",
+			"dokumenter.kategori",
+			"dokumenter.skjerming",
+			"dokumenter.fildetaljer"
+	);
+	private static final Set<String> SAFINTERN_FETCHPATHS_ALLE = concat(SAFINTERN_FETCHPATHS_UTEN_DOKUMENTER.stream(), SAFINTERN_FETCHPATHS_DOKUMENTER.stream()).collect(toSet());
+
 	private final HentJournalsakinfo hentJournalsakinfo;
 	private final DokarkivConsumer dokarkivConsumer;
 	private final SafToJoarkJournalstatusMapper safToJoarkJournalstatusMapper;
@@ -96,11 +135,18 @@ class JoarkAntiCorruptionLayerImpl implements JoarkAntiCorruptionLayer {
 	}
 
 	@Override
-	public ArkivJournalpost hentJournalpost(String journalpostId, String eksternReferanseId) {
-		if(isNotBlank(journalpostId)) {
-			return dokarkivConsumer.journalpostById(journalpostId, Set.of());
-		} else {
-			return dokarkivConsumer.journalpostByEksternReferanseId(eksternReferanseId, Set.of());
+	public ArkivJournalpost hentJournalpostById(String journalpostId, Set<String> fields) {
+		if (!SAFINTERN_FETCHPATHS_ALLE.containsAll(fields)) {
+			throw new SafTechnicalException("fields inneholder et felt som ikke er gyldig. fields=" + fields, INTERNAL_SERVER_ERROR);
 		}
+		return dokarkivConsumer.journalpostById(journalpostId, fields);
+	}
+
+	@Override
+	public ArkivJournalpost hentJournalpostByEksternReferanseId(String eksternReferanseId, Set<String> fields) {
+		if (!SAFINTERN_FETCHPATHS_ALLE.containsAll(fields)) {
+			throw new SafTechnicalException("fields inneholder et felt som ikke er gyldig. fields=" + fields, INTERNAL_SERVER_ERROR);
+		}
+		return dokarkivConsumer.journalpostByEksternReferanseId(eksternReferanseId, fields);
 	}
 }
