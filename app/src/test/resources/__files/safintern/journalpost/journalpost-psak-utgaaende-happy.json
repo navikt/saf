@@ -1,0 +1,141 @@
+{
+  "journalpostId": 400000000,
+  "type": "U",
+  "fagomraade": "PEN",
+  "fagomraadenavn": "Pensjon",
+  "status": "FS",
+  "saksrelasjon": {
+    "fagsystem": "PEN",
+    "sakId": 21998969
+  },
+  "relevanteDatoer": {
+    "hoveddokument": "2023-11-22T07:37:06.542+00:00",
+    "journalfoert": "2023-11-22T07:37:07.405+00:00",
+    "opprettet": "2023-11-22T07:37:07.214+00:00"
+  },
+  "avsenderMottaker": {
+    "id": "10525619171",
+    "land": "NO",
+    "navn": "FISKEBOLLE FROM"
+  },
+  "bruker": {
+    "id": "10525619171",
+    "type": "PERSON"
+  },
+  "dokumenter": [
+    {
+      "dokumentInfoId": 500000000,
+      "brevkode": "MF_000086",
+      "dokumenttypeId": "000086",
+      "ferdigDato": "2023-11-22T07:37:07.210+00:00",
+      "fildetaljer": [
+        {
+          "format": "ARKIV",
+          "stoerrelse": "173456",
+          "type": "PDFA",
+          "uuid": "34e44b9d-77d4-4917-ac8b-75024556006c"
+        },
+        {
+          "format": "PRODUKSJON",
+          "stoerrelse": "38694",
+          "type": "AXML",
+          "uuid": "eb70c4d3-a893-4f6e-8ee3-35079ee0beb3"
+        }
+      ],
+      "kategori": "VB",
+      "logiskVedlegg": [],
+      "originalJournalpostId": 400000000,
+      "sensitivt": true,
+      "status": "FERDIGSTILT",
+      "tilknyttetSom": "HOVEDDOKUMENT",
+      "tittel": "Vedtak – omregning fra uføretrygd til alderspensjon"
+    },
+    {
+      "dokumentInfoId": 500000001,
+      "brevkode": "MF_V00002",
+      "dokumenttypeId": "V00002",
+      "ferdigDato": "2023-11-22T07:37:07.210+00:00",
+      "fildetaljer": [
+        {
+          "format": "ARKIV",
+          "stoerrelse": "124896",
+          "type": "PDFA",
+          "uuid": "584aa933-88d1-47ae-ac34-f274030e822d"
+        },
+        {
+          "format": "PRODUKSJON",
+          "stoerrelse": "34872",
+          "type": "AXML",
+          "uuid": "8f588fe4-9a35-459e-824d-cd9e2a46f689"
+        }
+      ],
+      "kategori": "B",
+      "logiskVedlegg": [],
+      "originalJournalpostId": 400000000,
+      "sensitivt": false,
+      "status": "FERDIGSTILT",
+      "tilknyttetSom": "VEDLEGG",
+      "tittel": "Dine rettigheter og plikter"
+    },
+    {
+      "dokumentInfoId": 500000002,
+      "brevkode": "MF_V00003",
+      "dokumenttypeId": "V00003",
+      "ferdigDato": "2023-11-22T07:37:07.210+00:00",
+      "fildetaljer": [
+        {
+          "format": "ARKIV",
+          "stoerrelse": "96658",
+          "type": "PDFA",
+          "uuid": "286db8d8-8293-40a7-985c-c49d24533f13"
+        },
+        {
+          "format": "PRODUKSJON",
+          "stoerrelse": "37129",
+          "type": "AXML",
+          "uuid": "f54ab4ae-6fff-4adc-af75-3ee6d557b059"
+        }
+      ],
+      "kategori": "B",
+      "logiskVedlegg": [],
+      "originalJournalpostId": 400000000,
+      "sensitivt": false,
+      "status": "FERDIGSTILT",
+      "tilknyttetSom": "VEDLEGG",
+      "tittel": "Dette er din månedlige pensjon før skatt"
+    },
+    {
+      "dokumentInfoId": 500000003,
+      "brevkode": "MF_V00004",
+      "dokumenttypeId": "V00004",
+      "ferdigDato": "2023-11-22T07:37:07.210+00:00",
+      "fildetaljer": [
+        {
+          "format": "ARKIV",
+          "stoerrelse": "107476",
+          "type": "PDFA",
+          "uuid": "939a9b2f-e86e-4c2f-854e-309d302e3e21"
+        },
+        {
+          "format": "PRODUKSJON",
+          "stoerrelse": "88703",
+          "type": "AXML",
+          "uuid": "eada2d5c-2829-4a13-b90f-0e1102fe9667"
+        }
+      ],
+      "kategori": "B",
+      "logiskVedlegg": [],
+      "originalJournalpostId": 400000000,
+      "sensitivt": false,
+      "status": "FERDIGSTILT",
+      "tilknyttetSom": "VEDLEGG",
+      "tittel": "Opplysninger brukt i beregningen"
+    }
+  ],
+  "innhold": "Vedtak – omregning fra uføretrygd til alderspensjon",
+  "journalfoerendeEnhet": "4808",
+  "journalfoertAvNavn": "PESYS_MASKINELL",
+  "opprettetAvNavn": "PESYS_MASKINELL",
+  "tilleggsopplysninger": {},
+  "utsendingskanal": "S"
+}

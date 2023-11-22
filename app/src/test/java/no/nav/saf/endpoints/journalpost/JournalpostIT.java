@@ -29,6 +29,7 @@ import java.time.LocalDateTime;
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
+import static no.nav.saf.anticorruptionlayer.joark.domain.kode.Sakstype.FAGSAK;
 import static no.nav.saf.anticorruptionlayer.joark.domain.kode.Sakstype.GENERELL_SAK;
 import static no.nav.saf.domain.kode.Datotype.DATO_DOKUMENT;
 import static no.nav.saf.domain.kode.Datotype.DATO_EKSPEDERT;
@@ -39,6 +40,7 @@ import static no.nav.saf.domain.kode.Journalstatus.MOTTATT;
 import static no.nav.saf.domain.kode.Kanal.SDP;
 import static no.nav.saf.domain.kode.Kanal.SKAN_IM;
 import static no.nav.saf.domain.kode.Tema.HJE;
+import static no.nav.saf.domain.kode.Tema.UFO;
 import static no.nav.saf.domain.kode.Variantformat.ARKIV;
 import static no.nav.saf.domain.visningsmodell.BrukerIdType.AKTOERID;
 import static no.nav.saf.domain.visningsmodell.BrukerIdType.ORGNR;
@@ -52,9 +54,6 @@ import static no.nav.saf.tilgangskontroll.pep.DenyReasonFactory.PEP3_DENY_REASON
 import static no.nav.saf.tilgangskontroll.pep.DenyReasonFactory.PEP4_DENY_REASON;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.OK;
@@ -103,7 +102,7 @@ class JournalpostIT extends AbstractItest {
 		assertThat(journalpost.getAvsenderMottaker().getType()).isEqualTo(AvsenderMottakerIdType.FNR);
 		assertThat(journalpost.getAvsenderMottaker().getNavn()).isEqualTo("Sitrongul Ovn");
 		assertThat(journalpost.getAvsenderMottaker().getLand()).isEqualTo("NO");
-		assertTrue(journalpost.getAvsenderMottaker().isErLikBruker());
+		assertThat(journalpost.getAvsenderMottaker().isErLikBruker()).isTrue();
 		assertThat(journalpost.getAvsenderMottakerId()).isEqualTo("07480966982");
 		assertThat(journalpost.getAvsenderMottakerNavn()).isEqualTo("Sitrongul Ovn");
 		assertThat(journalpost.getAvsenderMottakerLand()).isEqualTo("NO");
@@ -132,7 +131,7 @@ class JournalpostIT extends AbstractItest {
 		assertThat(dokumentInfo1.getLogiskeVedlegg().get(0).getLogiskVedleggId()).isEqualTo("300000000");
 		assertThat(dokumentInfo1.getLogiskeVedlegg().get(0).getTittel()).isEqualTo("Skjema");
 		assertThat(dokumentInfo1.getDokumentvarianter().get(0).getVariantformat()).isEqualTo(ARKIV);
-		assertTrue(dokumentInfo1.getDokumentvarianter().get(0).isSaksbehandlerHarTilgang());
+		assertThat(dokumentInfo1.getDokumentvarianter().get(0).isSaksbehandlerHarTilgang()).isTrue();
 		assertThat(dokumentInfo1.getDokumentvarianter().get(0).getFiltype()).isEqualTo("PDF");
 		assertThat(dokumentInfo1.getDokumentvarianter().get(0).getFilnavn()).isEqualTo("tilskudd.pdf");
 		assertThat(dokumentInfo1.getDokumentvarianter().get(0).getFiluuid()).isEqualTo("4b4d0d13-5c8c-4f6b-922c-4026f1679069");
@@ -182,7 +181,7 @@ class JournalpostIT extends AbstractItest {
 		assertThat(journalpost.getAvsenderMottaker().getType()).isEqualTo(AvsenderMottakerIdType.FNR);
 		assertThat(journalpost.getAvsenderMottaker().getNavn()).isEqualTo("SNÅL LOGARITME");
 		assertThat(journalpost.getAvsenderMottaker().getLand()).isNull();
-		assertTrue(journalpost.getAvsenderMottaker().isErLikBruker());
+		assertThat(journalpost.getAvsenderMottaker().isErLikBruker()).isTrue();
 		assertThat(journalpost.getAvsenderMottakerId()).isEqualTo("23496940474");
 		assertThat(journalpost.getAvsenderMottakerNavn()).isEqualTo("SNÅL LOGARITME");
 		assertThat(journalpost.getAvsenderMottakerLand()).isNull();
@@ -210,7 +209,7 @@ class JournalpostIT extends AbstractItest {
 		assertThat(dokumentInfo1.getOriginalJournalpostId()).isEqualTo(JOURNALPOST_ID);
 		assertThat(dokumentInfo1.getLogiskeVedlegg()).isEmpty();
 		assertThat(dokumentInfo1.getDokumentvarianter().get(0).getVariantformat()).isEqualTo(ARKIV);
-		assertTrue(dokumentInfo1.getDokumentvarianter().get(0).isSaksbehandlerHarTilgang());
+		assertThat(dokumentInfo1.getDokumentvarianter().get(0).isSaksbehandlerHarTilgang()).isTrue();
 		assertThat(dokumentInfo1.getDokumentvarianter().get(0).getFiltype()).isEqualTo("PDF");
 		assertThat(dokumentInfo1.getDokumentvarianter().get(0).getFilnavn()).isNull();
 		assertThat(dokumentInfo1.getDokumentvarianter().get(0).getFiluuid()).isEqualTo("4ceaea4f-b01f-42fa-9992-d01e56f58962");
@@ -227,8 +226,8 @@ class JournalpostIT extends AbstractItest {
 				.containsExactlyInAnyOrder(
 						tuple("EPOST", "Varsel om post", "Du har fått et vedtak fra NAV. Les det i din digitale postkasse.", "enhetstest_att_nav.no", LocalDateTime.parse("2023-11-10T10:48:14")),
 						tuple("SMS", null, "Du har fått et vedtak fra NAV. Les det i din digitale postkasse.", "+47NNNNNNNNN", LocalDateTime.parse("2023-11-10T10:48:14")));
-		assertNull(utsendingsInfo.getSmsVarselSendt());
-		assertNull(utsendingsInfo.getFysiskpostSendt());
+		assertThat(utsendingsInfo.getSmsVarselSendt()).isNull();
+		assertThat(utsendingsInfo.getFysiskpostSendt()).isNull();
 	}
 
 	@Test
@@ -261,7 +260,7 @@ class JournalpostIT extends AbstractItest {
 		assertThat(journalpost.getSak().getFagsaksystem()).isEqualTo("FS22");
 		assertThat(journalpost.getSak().getSakstype()).isEqualTo(GENERELL_SAK);
 		assertThat(journalpost.getSak().getTema()).isEqualTo(HJE);
-		assertThat(journalpost.getBruker().getId()).isEqualTo("1912374211459");
+		assertThat(journalpost.getBruker().getId()).isEqualTo(AKTOER_ID);
 		assertThat(journalpost.getBruker().getType()).isEqualTo(AKTOERID);
 	}
 
@@ -280,6 +279,27 @@ class JournalpostIT extends AbstractItest {
 				.flatExtracting(DokumentInfo::getDokumentvarianter)
 				.extracting(Dokumentvariant::isSaksbehandlerHarTilgang)
 				.containsExactly(true);
+	}
+
+	@Test
+	void shouldQueryJournalpostWhenPensjonSak() {
+		abacPermit();
+		stubDokarkivJournalpost("journalpost-psak-utgaaende-happy.json");
+		stubPensjonBrukerForSak();
+		stubPensjonSakSammendrag();
+		stubPdl();
+
+		Journalpost journalpost = parseJournalpost(journalpostQuery());
+		// Tema er uføretrygd pga det er arkivtema i pensjonsaken som gjelder
+		assertThat(journalpost.getTema()).isEqualTo(UFO);
+		assertThat(journalpost.getSak().getArkivsaksnummer()).isEqualTo("21998969");
+		assertThat(journalpost.getSak().getFagsakId()).isEqualTo("21998969");
+		assertThat(journalpost.getSak().getFagsaksystem()).isEqualTo("PP01");
+		assertThat(journalpost.getSak().getSakstype()).isEqualTo(FAGSAK);
+		assertThat(journalpost.getSak().getTema()).isEqualTo(UFO);
+		assertThat(journalpost.getSak().getDatoOpprettet()).isEqualTo(LocalDateTime.parse("2015-06-01T00:00"));
+		assertThat(journalpost.getBruker().getId()).isEqualTo(AKTOER_ID);
+		assertThat(journalpost.getBruker().getType()).isEqualTo(AKTOERID);
 	}
 
 	@Test
@@ -441,7 +461,7 @@ class JournalpostIT extends AbstractItest {
 
 		Journalpost journalpost = parseJournalpost(journalpostQuery());
 		DokumentInfo dokumentInfo = journalpost.getDokumenter().get(0);
-		assertFalse(dokumentInfo.getDokumentvarianter().get(0).isSaksbehandlerHarTilgang());
+		assertThat(dokumentInfo.getDokumentvarianter().get(0).isSaksbehandlerHarTilgang()).isFalse();
 	}
 
 	@Test

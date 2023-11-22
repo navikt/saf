@@ -115,6 +115,12 @@ public class ArkivJournalpostMapper {
 		}
 		if (saksrelasjon.isPensjonsak()) {
 			Arkivsak arkivsak = requestCache.getObject(saksrelasjon.getKey());
+			if (arkivsak == null) {
+				return Sak.builder()
+						.arkivsaksnummer(String.valueOf(saksrelasjon.sakId()))
+						.arkivsaksystem(FagsystemCode.toSafArkivsaksystem(saksrelasjon.fagsystem()))
+						.build();
+			}
 			return Sak.builder()
 					.arkivsaksnummer(String.valueOf(saksrelasjon.sakId()))
 					.arkivsaksystem(arkivsak.getArkivsaksystem())
@@ -126,7 +132,7 @@ public class ArkivJournalpostMapper {
 					.build();
 		} else {
 			ArkivSak arkivSak = saksrelasjon.sak();
-			if(arkivSak == null) {
+			if (arkivSak == null) {
 				return null;
 			}
 			return Sak.builder()
@@ -196,7 +202,11 @@ public class ArkivJournalpostMapper {
 			return null;
 		}
 		if (tilgangBruker.isPerson()) {
-			return new Bruker(tilgangBruker.getAktoerId(), BrukerIdType.AKTOERID);
+			if (tilgangBruker.getAktoerId() == null) {
+				return new Bruker(tilgangBruker.getFoedselsnr(), BrukerIdType.FNR);
+			} else {
+				return new Bruker(tilgangBruker.getAktoerId(), BrukerIdType.AKTOERID);
+			}
 		} else if (tilgangBruker.isOrganisasjon()) {
 			return new Bruker(tilgangBruker.getOrgnummer(), BrukerIdType.ORGNR);
 		} else {
@@ -224,6 +234,9 @@ public class ArkivJournalpostMapper {
 			ArkivSaksrelasjon saksrelasjon = arkivJournalpost.saksrelasjon();
 			if (saksrelasjon.isPensjonsak()) {
 				Arkivsak arkivsak = requestCache.getObject(saksrelasjon.getKey());
+				if (arkivsak == null) {
+					return FagomradeCode.toSafTema(arkivJournalpost.fagomraade());
+				}
 				return arkivsak.getTema();
 			} else {
 				ArkivSak arkivSak = saksrelasjon.sak();

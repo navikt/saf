@@ -274,6 +274,13 @@ public abstract class AbstractItest {
 						.withBodyFile("psak/" + filename)));
 	}
 
+	protected static void stubPensjonBrukerForSak() {
+		stubFor(get(PENSJON_API_PIP_HENT_BRUKER_OG_ENHETSTILGANGER_FOR_SAK_V1_URL)
+				.willReturn(aResponse().withStatus(OK.value())
+						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("psak/psak-hentBrukerForSak-happy.json")));
+	}
+
 	protected static void stubBidrag() {
 		stubBidrag("bidragsak-happy.json");
 	}

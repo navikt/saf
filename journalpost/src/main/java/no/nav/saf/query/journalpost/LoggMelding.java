@@ -9,13 +9,14 @@ public record LoggMelding(String journalpostId, String eksternReferanseId) {
 	
 	public void exceptionLogg(Throwable e) {
 		if (e instanceof GraphQLException graphQLException) {
-			log.warn("query journalpost(journalpostId={}, eksternReferanseId={}) feilet. melding={}", journalpostId, eksternReferanseId, graphQLException.getError().getMessage());
+			log.warn("query journalpost(journalpostId={}, eksternReferanseId={}) feilet. melding={}",
+					journalpostId, eksternReferanseId, graphQLException.getError().getMessage());
 		} else if (e instanceof SafFunctionalException safException) {
-			log.error("query journalpost(journalpostId={}, eksternReferanseId={}) teknisk feil. melding={}", journalpostId, eksternReferanseId,
-					safException.getMessage());
+			log.error("query journalpost(journalpostId={}, eksternReferanseId={}) funksjonell feil. melding={}",
+					journalpostId, eksternReferanseId, safException.getMessage());
 		} else {
-			log.error("query journalpost(journalpostId={}, eksternReferanseId={}) ukjent teknisk feil. melding={}", journalpostId, eksternReferanseId,
-					e.getMessage());
+			log.error("query journalpost(journalpostId={}, eksternReferanseId={}) ukjent teknisk feil. melding={}",
+					journalpostId, eksternReferanseId, e.getMessage(), e);
 		}
 	}
 }
