@@ -10,7 +10,40 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
 
+import static java.util.stream.Collectors.toSet;
+import static java.util.stream.Stream.concat;
+
 public interface JoarkAntiCorruptionLayer {
+
+	Set<String> SAFINTERN_FETCHPATHS_UTEN_DOKUMENTER = Set.of(
+			"journalpostId",
+			"fagomraade",
+			"fagomraadenavn",
+			"status",
+			"type",
+			"kanalreferanseId",
+			"mottakskanal",
+			"utsendingskanal",
+			"behandlingstema",
+			"behandlingstemanavn",
+			"innhold",
+			"journalfoerendeEnhet",
+			"journalfoertAvNavn",
+			"opprettetAvNavn",
+			"antallRetur",
+			"innsyn",
+			"skjerming",
+			"relevanteDatoer",
+			"avsenderMottaker",
+			"saksrelasjon",
+			"bruker",
+			"utsendingsInfo",
+			"tilleggsopplysninger"
+	);
+	Set<String> SAFINTERN_FETCHPATHS_DOKUMENTER = Set.of(
+			"dokumenter"
+	);
+	Set<String> SAFINTERN_FETCHPATHS_ALLE = concat(SAFINTERN_FETCHPATHS_UTEN_DOKUMENTER.stream(), SAFINTERN_FETCHPATHS_DOKUMENTER.stream()).collect(toSet());
 
 	List<JournalpostDto> finnJournalposter(List<String> identer,
 										   List<TilgangSak> tilgangSakList,

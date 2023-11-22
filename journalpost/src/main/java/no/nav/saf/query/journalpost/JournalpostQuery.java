@@ -64,7 +64,7 @@ class JournalpostQuery {
 									   final SafRequestContext safRequestContext,
 									   final DataFetchingEnvironment environment) {
 		try {
-			JournalpostHolder journalpostHolder = journalpostService.hentJournalpost(journalpostId, eksternReferanseId, safRequestContext);
+			JournalpostHolder journalpostHolder = journalpostService.hentJournalpost(journalpostId, eksternReferanseId, safRequestContext, environment.getSelectionSet());
 
 			TilgangSak tilgangSak = journalpostHolder.journalpostTilgang().tilgangSak();
 			TilgangBruker tilgangBruker = journalpostHolder.journalpostTilgang().tilgangBruker();
@@ -84,9 +84,11 @@ class JournalpostQuery {
 				throw GraphQLException.of(FORBIDDEN, environment, createPep2DenyReason(safRequestContext));
 			}
 
-			if (tilgangJournalpost.getJournalstatus() != MOTTATT) {
-				pep2d.hasAccess(tilgangSak, safRequestContext);
-				pep7d.hasAccess(tilgangSak, safRequestContext);
+			if (environment.getSelectionSet().contains("Journalpost.dokumenter")) {
+				if (tilgangJournalpost.getJournalstatus() != MOTTATT) {
+					pep2d.hasAccess(tilgangSak, safRequestContext);
+					pep7d.hasAccess(tilgangSak, safRequestContext);
+				}
 			}
 
 			boolean pep3Access = pep3.hasAccess(tilgangSak, safRequestContext);
@@ -99,12 +101,13 @@ class JournalpostQuery {
 				throw GraphQLException.of(FORBIDDEN, environment, createPep4DenyReason(safRequestContext));
 			}
 
-			tilgangJournalpost.getDokumenter().forEach(tilgangDokumentInfo -> {
-				pep5.hasAccess(tilgangDokumentInfo, safRequestContext);
-				tilgangDokumentInfo.getTilgangDokumentvarianter().forEach(tilgangDokumentvariant ->
-						pep6d.hasAccess(tilgangDokumentvariant, safRequestContext));
-			});
-
+			if (environment.getSelectionSet().contains("Journalpost.dokumenter")) {
+				tilgangJournalpost.getDokumenter().forEach(tilgangDokumentInfo -> {
+					pep5.hasAccess(tilgangDokumentInfo, safRequestContext);
+					tilgangDokumentInfo.getTilgangDokumentvarianter().forEach(tilgangDokumentvariant ->
+							pep6d.hasAccess(tilgangDokumentvariant, safRequestContext));
+				});
+			}
 			return mapJournalpost(journalpostHolder.arkivJournalpost(), safRequestContext.getRequestCache());
 		} catch (JournalpostIkkeFunnetException e) {
 			throw GraphQLException.of(NOT_FOUND, environment,

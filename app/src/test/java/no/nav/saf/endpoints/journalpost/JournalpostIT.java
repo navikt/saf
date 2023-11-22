@@ -25,10 +25,12 @@ import org.springframework.http.RequestEntity;
 
 import java.net.URI;
 import java.time.LocalDateTime;
+import java.util.Set;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
+import static no.nav.saf.anticorruptionlayer.joark.JoarkAntiCorruptionLayer.SAFINTERN_FETCHPATHS_UTEN_DOKUMENTER;
 import static no.nav.saf.anticorruptionlayer.joark.domain.kode.Sakstype.FAGSAK;
 import static no.nav.saf.anticorruptionlayer.joark.domain.kode.Sakstype.GENERELL_SAK;
 import static no.nav.saf.domain.kode.Datotype.DATO_DOKUMENT;
@@ -81,6 +83,11 @@ class JournalpostIT extends AbstractItest {
 
 		Journalpost journalpost = parseJournalpost(journalpostQuery());
 
+		assertInngaaendeJournalpost(journalpost);
+		assertInngaaendeDokumenter(journalpost);
+	}
+
+	private static void assertInngaaendeJournalpost(Journalpost journalpost) {
 		assertThat(journalpost.getJournalpostId()).isEqualTo(JOURNALPOST_ID);
 		assertThat(journalpost.getTittel()).isEqualTo("NAV 10-07.34 Tilskudd ved kjøp av briller til barn");
 		assertThat(journalpost.getJournalposttype()).isEqualTo(Journalposttype.I);
@@ -123,6 +130,10 @@ class JournalpostIT extends AbstractItest {
 		assertThat(journalpost.getTilleggsopplysninger().get(0).getNokkel()).isEqualTo("brilletype");
 		assertThat(journalpost.getTilleggsopplysninger().get(0).getVerdi()).isEqualTo("trippel-brille");
 		assertThat(journalpost.getEksternReferanseId()).isEqualTo("d35c8412-7b98-4a66-8fdd-51f44ed6c632HJE-DIGITAL-SOKNAD");
+		assertThat(journalpost.getUtsendingsinfo()).isNull();
+	}
+
+	private static void assertInngaaendeDokumenter(Journalpost journalpost) {
 		DokumentInfo dokumentInfo1 = journalpost.getDokumenter().get(0);
 		assertThat(dokumentInfo1.getDokumentInfoId()).isEqualTo("500000000");
 		assertThat(dokumentInfo1.getTittel()).isEqualTo("NAV 10-07.34 Tilskudd ved kjøp av briller til barn");
@@ -137,7 +148,6 @@ class JournalpostIT extends AbstractItest {
 		assertThat(dokumentInfo1.getDokumentvarianter().get(0).getFilnavn()).isEqualTo("tilskudd.pdf");
 		assertThat(dokumentInfo1.getDokumentvarianter().get(0).getFiluuid()).isEqualTo("4b4d0d13-5c8c-4f6b-922c-4026f1679069");
 		assertThat(dokumentInfo1.getDokumentvarianter().get(0).getFilstoerrelse()).isEqualTo(4721);
-		assertThat(journalpost.getUtsendingsinfo()).isNull();
 	}
 
 	@Test
@@ -302,6 +312,17 @@ class JournalpostIT extends AbstractItest {
 		assertThat(journalpost.getSak().getDatoOpprettet()).isEqualTo(LocalDateTime.parse("2015-06-01T00:00"));
 		assertThat(journalpost.getBruker().getId()).isEqualTo(AKTOER_ID);
 		assertThat(journalpost.getBruker().getType()).isEqualTo(AKTOERID);
+	}
+
+	@Test
+	void shouldQueryJournalpostAndNotFetchDokumenterWhenDokumenterIsNotInQuery() {
+		abacPermit();
+		stubDokarkivJournalpost("journalpost-gsak-inngaaende-ingen-dokumenter.json", SAFINTERN_FETCHPATHS_UTEN_DOKUMENTER);
+
+		Journalpost journalpost = parseJournalpost(journalpostQuery("journalpost_ingen_dokumenter.query"));
+
+		assertInngaaendeJournalpost(journalpost);
+		assertThat(journalpost.getDokumenter()).isNull();
 	}
 
 	@Test
@@ -578,6 +599,14 @@ class JournalpostIT extends AbstractItest {
 
 	private static void stubDokarkivJournalpost(String fil) {
 		stubFor(get("/dokarkiv/journalpost/journalpostId/" + JOURNALPOST_ID)
+				.willReturn(aResponse()
+						.withStatus(OK.value())
+						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("safintern/journalpost/" + fil)));
+	}
+
+	private static void stubDokarkivJournalpost(String fil, Set<String> fields) {
+		stubFor(get("/dokarkiv/journalpost/journalpostId/" + JOURNALPOST_ID + "?fields=" + String.join(",", fields))
 				.willReturn(aResponse()
 						.withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)

@@ -366,6 +366,9 @@ public class ArkivJournalpostMapper {
 	}
 
 	private static List<DokumentInfo> mapDokumenter(Journalpost journalpost, ArkivJournalpost arkivJournalpost, RequestCache requestCache) {
+		if(arkivJournalpost.dokumenter() == null) {
+			return List.of();
+		}
 		return arkivJournalpost.dokumenter().stream()
 				.filter(dokumentinfo -> shouldMapDokumentInfo(arkivJournalpost.journalpostId().toString(), dokumentinfo.dokumentInfoId().toString(), requestCache))
 				.map(dokumentinfo -> DokumentInfo.builder()

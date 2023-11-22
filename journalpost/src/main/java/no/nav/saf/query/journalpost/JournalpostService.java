@@ -1,5 +1,6 @@
 package no.nav.saf.query.journalpost;
 
+import graphql.schema.DataFetchingFieldSelectionSet;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.anticorruptionlayer.aktoer.PdlAntiCorruptionLayer;
 import no.nav.saf.anticorruptionlayer.bisys.BisysAntiCorruptionLayer;
@@ -34,6 +35,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static java.lang.String.valueOf;
+import static no.nav.saf.anticorruptionlayer.joark.JoarkAntiCorruptionLayer.SAFINTERN_FETCHPATHS_UTEN_DOKUMENTER;
 import static no.nav.saf.anticorruptionlayer.joark.domain.kode.BrukerTypeCode.ORGANISASJON;
 import static no.nav.saf.anticorruptionlayer.joark.domain.kode.BrukerTypeCode.PERSON;
 import static no.nav.saf.domain.kode.Arkivsakssystem.GSAK;
@@ -67,8 +69,8 @@ public class JournalpostService {
 		this.pdlAntiCorruptionLayer = pdlAntiCorruptionLayer;
 	}
 
-	JournalpostHolder hentJournalpost(String journalpostId, String eksternReferanseId, SafRequestContext safRequestContext) {
-		ArkivJournalpost arkivJournalpost = journalpostFromAcl(journalpostId, eksternReferanseId);
+	JournalpostHolder hentJournalpost(String journalpostId, String eksternReferanseId, SafRequestContext safRequestContext, DataFetchingFieldSelectionSet selectionSet) {
+		ArkivJournalpost arkivJournalpost = journalpostFromAcl(journalpostId, eksternReferanseId, mapFields(selectionSet));
 		TilgangBruker tilgangBruker = mapTilgangBruker(arkivJournalpost);
 		TilgangSak tilgangSak = mapTilgangSak(tilgangBruker, arkivJournalpost, safRequestContext);
 		TilgangJournalpost tilgangJournalpost = mapTilgangJournalpost(arkivJournalpost);
@@ -76,11 +78,19 @@ public class JournalpostService {
 		return new JournalpostHolder(arkivJournalpost, new JournalpostTilgang(tilgangBruker, tilgangSak, tilgangJournalpost));
 	}
 
-	private ArkivJournalpost journalpostFromAcl(String journalpostId, String eksternReferanseId) {
-		if(isNotBlank(journalpostId)) {
-			return joarkAntiCorruptionLayer.hentJournalpostById(journalpostId, Set.of());
+	private Set<String> mapFields(DataFetchingFieldSelectionSet selectionSet) {
+		if (selectionSet.contains("Journalpost.dokumenter")) {
+			return Set.of();
 		} else {
-			return joarkAntiCorruptionLayer.hentJournalpostByEksternReferanseId(eksternReferanseId, Set.of());
+			return SAFINTERN_FETCHPATHS_UTEN_DOKUMENTER;
+		}
+	}
+
+	private ArkivJournalpost journalpostFromAcl(String journalpostId, String eksternReferanseId, Set<String> fields) {
+		if (isNotBlank(journalpostId)) {
+			return joarkAntiCorruptionLayer.hentJournalpostById(journalpostId, fields);
+		} else {
+			return joarkAntiCorruptionLayer.hentJournalpostByEksternReferanseId(eksternReferanseId, fields);
 		}
 	}
 
@@ -214,6 +224,9 @@ public class JournalpostService {
 
 	private static List<TilgangDokumentInfo> mapTilgangDokumentInfo(ArkivJournalpost arkivJournalpost) {
 		Long journalpostId = arkivJournalpost.journalpostId();
+		if (arkivJournalpost.dokumenter() == null) {
+			return List.of();
+		}
 		return arkivJournalpost.dokumenter().stream()
 				.map(arkivDokumentinfo -> {
 					Long dokumentInfoId = arkivDokumentinfo.dokumentInfoId();
