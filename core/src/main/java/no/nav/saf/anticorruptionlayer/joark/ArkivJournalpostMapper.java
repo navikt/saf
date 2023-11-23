@@ -56,6 +56,7 @@ import static no.nav.saf.cache.KeyGeneratorLocalCaching.getKeyForPep2d;
 import static no.nav.saf.cache.KeyGeneratorLocalCaching.getKeyForPep5;
 import static no.nav.saf.cache.KeyGeneratorLocalCaching.getKeyForPep6d;
 import static no.nav.saf.cache.KeyGeneratorLocalCaching.getKeyForPep7d;
+import static no.nav.saf.domain.DomainConstants.TIDSSONE_NORGE;
 import static no.nav.saf.domain.DomainConstants.TILGANG_BRUKER;
 import static no.nav.saf.domain.visningsmodell.RelevantDato.INVALID_DATE;
 import static org.apache.commons.lang3.BooleanUtils.isTrue;
@@ -251,7 +252,7 @@ public class ArkivJournalpostMapper {
 	}
 
 	private static LocalDateTime mapDatoOpprettet(ArkivRelevanteDatoer arkivRelevanteDatoer) {
-		return arkivRelevanteDatoer.opprettet() == null ? INVALID_DATE : arkivRelevanteDatoer.opprettet().toLocalDateTime();
+		return arkivRelevanteDatoer.opprettet() == null ? INVALID_DATE : arkivRelevanteDatoer.opprettet().atZoneSameInstant(TIDSSONE_NORGE).toLocalDateTime();
 	}
 
 	private static Skjerming mapSkjerming(String skjerming) {
@@ -266,29 +267,29 @@ public class ArkivJournalpostMapper {
 		List<RelevantDato> relevanteDatoer = new ArrayList<>();
 		ArkivRelevanteDatoer arkivRelevanteDatoer = arkivJournalpost.relevanteDatoer();
 		if (arkivRelevanteDatoer.hoveddokument() != null) {
-			relevanteDatoer.add(new RelevantDato(arkivRelevanteDatoer.hoveddokument().toLocalDateTime(), Datotype.DATO_DOKUMENT));
+			relevanteDatoer.add(new RelevantDato(arkivRelevanteDatoer.hoveddokument(), Datotype.DATO_DOKUMENT));
 		}
 		if (arkivRelevanteDatoer.journalfoert() != null) {
-			relevanteDatoer.add(new RelevantDato(arkivRelevanteDatoer.journalfoert().toLocalDateTime(), Datotype.DATO_JOURNALFOERT));
+			relevanteDatoer.add(new RelevantDato(arkivRelevanteDatoer.journalfoert(), Datotype.DATO_JOURNALFOERT));
 		}
 		switch (JournalpostTypeCode.valueOf(arkivJournalpost.type())) {
 			case I:
 				if (arkivRelevanteDatoer.forsendelseMottatt() != null) {
-					relevanteDatoer.add(new RelevantDato(arkivRelevanteDatoer.forsendelseMottatt().toLocalDateTime(), Datotype.DATO_REGISTRERT));
+					relevanteDatoer.add(new RelevantDato(arkivRelevanteDatoer.forsendelseMottatt(), Datotype.DATO_REGISTRERT));
 				}
 				break;
 			case U:
 				if (arkivRelevanteDatoer.sendtPrint() != null) {
-					relevanteDatoer.add(new RelevantDato(arkivRelevanteDatoer.sendtPrint().toLocalDateTime(), Datotype.DATO_SENDT_PRINT));
+					relevanteDatoer.add(new RelevantDato(arkivRelevanteDatoer.sendtPrint(), Datotype.DATO_SENDT_PRINT));
 				}
 				if (arkivRelevanteDatoer.ekspedert() != null) {
-					relevanteDatoer.add(new RelevantDato(arkivRelevanteDatoer.ekspedert().toLocalDateTime(), Datotype.DATO_EKSPEDERT));
+					relevanteDatoer.add(new RelevantDato(arkivRelevanteDatoer.ekspedert(), Datotype.DATO_EKSPEDERT));
 				}
 				if (arkivRelevanteDatoer.retur() != null) {
-					relevanteDatoer.add(new RelevantDato(arkivRelevanteDatoer.retur().toLocalDateTime(), Datotype.DATO_AVS_RETUR));
+					relevanteDatoer.add(new RelevantDato(arkivRelevanteDatoer.retur(), Datotype.DATO_AVS_RETUR));
 				}
 				if (arkivRelevanteDatoer.lest() != null) {
-					relevanteDatoer.add(new RelevantDato(arkivRelevanteDatoer.lest().toLocalDateTime(), Datotype.DATO_LEST));
+					relevanteDatoer.add(new RelevantDato(arkivRelevanteDatoer.lest(), Datotype.DATO_LEST));
 				}
 				break;
 			default:
@@ -432,7 +433,7 @@ public class ArkivJournalpostMapper {
 	}
 
 	private static LocalDateTime mapDokumentFerdigstilt(ArkivDokumentinfo dokumentinfo) {
-		return dokumentinfo.ferdigDato() == null ? null : dokumentinfo.ferdigDato().toLocalDateTime();
+		return dokumentinfo.ferdigDato() == null ? null : dokumentinfo.ferdigDato().atZoneSameInstant(TIDSSONE_NORGE).toLocalDateTime();
 	}
 
 	private static String mapFiltype(ArkivFildetaljer arkivFildetaljer) {

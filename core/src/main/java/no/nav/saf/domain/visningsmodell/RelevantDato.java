@@ -8,8 +8,10 @@ import no.nav.saf.domain.kode.Datotype;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.ZoneId;
+import java.time.OffsetDateTime;
 import java.util.Date;
+
+import static no.nav.saf.domain.DomainConstants.TIDSSONE_NORGE;
 
 @Data
 public class RelevantDato {
@@ -25,6 +27,11 @@ public class RelevantDato {
 		this.datotype = datotype;
 	}
 
+	public RelevantDato(OffsetDateTime dato, Datotype datotype) {
+		this.dato = toLocalDateTime(dato);
+		this.datotype = datotype;
+	}
+
 	public RelevantDato(Date dato, Datotype datotype) {
 		this.dato = toLocalDateTime(dato);
 		this.datotype = datotype;
@@ -34,6 +41,13 @@ public class RelevantDato {
 		if (date == null) {
 			return INVALID_DATE;
 		}
-		return LocalDateTime.from(date.toInstant().atZone(ZoneId.systemDefault()));
+		return LocalDateTime.from(date.toInstant().atZone(TIDSSONE_NORGE));
+	}
+
+	private static LocalDateTime toLocalDateTime(OffsetDateTime offsetDateTime) {
+		if (offsetDateTime == null) {
+			return INVALID_DATE;
+		}
+		return offsetDateTime.atZoneSameInstant(TIDSSONE_NORGE).toLocalDateTime();
 	}
 }

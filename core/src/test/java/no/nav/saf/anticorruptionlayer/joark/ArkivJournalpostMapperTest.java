@@ -106,6 +106,7 @@ import static no.nav.saf.anticorruptionlayer.joark.domain.kode.JournalStatusCode
 import static no.nav.saf.anticorruptionlayer.joark.domain.kode.UtsendingsKanalCode.NAV_NO;
 import static no.nav.saf.anticorruptionlayer.joark.domain.kode.UtsendingsKanalCode.S;
 import static no.nav.saf.anticorruptionlayer.joark.domain.kode.UtsendingsKanalCode.SDP;
+import static no.nav.saf.domain.DomainConstants.TIDSSONE_NORGE;
 import static no.nav.saf.domain.DomainConstants.TILGANG_BRUKER;
 import static no.nav.saf.domain.kode.Arkivsakssystem.PSAK;
 import static no.nav.saf.domain.kode.Datotype.DATO_AVS_RETUR;
@@ -143,12 +144,12 @@ class ArkivJournalpostMapperTest {
 		assertThat(journalpost.getAntallRetur()).isEqualTo(ARKIVJOURNALPOST_ANTALL_RETUR.toString());
 		assertThat(journalpost.getRelevanteDatoer())
 				.hasSize(6)
-				.contains(new RelevantDato(ARKIVJOURNALPOST_JOURNAL_DATO.toLocalDateTime(), DATO_JOURNALFOERT),
-						new RelevantDato(ARKIVJOURNALPOST_DOKUMENT_DATO.toLocalDateTime(), DATO_DOKUMENT),
-						new RelevantDato(ARKIVJOURNALPOST_AVS_RETUR_DATO.toLocalDateTime(), DATO_AVS_RETUR),
-						new RelevantDato(ARKIVJOURNALPOST_SENDT_PRINT_DATO.toLocalDateTime(), DATO_SENDT_PRINT),
-						new RelevantDato(ARKIVJOURNALPOST_EKSPEDERT_DATO.toLocalDateTime(), DATO_EKSPEDERT),
-						new RelevantDato(ARKIVJOURNALPOST_LEST_DATO.toLocalDateTime(), DATO_LEST));
+				.contains(new RelevantDato(ARKIVJOURNALPOST_JOURNAL_DATO, DATO_JOURNALFOERT),
+						new RelevantDato(ARKIVJOURNALPOST_DOKUMENT_DATO, DATO_DOKUMENT),
+						new RelevantDato(ARKIVJOURNALPOST_AVS_RETUR_DATO, DATO_AVS_RETUR),
+						new RelevantDato(ARKIVJOURNALPOST_SENDT_PRINT_DATO, DATO_SENDT_PRINT),
+						new RelevantDato(ARKIVJOURNALPOST_EKSPEDERT_DATO, DATO_EKSPEDERT),
+						new RelevantDato(ARKIVJOURNALPOST_LEST_DATO, DATO_LEST));
 		assertThat(journalpost.getUtsendingsinfo().getFysiskpostSendt().getAdressetekstKonvolutt()).isEqualTo(FORVENTET_ADRESSETEKST_KONVOLUTT);
 	}
 
@@ -224,8 +225,8 @@ class ArkivJournalpostMapperTest {
 
 		assertThat(journalpost.getRelevanteDatoer())
 				.hasSize(2)
-				.contains(new RelevantDato(ARKIVJOURNALPOST_MOTTAT_DATO.toLocalDateTime(), DATO_REGISTRERT),
-						new RelevantDato(ARKIVJOURNALPOST_JOURNAL_DATO.toLocalDateTime(), DATO_JOURNALFOERT));
+				.contains(new RelevantDato(ARKIVJOURNALPOST_MOTTAT_DATO, DATO_REGISTRERT),
+						new RelevantDato(ARKIVJOURNALPOST_JOURNAL_DATO, DATO_JOURNALFOERT));
 	}
 
 	@Test
@@ -246,7 +247,7 @@ class ArkivJournalpostMapperTest {
 
 		assertThat(journalpost.getRelevanteDatoer())
 				.hasSize(1)
-				.contains(new RelevantDato(ARKIVJOURNALPOST_JOURNAL_DATO.toLocalDateTime(), DATO_JOURNALFOERT));
+				.contains(new RelevantDato(ARKIVJOURNALPOST_JOURNAL_DATO, DATO_JOURNALFOERT));
 	}
 
 	@Test
@@ -652,7 +653,7 @@ class ArkivJournalpostMapperTest {
 		assertThat(journalpost.getJournalfoerendeEnhet()).isEqualTo(ARKIVJOURNALPOST_JOURNALFOERENDE_ENHET);
 		assertThat(journalpost.getOpprettetAvNavn()).isEqualTo(ARKIVJOURNALPOST_OPPRETTET_AV_NAVN);
 		assertThat(journalpost.getSkjerming()).isEqualTo(POL);
-		assertThat(journalpost.getDatoOpprettet()).isEqualTo(ARKIVJOURNALPOST_DATO_OPPRETTET.toLocalDateTime());
+		assertThat(journalpost.getDatoOpprettet()).isEqualTo(ARKIVJOURNALPOST_DATO_OPPRETTET.atZoneSameInstant(TIDSSONE_NORGE).toLocalDateTime());
 		assertThat(journalpost.getBruker().getId()).isEqualTo(ARKIVSAK_AKTOERID);
 		assertThat(journalpost.getEksternReferanseId()).isEqualTo(ARKIVJOURNALPOST_KANALREFERANSE_ID);
 		assertThat(journalpost.getTilleggsopplysninger())
@@ -666,7 +667,7 @@ class ArkivJournalpostMapperTest {
 		assertThat(dokumenter).hasSize(1);
 		DokumentInfo dokumentInfo1 = dokumenter.get(0);
 		assertThat(dokumentInfo1.getDokumentInfoId()).isEqualTo(String.valueOf(ARKIVDOKUMENTINFO_DOKUMENT_INFO_ID));
-		assertThat(dokumentInfo1.getDatoFerdigstilt()).isEqualTo(ARKIVDOKUMENT_INFO_DATO_FERDIGSTILT.toLocalDateTime());
+		assertThat(dokumentInfo1.getDatoFerdigstilt()).isEqualTo(ARKIVDOKUMENT_INFO_DATO_FERDIGSTILT.atZoneSameInstant(TIDSSONE_NORGE).toLocalDateTime());
 		assertThat(dokumentInfo1.getOriginalJournalpostId()).isEqualTo(String.valueOf(ARKIVJOURNALPOST_JOURNALPOST_ID));
 		assertThat(dokumentInfo1.getSkjerming()).isEqualTo(POL);
 		assertThat(dokumentInfo1.getDokumentstatus()).isEqualTo(Dokumentstatus.FERDIGSTILT);
