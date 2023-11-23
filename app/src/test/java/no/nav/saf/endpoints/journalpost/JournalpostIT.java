@@ -16,6 +16,7 @@ import no.nav.saf.domain.visningsmodell.Utsendingsinfo;
 import no.nav.saf.endpoints.AbstractItest;
 import no.nav.saf.endpoints.graphql.GraphQLRequest;
 import no.nav.saf.endpoints.graphql.GraphQLResponse;
+import no.nav.saf.graphql.ErrorCode;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;
@@ -29,7 +30,11 @@ import java.util.Set;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
+import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.verify;
+import static com.github.tomakehurst.wiremock.stubbing.Scenario.STARTED;
 import static no.nav.saf.anticorruptionlayer.joark.JoarkAntiCorruptionLayer.SAFINTERN_FETCHPATHS_UTEN_DOKUMENTER;
 import static no.nav.saf.anticorruptionlayer.joark.domain.kode.Sakstype.FAGSAK;
 import static no.nav.saf.anticorruptionlayer.joark.domain.kode.Sakstype.GENERELL_SAK;
@@ -48,7 +53,6 @@ import static no.nav.saf.domain.visningsmodell.BrukerIdType.AKTOERID;
 import static no.nav.saf.domain.visningsmodell.BrukerIdType.ORGNR;
 import static no.nav.saf.graphql.ErrorCode.BAD_REQUEST;
 import static no.nav.saf.graphql.ErrorCode.FORBIDDEN;
-import static no.nav.saf.graphql.ErrorCode.NOT_FOUND;
 import static no.nav.saf.graphql.ErrorCode.SERVER_ERROR;
 import static no.nav.saf.tilgangskontroll.pep.DenyReasonFactory.PEP1G_DENY_REASON;
 import static no.nav.saf.tilgangskontroll.pep.DenyReasonFactory.PEP2_DENY_REASON;
@@ -60,6 +64,7 @@ import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.http.MediaType.TEXT_HTML_VALUE;
 
 class JournalpostIT extends AbstractItest {
 	private static final String JOURNALPOST_ID = "400000000";
@@ -536,7 +541,7 @@ class JournalpostIT extends AbstractItest {
 		abacPermit();
 		stubDokarkivJournalpost(HttpStatus.NOT_FOUND);
 
-		assertErrorWithCode(journalpostQuery(), NOT_FOUND.getText());
+		assertErrorWithCode(journalpostQuery(), ErrorCode.NOT_FOUND.getText());
 	}
 
 	@Test
@@ -545,6 +550,17 @@ class JournalpostIT extends AbstractItest {
 		stubDokarkivJournalpost(INTERNAL_SERVER_ERROR);
 
 		assertErrorWithCode(journalpostQuery(), SERVER_ERROR.getText());
+	}
+
+	@Test
+	void shouldRetryWhenNginxException() {
+		abacPermit();
+		stubDokarkivJournalpostRetry("journalpost-gsak-inngaaende-happy.json");
+
+		Journalpost journalpost = parseJournalpost(journalpostQuery());
+
+		assertThat(journalpost.getJournalpostId()).isEqualTo(JOURNALPOST_ID);
+		verify(2, getRequestedFor(urlEqualTo("/dokarkiv/journalpost/journalpostId/" + JOURNALPOST_ID)));
 	}
 
 	@Test
@@ -621,6 +637,24 @@ class JournalpostIT extends AbstractItest {
 
 	private static void stubDokarkivJournalpostEksternReferanseId(String fil) {
 		stubFor(get("/dokarkiv/journalpost/eksternReferanseId/" + EKSTERNREFERANSE_ID)
+				.willReturn(aResponse()
+						.withStatus(OK.value())
+						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("safintern/journalpost/" + fil)));
+	}
+
+	private static void stubDokarkivJournalpostRetry(String fil) {
+		stubFor(get("/dokarkiv/journalpost/journalpostId/" + JOURNALPOST_ID)
+				.inScenario("nginx_retry")
+				.whenScenarioStateIs(STARTED)
+				.willReturn(aResponse()
+						.withStatus(HttpStatus.NOT_FOUND.value())
+						.withHeader(CONTENT_TYPE, TEXT_HTML_VALUE)
+						.withBodyFile("nginx/nginx-notfound.html")))
+				.setNewScenarioState("nginx_ok");
+		stubFor(get("/dokarkiv/journalpost/journalpostId/" + JOURNALPOST_ID)
+				.inScenario("nginx_retry")
+				.whenScenarioStateIs("nginx_ok")
 				.willReturn(aResponse()
 						.withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)

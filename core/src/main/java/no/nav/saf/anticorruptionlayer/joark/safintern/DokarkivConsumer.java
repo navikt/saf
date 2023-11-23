@@ -3,6 +3,9 @@ package no.nav.saf.anticorruptionlayer.joark.safintern;
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerRegistry;
 import io.github.resilience4j.reactor.circuitbreaker.operator.CircuitBreakerOperator;
+import io.github.resilience4j.reactor.retry.RetryOperator;
+import io.github.resilience4j.retry.Retry;
+import io.github.resilience4j.retry.RetryRegistry;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.anticorruptionlayer.CallIdExchangeFilterFunction;
 import no.nav.saf.anticorruptionlayer.joark.safintern.hentdokument.HentDokumentResponseTo;
@@ -10,6 +13,7 @@ import no.nav.saf.anticorruptionlayer.joark.safintern.journalpost.ArkivJournalpo
 import no.nav.saf.config.SafProperties;
 import no.nav.saf.exceptions.DokumentIkkeFunnetException;
 import no.nav.saf.exceptions.JournalpostIkkeFunnetException;
+import no.nav.saf.exceptions.NginxException;
 import no.nav.saf.exceptions.SafFunctionalException;
 import no.nav.saf.exceptions.SafTechnicalException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +31,7 @@ import static no.nav.saf.azure.AzureProperties.CLIENT_REGISTRATION_DOKARKIV;
 import static no.nav.saf.headers.NavHeaders.NAV_CALLID;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.http.MediaType.APPLICATION_PDF;
+import static org.springframework.http.MediaType.TEXT_HTML;
 import static org.springframework.security.oauth2.client.web.reactive.function.client.ServerOAuth2AuthorizedClientExchangeFilterFunction.clientRegistrationId;
 
 @Slf4j
@@ -38,12 +43,15 @@ public class DokarkivConsumer {
 	private final WebClient webClient;
 	private final CircuitBreaker dokarkivHentdokumentCircuitBreaker;
 	private final CircuitBreaker dokarkivMetadataCircuitBreaker;
+	private final Retry dokarkivHentdokumentRetry;
+	private final Retry dokarkivMetadataRetry;
 
 	@Autowired
 	public DokarkivConsumer(final SafProperties safProperties,
 							final CodecProperties codecProperties,
 							final WebClient webClient,
-							final CircuitBreakerRegistry circuitBreakerRegistry) {
+							final CircuitBreakerRegistry circuitBreakerRegistry,
+							final RetryRegistry retryRegistry) {
 		this.webClient = webClient.mutate()
 				.baseUrl(safProperties.getEndpoints().getDokarkiv().getUrl())
 				.filter(new CallIdExchangeFilterFunction(NAV_CALLID))
@@ -56,6 +64,8 @@ public class DokarkivConsumer {
 				.build();
 		this.dokarkivHentdokumentCircuitBreaker = circuitBreakerRegistry.circuitBreaker(DOKARKIV_HENTDOKUMENT);
 		this.dokarkivMetadataCircuitBreaker = circuitBreakerRegistry.circuitBreaker(DOKARKIV_METADATA);
+		this.dokarkivHentdokumentRetry = retryRegistry.retry(DOKARKIV_HENTDOKUMENT);
+		this.dokarkivMetadataRetry = retryRegistry.retry(DOKARKIV_METADATA);
 	}
 
 	public HentDokumentResponseTo hentDokument(String dokumentInfoId, String variantFormat) {
@@ -73,14 +83,16 @@ public class DokarkivConsumer {
 						return clientResponse.createError();
 					}
 				})
-				.transformDeferred(CircuitBreakerOperator.of(dokarkivHentdokumentCircuitBreaker))
 				.doOnError(handleErrorHentDokument(dokumentInfoId, variantFormat))
+				.transformDeferred(CircuitBreakerOperator.of(dokarkivHentdokumentCircuitBreaker))
+				.transformDeferred(RetryOperator.of(dokarkivHentdokumentRetry))
 				.block();
 	}
 
 	private Consumer<Throwable> handleErrorHentDokument(String dokumentInfoId, String variantFormat) {
 		return error -> {
-			if (error instanceof WebClientResponseException.NotFound) {
+			if (error instanceof WebClientResponseException.NotFound notFound) {
+				handleMidlertidigNginxError(notFound);
 				throw new DokumentIkkeFunnetException(format("Dokument med dokumentInfoId=%s, variantFormat=%s ikke funnet. feilmelding=%s",
 						dokumentInfoId, variantFormat, error.getMessage()));
 			}
@@ -110,19 +122,16 @@ public class DokarkivConsumer {
 				.accept(APPLICATION_JSON)
 				.retrieve()
 				.bodyToMono(ArkivJournalpost.class)
-				.transformDeferred(CircuitBreakerOperator.of(dokarkivMetadataCircuitBreaker))
 				.doOnError(handleErrorJournalpostById(journalpostId))
+				.transformDeferred(CircuitBreakerOperator.of(dokarkivMetadataCircuitBreaker))
+				.transformDeferred(RetryOperator.of(dokarkivMetadataRetry))
 				.block();
 	}
 
 	private Consumer<Throwable> handleErrorJournalpostById(String journalpostId) {
 		return error -> {
 			if (error instanceof WebClientResponseException.NotFound notFound) {
-				String responseBody = notFound.getResponseBodyAs(String.class);
-				if (responseBody != null && responseBody.contains("nginx")) {
-					log.error("Fikk nginx respons i kall mot dokarkiv. Må analyseres for å unngå false positives på kall. journalpostId={}, headers={}, body={}",
-							journalpostId, notFound.getHeaders(), responseBody);
-				}
+				handleMidlertidigNginxError(notFound);
 				throw new JournalpostIkkeFunnetException("Journalpost med journalpostId=" + journalpostId + " ikke funnet.");
 			}
 			throw new SafTechnicalException("Henting av journalpostId=" + journalpostId + " feilet med ukjent teknisk feil.", error);
@@ -143,19 +152,16 @@ public class DokarkivConsumer {
 				.accept(APPLICATION_JSON)
 				.retrieve()
 				.bodyToMono(ArkivJournalpost.class)
-				.transformDeferred(CircuitBreakerOperator.of(dokarkivMetadataCircuitBreaker))
 				.doOnError(handleErrorJournalpostByEksternReferanseId(eksternReferanseId))
+				.transformDeferred(CircuitBreakerOperator.of(dokarkivMetadataCircuitBreaker))
+				.transformDeferred(RetryOperator.of(dokarkivMetadataRetry))
 				.block();
 	}
 
 	private Consumer<Throwable> handleErrorJournalpostByEksternReferanseId(String eksternReferanseId) {
 		return error -> {
 			if (error instanceof WebClientResponseException.NotFound notFound) {
-				String responseBody = notFound.getResponseBodyAs(String.class);
-				if (responseBody != null && responseBody.contains("nginx")) {
-					log.error("Fikk nginx respons i kall mot dokarkiv. Må analyseres for å unngå false positives på kall. eksternReferanseId={}, headers={}, body={}",
-							eksternReferanseId, notFound.getHeaders(), responseBody);
-				}
+				handleMidlertidigNginxError(notFound);
 				throw new JournalpostIkkeFunnetException("Journalpost med eksternReferanseId=" + eksternReferanseId + " ikke funnet.");
 			}
 			throw new SafTechnicalException("Henting av eksternReferanseId=" + eksternReferanseId + " feilet med ukjent teknisk feil.", error);
@@ -176,14 +182,16 @@ public class DokarkivConsumer {
 				.accept(APPLICATION_JSON)
 				.retrieve()
 				.bodyToMono(ArkivJournalpost.class)
-				.transformDeferred(CircuitBreakerOperator.of(dokarkivMetadataCircuitBreaker))
 				.doOnError(handleErrorJournalpostByIdAndDokumentInfoId(journalpostId, dokumentInfoId))
+				.transformDeferred(CircuitBreakerOperator.of(dokarkivMetadataCircuitBreaker))
+				.transformDeferred(RetryOperator.of(dokarkivMetadataRetry))
 				.block();
 	}
 
 	private Consumer<Throwable> handleErrorJournalpostByIdAndDokumentInfoId(String journalpostId, String dokumentInfoId) {
 		return error -> {
-			if (error instanceof WebClientResponseException.NotFound) {
+			if (error instanceof WebClientResponseException.NotFound notFound) {
+				handleMidlertidigNginxError(notFound);
 				throw new DokumentIkkeFunnetException(format("Journalpost med journalpostId=%s, dokumentInfoId=%s ikke funnet i Joark.",
 						journalpostId, dokumentInfoId));
 			}
@@ -197,5 +205,16 @@ public class DokarkivConsumer {
 				}
 			}
 		};
+	}
+
+	private static void handleMidlertidigNginxError(WebClientResponseException.NotFound notFound) {
+		String responseBody = notFound.getResponseBodyAs(String.class);
+		if (isNginxResponse(notFound, responseBody)) {
+			throw new NginxException("Midlertidig feil mot nginx loadbalancer. Forsøker retry", notFound);
+		}
+	}
+
+	private static boolean isNginxResponse(WebClientResponseException.NotFound notFound, String responseBody) {
+		return responseBody != null && responseBody.contains("nginx") && TEXT_HTML.equals(notFound.getHeaders().getContentType());
 	}
 }
