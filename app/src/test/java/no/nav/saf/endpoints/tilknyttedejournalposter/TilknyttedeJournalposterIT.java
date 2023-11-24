@@ -52,15 +52,11 @@ class TilknyttedeJournalposterIT extends AbstractItest {
 	private final String GSAK_ID = "100000000";
 	private final String BIDRAG_SAK_ID = "abc123";
 
-	private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+	private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper().registerModule(new JavaTimeModule());
 
 	@BeforeEach
 	void setUp() {
 		setupHappyPathAzureToken();
-	}
-
-	static {
-		OBJECT_MAPPER.registerModule(new JavaTimeModule());
 	}
 
 	@Test

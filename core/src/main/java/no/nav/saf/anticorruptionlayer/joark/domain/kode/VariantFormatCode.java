@@ -50,4 +50,12 @@ public enum VariantFormatCode {
 		return joarkVariantFormatCode == null ? null : joarkVariantFormatCode.getSafVariantformat();
 	}
 
+	public static Variantformat toSafVariantformat(String variantFormat) {
+		try {
+			return variantFormat == null ? null : VariantFormatCode.valueOf(variantFormat).getSafVariantformat();
+		} catch (IllegalArgumentException e) {
+			return null;
+		}
+	}
+
 }

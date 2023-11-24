@@ -1,6 +1,7 @@
 package no.nav.saf.endpoints.dokumentoversikt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import no.nav.saf.domain.kode.Journalstatus;
 import no.nav.saf.domain.visningsmodell.Dokumentoversikt;
 import no.nav.saf.endpoints.AbstractItest;
@@ -31,14 +32,11 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
-/**
- * @author Erik Bråten, Visma Consulting.
- */
 class DokumentoversiktJournalstatusIT extends AbstractItest {
 
 	private static final String KANAL_REFERANSE_ID = "KANAL REFERANSE ID";
 
-	private final ObjectMapper objectMapper = new ObjectMapper();
+	private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper().registerModule(new JavaTimeModule());
 
 	@Test
 	void shouldHentDokumentoversiktJournalstatusUkjentBruker() throws IOException, URISyntaxException {
@@ -266,6 +264,6 @@ class DokumentoversiktJournalstatusIT extends AbstractItest {
 
 	private Dokumentoversikt getDokumentoversikt(ResponseEntity<LinkedHashMap> responseEntity) {
 		Map<String, Object> responseEntityData = (Map<String, Object>) responseEntity.getBody().get("data");
-		return objectMapper.convertValue(responseEntityData.get("dokumentoversiktJournalstatus"), Dokumentoversikt.class);
+		return OBJECT_MAPPER.convertValue(responseEntityData.get("dokumentoversiktJournalstatus"), Dokumentoversikt.class);
 	}
 }

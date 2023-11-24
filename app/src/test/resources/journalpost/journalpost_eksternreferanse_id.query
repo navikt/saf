@@ -11,6 +11,7 @@
         avsenderMottaker {
           id
           navn
+          type
           land
           erLikBruker
         }
@@ -29,6 +30,7 @@
             dato
             datotype
         }
+        antallRetur
         tilleggsopplysninger {
             nokkel
             verdi
@@ -53,6 +55,7 @@
             dokumentstatus
             originalJournalpostId
             logiskeVedlegg {
+                logiskVedleggId
                 tittel
             }
             dokumentvarianter {
@@ -61,6 +64,7 @@
                 filuuid
                 filnavn
                 filtype
+                filstoerrelse
             }
         }
         utsendingsinfo {
@@ -78,6 +82,13 @@
                 tittel
                 adresse
                 varslingstekst
+            }
+            varselSendt {
+                type
+                tittel
+                adresse
+                varslingstekst
+                varslingstidspunkt
             }
         }
     }

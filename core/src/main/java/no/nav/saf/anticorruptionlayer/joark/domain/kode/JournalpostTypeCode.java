@@ -32,4 +32,15 @@ public enum JournalpostTypeCode {
 		}
 		return Journalposttype.valueOf(journalpostTypeCode.name());
 	}
+
+	public static Journalposttype mapToJournalpostType(String type) {
+		try {
+			if (type == null) {
+				return null;
+			}
+			return Journalposttype.valueOf(type);
+		} catch(IllegalArgumentException e) {
+			return null;
+		}
+	}
 }

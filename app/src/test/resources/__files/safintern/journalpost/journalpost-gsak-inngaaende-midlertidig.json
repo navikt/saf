@@ -1,0 +1,65 @@
+{
+  "journalpostId": 400000000,
+  "type": "I",
+  "fagomraade": "HJE",
+  "fagomraadenavn": "Hjelpemidler",
+  "status": "MO",
+  "saksrelasjon": {
+    "fagsystem": null,
+    "sak": null,
+    "sakId": null
+  },
+  "relevanteDatoer": {
+    "forsendelseMottatt": "2023-08-16T11:15:00.290+00:00",
+    "hoveddokument": "2023-08-16T11:15:00.290+00:00",
+    "opprettet": "2023-08-16T11:15:00.292+00:00"
+  },
+  "avsenderMottaker": {
+    "id": "07480966982",
+    "navn": "Sitrongul Ovn",
+    "type": "FNR",
+    "land": "NO"
+  },
+  "antallRetur": 1,
+  "behandlingstema": "ab0071",
+  "behandlingstemanavn": "Tilskudd",
+  "bruker": {
+    "id": null,
+    "type": null
+  },
+  "dokumenter": [
+    {
+      "dokumentInfoId": 500000000,
+      "brevkode": "NAV 10-07.34",
+      "fildetaljer": [
+        {
+          "format": "ARKIV",
+          "navn": "tilskudd.pdf",
+          "stoerrelse": "4721",
+          "type": "PDFA",
+          "uuid": "4b4d0d13-5c8c-4f6b-922c-4026f1679069"
+        }
+      ],
+      "kategori": "IS",
+      "logiskVedlegg": [
+        {
+          "tittel": "Skjema",
+          "vedleggId": 300000000
+        }
+      ],
+      "originalJournalpostId": 400000000,
+      "status": "FERDIGSTILT",
+      "tilknyttetSom": "HOVEDDOKUMENT",
+      "tittel": "NAV 10-07.34 Tilskudd ved kjøp av briller til barn"
+    }
+  ],
+  "innhold": "NAV 10-07.34 Tilskudd ved kjøp av briller til barn",
+  "kanalreferanseId": "d35c8412-7b98-4a66-8fdd-51f44ed6c632HJE-DIGITAL-SOKNAD",
+  "journalfoerendeEnhet": "4710",
+  "journalfoertAvNavn": "teamdigihot:hm-joark-sink",
+  "mottakskanal": "SKAN_IM",
+  "opprettetAvNavn": "Max Mekker",
+  "tilleggsopplysninger": {
+    "brilletype": "trippel-brille"
+  }
+}

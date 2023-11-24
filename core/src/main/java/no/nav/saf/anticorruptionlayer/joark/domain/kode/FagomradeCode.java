@@ -265,7 +265,14 @@ public enum FagomradeCode {
 	KLL;
 
 	public static Tema toSafTema(FagomradeCode joarkFagomradeCode) {
-		// Hvis tema er null så faller man tilbake til UKJ
 		return joarkFagomradeCode == null ? Tema.UKJ : Tema.valueOf(joarkFagomradeCode.name());
+	}
+
+	public static Tema toSafTema(String fagomraade) {
+		try {
+			return fagomraade == null ? Tema.UKJ : Tema.valueOf(fagomraade);
+		} catch (IllegalArgumentException e) {
+			return Tema.UKJ;
+		}
 	}
 }

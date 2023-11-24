@@ -10,27 +10,37 @@ import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.FinnJou
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.FinnJournalposterResponseTo;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark904.FinnJournalposterStatusRequestTo;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark904.FinnJournalposterStatusResponseTo;
+import no.nav.saf.anticorruptionlayer.joark.safintern.DokarkivConsumer;
+import no.nav.saf.anticorruptionlayer.joark.safintern.journalpost.ArkivJournalpost;
 import no.nav.saf.domain.kode.Arkivsakssystem;
 import no.nav.saf.domain.kode.Journalposttype;
 import no.nav.saf.domain.kode.Journalstatus;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
+import no.nav.saf.exceptions.SafTechnicalException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
+
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
 @Component
 @Slf4j
 class JoarkAntiCorruptionLayerImpl implements JoarkAntiCorruptionLayer {
+
 	private final HentJournalsakinfo hentJournalsakinfo;
+	private final DokarkivConsumer dokarkivConsumer;
 	private final SafToJoarkJournalstatusMapper safToJoarkJournalstatusMapper;
 
 	@Autowired
-	public JoarkAntiCorruptionLayerImpl(HentJournalsakinfo hentJournalsakinfo) {
+	public JoarkAntiCorruptionLayerImpl(HentJournalsakinfo hentJournalsakinfo,
+										DokarkivConsumer dokarkivConsumer) {
 		this.hentJournalsakinfo = hentJournalsakinfo;
+		this.dokarkivConsumer = dokarkivConsumer;
 		this.safToJoarkJournalstatusMapper = new SafToJoarkJournalstatusMapper();
 	}
 
@@ -85,5 +95,23 @@ class JoarkAntiCorruptionLayerImpl implements JoarkAntiCorruptionLayer {
 				.build());
 
 		return responseTo.getTilgangJournalposter();
+	}
+
+	@Override
+	public ArkivJournalpost hentJournalpostById(String journalpostId, Set<String> fields) {
+		validateFields(fields);
+		return dokarkivConsumer.journalpostById(journalpostId, fields);
+	}
+
+	@Override
+	public ArkivJournalpost hentJournalpostByEksternReferanseId(String eksternReferanseId, Set<String> fields) {
+		validateFields(fields);
+		return dokarkivConsumer.journalpostByEksternReferanseId(eksternReferanseId, fields);
+	}
+
+	private static void validateFields(Set<String> fields) {
+		if (!fields.isEmpty() && !SAFINTERN_FETCHPATHS_ALLE.containsAll(fields)) {
+			throw new SafTechnicalException("fields inneholder et felt som ikke er gyldig. fields=" + fields, INTERNAL_SERVER_ERROR);
+		}
 	}
 }

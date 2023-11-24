@@ -1,0 +1,47 @@
+{
+  "journalpostId": 400000000,
+  "type": "I",
+  "fagomraade": "HJE",
+  "fagomraadenavn": "Hjelpemidler",
+  "status": "J",
+  "saksrelasjon": {
+    "fagsystem": "FS22",
+    "sak": {
+      "aktoerId": "1912374211459",
+      "applikasjon": "HJELPEMIDLER",
+      "fagsakNr": "2514",
+      "opprettetTid": "2023-09-08T14:16:28.791052",
+      "tema": "HJE"
+    },
+    "sakId": 140000000
+  },
+  "relevanteDatoer": {
+    "forsendelseMottatt": "2023-08-16T11:15:00.290+00:00",
+    "hoveddokument": "2023-08-16T11:15:00.290+00:00",
+    "journalfoert": "2023-09-12T13:42:13.647+00:00",
+    "opprettet": "2023-08-16T11:15:00.292+00:00"
+  },
+  "avsenderMottaker": {
+    "id": "07480966982",
+    "navn": "Sitrongul Ovn",
+    "type": "FNR",
+    "land": "NO"
+  },
+  "antallRetur": null,
+  "behandlingstema": "ab0071",
+  "behandlingstemanavn": "Tilskudd",
+  "bruker": {
+    "id": "07480966982",
+    "type": "PERSON"
+  },
+  "dokumenter": [],
+  "innhold": "NAV 10-07.34 Tilskudd ved kjøp av briller til barn",
+  "kanalreferanseId": "d35c8412-7b98-4a66-8fdd-51f44ed6c632HJE-DIGITAL-SOKNAD",
+  "journalfoerendeEnhet": "4710",
+  "journalfoertAvNavn": "teamdigihot:hm-joark-sink",
+  "mottakskanal": "SKAN_IM",
+  "opprettetAvNavn": "Max Mekker",
+  "tilleggsopplysninger": {
+    "brilletype": "trippel-brille"
+  }
+}

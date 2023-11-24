@@ -1,6 +1,7 @@
 package no.nav.saf.anticorruptionlayer.joark.domain;
 
 import lombok.extern.slf4j.Slf4j;
+import no.nav.saf.anticorruptionlayer.joark.domain.kode.BrukerTypeCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.FagomradeCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.FagsystemCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.JournalpostTypeCode;
@@ -11,7 +12,6 @@ import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.dto.JournalpostDt
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.dto.SaksrelasjonDto;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.dto.VariantDto;
 import no.nav.saf.domain.Arkivsak;
-import no.nav.saf.domain.DomainConstants;
 import no.nav.saf.domain.kode.Arkivsakssystem;
 import no.nav.saf.domain.kode.Datotype;
 import no.nav.saf.domain.kode.Dokumentstatus;
@@ -208,9 +208,9 @@ public class JournalpostDtoMapper {
 			return null;
 		}
 
-		if (brukerType.equals(DomainConstants.PERSON)) {
+		if (brukerType.equals(BrukerTypeCode.PERSON)) {
 			return new Bruker(brukerId, BrukerIdType.FNR);
-		} else if (brukerType.equals(DomainConstants.ORGANISASJON)) {
+		} else if (brukerType.equals(BrukerTypeCode.ORGANISASJON)) {
 			return new Bruker(trim(brukerId), BrukerIdType.ORGNR);
 		} else {
 			return null;

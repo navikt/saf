@@ -79,7 +79,7 @@ public class PensjonSakAntiCorruptionLayerImpl implements PensjonSakAntiCorrupti
 		try {
 			return pensjonSakRestConsumer.hentBrukerForSak(sakId).getFnr();
 		} catch (Exception e) {
-			log.warn("Klarte ikke å hente brukerId (fødselsnummer) for sakId={}", sakId, e);
+			log.warn("Klarte ikke å hente brukerId (fødselsnummer) for pensjonsak med sakId={}", sakId, e);
 			return null;
 		}
 	}

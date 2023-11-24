@@ -11,15 +11,12 @@ public final class DomainConstants {
 	public static final String AKTOER_ID_LIST = "aktoerIdList";
 	public static final String ORGNR_LIST = "orgnrList";
 	public static final String RJOARK902_JOURNALPOST_DTO = "journalpostDto";
-	public static final String PERSON = "PERSON";
-	public static final String ORGANISASJON = "ORGANISASJON";
 
 	public static final String FAGSAKSYSTEM_BISYS = "BISYS";
 	public static final String FAGSAKSYSTEM_FORELDREPENGELOSNING = "FS36";
 	public static final String FAGSAKSYSTEM_K9 = "K9";
 
 	public static final ZoneId TIDSSONE_NORGE = ZoneId.of("Europe/Oslo");
-
 
 	// PEP funksjonelt navn. Se https://confluence.adeo.no/display/BOA/saf+-+Tilgangskontroll
 	public static final String PEP1G = "pep1g";

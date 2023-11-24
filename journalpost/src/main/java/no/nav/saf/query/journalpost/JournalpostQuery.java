@@ -1,9 +1,6 @@
 package no.nav.saf.query.journalpost;
 
 import graphql.schema.DataFetchingEnvironment;
-import no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoMapper;
-import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.dto.JournalpostDto;
-import no.nav.saf.domain.Arkivsak;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.domain.tilgangsmodell.TilgangDokumentInfo;
 import no.nav.saf.domain.tilgangsmodell.TilgangDokumentvariant;
@@ -18,7 +15,7 @@ import no.nav.saf.tilgangskontroll.pep.Pep;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import static no.nav.saf.domain.DomainConstants.RJOARK902_JOURNALPOST_DTO;
+import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostMapper.mapJournalpost;
 import static no.nav.saf.domain.DomainConstants.TILGANG_BRUKER;
 import static no.nav.saf.domain.kode.Journalstatus.MOTTATT;
 import static no.nav.saf.graphql.ErrorCode.FORBIDDEN;
@@ -32,8 +29,8 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 @Component
 class JournalpostQuery {
 
-	private final JournalpostTilgangRepository journalpostTilgangRepository;
-	private final JournalpostDtoMapper journalpostDtoMapper;
+	public static final String SELECTION_JOURNALPOST_DOKUMENTER = "Journalpost.dokumenter";
+	private final JournalpostService journalpostService;
 	private final Pep<TilgangBruker> pep1g;
 	private final Pep<TilgangSak> pep2;
 	private final Pep<TilgangSak> pep2d;
@@ -44,8 +41,7 @@ class JournalpostQuery {
 	private final Pep<TilgangSak> pep7d;
 
 	public JournalpostQuery(
-			JournalpostTilgangRepository journalpostTilgangRepository,
-			JournalpostDtoMapper journalpostDtoMapper,
+			JournalpostService journalpostService,
 			@Autowired Pep<TilgangBruker> pep1g,
 			@Autowired Pep<TilgangSak> pep2,
 			@Autowired Pep<TilgangSak> pep2d,
@@ -54,8 +50,7 @@ class JournalpostQuery {
 			@Autowired Pep<TilgangDokumentInfo> pep5,
 			@Autowired Pep<TilgangDokumentvariant> pep6d,
 			@Autowired Pep<TilgangSak> pep7d) {
-		this.journalpostTilgangRepository = journalpostTilgangRepository;
-		this.journalpostDtoMapper = journalpostDtoMapper;
+		this.journalpostService = journalpostService;
 		this.pep1g = pep1g;
 		this.pep2 = pep2;
 		this.pep2d = pep2d;
@@ -70,8 +65,11 @@ class JournalpostQuery {
 									   final SafRequestContext safRequestContext,
 									   final DataFetchingEnvironment environment) {
 		try {
-			final Arkivsak arkivsak = journalpostTilgangRepository.findArkivsakAndCacheJournalpostDto(journalpostId, eksternReferanseId, safRequestContext);
-			final TilgangBruker tilgangBruker = journalpostTilgangRepository.findTilgangBruker(arkivsak, safRequestContext);
+			JournalpostHolder journalpostHolder = journalpostService.hentJournalpost(journalpostId, eksternReferanseId, safRequestContext, environment.getSelectionSet());
+
+			TilgangSak tilgangSak = journalpostHolder.journalpostTilgang().tilgangSak();
+			TilgangBruker tilgangBruker = journalpostHolder.journalpostTilgang().tilgangBruker();
+			TilgangJournalpost tilgangJournalpost = journalpostHolder.journalpostTilgang().tilgangJournalpost();
 
 			if (tilgangBruker != null) {
 				safRequestContext.getRequestCache().putObject(TILGANG_BRUKER, tilgangBruker);
@@ -82,17 +80,16 @@ class JournalpostQuery {
 				throw GraphQLException.of(FORBIDDEN, environment, createPep1gDenyReason(safRequestContext, pep1Access));
 			}
 
-			final TilgangSak tilgangSak = journalpostTilgangRepository.findTilgangSak(arkivsak, tilgangBruker, safRequestContext);
-
 			boolean pep2Access = pep2.hasAccess(tilgangSak, safRequestContext);
 			if (!pep2Access) {
 				throw GraphQLException.of(FORBIDDEN, environment, createPep2DenyReason(safRequestContext));
 			}
 
-			final TilgangJournalpost tilgangJournalpost = journalpostTilgangRepository.findTilgangJournalpostFromSafRequestContext(safRequestContext, tilgangSak);
-			if (tilgangJournalpost.getJournalstatus() != MOTTATT) {
-				pep2d.hasAccess(tilgangSak, safRequestContext);
-				pep7d.hasAccess(tilgangSak, safRequestContext);
+			if (environment.getSelectionSet().contains(SELECTION_JOURNALPOST_DOKUMENTER)) {
+				if (tilgangJournalpost.getJournalstatus() != MOTTATT) {
+					pep2d.hasAccess(tilgangSak, safRequestContext);
+					pep7d.hasAccess(tilgangSak, safRequestContext);
+				}
 			}
 
 			boolean pep3Access = pep3.hasAccess(tilgangSak, safRequestContext);
@@ -105,22 +102,18 @@ class JournalpostQuery {
 				throw GraphQLException.of(FORBIDDEN, environment, createPep4DenyReason(safRequestContext));
 			}
 
-			tilgangJournalpost.getDokumenter().forEach(tilgangDokumentInfo -> {
-				pep5.hasAccess(tilgangDokumentInfo, safRequestContext);
-				tilgangDokumentInfo.getTilgangDokumentvarianter().forEach(tilgangDokumentvariant ->
-						pep6d.hasAccess(tilgangDokumentvariant, safRequestContext));
-			});
-
-			return hentVisningsmodell(safRequestContext);
+			if (environment.getSelectionSet().contains(SELECTION_JOURNALPOST_DOKUMENTER)) {
+				tilgangJournalpost.getDokumenter().forEach(tilgangDokumentInfo -> {
+					pep5.hasAccess(tilgangDokumentInfo, safRequestContext);
+					tilgangDokumentInfo.getTilgangDokumentvarianter().forEach(tilgangDokumentvariant ->
+							pep6d.hasAccess(tilgangDokumentvariant, safRequestContext));
+				});
+			}
+			return mapJournalpost(journalpostHolder.arkivJournalpost(), safRequestContext.getRequestCache());
 		} catch (JournalpostIkkeFunnetException e) {
 			throw GraphQLException.of(NOT_FOUND, environment,
 					"Fant ikke journalpost i fagarkivet. " + errLog(journalpostId, eksternReferanseId));
 		}
-	}
-
-	private Journalpost hentVisningsmodell(SafRequestContext safRequestContext) {
-		final JournalpostDto journalpostDto = safRequestContext.getRequestCache().getObject(RJOARK902_JOURNALPOST_DTO);
-		return journalpostDtoMapper.mapJournalpostDto(journalpostDto, safRequestContext.getRequestCache());
 	}
 
 	private String errLog(String journalpostId, String eksternReferanseId) {

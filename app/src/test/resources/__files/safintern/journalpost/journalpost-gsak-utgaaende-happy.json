@@ -1,0 +1,86 @@
+{
+  "journalpostId": 400000000,
+  "type": "U",
+  "fagomraade": "ENF",
+  "fagomraadenavn": "Enslig mor eller far",
+  "status": "E",
+  "saksrelasjon": {
+    "fagsystem": "FS22",
+    "sak": {
+      "aktoerId": "1912374211459",
+      "applikasjon": "EF",
+      "fagsakNr": "200054151",
+      "opprettetTid": "2023-11-21T14:21:12.233152",
+      "tema": "ENF"
+    },
+    "sakId": 140000000
+  },
+  "relevanteDatoer": {
+    "hoveddokument": "2023-11-21T15:19:35.871+00:00",
+    "journalfoert": "2023-11-21T15:19:35.911+00:00",
+    "opprettet": "2023-11-21T15:19:35.874+00:00",
+    "ekspedert": "2023-11-21T15:19:37.911+00:00"
+  },
+  "avsenderMottaker": {
+    "id": "23496940474",
+    "navn": "SNÅL LOGARITME",
+    "type": "FNR"
+  },
+  "antallRetur": 1,
+  "behandlingstema": "ab0071",
+  "behandlingstemanavn": "Overgangsstønad",
+  "bruker": {
+    "id": "23496940474",
+    "type": "PERSON"
+  },
+  "dokumenter": [
+    {
+      "dokumentInfoId": 500000000,
+      "brevkode": "ENF_BREV_OVERGANGSSTØNAD_VEDTAK",
+      "fildetaljer": [
+        {
+          "format": "ARKIV",
+          "stoerrelse": "22507",
+          "type": "PDFA",
+          "uuid": "4ceaea4f-b01f-42fa-9992-d01e56f58962"
+        }
+      ],
+      "kategori": "VB",
+      "logiskVedlegg": [],
+      "originalJournalpostId": 400000000,
+      "status": "FERDIGSTILT",
+      "tilknyttetSom": "HOVEDDOKUMENT",
+      "tittel": "Vedtak om revurdert overgangstønad"
+    }
+  ],
+  "innhold": "Vedtak om revurdert overgangstønad",
+  "journalfoerendeEnhet": "4489",
+  "journalfoertAvNavn": "Bjarne Betjent",
+  "kanalreferanseId": "712a2b03-adb0-44e8-be07-34e5fadbc821-vedtaksbrev",
+  "opprettetAvNavn": "Bjarne Betjent",
+  "tilleggsopplysninger": {
+    "dokdistBestillingsId": "6b040820-a915-4728-979f-d174cd3a42d4"
+  },
+  "utsendingsInfo": {
+    "digitalPostadresse": {
+      "adresse": "sitrongul.ovn#ABCD",
+      "leverandoer": "980000000"
+    },
+    "epostVarsel": [
+      {
+        "tittel": "Varsel om post",
+        "tekst": "Du har fått et vedtak fra NAV. Les det i din digitale postkasse.",
+        "epostadresse": "enhetstest_att_nav.no",
+        "varslingstidspunkt": "2023-11-10T10:48:14.163532"
+      }
+    ],
+    "smsVarsel": [
+      {
+        "tekst": "Du har fått et vedtak fra NAV. Les det i din digitale postkasse.",
+        "mobilnummer": "+47NNNNNNNNN",
+        "varslingstidspunkt": "2023-11-10T10:48:14.163537"
+      }
+    ]
+  },
+  "utsendingskanal": "SDP"
+}

@@ -43,11 +43,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 class SakerIT extends AbstractItest {
 
 	private static final String AKTOER_ID = "1912374211459";
-	private static final ObjectMapper objectMapper = new ObjectMapper();
-
-	static {
-		objectMapper.registerModule(new JavaTimeModule());
-	}
+	private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper().registerModule(new JavaTimeModule());
 
 	@BeforeEach
 	void setup() {
@@ -206,7 +202,7 @@ class SakerIT extends AbstractItest {
 
 	private List<Sak> parseSaker(ResponseEntity<LinkedHashMap> responseEntity) {
 		Map<String, Object> responseEntityData = (Map<String, Object>) responseEntity.getBody().get("data");
-		return objectMapper.convertValue(responseEntityData.get("saker"), new TypeReference<>() {
+		return OBJECT_MAPPER.convertValue(responseEntityData.get("saker"), new TypeReference<>() {
 		});
 	}
 }

@@ -8,12 +8,11 @@ import no.nav.saf.domain.kode.Datotype;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.ZoneId;
+import java.time.OffsetDateTime;
 import java.util.Date;
 
-/**
- * @author Joakim Bjørnstad, Jbit AS
- */
+import static no.nav.saf.domain.DomainConstants.TIDSSONE_NORGE;
+
 @Data
 public class RelevantDato {
 	// Fallback for datoer som er påkrevd men av ukjente årsaker ikke finnes.
@@ -23,7 +22,17 @@ public class RelevantDato {
 	private final Datotype datotype;
 
 	@JsonCreator
-	public RelevantDato(@JsonProperty("dato") Date dato, @JsonProperty("datotype") Datotype datotype) {
+	public RelevantDato(@JsonProperty("dato") LocalDateTime dato, @JsonProperty("datotype") Datotype datotype) {
+		this.dato = dato;
+		this.datotype = datotype;
+	}
+
+	public RelevantDato(OffsetDateTime dato, Datotype datotype) {
+		this.dato = toLocalDateTime(dato);
+		this.datotype = datotype;
+	}
+
+	public RelevantDato(Date dato, Datotype datotype) {
 		this.dato = toLocalDateTime(dato);
 		this.datotype = datotype;
 	}
@@ -32,6 +41,13 @@ public class RelevantDato {
 		if (date == null) {
 			return INVALID_DATE;
 		}
-		return LocalDateTime.from(date.toInstant().atZone(ZoneId.systemDefault()));
+		return LocalDateTime.from(date.toInstant().atZone(TIDSSONE_NORGE));
+	}
+
+	private static LocalDateTime toLocalDateTime(OffsetDateTime offsetDateTime) {
+		if (offsetDateTime == null) {
+			return INVALID_DATE;
+		}
+		return offsetDateTime.atZoneSameInstant(TIDSSONE_NORGE).toLocalDateTime();
 	}
 }

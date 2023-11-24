@@ -1,5 +1,7 @@
 package no.nav.saf.util;
 
+import java.util.Set;
+
 public final class MDCConstants {
 	/**
 	 * callId logger en unik id inn til systemet for å kunne sammenstille loggmeldinger.
@@ -42,7 +44,8 @@ public final class MDCConstants {
 	 */
 	public static final String DOKUMENT_INFO_ID = "dokumentInfoId";
 
-	private MDCConstants() {
+	public static Set<String> ALL_KEYS = Set.of(CALL_ID, USER_ID, CONSUMER_ID, JOURNALPOST_ID, EKSTERNREFERANSE_ID, DOKUMENT_INFO_ID);
 
+	private MDCConstants() {
 	}
 }
