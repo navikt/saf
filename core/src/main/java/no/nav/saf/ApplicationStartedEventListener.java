@@ -13,12 +13,8 @@ public class ApplicationStartedEventListener implements ApplicationListener<Appl
 
 	@Override
 	public void onApplicationEvent(ApplicationStartedEvent event) {
-		configureCacheMetrics(event);
-	}
-
-	private static void configureCacheMetrics(ApplicationStartedEvent event) {
-		registerReactorContextPropagation();
 		registerCacheMetrics(event);
+		registerReactorContextPropagation();
 	}
 
 	private static void registerReactorContextPropagation() {
