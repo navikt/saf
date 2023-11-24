@@ -21,7 +21,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class ArkivAvsenderMottakerMapperTest {
 
 	@Test
-	void shouldAvsenderMottakerErLikBrukerTrueWhenBrukerIsSameAsAvsenderMottakerId() {
+	void shouldReturnErLikBrukerTrueWhenBrukerIdIsSameAsAvsenderMottakerId() {
 		ArkivJournalpost arkivJournalpost = baseArkivJournalpost()
 				.type(JournalpostTypeCode.I.name())
 				.avsenderMottaker(new ArkivAvsenderMottaker(AVSENDER_MOTTAKER_ID, null, null, null))

@@ -99,17 +99,19 @@ class JoarkAntiCorruptionLayerImpl implements JoarkAntiCorruptionLayer {
 
 	@Override
 	public ArkivJournalpost hentJournalpostById(String journalpostId, Set<String> fields) {
-		if (!fields.isEmpty() && !SAFINTERN_FETCHPATHS_ALLE.containsAll(fields)) {
-			throw new SafTechnicalException("fields inneholder et felt som ikke er gyldig. fields=" + fields, INTERNAL_SERVER_ERROR);
-		}
+		validateFields(fields);
 		return dokarkivConsumer.journalpostById(journalpostId, fields);
 	}
 
 	@Override
 	public ArkivJournalpost hentJournalpostByEksternReferanseId(String eksternReferanseId, Set<String> fields) {
+		validateFields(fields);
+		return dokarkivConsumer.journalpostByEksternReferanseId(eksternReferanseId, fields);
+	}
+
+	private static void validateFields(Set<String> fields) {
 		if (!fields.isEmpty() && !SAFINTERN_FETCHPATHS_ALLE.containsAll(fields)) {
 			throw new SafTechnicalException("fields inneholder et felt som ikke er gyldig. fields=" + fields, INTERNAL_SERVER_ERROR);
 		}
-		return dokarkivConsumer.journalpostByEksternReferanseId(eksternReferanseId, fields);
 	}
 }

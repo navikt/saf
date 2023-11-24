@@ -7,7 +7,7 @@ import java.util.Map;
 
 @Builder
 public record ArkivJournalpost(
-		// tilgangskontroll
+		// brukt til tilgangskontroll i hentdokument
 		Long journalpostId,
 		String fagomraade,
 		String status,

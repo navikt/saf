@@ -59,7 +59,7 @@ public interface JoarkAntiCorruptionLayer {
 												 Integer foerste, String etterPeker);
 
 	/**
-	 * Henter en journalpost fra joark basert på enten journalpostId
+	 * Henter en journalpost fra joark basert på journalpostId
 	 *
 	 * @param journalpostId journalpostId
 	 * @param fields        felt som skal hentes fra joark

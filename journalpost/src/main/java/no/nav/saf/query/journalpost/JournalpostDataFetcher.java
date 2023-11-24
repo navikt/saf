@@ -36,30 +36,32 @@ public class JournalpostDataFetcher implements DataFetcher<DataFetcherResult<Jou
 		addMdcData(safRequestContext);
 		final String journalpostId = environment.getArgument("journalpostId");
 		final String eksternReferanseId = environment.getArgument("eksternReferanseId");
-		LoggMelding loggMelding = new LoggMelding(journalpostId, eksternReferanseId);
 		try {
 			mdcSporing(journalpostId, eksternReferanseId);
 			validateJournalpostIdOgEksternReferanseId(journalpostId, eksternReferanseId, environment);
 
 			String argumentNameValue = argumentNameValue(journalpostId, eksternReferanseId);
-			log.info("query journalpost. {}", argumentNameValue);
+			log.info("query journalpost({})", argumentNameValue);
 			Journalpost journalpost = journalpostQuery.hentJournalpost(journalpostId, eksternReferanseId, safRequestContext, environment);
-			log.info("query journalpost hentet. {}", argumentNameValue);
+			log.info("query journalpost({}) hentet journalpost", argumentNameValue);
 
 			return DataFetcherResult.<Journalpost>newResult()
 					.data(journalpost)
 					.build();
 		} catch (GraphQLException e) {
-			loggMelding.exceptionLogg(e);
+			log.warn("query journalpost({}) feilet. melding={}",
+					argumentNameValue(journalpostId, eksternReferanseId), e.getError().getMessage());
 			return e.toDataFetcherResult();
 		} catch (SafTechnicalException e) {
-			loggMelding.exceptionLogg(e);
+			log.error("query journalpost({}) teknisk feil. melding={}",
+					argumentNameValue(journalpostId, eksternReferanseId), e.getMessage(), e);
 			return DataFetcherResult.<Journalpost>newResult()
 					.error(SERVER_ERROR.construct(environment,
 							"Teknisk feil. Prøv igjen senere."))
 					.build();
 		} catch (Exception e) {
-			loggMelding.exceptionLogg(e);
+			log.error("query journalpost({}) ukjent teknisk feil. melding={}",
+					argumentNameValue(journalpostId, eksternReferanseId), e.getMessage(), e);
 			return DataFetcherResult.<Journalpost>newResult()
 					.error(SERVER_ERROR.construct(environment,
 							"Ukjent teknisk feil. Meld fra til #team_dokumentløsninger på Slack."))

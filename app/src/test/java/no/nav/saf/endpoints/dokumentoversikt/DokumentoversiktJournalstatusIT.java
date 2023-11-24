@@ -36,11 +36,7 @@ class DokumentoversiktJournalstatusIT extends AbstractItest {
 
 	private static final String KANAL_REFERANSE_ID = "KANAL REFERANSE ID";
 
-	private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
-
-	static {
-		OBJECT_MAPPER.registerModule(new JavaTimeModule());
-	}
+	private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper().registerModule(new JavaTimeModule());
 
 	@Test
 	void shouldHentDokumentoversiktJournalstatusUkjentBruker() throws IOException, URISyntaxException {

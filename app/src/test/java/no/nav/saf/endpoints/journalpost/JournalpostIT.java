@@ -70,11 +70,7 @@ class JournalpostIT extends AbstractItest {
 	private static final String JOURNALPOST_ID = "400000000";
 	private static final String EKSTERNREFERANSE_ID = "cd047c37-aaaf-4dda-83a3773ed636f452";
 
-	private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
-
-	static {
-		OBJECT_MAPPER.registerModule(new JavaTimeModule());
-	}
+	private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper().registerModule(new JavaTimeModule());
 
 	@BeforeEach
 	void setUp() {

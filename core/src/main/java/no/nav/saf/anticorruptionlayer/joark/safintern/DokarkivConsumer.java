@@ -115,8 +115,7 @@ public class DokarkivConsumer {
 					if (!fields.isEmpty()) {
 						uriBuilder.queryParam("fields", String.join(",", fields));
 					}
-					return uriBuilder
-							.build(journalpostId);
+					return uriBuilder.build(journalpostId);
 				})
 				.attributes(clientRegistrationId(CLIENT_REGISTRATION_DOKARKIV))
 				.accept(APPLICATION_JSON)
@@ -145,8 +144,7 @@ public class DokarkivConsumer {
 					if (!fields.isEmpty()) {
 						uriBuilder.queryParam("fields", String.join(",", fields));
 					}
-					return uriBuilder
-							.build(eksternReferanseId);
+					return uriBuilder.build(eksternReferanseId);
 				})
 				.attributes(clientRegistrationId(CLIENT_REGISTRATION_DOKARKIV))
 				.accept(APPLICATION_JSON)
@@ -175,8 +173,7 @@ public class DokarkivConsumer {
 					if (!fields.isEmpty()) {
 						uriBuilder.queryParam("fields", String.join(",", fields));
 					}
-					return uriBuilder
-							.build(journalpostId, dokumentInfoId);
+					return uriBuilder.build(journalpostId, dokumentInfoId);
 				})
 				.attributes(clientRegistrationId(CLIENT_REGISTRATION_DOKARKIV))
 				.accept(APPLICATION_JSON)

@@ -271,7 +271,7 @@ public class ArkivUtsendingsInfoMapperTest {
 	}
 
 	@Test
-	void shouldReturnUtsendingsInfoNullWhenNavNoVarselTekstOgInfoIsNull() {
+	void shouldReturnUtsendingsinfoNullWhenNavNoVarselTekstOgInfoIsNull() {
 		Optional<Utsendingsinfo> utsendingsinfo = mapArkivUtsendingsInfo(arkivUtsendingsInfoWithNavNoVarslingOldVarselStructure(null, null), NAV_NO);
 
 		assertThat(utsendingsinfo).isEmpty();

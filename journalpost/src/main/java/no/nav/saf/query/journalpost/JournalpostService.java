@@ -42,6 +42,7 @@ import static no.nav.saf.domain.kode.Arkivsakssystem.GSAK;
 import static no.nav.saf.domain.kode.Arkivsakssystem.PSAK;
 import static no.nav.saf.domain.kode.Tema.PEN;
 import static no.nav.saf.domain.kode.Tema.UFO;
+import static no.nav.saf.query.journalpost.JournalpostQuery.SELECTION_JOURNALPOST_DOKUMENTER;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.apache.commons.lang3.StringUtils.trim;
 
@@ -79,7 +80,7 @@ public class JournalpostService {
 	}
 
 	private Set<String> mapFields(DataFetchingFieldSelectionSet selectionSet) {
-		if (selectionSet.contains("Journalpost.dokumenter")) {
+		if (selectionSet.contains(SELECTION_JOURNALPOST_DOKUMENTER)) {
 			return Set.of();
 		} else {
 			return SAFINTERN_FETCHPATHS_UTEN_DOKUMENTER;
@@ -141,13 +142,13 @@ public class JournalpostService {
 
 	private TilgangSak mapTilgangSak(TilgangBruker tilgangBruker, ArkivJournalpost arkivJournalpost, SafRequestContext safRequestContext) {
 		if (arkivJournalpost.isTilknyttetSak()) {
-			return tilgangSakMedSakstilknytning(tilgangBruker, arkivJournalpost, safRequestContext);
+			return mapTilgangSakMedSakstilknytning(tilgangBruker, arkivJournalpost, safRequestContext);
 		} else {
 			return mapTilgangSakUtenSakstilknytning(arkivJournalpost);
 		}
 	}
 
-	private TilgangSak tilgangSakMedSakstilknytning(TilgangBruker tilgangBruker, ArkivJournalpost arkivJournalpost, SafRequestContext safRequestContext) {
+	private TilgangSak mapTilgangSakMedSakstilknytning(TilgangBruker tilgangBruker, ArkivJournalpost arkivJournalpost, SafRequestContext safRequestContext) {
 		ArkivSaksrelasjon arkivSaksrelasjon = arkivJournalpost.saksrelasjon();
 		if (arkivSaksrelasjon.isPensjonsak()) {
 			return mapTilgangPensjonSak(tilgangBruker, arkivJournalpost, safRequestContext);

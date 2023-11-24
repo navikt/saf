@@ -4,7 +4,7 @@ import lombok.Builder;
 
 @Builder
 public record ArkivFildetaljer(
-		// tilgangskontroll
+		// brukt til tilgangskontroll i hentdokument
 		String skjerming,
 		String format,
 		//

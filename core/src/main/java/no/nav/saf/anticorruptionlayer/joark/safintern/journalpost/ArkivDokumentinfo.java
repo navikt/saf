@@ -8,7 +8,7 @@ import java.util.Set;
 
 @Builder
 public record ArkivDokumentinfo(
-		// tilgangskontroll
+		// brukt til tilgangskontroll i hentdokument
 		Long dokumentInfoId,
 		String skjerming,
 		//

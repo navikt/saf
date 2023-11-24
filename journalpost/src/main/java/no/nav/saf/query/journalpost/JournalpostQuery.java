@@ -29,6 +29,7 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 @Component
 class JournalpostQuery {
 
+	public static final String SELECTION_JOURNALPOST_DOKUMENTER = "Journalpost.dokumenter";
 	private final JournalpostService journalpostService;
 	private final Pep<TilgangBruker> pep1g;
 	private final Pep<TilgangSak> pep2;
@@ -84,7 +85,7 @@ class JournalpostQuery {
 				throw GraphQLException.of(FORBIDDEN, environment, createPep2DenyReason(safRequestContext));
 			}
 
-			if (environment.getSelectionSet().contains("Journalpost.dokumenter")) {
+			if (environment.getSelectionSet().contains(SELECTION_JOURNALPOST_DOKUMENTER)) {
 				if (tilgangJournalpost.getJournalstatus() != MOTTATT) {
 					pep2d.hasAccess(tilgangSak, safRequestContext);
 					pep7d.hasAccess(tilgangSak, safRequestContext);
@@ -101,7 +102,7 @@ class JournalpostQuery {
 				throw GraphQLException.of(FORBIDDEN, environment, createPep4DenyReason(safRequestContext));
 			}
 
-			if (environment.getSelectionSet().contains("Journalpost.dokumenter")) {
+			if (environment.getSelectionSet().contains(SELECTION_JOURNALPOST_DOKUMENTER)) {
 				tilgangJournalpost.getDokumenter().forEach(tilgangDokumentInfo -> {
 					pep5.hasAccess(tilgangDokumentInfo, safRequestContext);
 					tilgangDokumentInfo.getTilgangDokumentvarianter().forEach(tilgangDokumentvariant ->
