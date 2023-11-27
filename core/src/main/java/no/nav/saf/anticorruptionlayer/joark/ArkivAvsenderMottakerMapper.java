@@ -17,7 +17,9 @@ public class ArkivAvsenderMottakerMapper {
 		ArkivAvsenderMottaker arkivAvsenderMottaker = arkivJournalpost.avsenderMottaker();
 		if (arkivAvsenderMottaker == null) {
 			// Bug som feature. Klienter gjør ikke null sjekk på denne og får NPE pga i AvsenderMottakerMapper så er den aldri null
-			return AvsenderMottaker.builder().build();
+			return AvsenderMottaker.builder()
+					.type(AvsenderMottakerIdType.NULL)
+					.build();
 		}
 		return AvsenderMottaker.builder()
 				.id(arkivAvsenderMottaker.id())
