@@ -26,6 +26,7 @@ import org.springframework.http.RequestEntity;
 
 import java.net.URI;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
@@ -143,12 +144,14 @@ class JournalpostIT extends AbstractItest {
 		assertThat(dokumentInfo1.getOriginalJournalpostId()).isEqualTo(JOURNALPOST_ID);
 		assertThat(dokumentInfo1.getLogiskeVedlegg().get(0).getLogiskVedleggId()).isEqualTo("300000000");
 		assertThat(dokumentInfo1.getLogiskeVedlegg().get(0).getTittel()).isEqualTo("Skjema");
-		assertThat(dokumentInfo1.getDokumentvarianter().get(0).getVariantformat()).isEqualTo(ARKIV);
-		assertThat(dokumentInfo1.getDokumentvarianter().get(0).isSaksbehandlerHarTilgang()).isTrue();
-		assertThat(dokumentInfo1.getDokumentvarianter().get(0).getFiltype()).isEqualTo("PDF");
-		assertThat(dokumentInfo1.getDokumentvarianter().get(0).getFilnavn()).isEqualTo("tilskudd.pdf");
-		assertThat(dokumentInfo1.getDokumentvarianter().get(0).getFiluuid()).isEqualTo("4b4d0d13-5c8c-4f6b-922c-4026f1679069");
-		assertThat(dokumentInfo1.getDokumentvarianter().get(0).getFilstoerrelse()).isEqualTo(4721);
+		assertThat(dokumentInfo1.getDokumentvarianter()).hasSize(1);
+		Dokumentvariant dokumentvariant = dokumentInfo1.getDokumentvarianter().get(0);
+		assertThat(dokumentvariant.getVariantformat()).isEqualTo(ARKIV);
+		assertThat(dokumentvariant.isSaksbehandlerHarTilgang()).isTrue();
+		assertThat(dokumentvariant.getFiltype()).isEqualTo("PDF");
+		assertThat(dokumentvariant.getFilnavn()).isEqualTo("tilskudd.pdf");
+		assertThat(dokumentvariant.getFiluuid()).isEqualTo("4b4d0d13-5c8c-4f6b-922c-4026f1679069");
+		assertThat(dokumentvariant.getFilstoerrelse()).isEqualTo(4721);
 	}
 
 	@Test
@@ -324,6 +327,19 @@ class JournalpostIT extends AbstractItest {
 
 		assertInngaaendeJournalpost(journalpost);
 		assertThat(journalpost.getDokumenter()).isNull();
+	}
+
+	@Test
+	void shouldQueryJournalpostAndIgnoreUkjentVariantformat() {
+		abacPermit();
+		stubDokarkivJournalpost("journalpost-gsak-inngaaende-ukjent-variant.json");
+
+		Journalpost journalpost = parseJournalpost(journalpostQuery());
+
+		assertInngaaendeJournalpost(journalpost);
+		List<Dokumentvariant> dokumentvarianter = journalpost.getDokumenter().get(0).getDokumentvarianter();
+		assertThat(dokumentvarianter).hasSize(1);
+		assertThat(dokumentvarianter.get(0).getVariantformat()).isEqualTo(ARKIV);
 	}
 
 	@Test

@@ -244,7 +244,7 @@ public class JournalpostService {
 		return fildetaljer.stream()
 				.map(arkivFildetaljer -> TilgangDokumentvariant.builder()
 						.skjerming(mapSkjerming(arkivFildetaljer.skjerming()))
-						.variantformat(VariantFormatCode.valueOf(arkivFildetaljer.format()).getSafVariantformat())
+						.variantformat(VariantFormatCode.toSafVariantformat(arkivFildetaljer.format()))
 						.journalpostId(valueOf(journalpostId))
 						.dokumentInfoId(valueOf(dokumentInfoId))
 						.build()).collect(Collectors.toList());

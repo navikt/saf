@@ -52,6 +52,13 @@
           "stoerrelse": "5000",
           "type": "XML",
           "uuid": "4b4d0d13-5c8c-4f6b-922c-4026f1679070"
+        },
+        {
+          "format": "DENNE_FINNES_IKKE",
+          "navn": "ukjent.xml",
+          "stoerrelse": "5000",
+          "type": "XML",
+          "uuid": "4b4d0d13-5c8c-4f6b-922c-4026f1679070"
         }
       ],
       "kategori": "IS",
