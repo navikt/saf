@@ -362,6 +362,11 @@
       "roles": ["tema_oms", "tema_fri"]
     },
     {
+      "app": "k9-formidling",
+      "namespace": "k9saksbehandling",
+      "cluster": "dev-fss"
+    },
+    {
       "app": "dokarkiv-q1",
       "namespace": "teamdokumenthandtering",
       "cluster": "dev-fss",
