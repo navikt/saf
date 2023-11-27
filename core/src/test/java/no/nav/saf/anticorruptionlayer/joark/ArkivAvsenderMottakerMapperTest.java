@@ -74,8 +74,9 @@ class ArkivAvsenderMottakerMapperTest {
 
 		AvsenderMottaker avsenderMottaker = mapArkivAvsenderMottaker(arkivJournalpost);
 
-		assertThat(avsenderMottaker).hasAllNullFieldsOrPropertiesExcept("erLikBruker")
+		assertThat(avsenderMottaker).hasAllNullFieldsOrPropertiesExcept("type", "erLikBruker")
 				.isNotNull();
+		assertThat(avsenderMottaker.getType()).isEqualTo(AvsenderMottakerIdType.NULL);
 	}
 
 	@Nested
