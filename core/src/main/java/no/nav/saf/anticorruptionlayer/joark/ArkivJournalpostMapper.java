@@ -46,6 +46,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static no.nav.saf.anticorruptionlayer.joark.ArkivAvsenderMottakerMapper.mapArkivAvsenderMottaker;
@@ -381,18 +382,27 @@ public class ArkivJournalpostMapper {
 						.originalJournalpostId(dokumentinfo.originalJournalpostId() == null ? null : dokumentinfo.originalJournalpostId().toString())
 						.skjerming(mapSkjerming(dokumentinfo.skjerming()))
 						.dokumentvarianter(dokumentinfo.fildetaljer().stream()
-								.map(fildetaljer -> Dokumentvariant.builder()
-										.saksbehandlerHarTilgang(determineSaksbehandlerTilgang(journalpost, dokumentinfo, fildetaljer, requestCache))
-										.variantformat(mapVariantformat(fildetaljer))
-										.filnavn(fildetaljer.navn())
-										.filuuid(fildetaljer.uuid())
-										.filtype(mapFiltype(fildetaljer))
-										.skjerming(mapSkjerming(fildetaljer.skjerming()))
-										.filstoerrelse(mapFilstoerrelse(fildetaljer))
-										.build())
+								.map(fildetaljer -> mapDokumentvariant(journalpost, requestCache, dokumentinfo, fildetaljer))
+								.filter(Objects::nonNull)
 								.collect(Collectors.toList()))
 						.logiskeVedlegg(mapLogiskeVedlegg(dokumentinfo))
 						.build()).toList();
+	}
+
+	private static Dokumentvariant mapDokumentvariant(Journalpost journalpost, RequestCache requestCache, ArkivDokumentinfo dokumentinfo, ArkivFildetaljer fildetaljer) {
+		Variantformat variantformat = mapVariantformat(fildetaljer);
+		if(variantformat == null) {
+			return null;
+		}
+		return Dokumentvariant.builder()
+				.saksbehandlerHarTilgang(determineSaksbehandlerTilgang(journalpost, dokumentinfo, fildetaljer, requestCache))
+				.variantformat(variantformat)
+				.filnavn(fildetaljer.navn())
+				.filuuid(fildetaljer.uuid())
+				.filtype(mapFiltype(fildetaljer))
+				.skjerming(mapSkjerming(fildetaljer.skjerming()))
+				.filstoerrelse(mapFilstoerrelse(fildetaljer))
+				.build();
 	}
 
 	private static List<LogiskVedlegg> mapLogiskeVedlegg(ArkivDokumentinfo dokumentinfo) {

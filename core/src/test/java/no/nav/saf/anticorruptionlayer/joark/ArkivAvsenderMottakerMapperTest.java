@@ -66,6 +66,18 @@ class ArkivAvsenderMottakerMapperTest {
 		assertThat(avsenderMottaker.getType()).isEqualTo(AvsenderMottakerIdType.UKJENT);
 	}
 
+	@Test
+	void shouldMapAvsenderMottakerEmptyObjectWhenInputIsNull() {
+		ArkivJournalpost arkivJournalpost = baseArkivJournalpost()
+				.avsenderMottaker(null)
+				.build();
+
+		AvsenderMottaker avsenderMottaker = mapArkivAvsenderMottaker(arkivJournalpost);
+
+		assertThat(avsenderMottaker).hasAllNullFieldsOrPropertiesExcept("erLikBruker")
+				.isNotNull();
+	}
+
 	@Nested
 	@DisplayName("Test mapping når AvsenderMottakerIdType ikke er satt")
 	class AvsenderMottakerIdTypeIsNull {
