@@ -384,6 +384,11 @@
       "cluster": "dev-fss"
     },
     {
+      "app": "k9-formidling",
+      "namespace": "k9saksbehandling",
+      "cluster": "dev-fss"
+    },
+    {
       "app": "dokarkiv",
       "namespace": "teamdokumenthandtering",
       "cluster": "dev-fss",
