@@ -470,6 +470,11 @@
       "app": "pdl-web",
       "namespace": "pdl",
       "cluster": "prod-fss"
+    },
+    {
+      "app": "oppgavebehandling-api",
+      "namespace": "oppgavehandtering",
+      "cluster": "prod-gcp"
     }
   ]
 }
