@@ -476,7 +476,8 @@
     {
       "app": "tilleggsstonader-integrasjoner",
       "namespace": "tilleggsstonader",
-      "cluster": "dev-gcp"
+      "cluster": "dev-gcp",
+      "roles": ["tema_tso"]
     }
   ]
 }

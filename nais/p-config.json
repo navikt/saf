@@ -475,6 +475,12 @@
       "app": "oppgavebehandling-api",
       "namespace": "oppgavehandtering",
       "cluster": "prod-gcp"
+    },
+    {
+      "app": "tilleggsstonader-integrasjoner",
+      "namespace": "tilleggsstonader",
+      "cluster": "prod-gcp",
+      "roles": ["tema_tso"]
     }
   ]
 }
