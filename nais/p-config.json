@@ -398,7 +398,8 @@
     {
       "app": "k9-formidling",
       "namespace": "k9saksbehandling",
-      "cluster": "prod-fss"
+      "cluster": "prod-fss",
+      "roles": ["tema_oms", "tema_fri"]
     },
     {
       "app": "dokarkiv",
