@@ -71,7 +71,8 @@
     {
       "app": "k9-punsj",
       "namespace": "k9saksbehandling",
-      "cluster": "dev-fss"
+      "cluster": "dev-fss",
+      "roles": ["tema_oms", "tema_fri"]
     },
     {
       "app": "familie-integrasjoner",
@@ -348,17 +349,20 @@
     {
       "app": "k9-sak",
       "namespace": "k9saksbehandling",
-      "cluster": "dev-fss"
+      "cluster": "dev-fss",
+      "roles": ["tema_oms", "tema_fri"]
     },
     {
       "app": "k9-fordel",
       "namespace": "k9saksbehandling",
-      "cluster": "dev-fss"
+      "cluster": "dev-fss",
+      "roles": ["tema_oms", "tema_fri"]
     },
     {
       "app": "k9-klage",
       "namespace": "k9saksbehandling",
-      "cluster": "dev-fss"      
+      "cluster": "dev-fss",
+      "roles": ["tema_oms", "tema_fri"]      
     },
     {
       "app": "k9-tilbake",
