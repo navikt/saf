@@ -377,8 +377,7 @@
     {
       "app": "k9-sak",
       "namespace": "k9saksbehandling",
-      "cluster": "prod-fss",
-      "roles": ["tema_oms", "tema_fri"]
+      "cluster": "prod-fss"
     },
     {
       "app": "k9-tilbake",
@@ -389,14 +388,12 @@
     {
       "app": "k9-klage",
       "namespace": "k9saksbehandling",
-      "cluster": "prod-fss",
-      "roles": ["tema_oms", "tema_fri"]
+      "cluster": "prod-fss"
     },
     {
       "app": "k9-fordel",
       "namespace": "k9saksbehandling",
-      "cluster": "prod-fss",
-      "roles": ["tema_oms", "tema_fri"]
+      "cluster": "prod-fss"
     },
     {
       "app": "k9-formidling",

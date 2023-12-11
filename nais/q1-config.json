@@ -348,21 +348,17 @@
     {
       "app": "k9-sak",
       "namespace": "k9saksbehandling",
-      "cluster": "dev-fss",
-      "roles": ["tema_oms", "tema_fri"]
+      "cluster": "dev-fss"
     },
     {
       "app": "k9-fordel",
       "namespace": "k9saksbehandling",
-      "cluster": "dev-fss",
-      "roles": ["tema_oms", "tema_fri"]
+      "cluster": "dev-fss"
     },
     {
       "app": "k9-klage",
       "namespace": "k9saksbehandling",
-      "cluster": "dev-fss",
-      "roles": ["tema_oms", "tema_fri"]
-      
+      "cluster": "dev-fss"      
     },
     {
       "app": "k9-tilbake",
