@@ -7,7 +7,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.1.4</version>
+		<version>3.2.0</version>
 	</parent>
 
 	<groupId>no.nav.saf</groupId>
@@ -29,9 +29,9 @@
 		<java.version>17</java.version>
 
 		<graphql-java.version>21.3</graphql-java.version>
-		<resilience4j.version>2.1.0</resilience4j.version>
-		<token-support.version>3.1.0</token-support.version>
-		<springdoc-openapi-starter-webmvc-ui.version>2.2.0</springdoc-openapi-starter-webmvc-ui.version>
+		<resilience4j.version>2.2.0</resilience4j.version>
+		<token-support.version>3.2.0</token-support.version>
+		<springdoc-openapi-starter-webmvc-ui.version>2.3.0</springdoc-openapi-starter-webmvc-ui.version>
 		<logstash-logback-encoder.version>7.4</logstash-logback-encoder.version>
 		<logback-syslog4j.version>1.0.0</logback-syslog4j.version>
 		<microsoft-graph.version>5.77.0</microsoft-graph.version>
@@ -40,7 +40,7 @@
 		<bcprov-jdk15on.version>1.70</bcprov-jdk15on.version>
 
 		<!-- Test -->
-		<spring-cloud-starter-contract-stub-runner.version>4.0.4</spring-cloud-starter-contract-stub-runner.version>
+		<spring-cloud-starter-contract-stub-runner.version>4.1.0</spring-cloud-starter-contract-stub-runner.version>
 
 		<!-- Plugins -->
 		<maven-toolchains-plugin.version>3.1.0</maven-toolchains-plugin.version>
