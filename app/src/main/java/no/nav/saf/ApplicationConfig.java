@@ -103,7 +103,7 @@ public class ApplicationConfig {
 	}
 
 	@Bean
-	DokMonitoringAspect timedAspect(MeterRegistry meterRegistry) {
+	DokMonitoringAspect dokMonitoringAspect(MeterRegistry meterRegistry) {
 		return new DokMonitoringAspect(meterRegistry);
 	}
 
