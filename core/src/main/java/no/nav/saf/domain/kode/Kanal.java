@@ -22,7 +22,9 @@ public enum Kanal {
 	NAV_NO_UINNLOGGET("Nav.no uten ID-porten-pålogging"),
 	INNSENDT_NAV_ANSATT("Registrert av Nav-ansatt"),
 	NAV_NO_CHAT("Innlogget samtale"),
-	DPVT("Taushetsbelagt digital post til virksomhet");
+	DPVT("Taushetsbelagt digital post til virksomhet"),
+	E_POST("E-post"),
+	ALTINN_INNBOKS("Altinn Innboks");
 
 	private final String kanalnavn;
 
