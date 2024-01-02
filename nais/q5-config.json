@@ -65,6 +65,11 @@
       "namespace": "teamarenanais",
       "cluster": "dev-fss",
       "roles": ["tema_aap", "tema_dag", "tema_fei", "tema_ind", "tema_opp", "tema_sym", "tema_til", "tema_tso", "tema_tsr"]
+    },
+    {
+      "app": "okonomiportal",
+      "namespace": "okonomi",
+      "cluster": "dev-fss"
     }
   ]
 }

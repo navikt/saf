@@ -488,6 +488,11 @@
       "namespace": "tilleggsstonader",
       "cluster": "dev-gcp",
       "roles": ["tema_tso"]
+    },
+    {
+      "app": "okonomiportal",
+      "namespace": "okonomi",
+      "cluster": "dev-fss"
     }
   ]
 }
