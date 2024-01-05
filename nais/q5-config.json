@@ -69,7 +69,8 @@
     {
       "app": "okonomiportal",
       "namespace": "okonomi",
-      "cluster": "dev-fss"
+      "cluster": "dev-fss",
+      "roles": ["tema_sto"]
     }
   ]
 }
