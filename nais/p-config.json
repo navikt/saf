@@ -171,7 +171,8 @@
     {
       "app": "yrkesskade-saksbehandling-backend",
       "namespace": "yrkesskade",
-      "cluster": "prod-gcp"
+      "cluster": "prod-gcp",
+      "roles": ["tema_yrk"]
     },
     {
       "app": "yrkesskade-uttrekk",
