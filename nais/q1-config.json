@@ -249,7 +249,7 @@
       "roles": ["tema_far"]
     },
     {
-      "app": "dokdistdpv",
+      "app": "dokdistdpv-q1",
       "namespace": "teamdokumenthandtering",
       "cluster": "dev-fss"
     },
