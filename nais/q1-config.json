@@ -500,6 +500,11 @@
       "namespace": "okonomi",
       "cluster": "dev-fss",
       "roles": ["tema_sto"]
+    },
+    {
+      "app": "spinosaurus",
+      "namespace": "helsearbeidsgiver",
+      "cluster": "dev-gcp"
     }
   ]
 }
