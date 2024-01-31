@@ -35,20 +35,20 @@ public class Pep4Impl extends Pep<TilgangJournalpost> {
 	}
 
 	@Override
-	public XacmlResponse verifyAbacPdpDecision(TilgangJournalpost ressurs, SafRequestContext safRequestContext) {
+	public AbacAnswer verifyAbacPdpDecision(TilgangJournalpost ressurs, SafRequestContext safRequestContext) {
 		if (ressurs == null) {
 			log.warn("Pep4 mangler tilstrekkelig datagrunnlag for å kunne gjennomføre tilgangskontroll.");
-			return XacmlResponse.deny();
+			return AbacAnswer.deny(AbacAnswer.AbacDenyReasonCode.UKJENT);
 		}
 
 		if (isJournalpoststatusUtgaar(ressurs) || isSkjermingPresent(ressurs)) {
 			return hasJournalpostAccess(safRequestContext, ressurs);
 		} else {
-			return XacmlResponse.permit();
+			return AbacAnswer.permit();
 		}
 	}
 
-	private XacmlResponse hasJournalpostAccess(SafRequestContext safRequestContext, TilgangJournalpost ressurs) {
+	private AbacAnswer hasJournalpostAccess(SafRequestContext safRequestContext, TilgangJournalpost ressurs) {
 		XacmlRequest request = SafXacmlRequestFactory.create(safRequestContext.getSecurityContext());
 		request.resource(RESOURCE_FELLES_RESOURCE_TYPE, RESOURCE_SAF_JOURNAL_METADATA);
 
@@ -63,12 +63,17 @@ public class Pep4Impl extends Pep<TilgangJournalpost> {
 		XacmlResponse response = abacService.evaluate(request);
 		traceLogPepFinished(PEP4, ressurs);
 
-		return response;
+		return mapXacmlResponse(response);
 	}
 
 	@Override
 	public AbacAnswer verifyAzureClientCredentialFlowAccess(TilgangJournalpost ressurs, SafRequestContext safRequestContext) {
 		return permit();
+	}
+
+	@Override
+	AbacAnswer.AbacDenyReasonCode translateToDenyReasonCode(XacmlResponse xacmlResponse) {
+		return AbacAnswer.AbacDenyReasonCode.JOURNALSTATUS;
 	}
 
 	private boolean isJournalpoststatusUtgaar(TilgangJournalpost ressurs) {

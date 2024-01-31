@@ -30,6 +30,7 @@ import no.nav.saf.domain.visningsmodell.Sak;
 import no.nav.saf.domain.visningsmodell.Tilleggsopplysning;
 import no.nav.saf.domain.visningsmodell.Utsendingsinfo;
 import no.nav.saf.tilgangskontroll.RequestCache;
+import no.nav.saf.tilgangskontroll.pep.AbacAnswer;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -415,6 +416,7 @@ public class JournalpostDtoMapper {
 	}
 
 	private boolean getCachedDecision(RequestCache requestCache, String tilgangKey) {
-		return requestCache.getObject(tilgangKey) == null ? false : requestCache.getObject(tilgangKey);
+		AbacAnswer abacAnswer = requestCache.getObject(tilgangKey);
+		return abacAnswer != null && abacAnswer.isPermit();
 	}
 }

@@ -1,5 +1,7 @@
 package no.nav.saf.tilgangskontroll;
 
+import no.nav.saf.tilgangskontroll.pep.AbacAnswer;
+
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 

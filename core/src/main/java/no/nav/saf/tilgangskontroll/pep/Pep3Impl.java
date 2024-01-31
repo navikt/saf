@@ -21,6 +21,7 @@ import static no.nav.saf.domain.kode.Tema.FAR;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_PERSON_FNR;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_RESOURCE_TYPE;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_SAF_TREDJEPART;
+import static no.nav.saf.tilgangskontroll.abac.dto.response.AdviceStringUtil.getAdvicesMap;
 import static no.nav.saf.tilgangskontroll.pep.AbacAnswer.permit;
 
 /**
@@ -42,13 +43,13 @@ public class Pep3Impl extends Pep<TilgangSak> {
 	}
 
 	@Override
-	public XacmlResponse verifyAbacPdpDecision(TilgangSak ressurs, SafRequestContext safRequestContext) {
+	public AbacAnswer verifyAbacPdpDecision(TilgangSak ressurs, SafRequestContext safRequestContext) {
 
 		if (ressurs != null && RELEVANTE_TEMA.contains(ressurs.getTema()) && FAGSAKSYSTEM_BISYS.equals(ressurs.getFagsaksystem())) {
 
 			if (ressurs.getRelevanteTredjeparter() == null || ressurs.getRelevanteTredjeparter().isEmpty()) {
 				log.info("Pep3(relevante-parter) har ingen relevante parter. Tilgang gis.");
-				return XacmlResponse.permit();
+				return AbacAnswer.permit();
 			}
 
 			List<TilgangRelevantTredjepart> relevantTredjeparter = ressurs.getRelevanteTredjeparter();
@@ -62,13 +63,28 @@ public class Pep3Impl extends Pep<TilgangSak> {
 			XacmlResponse response = abacService.evaluate(request);
 			traceLogPepFinished(PEP3, ressurs);
 
-			return response;
+			return mapXacmlResponse(response);
 		}
-		return XacmlResponse.permit();
+		return AbacAnswer.permit();
 	}
 
 	@Override
 	public AbacAnswer verifyAzureClientCredentialFlowAccess(TilgangSak ressurs, SafRequestContext safRequestContext) {
 		return permit();
+	}
+
+	@Override
+	AbacAnswer.AbacDenyReasonCode translateToDenyReasonCode(XacmlResponse xacmlResponse) {
+		var adviceMap = getAdvicesMap(xacmlResponse.getAdvices());
+		return switch ((adviceMap.get("deny_policy") + ":" + adviceMap.get("deny_rule")).toLowerCase()) {
+			// subset av statuser; dette er alle som kan mappes ut i pep3
+			case "adressebeskyttelse_fortrolig_adresse:fortrolig_adresse_nok" ->
+					AbacAnswer.AbacDenyReasonCode.FORTROLIG_ADRESSE;
+			case "adressebeskyttelse_strengt_fortrolig_adresse:strengt_fortrolig_adresse_nok" ->
+					AbacAnswer.AbacDenyReasonCode.STRENGT_FORTROLIG_ADRESSE;
+			case "adressebeskyttelse_strengt_fortrolig_adresse_utland:strengt_fortrolig_adresse_utland_nok" ->
+					AbacAnswer.AbacDenyReasonCode.STRENGT_FORTROLIG_ADRESSE_UTLAND;
+			default -> AbacAnswer.AbacDenyReasonCode.UKJENT;
+		};
 	}
 }

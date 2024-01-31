@@ -41,6 +41,7 @@ import no.nav.saf.domain.visningsmodell.Sak;
 import no.nav.saf.domain.visningsmodell.Tilleggsopplysning;
 import no.nav.saf.domain.visningsmodell.Utsendingsinfo;
 import no.nav.saf.tilgangskontroll.RequestCache;
+import no.nav.saf.tilgangskontroll.pep.AbacAnswer;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -494,6 +495,7 @@ public class ArkivJournalpostMapper {
 	}
 
 	private static boolean getCachedDecision(RequestCache requestCache, String tilgangKey) {
-		return requestCache.getObject(tilgangKey) == null ? false : requestCache.getObject(tilgangKey);
+		AbacAnswer abacAnswer = requestCache.getObject(tilgangKey);
+		return abacAnswer != null && abacAnswer.isPermit();
 	}
 }

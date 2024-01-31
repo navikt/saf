@@ -15,7 +15,7 @@ import static no.nav.saf.domain.kode.Tema.KTA;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_RESOURCE_TYPE;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_TEMA;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_SAF_SAK_JP_METADATA;
-import static no.nav.saf.tilgangskontroll.pep.AbacAnswer.deny;
+import static no.nav.saf.tilgangskontroll.pep.AbacAnswer.AbacDenyReasonCode.UKJENT;
 import static no.nav.saf.tilgangskontroll.pep.AbacAnswer.permit;
 
 /**
@@ -35,10 +35,10 @@ public class Pep2Impl extends Pep<TilgangSak> {
 	}
 
 	@Override
-	public XacmlResponse verifyAbacPdpDecision(TilgangSak ressurs, SafRequestContext safRequestContext) {
+	public AbacAnswer verifyAbacPdpDecision(TilgangSak ressurs, SafRequestContext safRequestContext) {
 		if (ressurs == null) {
 			log.error("Pep2 (tema FAR eller KTA) mangler data om journalposten. Den må ha tema for å gjøre tilgangskontroll. Dette er forårsaket av en teknisk feil");
-			return XacmlResponse.deny();
+			return AbacAnswer.deny(UKJENT);
 		}
 
 		if (isFarskap(ressurs) || isKontrollAnmeldelse(ressurs)) {
@@ -50,10 +50,10 @@ public class Pep2Impl extends Pep<TilgangSak> {
 			XacmlResponse response = abacService.evaluate(request);
 			traceLogPepFinished(PEP2, ressurs);
 
-			return response;
+			return mapXacmlResponse(response);
 
 		} else {
-			return XacmlResponse.permit();
+			return AbacAnswer.permit();
 		}
 	}
 
@@ -61,24 +61,31 @@ public class Pep2Impl extends Pep<TilgangSak> {
 	public AbacAnswer verifyAzureClientCredentialFlowAccess(TilgangSak ressurs, SafRequestContext safRequestContext) {
 		if (ressurs == null) {
 			log.error("Pep2 (tema FAR eller KTA) mangler data om journalposten. Den må ha tema for å gjøre tilgangskontroll. Dette er forårsaket av en teknisk feil");
-			return deny(AbacAnswer.AbacDenyReason.builder()
+			return AbacAnswer.deny(AbacAnswer.AbacDenyReason.builder()
 					.cause("ingen_tilgang_sensitive_tema").policy("saf_pep2").rule("mangler_tema")
 					.build());
 		}
 		String tema = ressurs.getTema().name().toLowerCase();
 		if (isFarskap(ressurs)) {
 			return safRequestContext.getSecurityContext().hasTemaAureRole(tema) ?
-					permit() : deny(AbacAnswer.AbacDenyReason.builder()
+					permit() : AbacAnswer.deny(AbacAnswer.AbacDenyReason.builder()
+							.abacDenyReasonCode(AbacAnswer.AbacDenyReasonCode.TEMA)
 					.cause("ingen_tilgang_farskap").policy("saf_pep2").rule("clientid_mangler_far_rolle")
 					.build());
 		} else if (isKontrollAnmeldelse(ressurs)) {
 			return safRequestContext.getSecurityContext().hasTemaAureRole(tema) ?
-					permit() : deny(AbacAnswer.AbacDenyReason.builder()
+					permit() : AbacAnswer.deny(AbacAnswer.AbacDenyReason.builder()
+					.abacDenyReasonCode(AbacAnswer.AbacDenyReasonCode.TEMA)
 					.cause("ingen_tilgang_kontroll_anmeldelse").policy("saf_pep2").rule("clientid_mangler_kta_rolle")
 					.build());
 		} else {
 			return permit();
 		}
+	}
+
+	@Override
+	AbacAnswer.AbacDenyReasonCode translateToDenyReasonCode(XacmlResponse xacmlResponse) {
+		return AbacAnswer.AbacDenyReasonCode.TEMA; // eventuelt: egen reason code for forvaltningsloven §19
 	}
 
 	private boolean isFarskap(TilgangSak ressurs) {

@@ -16,11 +16,6 @@ import static graphql.ErrorType.DataFetchingException;
 public class SafFunctionalException extends RuntimeException implements GraphQLError {
 	private final HttpStatusCode httpStatusCode;
 
-	public SafFunctionalException() {
-		super();
-		httpStatusCode = null;
-	}
-
 	public SafFunctionalException(String message) {
 		super(message);
 		this.httpStatusCode = null;

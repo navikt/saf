@@ -7,11 +7,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 public class HentdokumentTilgangskontrollException extends SafFunctionalException {
 	private final String denyReason;
 
-	public HentdokumentTilgangskontrollException(String message) {
-		super(message);
-		this.denyReason = null;
-	}
-
+	// må kanskje ha inn en enum her feks.
 	public HentdokumentTilgangskontrollException(String message, String denyReason) {
 		super("Avvist av SAF tilgangskontroll: " + message);
 		this.denyReason = denyReason;

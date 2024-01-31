@@ -8,7 +8,6 @@ import no.nav.saf.cache.RedisCacheConfig;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlRequest;
-import no.nav.saf.tilgangskontroll.abac.dto.response.Decision;
 import no.nav.saf.tilgangskontroll.abac.dto.response.XacmlResponse;
 import no.nav.saf.tilgangskontroll.abac.service.AbacService;
 import no.nav.saf.tilgangskontroll.pep.AbacAnswer.AbacDenyReason;
@@ -26,7 +25,9 @@ import static no.nav.saf.domain.DomainConstants.PEP2D;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_RESOURCE_TYPE;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_TEMA;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_SAF_SAK_DOKUMENT;
-import static no.nav.saf.tilgangskontroll.pep.AbacAnswer.deny;
+import static no.nav.saf.tilgangskontroll.abac.dto.response.AdviceStringUtil.getAdvicesMap;
+import static no.nav.saf.tilgangskontroll.pep.AbacAnswer.AbacDenyReasonCode.TEMA;
+import static no.nav.saf.tilgangskontroll.pep.AbacAnswer.AbacDenyReasonCode.UKJENT;
 import static no.nav.saf.tilgangskontroll.pep.AbacAnswer.permit;
 
 /**
@@ -50,10 +51,10 @@ public class Pep2dImpl extends Pep<TilgangSak> {
 	}
 
 	@Override
-	public XacmlResponse verifyAbacPdpDecision(TilgangSak ressurs, SafRequestContext safRequestContext) {
+	public AbacAnswer verifyAbacPdpDecision(TilgangSak ressurs, SafRequestContext safRequestContext) {
 		if (ressurs == null || ressurs.getTema() == null) {
 			log.info("Pep2d(tema-tilgang) mangler data om sak. Tilgang gis likevel for at saksbehandler skal kunne knytte dokument til sak og bruker.");
-			return XacmlResponse.permit();
+			return AbacAnswer.permit();
 		}
 
 		traceLogPepStarted(PEP2D, ressurs);
@@ -63,15 +64,17 @@ public class Pep2dImpl extends Pep<TilgangSak> {
 		try {
 			XacmlResponse response = fetchXacmlResponse(ressurs, safRequestContext, tilgangKeyDistributedCaching);
 			if (response == null) {
-				return XacmlResponse.deny();
+				return AbacAnswer.deny(UKJENT); // ren teknisk feil
 			}
-			safRequestContext.getRequestCache().putObject(tilgangKeyLocalCaching, decide(response.getDecision()));
-			return response;
+			AbacAnswer abacAnswer = mapXacmlResponse(response);
+			safRequestContext.getRequestCache().putObject(tilgangKeyLocalCaching, abacAnswer);
+			return abacAnswer;
 		} catch (RedisSystemException | RedisException | PoolException | Cache.ValueRetrievalException | RedisConnectionFailureException e) {
 			// Ting skal fremdeles snurre selv om man ikke får kontakt med redis
 			XacmlResponse response = hasDokumentAccess(ressurs, safRequestContext);
-			safRequestContext.getRequestCache().putObject(tilgangKeyLocalCaching, decide(response.getDecision()));
-			return response;
+			AbacAnswer abacAnswer = mapXacmlResponse(response);
+			safRequestContext.getRequestCache().putObject(tilgangKeyLocalCaching, abacAnswer);
+			return abacAnswer;
 		} finally {
 			traceLogPepFinished(PEP2D, ressurs);
 		}
@@ -87,11 +90,23 @@ public class Pep2dImpl extends Pep<TilgangSak> {
 		String temakode = ressurs.getTema().name();
 		String tilgangKeyLocalCaching = KeyGeneratorLocalCaching.getKeyForPep2d(temakode);
 		boolean decision = safRequestContext.getSecurityContext().hasTemaAureRole(temakode.toLowerCase());
-		safRequestContext.getRequestCache().putObject(tilgangKeyLocalCaching, decision);
+		safRequestContext.getRequestCache().putObject(tilgangKeyLocalCaching, decision ? AbacAnswer.permit() : AbacAnswer.deny(TEMA));
 		traceLogPepFinished(PEP2D, ressurs);
-		return decision ? permit() : deny(AbacDenyReason.builder()
+		return decision ? permit() : AbacAnswer.deny(AbacDenyReason.builder()
+				.abacDenyReasonCode(AbacAnswer.AbacDenyReasonCode.TEMA)  //  eller teknisk feil?
 				.cause("ingen_tema_tilgang").policy("saf_pep2d").rule("clientid_mangler_tema_role")
 				.build());
+	}
+
+	@Override
+	AbacAnswer.AbacDenyReasonCode translateToDenyReasonCode(XacmlResponse xacmlResponse) {
+		// subset av statuser; dette er alle som kan mappes ut i pep1g
+		var adviceMap = getAdvicesMap(xacmlResponse.getAdvices());
+		if ("fp4_geografi:ingen_tilgang_enhet"
+				.equalsIgnoreCase((adviceMap.get("deny_policy") + ":" + adviceMap.get("deny_rule")))) {
+			return AbacAnswer.AbacDenyReasonCode.GEOGRAFI;
+		}
+		return AbacAnswer.AbacDenyReasonCode.TEMA;
 	}
 
 	private XacmlResponse fetchXacmlResponse(TilgangSak ressurs, SafRequestContext safRequestContext, String tilgangKeyDistributedCaching) {
@@ -108,10 +123,6 @@ public class Pep2dImpl extends Pep<TilgangSak> {
 		} else {
 			return cachedResponse;
 		}
-	}
-
-	private boolean decide(Decision decision) {
-		return Decision.PERMIT.equals(decision);
 	}
 
 	private XacmlResponse hasDokumentAccess(TilgangSak ressurs, SafRequestContext safRequestContext) {

@@ -15,6 +15,7 @@ import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_PERSON_
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_PERSON_FNR;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_RESOURCE_TYPE;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_SAF_PERSON;
+import static no.nav.saf.tilgangskontroll.abac.dto.response.AdviceStringUtil.getAdvicesMap;
 import static no.nav.saf.tilgangskontroll.pep.AbacAnswer.permit;
 
 /**
@@ -40,10 +41,10 @@ public class Pep1gImpl extends Pep<TilgangBruker> {
 	}
 
 	@Override
-	public XacmlResponse verifyAbacPdpDecision(TilgangBruker ressurs, SafRequestContext safRequestContext) {
+	public AbacAnswer verifyAbacPdpDecision(TilgangBruker ressurs, SafRequestContext safRequestContext) {
 		if (ressurs == null || ressurs.isUkjent()) {
 			log.info("Pep1g(kode6/7, egen-ansatt, geografi) mangler data om bruker. Tilgang gis for å kunne identifisere bruker.");
-			return XacmlResponse.permit();
+			return AbacAnswer.permit();
 		} else if (ressurs.isOrganisasjon()) {
 			return verifyTilgangOrganisasjon(ressurs.getOrgnummer(), safRequestContext);
 		}
@@ -57,12 +58,12 @@ public class Pep1gImpl extends Pep<TilgangBruker> {
 			request.resource(RESOURCE_FELLES_PERSON_FNR, ressurs.getFoedselsnr());
 		} else {
 			log.error("Pep1g kunne ikke validere bruker fordi bruker ikke er en person. Denne tilstanden indikerer en teknisk feil.");
-			return XacmlResponse.deny();
+			return AbacAnswer.deny(AbacAnswer.AbacDenyReasonCode.UKJENT);
 		}
 		traceLogPepStarted(PEP1G, ressurs);
 		XacmlResponse response = abacService.evaluate(request);
 		traceLogPepFinished(PEP1G, ressurs);
-		return response;
+		return response.isPermit() ? AbacAnswer.permit() : AbacAnswer.deny(translateToDenyReasonCode(response));
 	}
 
 	@Override
@@ -70,22 +71,37 @@ public class Pep1gImpl extends Pep<TilgangBruker> {
 		if (ressurs == null) {
 			return permit();
 		} else if (ressurs.isOrganisasjon()) {
-			return mapXacmlResponse(verifyTilgangOrganisasjon(ressurs.getOrgnummer(), safRequestContext));
+			return verifyTilgangOrganisasjon(ressurs.getOrgnummer(), safRequestContext);
 		}
 		return permit();
 	}
 
-	private XacmlResponse verifyTilgangOrganisasjon(String organisasjonsnummer, SafRequestContext safRequestContext) {
+	@Override
+	AbacAnswer.AbacDenyReasonCode translateToDenyReasonCode(XacmlResponse xacmlResponse) {
+		var adviceMap = getAdvicesMap(xacmlResponse.getAdvices());
+		return switch ((adviceMap.get("deny_policy") + ":" + adviceMap.get("deny_rule")).toLowerCase()) {
+			case "skjermede_navansatte_og_familiemedlemmer:behandle_skjermede_navansatte_og_familiemedlemmer_mangler_gruppetilgang" -> AbacAnswer.AbacDenyReasonCode.EGEN_ANSATT;
+			case "fp4_geografi:ingen_tilgang_enhet" -> AbacAnswer.AbacDenyReasonCode.GEOGRAFI;
+			case "adressebeskyttelse_fortrolig_adresse:fortrolig_adresse_nok" -> AbacAnswer.AbacDenyReasonCode.FORTROLIG_ADRESSE;
+			case "adressebeskyttelse_strengt_fortrolig_adresse:strengt_fortrolig_adresse_nok" -> AbacAnswer.AbacDenyReasonCode.STRENGT_FORTROLIG_ADRESSE;
+			case "adressebeskyttelse_strengt_fortrolig_adresse_utland:strengt_fortrolig_adresse_utland_nok" -> AbacAnswer.AbacDenyReasonCode.STRENGT_FORTROLIG_ADRESSE_UTLAND;
+			default -> AbacAnswer.AbacDenyReasonCode.UKJENT;
+		};
+	}
+
+
+	private AbacAnswer verifyTilgangOrganisasjon(String organisasjonsnummer, SafRequestContext safRequestContext) {
 		if (!safRequestContext.isUserIdNavAnsatt()) {
-			return XacmlResponse.permit();
+			return AbacAnswer.permit();
 		}
 		if (navOrgService.isOrganisasjonsnummerNavBedrift(organisasjonsnummer)) {
 			log.info("Pep1g organisasjonsnummer={} er en NAV Organisasjon. Undersøker om NAV ansatt har tilgang.", organisasjonsnummer);
 			if (navOrgService.isNavIdentInEgenAnsattGroup(safRequestContext.getUserId())) {
-				return XacmlResponse.permit();
+				return AbacAnswer.permit();
 			}
-			return XacmlResponse.denyWithInfo(ORGANISASJON_ER_NAV_STAT_KREVER_EGEN_ANSATT_TILGANG);
+			// return AbacAnswer.denyWithInfo(ORGANISASJON_ER_NAV_STAT_KREVER_EGEN_ANSATT_TILGANG);
+			return AbacAnswer.deny(AbacAnswer.AbacDenyReasonCode.ORGNR_NAV_STAT);
 		}
-		return XacmlResponse.permit();
+		return AbacAnswer.permit();
 	}
 }

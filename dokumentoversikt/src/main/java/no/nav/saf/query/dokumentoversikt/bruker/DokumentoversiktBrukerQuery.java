@@ -95,6 +95,7 @@ class DokumentoversiktBrukerQuery {
 
 		AbacAnswer pep1gAnswer = this.pep1g.hasAccessWithAnswer(tilgangBruker, safRequestContext);
 		if (pep1gAnswer.isDeny()) {
+			// må ha bedre reason her
 			throw GraphQLException.of(FORBIDDEN, environment, createPep1gDenyReasonDokumentoversikt(safRequestContext, pep1gAnswer), Dokumentoversikt.empty());
 		}
 

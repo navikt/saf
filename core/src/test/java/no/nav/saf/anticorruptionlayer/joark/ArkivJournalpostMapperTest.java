@@ -30,6 +30,7 @@ import no.nav.saf.domain.visningsmodell.RelevantDato;
 import no.nav.saf.domain.visningsmodell.Tilleggsopplysning;
 import no.nav.saf.domain.visningsmodell.Utsendingsinfo;
 import no.nav.saf.tilgangskontroll.RequestCache;
+import no.nav.saf.tilgangskontroll.pep.AbacAnswer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
@@ -234,7 +235,7 @@ class ArkivJournalpostMapperTest {
 		ArkivJournalpost arkivJournalpost = notatArkivJournalpost();
 		RequestCache requestCache = createTilgangBrukerRequestCache();
 		String tilgangKeyPep5LocalCaching = KeyGeneratorLocalCaching.getKeyForPep5(String.valueOf(ARKIVJOURNALPOST_JOURNALPOST_ID), String.valueOf(ARKIVDOKUMENTINFO_DOKUMENT_INFO_ID));
-		requestCache.putObject(tilgangKeyPep5LocalCaching, true);
+		requestCache.putObject(tilgangKeyPep5LocalCaching, AbacAnswer.permit());
 
 		Journalpost journalpost = mapJournalpost(arkivJournalpost, requestCache);
 
@@ -255,7 +256,7 @@ class ArkivJournalpostMapperTest {
 		ArkivJournalpost arkivJournalpost = inngaaendeArkivJournalpost();
 		RequestCache requestCache = createTilgangBrukerRequestCache();
 		String tilgangKeyPep5LocalCaching = KeyGeneratorLocalCaching.getKeyForPep5(String.valueOf(ARKIVJOURNALPOST_JOURNALPOST_ID), String.valueOf(ARKIVDOKUMENTINFO_DOKUMENT_INFO_ID));
-		requestCache.putObject(tilgangKeyPep5LocalCaching, false);
+		requestCache.putObject(tilgangKeyPep5LocalCaching, AbacAnswer.deny(AbacAnswer.AbacDenyReasonCode.UKJENT));
 
 		Journalpost journalpost = mapJournalpost(arkivJournalpost, requestCache);
 
@@ -377,11 +378,11 @@ class ArkivJournalpostMapperTest {
 		String tilgangKeyPep7dLocalCaching = KeyGeneratorLocalCaching.getKeyForPep7d(FagsystemCode.toSafArkivsaksystem(arkivJournalpost.saksrelasjon().fagsystem()), arkivJournalpost.saksrelasjon().sakId().toString());
 
 		RequestCache requestCache = createTilgangBrukerRequestCachePSAK();
-		requestCache.putObject(tilgangKeyPep2dLocalCaching, true);
-		requestCache.putObject(tilgangKeyPep5LocalCaching, true);
-		requestCache.putObject(tilgangKeyPep6dLocalCachingVariantArkiv, true);
-		requestCache.putObject(tilgangKeyPep6dLocalCachingVariantSladdet, false);
-		requestCache.putObject(tilgangKeyPep7dLocalCaching, true);
+		requestCache.putObject(tilgangKeyPep2dLocalCaching, AbacAnswer.permit());
+		requestCache.putObject(tilgangKeyPep5LocalCaching, AbacAnswer.permit());
+		requestCache.putObject(tilgangKeyPep6dLocalCachingVariantArkiv, AbacAnswer.permit());
+		requestCache.putObject(tilgangKeyPep6dLocalCachingVariantSladdet, AbacAnswer.deny(AbacAnswer.AbacDenyReasonCode.UKJENT));
+		requestCache.putObject(tilgangKeyPep7dLocalCaching, AbacAnswer.permit());
 
 		Journalpost journalpost = mapJournalpost(arkivJournalpost, requestCache);
 
@@ -408,9 +409,9 @@ class ArkivJournalpostMapperTest {
 						.name(), null);
 
 		RequestCache requestCache = new RequestCache();
-		requestCache.putObject(tilgangKeyPep5LocalCaching, true);
-		requestCache.putObject(tilgangKeyPep6dLocalCachingVariantArkiv, true);
-		requestCache.putObject(tilgangKeyPep6dLocalCachingVariantSladdet, true);
+		requestCache.putObject(tilgangKeyPep5LocalCaching, AbacAnswer.permit());
+		requestCache.putObject(tilgangKeyPep6dLocalCachingVariantArkiv, AbacAnswer.permit());
+		requestCache.putObject(tilgangKeyPep6dLocalCachingVariantSladdet, AbacAnswer.permit());
 
 		Journalpost journalpost = mapJournalpost(arkivJournalpost, requestCache);
 
@@ -436,9 +437,9 @@ class ArkivJournalpostMapperTest {
 						.name(), null);
 
 		RequestCache requestCache = new RequestCache();
-		requestCache.putObject(tilgangKeyPep5LocalCaching, true);
-		requestCache.putObject(tilgangKeyPep6dLocalCachingVariantArkiv, true);
-		requestCache.putObject(tilgangKeyPep6dLocalCachingVariantSladdet, true);
+		requestCache.putObject(tilgangKeyPep5LocalCaching, AbacAnswer.permit());
+		requestCache.putObject(tilgangKeyPep6dLocalCachingVariantArkiv, AbacAnswer.permit());
+		requestCache.putObject(tilgangKeyPep6dLocalCachingVariantSladdet, AbacAnswer.permit());
 
 		Journalpost journalpost = mapJournalpost(arkivJournalpost, requestCache);
 
@@ -466,9 +467,9 @@ class ArkivJournalpostMapperTest {
 						.name(), null);
 
 		RequestCache requestCache = new RequestCache();
-		requestCache.putObject(tilgangKeyPep5LocalCaching, true);
-		requestCache.putObject(tilgangKeyPep6dLocalCachingVariantArkiv, true);
-		requestCache.putObject(tilgangKeyPep6dLocalCachingVariantSladdet, true);
+		requestCache.putObject(tilgangKeyPep5LocalCaching, AbacAnswer.permit());
+		requestCache.putObject(tilgangKeyPep6dLocalCachingVariantArkiv, AbacAnswer.permit());
+		requestCache.putObject(tilgangKeyPep6dLocalCachingVariantSladdet, AbacAnswer.permit());
 
 		Journalpost journalpost = mapJournalpost(arkivJournalpost, requestCache);
 
@@ -631,7 +632,7 @@ class ArkivJournalpostMapperTest {
 	private RequestCache pep5RequestCache() {
 		RequestCache requestCache = createArkivsakCacheRequestCache();
 		String tilgangKeyPep5LocalCaching = KeyGeneratorLocalCaching.getKeyForPep5(String.valueOf(ARKIVJOURNALPOST_JOURNALPOST_ID), String.valueOf(ARKIVDOKUMENTINFO_DOKUMENT_INFO_ID));
-		requestCache.putObject(tilgangKeyPep5LocalCaching, true);
+		requestCache.putObject(tilgangKeyPep5LocalCaching, AbacAnswer.permit());
 		return requestCache;
 	}
 
