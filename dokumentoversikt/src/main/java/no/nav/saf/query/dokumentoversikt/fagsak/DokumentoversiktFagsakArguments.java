@@ -10,9 +10,6 @@ import no.nav.saf.tjeneste.argumenter.FagsakInput;
 
 import java.util.Map;
 
-/**
- * @author Joakim Bjørnstad, Jbit AS
- */
 @Value
 @EqualsAndHashCode(callSuper = true)
 public class DokumentoversiktFagsakArguments extends AbstractDokumentoversiktArguments {

@@ -6,9 +6,6 @@ import no.nav.saf.domain.kode.Tema;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @author Joakim Bjørnstad, Jbit AS
- */
 public interface GsakAntiCorruptionLayer {
 
 	List<Arkivsak> findArkivsakerByAktoerId(List<String> aktoerIder, List<Tema> tema);

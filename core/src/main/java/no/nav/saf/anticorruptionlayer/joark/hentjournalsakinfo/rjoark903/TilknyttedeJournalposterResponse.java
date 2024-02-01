@@ -7,9 +7,6 @@ import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.dto.JournalpostDt
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author Joakim Bjørnstad, Jbit AS
- */
 @Value
 public class TilknyttedeJournalposterResponse {
 	private final List<JournalpostDto> tilknyttedeJournalposter;

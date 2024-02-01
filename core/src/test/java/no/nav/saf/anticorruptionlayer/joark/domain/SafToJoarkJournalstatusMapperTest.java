@@ -1,9 +1,5 @@
 package no.nav.saf.anticorruptionlayer.joark.domain;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.hamcrest.Matchers.hasSize;
-
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.JournalStatusCode;
 import no.nav.saf.domain.kode.Journalstatus;
 import org.junit.jupiter.api.Test;
@@ -11,9 +7,10 @@ import org.junit.jupiter.api.Test;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * @author Joakim Bjørnstad, Jbit AS
- */
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.hasSize;
+
 class SafToJoarkJournalstatusMapperTest {
 	private final SafToJoarkJournalstatusMapper mapper = new SafToJoarkJournalstatusMapper();
 

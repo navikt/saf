@@ -7,9 +7,6 @@ import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.dto.SaksrelasjonD
 import no.nav.saf.domain.Arkivsak;
 import org.springframework.stereotype.Component;
 
-/**
- * @author Erik Bråten, Visma Consulting
- */
 @Component
 public class ArkivsakMapper {
 

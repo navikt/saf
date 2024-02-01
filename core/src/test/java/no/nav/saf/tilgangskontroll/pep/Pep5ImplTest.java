@@ -1,5 +1,14 @@
 package no.nav.saf.tilgangskontroll.pep;
 
+import no.nav.saf.domain.tilgangsmodell.TilgangDokumentInfo;
+import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlAttribute;
+import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlRequest;
+import no.nav.saf.tilgangskontroll.abac.dto.response.Decision;
+import no.nav.saf.tilgangskontroll.abac.dto.response.XacmlResponse;
+import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.InjectMocks;
+
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_RESOURCE_TYPE;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_SAF_DOKUMENT_METADATA;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_SAF_SKJERMING;
@@ -11,18 +20,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import no.nav.saf.domain.tilgangsmodell.TilgangDokumentInfo;
-import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlAttribute;
-import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlRequest;
-import no.nav.saf.tilgangskontroll.abac.dto.response.Decision;
-import no.nav.saf.tilgangskontroll.abac.dto.response.XacmlResponse;
-import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
-
-/**
- * @author Sigurd Midttun, Visma Consulting.
- */
 class Pep5ImplTest extends AbstractPepTest {
 
 	@InjectMocks

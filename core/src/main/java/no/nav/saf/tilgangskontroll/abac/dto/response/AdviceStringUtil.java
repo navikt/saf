@@ -1,13 +1,10 @@
 package no.nav.saf.tilgangskontroll.abac.dto.response;
 
-import static org.apache.commons.lang3.StringUtils.substringAfterLast;
-
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * @author Joakim Bjørnstad, Jbit AS
- */
+import static org.apache.commons.lang3.StringUtils.substringAfterLast;
+
 public final class AdviceStringUtil {
 	private static final String ADVICE_SEPERATOR = ".";
 	private static final String BLANK = "";

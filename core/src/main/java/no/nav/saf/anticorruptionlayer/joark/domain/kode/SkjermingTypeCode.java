@@ -4,8 +4,6 @@ import no.nav.saf.domain.kode.Skjerming;
 
 /**
  * Enum for codes in T_K_BEGRENSNING_TYPE.
- *
- * @author Ketill Fenne, Visma Consulting
  */
 public enum SkjermingTypeCode {
 	/**

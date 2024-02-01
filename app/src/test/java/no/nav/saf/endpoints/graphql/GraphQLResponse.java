@@ -5,9 +5,6 @@ import lombok.Data;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @author Joakim Bjørnstad, Jbit AS
- */
 @Data
 public class GraphQLResponse {
 	private Map<String, Object> data;

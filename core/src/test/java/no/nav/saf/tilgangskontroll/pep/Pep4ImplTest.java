@@ -1,5 +1,15 @@
 package no.nav.saf.tilgangskontroll.pep;
 
+import no.nav.saf.domain.kode.Journalstatus;
+import no.nav.saf.domain.tilgangsmodell.TilgangJournalpost;
+import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlAttribute;
+import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlRequest;
+import no.nav.saf.tilgangskontroll.abac.dto.response.Decision;
+import no.nav.saf.tilgangskontroll.abac.dto.response.XacmlResponse;
+import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.InjectMocks;
+
 import static no.nav.saf.domain.DomainConstants.ABAC_JOURNALSTATUS_UTGAAR;
 import static no.nav.saf.domain.kode.Journalstatus.FERDIGSTILT;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_RESOURCE_TYPE;
@@ -14,19 +24,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import no.nav.saf.domain.kode.Journalstatus;
-import no.nav.saf.domain.tilgangsmodell.TilgangJournalpost;
-import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlAttribute;
-import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlRequest;
-import no.nav.saf.tilgangskontroll.abac.dto.response.Decision;
-import no.nav.saf.tilgangskontroll.abac.dto.response.XacmlResponse;
-import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
-
-/**
- * @author Joakim Bjørnstad, Jbit AS
- */
 class Pep4ImplTest extends AbstractPepTest {
 
 	@InjectMocks

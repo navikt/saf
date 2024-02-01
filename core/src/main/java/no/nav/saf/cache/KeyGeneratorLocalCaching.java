@@ -3,8 +3,6 @@ package no.nav.saf.cache;
 import no.nav.saf.domain.kode.Arkivsakssystem;
 
 /**
- * @author Sigurd Midttun, Visma Consulting.
- * <p>
  * Nøklene genereres med følgende format: key = "ressurs:*ressurs*" + "unik_id_for_lokal_caching"
  */
 public final class KeyGeneratorLocalCaching extends AbstractKeyGeneratorCaching {

@@ -4,9 +4,6 @@ import lombok.Builder;
 import lombok.Value;
 import org.springframework.http.MediaType;
 
-/**
- * @author Sigurd Midttun, Visma Consulting.
- */
 @Value
 @Builder
 public class HentDokument {

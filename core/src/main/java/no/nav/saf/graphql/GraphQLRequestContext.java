@@ -5,9 +5,6 @@ import lombok.ToString;
 import lombok.Value;
 import no.nav.security.token.support.core.context.TokenValidationContext;
 
-/**
- * @author Joakim Bjørnstad, Jbit AS
- */
 @Value
 @Builder
 public class GraphQLRequestContext {

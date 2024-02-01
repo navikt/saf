@@ -7,9 +7,6 @@ import no.nav.saf.anticorruptionlayer.joark.domain.kode.FagsystemCode;
 
 import java.time.OffsetDateTime;
 
-/**
- * @author Joakim Bjørnstad, Jbit AS
- */
 @Data
 @Builder
 @AllArgsConstructor

@@ -27,9 +27,6 @@ import java.util.stream.Collectors;
 import static no.nav.saf.domain.kode.Journalstatus.FEILREGISTRERT;
 import static no.nav.saf.util.MDCUtility.addMdcData;
 
-/**
- * @author Joakim Bjørnstad, Jbit AS
- */
 @Component
 class DokumentoversiktFagsakQuery {
 

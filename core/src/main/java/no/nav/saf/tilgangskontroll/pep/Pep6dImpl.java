@@ -32,8 +32,6 @@ import static no.nav.saf.tilgangskontroll.pep.AbacAnswer.permit;
  * Dekker følgende policies i saf:
  * <p>
  * Lokal caching er kun relevant for dokumentoversiktene og brukes i journalpostDtoMapper.java
- *
- * @author Joakim Bjørnstad, Jbit AS
  */
 @Slf4j
 @Component(PEP6D)

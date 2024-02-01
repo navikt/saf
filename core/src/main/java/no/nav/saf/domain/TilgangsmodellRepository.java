@@ -10,9 +10,6 @@ import no.nav.saf.tilgangskontroll.SafRequestContext;
 import java.time.LocalDate;
 import java.util.List;
 
-/**
- * @author Joakim Bjørnstad, Jbit AS
- */
 public interface TilgangsmodellRepository {
 	List<TilgangJournalpost> findTilgangJournalposter(List<TilgangBruker> tilgangBrukere,
 													  List<TilgangSak> tilgangSakList,

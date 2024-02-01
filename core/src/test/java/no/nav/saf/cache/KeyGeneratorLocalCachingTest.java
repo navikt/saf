@@ -1,5 +1,7 @@
 package no.nav.saf.cache;
 
+import org.junit.jupiter.api.Test;
+
 import static no.nav.saf.cache.AbstractKeyGeneratorCaching.ARKIVSAKSNUMMER;
 import static no.nav.saf.cache.AbstractKeyGeneratorCaching.ARKIVSAKSSYSTEM;
 import static no.nav.saf.cache.AbstractKeyGeneratorCaching.DOKUMENTINFO_ID;
@@ -18,11 +20,6 @@ import static no.nav.saf.cache.KeyGeneratorLocalCaching.getKeyForPep7d;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 
-import org.junit.jupiter.api.Test;
-
-/**
- * @author Sigurd Midttun, Visma Consulting.
- */
 class KeyGeneratorLocalCachingTest extends AbstractKeyGeneratorCachingTest {
 
 	@Test

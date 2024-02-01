@@ -3,9 +3,6 @@ package no.nav.saf.tilgangskontroll;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-/**
- * @author Joakim Bjørnstad, Jbit AS
- */
 public class RequestCache {
 	private final Map<String, Object> holder = new ConcurrentHashMap<>(300);
 

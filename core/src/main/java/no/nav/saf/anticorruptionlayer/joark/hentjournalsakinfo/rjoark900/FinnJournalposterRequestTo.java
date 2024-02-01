@@ -7,9 +7,6 @@ import no.nav.saf.anticorruptionlayer.joark.domain.kode.JournalpostTypeCode;
 
 import java.util.List;
 
-/**
- * @author Joakim Bjørnstad, Jbit AS
- */
 @Data
 @Builder
 public class FinnJournalposterRequestTo {

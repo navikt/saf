@@ -8,9 +8,6 @@ import no.nav.saf.domain.visningsmodell.AvsenderMottakerIdType;
 
 import java.util.regex.Pattern;
 
-/**
- * @author Joakim Bjørnstad, Jbit AS
- */
 public class AvsenderMottakerMapper {
     private static final Pattern FNR_SIMPLE_REGEX = Pattern.compile("[0-7]\\d{10}");
 

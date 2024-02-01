@@ -7,9 +7,6 @@ import no.nav.saf.query.dokumentoversikt.arguments.AbstractDokumentoversiktArgum
 import no.nav.saf.query.dokumentoversikt.arguments.DokumentoversiktFilters;
 import no.nav.saf.query.dokumentoversikt.arguments.DokumentoversiktPagination;
 
-/**
- * @author Joakim Bjørnstad, Jbit AS
- */
 @Value
 @EqualsAndHashCode(callSuper = true)
 public class DokumentoversiktJournalstatusArguments extends AbstractDokumentoversiktArguments {

@@ -22,8 +22,6 @@ import static no.nav.saf.tilgangskontroll.pep.AbacAnswer.permit;
  * Dekker følgende policies i saf:
  * <p>
  * https://confluence.adeo.no/display/ABAC/Journalpoststatus
- *
- * @author Joakim Bjørnstad, Jbit AS
  */
 @Slf4j
 @Component(PEP4)

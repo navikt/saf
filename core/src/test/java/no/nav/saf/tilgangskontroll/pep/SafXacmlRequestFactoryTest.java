@@ -18,9 +18,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsIterableContaining.hasItem;
 import static org.mockito.Mockito.when;
 
-/**
- * @author Joakim Bjørnstad, Jbit AS
- */
 @ExtendWith(MockitoExtension.class)
 class SafXacmlRequestFactoryTest {
 

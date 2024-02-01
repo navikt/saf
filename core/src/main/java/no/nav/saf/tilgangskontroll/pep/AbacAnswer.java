@@ -8,8 +8,6 @@ import static no.nav.saf.tilgangskontroll.pep.AbacAnswer.AbacDecision.PERMIT;
 
 /**
  * Inneholder beslutningen til PEP.
- *
- * @author Joakim Bjørnstad, Jbit AS
  */
 @Value
 public class AbacAnswer {

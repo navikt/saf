@@ -41,9 +41,6 @@ import static no.nav.saf.domain.DomainConstants.TIDSSONE_NORGE;
 import static no.nav.saf.domain.kode.Arkivsakssystem.GSAK;
 import static no.nav.saf.domain.kode.Arkivsakssystem.PSAK;
 
-/**
- * @author Joakim Bjørnstad, Jbit AS
- */
 @Component
 class TilknyttedeJournalposterTilgangRepository {
 
