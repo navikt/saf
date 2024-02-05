@@ -21,9 +21,6 @@ import java.util.stream.Collectors;
 
 import static no.nav.saf.util.MDCUtility.addMdcData;
 
-/**
- * @author Joakim Bjørnstad, Jbit AS
- */
 @Component
 public class TilknyttedeJournalposterQuery {
 	private final TilknyttedeJournalposterTilgangRepository tilknyttedeJournalposterTilgangRepository;

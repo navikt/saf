@@ -3,10 +3,6 @@ package no.nav.saf.cache;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
-/**
- * @author Sigurd Midttun, Visma Consulting.
- */
-
 abstract class AbstractKeyGeneratorCaching {
 	static final String RESSURS = "ressurs";
 	static final String RESSURS_SAK_DOKUMENT = "sak_dokument";

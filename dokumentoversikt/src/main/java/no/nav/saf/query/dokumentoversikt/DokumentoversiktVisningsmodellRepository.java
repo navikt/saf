@@ -5,9 +5,6 @@ import no.nav.saf.tilgangskontroll.SafRequestContext;
 
 import java.util.List;
 
-/**
- * @author Joakim Bjørnstad, Jbit AS
- */
 public interface DokumentoversiktVisningsmodellRepository {
 	List<Journalpost> findJournalposter(List<String> journalpostIds,
 										SafRequestContext safRequestContext);

@@ -9,9 +9,6 @@ import no.nav.saf.domain.tilgangsmodell.TilgangRelevantTredjepart;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author Sigurd Midttun, Visma Consulting.
- */
 @Value
 @Builder
 @AllArgsConstructor

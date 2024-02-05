@@ -6,9 +6,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.SkjermingTypeCode;
 
-/**
- * @author Sigurd Midttun, Visma Consulting.
- */
 @Data
 @Builder
 @NoArgsConstructor

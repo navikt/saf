@@ -3,9 +3,6 @@ package no.nav.saf.domain.visningsmodell;
 import lombok.Builder;
 import lombok.Value;
 
-/**
- * @author Joakim Bjørnstad, Jbit AS
- */
 @Value
 @Builder
 public class AvsenderMottaker {

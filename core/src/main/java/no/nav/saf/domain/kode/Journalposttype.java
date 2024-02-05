@@ -3,9 +3,6 @@ package no.nav.saf.domain.kode;
 import java.util.Arrays;
 import java.util.List;
 
-/**
- * @author Ugur Alpay Cenar, Visma Consulting.
- */
 public enum Journalposttype {
 	I,
 	U,

@@ -35,8 +35,6 @@ import static no.nav.saf.tilgangskontroll.pep.AbacAnswer.permit;
  * https://confluence.adeo.no/pages/viewpage.action?pageId=313329243
  * <p>
  * Lokal caching er kun relevant for dokumentoversiktene og brukes i journalpostMapperDto.java
- *
- * @author Joakim Bjørnstad, Jbit AS
  */
 @Slf4j
 @Component(PEP2D)

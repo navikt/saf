@@ -23,9 +23,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-/**
- * @author Joakim Bjørnstad, Jbit AS
- */
 public class JournalpostDtoTestObjects {
 	static final String DOKUMENT_INFO_ID = "1234";
 	static final VariantFormatCode VARIANT_FORMAT_CODE_ARKIV = VariantFormatCode.ARKIV;

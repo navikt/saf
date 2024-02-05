@@ -2,9 +2,6 @@ package no.nav.saf.domain.visningsmodell;
 
 import lombok.Value;
 
-/**
- * @author Joakim Bjørnstad, Jbit AS
- */
 @Value
 public class SideInfo {
 	private static final SideInfo EMPTY_SIDE_INFO = new SideInfo(null, false, 0, 0);

@@ -1,8 +1,5 @@
 package no.nav.saf.domain.kode;
 
-/**
- * @author Joakim Bjørnstad, Jbit AS
- */
 public enum Kanal {
 	ALTINN("Altinn"),
 	EESSI("EESSI"),

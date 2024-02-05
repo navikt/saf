@@ -12,9 +12,6 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-/**
- * @author Erik Bråten, Visma Consulting
- */
 class ArkivsakMapperTest {
 
 	private static final long JOURNALPOST_ID = 123456789L;

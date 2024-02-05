@@ -13,9 +13,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-/**
- * @author Joakim Bjørnstad, Jbit AS
- */
 @Value
 public class DokumentoversiktFilters {
 	LocalDate fraDato;

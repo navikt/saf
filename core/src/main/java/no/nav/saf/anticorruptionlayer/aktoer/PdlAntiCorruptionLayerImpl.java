@@ -9,9 +9,6 @@ import java.util.List;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
-/**
- * @author Joakim Bjørnstad, Jbit AS
- */
 @Component
 class PdlAntiCorruptionLayerImpl implements PdlAntiCorruptionLayer {
 

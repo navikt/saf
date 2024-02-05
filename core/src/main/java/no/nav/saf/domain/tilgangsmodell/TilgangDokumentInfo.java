@@ -6,9 +6,6 @@ import no.nav.saf.domain.kode.Skjerming;
 
 import java.util.List;
 
-/**
- * @author Joakim Bjørnstad, Jbit AS
- */
 @Value
 @Builder
 public class TilgangDokumentInfo {

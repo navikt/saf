@@ -9,9 +9,6 @@ import no.nav.saf.tilgangskontroll.SafRequestContext;
 import java.util.Base64;
 import java.util.List;
 
-/**
- * @author Joakim Bjørnstad, Jbit AS
- */
 public class SideInfoMapper {
 	public SideInfo mapSideInfo(DokumentoversiktPagination.SeekPagination pagination, List<Journalpost> journalposter, SafRequestContext safRequestContext) {
 		if (journalposter.isEmpty()) {

@@ -8,8 +8,6 @@ import java.util.List;
 
 /**
  * Mapper fra saf sine journalstatuser til joark sine journalstatuser
- *
- * @author Joakim Bjørnstad, Jbit AS
  */
 public class SafToJoarkJournalstatusMapper {
 	public List<JournalStatusCode> map(List<Journalstatus> safJournalstatuser) {

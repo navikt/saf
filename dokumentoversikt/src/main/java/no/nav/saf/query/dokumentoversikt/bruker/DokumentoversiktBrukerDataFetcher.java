@@ -14,9 +14,6 @@ import org.springframework.stereotype.Component;
 import static no.nav.saf.graphql.ErrorCode.SERVER_ERROR;
 import static no.nav.saf.util.MDCUtility.addMdcData;
 
-/**
- * @author Joakim Bjørnstad, Jbit AS
- */
 @Slf4j
 @Component
 public class DokumentoversiktBrukerDataFetcher implements DataFetcher<DataFetcherResult<Dokumentoversikt>> {

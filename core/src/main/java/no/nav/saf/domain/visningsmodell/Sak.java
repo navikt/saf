@@ -8,9 +8,6 @@ import no.nav.saf.domain.kode.Tema;
 
 import java.time.LocalDateTime;
 
-/**
- * @author Joakim Bjørnstad, Jbit AS
- */
 @Value
 @Builder
 public class Sak {

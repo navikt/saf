@@ -1,9 +1,5 @@
 package no.nav.saf.tilgangskontroll.abac.service.advice;
 
-import static no.nav.saf.tilgangskontroll.abac.service.advice.AdviceTypes.ACTION_TILGANGSLOGG;
-import static no.nav.saf.tilgangskontroll.abac.service.advice.AdviceTypes.DENY_INFO;
-import static no.nav.saf.tilgangskontroll.abac.service.advice.AdviceTypes.DENY_REASON;
-
 import no.nav.saf.tilgangskontroll.AbacLogger;
 import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlRequest;
 import no.nav.saf.tilgangskontroll.abac.dto.response.Advice;
@@ -12,9 +8,10 @@ import no.nav.saf.tilgangskontroll.abac.dto.response.XacmlResponse;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
-/**
- * @author Sigurd Midttun, Visma Consulting.
- */
+import static no.nav.saf.tilgangskontroll.abac.service.advice.AdviceTypes.ACTION_TILGANGSLOGG;
+import static no.nav.saf.tilgangskontroll.abac.service.advice.AdviceTypes.DENY_INFO;
+import static no.nav.saf.tilgangskontroll.abac.service.advice.AdviceTypes.DENY_REASON;
+
 @Component
 public class ApplicationLoggingAdviceStrategy implements AdviceStrategy {
 

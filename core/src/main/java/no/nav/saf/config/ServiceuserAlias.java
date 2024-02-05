@@ -7,9 +7,6 @@ import lombok.ToString;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.validation.annotation.Validated;
 
-/**
- * @author Joakim Bjørnstad, Jbit AS
- */
 @Getter
 @Setter
 @ToString

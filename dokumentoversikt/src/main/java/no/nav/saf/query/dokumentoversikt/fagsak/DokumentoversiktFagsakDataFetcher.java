@@ -11,9 +11,6 @@ import org.springframework.stereotype.Component;
 
 import static no.nav.saf.util.MDCUtility.addMdcData;
 
-/**
- * @author Joakim Bjørnstad, Jbit AS
- */
 @Slf4j
 @Component
 public class DokumentoversiktFagsakDataFetcher implements DataFetcher<DataFetcherResult<Dokumentoversikt>> {

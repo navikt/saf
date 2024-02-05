@@ -2,9 +2,6 @@ package no.nav.saf.cache;
 
 import no.nav.saf.domain.kode.Arkivsakssystem;
 
-/**
- * @author Sigurd Midttun, Visma Consulting.
- */
 class AbstractKeyGeneratorCachingTest {
 
 	static final String SAKSBEHANDLER_ID_TEST = "saksbehandlerIdTest";

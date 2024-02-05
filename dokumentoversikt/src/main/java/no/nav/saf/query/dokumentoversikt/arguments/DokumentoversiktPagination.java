@@ -3,9 +3,6 @@ package no.nav.saf.query.dokumentoversikt.arguments;
 import graphql.schema.DataFetchingEnvironment;
 import lombok.Value;
 
-/**
- * @author Joakim Bjørnstad, Jbit AS
- */
 public final class DokumentoversiktPagination {
 	private DokumentoversiktPagination() {
 		// ingen instansiering

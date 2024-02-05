@@ -15,9 +15,6 @@ import java.util.List;
 
 import static no.nav.saf.util.MDCUtility.addMdcData;
 
-/**
- * @author Joakim Bjørnstad, Jbit AS
- */
 @Slf4j
 @Component
 public class TilknyttedeJournalposterDataFetcher implements DataFetcher<DataFetcherResult<List<Journalpost>>> {

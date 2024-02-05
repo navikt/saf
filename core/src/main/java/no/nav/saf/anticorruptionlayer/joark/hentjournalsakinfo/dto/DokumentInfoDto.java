@@ -10,9 +10,6 @@ import no.nav.saf.anticorruptionlayer.joark.domain.kode.SkjermingTypeCode;
 import java.util.Date;
 import java.util.List;
 
-/**
- * @author Joakim Bjørnstad, Jbit AS
- */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

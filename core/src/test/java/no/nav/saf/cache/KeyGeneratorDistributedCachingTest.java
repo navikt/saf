@@ -1,5 +1,7 @@
 package no.nav.saf.cache;
 
+import org.junit.jupiter.api.Test;
+
 import static no.nav.saf.cache.AbstractKeyGeneratorCaching.DOKUMENTINFO_ID;
 import static no.nav.saf.cache.AbstractKeyGeneratorCaching.JOURNALPOST_ID;
 import static no.nav.saf.cache.AbstractKeyGeneratorCaching.RESSURS;
@@ -14,11 +16,6 @@ import static no.nav.saf.cache.KeyGeneratorDistributedCaching.getKeyForPep6d;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 
-import org.junit.jupiter.api.Test;
-
-/**
- * @author Sigurd Midttun, Visma Consulting.
- */
 class KeyGeneratorDistributedCachingTest extends AbstractKeyGeneratorCachingTest {
 
 	@Test

@@ -9,9 +9,6 @@ import static no.nav.saf.tilgangskontroll.SafAttributter.ENVIRONMENT_FELLES_PEP_
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_DOMENE;
 import static no.nav.saf.tilgangskontroll.SafAttributter.XACML_1_0_ACTION_ACTION_ID;
 
-/**
- * @author Sigurd Midttun, Visma Consulting.
- */
 final class SafXacmlRequestFactory {
 
 	static final String ACTION_READ = "read";

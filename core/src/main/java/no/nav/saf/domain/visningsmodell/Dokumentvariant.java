@@ -5,9 +5,6 @@ import lombok.Value;
 import no.nav.saf.domain.kode.Skjerming;
 import no.nav.saf.domain.kode.Variantformat;
 
-/**
- * @author Joakim Bjørnstad, Jbit AS
- */
 @Value
 @Builder
 public class Dokumentvariant {

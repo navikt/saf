@@ -17,9 +17,6 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/**
- * @author Joakim Bjørnstad, Jbit AS
- */
 class AvsenderMottakerMapperTest {
     private final AvsenderMottakerMapper mapper = new AvsenderMottakerMapper();
 

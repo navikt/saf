@@ -21,9 +21,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * @author Joakim Bjørnstad, Jbit AS
- */
 @Repository
 @Slf4j
 public class TilgangsmodellRepositoryImpl implements TilgangsmodellRepository {

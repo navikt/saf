@@ -4,9 +4,6 @@ import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 
 import java.util.List;
 
-/**
- * @author Joakim Bjørnstad, Jbit AS
- */
 public interface PdlAntiCorruptionLayer {
 	TilgangBruker hentTilgangBrukerByAktoerId(String aktoerId);
 	TilgangBruker hentTilgangBrukerByFoedselsnummer(String foedselsnummer);
