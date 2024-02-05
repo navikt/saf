@@ -487,6 +487,11 @@
       "namespace": "tilleggsstonader",
       "cluster": "prod-gcp",
       "roles": ["tema_tso"]
+    },
+    {
+      "app": "spinosaurus",
+      "namespace": "helsearbeidsgiver",
+      "cluster": "prod-gcp"
     }
   ]
 }
