@@ -362,12 +362,6 @@
       "roles": ["tema_for"]
     },
     {
-      "app": "fpabakus",
-      "namespace": "teamforeldrepenger",
-      "cluster": "dev-fss",
-      "roles": ["tema_for"]
-    },
-    {
       "app": "fptilbake",
       "namespace": "teamforeldrepenger",
       "cluster": "dev-fss",
