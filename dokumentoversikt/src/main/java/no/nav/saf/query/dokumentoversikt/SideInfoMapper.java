@@ -27,7 +27,7 @@ public class SideInfoMapper {
 		if (sluttJournalpostId == null || sluttJournalpostId.isEmpty()) {
 			return SideInfo.empty();
 		}
-		JournalpostDto journalpostDto = safRequestContext.getRequestCache().getObject(sluttJournalpostId);
+		JournalpostDto journalpostDto = safRequestContext.getRequestCache().getJournalpost(sluttJournalpostId);
 		Long nextJournalpostId = journalpostDto.getNextJournalpostId();
 		return new SideInfo(
 				base64(sluttJournalpostId),
@@ -52,7 +52,7 @@ public class SideInfoMapper {
 		if (journalposter.size() < foerste) {
 			return false;
 		} else {
-			JournalpostDto journalpostDto = safRequestContext.getRequestCache().getObject(sluttJournalpostId);
+			JournalpostDto journalpostDto = safRequestContext.getRequestCache().getJournalpost(sluttJournalpostId);
 			Long nextJournalpostId = journalpostDto.getNextJournalpostId();
 			return finnesNesteJournalpostId(journalpostDto, nextJournalpostId);
 		}
@@ -66,7 +66,7 @@ public class SideInfoMapper {
 		if (sluttJournalpostId == null) {
 			return 0;
 		}
-		JournalpostDto journalpostDto = safRequestContext.getRequestCache().getObject(sluttJournalpostId);
+		JournalpostDto journalpostDto = safRequestContext.getRequestCache().getJournalpost(sluttJournalpostId);
 		return journalpostDto.getTotaltAntall().intValue();
 	}
 }

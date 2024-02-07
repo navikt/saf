@@ -98,7 +98,7 @@ public class TilknyttedeJournalposterQuery {
 	private List<Journalpost> mapJournalpostDto(final List<TilgangJournalpost> tilgangJournalposts, final SafRequestContext safRequestContext) {
 		return tilgangJournalposts.stream()
 				.map(tj -> {
-					JournalpostDto journalpostDto = safRequestContext.getRequestCache().getObject(tj.getJournalpostId());
+					JournalpostDto journalpostDto = safRequestContext.getRequestCache().getJournalpost(tj.getJournalpostId());
 					return journalpostDtoMapper.mapJournalpostDto(journalpostDto, safRequestContext.getRequestCache());
 				}).collect(Collectors.toList());
 	}

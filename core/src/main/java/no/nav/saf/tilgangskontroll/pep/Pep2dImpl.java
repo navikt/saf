@@ -67,13 +67,13 @@ public class Pep2dImpl extends Pep<TilgangSak> {
 				return AbacAnswer.deny(UKJENT); // ren teknisk feil
 			}
 			AbacAnswer abacAnswer = mapXacmlResponse(response);
-			safRequestContext.getRequestCache().putObject(tilgangKeyLocalCaching, abacAnswer);
+			safRequestContext.getRequestCache().putDecision(tilgangKeyLocalCaching, abacAnswer);
 			return abacAnswer;
 		} catch (RedisSystemException | RedisException | PoolException | Cache.ValueRetrievalException | RedisConnectionFailureException e) {
 			// Ting skal fremdeles snurre selv om man ikke får kontakt med redis
 			XacmlResponse response = hasDokumentAccess(ressurs, safRequestContext);
 			AbacAnswer abacAnswer = mapXacmlResponse(response);
-			safRequestContext.getRequestCache().putObject(tilgangKeyLocalCaching, abacAnswer);
+			safRequestContext.getRequestCache().putDecision(tilgangKeyLocalCaching, abacAnswer);
 			return abacAnswer;
 		} finally {
 			traceLogPepFinished(PEP2D, ressurs);
@@ -90,7 +90,7 @@ public class Pep2dImpl extends Pep<TilgangSak> {
 		String temakode = ressurs.getTema().name();
 		String tilgangKeyLocalCaching = KeyGeneratorLocalCaching.getKeyForPep2d(temakode);
 		boolean decision = safRequestContext.getSecurityContext().hasTemaAureRole(temakode.toLowerCase());
-		safRequestContext.getRequestCache().putObject(tilgangKeyLocalCaching, decision ? AbacAnswer.permit() : AbacAnswer.deny(TEMA));
+		safRequestContext.getRequestCache().putDecision(tilgangKeyLocalCaching, decision ? AbacAnswer.permit() : AbacAnswer.deny(TEMA));
 		traceLogPepFinished(PEP2D, ressurs);
 		return decision ? permit() : AbacAnswer.deny(AbacDenyReason.builder()
 				.abacDenyReasonCode(AbacAnswer.AbacDenyReasonCode.TEMA)  //  eller teknisk feil?

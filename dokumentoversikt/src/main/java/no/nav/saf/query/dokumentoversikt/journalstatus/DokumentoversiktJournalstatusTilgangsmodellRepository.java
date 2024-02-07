@@ -21,12 +21,12 @@ class DokumentoversiktJournalstatusTilgangsmodellRepository {
 
 	public void mapOgCacheArkivsaker(final List<TilgangJournalpost> filteredTilgangJournalpostList, final SafRequestContext safRequestContext) {
 		List<JournalpostDto> journalposterMedSaksrelasjon = filteredTilgangJournalpostList.stream()
-				.map(tj -> (JournalpostDto) safRequestContext.getRequestCache().getObject(tj.getJournalpostId()))
+				.map(tj -> safRequestContext.getRequestCache().getJournalpost(tj.getJournalpostId()))
 				.filter(jp -> jp.getSaksrelasjon() != null)
 				.collect(Collectors.toList());
 
 		journalposterMedSaksrelasjon.stream()
 				.map(arkivsakMapper::map)
-				.forEach(arkivsak -> safRequestContext.getRequestCache().putObject(arkivsak.getKey(), arkivsak));
+				.forEach(arkivsak -> safRequestContext.getRequestCache().putArkivsak(arkivsak));
 	}
 }

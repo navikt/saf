@@ -13,7 +13,6 @@ import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark903.Tilknyt
 import no.nav.saf.anticorruptionlayer.pensjonsak.PensjonSakAntiCorruptionLayer;
 import no.nav.saf.domain.Arkivsak;
 import no.nav.saf.domain.BidragSak;
-import no.nav.saf.domain.kode.Arkivsakssystem;
 import no.nav.saf.domain.kode.Tema;
 import no.nav.saf.domain.kode.Tilknytning;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
@@ -35,8 +34,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static no.nav.saf.anticorruptionlayer.joark.domain.kode.FagsystemCode.FS22;
-import static no.nav.saf.anticorruptionlayer.joark.domain.kode.FagsystemCode.PEN;
 import static no.nav.saf.domain.DomainConstants.TIDSSONE_NORGE;
 import static no.nav.saf.domain.kode.Arkivsakssystem.GSAK;
 import static no.nav.saf.domain.kode.Arkivsakssystem.PSAK;
@@ -68,12 +65,12 @@ class TilknyttedeJournalposterTilgangRepository {
 	Set<Arkivsak> arkivsaker(final List<JournalpostDto> tilknyttetJournalpostDto, SafRequestContext safRequestContext) {
 		return tilknyttetJournalpostDto.stream()
 				.map(journalpostDto -> {
-					safRequestContext.getRequestCache().putObject(journalpostDto.getJournalpostId().toString(), journalpostDto);
+					safRequestContext.getRequestCache().putJournalpost(journalpostDto.getJournalpostId().toString(), journalpostDto);
 					if (journalpostDto.isTilknyttetSak()) {
 						SaksrelasjonDto saksrelasjon = journalpostDto.getSaksrelasjon();
 						return Arkivsak.builder()
 								.arkivsaksnummer(saksrelasjon.getSakId())
-								.arkivsaksystem(mapJoarkFagsystemToArkivsakssystem(saksrelasjon.getFagsystem()))
+								.arkivsaksystem(FagsystemCode.toSafArkivsaksystem(saksrelasjon.getFagsystem()))
 								.fagsaksystem(saksrelasjon.getApplikasjon())
 								.fagsakId(saksrelasjon.getFagsakNr())
 								.orgnummer(saksrelasjon.getOrgnr())
@@ -109,16 +106,6 @@ class TilknyttedeJournalposterTilgangRepository {
 						return midlertidigTilgangBrukerPersonOrganisasjon(journalpostDto.getBruker());
 					}
 				}).filter(Objects::nonNull);
-	}
-
-	private Arkivsakssystem mapJoarkFagsystemToArkivsakssystem(FagsystemCode joarkFagsystem) {
-		if (FS22 == joarkFagsystem) {
-			return GSAK;
-		} else if (PEN == joarkFagsystem) {
-			return PSAK;
-		} else {
-			return null;
-		}
 	}
 
 	private TilgangBruker sakstilknyttetTilgangBruker(Arkivsak arkivsak) {
@@ -173,7 +160,7 @@ class TilknyttedeJournalposterTilgangRepository {
 
 	private TilgangSak tilgangSakGsak(final Arkivsak arkivsak, final SafRequestContext safRequestContext) {
 		final BidragSak bidragSak = bisysAntiCorruptionLayer.hentBidragSakByArkivsak(arkivsak);
-		safRequestContext.getRequestCache().putObject(arkivsak.getKey(), arkivsak);
+		safRequestContext.getRequestCache().putArkivsak(arkivsak);
 		return TilgangSak.builder()
 				.aktoerId(arkivsak.getAktoerId())
 				.orgnummer(arkivsak.getOrgnummer())
@@ -192,7 +179,7 @@ class TilknyttedeJournalposterTilgangRepository {
 		return arkivsaker.stream()
 				.filter(psakArkivsak -> psakArkivsak.getArkivsaksnummer().equals(arkivsak.getArkivsaksnummer()))
 				.map(psakArkivsak -> {
-					safRequestContext.getRequestCache().putObject(psakArkivsak.getKey(), psakArkivsak);
+					safRequestContext.getRequestCache().putArkivsak(psakArkivsak);
 					return TilgangSak.builder()
 							.aktoerId(psakArkivsak.getAktoerId())
 							.arkivsaksnummer(psakArkivsak.getArkivsaksnummer())
@@ -210,8 +197,7 @@ class TilknyttedeJournalposterTilgangRepository {
 					if (journalpostDto.isTilknyttetSak()) {
 						return filteredTilgangSaker.stream().anyMatch(tilgangSak -> {
 							SaksrelasjonDto saksrelasjon = journalpostDto.getSaksrelasjon();
-							return tilgangSak.getArkivsaksnummer().equals(saksrelasjon.getSakId()) &&
-									tilgangSak.getArkivsaksystem() == mapJoarkFagsystemToArkivsakssystem(saksrelasjon.getFagsystem());
+							return tilgangSak.getArkivsaksnummer().equals(saksrelasjon.getSakId()) && tilgangSak.getArkivsaksystem() == FagsystemCode.toSafArkivsaksystem(saksrelasjon.getFagsystem());
 						});
 					} else {
 						return true;

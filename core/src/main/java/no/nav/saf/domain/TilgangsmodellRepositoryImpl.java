@@ -51,7 +51,7 @@ public class TilgangsmodellRepositoryImpl implements TilgangsmodellRepository {
 			return journalposter.stream()
 					.map(journalpostDto -> {
 						safRequestContext.getRequestCache()
-								.putObject(journalpostDto.getJournalpostId().toString(), journalpostDto);
+								.putJournalpost(journalpostDto.getJournalpostId().toString(), journalpostDto);
 						return mapTilgangJournalpost(journalpostDto);
 					})
 					.collect(Collectors.toList());
@@ -80,7 +80,7 @@ public class TilgangsmodellRepositoryImpl implements TilgangsmodellRepository {
 			return journalposter.stream()
 					.map(journalpostDto -> {
 						safRequestContext.getRequestCache()
-								.putObject(journalpostDto.getJournalpostId().toString(), journalpostDto);
+								.putJournalpost(journalpostDto.getJournalpostId().toString(), journalpostDto);
 						return mapTilgangJournalpost(journalpostDto);
 					})
 					.collect(Collectors.toList());

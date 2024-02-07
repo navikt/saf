@@ -90,7 +90,7 @@ class DokumentoversiktBrukerQuery {
 		if (tilgangBruker == null) {
 			throw GraphQLException.of(NOT_FOUND, environment, PERSON_IKKE_FUNNET_REASON, Dokumentoversikt.empty());
 		} else {
-			safRequestContext.getRequestCache().putObject(TILGANG_BRUKER, tilgangBruker);
+			safRequestContext.getRequestCache().putTilgangBruker(tilgangBruker);
 		}
 
 		AbacAnswer pep1gAnswer = this.pep1g.hasAccessWithAnswer(tilgangBruker, safRequestContext);
@@ -185,7 +185,7 @@ class DokumentoversiktBrukerQuery {
 	}
 
 	private TilgangSak mapToTilgangSak(String journalpostId, SafRequestContext safRequestContext) {
-		JournalpostDto journalpostDto = safRequestContext.getRequestCache().getObject(journalpostId);
+		JournalpostDto journalpostDto = safRequestContext.getRequestCache().getJournalpost(journalpostId);
 
 		return TilgangSak.builder()
 				.tema(FagomradeCode.toSafTema(journalpostDto.getFagomrade()))

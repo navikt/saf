@@ -43,10 +43,10 @@ public class Pep5Impl extends Pep<TilgangDokumentInfo> {
 		if (isSkjermingPresent(ressurs)) {
 			XacmlResponse response = hasDokumentAccess(ressurs, safRequestContext);
 			AbacAnswer abacAnswer = mapXacmlResponse(response);
-			safRequestContext.getRequestCache().putObject(tilgangKeyLocalCaching, abacAnswer);
+			safRequestContext.getRequestCache().putDecision(tilgangKeyLocalCaching, abacAnswer);
 			return abacAnswer;
 		} else {
-			safRequestContext.getRequestCache().putObject(tilgangKeyLocalCaching, AbacAnswer.permit());
+			safRequestContext.getRequestCache().putDecision(tilgangKeyLocalCaching, AbacAnswer.permit());
 			return AbacAnswer.permit();
 		}
 	}
@@ -64,7 +64,7 @@ public class Pep5Impl extends Pep<TilgangDokumentInfo> {
 		AbacAnswer abacAnswer = decision ? permit() : AbacAnswer.deny(AbacAnswer.AbacDenyReason.builder()
 				.cause("dokument_info_skjermet").policy("saf_pep5").rule("dokument_info_skjermet")
 				.build());
-		safRequestContext.getRequestCache().putObject(tilgangKeyLocalCaching, abacAnswer);
+		safRequestContext.getRequestCache().putDecision(tilgangKeyLocalCaching, abacAnswer);
 		return abacAnswer;
 	}
 

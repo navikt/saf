@@ -59,7 +59,6 @@ import static no.nav.saf.cache.KeyGeneratorLocalCaching.getKeyForPep5;
 import static no.nav.saf.cache.KeyGeneratorLocalCaching.getKeyForPep6d;
 import static no.nav.saf.cache.KeyGeneratorLocalCaching.getKeyForPep7d;
 import static no.nav.saf.domain.DomainConstants.TIDSSONE_NORGE;
-import static no.nav.saf.domain.DomainConstants.TILGANG_BRUKER;
 import static no.nav.saf.domain.visningsmodell.RelevantDato.INVALID_DATE;
 import static org.apache.commons.lang3.BooleanUtils.isTrue;
 import static org.apache.commons.lang3.StringUtils.isBlank;
@@ -117,7 +116,7 @@ public class ArkivJournalpostMapper {
 			return null;
 		}
 		if (saksrelasjon.isPensjonsak()) {
-			Arkivsak arkivsak = requestCache.getObject(saksrelasjon.getKey());
+			Arkivsak arkivsak = requestCache.getArkivsak(saksrelasjon);
 			if (arkivsak == null) {
 				return Sak.builder()
 						.arkivsaksnummer(String.valueOf(saksrelasjon.sakId()))
@@ -185,7 +184,7 @@ public class ArkivJournalpostMapper {
 
 	// journalposten er endelig journalført
 	private static Bruker mapBrukerFromArkivsakCache(ArkivSaksrelasjon saksrelasjon, RequestCache requestCache) {
-		Arkivsak arkivsak = requestCache.getObject(saksrelasjon.getKey());
+		Arkivsak arkivsak = requestCache.getArkivsak(saksrelasjon);
 		if (arkivsak == null || arkivsak.isBrukerInfoMissing()) {
 			return null;
 		}
@@ -200,7 +199,7 @@ public class ArkivJournalpostMapper {
 
 	// journalposten er midlertidig journalført
 	private static Bruker mapBrukerFromTilgangBrukerCache(RequestCache requestCache) {
-		TilgangBruker tilgangBruker = requestCache.getObject(TILGANG_BRUKER);
+		TilgangBruker tilgangBruker = requestCache.getTilgangBruker();
 		if (tilgangBruker == null) {
 			return null;
 		}
@@ -236,7 +235,7 @@ public class ArkivJournalpostMapper {
 		if (arkivJournalpost.isTilknyttetSak()) {
 			ArkivSaksrelasjon saksrelasjon = arkivJournalpost.saksrelasjon();
 			if (saksrelasjon.isPensjonsak()) {
-				Arkivsak arkivsak = requestCache.getObject(saksrelasjon.getKey());
+				Arkivsak arkivsak = requestCache.getArkivsak(saksrelasjon);
 				if (arkivsak == null) {
 					return FagomradeCode.toSafTema(arkivJournalpost.fagomraade());
 				}
@@ -495,7 +494,7 @@ public class ArkivJournalpostMapper {
 	}
 
 	private static boolean getCachedDecision(RequestCache requestCache, String tilgangKey) {
-		AbacAnswer abacAnswer = requestCache.getObject(tilgangKey);
+		AbacAnswer abacAnswer = requestCache.getCachedDecision(tilgangKey);
 		return abacAnswer != null && abacAnswer.isPermit();
 	}
 }

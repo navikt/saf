@@ -72,7 +72,7 @@ class JournalpostQuery {
 			TilgangJournalpost tilgangJournalpost = journalpostHolder.journalpostTilgang().tilgangJournalpost();
 
 			if (tilgangBruker != null) {
-				safRequestContext.getRequestCache().putObject(TILGANG_BRUKER, tilgangBruker);
+				safRequestContext.getRequestCache().putTilgangBruker(tilgangBruker);
 			}
 
 			AbacAnswer pep1Access = pep1g.hasAccessWithAnswer(tilgangBruker, safRequestContext);

@@ -6,7 +6,6 @@ import no.nav.saf.domain.kode.Tema;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlRequest;
-import no.nav.saf.tilgangskontroll.abac.dto.response.Decision;
 import no.nav.saf.tilgangskontroll.abac.dto.response.XacmlResponse;
 import no.nav.saf.tilgangskontroll.abac.service.AbacService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,36 +53,36 @@ public class Pep7dImpl extends Pep<TilgangSak> {
 
 			if (FOR.equals(ressurs.getTema()) && FAGSAKSYSTEM_FORELDREPENGELOSNING.equals(ressurs.getFagsaksystem())) {
 				if (aktoerlisteErNullEllerTomForFp(ressurs)) {
-					safRequestContext.getRequestCache().putObject(tilgangKeyLocalCaching, AbacAnswer.permit());
+					safRequestContext.getRequestCache().putDecision(tilgangKeyLocalCaching, AbacAnswer.permit());
 					return AbacAnswer.permit();
 				}
 
-				if (safRequestContext.getRequestCache().getObject(tilgangKeyLocalCaching) == null) {
+				if (safRequestContext.getRequestCache().getCachedDecision(tilgangKeyLocalCaching) == null) {
 					XacmlResponse response = getXacmlResponseFromAbac(ressurs, safRequestContext, ressurs.getFpAktoerIdList());
 					// hvordan kan man få mer info ut av denne booleanen - kan man gjøre om på denne kanskje?
 					AbacAnswer abacAnswer = mapXacmlResponse(response);
-					safRequestContext.getRequestCache().putObject(tilgangKeyLocalCaching, abacAnswer);
+					safRequestContext.getRequestCache().putDecision(tilgangKeyLocalCaching, abacAnswer);
 					return abacAnswer;
 				}
 
-				return safRequestContext.getRequestCache().getObject(tilgangKeyLocalCaching);
+				return safRequestContext.getRequestCache().getCachedDecision(tilgangKeyLocalCaching);
 			}
 
 			if (relevanteTemaK9.contains(ressurs.getTema()) && FAGSAKSYSTEM_K9.equals(ressurs.getFagsaksystem())) {
 				if (aktoerlisteErNullEllerTomForK9(ressurs)) {
-					safRequestContext.getRequestCache().putObject(tilgangKeyLocalCaching, AbacAnswer.permit());
+					safRequestContext.getRequestCache().putDecision(tilgangKeyLocalCaching, AbacAnswer.permit());
 					return AbacAnswer.permit();
 				}
-				if (safRequestContext.getRequestCache().getObject(tilgangKeyLocalCaching) == null) {
+				if (safRequestContext.getRequestCache().getCachedDecision(tilgangKeyLocalCaching) == null) {
 					XacmlResponse response = getXacmlResponseFromAbac(ressurs, safRequestContext, ressurs.getK9AktoerIdList());
 					AbacAnswer abacAnswer = mapXacmlResponse(response);
-					safRequestContext.getRequestCache().putObject(tilgangKeyLocalCaching, abacAnswer);
+					safRequestContext.getRequestCache().putDecision(tilgangKeyLocalCaching, abacAnswer);
 					return abacAnswer;
 				}
 
-				return safRequestContext.getRequestCache().getObject(tilgangKeyLocalCaching);
+				return safRequestContext.getRequestCache().getCachedDecision(tilgangKeyLocalCaching);
 			}
-			safRequestContext.getRequestCache().putObject(tilgangKeyLocalCaching, AbacAnswer.permit());
+			safRequestContext.getRequestCache().putDecision(tilgangKeyLocalCaching, AbacAnswer.permit());
 		}
 		return AbacAnswer.permit();
 	}
@@ -120,7 +119,7 @@ public class Pep7dImpl extends Pep<TilgangSak> {
 	public AbacAnswer verifyAzureClientCredentialFlowAccess(TilgangSak ressurs, SafRequestContext safRequestContext) {
 		if (ressurs != null && ressurs.getArkivsaksystem() != null && ressurs.getArkivsaksnummer() != null) {
 			String tilgangKeyLocalCaching = KeyGeneratorLocalCaching.getKeyForPep7d(ressurs.getArkivsaksystem(), ressurs.getArkivsaksnummer());
-			safRequestContext.getRequestCache().putObject(tilgangKeyLocalCaching, AbacAnswer.permit());
+			safRequestContext.getRequestCache().putDecision(tilgangKeyLocalCaching, AbacAnswer.permit());
 		}
 		return permit();
 	}

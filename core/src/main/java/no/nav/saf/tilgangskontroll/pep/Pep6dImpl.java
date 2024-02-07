@@ -78,12 +78,12 @@ public class Pep6dImpl extends Pep<TilgangDokumentvariant> {
 				if (response == null) {
 					return AbacAnswer.deny(AbacAnswer.AbacDenyReasonCode.UKJENT);
 				}
-				safRequestContext.getRequestCache().putObject(tilgangKeyLocalCaching, response);
+				safRequestContext.getRequestCache().putDecision(tilgangKeyLocalCaching, response);
 				return response;
 			} catch (RedisSystemException | RedisException | PoolException | Cache.ValueRetrievalException | RedisConnectionFailureException e) {
 				// Ting skal fremdeles snurre selv om man ikke får kontakt med redis
 				AbacAnswer response = mapXacmlResponse(hasDokumentFilAccess(ressurs, safRequestContext));
-				safRequestContext.getRequestCache().putObject(tilgangKeyLocalCaching, response);
+				safRequestContext.getRequestCache().putDecision(tilgangKeyLocalCaching, response);
 				return response;
 			} finally {
 				traceLogPepFinished(PEP6D, ressurs);
@@ -94,7 +94,7 @@ public class Pep6dImpl extends Pep<TilgangDokumentvariant> {
 					ressurs.getDokumentInfoId(),
 					isVariantformatNull(ressurs) ? null : ressurs.getVariantformat().name(),
 					null);
-			safRequestContext.getRequestCache().putObject(tilgangKeyLocalCaching, AbacAnswer.permit());
+			safRequestContext.getRequestCache().putDecision(tilgangKeyLocalCaching, AbacAnswer.permit());
 			return AbacAnswer.permit();
 		}
 	}
@@ -130,7 +130,7 @@ public class Pep6dImpl extends Pep<TilgangDokumentvariant> {
 							.abacDenyReasonCode(AbacAnswer.AbacDenyReasonCode.SKJERMING)
 					.cause("dokumentvariant_skjermet").policy("saf_pep6d").rule("dokumentvariant_skjermet")
 					.build());
-			safRequestContext.getRequestCache().putObject(tilgangKeyLocalCaching, abacAnswer);
+			safRequestContext.getRequestCache().putDecision(tilgangKeyLocalCaching, abacAnswer);
 			return abacAnswer;
 		} else {
 			String tilgangKeyLocalCaching = KeyGeneratorLocalCaching.getKeyForPep6d(
@@ -138,7 +138,7 @@ public class Pep6dImpl extends Pep<TilgangDokumentvariant> {
 					ressurs.getDokumentInfoId(),
 					isVariantformatNull(ressurs) ? null : ressurs.getVariantformat().name(),
 					null);
-			safRequestContext.getRequestCache().putObject(tilgangKeyLocalCaching, AbacAnswer.permit());
+			safRequestContext.getRequestCache().putDecision(tilgangKeyLocalCaching, AbacAnswer.permit());
 			return permit();
 		}
 	}

@@ -47,7 +47,7 @@ class SakerQuery {
 	public List<Sak> hentSaker(BrukerIdInput brukerIdInput, SafRequestContext safRequestContext) {
 		TilgangBruker tilgangBruker = saksoversiktBrukerTilgangsmodellRepository.findTilgangBruker(brukerIdInput);
 		if (tilgangBruker != null) {
-			safRequestContext.getRequestCache().putObject(TILGANG_BRUKER, tilgangBruker);
+			safRequestContext.getRequestCache().putTilgangBruker(tilgangBruker);
 		}
 
 		boolean pep1gAccess = this.pep1g.hasAccess(tilgangBruker, safRequestContext);
