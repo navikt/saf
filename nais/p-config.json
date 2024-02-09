@@ -145,7 +145,7 @@
     {
       "app": "tiltakspenger-dokument",
       "namespace": "tpts",
-      "cluster": "dev-gcp",
+      "cluster": "prod-gcp",
       "roles": ["tema_ind"]
     },
     {
