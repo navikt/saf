@@ -143,6 +143,12 @@
       "roles": ["tema_ind"]
     },
     {
+      "app": "tiltakspenger-dokument",
+      "namespace": "tpts",
+      "cluster": "dev-gcp",
+      "roles": ["tema_ind"]
+    },
+    {
       "app": "flex-joark-mottak",
       "namespace": "flex",
       "cluster": "prod-gcp"
