@@ -120,6 +120,16 @@
     "cluster": "dev-gcp"
     },
     {
+      "app": "eessi-pensjon-journalforing-q1",
+      "namespace": "eessipensjon",
+      "cluster": "dev-gcp"
+    },
+    {
+      "app": "eessi-pensjon-pdl-produsent-q1",
+      "namespace": "eessipensjon",
+      "cluster": "dev-gcp"
+    },
+    {
       "app": "salesforce",
       "namespace": "teamcrm",
       "cluster": "dev-external"

@@ -233,6 +233,11 @@
       "cluster": "prod-gcp"
     },
     {
+      "app": "eessi-pensjon-journalforing",
+      "namespace": "eessipensjon",
+      "cluster": "prod-gcp"
+    },
+    {
       "app": "pensjon-pen",
       "namespace": "pensjondeployer",
       "cluster": "prod-fss"
