@@ -146,6 +146,11 @@
       "cluster": "dev-gcp"
     },
     {
+      "app": "tiltakspenger-dokument",
+      "namespace": "tpts",
+      "cluster": "dev-gcp"
+    },
+    {
       "app": "yrkesskade-melding-mottak",
       "namespace": "yrkesskade",
       "cluster": "dev-gcp"
