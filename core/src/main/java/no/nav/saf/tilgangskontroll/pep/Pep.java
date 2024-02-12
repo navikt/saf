@@ -47,20 +47,11 @@ public abstract class Pep<T> {
 			return verifyAzureClientCredentialFlowAccess(ressurs, safRequestContext);
 		} else {
 			return verifyAbacPdpDecision(ressurs, safRequestContext);
-			// return mapXacmlResponse(response);
 		}
 	}
 
-	protected boolean decide(Decision decision) {
-		return Decision.PERMIT.equals(decision);
-	}
-
-	protected boolean decide(AbacAnswer.AbacDecision decision) {
-		return AbacAnswer.AbacDecision.PERMIT.equals(decision);
-	}
-
 	protected AbacAnswer mapXacmlResponse(XacmlResponse xacmlResponse) {
-		return xacmlResponse.isPermit() ? AbacAnswer.permit() : AbacAnswer.deny(translateToDenyReasonCode(xacmlResponse));
+		return xacmlResponse.isPermit() ? AbacAnswer.permit() : translateToDenyReasonCode(xacmlResponse);
 	}
 
 	void traceLogPepStarted(String pepName, Object ressurs) {
@@ -75,6 +66,6 @@ public abstract class Pep<T> {
 		}
 	}
 
-	abstract AbacAnswer.AbacDenyReasonCode translateToDenyReasonCode(XacmlResponse xacmlResponse);
+	abstract AbacAnswer translateToDenyReasonCode(XacmlResponse xacmlResponse);
 
 }

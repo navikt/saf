@@ -7,8 +7,18 @@ import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlRequest;
 import no.nav.saf.tilgangskontroll.abac.dto.response.XacmlResponse;
 import no.nav.saf.tilgangskontroll.abac.service.AbacService;
+import no.nav.saf.tilgangskontroll.pep.reasons.EgenAnsattPartReason;
+import no.nav.saf.tilgangskontroll.pep.reasons.EgenAnsattReason;
+import no.nav.saf.tilgangskontroll.pep.reasons.FortroligAdresseReason;
+import no.nav.saf.tilgangskontroll.pep.reasons.GeografiReason;
+import no.nav.saf.tilgangskontroll.pep.reasons.OrgnrNavStatReaason;
+import no.nav.saf.tilgangskontroll.pep.reasons.StrengtFortroligAdresseReason;
+import no.nav.saf.tilgangskontroll.pep.reasons.StrengtFortroligAdresseUtlandReason;
+import no.nav.saf.tilgangskontroll.pep.reasons.UkjentReason;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.Collections;
 
 import static no.nav.saf.domain.DomainConstants.PEP1G;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_PERSON_AKTOERID_RESOURCE;
@@ -58,12 +68,12 @@ public class Pep1gImpl extends Pep<TilgangBruker> {
 			request.resource(RESOURCE_FELLES_PERSON_FNR, ressurs.getFoedselsnr());
 		} else {
 			log.error("Pep1g kunne ikke validere bruker fordi bruker ikke er en person. Denne tilstanden indikerer en teknisk feil.");
-			return AbacAnswer.deny(AbacAnswer.AbacDenyReasonCode.UKJENT);
+			return AbacAnswer.deny(new UkjentReason());
 		}
 		traceLogPepStarted(PEP1G, ressurs);
 		XacmlResponse response = abacService.evaluate(request);
 		traceLogPepFinished(PEP1G, ressurs);
-		return response.isPermit() ? AbacAnswer.permit() : AbacAnswer.deny(translateToDenyReasonCode(response));
+		return mapXacmlResponse(response);
 	}
 
 	@Override
@@ -77,16 +87,17 @@ public class Pep1gImpl extends Pep<TilgangBruker> {
 	}
 
 	@Override
-	AbacAnswer.AbacDenyReasonCode translateToDenyReasonCode(XacmlResponse xacmlResponse) {
-		var adviceMap = getAdvicesMap(xacmlResponse.getAdvices());
-		return switch ((adviceMap.get("deny_policy") + ":" + adviceMap.get("deny_rule")).toLowerCase()) {
-			case "skjermede_navansatte_og_familiemedlemmer:behandle_skjermede_navansatte_og_familiemedlemmer_mangler_gruppetilgang" -> AbacAnswer.AbacDenyReasonCode.EGEN_ANSATT;
-			case "fp4_geografi:ingen_tilgang_enhet" -> AbacAnswer.AbacDenyReasonCode.GEOGRAFI;
-			case "adressebeskyttelse_fortrolig_adresse:fortrolig_adresse_nok" -> AbacAnswer.AbacDenyReasonCode.FORTROLIG_ADRESSE;
-			case "adressebeskyttelse_strengt_fortrolig_adresse:strengt_fortrolig_adresse_nok" -> AbacAnswer.AbacDenyReasonCode.STRENGT_FORTROLIG_ADRESSE;
-			case "adressebeskyttelse_strengt_fortrolig_adresse_utland:strengt_fortrolig_adresse_utland_nok" -> AbacAnswer.AbacDenyReasonCode.STRENGT_FORTROLIG_ADRESSE_UTLAND;
-			default -> AbacAnswer.AbacDenyReasonCode.UKJENT;
-		};
+	AbacAnswer translateToDenyReasonCode(XacmlResponse xacmlResponse) {
+		var advices = getAdvicesMap(xacmlResponse.getAdvices());
+		return AbacAnswer.deny(
+				switch ((advices.get("deny_policy") + ":" + advices.get("deny_rule")).toLowerCase()) {
+					case "skjermede_navansatte_og_familiemedlemmer:behandle_skjermede_navansatte_og_familiemedlemmer_mangler_gruppetilgang" -> new EgenAnsattReason(advices);
+					case "fp4_geografi:ingen_tilgang_enhet" -> new GeografiReason(advices);
+					case "adressebeskyttelse_fortrolig_adresse:fortrolig_adresse_nok" -> new FortroligAdresseReason(advices);
+					case "adressebeskyttelse_strengt_fortrolig_adresse:strengt_fortrolig_adresse_nok" -> new StrengtFortroligAdresseReason(advices);
+					case "adressebeskyttelse_strengt_fortrolig_adresse_utland:strengt_fortrolig_adresse_utland_nok" -> new StrengtFortroligAdresseUtlandReason(advices);
+					default -> new UkjentReason();
+				});
 	}
 
 
@@ -99,8 +110,7 @@ public class Pep1gImpl extends Pep<TilgangBruker> {
 			if (navOrgService.isNavIdentInEgenAnsattGroup(safRequestContext.getUserId())) {
 				return AbacAnswer.permit();
 			}
-			// return AbacAnswer.denyWithInfo(ORGANISASJON_ER_NAV_STAT_KREVER_EGEN_ANSATT_TILGANG);
-			return AbacAnswer.deny(AbacAnswer.AbacDenyReasonCode.ORGNR_NAV_STAT);
+			return AbacAnswer.deny(new OrgnrNavStatReaason(Collections.emptyMap()));
 		}
 		return AbacAnswer.permit();
 	}

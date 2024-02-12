@@ -1,7 +1,7 @@
 package no.nav.saf.tilgangskontroll.pep;
 
-import lombok.Builder;
 import lombok.Value;
+import no.nav.saf.tilgangskontroll.pep.reasons.AbacDenyReason;
 
 import static no.nav.saf.tilgangskontroll.pep.AbacAnswer.AbacDecision.DENY;
 import static no.nav.saf.tilgangskontroll.pep.AbacAnswer.AbacDecision.PERMIT;
@@ -17,6 +17,7 @@ public class AbacAnswer {
 	 * https://confluence.adeo.no/display/BOA/saf+-+Sporingslogg+hentdokument
 	 */
 	String denyReasonSporing;
+	AbacDenyReason abacDenyReason;
 
 	public boolean isDeny() {
 		return DENY == decision;
@@ -27,46 +28,17 @@ public class AbacAnswer {
 	}
 
 	public static AbacAnswer permit() {
-		return new AbacAnswer(PERMIT, null);
+		return new AbacAnswer(PERMIT, null, null);
 	}
 
 	public static AbacAnswer deny(AbacDenyReason abacDenyReason) {
-		return new AbacAnswer(DENY, abacDenyReason.toString());
-	}
-
-	public static AbacAnswer deny(AbacDenyReasonCode abacDenyReasonCode) {
-		return deny(new AbacDenyReason(null, null, null, abacDenyReasonCode));
+		return new AbacAnswer(DENY, abacDenyReason.toString(), abacDenyReason);
 	}
 
 	public enum AbacDecision {
 		PERMIT,
 		DENY
 	}
-
-	@Builder
-	@Value
-	public static class AbacDenyReason {
-		String cause;
-		String policy;
-		String rule;
-
-		AbacDenyReasonCode abacDenyReasonCode;
-
-		@Override
-		public String toString() {
-			return "cause=" + cause + ", deny_policy=" + policy + ", deny_rule=" + rule + ", reason_code=" + abacDenyReasonCode.code;
-		}
-	}
-	/*
-
-	public static final String attributeValueCause0001 = "cause-0001-manglerrolle";
-	public static final String attributeValueCause0002 = "cause-0002-ikketilgangtilNAVbrukersenhet";
-	public static final String attributeValueCause0005 = "cause-0005-feilstatus";
-	public static final String attributeValueCause0006 = "cause-0006-kanikkefattevedtakiegensak";
-	public static final String attributeValueCause0010 = "cause_0010_kontorsperre";
-	public static final String attributeValueCause0012 = "cause_0012_eksternbruker_krever_innloggingsnivaa_4";
-	public static final String attributeValueCause0013 = "cause_0013_ikketilgangtiltema";
-	 */
 
 	public enum AbacDenyReasonCode {
 		EGEN_ANSATT("deny_egen_ansatt"),

@@ -10,6 +10,9 @@ import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlRequest;
 import no.nav.saf.tilgangskontroll.abac.dto.response.XacmlResponse;
 import no.nav.saf.tilgangskontroll.abac.service.AbacService;
+import no.nav.saf.tilgangskontroll.pep.reasons.AbacDenyReason;
+import no.nav.saf.tilgangskontroll.pep.reasons.SkjermingReason;
+import no.nav.saf.tilgangskontroll.pep.reasons.UkjentReason;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.Cache;
@@ -19,11 +22,14 @@ import org.springframework.data.redis.RedisSystemException;
 import org.springframework.data.redis.connection.PoolException;
 import org.springframework.stereotype.Component;
 
+import java.util.Collections;
+
 import static no.nav.saf.cache.RedisCacheConfig.TILGANG_CACHE;
 import static no.nav.saf.domain.DomainConstants.PEP6D;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_RESOURCE_TYPE;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_SAF_DOKUMENT_FIL;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_SAF_SKJERMING;
+import static no.nav.saf.tilgangskontroll.abac.dto.response.AdviceStringUtil.getAdvicesMap;
 import static no.nav.saf.tilgangskontroll.pep.AbacAnswer.permit;
 
 /**
@@ -48,14 +54,14 @@ public class Pep6dImpl extends Pep<TilgangDokumentvariant> {
 	public AbacAnswer verifyAbacPdpDecision(TilgangDokumentvariant ressurs, SafRequestContext safRequestContext) {
 		if (ressurs == null) {
 			log.warn("Pep6d mangler tilstrekkelig datagrunnlag for å kunne gjennomføre tilgangskontroll");
-			return AbacAnswer.deny(AbacAnswer.AbacDenyReasonCode.UKJENT);
+			return AbacAnswer.deny(new UkjentReason());
 		}
 
 		if (isSkjermingPresent(ressurs)) {
 			if (isVariantformatNull(ressurs)) {
 				log.warn("Pep6d mangler tilstrekkelig datagrunnlag for å kunne gjennomføre tilgangskontroll. Variantformat=null. journalpostId={} og dokumentinfoId={}",
 						ressurs.getJournalpostId(), ressurs.getDokumentInfoId());
-				return AbacAnswer.deny(AbacAnswer.AbacDenyReasonCode.UKJENT);
+				return AbacAnswer.deny(new UkjentReason());
 			}
 
 			traceLogPepStarted(PEP6D, ressurs);
@@ -76,7 +82,7 @@ public class Pep6dImpl extends Pep<TilgangDokumentvariant> {
 			try {
 				AbacAnswer response = fetchXacmlResponse(ressurs, safRequestContext, tilgangKeyDistributedCaching);
 				if (response == null) {
-					return AbacAnswer.deny(AbacAnswer.AbacDenyReasonCode.UKJENT);
+					return AbacAnswer.deny(new UkjentReason());
 				}
 				safRequestContext.getRequestCache().putDecision(tilgangKeyLocalCaching, response);
 				return response;
@@ -103,18 +109,17 @@ public class Pep6dImpl extends Pep<TilgangDokumentvariant> {
 	public AbacAnswer verifyAzureClientCredentialFlowAccess(TilgangDokumentvariant ressurs, SafRequestContext safRequestContext) {
 		if (ressurs == null) {
 			log.warn("Pep6d mangler tilstrekkelig datagrunnlag for å kunne gjennomføre tilgangskontroll. Azure ccf.");
-			return AbacAnswer.deny(AbacAnswer.AbacDenyReason.builder()
-					.cause("dokumentvariant_mangler_data").policy("saf_pep6d").rule("dokumentvariant_er_null")
-					.build());
+			return AbacAnswer.deny(new SkjermingReason(
+					"dokumentvariant_mangler_data", "saf_pep6d", "dokumentvariant_er_null"
+					));
 		}
 
 		if (isSkjermingPresent(ressurs)) {
 			if (isVariantformatNull(ressurs)) {
 				log.warn("Pep6d mangler tilstrekkelig datagrunnlag for å kunne gjennomføre tilgangskontroll. Variantformat=null. journalpostId={} og dokumentinfoId={}. Azure ccf.",
 						ressurs.getJournalpostId(), ressurs.getDokumentInfoId());
-				return AbacAnswer.deny(AbacAnswer.AbacDenyReason.builder()
-						.cause("dokumentvariant_mangler_variantformat").policy("saf_pep6d").rule("dokumentvariant_skjermet_og_variantformat_er_null")
-						.build());
+				return AbacAnswer.deny(
+						new SkjermingReason("dokumentvariant_mangler_variantformat", "saf_pep6d", "dokumentvariant_skjermet_og_variantformat_er_null"));
 			}
 
 			traceLogPepStarted(PEP6D, ressurs);
@@ -126,10 +131,9 @@ public class Pep6dImpl extends Pep<TilgangDokumentvariant> {
 
 			boolean decision = !isSkjermingPresent(ressurs);
 			traceLogPepFinished(PEP6D, ressurs);
-			AbacAnswer abacAnswer = decision ? permit() : AbacAnswer.deny(AbacAnswer.AbacDenyReason.builder()
-							.abacDenyReasonCode(AbacAnswer.AbacDenyReasonCode.SKJERMING)
-					.cause("dokumentvariant_skjermet").policy("saf_pep6d").rule("dokumentvariant_skjermet")
-					.build());
+			AbacAnswer abacAnswer = decision ? permit() : AbacAnswer.deny(new SkjermingReason(
+					"dokumentvariant_skjermet", "saf_pep6d", "dokumentvariant_skjermet"
+					));
 			safRequestContext.getRequestCache().putDecision(tilgangKeyLocalCaching, abacAnswer);
 			return abacAnswer;
 		} else {
@@ -144,8 +148,8 @@ public class Pep6dImpl extends Pep<TilgangDokumentvariant> {
 	}
 
 	@Override
-	AbacAnswer.AbacDenyReasonCode translateToDenyReasonCode(XacmlResponse xacmlResponse) {
-		return AbacAnswer.AbacDenyReasonCode.SKJERMING;
+	AbacAnswer translateToDenyReasonCode(XacmlResponse xacmlResponse) {
+		return AbacAnswer.deny(new SkjermingReason(getAdvicesMap(xacmlResponse.getAdvices())));
 	}
 
 	private AbacAnswer fetchXacmlResponse(TilgangDokumentvariant ressurs, SafRequestContext safRequestContext, String tilgangKeyDistributedCaching) {
@@ -153,9 +157,9 @@ public class Pep6dImpl extends Pep<TilgangDokumentvariant> {
 		if (cachedResponse == null) {
 			XacmlResponse abacResponse = hasDokumentFilAccess(ressurs, safRequestContext);
 			if (abacResponse == null) {
-				return AbacAnswer.deny(AbacAnswer.AbacDenyReasonCode.SKJERMING);
+				return AbacAnswer.deny(new SkjermingReason(Collections.emptyMap()));
 			}
-			if (decide(abacResponse.getDecision())) { // -> kun abacresponse der permit = true
+			if (abacResponse.isPermit()) {
 				tilgangCache.put(tilgangKeyDistributedCaching, abacResponse);
 			}
 			return mapXacmlResponse(abacResponse); // siden put kun gjøres om decide = true er vel denna alltid = permit

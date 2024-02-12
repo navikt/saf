@@ -10,7 +10,10 @@ import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlRequest;
 import no.nav.saf.tilgangskontroll.abac.dto.response.XacmlResponse;
 import no.nav.saf.tilgangskontroll.abac.service.AbacService;
-import no.nav.saf.tilgangskontroll.pep.AbacAnswer.AbacDenyReason;
+import no.nav.saf.tilgangskontroll.pep.reasons.AbacDenyReason;
+import no.nav.saf.tilgangskontroll.pep.reasons.GeografiReason;
+import no.nav.saf.tilgangskontroll.pep.reasons.TemaReason;
+import no.nav.saf.tilgangskontroll.pep.reasons.UkjentReason;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.Cache;
@@ -19,6 +22,8 @@ import org.springframework.data.redis.RedisConnectionFailureException;
 import org.springframework.data.redis.RedisSystemException;
 import org.springframework.data.redis.connection.PoolException;
 import org.springframework.stereotype.Component;
+
+import java.util.Collections;
 
 import static no.nav.saf.cache.RedisCacheConfig.TILGANG_CACHE;
 import static no.nav.saf.domain.DomainConstants.PEP2D;
@@ -64,7 +69,7 @@ public class Pep2dImpl extends Pep<TilgangSak> {
 		try {
 			XacmlResponse response = fetchXacmlResponse(ressurs, safRequestContext, tilgangKeyDistributedCaching);
 			if (response == null) {
-				return AbacAnswer.deny(UKJENT); // ren teknisk feil
+				return AbacAnswer.deny(new UkjentReason()); // ren teknisk feil
 			}
 			AbacAnswer abacAnswer = mapXacmlResponse(response);
 			safRequestContext.getRequestCache().putDecision(tilgangKeyLocalCaching, abacAnswer);
@@ -90,23 +95,21 @@ public class Pep2dImpl extends Pep<TilgangSak> {
 		String temakode = ressurs.getTema().name();
 		String tilgangKeyLocalCaching = KeyGeneratorLocalCaching.getKeyForPep2d(temakode);
 		boolean decision = safRequestContext.getSecurityContext().hasTemaAureRole(temakode.toLowerCase());
-		safRequestContext.getRequestCache().putDecision(tilgangKeyLocalCaching, decision ? AbacAnswer.permit() : AbacAnswer.deny(TEMA));
+		safRequestContext.getRequestCache().putDecision(tilgangKeyLocalCaching, decision ? AbacAnswer.permit() : AbacAnswer.deny(new TemaReason(Collections.emptyMap())));
 		traceLogPepFinished(PEP2D, ressurs);
-		return decision ? permit() : AbacAnswer.deny(AbacDenyReason.builder()
-				.abacDenyReasonCode(AbacAnswer.AbacDenyReasonCode.TEMA)  //  eller teknisk feil?
-				.cause("ingen_tema_tilgang").policy("saf_pep2d").rule("clientid_mangler_tema_role")
-				.build());
+		return decision ? permit() : AbacAnswer.deny(new TemaReason(
+						"ingen_tema_tilgang", "saf_pep2d", "clientid_mangler_tema_role" ));
 	}
 
 	@Override
-	AbacAnswer.AbacDenyReasonCode translateToDenyReasonCode(XacmlResponse xacmlResponse) {
+	AbacAnswer translateToDenyReasonCode(XacmlResponse xacmlResponse) {
 		// subset av statuser; dette er alle som kan mappes ut i pep1g
-		var adviceMap = getAdvicesMap(xacmlResponse.getAdvices());
+		var advices = getAdvicesMap(xacmlResponse.getAdvices());
 		if ("fp4_geografi:ingen_tilgang_enhet"
-				.equalsIgnoreCase((adviceMap.get("deny_policy") + ":" + adviceMap.get("deny_rule")))) {
-			return AbacAnswer.AbacDenyReasonCode.GEOGRAFI;
+				.equalsIgnoreCase((advices.get("deny_policy") + ":" + advices.get("deny_rule")))) {
+			return AbacAnswer.deny(new GeografiReason(advices));
 		}
-		return AbacAnswer.AbacDenyReasonCode.TEMA;
+		return AbacAnswer.deny(new TemaReason(advices));
 	}
 
 	private XacmlResponse fetchXacmlResponse(TilgangSak ressurs, SafRequestContext safRequestContext, String tilgangKeyDistributedCaching) {
@@ -116,7 +119,7 @@ public class Pep2dImpl extends Pep<TilgangSak> {
 			if (abacResponse == null) {
 				return XacmlResponse.deny();
 			}
-			if (decide(abacResponse.getDecision())) {
+			if (abacResponse.isPermit()) {
 				tilgangCache.put(tilgangKeyDistributedCaching, abacResponse);
 			}
 			return abacResponse;

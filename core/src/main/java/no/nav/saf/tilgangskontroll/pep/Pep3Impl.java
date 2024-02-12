@@ -8,6 +8,10 @@ import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlRequest;
 import no.nav.saf.tilgangskontroll.abac.dto.response.XacmlResponse;
 import no.nav.saf.tilgangskontroll.abac.service.AbacService;
+import no.nav.saf.tilgangskontroll.pep.reasons.FortroligAdresseReason;
+import no.nav.saf.tilgangskontroll.pep.reasons.StrengtFortroligAdresseReason;
+import no.nav.saf.tilgangskontroll.pep.reasons.StrengtFortroligAdresseUtlandReason;
+import no.nav.saf.tilgangskontroll.pep.reasons.UkjentReason;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -74,17 +78,18 @@ public class Pep3Impl extends Pep<TilgangSak> {
 	}
 
 	@Override
-	AbacAnswer.AbacDenyReasonCode translateToDenyReasonCode(XacmlResponse xacmlResponse) {
-		var adviceMap = getAdvicesMap(xacmlResponse.getAdvices());
-		return switch ((adviceMap.get("deny_policy") + ":" + adviceMap.get("deny_rule")).toLowerCase()) {
-			// subset av statuser; dette er alle som kan mappes ut i pep3
-			case "adressebeskyttelse_fortrolig_adresse:fortrolig_adresse_nok" ->
-					AbacAnswer.AbacDenyReasonCode.FORTROLIG_ADRESSE;
-			case "adressebeskyttelse_strengt_fortrolig_adresse:strengt_fortrolig_adresse_nok" ->
-					AbacAnswer.AbacDenyReasonCode.STRENGT_FORTROLIG_ADRESSE;
-			case "adressebeskyttelse_strengt_fortrolig_adresse_utland:strengt_fortrolig_adresse_utland_nok" ->
-					AbacAnswer.AbacDenyReasonCode.STRENGT_FORTROLIG_ADRESSE_UTLAND;
-			default -> AbacAnswer.AbacDenyReasonCode.UKJENT;
-		};
+	AbacAnswer translateToDenyReasonCode(XacmlResponse xacmlResponse) {
+		var advices = getAdvicesMap(xacmlResponse.getAdvices());
+		return AbacAnswer.deny(
+				switch ((advices.get("deny_policy") + ":" + advices.get("deny_rule")).toLowerCase()) {
+					// subset av statuser; dette er alle som kan mappes ut i pep3
+					case "adressebeskyttelse_fortrolig_adresse:fortrolig_adresse_nok" ->
+							new FortroligAdresseReason(advices);
+					case "adressebeskyttelse_strengt_fortrolig_adresse:strengt_fortrolig_adresse_nok" ->
+							new StrengtFortroligAdresseReason(advices);
+					case "adressebeskyttelse_strengt_fortrolig_adresse_utland:strengt_fortrolig_adresse_utland_nok" ->
+							new StrengtFortroligAdresseUtlandReason(advices);
+					default -> new UkjentReason();
+				});
 	}
 }

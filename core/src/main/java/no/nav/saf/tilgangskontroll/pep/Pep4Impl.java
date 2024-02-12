@@ -7,6 +7,8 @@ import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlRequest;
 import no.nav.saf.tilgangskontroll.abac.dto.response.XacmlResponse;
 import no.nav.saf.tilgangskontroll.abac.service.AbacService;
+import no.nav.saf.tilgangskontroll.pep.reasons.JournalstatusReason;
+import no.nav.saf.tilgangskontroll.pep.reasons.UkjentReason;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -16,6 +18,7 @@ import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_RESOURC
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_SAF_JOURNALSTATUS;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_SAF_JOURNAL_METADATA;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_SAF_SKJERMING;
+import static no.nav.saf.tilgangskontroll.abac.dto.response.AdviceStringUtil.getAdvicesMap;
 import static no.nav.saf.tilgangskontroll.pep.AbacAnswer.permit;
 
 /**
@@ -38,7 +41,7 @@ public class Pep4Impl extends Pep<TilgangJournalpost> {
 	public AbacAnswer verifyAbacPdpDecision(TilgangJournalpost ressurs, SafRequestContext safRequestContext) {
 		if (ressurs == null) {
 			log.warn("Pep4 mangler tilstrekkelig datagrunnlag for å kunne gjennomføre tilgangskontroll.");
-			return AbacAnswer.deny(AbacAnswer.AbacDenyReasonCode.UKJENT);
+			return AbacAnswer.deny(new UkjentReason());
 		}
 
 		if (isJournalpoststatusUtgaar(ressurs) || isSkjermingPresent(ressurs)) {
@@ -72,8 +75,8 @@ public class Pep4Impl extends Pep<TilgangJournalpost> {
 	}
 
 	@Override
-	AbacAnswer.AbacDenyReasonCode translateToDenyReasonCode(XacmlResponse xacmlResponse) {
-		return AbacAnswer.AbacDenyReasonCode.JOURNALSTATUS;
+	AbacAnswer translateToDenyReasonCode(XacmlResponse xacmlResponse) {
+		return AbacAnswer.deny(new JournalstatusReason(getAdvicesMap(xacmlResponse.getAdvices())));
 	}
 
 	private boolean isJournalpoststatusUtgaar(TilgangJournalpost ressurs) {
