@@ -64,7 +64,6 @@ public class Pep7dImpl extends Pep<TilgangSak> {
 
 				if (safRequestContext.getRequestCache().getCachedDecision(tilgangKeyLocalCaching) == null) {
 					XacmlResponse response = getXacmlResponseFromAbac(ressurs, safRequestContext, ressurs.getFpAktoerIdList());
-					// hvordan kan man få mer info ut av denne booleanen - kan man gjøre om på denne kanskje?
 					AbacAnswer abacAnswer = mapXacmlResponse(response);
 					safRequestContext.getRequestCache().putDecision(tilgangKeyLocalCaching, abacAnswer);
 					return abacAnswer;

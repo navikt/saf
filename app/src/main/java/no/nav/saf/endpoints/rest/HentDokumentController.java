@@ -15,6 +15,8 @@ import no.nav.saf.metrics.Monitor;
 import no.nav.saf.springdoc.SwaggerRestHentDokument;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.SafSecurityContext;
+import no.nav.saf.tilgangskontroll.pep.AbacAnswer;
+import no.nav.saf.tilgangskontroll.pep.reasons.UkjentReason;
 import no.nav.security.token.support.core.api.Protected;
 import no.nav.security.token.support.core.context.TokenValidationContextHolder;
 import org.slf4j.MDC;
@@ -138,7 +140,7 @@ public class HentDokumentController {
 			throw new HentdokumentTilgangskontrollException(
 					"Servicebruker forsøker å hente dokument med variantFormat=" +
 					variantFormat + ". Servicebrukere har kun tilgang til variantFormat=" + Variantformat.ORIGINAL +
-					" med mindre man har en avtale med Team Dokumentløsninger. Snakk med oss om behov.", ""); // i mange tilfeller dyttes det ut en XacmlResponse.deny() uten innhold, den materialiserer seg til slutt i en string BLANK == ""
+					" med mindre man har en avtale med Team Dokumentløsninger. Snakk med oss om behov.", AbacAnswer.deny(new UkjentReason())); // i mange tilfeller dyttes det ut en XacmlResponse.deny() uten innhold, den materialiserer seg til slutt i en string BLANK == ""
 		}
 	}
 }

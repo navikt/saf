@@ -1,6 +1,7 @@
 package no.nav.saf.cache;
 
 import no.nav.saf.domain.kode.Arkivsakssystem;
+import no.nav.saf.domain.kode.Tema;
 
 /**
  * Nøklene genereres med følgende format: key = "ressurs:*ressurs*" + "unik_id_for_lokal_caching"
@@ -10,9 +11,9 @@ public final class KeyGeneratorLocalCaching extends AbstractKeyGeneratorCaching 
 	private KeyGeneratorLocalCaching() {
 	}
 
-	public static String getKeyForPep2d(String tema) {
+	public static String getKeyForPep2d(Tema tema) {
 		return createIdentifierPair(RESSURS, RESSURS_SAK_DOKUMENT) + createUniqueIdentifier(
-				createIdentifierPair(TEMA, tema)
+				createIdentifierPair(TEMA, tema.name())
 		);
 	}
 

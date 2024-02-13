@@ -7,7 +7,6 @@ import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.domain.visningsmodell.Dokumentoversikt;
 import no.nav.saf.exceptions.SafFunctionalException;
 import no.nav.saf.exceptions.SafTechnicalException;
-import no.nav.saf.graphql.GraphQLException;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import org.springframework.stereotype.Component;
 
@@ -37,10 +36,10 @@ public class DokumentoversiktBrukerDataFetcher implements DataFetcher<DataFetche
 			return DataFetcherResult.<Dokumentoversikt>newResult()
 					.data(dokumentoversikt)
 					.build();
-		} catch (GraphQLException e) {
-			log.warn("query dokumentoversiktBruker feilet. melding={}", e.getError().getMessage(), e);
-			return e.toDataFetcherResult();
-		} catch (SafFunctionalException e) {
+		// } catch (GraphQLException e) {
+		// 	log.warn("query dokumentoversiktBruker feilet. melding={}", e.getError().getMessage(), e);
+		// 	return e.toDataFetcherResult();
+		} catch (SafFunctionalException e) { // flytt dette til vår venn
 			log.warn("query dokumentoversiktBruker feilet funksjonelt. melding={}", e.getMessage(), e);
 			return DataFetcherResult.<Dokumentoversikt>newResult()
 					.data(Dokumentoversikt.empty())

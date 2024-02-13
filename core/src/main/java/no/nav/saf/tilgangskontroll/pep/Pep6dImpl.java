@@ -157,7 +157,7 @@ public class Pep6dImpl extends Pep<TilgangDokumentvariant> {
 		if (cachedResponse == null) {
 			XacmlResponse abacResponse = hasDokumentFilAccess(ressurs, safRequestContext);
 			if (abacResponse == null) {
-				return AbacAnswer.deny(new SkjermingReason(Collections.emptyMap()));
+				return AbacAnswer.deny(new SkjermingReason(Collections.emptyMap()));  // ev. UkjentReason?
 			}
 			if (abacResponse.isPermit()) {
 				tilgangCache.put(tilgangKeyDistributedCaching, abacResponse);

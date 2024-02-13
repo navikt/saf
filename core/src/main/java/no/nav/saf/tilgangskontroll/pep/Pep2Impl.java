@@ -6,9 +6,9 @@ import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlRequest;
 import no.nav.saf.tilgangskontroll.abac.dto.response.XacmlResponse;
 import no.nav.saf.tilgangskontroll.abac.service.AbacService;
-import no.nav.saf.tilgangskontroll.pep.reasons.AbacDenyReason;
 import no.nav.saf.tilgangskontroll.pep.reasons.TemaReason;
 import no.nav.saf.tilgangskontroll.pep.reasons.UkjentReason;
+import org.apache.commons.lang3.NotImplementedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -19,8 +19,6 @@ import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_RESOURC
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_TEMA;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_SAF_SAK_JP_METADATA;
 import static no.nav.saf.tilgangskontroll.abac.dto.response.AdviceStringUtil.getAdvicesMap;
-import static no.nav.saf.tilgangskontroll.pep.AbacAnswer.AbacDenyReasonCode.TEMA;
-import static no.nav.saf.tilgangskontroll.pep.AbacAnswer.AbacDenyReasonCode.UKJENT;
 import static no.nav.saf.tilgangskontroll.pep.AbacAnswer.permit;
 
 /**
@@ -55,7 +53,7 @@ public class Pep2Impl extends Pep<TilgangSak> {
 			XacmlResponse response = abacService.evaluate(request);
 			traceLogPepFinished(PEP2, ressurs);
 
-			return mapXacmlResponse(response);
+			return response.isPermit() ? AbacAnswer.permit() : AbacAnswer.deny(new TemaReason(getAdvicesMap(response.getAdvices()), ressurs.getTema()));
 
 		} else {
 			return AbacAnswer.permit();
@@ -67,19 +65,19 @@ public class Pep2Impl extends Pep<TilgangSak> {
 		if (ressurs == null) {
 			log.error("Pep2 (tema FAR eller KTA) mangler data om journalposten. Den må ha tema for å gjøre tilgangskontroll. Dette er forårsaket av en teknisk feil");
 			return AbacAnswer.deny(new TemaReason(
-					"ingen_tilgang_sensitive_tema", "saf_pep2", "mangler_tema"
+					"ingen_tilgang_sensitive_tema", "saf_pep2", "mangler_tema", null
 					));
 		}
 		String tema = ressurs.getTema().name().toLowerCase();
 		if (isFarskap(ressurs)) {
 			return safRequestContext.getSecurityContext().hasTemaAureRole(tema) ?
 					permit() : AbacAnswer.deny(new TemaReason(
-					"ingen_tilgang_farskap", "saf_pep2", "clientid_mangler_far_rolle"
+					"ingen_tilgang_farskap", "saf_pep2", "clientid_mangler_far_rolle", FAR
 					));
 		} else if (isKontrollAnmeldelse(ressurs)) {
 			return safRequestContext.getSecurityContext().hasTemaAureRole(tema) ?
 					permit() : AbacAnswer.deny(new TemaReason(
-					"ingen_tilgang_kontroll_anmeldelse", "saf_pep2", "clientid_mangler_kta_rolle"
+					"ingen_tilgang_kontroll_anmeldelse", "saf_pep2", "clientid_mangler_kta_rolle", KTA
 					));
 		} else {
 			return permit();
@@ -87,8 +85,14 @@ public class Pep2Impl extends Pep<TilgangSak> {
 	}
 
 	@Override
-	AbacAnswer translateToDenyReasonCode(XacmlResponse response) {
-		return AbacAnswer.deny(new TemaReason(getAdvicesMap(response.getAdvices()))); // eventuelt: egen reason code for forvaltningsloven §19
+	protected AbacAnswer mapXacmlResponse(XacmlResponse response) {
+		throw new RuntimeException("Denne er ikke i bruk i pep2!");
+	}
+
+	@Override
+	AbacAnswer translateToDenyReasonCode(XacmlResponse xacmlResponse) {
+		// return null; // ikke i bruk
+		throw new RuntimeException("Denne er ikke i bruk i pep2!");
 	}
 
 	private boolean isFarskap(TilgangSak ressurs) {

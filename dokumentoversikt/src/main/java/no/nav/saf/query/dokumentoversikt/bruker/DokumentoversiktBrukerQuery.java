@@ -15,13 +15,14 @@ import no.nav.saf.domain.tilgangsmodell.TilgangJournalpost;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 import no.nav.saf.domain.visningsmodell.Dokumentoversikt;
 import no.nav.saf.domain.visningsmodell.Journalpost;
-import no.nav.saf.graphql.GraphQLException;
+import no.nav.saf.exceptions.SafFunctionalException;
 import no.nav.saf.metrics.Monitor;
 import no.nav.saf.query.dokumentoversikt.DokumentoversiktVisningsmodellRepository;
 import no.nav.saf.query.dokumentoversikt.SideInfoMapper;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.pep.AbacAnswer;
 import no.nav.saf.tilgangskontroll.pep.Pep;
+import org.aspectj.lang.reflect.NoSuchAdviceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -88,7 +89,7 @@ class DokumentoversiktBrukerQuery {
 												 DataFetchingEnvironment environment) {
 		TilgangBruker tilgangBruker = dokumentoversiktBrukerTilgangsmodellRepository.findTilgangBruker(dokumentoversiktBrukerArguments.getBrukerIdInput());
 		if (tilgangBruker == null) {
-			throw GraphQLException.of(NOT_FOUND, environment, PERSON_IKKE_FUNNET_REASON, Dokumentoversikt.empty());
+			throw new SafFunctionalException(NOT_FOUND, environment, PERSON_IKKE_FUNNET_REASON); //, Dokumentoversikt.empty());
 		} else {
 			safRequestContext.getRequestCache().putTilgangBruker(tilgangBruker);
 		}
@@ -96,7 +97,7 @@ class DokumentoversiktBrukerQuery {
 		AbacAnswer pep1gAnswer = this.pep1g.hasAccessWithAnswer(tilgangBruker, safRequestContext);
 		if (pep1gAnswer.isDeny()) {
 			// må ha bedre reason her
-			throw GraphQLException.of(FORBIDDEN, environment, createPep1gDenyReasonDokumentoversikt(safRequestContext, pep1gAnswer), Dokumentoversikt.empty());
+			throw new SafFunctionalException(FORBIDDEN, environment, createPep1gDenyReasonDokumentoversikt(safRequestContext, pep1gAnswer)); // , Dokumentoversikt.empty());
 		}
 
 		//  Resultat fra pep2d caches lokalt og brukes i JournalpostDtoMapper.java. Med bakgrunn i resultat fra pep2d, pep6d og pep7d settes feltet saksbehandlerHarTilgang=true/false.

@@ -4,7 +4,7 @@ import graphql.schema.DataFetchingEnvironment;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import no.nav.saf.domain.visningsmodell.BrukerIdType;
-import no.nav.saf.graphql.GraphQLException;
+import no.nav.saf.exceptions.SafFunctionalException;
 import no.nav.saf.query.dokumentoversikt.arguments.AbstractDokumentoversiktArguments;
 import no.nav.saf.query.dokumentoversikt.arguments.DokumentoversiktFilters;
 import no.nav.saf.query.dokumentoversikt.arguments.DokumentoversiktPagination;
@@ -41,17 +41,17 @@ public class DokumentoversiktBrukerArguments extends AbstractDokumentoversiktArg
 		switch (brukerIdInput.getType()) {
 			case AKTOERID -> {
 				if (!isNumeric(brukerIdInput.getId())) {
-					throw GraphQLException.of(BAD_REQUEST, environment, "input brukerId.id må være numerisk for brukerId.idType=" + AKTOERID);
+					throw new SafFunctionalException(BAD_REQUEST, environment, "input brukerId.id må være numerisk for brukerId.idType=" + AKTOERID);
 				}
 			}
 			case FNR -> {
 				if (!isNumeric(brukerIdInput.getId())) {
-					throw GraphQLException.of(BAD_REQUEST, environment, "input brukerId.id må være numerisk for brukerId.idType=" + FNR);
+					throw new SafFunctionalException(BAD_REQUEST, environment, "input brukerId.id må være numerisk for brukerId.idType=" + FNR);
 				}
 			}
 			case ORGNR -> {
 				if (!isNumeric(brukerIdInput.getId())) {
-					throw GraphQLException.of(BAD_REQUEST, environment, "input brukerId.id må være numerisk for brukerId.idType=" + ORGNR);
+					throw new SafFunctionalException(BAD_REQUEST, environment, "input brukerId.id må være numerisk for brukerId.idType=" + ORGNR);
 				}
 			}
 		}

@@ -4,9 +4,10 @@ import graphql.execution.DataFetcherResult;
 import graphql.schema.DataFetcher;
 import graphql.schema.DataFetchingEnvironment;
 import lombok.extern.slf4j.Slf4j;
+import no.nav.saf.domain.visningsmodell.Dokumentoversikt;
 import no.nav.saf.domain.visningsmodell.Journalpost;
+import no.nav.saf.exceptions.SafFunctionalException;
 import no.nav.saf.exceptions.SafTechnicalException;
-import no.nav.saf.graphql.GraphQLException;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import org.slf4j.MDC;
 import org.springframework.stereotype.Component;
@@ -48,10 +49,16 @@ public class JournalpostDataFetcher implements DataFetcher<DataFetcherResult<Jou
 			return DataFetcherResult.<Journalpost>newResult()
 					.data(journalpost)
 					.build();
-		} catch (GraphQLException e) {
-			log.warn("query journalpost({}) feilet. melding={}",
-					argumentNameValue(journalpostId, eksternReferanseId), e.getError().getMessage());
-			return e.toDataFetcherResult();
+		// } catch (GraphQLException e) {
+		// 	log.warn("query journalpost({}) feilet. melding={}",
+		// 			argumentNameValue(journalpostId, eksternReferanseId), e.getError().getMessage());
+		// 	return e.toDataFetcherResult();
+		} catch (SafFunctionalException e) { // flytt dette til vår venn
+			log.warn("query journalpost({}) feilet funksjonelt. melding={}",
+					argumentNameValue(journalpostId, eksternReferanseId), e.getMessage(), e);
+			return DataFetcherResult.<Journalpost>newResult()
+					.error(e)
+					.build();
 		} catch (SafTechnicalException e) {
 			log.error("query journalpost({}) teknisk feil. melding={}",
 					argumentNameValue(journalpostId, eksternReferanseId), e.getMessage(), e);
@@ -88,17 +95,17 @@ public class JournalpostDataFetcher implements DataFetcher<DataFetcherResult<Jou
 
 	private void validateJournalpostIdOgEksternReferanseId(String journalpostId, String eksternReferanseId, DataFetchingEnvironment environment) {
 		if (isNotBlank(journalpostId) && !isNumeric(journalpostId)) {
-			throw GraphQLException.of(BAD_REQUEST, environment, "journalpostId er en ikke-numerisk verdi.");
+			throw new SafFunctionalException(BAD_REQUEST, environment, "journalpostId er en ikke-numerisk verdi.");
 		}
 
 		if (isBlank(journalpostId)) {
 			if (isNotBlank(eksternReferanseId) && eksternReferanseId.length() > 200) {
-				throw GraphQLException.of(BAD_REQUEST, environment, "eksternReferanseId kan ha maks 200 tegn.");
+				throw new SafFunctionalException(BAD_REQUEST, environment, "eksternReferanseId kan ha maks 200 tegn.");
 			}
 		}
 
 		if (isBlank(journalpostId) && isBlank(eksternReferanseId)) {
-			throw GraphQLException.of(BAD_REQUEST, environment, "journalpostId og eksternReferanseId kan ikke være tomt eller null.");
+			throw new SafFunctionalException(BAD_REQUEST, environment, "journalpostId og eksternReferanseId kan ikke være tomt eller null.");
 		}
 	}
 }

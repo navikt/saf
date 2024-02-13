@@ -381,7 +381,7 @@ public class JournalpostDtoMapper {
 	}
 
 	private boolean getDecisionFromPep2d(Tema tema, RequestCache requestCache) {
-		String tilgangKeyPep2dLocalCaching = getKeyForPep2d(tema.name());
+		String tilgangKeyPep2dLocalCaching = getKeyForPep2d(tema);
 		return getCachedDecision(requestCache, tilgangKeyPep2dLocalCaching);
 	}
 
