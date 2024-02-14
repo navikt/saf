@@ -33,7 +33,7 @@ public class SafFunctionalException extends RuntimeException implements GraphQLE
 		this.errorType = DataFetchingException;
 	}
 
-	public SafFunctionalException(ErrorCode errorCode, String message) {
+	public SafFunctionalException(String message, ErrorCode errorCode) {
 		super(message);
 		this.httpStatusCode = errorCode.getStatusCode();
 		this.errorType = errorCode.getType();

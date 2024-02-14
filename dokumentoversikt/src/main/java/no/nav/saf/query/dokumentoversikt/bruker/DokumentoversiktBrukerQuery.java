@@ -85,14 +85,14 @@ class DokumentoversiktBrukerQuery {
 												 SafRequestContext safRequestContext) {
 		TilgangBruker tilgangBruker = dokumentoversiktBrukerTilgangsmodellRepository.findTilgangBruker(dokumentoversiktBrukerArguments.getBrukerIdInput());
 		if (tilgangBruker == null) {
-			throw new SafFunctionalException(NOT_FOUND, PERSON_IKKE_FUNNET_REASON);
+			throw new SafFunctionalException(PERSON_IKKE_FUNNET_REASON, NOT_FOUND);
 		} else {
 			safRequestContext.getRequestCache().putTilgangBruker(tilgangBruker);
 		}
 
 		AbacAnswer pep1gAnswer = this.pep1g.hasAccessWithAnswer(tilgangBruker, safRequestContext);
 		if (pep1gAnswer.isDeny()) {
-			throw new SafFunctionalException(FORBIDDEN, createPep1gDenyReasonDokumentoversikt(safRequestContext, pep1gAnswer));
+			throw new SafFunctionalException(createPep1gDenyReasonDokumentoversikt(safRequestContext, pep1gAnswer), FORBIDDEN);
 		}
 
 		//  Resultat fra pep2d caches lokalt og brukes i JournalpostDtoMapper.java. Med bakgrunn i resultat fra pep2d, pep6d og pep7d settes feltet saksbehandlerHarTilgang=true/false.

@@ -41,17 +41,17 @@ public class DokumentoversiktBrukerArguments extends AbstractDokumentoversiktArg
 		switch (brukerIdInput.getType()) {
 			case AKTOERID -> {
 				if (!isNumeric(brukerIdInput.getId())) {
-					throw new SafFunctionalException(BAD_REQUEST, "input brukerId.id må være numerisk for brukerId.idType=" + AKTOERID);
+					throw new SafFunctionalException("input brukerId.id må være numerisk for brukerId.idType=" + AKTOERID, BAD_REQUEST);
 				}
 			}
 			case FNR -> {
 				if (!isNumeric(brukerIdInput.getId())) {
-					throw new SafFunctionalException(BAD_REQUEST, "input brukerId.id må være numerisk for brukerId.idType=" + FNR);
+					throw new SafFunctionalException("input brukerId.id må være numerisk for brukerId.idType=" + FNR, BAD_REQUEST);
 				}
 			}
 			case ORGNR -> {
 				if (!isNumeric(brukerIdInput.getId())) {
-					throw new SafFunctionalException(BAD_REQUEST, "input brukerId.id må være numerisk for brukerId.idType=" + ORGNR);
+					throw new SafFunctionalException("input brukerId.id må være numerisk for brukerId.idType=" + ORGNR, BAD_REQUEST);
 				}
 			}
 		}

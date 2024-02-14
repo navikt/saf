@@ -66,17 +66,17 @@ public class JournalpostDataFetcher implements DataFetcher<DataFetcherResult<Jou
 
 	private void validateJournalpostIdOgEksternReferanseId(String journalpostId, String eksternReferanseId) {
 		if (isNotBlank(journalpostId) && !isNumeric(journalpostId)) {
-			throw new SafFunctionalException(BAD_REQUEST, "journalpostId er en ikke-numerisk verdi.");
+			throw new SafFunctionalException("journalpostId er en ikke-numerisk verdi.", BAD_REQUEST);
 		}
 
 		if (isBlank(journalpostId)) {
 			if (isNotBlank(eksternReferanseId) && eksternReferanseId.length() > 200) {
-				throw new SafFunctionalException(BAD_REQUEST, "eksternReferanseId kan ha maks 200 tegn.");
+				throw new SafFunctionalException("eksternReferanseId kan ha maks 200 tegn.", BAD_REQUEST);
 			}
 		}
 
 		if (isBlank(journalpostId) && isBlank(eksternReferanseId)) {
-			throw new SafFunctionalException(BAD_REQUEST, "journalpostId og eksternReferanseId kan ikke være tomt eller null.");
+			throw new SafFunctionalException("journalpostId og eksternReferanseId kan ikke være tomt eller null.", BAD_REQUEST);
 		}
 	}
 }

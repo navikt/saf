@@ -76,12 +76,12 @@ class JournalpostQuery {
 
 			AbacAnswer pep1Access = pep1g.hasAccessWithAnswer(tilgangBruker, safRequestContext);
 			if (pep1Access.isDeny()) {
-				throw new SafFunctionalException(FORBIDDEN, createPep1gDenyReason(safRequestContext, pep1Access));
+				throw new SafFunctionalException(createPep1gDenyReason(safRequestContext, pep1Access), FORBIDDEN);
 			}
 
 			boolean pep2Access = pep2.hasAccess(tilgangSak, safRequestContext);
 			if (!pep2Access) {
-				throw new SafFunctionalException(FORBIDDEN, createPep2DenyReason(safRequestContext));
+				throw new SafFunctionalException(createPep2DenyReason(safRequestContext), FORBIDDEN);
 			}
 
 			if (environment.getSelectionSet().contains(SELECTION_JOURNALPOST_DOKUMENTER)) {
@@ -93,12 +93,12 @@ class JournalpostQuery {
 
 			boolean pep3Access = pep3.hasAccess(tilgangSak, safRequestContext);
 			if (!pep3Access) {
-				throw new SafFunctionalException(FORBIDDEN, createPep3DenyReason(safRequestContext));
+				throw new SafFunctionalException(createPep3DenyReason(safRequestContext), FORBIDDEN);
 			}
 
 			boolean pep4Access = pep4.hasAccess(tilgangJournalpost, safRequestContext);
 			if (!pep4Access) {
-				throw new SafFunctionalException(FORBIDDEN, createPep4DenyReason(safRequestContext));
+				throw new SafFunctionalException(createPep4DenyReason(safRequestContext), FORBIDDEN);
 			}
 
 			if (environment.getSelectionSet().contains(SELECTION_JOURNALPOST_DOKUMENTER)) {
@@ -110,8 +110,8 @@ class JournalpostQuery {
 			}
 			return mapJournalpost(journalpostHolder.arkivJournalpost(), safRequestContext.getRequestCache());
 		} catch (JournalpostIkkeFunnetException e) {
-			throw new SafFunctionalException(NOT_FOUND,
-					"Fant ikke journalpost i fagarkivet. " + errLog(journalpostId, eksternReferanseId));
+			throw new SafFunctionalException("Fant ikke journalpost i fagarkivet. " + errLog(journalpostId, eksternReferanseId), NOT_FOUND
+			);
 		}
 	}
 
