@@ -1,6 +1,5 @@
 package no.nav.saf.query.dokumentoversikt.bruker;
 
-import graphql.schema.DataFetchingEnvironment;
 import io.reactivex.rxjava3.core.Flowable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +21,6 @@ import no.nav.saf.query.dokumentoversikt.SideInfoMapper;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.pep.AbacAnswer;
 import no.nav.saf.tilgangskontroll.pep.Pep;
-import org.aspectj.lang.reflect.NoSuchAdviceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -32,7 +30,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static no.nav.saf.domain.DomainConstants.TILGANG_BRUKER;
 import static no.nav.saf.graphql.ErrorCode.FORBIDDEN;
 import static no.nav.saf.graphql.ErrorCode.NOT_FOUND;
 import static no.nav.saf.tilgangskontroll.pep.DenyReasonFactory.createPep1gDenyReasonDokumentoversikt;
@@ -85,19 +82,17 @@ class DokumentoversiktBrukerQuery {
 
 	@Monitor(value = "dok_request", extraTags = {"process", "dokumentOversikt", "requestType", "bruker"}, histogram = true)
 	public Dokumentoversikt hentDokumentoversikt(DokumentoversiktBrukerArguments dokumentoversiktBrukerArguments,
-												 SafRequestContext safRequestContext,
-												 DataFetchingEnvironment environment) {
+												 SafRequestContext safRequestContext) {
 		TilgangBruker tilgangBruker = dokumentoversiktBrukerTilgangsmodellRepository.findTilgangBruker(dokumentoversiktBrukerArguments.getBrukerIdInput());
 		if (tilgangBruker == null) {
-			throw new SafFunctionalException(NOT_FOUND, environment, PERSON_IKKE_FUNNET_REASON); //, Dokumentoversikt.empty());
+			throw new SafFunctionalException(NOT_FOUND, PERSON_IKKE_FUNNET_REASON);
 		} else {
 			safRequestContext.getRequestCache().putTilgangBruker(tilgangBruker);
 		}
 
 		AbacAnswer pep1gAnswer = this.pep1g.hasAccessWithAnswer(tilgangBruker, safRequestContext);
 		if (pep1gAnswer.isDeny()) {
-			// må ha bedre reason her
-			throw new SafFunctionalException(FORBIDDEN, environment, createPep1gDenyReasonDokumentoversikt(safRequestContext, pep1gAnswer)); // , Dokumentoversikt.empty());
+			throw new SafFunctionalException(FORBIDDEN, createPep1gDenyReasonDokumentoversikt(safRequestContext, pep1gAnswer));
 		}
 
 		//  Resultat fra pep2d caches lokalt og brukes i JournalpostDtoMapper.java. Med bakgrunn i resultat fra pep2d, pep6d og pep7d settes feltet saksbehandlerHarTilgang=true/false.

@@ -33,25 +33,25 @@ public class DokumentoversiktBrukerArguments extends AbstractDokumentoversiktArg
 	public static DokumentoversiktBrukerArguments create(DataFetchingEnvironment environment) {
 		Map<String, Object> brukerId = environment.getArgument("brukerId");
 		BrukerIdInput brukerIdInput = new BrukerIdInput((String) brukerId.get("id"), BrukerIdType.valueOf((String) brukerId.get("type")));
-		validate(brukerIdInput, environment);
+		validate(brukerIdInput);
 		return new DokumentoversiktBrukerArguments(brukerIdInput, DokumentoversiktFilters.create(environment), DokumentoversiktPagination.create(environment));
 	}
 
-	private static void validate(BrukerIdInput brukerIdInput, DataFetchingEnvironment environment) {
+	private static void validate(BrukerIdInput brukerIdInput) {
 		switch (brukerIdInput.getType()) {
 			case AKTOERID -> {
 				if (!isNumeric(brukerIdInput.getId())) {
-					throw new SafFunctionalException(BAD_REQUEST, environment, "input brukerId.id må være numerisk for brukerId.idType=" + AKTOERID);
+					throw new SafFunctionalException(BAD_REQUEST, "input brukerId.id må være numerisk for brukerId.idType=" + AKTOERID);
 				}
 			}
 			case FNR -> {
 				if (!isNumeric(brukerIdInput.getId())) {
-					throw new SafFunctionalException(BAD_REQUEST, environment, "input brukerId.id må være numerisk for brukerId.idType=" + FNR);
+					throw new SafFunctionalException(BAD_REQUEST, "input brukerId.id må være numerisk for brukerId.idType=" + FNR);
 				}
 			}
 			case ORGNR -> {
 				if (!isNumeric(brukerIdInput.getId())) {
-					throw new SafFunctionalException(BAD_REQUEST, environment, "input brukerId.id må være numerisk for brukerId.idType=" + ORGNR);
+					throw new SafFunctionalException(BAD_REQUEST, "input brukerId.id må være numerisk for brukerId.idType=" + ORGNR);
 				}
 			}
 		}

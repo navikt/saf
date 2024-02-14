@@ -16,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostMapper.mapJournalpost;
-import static no.nav.saf.domain.DomainConstants.TILGANG_BRUKER;
 import static no.nav.saf.domain.kode.Journalstatus.MOTTATT;
 import static no.nav.saf.graphql.ErrorCode.FORBIDDEN;
 import static no.nav.saf.graphql.ErrorCode.NOT_FOUND;
@@ -77,12 +76,12 @@ class JournalpostQuery {
 
 			AbacAnswer pep1Access = pep1g.hasAccessWithAnswer(tilgangBruker, safRequestContext);
 			if (pep1Access.isDeny()) {
-				throw new SafFunctionalException(FORBIDDEN, environment, createPep1gDenyReason(safRequestContext, pep1Access));
+				throw new SafFunctionalException(FORBIDDEN, createPep1gDenyReason(safRequestContext, pep1Access));
 			}
 
 			boolean pep2Access = pep2.hasAccess(tilgangSak, safRequestContext);
 			if (!pep2Access) {
-				throw new SafFunctionalException(FORBIDDEN, environment, createPep2DenyReason(safRequestContext));
+				throw new SafFunctionalException(FORBIDDEN, createPep2DenyReason(safRequestContext));
 			}
 
 			if (environment.getSelectionSet().contains(SELECTION_JOURNALPOST_DOKUMENTER)) {
@@ -94,12 +93,12 @@ class JournalpostQuery {
 
 			boolean pep3Access = pep3.hasAccess(tilgangSak, safRequestContext);
 			if (!pep3Access) {
-				throw new SafFunctionalException(FORBIDDEN, environment, createPep3DenyReason(safRequestContext));
+				throw new SafFunctionalException(FORBIDDEN, createPep3DenyReason(safRequestContext));
 			}
 
 			boolean pep4Access = pep4.hasAccess(tilgangJournalpost, safRequestContext);
 			if (!pep4Access) {
-				throw new SafFunctionalException(FORBIDDEN, environment, createPep4DenyReason(safRequestContext));
+				throw new SafFunctionalException(FORBIDDEN, createPep4DenyReason(safRequestContext));
 			}
 
 			if (environment.getSelectionSet().contains(SELECTION_JOURNALPOST_DOKUMENTER)) {
@@ -111,7 +110,7 @@ class JournalpostQuery {
 			}
 			return mapJournalpost(journalpostHolder.arkivJournalpost(), safRequestContext.getRequestCache());
 		} catch (JournalpostIkkeFunnetException e) {
-			throw new SafFunctionalException(NOT_FOUND, environment,
+			throw new SafFunctionalException(NOT_FOUND,
 					"Fant ikke journalpost i fagarkivet. " + errLog(journalpostId, eksternReferanseId));
 		}
 	}

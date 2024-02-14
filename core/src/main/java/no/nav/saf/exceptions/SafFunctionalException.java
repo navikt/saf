@@ -1,7 +1,6 @@
 package no.nav.saf.exceptions;
 
 import graphql.ErrorClassification;
-import graphql.ErrorType;
 import graphql.GraphQLError;
 import graphql.language.SourceLocation;
 import lombok.Getter;
@@ -15,7 +14,6 @@ import java.util.Map;
 
 import static graphql.ErrorType.DataFetchingException;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
-import static org.springframework.http.HttpStatus.Series.SERVER_ERROR;
 
 
 @Getter
@@ -35,7 +33,7 @@ public class SafFunctionalException extends RuntimeException implements GraphQLE
 		this.errorType = DataFetchingException;
 	}
 
-	public SafFunctionalException(ErrorCode errorCode, Object whoCares, String message) {
+	public SafFunctionalException(ErrorCode errorCode, String message) {
 		super(message);
 		this.httpStatusCode = errorCode.getStatusCode();
 		this.errorType = errorCode.getType();
