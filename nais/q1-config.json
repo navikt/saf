@@ -513,7 +513,8 @@
     {
       "app": "spinosaurus",
       "namespace": "helsearbeidsgiver",
-      "cluster": "dev-gcp"
+      "cluster": "dev-gcp",
+      "roles": ["tema_syk"]
     }
   ]
 }
