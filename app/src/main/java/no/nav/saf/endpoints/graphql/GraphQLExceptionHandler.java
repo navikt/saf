@@ -35,8 +35,7 @@ public class GraphQLExceptionHandler implements DataFetcherExceptionHandler {
 		} else if (exception instanceof SafTechnicalException e) {
 			log.error("query {} teknisk feil. melding={}", path.segmentToString(), e.getMessage(), e);
 			result = DataFetcherExceptionHandlerResult.newResult()
-					.error(SERVER_ERROR.construct(environment,
-							"Teknisk feil. Prøv igjen senere."))
+					.error(e.asAnonymizedGraphQlError())
 					.build();
 		} else if (exception instanceof Exception e) {
 			log.error("query {} ukjent teknisk feil. melding={}", path.segmentToString(), e.getMessage(), e);
