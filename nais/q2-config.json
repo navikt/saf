@@ -234,6 +234,11 @@
       "cluster": "dev-gcp"
     },
     {
+      "app": "eux-journal-q2",
+      "namespace": "eessibasis",
+      "cluster": "dev-gcp"
+    },
+    {
       "app": "eessi-pensjon-fagmodul-q2",
       "namespace": "eessipensjon",
       "cluster": "dev-gcp"
