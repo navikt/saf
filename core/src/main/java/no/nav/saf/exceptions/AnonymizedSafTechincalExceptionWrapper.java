@@ -2,10 +2,14 @@ package no.nav.saf.exceptions;
 
 import graphql.ErrorClassification;
 import graphql.GraphQLError;
+import graphql.GraphqlErrorHelper;
 import graphql.language.SourceLocation;
 
 import java.util.List;
 import java.util.Map;
+
+import static graphql.ErrorType.DataFetchingException;
+import static java.util.Collections.emptyList;
 
 public class AnonymizedSafTechincalExceptionWrapper implements GraphQLError {
 	private final SafTechnicalException safTechnicalException;
@@ -15,22 +19,30 @@ public class AnonymizedSafTechincalExceptionWrapper implements GraphQLError {
 	}
 
 	@Override
+	public Map<String, Object> getExtensions() {
+		return safTechnicalException.getExtensions();
+	}
+
+	@Override
 	public String getMessage() {
-		return "Teknisk feil. Prøv igjen senere.";
+		return "Ukjent teknisk feil. Meld fra til #team_dokumentløsninger på Slack.";
 	}
 
 	@Override
 	public List<SourceLocation> getLocations() {
-		return safTechnicalException.getLocations();
+		return emptyList();
 	}
 
 	@Override
 	public ErrorClassification getErrorType() {
-		return safTechnicalException.getErrorType();
+		return DataFetchingException;
 	}
 
 	@Override
-	public Map<String, Object> getExtensions() {
-		return safTechnicalException.getExtensions();
+	public Map<String, Object> toSpecification() {
+		Map<String, Object> specification = GraphqlErrorHelper.toSpecification(this);
+		specification.put("exceptionType", "TECHNICAL");
+		specification.put("exception", safTechnicalException.getClass().getSimpleName());
+		return specification;
 	}
 }

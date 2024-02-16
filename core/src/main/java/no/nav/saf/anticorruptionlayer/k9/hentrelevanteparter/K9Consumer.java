@@ -20,7 +20,6 @@ import static no.nav.saf.headers.NavHeaders.NAV_CALLID;
 import static no.nav.saf.util.MDCUtility.getCallId;
 import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
-import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -64,7 +63,7 @@ public class K9Consumer {
 		} else if (UNAUTHORIZED.equals(response.getStatusCode())) {
 			throw new SafTechnicalException("hentAktoerForSak feilet teknisk. Tilgang avvist.", response.getStatusCode());
 		} else {
-			throw new SafTechnicalException("hentAktoerForSak feilet med ukjent feil.", INTERNAL_SERVER_ERROR);
+			throw new SafTechnicalException("hentAktoerForSak feilet med ukjent feil.");
 		}
 	}
 

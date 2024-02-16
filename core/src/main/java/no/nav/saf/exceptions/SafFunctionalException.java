@@ -63,6 +63,14 @@ public class SafFunctionalException extends RuntimeException implements GraphQLE
 
 	@Override
 	public Map<String, Object> getExtensions() {
-		return Map.of("code", ((HttpStatus)httpStatusCode).name().toLowerCase() );
+		return Map.of("code", resolveToCode(httpStatusCode));
 	}
+
+	public static String resolveToCode(HttpStatusCode httpStatusCode) {
+		if (httpStatusCode instanceof HttpStatus httpStatus) {
+			return httpStatus.name().toLowerCase();
+		}
+		return INTERNAL_SERVER_ERROR.name().toLowerCase();
+	}
+
 }

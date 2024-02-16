@@ -1,26 +1,19 @@
 package no.nav.saf.exceptions;
 
-import graphql.ErrorType;
-import graphql.GraphQLError;
-import graphql.GraphqlErrorBuilder;
-import graphql.language.SourceLocation;
 import lombok.Getter;
 import org.springframework.http.HttpStatusCode;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
-import static graphql.ErrorType.DataFetchingException;
-import static no.nav.saf.graphql.ErrorCode.SERVER_ERROR;
+import static no.nav.saf.exceptions.SafFunctionalException.resolveToCode;
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
 @Getter
 public class SafTechnicalException extends RuntimeException {
 	private final HttpStatusCode httpStatusCode;
 
 	public SafTechnicalException(String message, HttpStatusCode httpStatus) {
-		super(message);
-		this.httpStatusCode = httpStatus;
+		this(message, null, httpStatus);
 	}
 
 	public SafTechnicalException(String message, Throwable cause, HttpStatusCode httpStatus) {
@@ -29,20 +22,15 @@ public class SafTechnicalException extends RuntimeException {
 	}
 
 	public SafTechnicalException(String message, Throwable cause) {
-		super(message, cause);
-		this.httpStatusCode = null;
+		this(message, cause, INTERNAL_SERVER_ERROR);
 	}
 
-	List<SourceLocation> getLocations() {
-		return new ArrayList<>();
-	}
-
-	ErrorType getErrorType() {
-		return DataFetchingException;
+	public SafTechnicalException(String message) {
+		this(message, (Throwable) null);
 	}
 
 	Map<String,Object> getExtensions() {
-		return Map.of("code", SERVER_ERROR.getText());
+		return Map.of("code", resolveToCode(httpStatusCode));
 	}
 
 	public AnonymizedSafTechincalExceptionWrapper asAnonymizedGraphQlError() {

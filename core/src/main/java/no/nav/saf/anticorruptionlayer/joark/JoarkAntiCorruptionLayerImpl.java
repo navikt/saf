@@ -26,8 +26,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
-
 @Component
 @Slf4j
 class JoarkAntiCorruptionLayerImpl implements JoarkAntiCorruptionLayer {
@@ -111,7 +109,7 @@ class JoarkAntiCorruptionLayerImpl implements JoarkAntiCorruptionLayer {
 
 	private static void validateFields(Set<String> fields) {
 		if (!fields.isEmpty() && !SAFINTERN_FETCHPATHS_ALLE.containsAll(fields)) {
-			throw new SafTechnicalException("fields inneholder et felt som ikke er gyldig. fields=" + fields, INTERNAL_SERVER_ERROR);
+			throw new SafTechnicalException("fields inneholder et felt som ikke er gyldig. fields=" + fields);
 		}
 	}
 }

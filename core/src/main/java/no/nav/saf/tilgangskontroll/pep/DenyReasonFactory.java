@@ -3,8 +3,6 @@ package no.nav.saf.tilgangskontroll.pep;
 import no.nav.saf.domain.kode.Tema;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
-import no.nav.saf.tilgangskontroll.pep.reasons.AbacDenyReason;
-import no.nav.saf.tilgangskontroll.pep.reasons.TemaReason;
 
 import static no.nav.saf.tilgangskontroll.pep.Pep1gImpl.ORGANISASJON_ER_NAV_STAT_KREVER_EGEN_ANSATT_TILGANG;
 
