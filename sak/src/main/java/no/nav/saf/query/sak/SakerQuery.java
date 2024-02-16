@@ -13,6 +13,7 @@ import no.nav.saf.tjeneste.argumenter.BrukerIdInput;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -71,7 +72,7 @@ class SakerQuery {
 				.map(tilgangSak ->
 						sakMapper.mapSak(tilgangSak, safRequestContext.getRequestCache()))
 				.filter(Objects::nonNull)
-				.collect(Collectors.toSet())
-				.stream().collect(Collectors.toList());
+				.distinct()
+				.toList();
 	}
 }

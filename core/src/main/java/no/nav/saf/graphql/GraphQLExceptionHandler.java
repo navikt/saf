@@ -1,4 +1,4 @@
-package no.nav.saf.endpoints.graphql;
+package no.nav.saf.graphql;
 
 import graphql.GraphQLError;
 import graphql.execution.DataFetcherExceptionHandler;
@@ -27,7 +27,7 @@ public class GraphQLExceptionHandler implements DataFetcherExceptionHandler {
 		);
 	}
 
-	private static GraphQLError categorizeThrowableLogAndCreateError(Throwable exception, String path) {
+	public static GraphQLError categorizeThrowableLogAndCreateError(Throwable exception, String path) {
 		if (exception instanceof SafFunctionalException e) {
 			log.warn("query {} feilet funksjonelt. melding={}", path, e.getMessage(), e);
 			return e;

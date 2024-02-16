@@ -5,6 +5,7 @@ import graphql.schema.DataFetcher;
 import graphql.schema.DataFetchingEnvironment;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.domain.visningsmodell.Dokumentoversikt;
+import no.nav.saf.graphql.GraphQLExceptionHandler;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import org.springframework.stereotype.Component;
 
@@ -24,13 +25,20 @@ public class DokumentoversiktJournalstatusDataFetcher implements DataFetcher<Dat
 	public DataFetcherResult<Dokumentoversikt> get(DataFetchingEnvironment environment) throws Exception {
 		SafRequestContext safRequestContext = environment.getGraphQlContext().get(SafRequestContext.KEY);
 		addMdcData(safRequestContext);
-		DokumentoversiktJournalstatusArguments arguments = DokumentoversiktJournalstatusArguments.create(environment);
-		log.info("dokumentoversiktJournalstatus hentes for filter={}", arguments.getFilters());
-		Dokumentoversikt dokumentoversikt = dokumentoversiktJournalstatusQuery.hentDokumentoversikt(arguments, safRequestContext);
-		log.info("dokumentoversiktJournalstatus returnerer {} journalposter for filter={}",
-				dokumentoversikt.getJournalposter().size(), arguments.getFilters());
-		return DataFetcherResult.<Dokumentoversikt>newResult()
-				.data(dokumentoversikt)
-				.build();
+		try {
+			DokumentoversiktJournalstatusArguments arguments = DokumentoversiktJournalstatusArguments.create(environment);
+			log.info("dokumentoversiktJournalstatus hentes for filter={}", arguments.getFilters());
+			Dokumentoversikt dokumentoversikt = dokumentoversiktJournalstatusQuery.hentDokumentoversikt(arguments, safRequestContext);
+			log.info("dokumentoversiktJournalstatus returnerer {} journalposter for filter={}",
+					dokumentoversikt.getJournalposter().size(), arguments.getFilters());
+			return DataFetcherResult.<Dokumentoversikt>newResult()
+					.data(dokumentoversikt)
+					.build();
+		} catch (Exception e) {
+			return DataFetcherResult.<Dokumentoversikt>newResult()
+					.data(Dokumentoversikt.empty())
+					.error(GraphQLExceptionHandler.categorizeThrowableLogAndCreateError(e, "DokumentoversiktJournalsak"))
+					.build();
+		}
 	}
 }

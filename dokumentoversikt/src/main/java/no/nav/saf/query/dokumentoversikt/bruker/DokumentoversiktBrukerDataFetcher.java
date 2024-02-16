@@ -5,6 +5,7 @@ import graphql.schema.DataFetcher;
 import graphql.schema.DataFetchingEnvironment;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.domain.visningsmodell.Dokumentoversikt;
+import no.nav.saf.graphql.GraphQLExceptionHandler;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import org.springframework.stereotype.Component;
 
@@ -24,13 +25,21 @@ public class DokumentoversiktBrukerDataFetcher implements DataFetcher<DataFetche
 	public DataFetcherResult<Dokumentoversikt> get(DataFetchingEnvironment environment) throws Exception {
 		SafRequestContext safRequestContext = environment.getGraphQlContext().get(SafRequestContext.KEY);
 		addMdcData(safRequestContext);
-		DokumentoversiktBrukerArguments arguments = DokumentoversiktBrukerArguments.create(environment);
-		log.info("query dokumentoversiktBruker hentes for bruker med {}", arguments.getBrukerIdInput());
-		Dokumentoversikt dokumentoversikt = dokumentoversiktBrukerQuery.hentDokumentoversikt(arguments, safRequestContext);
-		log.info("query dokumentoversiktBruker returnerer {} journalposter for bruker med {}", dokumentoversikt.getJournalposter()
-				.size(), arguments.getBrukerIdInput());
-		return DataFetcherResult.<Dokumentoversikt>newResult()
-				.data(dokumentoversikt)
-				.build();
+
+		try {
+			DokumentoversiktBrukerArguments arguments = DokumentoversiktBrukerArguments.create(environment);
+			log.info("query dokumentoversiktBruker hentes for bruker med {}", arguments.getBrukerIdInput());
+			Dokumentoversikt dokumentoversikt = dokumentoversiktBrukerQuery.hentDokumentoversikt(arguments, safRequestContext);
+			log.info("query dokumentoversiktBruker returnerer {} journalposter for bruker med {}", dokumentoversikt.getJournalposter()
+					.size(), arguments.getBrukerIdInput());
+			return DataFetcherResult.<Dokumentoversikt>newResult()
+					.data(dokumentoversikt)
+					.build();
+		} catch (Exception e) {
+			return DataFetcherResult.<Dokumentoversikt>newResult()
+					.data(Dokumentoversikt.empty())
+					.error(GraphQLExceptionHandler.categorizeThrowableLogAndCreateError(e, "DokumentoversiktBruker"))
+					.build();
+		}
 	}
 }
