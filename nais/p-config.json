@@ -502,6 +502,12 @@
       "namespace": "helsearbeidsgiver",
       "cluster": "prod-gcp",
       "roles": ["tema_syk"]
+    },
+    {
+      "app": "okonomiportal",
+      "namespace": "okonomi",
+      "cluster": "prod-fss",
+      "roles": ["tema_sto"]
     }
   ]
 }
