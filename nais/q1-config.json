@@ -524,7 +524,7 @@
     {
       "app": "rpa-saf-tiltakspenger",
       "namespace": "team-rpa",
-      "cluster": "prod-fss",
+      "cluster": "dev-fss",
       "roles": ["tema_ind"]
    }
   ]
