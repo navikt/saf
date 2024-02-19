@@ -520,6 +520,12 @@
       "namespace": "helsearbeidsgiver",
       "cluster": "dev-gcp",
       "roles": ["tema_syk"]
-    }
+    },
+    {
+      "app": "rpa-saf-tiltakspenger",
+      "namespace": "team-rpa",
+      "cluster": "dev-fss",
+      "roles": ["tema_ind"]
+   }
   ]
 }
