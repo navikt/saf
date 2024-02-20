@@ -31,6 +31,4 @@ public class HentdokumentTilgangskontrollException extends SafFunctionalExceptio
 		map.put(REASON_MESSAGE, abacDenyReason.getHumanReadableDenyReason());
 		return map;
 	}
-
-
 }

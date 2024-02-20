@@ -489,9 +489,6 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 
 	private Dokumentoversikt getDokumentoversikt(ResponseEntity<LinkedHashMap> responseEntity) {
 		Map<String, Object> responseEntityData = (Map<String, Object>) responseEntity.getBody().get("data");
-		if (responseEntityData == null) {
-			return Dokumentoversikt.builder().build();
-		}
 		return objectMapper.convertValue(responseEntityData.get("dokumentoversiktBruker"), Dokumentoversikt.class);
 	}
 

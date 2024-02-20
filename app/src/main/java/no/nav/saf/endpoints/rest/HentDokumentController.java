@@ -140,7 +140,7 @@ public class HentDokumentController {
 			throw new HentdokumentTilgangskontrollException(
 					"Servicebruker forsøker å hente dokument med variantFormat=" +
 					variantFormat + ". Servicebrukere har kun tilgang til variantFormat=" + Variantformat.ORIGINAL +
-					" med mindre man har en avtale med Team Dokumentløsninger. Snakk med oss om behov.", AbacAnswer.deny(new UkjentReason())); // i mange tilfeller dyttes det ut en XacmlResponse.deny() uten innhold, den materialiserer seg til slutt i en string BLANK == ""
+					" med mindre man har en avtale med Team Dokumentløsninger. Snakk med oss om behov.", AbacAnswer.deny(new UkjentReason()));
 		}
 	}
 }
