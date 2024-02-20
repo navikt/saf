@@ -101,8 +101,7 @@ public class Pep2dImpl extends Pep<TilgangSak> {
 			return AbacAnswer.permit();
 		} else {
 			var advices = getAdvicesMap(xacmlResponse.getAdvices());
-			if ("fp4_geografi:ingen_tilgang_enhet"
-					.equalsIgnoreCase((advices.get("deny_policy") + ":" + advices.get("deny_rule")))) {
+			if (AbacDenyReasonCode.GEOGRAFI.matchesAbacAdvice(advices)) {
 				return AbacAnswer.deny(new GeografiReason(advices));
 			}
 			return AbacAnswer.deny(new TemaReason(advices, tema));

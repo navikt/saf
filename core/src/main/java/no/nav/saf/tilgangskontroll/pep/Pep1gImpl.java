@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
+import java.util.Map;
 
 import static no.nav.saf.domain.DomainConstants.PEP1G;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_PERSON_AKTOERID_RESOURCE;
@@ -25,7 +26,13 @@ import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_PERSON_
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_RESOURCE_TYPE;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_SAF_PERSON;
 import static no.nav.saf.tilgangskontroll.abac.dto.response.AdviceStringUtil.getAdvicesMap;
+import static no.nav.saf.tilgangskontroll.pep.AbacAnswer.deny;
 import static no.nav.saf.tilgangskontroll.pep.AbacAnswer.permit;
+import static no.nav.saf.tilgangskontroll.pep.AbacDenyReasonCode.EGEN_ANSATT;
+import static no.nav.saf.tilgangskontroll.pep.AbacDenyReasonCode.FORTROLIG_ADRESSE;
+import static no.nav.saf.tilgangskontroll.pep.AbacDenyReasonCode.GEOGRAFI;
+import static no.nav.saf.tilgangskontroll.pep.AbacDenyReasonCode.STRENGT_FORTROLIG_ADRESSE;
+import static no.nav.saf.tilgangskontroll.pep.AbacDenyReasonCode.STRENGT_FORTROLIG_ADRESSE_UTLAND;
 
 /**
  * Dekker følgende policies i saf:
@@ -67,7 +74,7 @@ public class Pep1gImpl extends StandardPep<TilgangBruker> {
 			request.resource(RESOURCE_FELLES_PERSON_FNR, ressurs.getFoedselsnr());
 		} else {
 			log.error("Pep1g kunne ikke validere bruker fordi bruker ikke er en person. Denne tilstanden indikerer en teknisk feil.");
-			return AbacAnswer.deny(new UkjentReason());
+			return deny(new UkjentReason());
 		}
 		traceLogPepStarted(PEP1G, ressurs);
 		XacmlResponse response = abacService.evaluate(request);
@@ -87,16 +94,20 @@ public class Pep1gImpl extends StandardPep<TilgangBruker> {
 
 	@Override
 	protected AbacAnswer translateToDenyReasonCode(XacmlResponse xacmlResponse) {
-		var advices = getAdvicesMap(xacmlResponse.getAdvices());
-		return AbacAnswer.deny(
-				switch ((advices.get("deny_policy") + ":" + advices.get("deny_rule")).toLowerCase()) {
-					case "skjermede_navansatte_og_familiemedlemmer:behandle_skjermede_navansatte_og_familiemedlemmer_mangler_gruppetilgang" -> new EgenAnsattReason(advices);
-					case "fp4_geografi:ingen_tilgang_enhet" -> new GeografiReason(advices);
-					case "adressebeskyttelse_fortrolig_adresse:fortrolig_adresse_nok" -> new FortroligAdresseReason(advices);
-					case "adressebeskyttelse_strengt_fortrolig_adresse:strengt_fortrolig_adresse_nok" -> new StrengtFortroligAdresseReason(advices);
-					case "adressebeskyttelse_strengt_fortrolig_adresse_utland:strengt_fortrolig_adresse_utland_nok" -> new StrengtFortroligAdresseUtlandReason(advices);
-					default -> new UkjentReason();
-				});
+		Map<String, String> advices = getAdvicesMap(xacmlResponse.getAdvices());
+
+		if (EGEN_ANSATT.matchesAbacAdvice(advices)) {
+			return deny(new EgenAnsattReason(advices));
+		} else if (GEOGRAFI.matchesAbacAdvice(advices)) {
+			return deny(new GeografiReason(advices));
+		} else if (FORTROLIG_ADRESSE.matchesAbacAdvice(advices)) {
+			return deny(new FortroligAdresseReason(advices));
+		} else if (STRENGT_FORTROLIG_ADRESSE.matchesAbacAdvice(advices)) {
+			return deny(new StrengtFortroligAdresseReason(advices));
+		} else if (STRENGT_FORTROLIG_ADRESSE_UTLAND.matchesAbacAdvice(advices)) {
+			return deny(new StrengtFortroligAdresseUtlandReason(advices));
+		}
+		return deny(new UkjentReason());
 	}
 
 
@@ -109,7 +120,7 @@ public class Pep1gImpl extends StandardPep<TilgangBruker> {
 			if (navOrgService.isNavIdentInEgenAnsattGroup(safRequestContext.getUserId())) {
 				return AbacAnswer.permit();
 			}
-			return AbacAnswer.deny(new OrgnrNavStatReaason(Collections.emptyMap()));
+			return deny(new OrgnrNavStatReaason(Collections.emptyMap()));
 		}
 		return AbacAnswer.permit();
 	}

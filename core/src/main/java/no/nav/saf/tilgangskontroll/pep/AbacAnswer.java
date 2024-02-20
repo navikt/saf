@@ -40,26 +40,4 @@ public class AbacAnswer {
 		DENY
 	}
 
-	public enum AbacDenyReasonCode {
-		EGEN_ANSATT("deny_egen_ansatt"),
-		EGEN_ANSATT_PART("deny_egen_ansatt_part"),
-		FORTROLIG_ADRESSE("deny_fortrolig_adresse"),
-		FORTROLIG_ADRESSE_PART("deny_fortrolig_adresse_part"),
-		GEOGRAFI("deny_geografi"),
-		JOURNALSTATUS("deny_journalstatus"),
-		ORGNR_NAV_STAT("deny_orgnr_nav_stat"),
-		SKJERMING("deny_skjerming"),
-		STRENGT_FORTROLIG_ADRESSE("deny_strengt_fortrolig_adresse"),
-		STRENGT_FORTROLIG_ADRESSE_UTLAND("deny_strengt_fortrolig_adresse_utland"),
-		STRENGT_FORTROLIG_ADRESSE_PART("deny_strengt_fortrolig_adresse_part"),
-		STRENGT_FORTROLIG_ADRESSE_UTLAND_PART("deny_strengt_fortrolig_adresse_utland_part"),
-		TEMA("deny_tema"),
-		UKJENT("ukjent");
-
-		public final String code;
-
-		AbacDenyReasonCode(String code) {
-			this.code = code;
-		}
-	}
 }

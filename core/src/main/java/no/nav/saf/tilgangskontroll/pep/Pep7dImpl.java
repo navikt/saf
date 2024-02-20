@@ -29,7 +29,12 @@ import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_PERSON_
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_RESOURCE_TYPE;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_SAF_TREDJEPART;
 import static no.nav.saf.tilgangskontroll.abac.dto.response.AdviceStringUtil.getAdvicesMap;
+import static no.nav.saf.tilgangskontroll.pep.AbacAnswer.deny;
 import static no.nav.saf.tilgangskontroll.pep.AbacAnswer.permit;
+import static no.nav.saf.tilgangskontroll.pep.AbacDenyReasonCode.EGEN_ANSATT;
+import static no.nav.saf.tilgangskontroll.pep.AbacDenyReasonCode.FORTROLIG_ADRESSE;
+import static no.nav.saf.tilgangskontroll.pep.AbacDenyReasonCode.STRENGT_FORTROLIG_ADRESSE;
+import static no.nav.saf.tilgangskontroll.pep.AbacDenyReasonCode.STRENGT_FORTROLIG_ADRESSE_UTLAND;
 
 /**
  * Dekker følgende policies i saf:
@@ -131,17 +136,16 @@ public class Pep7dImpl extends StandardPep<TilgangSak> {
 	@Override
 	protected AbacAnswer translateToDenyReasonCode(XacmlResponse xacmlResponse) {
 		var advices = getAdvicesMap(xacmlResponse.getAdvices());
-		return AbacAnswer.deny(switch ((advices.get("deny_policy") + ":" + advices.get("deny_rule")).toLowerCase()) {
-			case "skjermede_navansatte_og_familiemedlemmer:behandle_skjermede_navansatte_og_familiemedlemmer_mangler_gruppetilgang" ->
-					new EgenAnsattPartReason(advices);
-			case "adressebeskyttelse_fortrolig_adresse:fortrolig_adresse_nok" ->
-					new FortroligAdressePartReason(advices);
-			case "adressebeskyttelse_strengt_fortrolig_adresse:strengt_fortrolig_adresse_nok" ->
-					new StrengtFortroligAdressePartReason(advices);
-			case "adressebeskyttelse_strengt_fortrolig_adresse_utland:strengt_fortrolig_adresse_utland_nok" ->
-					new StrengtFortroligAdresseUtlandPartReason(advices);
-			default -> new UkjentReason();
 
-		});
+		if (EGEN_ANSATT.matchesAbacAdvice(advices)) {
+			return deny(new EgenAnsattPartReason(advices));
+		} else if (FORTROLIG_ADRESSE.matchesAbacAdvice(advices)) {
+			return deny(new FortroligAdressePartReason(advices));
+		} else if (STRENGT_FORTROLIG_ADRESSE.matchesAbacAdvice(advices)) {
+			return deny(new StrengtFortroligAdressePartReason(advices));
+		} else if (STRENGT_FORTROLIG_ADRESSE_UTLAND.matchesAbacAdvice(advices)) {
+			return deny(new StrengtFortroligAdresseUtlandPartReason(advices));
+		}
+		return deny(new UkjentReason());
 	}
 }

@@ -1,11 +1,16 @@
 package no.nav.saf.tilgangskontroll.pep.reasons;
 
-import no.nav.saf.tilgangskontroll.pep.AbacAnswer;
+import no.nav.saf.tilgangskontroll.pep.AbacDenyReasonCode;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
 public final class StrengtFortroligAdresseUtlandReason extends AbacDenyReason {
 	public StrengtFortroligAdresseUtlandReason(Map<String,String> advices) {
-		super(advices, AbacAnswer.AbacDenyReasonCode.STRENGT_FORTROLIG_ADRESSE_UTLAND);
+		super(advices, AbacDenyReasonCode.STRENGT_FORTROLIG_ADRESSE_UTLAND);
+	}
+
+	public String getHumanReadableDenyReason() {
+		return "Du har ikke tilgang til brukeren fordi han / hun har strengt fortrolig adresse utland." + VIKAFOSSEN;
 	}
 }

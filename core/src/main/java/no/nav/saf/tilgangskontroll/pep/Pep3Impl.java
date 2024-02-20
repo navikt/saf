@@ -26,7 +26,11 @@ import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_PERSON_
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_RESOURCE_TYPE;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_SAF_TREDJEPART;
 import static no.nav.saf.tilgangskontroll.abac.dto.response.AdviceStringUtil.getAdvicesMap;
+import static no.nav.saf.tilgangskontroll.pep.AbacAnswer.deny;
 import static no.nav.saf.tilgangskontroll.pep.AbacAnswer.permit;
+import static no.nav.saf.tilgangskontroll.pep.AbacDenyReasonCode.FORTROLIG_ADRESSE;
+import static no.nav.saf.tilgangskontroll.pep.AbacDenyReasonCode.STRENGT_FORTROLIG_ADRESSE;
+import static no.nav.saf.tilgangskontroll.pep.AbacDenyReasonCode.STRENGT_FORTROLIG_ADRESSE_UTLAND;
 
 /**
  * Dekker følgende policies i saf:
@@ -80,16 +84,14 @@ public class Pep3Impl extends StandardPep<TilgangSak> {
 	@Override
 	protected AbacAnswer translateToDenyReasonCode(XacmlResponse xacmlResponse) {
 		var advices = getAdvicesMap(xacmlResponse.getAdvices());
-		return AbacAnswer.deny(
-				switch ((advices.get("deny_policy") + ":" + advices.get("deny_rule")).toLowerCase()) {
-					// subset av statuser; dette er alle som kan mappes ut i pep3
-					case "adressebeskyttelse_fortrolig_adresse:fortrolig_adresse_nok" ->
-							new FortroligAdresseReason(advices);
-					case "adressebeskyttelse_strengt_fortrolig_adresse:strengt_fortrolig_adresse_nok" ->
-							new StrengtFortroligAdresseReason(advices);
-					case "adressebeskyttelse_strengt_fortrolig_adresse_utland:strengt_fortrolig_adresse_utland_nok" ->
-							new StrengtFortroligAdresseUtlandReason(advices);
-					default -> new UkjentReason();
-				});
+
+		if (FORTROLIG_ADRESSE.matchesAbacAdvice(advices)) {
+			return deny(new FortroligAdresseReason(advices));
+		} else if (STRENGT_FORTROLIG_ADRESSE.matchesAbacAdvice(advices)) {
+			return deny(new StrengtFortroligAdresseReason(advices));
+		} else if (STRENGT_FORTROLIG_ADRESSE_UTLAND.matchesAbacAdvice(advices)) {
+			return deny(new StrengtFortroligAdresseUtlandReason(advices));
+		}
+		return deny(new UkjentReason());
 	}
 }
