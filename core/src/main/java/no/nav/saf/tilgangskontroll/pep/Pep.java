@@ -2,10 +2,6 @@ package no.nav.saf.tilgangskontroll.pep;
 
 import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
-import no.nav.saf.tilgangskontroll.abac.dto.response.Decision;
-import no.nav.saf.tilgangskontroll.abac.dto.response.XacmlResponse;
-
-import static no.nav.saf.tilgangskontroll.pep.AbacAnswer.deny;
 
 /**
  * Policy Enforcement Point for ABAC.
@@ -50,10 +46,6 @@ public abstract class Pep<T> {
 		}
 	}
 
-	protected AbacAnswer mapXacmlResponse(XacmlResponse xacmlResponse) {
-		return xacmlResponse.isPermit() ? AbacAnswer.permit() : translateToDenyReasonCode(xacmlResponse);
-	}
-
 	void traceLogPepStarted(String pepName, Object ressurs) {
 		if (log.isTraceEnabled()) {
 			log.trace("{} evaluerer ressurs={}", pepName, ressurs);
@@ -65,7 +57,4 @@ public abstract class Pep<T> {
 			log.trace("{} ferdig evaluert ressurs={}", pepName, ressurs);
 		}
 	}
-
-	abstract AbacAnswer translateToDenyReasonCode(XacmlResponse xacmlResponse);
-
 }

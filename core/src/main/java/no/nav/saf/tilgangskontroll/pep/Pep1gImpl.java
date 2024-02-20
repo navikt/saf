@@ -7,7 +7,6 @@ import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlRequest;
 import no.nav.saf.tilgangskontroll.abac.dto.response.XacmlResponse;
 import no.nav.saf.tilgangskontroll.abac.service.AbacService;
-import no.nav.saf.tilgangskontroll.pep.reasons.EgenAnsattPartReason;
 import no.nav.saf.tilgangskontroll.pep.reasons.EgenAnsattReason;
 import no.nav.saf.tilgangskontroll.pep.reasons.FortroligAdresseReason;
 import no.nav.saf.tilgangskontroll.pep.reasons.GeografiReason;
@@ -37,7 +36,7 @@ import static no.nav.saf.tilgangskontroll.pep.AbacAnswer.permit;
  */
 @Component(PEP1G)
 @Slf4j
-public class Pep1gImpl extends Pep<TilgangBruker> {
+public class Pep1gImpl extends StandardPep<TilgangBruker> {
 
 	public static final String ORGANISASJON_ER_NAV_STAT_KREVER_EGEN_ANSATT_TILGANG = "organisasjon_er_nav_stat_krever_egen_ansatt_tilgang";
 	private final AbacService abacService;
@@ -87,7 +86,7 @@ public class Pep1gImpl extends Pep<TilgangBruker> {
 	}
 
 	@Override
-	AbacAnswer translateToDenyReasonCode(XacmlResponse xacmlResponse) {
+	protected AbacAnswer translateToDenyReasonCode(XacmlResponse xacmlResponse) {
 		var advices = getAdvicesMap(xacmlResponse.getAdvices());
 		return AbacAnswer.deny(
 				switch ((advices.get("deny_policy") + ":" + advices.get("deny_rule")).toLowerCase()) {

@@ -39,7 +39,7 @@ import static no.nav.saf.tilgangskontroll.pep.AbacAnswer.permit;
  */
 @Slf4j
 @Component(PEP7D)
-public class Pep7dImpl extends Pep<TilgangSak> {
+public class Pep7dImpl extends StandardPep<TilgangSak> {
 
 	private final AbacService abacService;
 
@@ -129,7 +129,7 @@ public class Pep7dImpl extends Pep<TilgangSak> {
 	}
 
 	@Override
-	AbacAnswer translateToDenyReasonCode(XacmlResponse xacmlResponse) {
+	protected AbacAnswer translateToDenyReasonCode(XacmlResponse xacmlResponse) {
 		var advices = getAdvicesMap(xacmlResponse.getAdvices());
 		return AbacAnswer.deny(switch ((advices.get("deny_policy") + ":" + advices.get("deny_rule")).toLowerCase()) {
 			case "skjermede_navansatte_og_familiemedlemmer:behandle_skjermede_navansatte_og_familiemedlemmer_mangler_gruppetilgang" ->

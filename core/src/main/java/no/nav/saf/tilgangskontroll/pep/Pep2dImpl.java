@@ -109,17 +109,6 @@ public class Pep2dImpl extends Pep<TilgangSak> {
 		}
 	}
 
-
-	@Override
-	protected AbacAnswer mapXacmlResponse(XacmlResponse xacmlResponse) {
-		throw new RuntimeException("Not in use in Pep2d");
-	}
-
-	@Override
-	AbacAnswer translateToDenyReasonCode(XacmlResponse xacmlResponse) {
-		throw new RuntimeException("Not in use in Pep2d");
-	}
-
 	private AbacAnswer fetchXacmlResponse(TilgangSak ressurs, SafRequestContext safRequestContext, String tilgangKeyDistributedCaching) {
 		XacmlResponse cachedResponse = tilgangCache.get(tilgangKeyDistributedCaching, XacmlResponse.class);
 		if (cachedResponse == null) {

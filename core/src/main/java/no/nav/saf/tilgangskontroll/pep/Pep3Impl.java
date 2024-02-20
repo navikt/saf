@@ -36,7 +36,7 @@ import static no.nav.saf.tilgangskontroll.pep.AbacAnswer.permit;
  */
 @Slf4j
 @Component(PEP3)
-public class Pep3Impl extends Pep<TilgangSak> {
+public class Pep3Impl extends StandardPep<TilgangSak> {
 
 	private static final EnumSet<Tema> RELEVANTE_TEMA = EnumSet.of(BID, FAR);
 	private final AbacService abacService;
@@ -78,7 +78,7 @@ public class Pep3Impl extends Pep<TilgangSak> {
 	}
 
 	@Override
-	AbacAnswer translateToDenyReasonCode(XacmlResponse xacmlResponse) {
+	protected AbacAnswer translateToDenyReasonCode(XacmlResponse xacmlResponse) {
 		var advices = getAdvicesMap(xacmlResponse.getAdvices());
 		return AbacAnswer.deny(
 				switch ((advices.get("deny_policy") + ":" + advices.get("deny_rule")).toLowerCase()) {

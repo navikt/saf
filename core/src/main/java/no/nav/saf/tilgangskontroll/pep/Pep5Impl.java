@@ -7,7 +7,6 @@ import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlRequest;
 import no.nav.saf.tilgangskontroll.abac.dto.response.XacmlResponse;
 import no.nav.saf.tilgangskontroll.abac.service.AbacService;
-import no.nav.saf.tilgangskontroll.pep.reasons.AbacDenyReason;
 import no.nav.saf.tilgangskontroll.pep.reasons.SkjermingReason;
 import no.nav.saf.tilgangskontroll.pep.reasons.UkjentReason;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +26,7 @@ import static no.nav.saf.tilgangskontroll.pep.AbacAnswer.permit;
  */
 @Slf4j
 @Component(PEP5)
-public class Pep5Impl extends Pep<TilgangDokumentInfo> {
+public class Pep5Impl extends StandardPep<TilgangDokumentInfo> {
 
 	private final AbacService abacService;
 
@@ -73,7 +72,7 @@ public class Pep5Impl extends Pep<TilgangDokumentInfo> {
 	}
 
 	@Override
-	AbacAnswer translateToDenyReasonCode(XacmlResponse xacmlResponse) {
+	protected AbacAnswer translateToDenyReasonCode(XacmlResponse xacmlResponse) {
 		return AbacAnswer.deny(new SkjermingReason(getAdvicesMap(xacmlResponse.getAdvices())));
 	}
 

@@ -8,7 +8,6 @@ import no.nav.saf.tilgangskontroll.abac.dto.response.XacmlResponse;
 import no.nav.saf.tilgangskontroll.abac.service.AbacService;
 import no.nav.saf.tilgangskontroll.pep.reasons.TemaReason;
 import no.nav.saf.tilgangskontroll.pep.reasons.UkjentReason;
-import org.apache.commons.lang3.NotImplementedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -82,17 +81,6 @@ public class Pep2Impl extends Pep<TilgangSak> {
 		} else {
 			return permit();
 		}
-	}
-
-	@Override
-	protected AbacAnswer mapXacmlResponse(XacmlResponse response) {
-		throw new RuntimeException("Denne er ikke i bruk i pep2!");
-	}
-
-	@Override
-	AbacAnswer translateToDenyReasonCode(XacmlResponse xacmlResponse) {
-		// return null; // ikke i bruk
-		throw new RuntimeException("Denne er ikke i bruk i pep2!");
 	}
 
 	private boolean isFarskap(TilgangSak ressurs) {

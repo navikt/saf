@@ -28,7 +28,7 @@ import static no.nav.saf.tilgangskontroll.pep.AbacAnswer.permit;
  */
 @Slf4j
 @Component(PEP4)
-public class Pep4Impl extends Pep<TilgangJournalpost> {
+public class Pep4Impl extends StandardPep<TilgangJournalpost> {
 
 	private final AbacService abacService;
 
@@ -75,7 +75,7 @@ public class Pep4Impl extends Pep<TilgangJournalpost> {
 	}
 
 	@Override
-	AbacAnswer translateToDenyReasonCode(XacmlResponse xacmlResponse) {
+	protected AbacAnswer translateToDenyReasonCode(XacmlResponse xacmlResponse) {
 		return AbacAnswer.deny(new JournalstatusReason(getAdvicesMap(xacmlResponse.getAdvices())));
 	}
 
