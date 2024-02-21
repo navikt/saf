@@ -1,0 +1,32 @@
+{
+  "Response": {
+    "Decision": "Deny",
+    "Status": {
+      "StatusCode": {
+        "Value": "urn:oasis:names:tc:xacml:1.0:status:ok",
+        "StatusCode": {
+          "Value": "urn:oasis:names:tc:xacml:1.0:status:ok"
+        }
+      }
+    },
+    "Obligations": [],
+    "AssociatedAdvice": {
+      "id": "no.nav.abac",
+      "AttributeAssignment":  [
+        {
+          "AttributeId": "no.nav.abac.attributter.adviceorobligation.deny_policy",
+          "Value": "adressebeskyttelse_fortrolig_adresse",
+          "Category": "urn:oasis:names:tc:xacml:3.0:attribute-category:resource",
+          "DataType": "http://www.w3.org/2001/XMLSchema#string"
+        },
+        {
+          "AttributeId": "no.nav.abac.attributter.adviceorobligation.deny_rule",
+          "Value": "fortrolig_adresse_nok",
+          "Category": "urn:oasis:names:tc:xacml:3.0:attribute-category:resource",
+          "DataType": "http://www.w3.org/2001/XMLSchema#string"
+        }
+      ]
+    },
+    "PolicyIdentifierList": {}
+  }
+}

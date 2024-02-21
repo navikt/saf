@@ -618,7 +618,7 @@ public abstract class AbstractItest {
 				.whenScenarioStateIs(STATE_PEP3)
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("abac/abac-deny.json"))
+						.withBodyFile("abac/abac-deny-kode6.json"))
 				.willSetStateTo(STATE_PERMIT));
 	}
 

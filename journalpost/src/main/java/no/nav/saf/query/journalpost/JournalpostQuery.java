@@ -9,6 +9,7 @@ import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 import no.nav.saf.domain.visningsmodell.Journalpost;
 import no.nav.saf.exceptions.JournalpostIkkeFunnetException;
 import no.nav.saf.exceptions.SafFunctionalException;
+import no.nav.saf.exceptions.TilgangskontrollException;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.pep.AbacAnswer;
 import no.nav.saf.tilgangskontroll.pep.Pep;
@@ -76,12 +77,12 @@ class JournalpostQuery {
 
 			AbacAnswer pep1Access = pep1g.hasAccessWithAnswer(tilgangBruker, safRequestContext);
 			if (pep1Access.isDeny()) {
-				throw new SafFunctionalException(createPep1gDenyReason(safRequestContext, pep1Access), FORBIDDEN);
+				throw new TilgangskontrollException(createPep1gDenyReason(safRequestContext, pep1Access), pep1Access);
 			}
 
-			boolean pep2Access = pep2.hasAccess(tilgangSak, safRequestContext);
-			if (!pep2Access) {
-				throw new SafFunctionalException(createPep2DenyReason(safRequestContext), FORBIDDEN);
+			AbacAnswer pep2Access = pep2.hasAccessWithAnswer(tilgangSak, safRequestContext);
+			if (pep2Access.isDeny()) {
+				throw new TilgangskontrollException(createPep2DenyReason(safRequestContext), pep2Access);
 			}
 
 			if (environment.getSelectionSet().contains(SELECTION_JOURNALPOST_DOKUMENTER)) {
@@ -91,14 +92,14 @@ class JournalpostQuery {
 				}
 			}
 
-			boolean pep3Access = pep3.hasAccess(tilgangSak, safRequestContext);
-			if (!pep3Access) {
-				throw new SafFunctionalException(createPep3DenyReason(safRequestContext), FORBIDDEN);
+			AbacAnswer pep3Access = pep3.hasAccessWithAnswer(tilgangSak, safRequestContext);
+			if (pep3Access.isDeny()) {
+				throw new TilgangskontrollException(createPep3DenyReason(safRequestContext), pep3Access);
 			}
 
-			boolean pep4Access = pep4.hasAccess(tilgangJournalpost, safRequestContext);
-			if (!pep4Access) {
-				throw new SafFunctionalException(createPep4DenyReason(safRequestContext), FORBIDDEN);
+			AbacAnswer pep4Access = pep4.hasAccessWithAnswer(tilgangJournalpost, safRequestContext);
+			if (pep4Access.isDeny()) {
+				throw new TilgangskontrollException(createPep4DenyReason(safRequestContext), pep4Access);
 			}
 
 			if (environment.getSelectionSet().contains(SELECTION_JOURNALPOST_DOKUMENTER)) {

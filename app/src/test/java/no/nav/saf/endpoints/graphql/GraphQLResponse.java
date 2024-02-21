@@ -1,5 +1,6 @@
 package no.nav.saf.endpoints.graphql;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 import java.util.List;
@@ -19,5 +20,9 @@ public class GraphQLResponse {
 	@Data
 	public static class Extensions {
 		private String code;
+		@JsonProperty("reason_code")
+		private String reasonCode;
+		@JsonProperty("reason_message")
+		private String reasonMessage;
 	}
 }

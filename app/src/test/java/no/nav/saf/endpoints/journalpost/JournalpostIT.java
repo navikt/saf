@@ -405,7 +405,7 @@ class JournalpostIT extends AbstractItest {
 		stubDokarkivJournalpost("journalpost-gsak-inngaaende-orgnr.json");
 
 		GraphQLResponse graphQLResponse = journalpostQuery();
-		assertErrorWithCode(graphQLResponse, FORBIDDEN.getText());
+		assertErrorWithCode(graphQLResponse, FORBIDDEN.getText(), "deny_orgnr_nav_stat");
 		assertErrorWithMessage(graphQLResponse, "Journalpost/dokument er knyttet til organisasjon underlagt NAV og det krever egen ansatt behandling for oppslag på denne.");
 	}
 
@@ -459,7 +459,7 @@ class JournalpostIT extends AbstractItest {
 		stubDokarkivJournalpost("journalpost-gsak-inngaaende-orgnr.json");
 
 		GraphQLResponse graphQLResponse = journalpostQueryNavUserId();
-		assertErrorWithCode(graphQLResponse, FORBIDDEN.getText());
+		assertErrorWithCode(graphQLResponse, FORBIDDEN.getText(), "deny_orgnr_nav_stat");
 		assertErrorWithMessage(graphQLResponse, "Journalpost/dokument er knyttet til organisasjon underlagt NAV og det krever egen ansatt behandling for oppslag på denne.");
 	}
 
@@ -469,7 +469,7 @@ class JournalpostIT extends AbstractItest {
 		stubDokarkivJournalpost("journalpost-gsak-inngaaende-happy.json");
 
 		GraphQLResponse graphQLResponse = journalpostQuery();
-		assertErrorWithCode(graphQLResponse, FORBIDDEN.getText());
+		assertErrorWithCode(graphQLResponse, FORBIDDEN.getText(), "ukjent");
 		assertErrorWithMessage(graphQLResponse, PEP1G_DENY_REASON);
 	}
 
@@ -480,7 +480,7 @@ class JournalpostIT extends AbstractItest {
 		stubDokarkivJournalpost("journalpost-gsak-inngaaende-tema-far.json");
 
 		GraphQLResponse graphQLResponse = journalpostQuery();
-		assertErrorWithCode(graphQLResponse, FORBIDDEN.getText());
+		assertErrorWithCode(graphQLResponse, FORBIDDEN.getText(), "deny_tema");
 		assertErrorWithMessage(graphQLResponse, PEP2_DENY_REASON);
 	}
 
@@ -490,7 +490,7 @@ class JournalpostIT extends AbstractItest {
 		stubDokarkivJournalpost("journalpost-gsak-inngaaende-midlertidig-tema-far.json");
 
 		GraphQLResponse graphQLResponse = journalpostQuery();
-		assertErrorWithCode(graphQLResponse, FORBIDDEN.getText());
+		assertErrorWithCode(graphQLResponse, FORBIDDEN.getText(), "deny_tema");
 		assertErrorWithMessage(graphQLResponse, PEP2_DENY_REASON);
 	}
 
@@ -511,7 +511,7 @@ class JournalpostIT extends AbstractItest {
 		stubBidrag();
 
 		GraphQLResponse graphQLResponse = journalpostQuery();
-		assertErrorWithCode(graphQLResponse, FORBIDDEN.getText());
+		assertErrorWithCode(graphQLResponse, FORBIDDEN.getText(), "deny_fortrolig_adresse");
 		assertErrorWithMessage(graphQLResponse, PEP3_DENY_REASON);
 	}
 
@@ -521,7 +521,7 @@ class JournalpostIT extends AbstractItest {
 		stubDokarkivJournalpost("journalpost-gsak-inngaaende-skjerming.json");
 
 		GraphQLResponse graphQLResponse = journalpostQuery();
-		assertErrorWithCode(graphQLResponse, FORBIDDEN.getText());
+		assertErrorWithCode(graphQLResponse, FORBIDDEN.getText(), "deny_journalstatus");
 		assertErrorWithMessage(graphQLResponse, PEP4_DENY_REASON);
 	}
 
@@ -581,8 +581,15 @@ class JournalpostIT extends AbstractItest {
 	}
 
 	private void assertErrorWithCode(GraphQLResponse graphQLResponse, String errorCode) {
+		assertErrorWithCode(graphQLResponse, errorCode, null);
+	}
+	private void assertErrorWithCode(GraphQLResponse graphQLResponse, String errorCode, String reasonCode) {
 		assertThat(graphQLResponse.getData().get("journalpost")).isNull();
 		assertThat(graphQLResponse.getErrors().get(0).getExtensions().getCode()).isEqualTo(errorCode);
+		assertThat(graphQLResponse.getErrors().get(0).getExtensions().getReasonCode()).isEqualTo(reasonCode);
+		if (reasonCode != null) {
+			assertThat(graphQLResponse.getErrors().get(0).getExtensions().getReasonMessage()).isNotNull();
+		}
 	}
 
 	private void assertErrorWithMessage(GraphQLResponse graphQLResponse, String expectedErrorMessage) {

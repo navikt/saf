@@ -6,6 +6,7 @@ import no.nav.saf.domain.tilgangsmodell.TilgangRelevantTredjepart;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlRequest;
+import no.nav.saf.tilgangskontroll.abac.dto.response.Advice;
 import no.nav.saf.tilgangskontroll.abac.dto.response.XacmlResponse;
 import no.nav.saf.tilgangskontroll.abac.service.AbacService;
 import no.nav.saf.tilgangskontroll.pep.reasons.FortroligAdresseReason;
@@ -83,7 +84,8 @@ public class Pep3Impl extends StandardPep<TilgangSak> {
 
 	@Override
 	protected AbacAnswer translateToDenyReasonCode(XacmlResponse xacmlResponse) {
-		var advices = getAdvicesMap(xacmlResponse.getAdvices());
+		List<Advice> advices1 = xacmlResponse.getAdvices();
+		var advices = getAdvicesMap(advices1);
 
 		if (FORTROLIG_ADRESSE.matchesAbacAdvice(advices)) {
 			return deny(new FortroligAdresseReason(advices));
