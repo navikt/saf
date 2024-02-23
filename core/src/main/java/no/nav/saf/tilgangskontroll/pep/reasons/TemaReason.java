@@ -2,18 +2,18 @@ package no.nav.saf.tilgangskontroll.pep.reasons;
 
 import no.nav.saf.domain.kode.Tema;
 import no.nav.saf.tilgangskontroll.pep.AbacDenyReasonCode;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
 public final class TemaReason extends AbacDenyReason {
 	private final Tema tema;
+
 	public TemaReason(String cause, String policy, String rule, Tema tema) {
 		super(cause, policy, rule, AbacDenyReasonCode.TEMA);
 		this.tema = tema;
 	}
 
-	public TemaReason(Map<String,String> advices, Tema tema) {
+	public TemaReason(Map<String, String> advices, Tema tema) {
 		super(advices, AbacDenyReasonCode.TEMA);
 		this.tema = tema;
 	}

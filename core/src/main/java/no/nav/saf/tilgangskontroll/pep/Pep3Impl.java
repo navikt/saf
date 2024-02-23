@@ -12,7 +12,7 @@ import no.nav.saf.tilgangskontroll.abac.service.AbacService;
 import no.nav.saf.tilgangskontroll.pep.reasons.FortroligAdresseReason;
 import no.nav.saf.tilgangskontroll.pep.reasons.StrengtFortroligAdresseReason;
 import no.nav.saf.tilgangskontroll.pep.reasons.StrengtFortroligAdresseUtlandReason;
-import no.nav.saf.tilgangskontroll.pep.reasons.UkjentReason;
+import no.nav.saf.tilgangskontroll.pep.reasons.UkjentEllerTekniskReason;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -72,7 +72,7 @@ public class Pep3Impl extends StandardPep<TilgangSak> {
 			XacmlResponse response = abacService.evaluate(request);
 			traceLogPepFinished(PEP3, ressurs);
 
-			return mapXacmlResponse(response);
+			return mapToAbacAnswer(response);
 		}
 		return AbacAnswer.permit();
 	}
@@ -94,6 +94,6 @@ public class Pep3Impl extends StandardPep<TilgangSak> {
 		} else if (STRENGT_FORTROLIG_ADRESSE_UTLAND.matchesAbacAdvice(advices)) {
 			return deny(new StrengtFortroligAdresseUtlandReason(advices));
 		}
-		return deny(new UkjentReason());
+		return deny(new UkjentEllerTekniskReason());
 	}
 }

@@ -1,7 +1,6 @@
 package no.nav.saf.tilgangskontroll.pep.reasons;
 
 import no.nav.saf.tilgangskontroll.pep.AbacDenyReasonCode;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
@@ -10,7 +9,7 @@ public final class SkjermingReason extends AbacDenyReason {
 		super(cause, policy, rule, AbacDenyReasonCode.SKJERMING);
 	}
 
-	public SkjermingReason(Map<String,String> advices) {
+	public SkjermingReason(Map<String, String> advices) {
 		super(advices, AbacDenyReasonCode.SKJERMING);
 	}
 

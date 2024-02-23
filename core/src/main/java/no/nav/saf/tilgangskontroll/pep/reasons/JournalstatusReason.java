@@ -1,13 +1,12 @@
 package no.nav.saf.tilgangskontroll.pep.reasons;
 
 import no.nav.saf.tilgangskontroll.pep.AbacDenyReasonCode;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
 public final class JournalstatusReason extends AbacDenyReason {
 
-	public JournalstatusReason(Map<String,String> advices) {
+	public JournalstatusReason(Map<String, String> advices) {
 		super(advices, AbacDenyReasonCode.JOURNALSTATUS);
 	}
 

@@ -11,7 +11,7 @@ import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlRequest;
 import no.nav.saf.tilgangskontroll.abac.dto.response.XacmlResponse;
 import no.nav.saf.tilgangskontroll.abac.service.AbacService;
 import no.nav.saf.tilgangskontroll.pep.reasons.SkjermingReason;
-import no.nav.saf.tilgangskontroll.pep.reasons.UkjentReason;
+import no.nav.saf.tilgangskontroll.pep.reasons.UkjentEllerTekniskReason;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.Cache;
@@ -53,14 +53,14 @@ public class Pep6dImpl extends StandardPep<TilgangDokumentvariant> {
 	public AbacAnswer verifyAbacPdpDecision(TilgangDokumentvariant ressurs, SafRequestContext safRequestContext) {
 		if (ressurs == null) {
 			log.warn("Pep6d mangler tilstrekkelig datagrunnlag for å kunne gjennomføre tilgangskontroll");
-			return AbacAnswer.deny(new UkjentReason());
+			return AbacAnswer.deny(new UkjentEllerTekniskReason());
 		}
 
 		if (isSkjermingPresent(ressurs)) {
 			if (isVariantformatNull(ressurs)) {
 				log.warn("Pep6d mangler tilstrekkelig datagrunnlag for å kunne gjennomføre tilgangskontroll. Variantformat=null. journalpostId={} og dokumentinfoId={}",
 						ressurs.getJournalpostId(), ressurs.getDokumentInfoId());
-				return AbacAnswer.deny(new UkjentReason());
+				return AbacAnswer.deny(new UkjentEllerTekniskReason());
 			}
 
 			traceLogPepStarted(PEP6D, ressurs);
@@ -81,13 +81,13 @@ public class Pep6dImpl extends StandardPep<TilgangDokumentvariant> {
 			try {
 				AbacAnswer response = fetchXacmlResponse(ressurs, safRequestContext, tilgangKeyDistributedCaching);
 				if (response == null) {
-					return AbacAnswer.deny(new UkjentReason());
+					return AbacAnswer.deny(new UkjentEllerTekniskReason());
 				}
 				safRequestContext.getRequestCache().putDecision(tilgangKeyLocalCaching, response);
 				return response;
 			} catch (RedisSystemException | RedisException | PoolException | Cache.ValueRetrievalException | RedisConnectionFailureException e) {
 				// Ting skal fremdeles snurre selv om man ikke får kontakt med redis
-				AbacAnswer response = mapXacmlResponse(hasDokumentFilAccess(ressurs, safRequestContext));
+				AbacAnswer response = mapToAbacAnswer(hasDokumentFilAccess(ressurs, safRequestContext));
 				safRequestContext.getRequestCache().putDecision(tilgangKeyLocalCaching, response);
 				return response;
 			} finally {
@@ -161,9 +161,9 @@ public class Pep6dImpl extends StandardPep<TilgangDokumentvariant> {
 			if (abacResponse.isPermit()) {
 				tilgangCache.put(tilgangKeyDistributedCaching, abacResponse);
 			}
-			return mapXacmlResponse(abacResponse); // siden put kun gjøres om decide = true er vel denna alltid = permit
+			return mapToAbacAnswer(abacResponse); // siden put kun gjøres om decide = true er vel denna alltid = permit
 		} else {
-			return mapXacmlResponse(cachedResponse);
+			return mapToAbacAnswer(cachedResponse);
 		}
 	}
 

@@ -11,10 +11,10 @@ import java.util.Map;
 import static graphql.ErrorType.DataFetchingException;
 import static java.util.Collections.emptyList;
 
-public class AnonymizedSafTechincalExceptionWrapper implements GraphQLError {
+public class AnonymizedSafTechnicalExceptionWrapper implements GraphQLError {
 	private final SafTechnicalException safTechnicalException;
 
-	AnonymizedSafTechincalExceptionWrapper(SafTechnicalException safTechnicalException) {
+	AnonymizedSafTechnicalExceptionWrapper(SafTechnicalException safTechnicalException) {
 		this.safTechnicalException = safTechnicalException;
 	}
 

@@ -322,10 +322,6 @@ public class JournalpostDtoMapper {
 		};
 	}
 
-	private String mapJoarkFagsystem(FagsystemCode joarkFagsystem) {
-		return FagsystemCode.toSafArkivsaksystem(joarkFagsystem).name();
-	}
-
 	// journalposten er endelig journalført
 	private Bruker getBrukerFromArkivsakCache(SaksrelasjonDto saksrelasjon, RequestCache requestCache) {
 		Arkivsak arkivsak = requestCache.getArkivsak(saksrelasjon);

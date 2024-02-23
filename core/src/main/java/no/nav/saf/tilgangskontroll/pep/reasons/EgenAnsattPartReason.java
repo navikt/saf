@@ -1,12 +1,11 @@
 package no.nav.saf.tilgangskontroll.pep.reasons;
 
 import no.nav.saf.tilgangskontroll.pep.AbacDenyReasonCode;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
 public final class EgenAnsattPartReason extends AbacDenyReason {
-	public EgenAnsattPartReason(Map<String,String> advices) {
+	public EgenAnsattPartReason(Map<String, String> advices) {
 		super(advices, AbacDenyReasonCode.EGEN_ANSATT_PART);
 	}
 

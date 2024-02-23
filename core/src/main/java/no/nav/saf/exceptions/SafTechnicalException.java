@@ -1,6 +1,7 @@
 package no.nav.saf.exceptions;
 
 import lombok.Getter;
+import no.nav.saf.graphql.ErrorCode;
 import org.springframework.http.HttpStatusCode;
 
 import java.util.Map;
@@ -10,7 +11,7 @@ import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
 @Getter
 public class SafTechnicalException extends RuntimeException {
-	private final HttpStatusCode httpStatusCode;
+	private final ErrorCode errorCode;
 
 	public SafTechnicalException(String message, HttpStatusCode httpStatus) {
 		this(message, null, httpStatus);
@@ -18,7 +19,7 @@ public class SafTechnicalException extends RuntimeException {
 
 	public SafTechnicalException(String message, Throwable cause, HttpStatusCode httpStatus) {
 		super(message, cause);
-		this.httpStatusCode = httpStatus;
+		this.errorCode = resolveToCode(httpStatus);
 	}
 
 	public SafTechnicalException(String message, Throwable cause) {
@@ -30,10 +31,10 @@ public class SafTechnicalException extends RuntimeException {
 	}
 
 	Map<String,Object> getExtensions() {
-		return Map.of("code", resolveToCode(httpStatusCode));
+		return Map.of("code", errorCode.getText());
 	}
 
-	public AnonymizedSafTechincalExceptionWrapper asAnonymizedGraphQlError() {
-		return new AnonymizedSafTechincalExceptionWrapper(this);
+	public AnonymizedSafTechnicalExceptionWrapper asAnonymizedGraphQlError() {
+		return new AnonymizedSafTechnicalExceptionWrapper(this);
 	}
 }

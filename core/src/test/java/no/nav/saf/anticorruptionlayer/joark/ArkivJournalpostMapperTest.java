@@ -31,7 +31,7 @@ import no.nav.saf.domain.visningsmodell.Tilleggsopplysning;
 import no.nav.saf.domain.visningsmodell.Utsendingsinfo;
 import no.nav.saf.tilgangskontroll.RequestCache;
 import no.nav.saf.tilgangskontroll.pep.AbacAnswer;
-import no.nav.saf.tilgangskontroll.pep.reasons.UkjentReason;
+import no.nav.saf.tilgangskontroll.pep.reasons.UkjentEllerTekniskReason;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
@@ -109,7 +109,6 @@ import static no.nav.saf.anticorruptionlayer.joark.domain.kode.UtsendingsKanalCo
 import static no.nav.saf.anticorruptionlayer.joark.domain.kode.UtsendingsKanalCode.S;
 import static no.nav.saf.anticorruptionlayer.joark.domain.kode.UtsendingsKanalCode.SDP;
 import static no.nav.saf.domain.DomainConstants.TIDSSONE_NORGE;
-import static no.nav.saf.domain.DomainConstants.TILGANG_BRUKER;
 import static no.nav.saf.domain.kode.Arkivsakssystem.PSAK;
 import static no.nav.saf.domain.kode.Datotype.DATO_AVS_RETUR;
 import static no.nav.saf.domain.kode.Datotype.DATO_DOKUMENT;
@@ -257,7 +256,7 @@ class ArkivJournalpostMapperTest {
 		ArkivJournalpost arkivJournalpost = inngaaendeArkivJournalpost();
 		RequestCache requestCache = createTilgangBrukerRequestCache();
 		String tilgangKeyPep5LocalCaching = KeyGeneratorLocalCaching.getKeyForPep5(String.valueOf(ARKIVJOURNALPOST_JOURNALPOST_ID), String.valueOf(ARKIVDOKUMENTINFO_DOKUMENT_INFO_ID));
-		requestCache.putDecision(tilgangKeyPep5LocalCaching, AbacAnswer.deny(new UkjentReason()));
+		requestCache.putDecision(tilgangKeyPep5LocalCaching, AbacAnswer.deny(new UkjentEllerTekniskReason()));
 
 		Journalpost journalpost = mapJournalpost(arkivJournalpost, requestCache);
 
@@ -382,7 +381,7 @@ class ArkivJournalpostMapperTest {
 		requestCache.putDecision(tilgangKeyPep2dLocalCaching, AbacAnswer.permit());
 		requestCache.putDecision(tilgangKeyPep5LocalCaching, AbacAnswer.permit());
 		requestCache.putDecision(tilgangKeyPep6dLocalCachingVariantArkiv, AbacAnswer.permit());
-		requestCache.putDecision(tilgangKeyPep6dLocalCachingVariantSladdet, AbacAnswer.deny(new UkjentReason()));
+		requestCache.putDecision(tilgangKeyPep6dLocalCachingVariantSladdet, AbacAnswer.deny(new UkjentEllerTekniskReason()));
 		requestCache.putDecision(tilgangKeyPep7dLocalCaching, AbacAnswer.permit());
 
 		Journalpost journalpost = mapJournalpost(arkivJournalpost, requestCache);

@@ -8,7 +8,7 @@ import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlRequest;
 import no.nav.saf.tilgangskontroll.abac.dto.response.XacmlResponse;
 import no.nav.saf.tilgangskontroll.abac.service.AbacService;
 import no.nav.saf.tilgangskontroll.pep.reasons.JournalstatusReason;
-import no.nav.saf.tilgangskontroll.pep.reasons.UkjentReason;
+import no.nav.saf.tilgangskontroll.pep.reasons.UkjentEllerTekniskReason;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -41,7 +41,7 @@ public class Pep4Impl extends StandardPep<TilgangJournalpost> {
 	public AbacAnswer verifyAbacPdpDecision(TilgangJournalpost ressurs, SafRequestContext safRequestContext) {
 		if (ressurs == null) {
 			log.warn("Pep4 mangler tilstrekkelig datagrunnlag for å kunne gjennomføre tilgangskontroll.");
-			return AbacAnswer.deny(new UkjentReason());
+			return AbacAnswer.deny(new UkjentEllerTekniskReason());
 		}
 
 		if (isJournalpoststatusUtgaar(ressurs) || isSkjermingPresent(ressurs)) {
@@ -66,7 +66,7 @@ public class Pep4Impl extends StandardPep<TilgangJournalpost> {
 		XacmlResponse response = abacService.evaluate(request);
 		traceLogPepFinished(PEP4, ressurs);
 
-		return mapXacmlResponse(response);
+		return mapToAbacAnswer(response);
 	}
 
 	@Override

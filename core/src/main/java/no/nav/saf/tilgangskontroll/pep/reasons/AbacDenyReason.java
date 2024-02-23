@@ -9,8 +9,8 @@ import java.util.Map;
 @Getter
 @AllArgsConstructor
 public abstract sealed class AbacDenyReason permits EgenAnsattReason, EgenAnsattPartReason, FortroligAdresseReason, FortroligAdressePartReason,
-		GeografiReason, JournalstatusReason, OrgnrNavStatReaason, SkjermingReason, StrengtFortroligAdresseReason, StrengtFortroligAdresseUtlandReason,
-		StrengtFortroligAdressePartReason, StrengtFortroligAdresseUtlandPartReason, TemaReason, UkjentReason {
+		GeografiReason, JournalstatusReason, OrgnrNavStatReason, SkjermingReason, StrengtFortroligAdresseReason, StrengtFortroligAdresseUtlandReason,
+		StrengtFortroligAdressePartReason, StrengtFortroligAdresseUtlandPartReason, TemaReason, UkjentEllerTekniskReason {
 
 	protected static final String MAA_HA_EGEN_ANSATT = " Arbeidet må i stedet utføres av en medarbeider med egen-ansatt-tilgang.";
 	protected static final String MAA_HA_FORTROLIG_TILGANG = " Arbeidet må i stedet utføres av en medarbeider med tilgang til brukere med fortrolig adresse.";
@@ -23,7 +23,7 @@ public abstract sealed class AbacDenyReason permits EgenAnsattReason, EgenAnsatt
 	protected final String rule;
 	protected final AbacDenyReasonCode abacDenyReasonCode;
 
-	public AbacDenyReason(Map<String,String> advices, AbacDenyReasonCode abacDenyReasonCode) {
+	public AbacDenyReason(Map<String, String> advices, AbacDenyReasonCode abacDenyReasonCode) {
 		this(null, advices.get("deny_policy"), advices.get("deny_rule"), abacDenyReasonCode);
 	}
 

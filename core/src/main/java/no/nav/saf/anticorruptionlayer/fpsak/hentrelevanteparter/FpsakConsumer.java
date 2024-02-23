@@ -60,7 +60,7 @@ public class FpsakConsumer {
 		} else if (UNAUTHORIZED.equals(response.getStatusCode())) {
 			throw new SafTechnicalException("hentAktoerForSak feilet teknisk. Tilgang avvist.", response.getStatusCode());
 		} else {
-			throw new SafTechnicalException("hentAktoerForSak feilet med ukjent feil.", response.getStatusCode());
+			throw new SafTechnicalException("hentAktoerForSak feilet med ukjent feil i FpsakConsumer.", response.getStatusCode());
 		}
 	}
 

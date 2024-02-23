@@ -7,7 +7,7 @@ import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlRequest;
 import no.nav.saf.tilgangskontroll.abac.dto.response.XacmlResponse;
 import no.nav.saf.tilgangskontroll.abac.service.AbacService;
 import no.nav.saf.tilgangskontroll.pep.reasons.TemaReason;
-import no.nav.saf.tilgangskontroll.pep.reasons.UkjentReason;
+import no.nav.saf.tilgangskontroll.pep.reasons.UkjentEllerTekniskReason;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -40,7 +40,7 @@ public class Pep2Impl extends Pep<TilgangSak> {
 	public AbacAnswer verifyAbacPdpDecision(TilgangSak ressurs, SafRequestContext safRequestContext) {
 		if (ressurs == null) {
 			log.error("Pep2 (tema FAR eller KTA) mangler data om journalposten. Den må ha tema for å gjøre tilgangskontroll. Dette er forårsaket av en teknisk feil");
-			return AbacAnswer.deny(new UkjentReason());
+			return AbacAnswer.deny(new UkjentEllerTekniskReason());
 		}
 
 		if (isFarskap(ressurs) || isKontrollAnmeldelse(ressurs)) {

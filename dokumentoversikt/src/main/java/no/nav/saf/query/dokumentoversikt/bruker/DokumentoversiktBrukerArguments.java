@@ -12,9 +12,6 @@ import no.nav.saf.tjeneste.argumenter.BrukerIdInput;
 
 import java.util.Map;
 
-import static no.nav.saf.domain.visningsmodell.BrukerIdType.AKTOERID;
-import static no.nav.saf.domain.visningsmodell.BrukerIdType.FNR;
-import static no.nav.saf.domain.visningsmodell.BrukerIdType.ORGNR;
 import static no.nav.saf.graphql.ErrorCode.BAD_REQUEST;
 import static org.apache.commons.lang3.StringUtils.isNumeric;
 
@@ -38,22 +35,8 @@ public class DokumentoversiktBrukerArguments extends AbstractDokumentoversiktArg
 	}
 
 	private static void validate(BrukerIdInput brukerIdInput) {
-		switch (brukerIdInput.getType()) {
-			case AKTOERID -> {
-				if (!isNumeric(brukerIdInput.getId())) {
-					throw new SafFunctionalException("input brukerId.id må være numerisk for brukerId.idType=" + AKTOERID, BAD_REQUEST);
-				}
-			}
-			case FNR -> {
-				if (!isNumeric(brukerIdInput.getId())) {
-					throw new SafFunctionalException("input brukerId.id må være numerisk for brukerId.idType=" + FNR, BAD_REQUEST);
-				}
-			}
-			case ORGNR -> {
-				if (!isNumeric(brukerIdInput.getId())) {
-					throw new SafFunctionalException("input brukerId.id må være numerisk for brukerId.idType=" + ORGNR, BAD_REQUEST);
-				}
-			}
+		if (!isNumeric(brukerIdInput.getId())) {
+			throw new SafFunctionalException("input brukerId.id må være numerisk for brukerId.idType=" + brukerIdInput.getType(), BAD_REQUEST);
 		}
 	}
 }

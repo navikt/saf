@@ -12,7 +12,7 @@ import no.nav.saf.tilgangskontroll.pep.reasons.EgenAnsattPartReason;
 import no.nav.saf.tilgangskontroll.pep.reasons.FortroligAdressePartReason;
 import no.nav.saf.tilgangskontroll.pep.reasons.StrengtFortroligAdressePartReason;
 import no.nav.saf.tilgangskontroll.pep.reasons.StrengtFortroligAdresseUtlandPartReason;
-import no.nav.saf.tilgangskontroll.pep.reasons.UkjentReason;
+import no.nav.saf.tilgangskontroll.pep.reasons.UkjentEllerTekniskReason;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -69,7 +69,7 @@ public class Pep7dImpl extends StandardPep<TilgangSak> {
 
 				if (safRequestContext.getRequestCache().getCachedDecision(tilgangKeyLocalCaching) == null) {
 					XacmlResponse response = getXacmlResponseFromAbac(ressurs, safRequestContext, ressurs.getFpAktoerIdList());
-					AbacAnswer abacAnswer = mapXacmlResponse(response);
+					AbacAnswer abacAnswer = mapToAbacAnswer(response);
 					safRequestContext.getRequestCache().putDecision(tilgangKeyLocalCaching, abacAnswer);
 					return abacAnswer;
 				}
@@ -84,7 +84,7 @@ public class Pep7dImpl extends StandardPep<TilgangSak> {
 				}
 				if (safRequestContext.getRequestCache().getCachedDecision(tilgangKeyLocalCaching) == null) {
 					XacmlResponse response = getXacmlResponseFromAbac(ressurs, safRequestContext, ressurs.getK9AktoerIdList());
-					AbacAnswer abacAnswer = mapXacmlResponse(response);
+					AbacAnswer abacAnswer = mapToAbacAnswer(response);
 					safRequestContext.getRequestCache().putDecision(tilgangKeyLocalCaching, abacAnswer);
 					return abacAnswer;
 				}
@@ -146,6 +146,6 @@ public class Pep7dImpl extends StandardPep<TilgangSak> {
 		} else if (STRENGT_FORTROLIG_ADRESSE_UTLAND.matchesAbacAdvice(advices)) {
 			return deny(new StrengtFortroligAdresseUtlandPartReason(advices));
 		}
-		return deny(new UkjentReason());
+		return deny(new UkjentEllerTekniskReason());
 	}
 }

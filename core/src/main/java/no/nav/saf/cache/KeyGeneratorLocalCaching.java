@@ -13,7 +13,7 @@ public final class KeyGeneratorLocalCaching extends AbstractKeyGeneratorCaching 
 
 	public static String getKeyForPep2d(Tema tema) {
 		return createIdentifierPair(RESSURS, RESSURS_SAK_DOKUMENT) + createUniqueIdentifier(
-				createIdentifierPair(TEMA, tema.name())
+				createIdentifierPair(TEMA, tema != null ? tema.name() : "ukjent")
 		);
 	}
 

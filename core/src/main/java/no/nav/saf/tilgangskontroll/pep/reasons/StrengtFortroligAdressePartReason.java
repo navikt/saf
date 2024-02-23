@@ -1,12 +1,11 @@
 package no.nav.saf.tilgangskontroll.pep.reasons;
 
 import no.nav.saf.tilgangskontroll.pep.AbacDenyReasonCode;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
 public final class StrengtFortroligAdressePartReason extends AbacDenyReason {
-	public StrengtFortroligAdressePartReason(Map<String,String> advices) {
+	public StrengtFortroligAdressePartReason(Map<String, String> advices) {
 		super(advices, AbacDenyReasonCode.STRENGT_FORTROLIG_ADRESSE_PART);
 	}
 

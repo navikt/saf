@@ -13,7 +13,7 @@ import no.nav.saf.tilgangskontroll.abac.dto.response.XacmlResponse;
 import no.nav.saf.tilgangskontroll.abac.service.AbacService;
 import no.nav.saf.tilgangskontroll.pep.reasons.GeografiReason;
 import no.nav.saf.tilgangskontroll.pep.reasons.TemaReason;
-import no.nav.saf.tilgangskontroll.pep.reasons.UkjentReason;
+import no.nav.saf.tilgangskontroll.pep.reasons.UkjentEllerTekniskReason;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.Cache;
@@ -113,7 +113,7 @@ public class Pep2dImpl extends Pep<TilgangSak> {
 		if (cachedResponse == null) {
 			XacmlResponse abacResponse = hasDokumentAccess(ressurs, safRequestContext);
 			if (abacResponse == null) {
-				return AbacAnswer.deny(new UkjentReason());
+				return AbacAnswer.deny(new UkjentEllerTekniskReason());
 			}
 			if (abacResponse.isPermit()) {
 				tilgangCache.put(tilgangKeyDistributedCaching, abacResponse);

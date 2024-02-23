@@ -10,10 +10,10 @@ import no.nav.saf.tilgangskontroll.abac.service.AbacService;
 import no.nav.saf.tilgangskontroll.pep.reasons.EgenAnsattReason;
 import no.nav.saf.tilgangskontroll.pep.reasons.FortroligAdresseReason;
 import no.nav.saf.tilgangskontroll.pep.reasons.GeografiReason;
-import no.nav.saf.tilgangskontroll.pep.reasons.OrgnrNavStatReaason;
+import no.nav.saf.tilgangskontroll.pep.reasons.OrgnrNavStatReason;
 import no.nav.saf.tilgangskontroll.pep.reasons.StrengtFortroligAdresseReason;
 import no.nav.saf.tilgangskontroll.pep.reasons.StrengtFortroligAdresseUtlandReason;
-import no.nav.saf.tilgangskontroll.pep.reasons.UkjentReason;
+import no.nav.saf.tilgangskontroll.pep.reasons.UkjentEllerTekniskReason;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -74,12 +74,12 @@ public class Pep1gImpl extends StandardPep<TilgangBruker> {
 			request.resource(RESOURCE_FELLES_PERSON_FNR, ressurs.getFoedselsnr());
 		} else {
 			log.error("Pep1g kunne ikke validere bruker fordi bruker ikke er en person. Denne tilstanden indikerer en teknisk feil.");
-			return deny(new UkjentReason());
+			return deny(new UkjentEllerTekniskReason());
 		}
 		traceLogPepStarted(PEP1G, ressurs);
 		XacmlResponse response = abacService.evaluate(request);
 		traceLogPepFinished(PEP1G, ressurs);
-		return mapXacmlResponse(response);
+		return mapToAbacAnswer(response);
 	}
 
 	@Override
@@ -107,7 +107,7 @@ public class Pep1gImpl extends StandardPep<TilgangBruker> {
 		} else if (STRENGT_FORTROLIG_ADRESSE_UTLAND.matchesAbacAdvice(advices)) {
 			return deny(new StrengtFortroligAdresseUtlandReason(advices));
 		}
-		return deny(new UkjentReason());
+		return deny(new UkjentEllerTekniskReason());
 	}
 
 
@@ -120,7 +120,7 @@ public class Pep1gImpl extends StandardPep<TilgangBruker> {
 			if (navOrgService.isNavIdentInEgenAnsattGroup(safRequestContext.getUserId())) {
 				return AbacAnswer.permit();
 			}
-			return deny(new OrgnrNavStatReaason(Collections.emptyMap()));
+			return deny(new OrgnrNavStatReason(Collections.emptyMap()));
 		}
 		return AbacAnswer.permit();
 	}

@@ -8,7 +8,7 @@ import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlRequest;
 import no.nav.saf.tilgangskontroll.abac.dto.response.XacmlResponse;
 import no.nav.saf.tilgangskontroll.abac.service.AbacService;
 import no.nav.saf.tilgangskontroll.pep.reasons.SkjermingReason;
-import no.nav.saf.tilgangskontroll.pep.reasons.UkjentReason;
+import no.nav.saf.tilgangskontroll.pep.reasons.UkjentEllerTekniskReason;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -39,13 +39,13 @@ public class Pep5Impl extends StandardPep<TilgangDokumentInfo> {
 	public AbacAnswer verifyAbacPdpDecision(TilgangDokumentInfo ressurs, SafRequestContext safRequestContext) {
 		if (ressurs == null) {
 			log.warn("Pep5 mangler tilstrekkelig datagrunnlag for å kunne gjennomføre tilgangskontroll");
-			return AbacAnswer.deny(new UkjentReason());
+			return AbacAnswer.deny(new UkjentEllerTekniskReason());
 		}
 
 		String tilgangKeyLocalCaching = KeyGeneratorLocalCaching.getKeyForPep5(ressurs.getJournalpostId(), ressurs.getDokumentInfoId());
 		if (isSkjermingPresent(ressurs)) {
 			XacmlResponse response = hasDokumentAccess(ressurs, safRequestContext);
-			AbacAnswer abacAnswer = mapXacmlResponse(response);
+			AbacAnswer abacAnswer = mapToAbacAnswer(response);
 			safRequestContext.getRequestCache().putDecision(tilgangKeyLocalCaching, abacAnswer);
 			return abacAnswer;
 		} else {
@@ -58,7 +58,7 @@ public class Pep5Impl extends StandardPep<TilgangDokumentInfo> {
 	public AbacAnswer verifyAzureClientCredentialFlowAccess(TilgangDokumentInfo ressurs, SafRequestContext safRequestContext) {
 		if (ressurs == null) {
 			log.warn("Pep5 mangler tilstrekkelig datagrunnlag for å kunne gjennomføre tilgangskontroll. Azure ccf.");
-			return AbacAnswer.deny(new UkjentReason(
+			return AbacAnswer.deny(new UkjentEllerTekniskReason(
 			"mangler_data", "saf_pep5", "dokument_info_er_null"
 			));
 		}

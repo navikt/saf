@@ -1,14 +1,13 @@
 package no.nav.saf.tilgangskontroll.pep.reasons;
 
 import no.nav.saf.tilgangskontroll.pep.AbacDenyReasonCode;
-import org.jetbrains.annotations.NotNull;
 
-public final class UkjentReason extends AbacDenyReason {
-	public UkjentReason(String cause, String policy, String rule) {
+public final class UkjentEllerTekniskReason extends AbacDenyReason {
+	public UkjentEllerTekniskReason(String cause, String policy, String rule) {
 		super(cause, policy, rule, AbacDenyReasonCode.UKJENT);
 	}
 
-	public UkjentReason() {
+	public UkjentEllerTekniskReason() {
 		this(null, null, null);
 	}
 
