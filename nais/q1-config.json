@@ -174,7 +174,8 @@
     {
       "app": "tiltakspenger-dokument",
       "namespace": "tpts",
-      "cluster": "dev-gcp"
+      "cluster": "dev-gcp",
+      "roles": ["tema_ind"]
     },
     {
       "app": "yrkesskade-melding-api",
