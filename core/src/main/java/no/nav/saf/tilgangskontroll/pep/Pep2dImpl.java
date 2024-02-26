@@ -23,8 +23,6 @@ import org.springframework.data.redis.RedisSystemException;
 import org.springframework.data.redis.connection.PoolException;
 import org.springframework.stereotype.Component;
 
-import java.util.Collections;
-
 import static no.nav.saf.cache.RedisCacheConfig.TILGANG_CACHE;
 import static no.nav.saf.domain.DomainConstants.PEP2D;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_RESOURCE_TYPE;
@@ -90,10 +88,11 @@ public class Pep2dImpl extends Pep<TilgangSak> {
 		Tema tema = ressurs.getTema();
 		String tilgangKeyLocalCaching = KeyGeneratorLocalCaching.getKeyForPep2d(tema);
 		boolean decision = safRequestContext.getSecurityContext().hasTemaAureRole(tema.name().toLowerCase());
-		safRequestContext.getRequestCache().putDecision(tilgangKeyLocalCaching, decision ? AbacAnswer.permit() : AbacAnswer.deny(new TemaReason(Collections.emptyMap(), tema)));
+		AbacAnswer abacAnswer = decision ? permit() : AbacAnswer.deny(new TemaReason(
+				"cause_0013_ikketilgangtiltema", "saf_pep2d", "mangler_tema", tema));
+		safRequestContext.getRequestCache().putDecision(tilgangKeyLocalCaching, abacAnswer);
 		traceLogPepFinished(PEP2D, ressurs);
-		return decision ? permit() : AbacAnswer.deny(new TemaReason(
-						"ingen_tema_tilgang", "saf_pep2d", "clientid_mangler_tema_role", tema));
+		return abacAnswer;
 	}
 
 	protected AbacAnswer mapXacmlResponse(XacmlResponse xacmlResponse, Tema tema) {

@@ -64,20 +64,20 @@ public class Pep2Impl extends Pep<TilgangSak> {
 		if (ressurs == null) {
 			log.error("Pep2 (tema FAR eller KTA) mangler data om journalposten. Den må ha tema for å gjøre tilgangskontroll. Dette er forårsaket av en teknisk feil");
 			return AbacAnswer.deny(new TemaReason(
-					"ingen_tilgang_sensitive_tema", "saf_pep2", "mangler_tema", null
-					));
+					"cause_0013_ikketilgangtiltema", "saf_pep2", "mangler_tema", null
+			));
 		}
 		String tema = ressurs.getTema().name().toLowerCase();
 		if (isFarskap(ressurs)) {
 			return safRequestContext.getSecurityContext().hasTemaAureRole(tema) ?
 					permit() : AbacAnswer.deny(new TemaReason(
-					"ingen_tilgang_farskap", "saf_pep2", "clientid_mangler_far_rolle", FAR
-					));
+					"cause_0013_ikketilgangtiltema", "saf_farskap", "tematilgang_nok", FAR
+			));
 		} else if (isKontrollAnmeldelse(ressurs)) {
 			return safRequestContext.getSecurityContext().hasTemaAureRole(tema) ?
 					permit() : AbacAnswer.deny(new TemaReason(
-					"ingen_tilgang_kontroll_anmeldelse", "saf_pep2", "clientid_mangler_kta_rolle", KTA
-					));
+					"cause_0013_ikketilgangtiltema", "saf_kontrollanmeldelse", "tematilgang_nok", KTA
+			));
 		} else {
 			return permit();
 		}
