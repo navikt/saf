@@ -69,12 +69,12 @@ public class Pep2Impl extends Pep<TilgangSak> {
 		}
 		String tema = ressurs.getTema().name().toLowerCase();
 		if (isFarskap(ressurs)) {
-			return safRequestContext.getSecurityContext().hasTemaAureRole(tema) ?
+			return safRequestContext.getSecurityContext().hasTemaAzureRole(tema) ?
 					permit() : AbacAnswer.deny(new TemaReason(
 					"cause_0013_ikketilgangtiltema", "saf_farskap", "tematilgang_nok", FAR
 			));
 		} else if (isKontrollAnmeldelse(ressurs)) {
-			return safRequestContext.getSecurityContext().hasTemaAureRole(tema) ?
+			return safRequestContext.getSecurityContext().hasTemaAzureRole(tema) ?
 					permit() : AbacAnswer.deny(new TemaReason(
 					"cause_0013_ikketilgangtiltema", "saf_kontrollanmeldelse", "tematilgang_nok", KTA
 			));

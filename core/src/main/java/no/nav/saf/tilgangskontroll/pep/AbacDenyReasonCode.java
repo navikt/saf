@@ -18,12 +18,14 @@ public enum AbacDenyReasonCode {
 	TEMA("deny_tema"),
 	UKJENT("ukjent");
 
+	private static final String ABAC_ADVICE_UNDEFINED = "null:null";
+	private final String abacAdvice;
+
 	public final String code;
-	public final String abacAdvice;
 
 	AbacDenyReasonCode(String code) {
 		this.code = code;
-		this.abacAdvice = null;
+		this.abacAdvice = ABAC_ADVICE_UNDEFINED;
 	}
 
 	AbacDenyReasonCode(String code, String abacDenyPolicy, String abacDenyRule) {
@@ -32,7 +34,7 @@ public enum AbacDenyReasonCode {
 	}
 
 	public boolean matchesAbacAdvice(Map<String, String> advices) {
-		if (abacAdvice == null) {
+		if (ABAC_ADVICE_UNDEFINED.equalsIgnoreCase(abacAdvice)) {
 			return false;
 		}
 		return abacAdvice.equalsIgnoreCase(buildAbacAdvice(advices.get("deny_policy"), advices.get("deny_rule")));
@@ -40,7 +42,7 @@ public enum AbacDenyReasonCode {
 
 	private static String buildAbacAdvice(String denyPolicy, String denyRule) {
 		if (denyPolicy == null && denyRule == null) {
-			return null;
+			return ABAC_ADVICE_UNDEFINED;
 		}
 		return denyPolicy + ":" + denyRule;
 	}

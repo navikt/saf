@@ -145,7 +145,7 @@ public class SafSecurityContext {
 	 * @param tema Temakode. Eksempel "FOR"
 	 * @return true hvis tema rollen finnes. Ellers false
 	 */
-	public boolean hasTemaAureRole(String tema) {
+	public boolean hasTemaAzureRole(String tema) {
 		if(containsAzureRole(AZURE_ROLE_ALLE_TEMA)) {
 			return true;
 		}

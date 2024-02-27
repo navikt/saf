@@ -29,7 +29,7 @@ public class GraphQLExceptionHandler implements DataFetcherExceptionHandler {
 
 	public static GraphQLError categorizeThrowableLogAndCreateError(Throwable exception, String path) {
 		if (exception instanceof SafFunctionalException e) {
-			log.warn("query {} feilet funksjonelt. melding={}", path, e.getMessage(), e);
+			log.warn("query {} funksjonell feil. melding={}", path, e.getMessage(), e);
 			return e;
 		} else if (exception instanceof SafTechnicalException e) {
 			log.error("query {} teknisk feil. melding={}", path, e.getMessage(), e);
