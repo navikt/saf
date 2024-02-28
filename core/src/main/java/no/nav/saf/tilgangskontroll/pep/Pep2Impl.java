@@ -17,7 +17,6 @@ import static no.nav.saf.domain.kode.Tema.KTA;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_RESOURCE_TYPE;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_TEMA;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_SAF_SAK_JP_METADATA;
-import static no.nav.saf.tilgangskontroll.abac.dto.response.AdviceStringUtil.getAdvicesMap;
 import static no.nav.saf.tilgangskontroll.pep.AbacAnswer.permit;
 
 /**
@@ -52,7 +51,7 @@ public class Pep2Impl extends Pep<TilgangSak> {
 			XacmlResponse response = abacService.evaluate(request);
 			traceLogPepFinished(PEP2, ressurs);
 
-			return response.isPermit() ? AbacAnswer.permit() : AbacAnswer.deny(new TemaReason(getAdvicesMap(response.getAdvices()), ressurs.getTema()));
+			return response.isPermit() ? AbacAnswer.permit() : AbacAnswer.deny(new TemaReason(response.getAdvicesMap(), ressurs.getTema()));
 
 		} else {
 			return AbacAnswer.permit();

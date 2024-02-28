@@ -28,7 +28,6 @@ import static no.nav.saf.domain.DomainConstants.PEP6D;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_RESOURCE_TYPE;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_SAF_DOKUMENT_FIL;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_SAF_SKJERMING;
-import static no.nav.saf.tilgangskontroll.abac.dto.response.AdviceStringUtil.getAdvicesMap;
 import static no.nav.saf.tilgangskontroll.pep.AbacAnswer.permit;
 
 /**
@@ -81,6 +80,8 @@ public class Pep6dImpl extends StandardPep<TilgangDokumentvariant> {
 			try {
 				AbacAnswer response = fetchXacmlResponse(ressurs, safRequestContext, tilgangKeyDistributedCaching);
 				if (response == null) {
+					log.warn("Pep6d mangler tilstrekkelig datagrunnlag for å kunne gjennomføre tilgangskontroll. Tomt svar fra ABAC. journalpostId={} og dokumentinfoId={}",
+							ressurs.getJournalpostId(), ressurs.getDokumentInfoId());
 					return AbacAnswer.deny(new UkjentEllerTekniskReason());
 				}
 				safRequestContext.getRequestCache().putDecision(tilgangKeyLocalCaching, response);
@@ -148,7 +149,7 @@ public class Pep6dImpl extends StandardPep<TilgangDokumentvariant> {
 
 	@Override
 	protected AbacAnswer translateToDenyReasonCode(XacmlResponse xacmlResponse) {
-		return AbacAnswer.deny(new SkjermingReason(getAdvicesMap(xacmlResponse.getAdvices())));
+		return AbacAnswer.deny(new SkjermingReason(xacmlResponse.getAdvicesMap()));
 	}
 
 	private AbacAnswer fetchXacmlResponse(TilgangDokumentvariant ressurs, SafRequestContext safRequestContext, String tilgangKeyDistributedCaching) {
@@ -156,12 +157,13 @@ public class Pep6dImpl extends StandardPep<TilgangDokumentvariant> {
 		if (cachedResponse == null) {
 			XacmlResponse abacResponse = hasDokumentFilAccess(ressurs, safRequestContext);
 			if (abacResponse == null) {
-				return AbacAnswer.deny(new SkjermingReason(Collections.emptyMap()));  // ev. UkjentReason?
+				return AbacAnswer.deny(
+						new SkjermingReason("cause-0001-manglerrolle", "saf_skjerming", "rolle_NOK"));
 			}
 			if (abacResponse.isPermit()) {
 				tilgangCache.put(tilgangKeyDistributedCaching, abacResponse);
 			}
-			return mapToAbacAnswer(abacResponse); // siden put kun gjøres om decide = true er vel denna alltid = permit
+			return mapToAbacAnswer(abacResponse);
 		} else {
 			return mapToAbacAnswer(cachedResponse);
 		}

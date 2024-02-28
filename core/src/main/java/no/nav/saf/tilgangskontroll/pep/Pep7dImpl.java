@@ -28,7 +28,6 @@ import static no.nav.saf.domain.kode.Tema.OMS;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_PERSON_AKTOERID_RESOURCE;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_RESOURCE_TYPE;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_SAF_TREDJEPART;
-import static no.nav.saf.tilgangskontroll.abac.dto.response.AdviceStringUtil.getAdvicesMap;
 import static no.nav.saf.tilgangskontroll.pep.AbacAnswer.deny;
 import static no.nav.saf.tilgangskontroll.pep.AbacAnswer.permit;
 import static no.nav.saf.tilgangskontroll.pep.AbacDenyReasonCode.EGEN_ANSATT;
@@ -135,7 +134,7 @@ public class Pep7dImpl extends StandardPep<TilgangSak> {
 
 	@Override
 	protected AbacAnswer translateToDenyReasonCode(XacmlResponse xacmlResponse) {
-		var advices = getAdvicesMap(xacmlResponse.getAdvices());
+		var advices = xacmlResponse.getAdvicesMap();
 
 		if (EGEN_ANSATT.matchesAbacAdvice(advices)) {
 			return deny(new EgenAnsattPartReason(advices));
@@ -146,6 +145,7 @@ public class Pep7dImpl extends StandardPep<TilgangSak> {
 		} else if (STRENGT_FORTROLIG_ADRESSE_UTLAND.matchesAbacAdvice(advices)) {
 			return deny(new StrengtFortroligAdresseUtlandPartReason(advices));
 		}
+		log.warn("pep7 kunne ikke matche abac-response til DenyReason advices={}", advices);
 		return deny(new UkjentEllerTekniskReason());
 	}
 }

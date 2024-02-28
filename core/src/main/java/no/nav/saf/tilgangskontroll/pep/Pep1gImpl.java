@@ -25,7 +25,6 @@ import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_PERSON_
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_PERSON_FNR;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_RESOURCE_TYPE;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_SAF_PERSON;
-import static no.nav.saf.tilgangskontroll.abac.dto.response.AdviceStringUtil.getAdvicesMap;
 import static no.nav.saf.tilgangskontroll.pep.AbacAnswer.deny;
 import static no.nav.saf.tilgangskontroll.pep.AbacAnswer.permit;
 import static no.nav.saf.tilgangskontroll.pep.AbacDenyReasonCode.EGEN_ANSATT;
@@ -94,7 +93,7 @@ public class Pep1gImpl extends StandardPep<TilgangBruker> {
 
 	@Override
 	protected AbacAnswer translateToDenyReasonCode(XacmlResponse xacmlResponse) {
-		Map<String, String> advices = getAdvicesMap(xacmlResponse.getAdvices());
+		Map<String, String> advices = xacmlResponse.getAdvicesMap();
 
 		if (EGEN_ANSATT.matchesAbacAdvice(advices)) {
 			return deny(new EgenAnsattReason(advices));
@@ -107,6 +106,7 @@ public class Pep1gImpl extends StandardPep<TilgangBruker> {
 		} else if (STRENGT_FORTROLIG_ADRESSE_UTLAND.matchesAbacAdvice(advices)) {
 			return deny(new StrengtFortroligAdresseUtlandReason(advices));
 		}
+		log.warn("pep1g kunne ikke matche abac-response til DenyReason advices={}", advices);
 		return deny(new UkjentEllerTekniskReason());
 	}
 
@@ -120,7 +120,9 @@ public class Pep1gImpl extends StandardPep<TilgangBruker> {
 			if (navOrgService.isNavIdentInEgenAnsattGroup(safRequestContext.getUserId())) {
 				return AbacAnswer.permit();
 			}
-			return deny(new OrgnrNavStatReason(Collections.emptyMap()));
+			return deny(new OrgnrNavStatReason(
+					"", "skjermede_navansatte_og_familiemedlemmer", "behandle_skjermede_navansatte_og_familiemedlemmer_mangler_gruppetilgang"
+			));
 		}
 		return AbacAnswer.permit();
 	}

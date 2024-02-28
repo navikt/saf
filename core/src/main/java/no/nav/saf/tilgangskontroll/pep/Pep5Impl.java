@@ -16,7 +16,6 @@ import static no.nav.saf.domain.DomainConstants.PEP5;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_RESOURCE_TYPE;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_SAF_DOKUMENT_METADATA;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_SAF_SKJERMING;
-import static no.nav.saf.tilgangskontroll.abac.dto.response.AdviceStringUtil.getAdvicesMap;
 import static no.nav.saf.tilgangskontroll.pep.AbacAnswer.permit;
 
 /**
@@ -73,7 +72,7 @@ public class Pep5Impl extends StandardPep<TilgangDokumentInfo> {
 
 	@Override
 	protected AbacAnswer translateToDenyReasonCode(XacmlResponse xacmlResponse) {
-		return AbacAnswer.deny(new SkjermingReason(getAdvicesMap(xacmlResponse.getAdvices())));
+		return AbacAnswer.deny(new SkjermingReason(xacmlResponse.getAdvicesMap()));
 	}
 
 	private XacmlResponse hasDokumentAccess(TilgangDokumentInfo ressurs, SafRequestContext safRequestContext) {

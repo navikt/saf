@@ -28,7 +28,6 @@ import static no.nav.saf.domain.DomainConstants.PEP2D;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_RESOURCE_TYPE;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_TEMA;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_SAF_SAK_DOKUMENT;
-import static no.nav.saf.tilgangskontroll.abac.dto.response.AdviceStringUtil.getAdvicesMap;
 import static no.nav.saf.tilgangskontroll.pep.AbacAnswer.permit;
 
 /**
@@ -99,7 +98,7 @@ public class Pep2dImpl extends Pep<TilgangSak> {
 		if (xacmlResponse.isPermit()) {
 			return AbacAnswer.permit();
 		} else {
-			var advices = getAdvicesMap(xacmlResponse.getAdvices());
+			var advices = xacmlResponse.getAdvicesMap();
 			if (AbacDenyReasonCode.GEOGRAFI.matchesAbacAdvice(advices)) {
 				return AbacAnswer.deny(new GeografiReason(advices));
 			}
@@ -112,6 +111,7 @@ public class Pep2dImpl extends Pep<TilgangSak> {
 		if (cachedResponse == null) {
 			XacmlResponse abacResponse = hasDokumentAccess(ressurs, safRequestContext);
 			if (abacResponse == null) {
+				log.warn("Pep2d mangler data for å kunne gjennomføre tilgangskontroll. Tomt svar fra ABAC. tema={}", ressurs.getTema());
 				return AbacAnswer.deny(new UkjentEllerTekniskReason());
 			}
 			if (abacResponse.isPermit()) {

@@ -5,8 +5,8 @@ import no.nav.saf.tilgangskontroll.pep.AbacDenyReasonCode;
 import java.util.Map;
 
 public final class OrgnrNavStatReason extends AbacDenyReason {
-	public OrgnrNavStatReason(Map<String, String> advices) {
-		super(advices, AbacDenyReasonCode.ORGNR_NAV_STAT);
+	public OrgnrNavStatReason(String cause, String policy, String rule) {
+		super(cause, policy, rule, AbacDenyReasonCode.ORGNR_NAV_STAT);
 	}
 
 	public String getHumanReadableDenyReason() {

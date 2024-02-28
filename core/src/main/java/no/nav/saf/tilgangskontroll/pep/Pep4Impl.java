@@ -18,7 +18,6 @@ import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_RESOURC
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_SAF_JOURNALSTATUS;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_SAF_JOURNAL_METADATA;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_SAF_SKJERMING;
-import static no.nav.saf.tilgangskontroll.abac.dto.response.AdviceStringUtil.getAdvicesMap;
 import static no.nav.saf.tilgangskontroll.pep.AbacAnswer.permit;
 
 /**
@@ -76,7 +75,7 @@ public class Pep4Impl extends StandardPep<TilgangJournalpost> {
 
 	@Override
 	protected AbacAnswer translateToDenyReasonCode(XacmlResponse xacmlResponse) {
-		return AbacAnswer.deny(new JournalstatusReason(getAdvicesMap(xacmlResponse.getAdvices())));
+		return AbacAnswer.deny(new JournalstatusReason(xacmlResponse.getAdvicesMap()));
 	}
 
 	private boolean isJournalpoststatusUtgaar(TilgangJournalpost ressurs) {

@@ -26,7 +26,6 @@ import static no.nav.saf.domain.kode.Tema.FAR;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_PERSON_FNR;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_RESOURCE_TYPE;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_SAF_TREDJEPART;
-import static no.nav.saf.tilgangskontroll.abac.dto.response.AdviceStringUtil.getAdvicesMap;
 import static no.nav.saf.tilgangskontroll.pep.AbacAnswer.deny;
 import static no.nav.saf.tilgangskontroll.pep.AbacAnswer.permit;
 import static no.nav.saf.tilgangskontroll.pep.AbacDenyReasonCode.FORTROLIG_ADRESSE;
@@ -84,8 +83,7 @@ public class Pep3Impl extends StandardPep<TilgangSak> {
 
 	@Override
 	protected AbacAnswer translateToDenyReasonCode(XacmlResponse xacmlResponse) {
-		List<Advice> advices1 = xacmlResponse.getAdvices();
-		var advices = getAdvicesMap(advices1);
+		var advices = xacmlResponse.getAdvicesMap();
 
 		if (FORTROLIG_ADRESSE.matchesAbacAdvice(advices)) {
 			return deny(new FortroligAdresseReason(advices));
@@ -94,6 +92,7 @@ public class Pep3Impl extends StandardPep<TilgangSak> {
 		} else if (STRENGT_FORTROLIG_ADRESSE_UTLAND.matchesAbacAdvice(advices)) {
 			return deny(new StrengtFortroligAdresseUtlandReason(advices));
 		}
+		log.warn("pep3 kunne ikke matche abac-response til DenyReason advices={}", advices);
 		return deny(new UkjentEllerTekniskReason());
 	}
 }
