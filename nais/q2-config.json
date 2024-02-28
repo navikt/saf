@@ -497,6 +497,16 @@
       "app": "oppgavebehandling-api",
       "namespace": "oppgavehandtering",
       "cluster": "dev-gcp"
+    },
+    {
+      "app": "soknadsarkiverer",
+      "namespace": "team-soknad",
+      "cluster": "dev-gcp"
+    },
+    {
+      "app": "innsending-api",
+      "namespace": "team-soknad",
+      "cluster": "dev-gcp"
     }
   ]
 }
