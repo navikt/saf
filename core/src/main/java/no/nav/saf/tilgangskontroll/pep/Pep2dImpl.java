@@ -69,7 +69,7 @@ public class Pep2dImpl extends Pep<TilgangSak> {
 		} catch (RedisSystemException | RedisException | PoolException | Cache.ValueRetrievalException | RedisConnectionFailureException e) {
 			// Ting skal fremdeles snurre selv om man ikke får kontakt med redis
 			XacmlResponse response = hasDokumentAccess(ressurs, safRequestContext);
-			AbacAnswer abacAnswer = mapXacmlResponse(response, tema);
+			AbacAnswer abacAnswer = mapToAbacAnswer(response, tema);
 			safRequestContext.getRequestCache().putDecision(tilgangKeyLocalCaching, abacAnswer);
 			return abacAnswer;
 		} finally {
@@ -86,7 +86,7 @@ public class Pep2dImpl extends Pep<TilgangSak> {
 		traceLogPepStarted(PEP2D, ressurs);
 		Tema tema = ressurs.getTema();
 		String tilgangKeyLocalCaching = KeyGeneratorLocalCaching.getKeyForPep2d(tema);
-		boolean decision = safRequestContext.getSecurityContext().hasTemaAzureRole(tema.name().toLowerCase());
+		boolean decision = safRequestContext.getSecurityContext().hasTemaAzureRole(tema);
 		AbacAnswer abacAnswer = decision ? permit() : AbacAnswer.deny(new TemaReason(
 				"cause_0013_ikketilgangtiltema", "saf_pep2d", "mangler_tema", tema));
 		safRequestContext.getRequestCache().putDecision(tilgangKeyLocalCaching, abacAnswer);
@@ -94,7 +94,7 @@ public class Pep2dImpl extends Pep<TilgangSak> {
 		return abacAnswer;
 	}
 
-	protected AbacAnswer mapXacmlResponse(XacmlResponse xacmlResponse, Tema tema) {
+	protected AbacAnswer mapToAbacAnswer(XacmlResponse xacmlResponse, Tema tema) {
 		if (xacmlResponse.isPermit()) {
 			return AbacAnswer.permit();
 		} else {
@@ -117,9 +117,9 @@ public class Pep2dImpl extends Pep<TilgangSak> {
 			if (abacResponse.isPermit()) {
 				tilgangCache.put(tilgangKeyDistributedCaching, abacResponse);
 			}
-			return mapXacmlResponse(abacResponse, ressurs.getTema());
+			return mapToAbacAnswer(abacResponse, ressurs.getTema());
 		} else {
-			return mapXacmlResponse(cachedResponse, ressurs.getTema());
+			return mapToAbacAnswer(cachedResponse, ressurs.getTema());
 		}
 	}
 

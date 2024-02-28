@@ -52,12 +52,12 @@ public class XacmlResponse {
 
     public static XacmlResponse denyWithInfo(final String info) {
         final Advice adviceInfo = Advice.builder()
-            .id(DENY_INFO)
-            .attributeAssignments(Collections.singletonList(AttributeAssignment.builder()
-                        .attributeId("no.nav.saf_info")
-                        .value(info)
-                        .build()))
-            .build();
+				.id(DENY_INFO)
+				.attributeAssignments(Collections.singletonList(AttributeAssignment.builder()
+						.attributeId("no.nav.saf_info")
+						.value(info)
+						.build()))
+				.build();
         return new XacmlResponse(Decision.DENY, Decision.DENY, Collections.emptyList(), Collections.singletonList(adviceInfo));
     }
 }

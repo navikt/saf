@@ -1,6 +1,7 @@
 package no.nav.saf.tilgangskontroll.pep;
 
 import lombok.extern.slf4j.Slf4j;
+import no.nav.saf.domain.kode.Tema;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlRequest;
@@ -66,7 +67,7 @@ public class Pep2Impl extends Pep<TilgangSak> {
 					"cause_0013_ikketilgangtiltema", "saf_pep2", "mangler_tema", null
 			));
 		}
-		String tema = ressurs.getTema().name().toLowerCase();
+		Tema tema = ressurs.getTema();
 		if (isFarskap(ressurs)) {
 			return safRequestContext.getSecurityContext().hasTemaAzureRole(tema) ?
 					permit() : AbacAnswer.deny(new TemaReason(
