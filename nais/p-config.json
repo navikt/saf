@@ -509,6 +509,12 @@
       "namespace": "okonomi",
       "cluster": "prod-fss",
       "roles": ["tema_sto"]
-    }
+    },
+    {
+      "app": "skribenten-backend",
+      "namespace": "pensjonsbrev",
+      "cluster": "prod-gcp",
+      "roles": ["tema_pen", "tema_ufo"]
+    },
   ]
 }
