@@ -111,8 +111,7 @@ class JournalpostQuery {
 			}
 			return mapJournalpost(journalpostHolder.arkivJournalpost(), safRequestContext.getRequestCache());
 		} catch (JournalpostIkkeFunnetException e) {
-			throw new SafFunctionalException("Fant ikke journalpost i fagarkivet. " + errLog(journalpostId, eksternReferanseId), NOT_FOUND
-			);
+			throw new SafFunctionalException("Fant ikke journalpost i fagarkivet. " + errLog(journalpostId, eksternReferanseId), NOT_FOUND);
 		}
 	}
 
