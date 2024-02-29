@@ -515,6 +515,6 @@
       "namespace": "pensjonsbrev",
       "cluster": "prod-gcp",
       "roles": ["tema_pen", "tema_ufo"]
-    },
+    }
   ]
 }
