@@ -19,11 +19,11 @@ public final class TemaReason extends AbacDenyReason {
 	}
 
 	public String getTemaForHumanDisplay() {
-		return tema != null ? tema.name() : "[Ukjent tema]";
+		return tema != null ? tema.getTemanavn() : "[Ukjent tema]";
 	}
 
 	public String getHumanReadableDenyReason() {
-		return "Du har ikke tilgang til journalpost / dokument fordi du mangler tilgang til tema " + getTemaForHumanDisplay() +
-				". Arbeidet må i stedet utføres av en medarbeider med tilgang til temaet.";
+		return "Du har ikke tilgang til journalpost / dokument fordi du mangler tilgang til tema \"" + getTemaForHumanDisplay() +
+				"\". Arbeidet må i stedet utføres av en medarbeider med tilgang til temaet.";
 	}
 }
