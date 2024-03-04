@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -20,6 +21,7 @@ import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 @Getter
 public class SafFunctionalException extends RuntimeException implements GraphQLError {
 	private final ErrorCode errorCode;
+	private List<SourceLocation> locations = new ArrayList<>();
 
 	public SafFunctionalException(String message) {
 		super(message);
@@ -48,7 +50,7 @@ public class SafFunctionalException extends RuntimeException implements GraphQLE
 
 	@Override
 	public List<SourceLocation> getLocations() {
-		return new ArrayList<>();
+		return locations;
 	}
 
 	@Override
@@ -59,6 +61,10 @@ public class SafFunctionalException extends RuntimeException implements GraphQLE
 	@Override
 	public Map<String, Object> getExtensions() {
 		return Map.of("code", errorCode.getText());
+	}
+
+	public void addLocation(SourceLocation sourceLocation) {
+		locations.add(sourceLocation);
 	}
 
 	public static ErrorCode resolveToCode(HttpStatusCode httpStatusCode) {

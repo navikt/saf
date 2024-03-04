@@ -4,6 +4,7 @@ import graphql.GraphQLError;
 import graphql.execution.DataFetcherExceptionHandler;
 import graphql.execution.DataFetcherExceptionHandlerParameters;
 import graphql.execution.DataFetcherExceptionHandlerResult;
+import graphql.language.SourceLocation;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.exceptions.SafFunctionalException;
 import no.nav.saf.exceptions.SafTechnicalException;
@@ -19,17 +20,21 @@ public class GraphQLExceptionHandler implements DataFetcherExceptionHandler {
 	public CompletableFuture<DataFetcherExceptionHandlerResult> handleException(DataFetcherExceptionHandlerParameters handlerParameters) {
 		Throwable exception = handlerParameters.getException();
 		String path = handlerParameters.getPath().segmentToString();
+		SourceLocation sourceLocation = handlerParameters.getSourceLocation();
 
 		return CompletableFuture.completedFuture(
 				DataFetcherExceptionHandlerResult.newResult()
-						.error(categorizeThrowableLogAndCreateError(exception, path))
+						.error(categorizeThrowableLogAndCreateError(exception, path, sourceLocation))
 						.build()
 		);
 	}
 
-	public static GraphQLError categorizeThrowableLogAndCreateError(Throwable exception, String path) {
+	public static GraphQLError categorizeThrowableLogAndCreateError(Throwable exception, String path, SourceLocation... sourceLocations) {
 		if (exception instanceof SafFunctionalException e) {
 			log.warn("query {} funksjonell feil. melding={}", path, e.getMessage(), e);
+			for (SourceLocation location : sourceLocations) {
+				e.addLocation(location);
+			}
 			return e;
 		} else if (exception instanceof SafTechnicalException e) {
 			log.error("query {} teknisk feil. melding={}", path, e.getMessage(), e);
