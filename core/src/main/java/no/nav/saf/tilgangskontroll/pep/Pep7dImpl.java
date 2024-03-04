@@ -6,9 +6,13 @@ import no.nav.saf.domain.kode.Tema;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlRequest;
-import no.nav.saf.tilgangskontroll.abac.dto.response.Decision;
 import no.nav.saf.tilgangskontroll.abac.dto.response.XacmlResponse;
 import no.nav.saf.tilgangskontroll.abac.service.AbacService;
+import no.nav.saf.tilgangskontroll.pep.reasons.EgenAnsattPartReason;
+import no.nav.saf.tilgangskontroll.pep.reasons.FortroligAdressePartReason;
+import no.nav.saf.tilgangskontroll.pep.reasons.StrengtFortroligAdressePartReason;
+import no.nav.saf.tilgangskontroll.pep.reasons.StrengtFortroligAdresseUtlandPartReason;
+import no.nav.saf.tilgangskontroll.pep.reasons.UkjentEllerTekniskReason;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -24,7 +28,12 @@ import static no.nav.saf.domain.kode.Tema.OMS;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_PERSON_AKTOERID_RESOURCE;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_RESOURCE_TYPE;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_SAF_TREDJEPART;
+import static no.nav.saf.tilgangskontroll.pep.AbacAnswer.deny;
 import static no.nav.saf.tilgangskontroll.pep.AbacAnswer.permit;
+import static no.nav.saf.tilgangskontroll.pep.AbacDenyReasonCode.EGEN_ANSATT;
+import static no.nav.saf.tilgangskontroll.pep.AbacDenyReasonCode.FORTROLIG_ADRESSE;
+import static no.nav.saf.tilgangskontroll.pep.AbacDenyReasonCode.STRENGT_FORTROLIG_ADRESSE;
+import static no.nav.saf.tilgangskontroll.pep.AbacDenyReasonCode.STRENGT_FORTROLIG_ADRESSE_UTLAND;
 
 /**
  * Dekker følgende policies i saf:
@@ -34,7 +43,7 @@ import static no.nav.saf.tilgangskontroll.pep.AbacAnswer.permit;
  */
 @Slf4j
 @Component(PEP7D)
-public class Pep7dImpl extends Pep<TilgangSak> {
+public class Pep7dImpl extends StandardPep<TilgangSak> {
 
 	private final AbacService abacService;
 
@@ -46,42 +55,44 @@ public class Pep7dImpl extends Pep<TilgangSak> {
 	private final List<Tema> relevanteTemaK9 = Arrays.asList(FRI, OMS);
 
 	@Override
-	public XacmlResponse verifyAbacPdpDecision(TilgangSak ressurs, SafRequestContext safRequestContext) {
+	public AbacAnswer verifyAbacPdpDecision(TilgangSak ressurs, SafRequestContext safRequestContext) {
 
 		if (ressurs != null && ressurs.getArkivsaksystem() != null && ressurs.getArkivsaksnummer() != null) {
 			String tilgangKeyLocalCaching = KeyGeneratorLocalCaching.getKeyForPep7d(ressurs.getArkivsaksystem(), ressurs.getArkivsaksnummer());
 
 			if (FOR.equals(ressurs.getTema()) && FAGSAKSYSTEM_FORELDREPENGELOSNING.equals(ressurs.getFagsaksystem())) {
 				if (aktoerlisteErNullEllerTomForFp(ressurs)) {
-					safRequestContext.getRequestCache().putObject(tilgangKeyLocalCaching, true);
-					return XacmlResponse.permit();
+					safRequestContext.getRequestCache().putDecision(tilgangKeyLocalCaching, AbacAnswer.permit());
+					return AbacAnswer.permit();
 				}
 
-				if (safRequestContext.getRequestCache().getObject(tilgangKeyLocalCaching) == null) {
+				if (safRequestContext.getRequestCache().getCachedDecision(tilgangKeyLocalCaching) == null) {
 					XacmlResponse response = getXacmlResponseFromAbac(ressurs, safRequestContext, ressurs.getFpAktoerIdList());
-					safRequestContext.getRequestCache().putObject(tilgangKeyLocalCaching, decide(response.getDecision()));
-					return response;
+					AbacAnswer abacAnswer = mapToAbacAnswer(response);
+					safRequestContext.getRequestCache().putDecision(tilgangKeyLocalCaching, abacAnswer);
+					return abacAnswer;
 				}
 
-				return safRequestContext.getRequestCache().getObject(tilgangKeyLocalCaching) ? XacmlResponse.permit() : XacmlResponse.deny();
+				return safRequestContext.getRequestCache().getCachedDecision(tilgangKeyLocalCaching);
 			}
 
 			if (relevanteTemaK9.contains(ressurs.getTema()) && FAGSAKSYSTEM_K9.equals(ressurs.getFagsaksystem())) {
 				if (aktoerlisteErNullEllerTomForK9(ressurs)) {
-					safRequestContext.getRequestCache().putObject(tilgangKeyLocalCaching, true);
-					return XacmlResponse.permit();
+					safRequestContext.getRequestCache().putDecision(tilgangKeyLocalCaching, AbacAnswer.permit());
+					return AbacAnswer.permit();
 				}
-				if (safRequestContext.getRequestCache().getObject(tilgangKeyLocalCaching) == null) {
+				if (safRequestContext.getRequestCache().getCachedDecision(tilgangKeyLocalCaching) == null) {
 					XacmlResponse response = getXacmlResponseFromAbac(ressurs, safRequestContext, ressurs.getK9AktoerIdList());
-					safRequestContext.getRequestCache().putObject(tilgangKeyLocalCaching, decide(response.getDecision()));
-					return response;
+					AbacAnswer abacAnswer = mapToAbacAnswer(response);
+					safRequestContext.getRequestCache().putDecision(tilgangKeyLocalCaching, abacAnswer);
+					return abacAnswer;
 				}
 
-				return safRequestContext.getRequestCache().getObject(tilgangKeyLocalCaching) ? XacmlResponse.permit() : XacmlResponse.deny();
+				return safRequestContext.getRequestCache().getCachedDecision(tilgangKeyLocalCaching);
 			}
-			safRequestContext.getRequestCache().putObject(tilgangKeyLocalCaching, true);
+			safRequestContext.getRequestCache().putDecision(tilgangKeyLocalCaching, AbacAnswer.permit());
 		}
-		return XacmlResponse.permit();
+		return AbacAnswer.permit();
 	}
 
 	private boolean aktoerlisteErNullEllerTomForFp(TilgangSak ressurs) {
@@ -112,16 +123,29 @@ public class Pep7dImpl extends Pep<TilgangSak> {
 		return response;
 	}
 
-	private boolean decide(Decision decision) {
-		return Decision.PERMIT.equals(decision);
-	}
-
 	@Override
 	public AbacAnswer verifyAzureClientCredentialFlowAccess(TilgangSak ressurs, SafRequestContext safRequestContext) {
 		if (ressurs != null && ressurs.getArkivsaksystem() != null && ressurs.getArkivsaksnummer() != null) {
 			String tilgangKeyLocalCaching = KeyGeneratorLocalCaching.getKeyForPep7d(ressurs.getArkivsaksystem(), ressurs.getArkivsaksnummer());
-			safRequestContext.getRequestCache().putObject(tilgangKeyLocalCaching, true);
+			safRequestContext.getRequestCache().putDecision(tilgangKeyLocalCaching, AbacAnswer.permit());
 		}
 		return permit();
+	}
+
+	@Override
+	protected AbacAnswer translateToDenyReasonCode(XacmlResponse xacmlResponse) {
+		var advices = xacmlResponse.getAdvicesMap();
+
+		if (EGEN_ANSATT.matchesAbacAdvice(advices)) {
+			return deny(new EgenAnsattPartReason(advices));
+		} else if (FORTROLIG_ADRESSE.matchesAbacAdvice(advices)) {
+			return deny(new FortroligAdressePartReason(advices));
+		} else if (STRENGT_FORTROLIG_ADRESSE.matchesAbacAdvice(advices)) {
+			return deny(new StrengtFortroligAdressePartReason(advices));
+		} else if (STRENGT_FORTROLIG_ADRESSE_UTLAND.matchesAbacAdvice(advices)) {
+			return deny(new StrengtFortroligAdresseUtlandPartReason(advices));
+		}
+		log.warn("pep7 kunne ikke matche abac-response til DenyReason advices={}", advices);
+		return deny(new UkjentEllerTekniskReason());
 	}
 }

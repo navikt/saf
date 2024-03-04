@@ -69,7 +69,7 @@ class Pep7dImplTest extends AbstractPepTest {
 		boolean hasAccess = pep7d.hasAccess(createTilgangSakWithFpAktoerIdList(), safRequestContext);
 		verify(abacService).evaluate(any());
 		assertFalse(hasAccess);
-		assertFalse((Boolean) safRequestContext.getRequestCache().getObject(getKeyForPep7d(Arkivsakssystem.GSAK, ARKIVSAKSNUMMER)));
+		assertFalse((safRequestContext.getRequestCache().getCachedDecision(getKeyForPep7d(Arkivsakssystem.GSAK, ARKIVSAKSNUMMER))).isPermit());
 	}
 
 	@Test
@@ -79,7 +79,7 @@ class Pep7dImplTest extends AbstractPepTest {
 		boolean hasAccess = pep7d.hasAccess(createTilgangSakWithK9AktoerIdList(FRI), safRequestContext);
 		verify(abacService).evaluate(any());
 		assertFalse(hasAccess);
-		assertFalse((Boolean) safRequestContext.getRequestCache().getObject(getKeyForPep7d(Arkivsakssystem.GSAK, ARKIVSAKSNUMMER)));
+		assertFalse((safRequestContext.getRequestCache().getCachedDecision(getKeyForPep7d(Arkivsakssystem.GSAK, ARKIVSAKSNUMMER))).isPermit());
 	}
 
 	@Test
@@ -89,7 +89,7 @@ class Pep7dImplTest extends AbstractPepTest {
 		boolean hasAccess = pep7d.hasAccess(createTilgangSakWithK9AktoerIdList(OMS), safRequestContext);
 		verify(abacService).evaluate(any());
 		assertFalse(hasAccess);
-		assertFalse((Boolean) safRequestContext.getRequestCache().getObject(getKeyForPep7d(Arkivsakssystem.GSAK, ARKIVSAKSNUMMER)));
+		assertFalse((safRequestContext.getRequestCache().getCachedDecision(getKeyForPep7d(Arkivsakssystem.GSAK, ARKIVSAKSNUMMER))).isPermit());
 	}
 
 	@Test
@@ -105,7 +105,7 @@ class Pep7dImplTest extends AbstractPepTest {
 
 		assertTrue(hasAccess);
 
-		assertTrue((Boolean) safRequestContext.getRequestCache().getObject(getKeyForPep7d(Arkivsakssystem.GSAK, ARKIVSAKSNUMMER)));
+		assertTrue((safRequestContext.getRequestCache().getCachedDecision(getKeyForPep7d(Arkivsakssystem.GSAK, ARKIVSAKSNUMMER))).isPermit());
 		assertThat(capturedRequest.getResources(), hasItem(new XacmlAttribute(RESOURCE_FELLES_RESOURCE_TYPE, RESOURCE_SAF_TREDJEPART)));
 		assertThat(capturedRequest.getResources(), hasItem(new XacmlAttribute(RESOURCE_FELLES_PERSON_AKTOERID_RESOURCE, FNR)));
 		assertThat(capturedRequest.getResources(), hasItem(new XacmlAttribute(RESOURCE_FELLES_PERSON_AKTOERID_RESOURCE, FNR2)));
@@ -123,7 +123,7 @@ class Pep7dImplTest extends AbstractPepTest {
 		XacmlRequest capturedRequest = request.getValue();
 
 		assertTrue(hasAccess);
-		assertTrue((Boolean) safRequestContext.getRequestCache().getObject(getKeyForPep7d(Arkivsakssystem.GSAK, ARKIVSAKSNUMMER)));
+		assertTrue((safRequestContext.getRequestCache().getCachedDecision(getKeyForPep7d(Arkivsakssystem.GSAK, ARKIVSAKSNUMMER))).isPermit());
 		assertThat(capturedRequest.getResources(), hasItem(new XacmlAttribute(RESOURCE_FELLES_RESOURCE_TYPE, RESOURCE_SAF_TREDJEPART)));
 		assertThat(capturedRequest.getResources(), hasItem(new XacmlAttribute(RESOURCE_FELLES_PERSON_AKTOERID_RESOURCE, FNR)));
 		assertThat(capturedRequest.getResources(), hasItem(new XacmlAttribute(RESOURCE_FELLES_PERSON_AKTOERID_RESOURCE, FNR2)));
@@ -141,7 +141,7 @@ class Pep7dImplTest extends AbstractPepTest {
 		XacmlRequest capturedRequest = request.getValue();
 
 		assertTrue(hasAccess);
-		assertTrue((Boolean) safRequestContext.getRequestCache().getObject(getKeyForPep7d(Arkivsakssystem.GSAK, ARKIVSAKSNUMMER)));
+		assertTrue((safRequestContext.getRequestCache().getCachedDecision(getKeyForPep7d(Arkivsakssystem.GSAK, ARKIVSAKSNUMMER))).isPermit());
 		assertThat(capturedRequest.getResources(), hasItem(new XacmlAttribute(RESOURCE_FELLES_RESOURCE_TYPE, RESOURCE_SAF_TREDJEPART)));
 		assertThat(capturedRequest.getResources(), hasItem(new XacmlAttribute(RESOURCE_FELLES_PERSON_AKTOERID_RESOURCE, FNR)));
 		assertThat(capturedRequest.getResources(), hasItem(new XacmlAttribute(RESOURCE_FELLES_PERSON_AKTOERID_RESOURCE, FNR2)));

@@ -1,11 +1,14 @@
 package no.nav.saf.tilgangskontroll.pep;
 
 import lombok.extern.slf4j.Slf4j;
+import no.nav.saf.domain.kode.Tema;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlRequest;
 import no.nav.saf.tilgangskontroll.abac.dto.response.XacmlResponse;
 import no.nav.saf.tilgangskontroll.abac.service.AbacService;
+import no.nav.saf.tilgangskontroll.pep.reasons.TemaReason;
+import no.nav.saf.tilgangskontroll.pep.reasons.UkjentEllerTekniskReason;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -15,7 +18,6 @@ import static no.nav.saf.domain.kode.Tema.KTA;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_RESOURCE_TYPE;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_TEMA;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_SAF_SAK_JP_METADATA;
-import static no.nav.saf.tilgangskontroll.pep.AbacAnswer.deny;
 import static no.nav.saf.tilgangskontroll.pep.AbacAnswer.permit;
 
 /**
@@ -35,10 +37,10 @@ public class Pep2Impl extends Pep<TilgangSak> {
 	}
 
 	@Override
-	public XacmlResponse verifyAbacPdpDecision(TilgangSak ressurs, SafRequestContext safRequestContext) {
+	public AbacAnswer verifyAbacPdpDecision(TilgangSak ressurs, SafRequestContext safRequestContext) {
 		if (ressurs == null) {
 			log.error("Pep2 (tema FAR eller KTA) mangler data om journalposten. Den må ha tema for å gjøre tilgangskontroll. Dette er forårsaket av en teknisk feil");
-			return XacmlResponse.deny();
+			return AbacAnswer.deny(new UkjentEllerTekniskReason());
 		}
 
 		if (isFarskap(ressurs) || isKontrollAnmeldelse(ressurs)) {
@@ -50,10 +52,10 @@ public class Pep2Impl extends Pep<TilgangSak> {
 			XacmlResponse response = abacService.evaluate(request);
 			traceLogPepFinished(PEP2, ressurs);
 
-			return response;
+			return response.isPermit() ? AbacAnswer.permit() : AbacAnswer.deny(new TemaReason(response.getAdvicesMap(), ressurs.getTema()));
 
 		} else {
-			return XacmlResponse.permit();
+			return AbacAnswer.permit();
 		}
 	}
 
@@ -61,21 +63,21 @@ public class Pep2Impl extends Pep<TilgangSak> {
 	public AbacAnswer verifyAzureClientCredentialFlowAccess(TilgangSak ressurs, SafRequestContext safRequestContext) {
 		if (ressurs == null) {
 			log.error("Pep2 (tema FAR eller KTA) mangler data om journalposten. Den må ha tema for å gjøre tilgangskontroll. Dette er forårsaket av en teknisk feil");
-			return deny(AbacAnswer.AbacDenyReason.builder()
-					.cause("ingen_tilgang_sensitive_tema").policy("saf_pep2").rule("mangler_tema")
-					.build());
+			return AbacAnswer.deny(new TemaReason(
+					"cause_0013_ikketilgangtiltema", "saf_pep2", "mangler_tema", null
+			));
 		}
-		String tema = ressurs.getTema().name().toLowerCase();
+		Tema tema = ressurs.getTema();
 		if (isFarskap(ressurs)) {
-			return safRequestContext.getSecurityContext().hasTemaAureRole(tema) ?
-					permit() : deny(AbacAnswer.AbacDenyReason.builder()
-					.cause("ingen_tilgang_farskap").policy("saf_pep2").rule("clientid_mangler_far_rolle")
-					.build());
+			return safRequestContext.getSecurityContext().hasTemaAzureRole(tema) ?
+					permit() : AbacAnswer.deny(new TemaReason(
+					"cause_0013_ikketilgangtiltema", "saf_farskap", "tematilgang_nok", FAR
+			));
 		} else if (isKontrollAnmeldelse(ressurs)) {
-			return safRequestContext.getSecurityContext().hasTemaAureRole(tema) ?
-					permit() : deny(AbacAnswer.AbacDenyReason.builder()
-					.cause("ingen_tilgang_kontroll_anmeldelse").policy("saf_pep2").rule("clientid_mangler_kta_rolle")
-					.build());
+			return safRequestContext.getSecurityContext().hasTemaAzureRole(tema) ?
+					permit() : AbacAnswer.deny(new TemaReason(
+					"cause_0013_ikketilgangtiltema", "saf_kontrollanmeldelse", "tematilgang_nok", KTA
+			));
 		} else {
 			return permit();
 		}

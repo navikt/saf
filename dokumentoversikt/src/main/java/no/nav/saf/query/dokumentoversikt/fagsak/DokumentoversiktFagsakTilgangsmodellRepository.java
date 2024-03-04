@@ -123,7 +123,7 @@ class DokumentoversiktFagsakTilgangsmodellRepository {
 					// Vi er kun interesserte i saker tilhørende brukere som ikke ble filtrert bort i pep1
 					.filter(arkivsak -> aktoerIdList.contains(arkivsak.getAktoerId()) || orgnrList.contains(arkivsak.getOrgnummer()))
 					.map(arkivsak -> {
-						safRequestContext.getRequestCache().putObject(arkivsak.getKey(), arkivsak);
+						safRequestContext.getRequestCache().putArkivsak(arkivsak);
 						final BidragSak bidragSak = bisysAntiCorruptionLayer.hentBidragSakByArkivsak(arkivsak);
 						List<String> fpsak = fpsakAntiCorruptionLayer.hentRelevanteParter(arkivsak);
 						List<String> k9sak = k9AntiCorruptionLayer.hentRelevanteParter(arkivsak);
@@ -169,7 +169,7 @@ class DokumentoversiktFagsakTilgangsmodellRepository {
 			List<Arkivsak> arkivsaker = pensjonSakAntiCorruptionLayer.findArkivsaker(tilgangBrukerList.get(0), tema);
 			return arkivsaker.stream()
 					.map(arkivsak -> {
-						safRequestContext.getRequestCache().putObject(arkivsak.getKey(), arkivsak);
+						safRequestContext.getRequestCache().putArkivsak(arkivsak);
 						return TilgangSak.builder()
 								.aktoerId(arkivsak.getAktoerId())
 								.arkivsaksnummer(arkivsak.getArkivsaksnummer())

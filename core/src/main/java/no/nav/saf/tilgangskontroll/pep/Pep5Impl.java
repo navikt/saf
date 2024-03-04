@@ -5,9 +5,10 @@ import no.nav.saf.cache.KeyGeneratorLocalCaching;
 import no.nav.saf.domain.tilgangsmodell.TilgangDokumentInfo;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlRequest;
-import no.nav.saf.tilgangskontroll.abac.dto.response.Decision;
 import no.nav.saf.tilgangskontroll.abac.dto.response.XacmlResponse;
 import no.nav.saf.tilgangskontroll.abac.service.AbacService;
+import no.nav.saf.tilgangskontroll.pep.reasons.SkjermingReason;
+import no.nav.saf.tilgangskontroll.pep.reasons.UkjentEllerTekniskReason;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -15,7 +16,6 @@ import static no.nav.saf.domain.DomainConstants.PEP5;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_RESOURCE_TYPE;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_SAF_DOKUMENT_METADATA;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_SAF_SKJERMING;
-import static no.nav.saf.tilgangskontroll.pep.AbacAnswer.deny;
 import static no.nav.saf.tilgangskontroll.pep.AbacAnswer.permit;
 
 /**
@@ -25,7 +25,7 @@ import static no.nav.saf.tilgangskontroll.pep.AbacAnswer.permit;
  */
 @Slf4j
 @Component(PEP5)
-public class Pep5Impl extends Pep<TilgangDokumentInfo> {
+public class Pep5Impl extends StandardPep<TilgangDokumentInfo> {
 
 	private final AbacService abacService;
 
@@ -35,21 +35,21 @@ public class Pep5Impl extends Pep<TilgangDokumentInfo> {
 	}
 
 	@Override
-	public XacmlResponse verifyAbacPdpDecision(TilgangDokumentInfo ressurs, SafRequestContext safRequestContext) {
+	public AbacAnswer verifyAbacPdpDecision(TilgangDokumentInfo ressurs, SafRequestContext safRequestContext) {
 		if (ressurs == null) {
 			log.warn("Pep5 mangler tilstrekkelig datagrunnlag for å kunne gjennomføre tilgangskontroll");
-			return XacmlResponse.deny();
+			return AbacAnswer.deny(new UkjentEllerTekniskReason());
 		}
 
 		String tilgangKeyLocalCaching = KeyGeneratorLocalCaching.getKeyForPep5(ressurs.getJournalpostId(), ressurs.getDokumentInfoId());
 		if (isSkjermingPresent(ressurs)) {
 			XacmlResponse response = hasDokumentAccess(ressurs, safRequestContext);
-			boolean decide = decide(response.getDecision());
-			safRequestContext.getRequestCache().putObject(tilgangKeyLocalCaching, decide);
-			return response;
+			AbacAnswer abacAnswer = mapToAbacAnswer(response);
+			safRequestContext.getRequestCache().putDecision(tilgangKeyLocalCaching, abacAnswer);
+			return abacAnswer;
 		} else {
-			safRequestContext.getRequestCache().putObject(tilgangKeyLocalCaching, true);
-			return XacmlResponse.permit();
+			safRequestContext.getRequestCache().putDecision(tilgangKeyLocalCaching, AbacAnswer.permit());
+			return AbacAnswer.permit();
 		}
 	}
 
@@ -57,20 +57,22 @@ public class Pep5Impl extends Pep<TilgangDokumentInfo> {
 	public AbacAnswer verifyAzureClientCredentialFlowAccess(TilgangDokumentInfo ressurs, SafRequestContext safRequestContext) {
 		if (ressurs == null) {
 			log.warn("Pep5 mangler tilstrekkelig datagrunnlag for å kunne gjennomføre tilgangskontroll. Azure ccf.");
-			return deny(AbacAnswer.AbacDenyReason.builder()
-					.cause("mangler_data").policy("saf_pep5").rule("dokument_info_er_null")
-					.build());
+			return AbacAnswer.deny(new UkjentEllerTekniskReason(
+			"mangler_data", "saf_pep5", "dokument_info_er_null"
+			));
 		}
 		String tilgangKeyLocalCaching = KeyGeneratorLocalCaching.getKeyForPep5(ressurs.getJournalpostId(), ressurs.getDokumentInfoId());
 		boolean decision = !isSkjermingPresent(ressurs);
-		safRequestContext.getRequestCache().putObject(tilgangKeyLocalCaching, decision);
-		return decision ? permit() : deny(AbacAnswer.AbacDenyReason.builder()
-				.cause("dokument_info_skjermet").policy("saf_pep5").rule("dokument_info_skjermet")
-				.build());
+		AbacAnswer abacAnswer = decision ? permit() : AbacAnswer.deny(new SkjermingReason(
+				"dokument_info_skjermet", "saf_pep5", "dokument_info_skjermet"
+		));
+		safRequestContext.getRequestCache().putDecision(tilgangKeyLocalCaching, abacAnswer);
+		return abacAnswer;
 	}
 
-	private boolean decide(Decision decision) {
-		return Decision.PERMIT.equals(decision);
+	@Override
+	protected AbacAnswer translateToDenyReasonCode(XacmlResponse xacmlResponse) {
+		return AbacAnswer.deny(new SkjermingReason(xacmlResponse.getAdvicesMap()));
 	}
 
 	private XacmlResponse hasDokumentAccess(TilgangDokumentInfo ressurs, SafRequestContext safRequestContext) {

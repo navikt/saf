@@ -5,7 +5,7 @@ import graphql.schema.DataFetcher;
 import graphql.schema.DataFetchingEnvironment;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.domain.visningsmodell.Dokumentoversikt;
-import no.nav.saf.exceptions.SafFunctionalException;
+import no.nav.saf.graphql.GraphQLExceptionHandler;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import org.springframework.stereotype.Component;
 
@@ -23,9 +23,10 @@ public class DokumentoversiktFagsakDataFetcher implements DataFetcher<DataFetche
 
 	@Override
 	public DataFetcherResult<Dokumentoversikt> get(DataFetchingEnvironment environment) throws Exception {
+		SafRequestContext safRequestContext = environment.getGraphQlContext().get(SafRequestContext.KEY);
+		addMdcData(safRequestContext);
+
 		try {
-			SafRequestContext safRequestContext = environment.getGraphQlContext().get(SafRequestContext.KEY);
-			addMdcData(safRequestContext);
 			DokumentoversiktFagsakArguments arguments = DokumentoversiktFagsakArguments.create(environment);
 			log.info("dokumentoversiktFagsak hentes for fagsakIdInput={}", arguments.getFagsakInput());
 			Dokumentoversikt dokumentoversikt = dokumentoversiktFagsakQuery.hentDokumentoversikt(arguments, safRequestContext);
@@ -34,10 +35,10 @@ public class DokumentoversiktFagsakDataFetcher implements DataFetcher<DataFetche
 			return DataFetcherResult.<Dokumentoversikt>newResult()
 					.data(dokumentoversikt)
 					.build();
-		} catch (SafFunctionalException e) {
+		} catch (Exception e) {
 			return DataFetcherResult.<Dokumentoversikt>newResult()
 					.data(Dokumentoversikt.empty())
-					.error(e)
+					.error(GraphQLExceptionHandler.categorizeThrowableLogAndCreateError(e, "DokumentoversiktFagsak"))
 					.build();
 		}
 	}

@@ -4,6 +4,7 @@ import com.nimbusds.jwt.JWT;
 import com.nimbusds.jwt.JWTParser;
 import com.nimbusds.jwt.SignedJWT;
 import lombok.extern.slf4j.Slf4j;
+import no.nav.saf.domain.kode.Tema;
 import no.nav.saf.exceptions.AuthorizationException;
 import no.nav.security.token.support.core.context.TokenValidationContext;
 import no.nav.security.token.support.core.jwt.JwtToken;
@@ -145,11 +146,11 @@ public class SafSecurityContext {
 	 * @param tema Temakode. Eksempel "FOR"
 	 * @return true hvis tema rollen finnes. Ellers false
 	 */
-	public boolean hasTemaAureRole(String tema) {
+	public boolean hasTemaAzureRole(Tema tema) {
 		if(containsAzureRole(AZURE_ROLE_ALLE_TEMA)) {
 			return true;
 		}
-		return containsAzureRole("tema_" + tema.toLowerCase());
+		return tema != null && containsAzureRole("tema_" + tema.name().toLowerCase());
 	}
 
 	private boolean containsAzureRole(String role) {

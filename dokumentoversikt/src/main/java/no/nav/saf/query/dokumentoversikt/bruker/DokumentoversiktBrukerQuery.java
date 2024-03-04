@@ -1,6 +1,5 @@
 package no.nav.saf.query.dokumentoversikt.bruker;
 
-import graphql.schema.DataFetchingEnvironment;
 import io.reactivex.rxjava3.core.Flowable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 import lombok.extern.slf4j.Slf4j;
@@ -15,7 +14,7 @@ import no.nav.saf.domain.tilgangsmodell.TilgangJournalpost;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 import no.nav.saf.domain.visningsmodell.Dokumentoversikt;
 import no.nav.saf.domain.visningsmodell.Journalpost;
-import no.nav.saf.graphql.GraphQLException;
+import no.nav.saf.exceptions.SafFunctionalException;
 import no.nav.saf.metrics.Monitor;
 import no.nav.saf.query.dokumentoversikt.DokumentoversiktVisningsmodellRepository;
 import no.nav.saf.query.dokumentoversikt.SideInfoMapper;
@@ -31,7 +30,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static no.nav.saf.domain.DomainConstants.TILGANG_BRUKER;
 import static no.nav.saf.graphql.ErrorCode.FORBIDDEN;
 import static no.nav.saf.graphql.ErrorCode.NOT_FOUND;
 import static no.nav.saf.tilgangskontroll.pep.DenyReasonFactory.createPep1gDenyReasonDokumentoversikt;
@@ -84,18 +82,17 @@ class DokumentoversiktBrukerQuery {
 
 	@Monitor(value = "dok_request", extraTags = {"process", "dokumentOversikt", "requestType", "bruker"}, histogram = true)
 	public Dokumentoversikt hentDokumentoversikt(DokumentoversiktBrukerArguments dokumentoversiktBrukerArguments,
-												 SafRequestContext safRequestContext,
-												 DataFetchingEnvironment environment) {
+												 SafRequestContext safRequestContext) {
 		TilgangBruker tilgangBruker = dokumentoversiktBrukerTilgangsmodellRepository.findTilgangBruker(dokumentoversiktBrukerArguments.getBrukerIdInput());
 		if (tilgangBruker == null) {
-			throw GraphQLException.of(NOT_FOUND, environment, PERSON_IKKE_FUNNET_REASON, Dokumentoversikt.empty());
+			throw new SafFunctionalException(PERSON_IKKE_FUNNET_REASON, NOT_FOUND);
 		} else {
-			safRequestContext.getRequestCache().putObject(TILGANG_BRUKER, tilgangBruker);
+			safRequestContext.getRequestCache().putTilgangBruker(tilgangBruker);
 		}
 
 		AbacAnswer pep1gAnswer = this.pep1g.hasAccessWithAnswer(tilgangBruker, safRequestContext);
 		if (pep1gAnswer.isDeny()) {
-			throw GraphQLException.of(FORBIDDEN, environment, createPep1gDenyReasonDokumentoversikt(safRequestContext, pep1gAnswer), Dokumentoversikt.empty());
+			throw new SafFunctionalException(createPep1gDenyReasonDokumentoversikt(safRequestContext, pep1gAnswer), FORBIDDEN);
 		}
 
 		//  Resultat fra pep2d caches lokalt og brukes i JournalpostDtoMapper.java. Med bakgrunn i resultat fra pep2d, pep6d og pep7d settes feltet saksbehandlerHarTilgang=true/false.
@@ -184,7 +181,7 @@ class DokumentoversiktBrukerQuery {
 	}
 
 	private TilgangSak mapToTilgangSak(String journalpostId, SafRequestContext safRequestContext) {
-		JournalpostDto journalpostDto = safRequestContext.getRequestCache().getObject(journalpostId);
+		JournalpostDto journalpostDto = safRequestContext.getRequestCache().getJournalpost(journalpostId);
 
 		return TilgangSak.builder()
 				.tema(FagomradeCode.toSafTema(journalpostDto.getFagomrade()))

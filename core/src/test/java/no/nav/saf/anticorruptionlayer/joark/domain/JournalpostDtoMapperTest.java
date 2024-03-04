@@ -22,18 +22,17 @@ import no.nav.saf.domain.visningsmodell.Journalpost;
 import no.nav.saf.domain.visningsmodell.RelevantDato;
 import no.nav.saf.domain.visningsmodell.Utsendingsinfo;
 import no.nav.saf.tilgangskontroll.RequestCache;
+import no.nav.saf.tilgangskontroll.pep.AbacAnswer;
+import no.nav.saf.tilgangskontroll.pep.reasons.UkjentEllerTekniskReason;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 
-import static java.lang.Boolean.FALSE;
-import static java.lang.Boolean.TRUE;
 import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoMapper.FILTYPE_PDF;
 import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.AKTOER_ID;
 import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.ANTALL_RETUR;
-import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.ARKIVSAK_NR;
 import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.AVSENDER_MOTTAKER_ID;
 import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.AVSENDER_MOTTAKER_ID_TYPE;
 import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.AVSENDER_MOTTAKER_LAND;
@@ -89,7 +88,6 @@ import static no.nav.saf.anticorruptionlayer.joark.domain.kode.JournalpostTypeCo
 import static no.nav.saf.anticorruptionlayer.joark.domain.kode.UtsendingsKanalCode.NAV_NO;
 import static no.nav.saf.anticorruptionlayer.joark.domain.kode.UtsendingsKanalCode.S;
 import static no.nav.saf.anticorruptionlayer.joark.domain.kode.UtsendingsKanalCode.SDP;
-import static no.nav.saf.domain.DomainConstants.TILGANG_BRUKER;
 import static no.nav.saf.domain.kode.Arkivsakssystem.PSAK;
 import static no.nav.saf.domain.kode.Datotype.DATO_AVS_RETUR;
 import static no.nav.saf.domain.kode.Datotype.DATO_DOKUMENT;
@@ -231,7 +229,7 @@ class JournalpostDtoMapperTest {
 		JournalpostDto journalpostDto = JournalpostDtoTestObjects.buildJournalpostDtoInternNotatType();
 		RequestCache requestCache = createTilgangBrukerRequestCache();
 		String tilgangKeyPep5LocalCaching = KeyGeneratorLocalCaching.getKeyForPep5(String.valueOf(JOURNALPOST_ID), DOKUMENT_INFO_ID);
-		requestCache.putObject(tilgangKeyPep5LocalCaching, true);
+		requestCache.putDecision(tilgangKeyPep5LocalCaching, AbacAnswer.permit());
 
 		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, requestCache);
 
@@ -249,7 +247,7 @@ class JournalpostDtoMapperTest {
 		JournalpostDto journalpostDto = JournalpostDtoTestObjects.buildJournalpostDtoInngaaendeType();
 		RequestCache requestCache = createTilgangBrukerRequestCache();
 		String tilgangKeyPep5LocalCaching = KeyGeneratorLocalCaching.getKeyForPep5(String.valueOf(JOURNALPOST_ID), DOKUMENT_INFO_ID);
-		requestCache.putObject(tilgangKeyPep5LocalCaching, false);
+		requestCache.putDecision(tilgangKeyPep5LocalCaching, AbacAnswer.deny(new UkjentEllerTekniskReason()));
 
 		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, requestCache);
 
@@ -296,7 +294,7 @@ class JournalpostDtoMapperTest {
 
 		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, requestCache);
 
-		assertEquals(ARKIVSAK_NR, journalpost.getSak().getArkivsaksnummer());
+		assertEquals(SAKS_ID, journalpost.getSak().getArkivsaksnummer());
 		assertEquals(PSAK.name(), journalpost.getSak().getArkivsaksystem().name());
 	}
 
@@ -349,7 +347,7 @@ class JournalpostDtoMapperTest {
 	void shouldMapSaksbehandlerHarTilgang() {
 		JournalpostDto journalpostDto = JournalpostDtoTestObjects.buildJournalpostDtoPenSaksrelasjonDto();
 
-		String tilgangKeyPep2dLocalCaching = KeyGeneratorLocalCaching.getKeyForPep2d(journalpostDto.getFagomrade().name());
+		String tilgangKeyPep2dLocalCaching = KeyGeneratorLocalCaching.getKeyForPep2d(FagomradeCode.toSafTema(journalpostDto.getFagomrade()));
 
 		String tilgangKeyPep5LocalCaching = KeyGeneratorLocalCaching.getKeyForPep5(String.valueOf(JOURNALPOST_ID), DOKUMENT_INFO_ID);
 
@@ -363,10 +361,10 @@ class JournalpostDtoMapperTest {
 
 
 		RequestCache requestCache = new RequestCache();
-		requestCache.putObject(tilgangKeyPep2dLocalCaching, TRUE);
-		requestCache.putObject(tilgangKeyPep5LocalCaching, TRUE);
-		requestCache.putObject(tilgangKeyPep6dLocalCachingVariantArkiv, TRUE);
-		requestCache.putObject(tilgangKeyPep6dLocalCachingVariantSladdet, FALSE);
+		requestCache.putDecision(tilgangKeyPep2dLocalCaching, AbacAnswer.permit());
+		requestCache.putDecision(tilgangKeyPep5LocalCaching, AbacAnswer.permit());
+		requestCache.putDecision(tilgangKeyPep6dLocalCachingVariantArkiv, AbacAnswer.permit());
+		requestCache.putDecision(tilgangKeyPep6dLocalCachingVariantSladdet, AbacAnswer.deny(new UkjentEllerTekniskReason()));
 
 		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, requestCache);
 
@@ -391,9 +389,9 @@ class JournalpostDtoMapperTest {
 						.name(), null);
 
 		RequestCache requestCache = new RequestCache();
-		requestCache.putObject(tilgangKeyPep5LocalCaching, TRUE);
-		requestCache.putObject(tilgangKeyPep6dLocalCachingVariantArkiv, TRUE);
-		requestCache.putObject(tilgangKeyPep6dLocalCachingVariantSladdet, TRUE);
+		requestCache.putDecision(tilgangKeyPep5LocalCaching, AbacAnswer.permit());
+		requestCache.putDecision(tilgangKeyPep6dLocalCachingVariantArkiv, AbacAnswer.permit());
+		requestCache.putDecision(tilgangKeyPep6dLocalCachingVariantSladdet, AbacAnswer.permit());
 
 		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, requestCache);
 
@@ -419,9 +417,9 @@ class JournalpostDtoMapperTest {
 						.name(), null);
 
 		RequestCache requestCache = new RequestCache();
-		requestCache.putObject(tilgangKeyPep5LocalCaching, TRUE);
-		requestCache.putObject(tilgangKeyPep6dLocalCachingVariantArkiv, TRUE);
-		requestCache.putObject(tilgangKeyPep6dLocalCachingVariantSladdet, TRUE);
+		requestCache.putDecision(tilgangKeyPep5LocalCaching, AbacAnswer.permit());
+		requestCache.putDecision(tilgangKeyPep6dLocalCachingVariantArkiv, AbacAnswer.permit());
+		requestCache.putDecision(tilgangKeyPep6dLocalCachingVariantSladdet, AbacAnswer.permit());
 
 		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, requestCache);
 
@@ -447,9 +445,9 @@ class JournalpostDtoMapperTest {
 						.name(), null);
 
 		RequestCache requestCache = new RequestCache();
-		requestCache.putObject(tilgangKeyPep5LocalCaching, TRUE);
-		requestCache.putObject(tilgangKeyPep6dLocalCachingVariantArkiv, TRUE);
-		requestCache.putObject(tilgangKeyPep6dLocalCachingVariantSladdet, TRUE);
+		requestCache.putDecision(tilgangKeyPep5LocalCaching, AbacAnswer.permit());
+		requestCache.putDecision(tilgangKeyPep6dLocalCachingVariantArkiv, AbacAnswer.permit());
+		requestCache.putDecision(tilgangKeyPep6dLocalCachingVariantSladdet, AbacAnswer.permit());
 
 		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, requestCache);
 
@@ -618,7 +616,7 @@ class JournalpostDtoMapperTest {
 	private RequestCache pep5RequestCache() {
 		RequestCache requestCache = createArkivsakCacheRequestCache();
 		String tilgangKeyPep5LocalCaching = KeyGeneratorLocalCaching.getKeyForPep5(String.valueOf(JOURNALPOST_ID), DOKUMENT_INFO_ID);
-		requestCache.putObject(tilgangKeyPep5LocalCaching, true);
+		requestCache.putDecision(tilgangKeyPep5LocalCaching, AbacAnswer.permit());
 		return requestCache;
 	}
 
@@ -688,8 +686,10 @@ class JournalpostDtoMapperTest {
 
 	private RequestCache createArkivsakCacheRequestCache() {
 		RequestCache requestCache = new RequestCache();
-		requestCache.putObject(SAKS_ID + Arkivsakssystem.GSAK.name(),
+		requestCache.putArkivsak(
 				Arkivsak.builder()
+						.arkivsaksnummer(SAKS_ID)
+						.arkivsaksystem(Arkivsakssystem.GSAK)
 						.aktoerId(AKTOER_ID)
 						.tema(Tema.STO)
 						.build()
@@ -699,7 +699,7 @@ class JournalpostDtoMapperTest {
 
 	private RequestCache createTilgangBrukerRequestCache() {
 		RequestCache requestCache = new RequestCache();
-		requestCache.putObject(TILGANG_BRUKER,
+		requestCache.putTilgangBruker(
 				TilgangBruker.builder()
 						.foedselsnr(JournalpostDtoTestObjects.FNR)
 						.aktoerId(AKTOER_ID)
@@ -710,11 +710,11 @@ class JournalpostDtoMapperTest {
 
 	private RequestCache createTilgangBrukerRequestCachePSAK() {
 		RequestCache requestCache = new RequestCache();
-		requestCache.putObject(SAKS_ID + PSAK.name(),
+		requestCache.putArkivsak(
 				Arkivsak.builder()
 						.aktoerId(AKTOER_ID)
 						.arkivsaksystem(PSAK)
-						.arkivsaksnummer(ARKIVSAK_NR)
+						.arkivsaksnummer(SAKS_ID)
 						.tema(Tema.PEN)
 						.build()
 		);
@@ -723,7 +723,7 @@ class JournalpostDtoMapperTest {
 
 	private RequestCache createTilgangBrukerCacheWithOrganisasjonSak() {
 		RequestCache requestCache = new RequestCache();
-		requestCache.putObject(TILGANG_BRUKER,
+		requestCache.putTilgangBruker(
 				TilgangBruker.builder()
 						.orgnummer(ORG_NR)
 						.build()

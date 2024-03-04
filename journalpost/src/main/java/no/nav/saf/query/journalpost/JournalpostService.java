@@ -154,7 +154,7 @@ public class JournalpostService {
 			return mapTilgangPensjonSak(tilgangBruker, arkivJournalpost, safRequestContext);
 		} else {
 			Arkivsak arkivsak = mapArkivsak(arkivJournalpost);
-			safRequestContext.getRequestCache().putObject(arkivsak.getKey(), arkivsak);
+			safRequestContext.getRequestCache().putArkivsak(arkivsak);
 			return mapTilgangGsak(arkivsak);
 		}
 	}
@@ -180,7 +180,7 @@ public class JournalpostService {
 		ArkivSaksrelasjon arkivSaksrelasjon = arkivJournalpost.saksrelasjon();
 		List<Arkivsak> arkivsaker = pensjonSakAntiCorruptionLayer.findArkivsaker(tilgangBruker, Arrays.asList(PEN, UFO));
 		return arkivsaker.stream().filter(p -> p.getArkivsaksnummer().equals(valueOf(arkivSaksrelasjon.sakId())))
-				.peek(pensjonArkivsak -> safRequestContext.getRequestCache().putObject(pensjonArkivsak.getKey(), pensjonArkivsak))
+				.peek(pensjonArkivsak -> safRequestContext.getRequestCache().putArkivsak(pensjonArkivsak))
 				.map(psakArkivsak -> TilgangSak.builder()
 						.aktoerId(psakArkivsak.getAktoerId())
 						.arkivsaksnummer(psakArkivsak.getArkivsaksnummer())

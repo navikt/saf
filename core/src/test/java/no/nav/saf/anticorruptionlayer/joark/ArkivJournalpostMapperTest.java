@@ -30,6 +30,8 @@ import no.nav.saf.domain.visningsmodell.RelevantDato;
 import no.nav.saf.domain.visningsmodell.Tilleggsopplysning;
 import no.nav.saf.domain.visningsmodell.Utsendingsinfo;
 import no.nav.saf.tilgangskontroll.RequestCache;
+import no.nav.saf.tilgangskontroll.pep.AbacAnswer;
+import no.nav.saf.tilgangskontroll.pep.reasons.UkjentEllerTekniskReason;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
@@ -107,7 +109,6 @@ import static no.nav.saf.anticorruptionlayer.joark.domain.kode.UtsendingsKanalCo
 import static no.nav.saf.anticorruptionlayer.joark.domain.kode.UtsendingsKanalCode.S;
 import static no.nav.saf.anticorruptionlayer.joark.domain.kode.UtsendingsKanalCode.SDP;
 import static no.nav.saf.domain.DomainConstants.TIDSSONE_NORGE;
-import static no.nav.saf.domain.DomainConstants.TILGANG_BRUKER;
 import static no.nav.saf.domain.kode.Arkivsakssystem.PSAK;
 import static no.nav.saf.domain.kode.Datotype.DATO_AVS_RETUR;
 import static no.nav.saf.domain.kode.Datotype.DATO_DOKUMENT;
@@ -234,7 +235,7 @@ class ArkivJournalpostMapperTest {
 		ArkivJournalpost arkivJournalpost = notatArkivJournalpost();
 		RequestCache requestCache = createTilgangBrukerRequestCache();
 		String tilgangKeyPep5LocalCaching = KeyGeneratorLocalCaching.getKeyForPep5(String.valueOf(ARKIVJOURNALPOST_JOURNALPOST_ID), String.valueOf(ARKIVDOKUMENTINFO_DOKUMENT_INFO_ID));
-		requestCache.putObject(tilgangKeyPep5LocalCaching, true);
+		requestCache.putDecision(tilgangKeyPep5LocalCaching, AbacAnswer.permit());
 
 		Journalpost journalpost = mapJournalpost(arkivJournalpost, requestCache);
 
@@ -255,7 +256,7 @@ class ArkivJournalpostMapperTest {
 		ArkivJournalpost arkivJournalpost = inngaaendeArkivJournalpost();
 		RequestCache requestCache = createTilgangBrukerRequestCache();
 		String tilgangKeyPep5LocalCaching = KeyGeneratorLocalCaching.getKeyForPep5(String.valueOf(ARKIVJOURNALPOST_JOURNALPOST_ID), String.valueOf(ARKIVDOKUMENTINFO_DOKUMENT_INFO_ID));
-		requestCache.putObject(tilgangKeyPep5LocalCaching, false);
+		requestCache.putDecision(tilgangKeyPep5LocalCaching, AbacAnswer.deny(new UkjentEllerTekniskReason()));
 
 		Journalpost journalpost = mapJournalpost(arkivJournalpost, requestCache);
 
@@ -366,7 +367,7 @@ class ArkivJournalpostMapperTest {
 	@Test
 	void shouldMapSaksbehandlerHarTilgang() {
 		ArkivJournalpost arkivJournalpost = pensjonSakArkivJournalpost();
-		String tilgangKeyPep2dLocalCaching = KeyGeneratorLocalCaching.getKeyForPep2d(Tema.PEN.name());
+		String tilgangKeyPep2dLocalCaching = KeyGeneratorLocalCaching.getKeyForPep2d(Tema.PEN);
 		String tilgangKeyPep5LocalCaching = KeyGeneratorLocalCaching.getKeyForPep5(String.valueOf(ARKIVJOURNALPOST_JOURNALPOST_ID), String.valueOf(ARKIVDOKUMENTINFO_DOKUMENT_INFO_ID));
 		String tilgangKeyPep6dLocalCachingVariantArkiv = KeyGeneratorLocalCaching.getKeyForPep6d(
 				String.valueOf(ARKIVJOURNALPOST_JOURNALPOST_ID), String.valueOf(ARKIVDOKUMENTINFO_DOKUMENT_INFO_ID), VARIANT_FORMAT_CODE_ARKIV.getSafVariantformat()
@@ -377,11 +378,11 @@ class ArkivJournalpostMapperTest {
 		String tilgangKeyPep7dLocalCaching = KeyGeneratorLocalCaching.getKeyForPep7d(FagsystemCode.toSafArkivsaksystem(arkivJournalpost.saksrelasjon().fagsystem()), arkivJournalpost.saksrelasjon().sakId().toString());
 
 		RequestCache requestCache = createTilgangBrukerRequestCachePSAK();
-		requestCache.putObject(tilgangKeyPep2dLocalCaching, true);
-		requestCache.putObject(tilgangKeyPep5LocalCaching, true);
-		requestCache.putObject(tilgangKeyPep6dLocalCachingVariantArkiv, true);
-		requestCache.putObject(tilgangKeyPep6dLocalCachingVariantSladdet, false);
-		requestCache.putObject(tilgangKeyPep7dLocalCaching, true);
+		requestCache.putDecision(tilgangKeyPep2dLocalCaching, AbacAnswer.permit());
+		requestCache.putDecision(tilgangKeyPep5LocalCaching, AbacAnswer.permit());
+		requestCache.putDecision(tilgangKeyPep6dLocalCachingVariantArkiv, AbacAnswer.permit());
+		requestCache.putDecision(tilgangKeyPep6dLocalCachingVariantSladdet, AbacAnswer.deny(new UkjentEllerTekniskReason()));
+		requestCache.putDecision(tilgangKeyPep7dLocalCaching, AbacAnswer.permit());
 
 		Journalpost journalpost = mapJournalpost(arkivJournalpost, requestCache);
 
@@ -408,9 +409,9 @@ class ArkivJournalpostMapperTest {
 						.name(), null);
 
 		RequestCache requestCache = new RequestCache();
-		requestCache.putObject(tilgangKeyPep5LocalCaching, true);
-		requestCache.putObject(tilgangKeyPep6dLocalCachingVariantArkiv, true);
-		requestCache.putObject(tilgangKeyPep6dLocalCachingVariantSladdet, true);
+		requestCache.putDecision(tilgangKeyPep5LocalCaching, AbacAnswer.permit());
+		requestCache.putDecision(tilgangKeyPep6dLocalCachingVariantArkiv, AbacAnswer.permit());
+		requestCache.putDecision(tilgangKeyPep6dLocalCachingVariantSladdet, AbacAnswer.permit());
 
 		Journalpost journalpost = mapJournalpost(arkivJournalpost, requestCache);
 
@@ -436,9 +437,9 @@ class ArkivJournalpostMapperTest {
 						.name(), null);
 
 		RequestCache requestCache = new RequestCache();
-		requestCache.putObject(tilgangKeyPep5LocalCaching, true);
-		requestCache.putObject(tilgangKeyPep6dLocalCachingVariantArkiv, true);
-		requestCache.putObject(tilgangKeyPep6dLocalCachingVariantSladdet, true);
+		requestCache.putDecision(tilgangKeyPep5LocalCaching, AbacAnswer.permit());
+		requestCache.putDecision(tilgangKeyPep6dLocalCachingVariantArkiv, AbacAnswer.permit());
+		requestCache.putDecision(tilgangKeyPep6dLocalCachingVariantSladdet, AbacAnswer.permit());
 
 		Journalpost journalpost = mapJournalpost(arkivJournalpost, requestCache);
 
@@ -466,9 +467,9 @@ class ArkivJournalpostMapperTest {
 						.name(), null);
 
 		RequestCache requestCache = new RequestCache();
-		requestCache.putObject(tilgangKeyPep5LocalCaching, true);
-		requestCache.putObject(tilgangKeyPep6dLocalCachingVariantArkiv, true);
-		requestCache.putObject(tilgangKeyPep6dLocalCachingVariantSladdet, true);
+		requestCache.putDecision(tilgangKeyPep5LocalCaching, AbacAnswer.permit());
+		requestCache.putDecision(tilgangKeyPep6dLocalCachingVariantArkiv, AbacAnswer.permit());
+		requestCache.putDecision(tilgangKeyPep6dLocalCachingVariantSladdet, AbacAnswer.permit());
 
 		Journalpost journalpost = mapJournalpost(arkivJournalpost, requestCache);
 
@@ -631,7 +632,7 @@ class ArkivJournalpostMapperTest {
 	private RequestCache pep5RequestCache() {
 		RequestCache requestCache = createArkivsakCacheRequestCache();
 		String tilgangKeyPep5LocalCaching = KeyGeneratorLocalCaching.getKeyForPep5(String.valueOf(ARKIVJOURNALPOST_JOURNALPOST_ID), String.valueOf(ARKIVDOKUMENTINFO_DOKUMENT_INFO_ID));
-		requestCache.putObject(tilgangKeyPep5LocalCaching, true);
+		requestCache.putDecision(tilgangKeyPep5LocalCaching, AbacAnswer.permit());
 		return requestCache;
 	}
 
@@ -707,8 +708,10 @@ class ArkivJournalpostMapperTest {
 
 	private RequestCache createArkivsakCacheRequestCache() {
 		RequestCache requestCache = new RequestCache();
-		requestCache.putObject(ARKIVSAKSRELASJON_SAK_ID + Arkivsakssystem.GSAK.name(),
+		requestCache.putArkivsak(
 				Arkivsak.builder()
+						.arkivsaksnummer(String.valueOf(ARKIVSAKSRELASJON_SAK_ID))
+						.arkivsaksystem(Arkivsakssystem.GSAK)
 						.aktoerId(ARKIVSAK_AKTOERID)
 						.tema(Tema.STO)
 						.build()
@@ -718,7 +721,7 @@ class ArkivJournalpostMapperTest {
 
 	private RequestCache createTilgangBrukerRequestCache() {
 		RequestCache requestCache = new RequestCache();
-		requestCache.putObject(TILGANG_BRUKER,
+		requestCache.putTilgangBruker(
 				TilgangBruker.builder()
 						.foedselsnr(FNR)
 						.aktoerId(ARKIVSAK_AKTOERID)
@@ -737,7 +740,7 @@ class ArkivJournalpostMapperTest {
 				.fagsaksystem("PP01")
 				.tema(Tema.PEN)
 				.build();
-		requestCache.putObject(pensjonArkivsak.getKey(),
+		requestCache.putArkivsak(
 				pensjonArkivsak
 		);
 		return requestCache;
@@ -745,7 +748,7 @@ class ArkivJournalpostMapperTest {
 
 	private RequestCache createTilgangBrukerCacheWithOrganisasjonSak() {
 		RequestCache requestCache = new RequestCache();
-		requestCache.putObject(TILGANG_BRUKER,
+		requestCache.putTilgangBruker(
 				TilgangBruker.builder()
 						.orgnummer(BRUKER_ID_ORGANISASJON)
 						.build()

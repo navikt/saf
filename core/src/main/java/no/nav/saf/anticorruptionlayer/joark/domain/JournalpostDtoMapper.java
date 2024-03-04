@@ -30,6 +30,7 @@ import no.nav.saf.domain.visningsmodell.Sak;
 import no.nav.saf.domain.visningsmodell.Tilleggsopplysning;
 import no.nav.saf.domain.visningsmodell.Utsendingsinfo;
 import no.nav.saf.tilgangskontroll.RequestCache;
+import no.nav.saf.tilgangskontroll.pep.AbacAnswer;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -45,7 +46,6 @@ import static no.nav.saf.cache.KeyGeneratorLocalCaching.getKeyForPep2d;
 import static no.nav.saf.cache.KeyGeneratorLocalCaching.getKeyForPep5;
 import static no.nav.saf.cache.KeyGeneratorLocalCaching.getKeyForPep6d;
 import static no.nav.saf.cache.KeyGeneratorLocalCaching.getKeyForPep7d;
-import static no.nav.saf.domain.DomainConstants.TILGANG_BRUKER;
 import static no.nav.saf.domain.visningsmodell.RelevantDato.INVALID_DATE;
 import static org.apache.commons.lang3.BooleanUtils.isTrue;
 import static org.apache.commons.lang3.StringUtils.isBlank;
@@ -162,7 +162,7 @@ public class JournalpostDtoMapper {
 	private Tema mapTema(JournalpostDto journalpostDto, RequestCache requestCache) {
 		if (journalpostDto.isTilknyttetSak()) {
 			SaksrelasjonDto saksrelasjon = journalpostDto.getSaksrelasjon();
-			Arkivsak arkivsak = requestCache.getObject(saksrelasjon.getSakId() + mapJoarkFagsystem(saksrelasjon.getFagsystem()));
+			Arkivsak arkivsak = requestCache.getArkivsak(saksrelasjon);
 			if (arkivsak == null) {
 				// For journalposter som mangler saksrelasjon, er gjeldende tema lik Journalpost.fagomrade.
 				return FagomradeCode.toSafTema(journalpostDto.getFagomrade());
@@ -218,7 +218,7 @@ public class JournalpostDtoMapper {
 		if (saksrelasjon == null) {
 			return null;
 		} else {
-			Arkivsak arkivsak = requestCache.getObject(saksrelasjon.getSakId() + mapJoarkFagsystem(saksrelasjon.getFagsystem()));
+			Arkivsak arkivsak = requestCache.getArkivsak(saksrelasjon);
 			if (arkivsak == null) {
 				return null;
 			}
@@ -322,24 +322,9 @@ public class JournalpostDtoMapper {
 		};
 	}
 
-	private String mapJoarkFagsystem(FagsystemCode joarkFagsystem) {
-		if (joarkFagsystem == null) {
-			return null;
-		}
-		switch (joarkFagsystem) {
-			case PEN:
-				return Arkivsakssystem.PSAK.name();
-			case FS22:
-				return Arkivsakssystem.GSAK.name();
-			default:
-				log.warn("Forventet joarkFagsystem er (FS22) GSAK eller (PEN) PSAK");
-				return null;
-		}
-	}
-
 	// journalposten er endelig journalført
 	private Bruker getBrukerFromArkivsakCache(SaksrelasjonDto saksrelasjon, RequestCache requestCache) {
-		Arkivsak arkivsak = requestCache.getObject(saksrelasjon.getSakId() + mapJoarkFagsystem(saksrelasjon.getFagsystem()));
+		Arkivsak arkivsak = requestCache.getArkivsak(saksrelasjon);
 		if (arkivsak == null || arkivsak.isBrukerInfoMissing()) {
 			return null;
 		}
@@ -354,7 +339,7 @@ public class JournalpostDtoMapper {
 
 	// journalposten er midlertidig journalført
 	private Bruker getBrukerFromTilgangBrukerCache(RequestCache requestCache) {
-		TilgangBruker tilgangBruker = requestCache.getObject(TILGANG_BRUKER);
+		TilgangBruker tilgangBruker = requestCache.getTilgangBruker();
 		if (tilgangBruker == null) {
 			return null;
 		}
@@ -392,7 +377,7 @@ public class JournalpostDtoMapper {
 	}
 
 	private boolean getDecisionFromPep2d(Tema tema, RequestCache requestCache) {
-		String tilgangKeyPep2dLocalCaching = getKeyForPep2d(tema.name());
+		String tilgangKeyPep2dLocalCaching = getKeyForPep2d(tema);
 		return getCachedDecision(requestCache, tilgangKeyPep2dLocalCaching);
 	}
 
@@ -415,6 +400,7 @@ public class JournalpostDtoMapper {
 	}
 
 	private boolean getCachedDecision(RequestCache requestCache, String tilgangKey) {
-		return requestCache.getObject(tilgangKey) == null ? false : requestCache.getObject(tilgangKey);
+		AbacAnswer abacAnswer = requestCache.getCachedDecision(tilgangKey);
+		return abacAnswer != null && abacAnswer.isPermit();
 	}
 }

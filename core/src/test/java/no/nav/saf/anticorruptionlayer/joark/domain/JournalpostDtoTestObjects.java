@@ -44,7 +44,7 @@ public class JournalpostDtoTestObjects {
 	static final String AKTOER_ID = "4321098765431";
 	static final String SAKS_ID = "12345";
 	static final String ORG_NR = "54321";
-	static final String ARKIVSAK_NR = "1337";
+	static final String ARKIVSAK_NR = SAKS_ID;
 	static final FagsystemCode FAKSYSTEM_CODE = FagsystemCode.FS22;
 	static final AvsenderMottakerIdTypeCode AVSENDER_MOTTAKER_ID_TYPE_CODE = AvsenderMottakerIdTypeCode.FNR;
 	static final FagomradeCode FAGOMRADE = FagomradeCode.STO;

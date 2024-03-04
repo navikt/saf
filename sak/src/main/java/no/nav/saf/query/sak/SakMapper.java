@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 public class SakMapper {
 
 	public Sak mapSak(TilgangSak sak, RequestCache requestCache) {
-		Arkivsak arkivsak = requestCache.getObject(sak.getArkivsaksnummer() + sak.getArkivsaksystem());
+		Arkivsak arkivsak = requestCache.getArkivsak(sak);
 		if (arkivsak == null) {
 			return null;
 		}

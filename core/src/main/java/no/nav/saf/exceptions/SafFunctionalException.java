@@ -1,53 +1,82 @@
 package no.nav.saf.exceptions;
 
-import graphql.ErrorType;
+import graphql.ErrorClassification;
 import graphql.GraphQLError;
 import graphql.language.SourceLocation;
 import lombok.Getter;
+import no.nav.saf.graphql.ErrorCode;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import static graphql.ErrorType.DataFetchingException;
+import static no.nav.saf.graphql.ErrorCode.SERVER_ERROR;
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
 
 @Getter
 public class SafFunctionalException extends RuntimeException implements GraphQLError {
-	private final HttpStatusCode httpStatusCode;
-
-	public SafFunctionalException() {
-		super();
-		httpStatusCode = null;
-	}
+	private final ErrorCode errorCode;
+	private List<SourceLocation> locations = new ArrayList<>();
 
 	public SafFunctionalException(String message) {
 		super(message);
-		this.httpStatusCode = null;
+		this.errorCode = SERVER_ERROR;
 	}
 
 	public SafFunctionalException(String message, HttpStatusCode httpStatusCode) {
 		super(message);
-		this.httpStatusCode = httpStatusCode;
+		this.errorCode = resolveToCode(httpStatusCode);
+	}
+
+	public SafFunctionalException(String message, ErrorCode errorCode) {
+		super(message);
+		this.errorCode = errorCode;
 	}
 
 	public SafFunctionalException(String message, Throwable cause, HttpStatusCode httpStatusCode) {
 		super(message, cause);
-		this.httpStatusCode = httpStatusCode;
+		this.errorCode = resolveToCode(httpStatusCode);
 	}
 
 	public SafFunctionalException(String message, Throwable cause) {
 		super(message, cause);
-		this.httpStatusCode = null;
+		this.errorCode = SERVER_ERROR;
 	}
 
 	@Override
 	public List<SourceLocation> getLocations() {
-		return new ArrayList<>();
+		return locations;
 	}
 
 	@Override
-	public ErrorType getErrorType() {
-		return DataFetchingException;
+	public ErrorClassification getErrorType() {
+		return errorCode.getType();
 	}
+
+	@Override
+	public Map<String, Object> getExtensions() {
+		return Map.of("code", errorCode.getText());
+	}
+
+	public void addLocation(SourceLocation sourceLocation) {
+		locations.add(sourceLocation);
+	}
+
+	public static ErrorCode resolveToCode(HttpStatusCode httpStatusCode) {
+		if (httpStatusCode instanceof HttpStatus httpStatus) {
+			return switch (httpStatus) {
+				case BAD_REQUEST -> ErrorCode.BAD_REQUEST;
+				case FORBIDDEN -> ErrorCode.FORBIDDEN;
+				case NOT_FOUND -> ErrorCode.NOT_FOUND;
+				default -> SERVER_ERROR;
+			};
+		}
+		return SERVER_ERROR;
+	}
+
 }

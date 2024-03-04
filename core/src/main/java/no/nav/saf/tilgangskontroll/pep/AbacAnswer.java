@@ -1,7 +1,7 @@
 package no.nav.saf.tilgangskontroll.pep;
 
-import lombok.Builder;
 import lombok.Value;
+import no.nav.saf.tilgangskontroll.pep.reasons.AbacDenyReason;
 
 import static no.nav.saf.tilgangskontroll.pep.AbacAnswer.AbacDecision.DENY;
 import static no.nav.saf.tilgangskontroll.pep.AbacAnswer.AbacDecision.PERMIT;
@@ -17,6 +17,7 @@ public class AbacAnswer {
 	 * https://confluence.adeo.no/display/BOA/saf+-+Sporingslogg+hentdokument
 	 */
 	String denyReasonSporing;
+	AbacDenyReason abacDenyReason;
 
 	public boolean isDeny() {
 		return DENY == decision;
@@ -27,15 +28,11 @@ public class AbacAnswer {
 	}
 
 	public static AbacAnswer permit() {
-		return new AbacAnswer(PERMIT, null);
+		return new AbacAnswer(PERMIT, null, null);
 	}
 
-	public static AbacAnswer deny(final AbacDenyReason abacDenyReason) {
-		return new AbacAnswer(DENY, abacDenyReason.toString());
-	}
-
-	public static AbacAnswer deny(final String denyReason) {
-		return new AbacAnswer(DENY, denyReason);
+	public static AbacAnswer deny(AbacDenyReason abacDenyReason) {
+		return new AbacAnswer(DENY, abacDenyReason.toString(), abacDenyReason);
 	}
 
 	public enum AbacDecision {
@@ -43,16 +40,4 @@ public class AbacAnswer {
 		DENY
 	}
 
-	@Builder
-	@Value
-	public static class AbacDenyReason {
-		String cause;
-		String policy;
-		String rule;
-
-		@Override
-		public String toString() {
-			return "cause=" + cause + ", deny_policy=" + policy + ", deny_rule=" + rule;
-		}
-	}
 }

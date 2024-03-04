@@ -6,8 +6,13 @@ import no.nav.saf.domain.tilgangsmodell.TilgangRelevantTredjepart;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlRequest;
+import no.nav.saf.tilgangskontroll.abac.dto.response.Advice;
 import no.nav.saf.tilgangskontroll.abac.dto.response.XacmlResponse;
 import no.nav.saf.tilgangskontroll.abac.service.AbacService;
+import no.nav.saf.tilgangskontroll.pep.reasons.FortroligAdresseReason;
+import no.nav.saf.tilgangskontroll.pep.reasons.StrengtFortroligAdresseReason;
+import no.nav.saf.tilgangskontroll.pep.reasons.StrengtFortroligAdresseUtlandReason;
+import no.nav.saf.tilgangskontroll.pep.reasons.UkjentEllerTekniskReason;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -21,7 +26,11 @@ import static no.nav.saf.domain.kode.Tema.FAR;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_PERSON_FNR;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_RESOURCE_TYPE;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_SAF_TREDJEPART;
+import static no.nav.saf.tilgangskontroll.pep.AbacAnswer.deny;
 import static no.nav.saf.tilgangskontroll.pep.AbacAnswer.permit;
+import static no.nav.saf.tilgangskontroll.pep.AbacDenyReasonCode.FORTROLIG_ADRESSE;
+import static no.nav.saf.tilgangskontroll.pep.AbacDenyReasonCode.STRENGT_FORTROLIG_ADRESSE;
+import static no.nav.saf.tilgangskontroll.pep.AbacDenyReasonCode.STRENGT_FORTROLIG_ADRESSE_UTLAND;
 
 /**
  * Dekker følgende policies i saf:
@@ -31,7 +40,7 @@ import static no.nav.saf.tilgangskontroll.pep.AbacAnswer.permit;
  */
 @Slf4j
 @Component(PEP3)
-public class Pep3Impl extends Pep<TilgangSak> {
+public class Pep3Impl extends StandardPep<TilgangSak> {
 
 	private static final EnumSet<Tema> RELEVANTE_TEMA = EnumSet.of(BID, FAR);
 	private final AbacService abacService;
@@ -42,13 +51,13 @@ public class Pep3Impl extends Pep<TilgangSak> {
 	}
 
 	@Override
-	public XacmlResponse verifyAbacPdpDecision(TilgangSak ressurs, SafRequestContext safRequestContext) {
+	public AbacAnswer verifyAbacPdpDecision(TilgangSak ressurs, SafRequestContext safRequestContext) {
 
 		if (ressurs != null && RELEVANTE_TEMA.contains(ressurs.getTema()) && FAGSAKSYSTEM_BISYS.equals(ressurs.getFagsaksystem())) {
 
 			if (ressurs.getRelevanteTredjeparter() == null || ressurs.getRelevanteTredjeparter().isEmpty()) {
 				log.info("Pep3(relevante-parter) har ingen relevante parter. Tilgang gis.");
-				return XacmlResponse.permit();
+				return AbacAnswer.permit();
 			}
 
 			List<TilgangRelevantTredjepart> relevantTredjeparter = ressurs.getRelevanteTredjeparter();
@@ -62,13 +71,28 @@ public class Pep3Impl extends Pep<TilgangSak> {
 			XacmlResponse response = abacService.evaluate(request);
 			traceLogPepFinished(PEP3, ressurs);
 
-			return response;
+			return mapToAbacAnswer(response);
 		}
-		return XacmlResponse.permit();
+		return AbacAnswer.permit();
 	}
 
 	@Override
 	public AbacAnswer verifyAzureClientCredentialFlowAccess(TilgangSak ressurs, SafRequestContext safRequestContext) {
 		return permit();
+	}
+
+	@Override
+	protected AbacAnswer translateToDenyReasonCode(XacmlResponse xacmlResponse) {
+		var advices = xacmlResponse.getAdvicesMap();
+
+		if (FORTROLIG_ADRESSE.matchesAbacAdvice(advices)) {
+			return deny(new FortroligAdresseReason(advices));
+		} else if (STRENGT_FORTROLIG_ADRESSE.matchesAbacAdvice(advices)) {
+			return deny(new StrengtFortroligAdresseReason(advices));
+		} else if (STRENGT_FORTROLIG_ADRESSE_UTLAND.matchesAbacAdvice(advices)) {
+			return deny(new StrengtFortroligAdresseUtlandReason(advices));
+		}
+		log.warn("pep3 kunne ikke matche abac-response til DenyReason advices={}", advices);
+		return deny(new UkjentEllerTekniskReason());
 	}
 }

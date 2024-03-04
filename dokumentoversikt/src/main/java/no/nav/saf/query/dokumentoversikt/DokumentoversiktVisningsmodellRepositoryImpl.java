@@ -24,7 +24,7 @@ class DokumentoversiktVisningsmodellRepositoryImpl implements DokumentoversiktVi
 	public List<Journalpost> findJournalposter(final List<String> journalpostIds,
 											   final SafRequestContext safRequestContext) {
 		return journalpostIds.stream().map(journalpostId -> {
-					JournalpostDto journalpostDto = safRequestContext.getRequestCache().getObject(journalpostId);
+					JournalpostDto journalpostDto = safRequestContext.getRequestCache().getJournalpost(journalpostId);
 					return journalpostDtoMapper.mapJournalpostDto(journalpostDto, safRequestContext.getRequestCache());
 				}).filter(Objects::nonNull)
 				.collect(Collectors.toList());

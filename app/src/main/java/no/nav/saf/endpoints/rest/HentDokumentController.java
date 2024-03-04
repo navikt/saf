@@ -15,6 +15,8 @@ import no.nav.saf.metrics.Monitor;
 import no.nav.saf.springdoc.SwaggerRestHentDokument;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.SafSecurityContext;
+import no.nav.saf.tilgangskontroll.pep.AbacAnswer;
+import no.nav.saf.tilgangskontroll.pep.reasons.UkjentEllerTekniskReason;
 import no.nav.security.token.support.core.api.Protected;
 import no.nav.security.token.support.core.context.TokenValidationContextHolder;
 import org.slf4j.MDC;
@@ -138,7 +140,7 @@ public class HentDokumentController {
 			throw new HentdokumentTilgangskontrollException(
 					"Servicebruker forsøker å hente dokument med variantFormat=" +
 					variantFormat + ". Servicebrukere har kun tilgang til variantFormat=" + Variantformat.ORIGINAL +
-					" med mindre man har en avtale med Team Dokumentløsninger. Snakk med oss om behov.");
+					" med mindre man har en avtale med Team Dokumentløsninger. Snakk med oss om behov.", AbacAnswer.deny(new UkjentEllerTekniskReason()));
 		}
 	}
 }

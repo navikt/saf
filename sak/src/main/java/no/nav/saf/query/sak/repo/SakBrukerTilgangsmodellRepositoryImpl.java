@@ -82,7 +82,7 @@ public class SakBrukerTilgangsmodellRepositoryImpl implements SakBrukerTilgangsm
 					.flatMapIterable(items -> items)
 					.map(arkivsak -> {
 						final BidragSak bidragSak = bisysAntiCorruptionLayer.hentBidragSakByArkivsak(arkivsak);
-						safRequestContext.getRequestCache().putObject(arkivsak.getKey(), arkivsak);
+						safRequestContext.getRequestCache().putArkivsak(arkivsak);
 						return TilgangSak.builder()
 								.aktoerId(arkivsak.getAktoerId())
 								.orgnummer(arkivsak.getOrgnummer())

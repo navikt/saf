@@ -6,8 +6,11 @@ import lombok.Getter;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import static no.nav.saf.tilgangskontroll.abac.service.advice.AdviceTypes.DENY_INFO;
+import static org.apache.commons.lang3.StringUtils.substringAfterLast;
 
 @Getter
 @AllArgsConstructor
@@ -15,11 +18,21 @@ import static no.nav.saf.tilgangskontroll.abac.service.advice.AdviceTypes.DENY_I
 public class XacmlResponse {
     private static final XacmlResponse PERMIT = new XacmlResponse(Decision.PERMIT, Decision.PERMIT, Collections.emptyList(), Collections.emptyList());
     private static final XacmlResponse DENY = new XacmlResponse(Decision.DENY, Decision.DENY, Collections.emptyList(), Collections.emptyList());
+    private static final String ADVICE_SEPERATOR = ".";
 
     private final Decision decision;
     private final Decision originalDecision;
     private final List<Obligation> obligations;
     private final List<Advice> advices;
+
+    public Map<String, String> getAdvicesMap() {
+        if (advices == null) {
+            return Collections.emptyMap();
+        }
+        return advices.stream()
+            .flatMap(a -> a.getAttributeAssignments().stream())
+            .collect(Collectors.toMap(as -> substringAfterLast(as.getAttributeId(), ADVICE_SEPERATOR), AttributeAssignment::getValue));
+    }
 
     public boolean isPermit() {
         return Decision.PERMIT.equals(decision);

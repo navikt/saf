@@ -59,13 +59,13 @@ public final class DenyReasonFactory {
 
 	public static String createPep1gDenyReason(SafRequestContext safRequestContext, AbacAnswer abacAnswer) {
 		boolean isSystem = safRequestContext.getSecurityContext().isSystem();
-		return switch (abacAnswer.getDenyReasonSporing()) {
-			case "saf_info=" + ORGANISASJON_ER_NAV_STAT_KREVER_EGEN_ANSATT_TILGANG -> DENY_PREFIX +
-																					  "Journalpost/dokument er knyttet til organisasjon underlagt NAV og det krever egen ansatt behandling for oppslag på denne. " +
-																					  "NAV ansatt må være medlem av gruppen 0000-GA-Egne_ansatte";
-			default -> DENY_PREFIX + saksbehandlerEllerSystem(isSystem) + PEP1G_DENY_REASON +
-					   (isSystem ? "" : PEP1G_DENY_SAKSBEHANDLER_INFO) + CONTACT_US_SUFFIX;
-		};
+		if (abacAnswer.getAbacDenyReason().getAbacDenyReasonCode() == AbacDenyReasonCode.ORGNR_NAV_STAT) {
+			return DENY_PREFIX +
+					"Journalpost/dokument er knyttet til organisasjon underlagt NAV og det krever egen ansatt behandling for oppslag på denne. " +
+					"NAV ansatt må være medlem av gruppen 0000-GA-Egne_ansatte";
+		}
+		return DENY_PREFIX + saksbehandlerEllerSystem(isSystem) + PEP1G_DENY_REASON +
+				(isSystem ? "" : PEP1G_DENY_SAKSBEHANDLER_INFO) + CONTACT_US_SUFFIX;
 	}
 
 	public static String createPep2DenyReason(SafRequestContext safRequestContext) {

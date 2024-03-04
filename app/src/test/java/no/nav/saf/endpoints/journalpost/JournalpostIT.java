@@ -17,6 +17,7 @@ import no.nav.saf.endpoints.AbstractItest;
 import no.nav.saf.endpoints.graphql.GraphQLRequest;
 import no.nav.saf.endpoints.graphql.GraphQLResponse;
 import no.nav.saf.graphql.ErrorCode;
+import no.nav.saf.tilgangskontroll.pep.AbacDenyReasonCode;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;
@@ -55,6 +56,11 @@ import static no.nav.saf.domain.visningsmodell.BrukerIdType.ORGNR;
 import static no.nav.saf.graphql.ErrorCode.BAD_REQUEST;
 import static no.nav.saf.graphql.ErrorCode.FORBIDDEN;
 import static no.nav.saf.graphql.ErrorCode.SERVER_ERROR;
+import static no.nav.saf.tilgangskontroll.pep.AbacDenyReasonCode.FORTROLIG_ADRESSE;
+import static no.nav.saf.tilgangskontroll.pep.AbacDenyReasonCode.JOURNALSTATUS;
+import static no.nav.saf.tilgangskontroll.pep.AbacDenyReasonCode.ORGNR_NAV_STAT;
+import static no.nav.saf.tilgangskontroll.pep.AbacDenyReasonCode.TEMA;
+import static no.nav.saf.tilgangskontroll.pep.AbacDenyReasonCode.UKJENT;
 import static no.nav.saf.tilgangskontroll.pep.DenyReasonFactory.PEP1G_DENY_REASON;
 import static no.nav.saf.tilgangskontroll.pep.DenyReasonFactory.PEP2_DENY_REASON;
 import static no.nav.saf.tilgangskontroll.pep.DenyReasonFactory.PEP3_DENY_REASON;
@@ -405,7 +411,7 @@ class JournalpostIT extends AbstractItest {
 		stubDokarkivJournalpost("journalpost-gsak-inngaaende-orgnr.json");
 
 		GraphQLResponse graphQLResponse = journalpostQuery();
-		assertErrorWithCode(graphQLResponse, FORBIDDEN.getText());
+		assertErrorWithCodeAndReason(graphQLResponse, FORBIDDEN, ORGNR_NAV_STAT);
 		assertErrorWithMessage(graphQLResponse, "Journalpost/dokument er knyttet til organisasjon underlagt NAV og det krever egen ansatt behandling for oppslag på denne.");
 	}
 
@@ -459,7 +465,7 @@ class JournalpostIT extends AbstractItest {
 		stubDokarkivJournalpost("journalpost-gsak-inngaaende-orgnr.json");
 
 		GraphQLResponse graphQLResponse = journalpostQueryNavUserId();
-		assertErrorWithCode(graphQLResponse, FORBIDDEN.getText());
+		assertErrorWithCodeAndReason(graphQLResponse, FORBIDDEN, ORGNR_NAV_STAT);
 		assertErrorWithMessage(graphQLResponse, "Journalpost/dokument er knyttet til organisasjon underlagt NAV og det krever egen ansatt behandling for oppslag på denne.");
 	}
 
@@ -469,7 +475,7 @@ class JournalpostIT extends AbstractItest {
 		stubDokarkivJournalpost("journalpost-gsak-inngaaende-happy.json");
 
 		GraphQLResponse graphQLResponse = journalpostQuery();
-		assertErrorWithCode(graphQLResponse, FORBIDDEN.getText());
+		assertErrorWithCodeAndReason(graphQLResponse, FORBIDDEN, UKJENT);
 		assertErrorWithMessage(graphQLResponse, PEP1G_DENY_REASON);
 	}
 
@@ -480,7 +486,7 @@ class JournalpostIT extends AbstractItest {
 		stubDokarkivJournalpost("journalpost-gsak-inngaaende-tema-far.json");
 
 		GraphQLResponse graphQLResponse = journalpostQuery();
-		assertErrorWithCode(graphQLResponse, FORBIDDEN.getText());
+		assertErrorWithCodeAndReason(graphQLResponse, FORBIDDEN, TEMA);
 		assertErrorWithMessage(graphQLResponse, PEP2_DENY_REASON);
 	}
 
@@ -490,7 +496,7 @@ class JournalpostIT extends AbstractItest {
 		stubDokarkivJournalpost("journalpost-gsak-inngaaende-midlertidig-tema-far.json");
 
 		GraphQLResponse graphQLResponse = journalpostQuery();
-		assertErrorWithCode(graphQLResponse, FORBIDDEN.getText());
+		assertErrorWithCodeAndReason(graphQLResponse, FORBIDDEN, TEMA);
 		assertErrorWithMessage(graphQLResponse, PEP2_DENY_REASON);
 	}
 
@@ -511,7 +517,7 @@ class JournalpostIT extends AbstractItest {
 		stubBidrag();
 
 		GraphQLResponse graphQLResponse = journalpostQuery();
-		assertErrorWithCode(graphQLResponse, FORBIDDEN.getText());
+		assertErrorWithCodeAndReason(graphQLResponse, FORBIDDEN, FORTROLIG_ADRESSE);
 		assertErrorWithMessage(graphQLResponse, PEP3_DENY_REASON);
 	}
 
@@ -521,7 +527,7 @@ class JournalpostIT extends AbstractItest {
 		stubDokarkivJournalpost("journalpost-gsak-inngaaende-skjerming.json");
 
 		GraphQLResponse graphQLResponse = journalpostQuery();
-		assertErrorWithCode(graphQLResponse, FORBIDDEN.getText());
+		assertErrorWithCodeAndReason(graphQLResponse, FORBIDDEN, JOURNALSTATUS);
 		assertErrorWithMessage(graphQLResponse, PEP4_DENY_REASON);
 	}
 
@@ -553,7 +559,7 @@ class JournalpostIT extends AbstractItest {
 		abacPermit();
 		stubDokarkivJournalpost(HttpStatus.NOT_FOUND);
 
-		assertErrorWithCode(journalpostQuery(), ErrorCode.NOT_FOUND.getText());
+		assertErrorWithCode(journalpostQuery(), ErrorCode.NOT_FOUND);
 	}
 
 	@Test
@@ -561,7 +567,7 @@ class JournalpostIT extends AbstractItest {
 		abacPermit();
 		stubDokarkivJournalpost(INTERNAL_SERVER_ERROR);
 
-		assertErrorWithCode(journalpostQuery(), SERVER_ERROR.getText());
+		assertErrorWithCode(journalpostQuery(), SERVER_ERROR);
 	}
 
 	@Test
@@ -577,12 +583,24 @@ class JournalpostIT extends AbstractItest {
 
 	@Test
 	void shouldReturnErrorCodeBadRequestWhenJournalpostIdNotValid() {
-		assertErrorWithCode(journalpostQuery("journalpost_invalid_journalpostid.query"), BAD_REQUEST.getText());
+		assertErrorWithCode(journalpostQuery("journalpost_invalid_journalpostid.query"), BAD_REQUEST);
 	}
 
-	private void assertErrorWithCode(GraphQLResponse graphQLResponse, String errorCode) {
+	private void assertErrorWithCode(GraphQLResponse graphQLResponse, ErrorCode errorCode) {
 		assertThat(graphQLResponse.getData().get("journalpost")).isNull();
-		assertThat(graphQLResponse.getErrors().get(0).getExtensions().getCode()).isEqualTo(errorCode);
+
+		GraphQLResponse.Extensions errorExtensions = graphQLResponse.getErrors().get(0).getExtensions();
+		assertThat(errorExtensions.getCode()).isEqualTo(errorCode.getText());
+		assertThat(errorExtensions.getReasonCode()).isNull();
+	}
+
+	private void assertErrorWithCodeAndReason(GraphQLResponse graphQLResponse, ErrorCode errorCode, AbacDenyReasonCode reasonCode) {
+		assertThat(graphQLResponse.getData().get("journalpost")).isNull();
+
+		GraphQLResponse.Extensions errorExtensions = graphQLResponse.getErrors().get(0).getExtensions();
+		assertThat(errorExtensions.getCode()).isEqualTo(errorCode.getText());
+		assertThat(errorExtensions.getReasonCode()).isEqualTo(reasonCode.code);
+		assertThat(errorExtensions.getReasonMessage()).isNotNull();
 	}
 
 	private void assertErrorWithMessage(GraphQLResponse graphQLResponse, String expectedErrorMessage) {

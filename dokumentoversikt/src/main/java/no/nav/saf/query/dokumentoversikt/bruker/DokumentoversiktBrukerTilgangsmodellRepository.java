@@ -98,7 +98,7 @@ class DokumentoversiktBrukerTilgangsmodellRepository {
 						final BidragSak bidragSak = bisysAntiCorruptionLayer.hentBidragSakByArkivsak(arkivsak);
 						List<String> fpsak = fpsakAntiCorruptionLayer.hentRelevanteParter(arkivsak);
 						List<String> k9sak = k9AntiCorruptionLayer.hentRelevanteParter(arkivsak);
-						safRequestContext.getRequestCache().putObject(arkivsak.getKey(), arkivsak);
+						safRequestContext.getRequestCache().putArkivsak(arkivsak);
 						return TilgangSak.builder()
 								.aktoerId(arkivsak.getAktoerId())
 								.orgnummer(arkivsak.getOrgnummer())

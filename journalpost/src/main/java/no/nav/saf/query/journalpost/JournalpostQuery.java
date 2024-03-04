@@ -8,7 +8,8 @@ import no.nav.saf.domain.tilgangsmodell.TilgangJournalpost;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 import no.nav.saf.domain.visningsmodell.Journalpost;
 import no.nav.saf.exceptions.JournalpostIkkeFunnetException;
-import no.nav.saf.graphql.GraphQLException;
+import no.nav.saf.exceptions.SafFunctionalException;
+import no.nav.saf.exceptions.TilgangskontrollException;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.pep.AbacAnswer;
 import no.nav.saf.tilgangskontroll.pep.Pep;
@@ -16,7 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostMapper.mapJournalpost;
-import static no.nav.saf.domain.DomainConstants.TILGANG_BRUKER;
 import static no.nav.saf.domain.kode.Journalstatus.MOTTATT;
 import static no.nav.saf.graphql.ErrorCode.FORBIDDEN;
 import static no.nav.saf.graphql.ErrorCode.NOT_FOUND;
@@ -72,17 +72,17 @@ class JournalpostQuery {
 			TilgangJournalpost tilgangJournalpost = journalpostHolder.journalpostTilgang().tilgangJournalpost();
 
 			if (tilgangBruker != null) {
-				safRequestContext.getRequestCache().putObject(TILGANG_BRUKER, tilgangBruker);
+				safRequestContext.getRequestCache().putTilgangBruker(tilgangBruker);
 			}
 
 			AbacAnswer pep1Access = pep1g.hasAccessWithAnswer(tilgangBruker, safRequestContext);
 			if (pep1Access.isDeny()) {
-				throw GraphQLException.of(FORBIDDEN, environment, createPep1gDenyReason(safRequestContext, pep1Access));
+				throw new TilgangskontrollException(createPep1gDenyReason(safRequestContext, pep1Access), pep1Access);
 			}
 
-			boolean pep2Access = pep2.hasAccess(tilgangSak, safRequestContext);
-			if (!pep2Access) {
-				throw GraphQLException.of(FORBIDDEN, environment, createPep2DenyReason(safRequestContext));
+			AbacAnswer pep2Access = pep2.hasAccessWithAnswer(tilgangSak, safRequestContext);
+			if (pep2Access.isDeny()) {
+				throw new TilgangskontrollException(createPep2DenyReason(safRequestContext), pep2Access);
 			}
 
 			if (environment.getSelectionSet().contains(SELECTION_JOURNALPOST_DOKUMENTER)) {
@@ -92,14 +92,14 @@ class JournalpostQuery {
 				}
 			}
 
-			boolean pep3Access = pep3.hasAccess(tilgangSak, safRequestContext);
-			if (!pep3Access) {
-				throw GraphQLException.of(FORBIDDEN, environment, createPep3DenyReason(safRequestContext));
+			AbacAnswer pep3Access = pep3.hasAccessWithAnswer(tilgangSak, safRequestContext);
+			if (pep3Access.isDeny()) {
+				throw new TilgangskontrollException(createPep3DenyReason(safRequestContext), pep3Access);
 			}
 
-			boolean pep4Access = pep4.hasAccess(tilgangJournalpost, safRequestContext);
-			if (!pep4Access) {
-				throw GraphQLException.of(FORBIDDEN, environment, createPep4DenyReason(safRequestContext));
+			AbacAnswer pep4Access = pep4.hasAccessWithAnswer(tilgangJournalpost, safRequestContext);
+			if (pep4Access.isDeny()) {
+				throw new TilgangskontrollException(createPep4DenyReason(safRequestContext), pep4Access);
 			}
 
 			if (environment.getSelectionSet().contains(SELECTION_JOURNALPOST_DOKUMENTER)) {
@@ -111,8 +111,7 @@ class JournalpostQuery {
 			}
 			return mapJournalpost(journalpostHolder.arkivJournalpost(), safRequestContext.getRequestCache());
 		} catch (JournalpostIkkeFunnetException e) {
-			throw GraphQLException.of(NOT_FOUND, environment,
-					"Fant ikke journalpost i fagarkivet. " + errLog(journalpostId, eksternReferanseId));
+			throw new SafFunctionalException("Fant ikke journalpost i fagarkivet. " + errLog(journalpostId, eksternReferanseId), NOT_FOUND);
 		}
 	}
 

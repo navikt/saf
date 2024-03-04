@@ -7,6 +7,8 @@ import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlRequest;
 import no.nav.saf.tilgangskontroll.abac.dto.response.XacmlResponse;
 import no.nav.saf.tilgangskontroll.abac.service.AbacService;
+import no.nav.saf.tilgangskontroll.pep.reasons.JournalstatusReason;
+import no.nav.saf.tilgangskontroll.pep.reasons.UkjentEllerTekniskReason;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -25,7 +27,7 @@ import static no.nav.saf.tilgangskontroll.pep.AbacAnswer.permit;
  */
 @Slf4j
 @Component(PEP4)
-public class Pep4Impl extends Pep<TilgangJournalpost> {
+public class Pep4Impl extends StandardPep<TilgangJournalpost> {
 
 	private final AbacService abacService;
 
@@ -35,20 +37,20 @@ public class Pep4Impl extends Pep<TilgangJournalpost> {
 	}
 
 	@Override
-	public XacmlResponse verifyAbacPdpDecision(TilgangJournalpost ressurs, SafRequestContext safRequestContext) {
+	public AbacAnswer verifyAbacPdpDecision(TilgangJournalpost ressurs, SafRequestContext safRequestContext) {
 		if (ressurs == null) {
 			log.warn("Pep4 mangler tilstrekkelig datagrunnlag for å kunne gjennomføre tilgangskontroll.");
-			return XacmlResponse.deny();
+			return AbacAnswer.deny(new UkjentEllerTekniskReason());
 		}
 
 		if (isJournalpoststatusUtgaar(ressurs) || isSkjermingPresent(ressurs)) {
 			return hasJournalpostAccess(safRequestContext, ressurs);
 		} else {
-			return XacmlResponse.permit();
+			return AbacAnswer.permit();
 		}
 	}
 
-	private XacmlResponse hasJournalpostAccess(SafRequestContext safRequestContext, TilgangJournalpost ressurs) {
+	private AbacAnswer hasJournalpostAccess(SafRequestContext safRequestContext, TilgangJournalpost ressurs) {
 		XacmlRequest request = SafXacmlRequestFactory.create(safRequestContext.getSecurityContext());
 		request.resource(RESOURCE_FELLES_RESOURCE_TYPE, RESOURCE_SAF_JOURNAL_METADATA);
 
@@ -63,12 +65,17 @@ public class Pep4Impl extends Pep<TilgangJournalpost> {
 		XacmlResponse response = abacService.evaluate(request);
 		traceLogPepFinished(PEP4, ressurs);
 
-		return response;
+		return mapToAbacAnswer(response);
 	}
 
 	@Override
 	public AbacAnswer verifyAzureClientCredentialFlowAccess(TilgangJournalpost ressurs, SafRequestContext safRequestContext) {
 		return permit();
+	}
+
+	@Override
+	protected AbacAnswer translateToDenyReasonCode(XacmlResponse xacmlResponse) {
+		return AbacAnswer.deny(new JournalstatusReason(xacmlResponse.getAdvicesMap()));
 	}
 
 	private boolean isJournalpoststatusUtgaar(TilgangJournalpost ressurs) {

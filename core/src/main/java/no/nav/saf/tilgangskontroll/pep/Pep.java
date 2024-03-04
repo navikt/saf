@@ -2,12 +2,6 @@ package no.nav.saf.tilgangskontroll.pep;
 
 import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
-import no.nav.saf.tilgangskontroll.abac.dto.response.Decision;
-import no.nav.saf.tilgangskontroll.abac.dto.response.XacmlResponse;
-
-import static no.nav.saf.tilgangskontroll.abac.dto.response.AdviceStringUtil.convertToString;
-import static no.nav.saf.tilgangskontroll.pep.AbacAnswer.deny;
-import static no.nav.saf.tilgangskontroll.pep.AbacAnswer.permit;
 
 /**
  * Policy Enforcement Point for ABAC.
@@ -27,7 +21,7 @@ public abstract class Pep<T> {
 	 * @param safRequestContext Kontekst for kallet
 	 * @return Beslutning om tilgang fra saf-abac PDP
 	 */
-	abstract XacmlResponse verifyAbacPdpDecision(T ressurs, SafRequestContext safRequestContext);
+	abstract AbacAnswer verifyAbacPdpDecision(T ressurs, SafRequestContext safRequestContext);
 
 	/**
 	 * Sjekker tilgang for app registration autentisert med client credential flow i Azure.
@@ -48,15 +42,8 @@ public abstract class Pep<T> {
 		if (safRequestContext.getSecurityContext().isJwtAzureClientCredentialFlow()) {
 			return verifyAzureClientCredentialFlowAccess(ressurs, safRequestContext);
 		} else {
-			XacmlResponse response = verifyAbacPdpDecision(ressurs, safRequestContext);
-			return mapXacmlResponse(response);
+			return verifyAbacPdpDecision(ressurs, safRequestContext);
 		}
-	}
-
-	protected AbacAnswer mapXacmlResponse(XacmlResponse xacmlResponse) {
-		return Decision.PERMIT.equals(xacmlResponse.getDecision()) ?
-				permit() :
-				deny(convertToString(xacmlResponse.getAdvices()));
 	}
 
 	void traceLogPepStarted(String pepName, Object ressurs) {
@@ -70,5 +57,4 @@ public abstract class Pep<T> {
 			log.trace("{} ferdig evaluert ressurs={}", pepName, ressurs);
 		}
 	}
-
 }
