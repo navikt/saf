@@ -34,7 +34,7 @@
 		<springdoc-openapi-starter-webmvc-ui.version>2.3.0</springdoc-openapi-starter-webmvc-ui.version>
 		<logstash-logback-encoder.version>7.4</logstash-logback-encoder.version>
 		<logback-syslog4j.version>1.0.0</logback-syslog4j.version>
-		<microsoft-graph.version>5.80.0</microsoft-graph.version>
+		<microsoft-graph.version>6.4.0</microsoft-graph.version>
 		<azure-identity.version>1.11.1</azure-identity.version>
 		<context-propagation.version>1.1.0</context-propagation.version>
 		<bcprov-jdk18on.version>1.77</bcprov-jdk18on.version>
