@@ -203,24 +203,25 @@ public abstract class AbstractItest {
 	}
 
 	protected static void stubMsGraphGetUser(String navIdent) {
-		stubFor(get("/msgraph/users?%24filter=onPremisesSamAccountName%20eq%20%27" + navIdent + "%27&%24count=true&%24select=id")
+		stubFor(get("/msgraph/users?$count=true&$filter=onPremisesSamAccountName%20eq%20%27" + navIdent + "%27&$select=id")
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("nav/msgraph-users.json")));
 	}
 
 	protected static void stubMsGraphMemberOfEgenAnsatt(String msUserId) {
-		stubFor(get("/msgraph/users/" + msUserId + "/memberOf?%24filter=id%20eq%20%27f476f724-350b-4ff4-8e74-141cda9e824e%27&%24count=true&%24select=id")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("nav/msgraph-memberof-egenansatt.json")));
+		stubMsGraphMemberOf(msUserId, "nav/msgraph-memberof-egenansatt.json");
 	}
 
 	protected static void stubMsGraphMemberOfNotEgenAnsatt(String msUserId) {
-		stubFor(get("/msgraph/users/" + msUserId + "/memberOf?%24filter=id%20eq%20%27f476f724-350b-4ff4-8e74-141cda9e824e%27&%24count=true&%24select=id")
+		stubMsGraphMemberOf(msUserId, "nav/msgraph-memberof-not-egenansatt.json");
+	}
+
+	protected static void stubMsGraphMemberOf(String msUserId, String bodyFile) {
+		stubFor(get("/msgraph/users/" + msUserId + "/memberOf?$count=true&$filter=id%20eq%20%27f476f724-350b-4ff4-8e74-141cda9e824e%27&$select=id")
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("nav/msgraph-memberof-not-egenansatt.json")));
+						.withBodyFile(bodyFile)));
 	}
 
 	protected static void stubPdl() {
