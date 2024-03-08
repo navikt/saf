@@ -1,17 +1,14 @@
 package no.nav.saf.anticorruptionlayer.nav;
 
+import com.azure.identity.ClientSecretCredential;
 import com.azure.identity.ClientSecretCredentialBuilder;
-import com.microsoft.graph.authentication.TokenCredentialAuthProvider;
-import com.microsoft.graph.core.ClientException;
 import com.microsoft.graph.models.DirectoryObject;
 import com.microsoft.graph.models.User;
-import com.microsoft.graph.options.HeaderOption;
-import com.microsoft.graph.options.QueryOption;
-import com.microsoft.graph.requests.GraphServiceClient;
+import com.microsoft.graph.serviceclient.GraphServiceClient;
+import com.microsoft.kiota.ApiException;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.azure.AzureProperties;
 import no.nav.saf.config.SafProperties;
-import okhttp3.Request;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 
@@ -28,19 +25,19 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 @Slf4j
 public class MsGraphConsumer {
 	private static final Pattern UUID_PATTERN = Pattern.compile("^[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}$");
-	private final GraphServiceClient<Request> graphClient;
+	private final GraphServiceClient graphClient;
 
 	public MsGraphConsumer(SafProperties safProperties,
 						   AzureProperties azureProperties) {
-		this.graphClient = GraphServiceClient.builder()
-				.authenticationProvider(new TokenCredentialAuthProvider(new ClientSecretCredentialBuilder()
-						.tenantId(azureProperties.appTenantId())
-						.clientId(azureProperties.appClientId())
-						.clientSecret(azureProperties.appClientSecret())
-						.build())).buildClient();
-		String overrideMsGraphServiceRoot = safProperties.getEndpoints().getOverrideMsGraphServiceRoot();
-		if (isNotBlank(overrideMsGraphServiceRoot)) {
-			this.graphClient.setServiceRoot(overrideMsGraphServiceRoot);
+		ClientSecretCredential clientSecretCredential = new ClientSecretCredentialBuilder()
+				.tenantId(azureProperties.appTenantId())
+				.clientId(azureProperties.appClientId())
+				.clientSecret(azureProperties.appClientSecret())
+				.build();
+		this.graphClient = new GraphServiceClient(clientSecretCredential);
+		String overrideMsGraphBaseUrl = safProperties.getEndpoints().getOverrideMsGraphServiceRoot();
+		if (isNotBlank(overrideMsGraphBaseUrl)) {
+			this.graphClient.getRequestAdapter().setBaseUrl(overrideMsGraphBaseUrl);
 		}
 	}
 
@@ -52,19 +49,18 @@ public class MsGraphConsumer {
 		try {
 			List<User> res = graphClient
 					.users()
-					.buildRequest(List.of(
-							new HeaderOption("ConsistencyLevel", "eventual"),
-							new QueryOption("$filter", "onPremisesSamAccountName eq '" + navIdent + "'")
-					))
-					.count()
-					.select("id")
-					.get().getCurrentPage();
+					.get(requestConfiguration -> {
+						requestConfiguration.headers.add("ConsistencyLevel", "eventual");
+						requestConfiguration.queryParameters.filter = "onPremisesSamAccountName eq '" + navIdent + "'";
+						requestConfiguration.queryParameters.count = true;
+						requestConfiguration.queryParameters.select = new String[]{"id"};
+					}).getValue();
 			if (res.isEmpty()) {
 				log.error("Microsoft Graph finner ikke bruker med navIdent={}", navIdent);
 				return Optional.empty();
 			}
 			return Optional.of(res.get(0));
-		} catch (ClientException e) {
+		} catch (ApiException e) {
 			log.error("Teknisk feil mot Microsoft Graph. message=" + e.getMessage(), e);
 			return Optional.empty();
 		}
@@ -72,7 +68,7 @@ public class MsGraphConsumer {
 
 	@Cacheable(value = MSGRAPH_MEMBER_CACHE, key = "#user.id")
 	public boolean isMemberOf(User user, String adGroup) {
-		if (user == null || user.id == null) {
+		if (user == null || user.getId() == null) {
 			return false;
 		}
 		if (!UUID_PATTERN.matcher(adGroup).matches()) {
@@ -81,17 +77,17 @@ public class MsGraphConsumer {
 
 		try {
 			List<DirectoryObject> res = graphClient
-					.users(user.id)
+					.users().byUserId(user.getId())
 					.memberOf()
-					.buildRequest(List.of(
-							new HeaderOption("ConsistencyLevel", "eventual"),
-							new QueryOption("$filter", "id eq '" + adGroup + "'")
-					))
-					.count()
-					.select("id")
-					.get().getCurrentPage();
-			return res.size() == 1;
-		} catch (ClientException e) {
+					.get(requestConfiguration -> {
+						requestConfiguration.headers.add("ConsistencyLevel", "eventual");
+						requestConfiguration.queryParameters.filter = "id eq '" + adGroup + "'";
+						requestConfiguration.queryParameters.count = true;
+						requestConfiguration.queryParameters.select = new String[]{"id"};
+					})
+					.getValue();
+			return !res.isEmpty();
+		} catch (ApiException e) {
 			log.error("Teknisk feil mot Microsoft Graph. message=" + e.getMessage(), e);
 			return false;
 		}
