@@ -5,6 +5,7 @@ import com.github.tomakehurst.wiremock.matching.EqualToPattern;
 import no.nav.saf.domain.visningsmodell.Dokumentoversikt;
 import no.nav.saf.endpoints.AbstractItest;
 import no.nav.saf.endpoints.graphql.GraphQLRequest;
+import no.nav.saf.endpoints.graphql.GraphQLResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpMethod;
@@ -15,7 +16,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
@@ -28,6 +29,10 @@ import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
+import static no.nav.saf.graphql.ErrorCode.FORBIDDEN;
+import static no.nav.saf.tilgangskontroll.pep.AbacDenyReasonCode.FORTROLIG_ADRESSE;
+import static no.nav.saf.tilgangskontroll.pep.AbacDenyReasonCode.ORGNR_NAV_STAT;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -59,7 +64,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 		stubFinnjournalposter();
 		stubPensjonSakSammendrag();
 
-		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikBrukerWithAktoerId();
+		ResponseEntity<GraphQLResponse> responseEntity = callDokumentOversikBrukerWithAktoerId();
 		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
 		assertEquals(OK, responseEntity.getStatusCode());
 		assertEquals("429837417", dokumentoversikt.getJournalposter().get(0).getJournalpostId());
@@ -83,7 +88,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 		stubFinnjournalposter();
 		stubPensjonSakSammendrag();
 
-		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikBrukerWithFnr();
+		ResponseEntity<GraphQLResponse> responseEntity = callDokumentOversikBrukerWithFnr();
 		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
 
 		assertEquals(OK, responseEntity.getStatusCode());
@@ -107,7 +112,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 		stubSakOrgnr();
 		stubFinnjournalposter("finnjournalposter_single_temaForNullskjerming-happy.json");
 
-		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikBrukerWithOrgnr();
+		ResponseEntity<GraphQLResponse> responseEntity = callDokumentOversikBrukerWithOrgnr();
 		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
 
 		assertEquals(OK, responseEntity.getStatusCode());
@@ -125,11 +130,14 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 		stubMsGraphGetUser(NAV_IDENT_SAKSBEHANDLER);
 		stubMsGraphMemberOfNotEgenAnsatt(MS_ID_SAKSBEHANDLER);
 
-		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikBrukerWithOrgnr();
+		ResponseEntity<GraphQLResponse> responseEntity = callDokumentOversikBrukerWithOrgnr();
 		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
 
 		assertEquals(OK, responseEntity.getStatusCode());
 		verifyEmptyJournalpostListeAndNullSideInfo(dokumentoversikt);
+		List<GraphQLResponse.Error> errors = responseEntity.getBody().getErrors();
+		assertThat(errors.get(0).getExtensions().getCode()).isEqualTo(FORBIDDEN.getText());
+		assertThat(errors.get(0).getExtensions().getReasonCode()).isEqualTo(ORGNR_NAV_STAT.code);
 	}
 
 	@Test
@@ -141,7 +149,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 		stubSakOrgnr();
 		stubFinnjournalposter("finnjournalposter_single_temaForNullskjerming-happy.json");
 
-		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikBrukerWithOrgnr();
+		ResponseEntity<GraphQLResponse> responseEntity = callDokumentOversikBrukerWithOrgnr();
 		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
 
 		assertEquals(OK, responseEntity.getStatusCode());
@@ -161,7 +169,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 		variables.put("fnr", "11111111111");
 		variables.put("fraDato", "2020-06-23");
 
-		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikBrukerWithFraDato(variables);
+		ResponseEntity<GraphQLResponse> responseEntity = callDokumentOversikBrukerWithFraDato(variables);
 		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
 
 		assertEquals(OK, responseEntity.getStatusCode());
@@ -176,7 +184,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 		stubFinnjournalposter("finnjournalposter-midlertidig-happy.json");
 		stubPensjonSakSammendrag("psak-hentSakSammendragListe-happy-empty.json");
 
-		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikBrukerWithAktoerId();
+		ResponseEntity<GraphQLResponse> responseEntity = callDokumentOversikBrukerWithAktoerId();
 		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
 
 		assertEquals(OK, responseEntity.getStatusCode());
@@ -197,7 +205,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 		stubFinnjournalposter("finnjournalposter_single_sladdet-happy.json");
 		stubPensjonSakSammendrag();
 
-		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikBrukerWithAktoerId();
+		ResponseEntity<GraphQLResponse> responseEntity = callDokumentOversikBrukerWithAktoerId();
 		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
 
 		assertEquals(OK, responseEntity.getStatusCode());
@@ -213,7 +221,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 	void hentIdentForAktoerIdTechnicalFail() throws IOException, URISyntaxException {
 		stubPdl("badRequest.json");
 
-		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikBrukerWithAktoerId();
+		ResponseEntity<GraphQLResponse> responseEntity = callDokumentOversikBrukerWithAktoerId();
 		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
 
 		assertEquals(OK, responseEntity.getStatusCode());
@@ -227,7 +235,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 	void hentIdentForAktoerIdFunctionalFail() throws IOException, URISyntaxException {
 		stubPdl("badRequest.json");
 
-		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikBrukerWithAktoerId();
+		ResponseEntity<GraphQLResponse> responseEntity = callDokumentOversikBrukerWithAktoerId();
 		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
 
 		assertEquals(OK, responseEntity.getStatusCode());
@@ -246,7 +254,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 		stubFinnjournalposter("finnjournalposter-empty.json");
 		stubPensjonSakSammendrag();
 
-		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikBrukerWithAktoerId();
+		ResponseEntity<GraphQLResponse> responseEntity = callDokumentOversikBrukerWithAktoerId();
 		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
 
 		verifyEmptyJournalpostListeAndNullSideInfo(dokumentoversikt);
@@ -268,7 +276,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 				.withStatus(OK.value())
 				.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)));
 
-		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikBrukerWithAktoerId();
+		ResponseEntity<GraphQLResponse> responseEntity = callDokumentOversikBrukerWithAktoerId();
 		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
 
 		verifyEmptyJournalpostListeAndNullSideInfo(dokumentoversikt);
@@ -289,7 +297,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 				.withStatus(INTERNAL_SERVER_ERROR.value())
 				.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)));
 
-		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikBrukerWithAktoerId();
+		ResponseEntity<GraphQLResponse> responseEntity = callDokumentOversikBrukerWithAktoerId();
 		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
 
 		assertEquals(OK, responseEntity.getStatusCode());
@@ -309,11 +317,14 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 		stubPensjonSakSammendrag();
 		stubBidrag();
 
-		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikBrukerWithAktoerId();
+		ResponseEntity<GraphQLResponse> responseEntity = callDokumentOversikBrukerWithAktoerId();
 		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
 
 		verifyEmptyJournalpostListeAndNullSideInfo(dokumentoversikt);
 		verifyabacDenyPep1gAndHttpStatusCode(OK, responseEntity.getStatusCode());
+		List<GraphQLResponse.Error> errors = responseEntity.getBody().getErrors();
+		assertThat(errors.get(0).getExtensions().getCode()).isEqualTo(FORBIDDEN.getText());
+		assertThat(errors.get(0).getExtensions().getReasonCode()).isEqualTo(FORTROLIG_ADRESSE.code);
 	}
 
 	@Test
@@ -324,7 +335,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 		stubFinnjournalposter("finnjournalposter-empty.json");
 		stubPensjonSakSammendrag("psak-hentSakSammendragListe-happy-empty.json");
 
-		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikBrukerWithAktoerId();
+		ResponseEntity<GraphQLResponse> responseEntity = callDokumentOversikBrukerWithAktoerId();
 		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
 
 		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter"))
@@ -341,7 +352,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 		stubFinnjournalposter("finnjournalposter-far-kta.json");
 		stubPensjonSakSammendrag("psak-hentSakSammendragListe-happy-empty.json");
 
-		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikBrukerWithAktoerIdInkluderMidlertidige();
+		ResponseEntity<GraphQLResponse> responseEntity = callDokumentOversikBrukerWithAktoerIdInkluderMidlertidige();
 		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
 
 		verifyEmptyJournalpostListeAndNullSideInfo(dokumentoversikt);
@@ -357,7 +368,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 		stubPensjonSakSammendrag("psak-hentSakSammendragListe-happy-empty.json");
 		stubBidrag("bidragsak-happy.json");
 
-		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikBrukerWithAktoerId();
+		ResponseEntity<GraphQLResponse> responseEntity = callDokumentOversikBrukerWithAktoerId();
 		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
 
 		assertEquals("429837417", dokumentoversikt.getJournalposter().get(0).getJournalpostId());
@@ -376,7 +387,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 		stubPensjonSakSammendrag("psak-hentSakSammendragListe-happy-empty.json");
 		stubBidrag();
 
-		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikBrukerWithAktoerId();
+		ResponseEntity<GraphQLResponse> responseEntity = callDokumentOversikBrukerWithAktoerId();
 		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
 
 		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter"))
@@ -394,7 +405,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 		stubPensjonSakSammendrag("psak-hentSakSammendragListe-happy-empty.json");
 		stubBidrag();
 
-		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikBrukerWithAktoerId();
+		ResponseEntity<GraphQLResponse> responseEntity = callDokumentOversikBrukerWithAktoerId();
 		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
 
 		verifyEmptyJournalpostListeAndNullSideInfo(dokumentoversikt);
@@ -412,7 +423,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 		stubPensjonSakSammendrag("psak-hentSakSammendragListe-happy-empty.json");
 		stubBidrag();
 
-		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikBrukerWithAktoerId();
+		ResponseEntity<GraphQLResponse> responseEntity = callDokumentOversikBrukerWithAktoerId();
 		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
 
 		assertFalse(dokumentoversikt.getJournalposter().isEmpty());
@@ -431,7 +442,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 		stubFinnjournalposter("finnjournalposter_single_bidragAndSkjerming-happy.json");
 		stubPensjonSakSammendrag("psak-hentSakSammendragListe-happy-empty.json");
 
-		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikBrukerWithAktoerId();
+		ResponseEntity<GraphQLResponse> responseEntity = callDokumentOversikBrukerWithAktoerId();
 		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
 
 		assertEquals("429837417", dokumentoversikt.getJournalposter().get(0).getJournalpostId());
@@ -453,7 +464,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 				.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 				.withBodyFile("k9/happy-response.json")));
 
-		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikBrukerWithAktoerId();
+		ResponseEntity<GraphQLResponse> responseEntity = callDokumentOversikBrukerWithAktoerId();
 		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
 
 		assertEquals("429837417", dokumentoversikt.getJournalposter().get(0).getJournalpostId());
@@ -463,38 +474,38 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 		verifyabacDenyPep7dSkipPep2Pep3Pep4Pep5Pep6dAndHttpStatusCode(OK, responseEntity.getStatusCode());
 	}
 
-	private ResponseEntity<LinkedHashMap> callDokumentOversikBrukerWithAktoerId() throws IOException, URISyntaxException {
+	private ResponseEntity<GraphQLResponse> callDokumentOversikBrukerWithAktoerId() throws IOException, URISyntaxException {
 		GraphQLRequest request = new GraphQLRequest(stringFromClasspath("dokumentoversiktBruker/dokumentoversiktbruker_aktoerid.query"), null, null);
 		RequestEntity<GraphQLRequest> requestEntity = new RequestEntity<>(request, createHeaders(), HttpMethod.POST, new URI("/graphql"));
-		return restTemplate.exchange(requestEntity, LinkedHashMap.class);
+		return restTemplate.exchange(requestEntity, GraphQLResponse.class);
 	}
 
-	private ResponseEntity<LinkedHashMap> callDokumentOversikBrukerWithAktoerIdInkluderMidlertidige() throws IOException, URISyntaxException {
+	private ResponseEntity<GraphQLResponse> callDokumentOversikBrukerWithAktoerIdInkluderMidlertidige() throws IOException, URISyntaxException {
 		GraphQLRequest request = new GraphQLRequest(stringFromClasspath("dokumentoversiktBruker/dokumentoversiktbruker_aktoerid_midlertidig.query"), null, null);
 		RequestEntity<GraphQLRequest> requestEntity = new RequestEntity<>(request, createHeaders(), HttpMethod.POST, new URI("/graphql"));
-		return restTemplate.exchange(requestEntity, LinkedHashMap.class);
+		return restTemplate.exchange(requestEntity, GraphQLResponse.class);
 	}
 
-	private ResponseEntity<LinkedHashMap> callDokumentOversikBrukerWithFnr() throws IOException, URISyntaxException {
+	private ResponseEntity<GraphQLResponse> callDokumentOversikBrukerWithFnr() throws IOException, URISyntaxException {
 		GraphQLRequest request = new GraphQLRequest(stringFromClasspath("dokumentoversiktBruker/dokumentoversiktbruker_fnr.query"), null, null);
 		RequestEntity<GraphQLRequest> requestEntity = new RequestEntity<>(request, createHeaders(), HttpMethod.POST, new URI("/graphql"));
-		return restTemplate.exchange(requestEntity, LinkedHashMap.class);
+		return restTemplate.exchange(requestEntity, GraphQLResponse.class);
 	}
 
-	private ResponseEntity<LinkedHashMap> callDokumentOversikBrukerWithOrgnr() throws IOException, URISyntaxException {
+	private ResponseEntity<GraphQLResponse> callDokumentOversikBrukerWithOrgnr() throws IOException, URISyntaxException {
 		GraphQLRequest request = new GraphQLRequest(stringFromClasspath("dokumentoversiktBruker/dokumentoversiktbruker_orgnr.query"), null, null);
 		RequestEntity<GraphQLRequest> requestEntity = new RequestEntity<>(request, createHeaders(), HttpMethod.POST, new URI("/graphql"));
-		return restTemplate.exchange(requestEntity, LinkedHashMap.class);
+		return restTemplate.exchange(requestEntity, GraphQLResponse.class);
 	}
 
-	private Dokumentoversikt getDokumentoversikt(ResponseEntity<LinkedHashMap> responseEntity) {
-		Map<String, Object> responseEntityData = (Map<String, Object>) responseEntity.getBody().get("data");
-		return objectMapper.convertValue(responseEntityData.get("dokumentoversiktBruker"), Dokumentoversikt.class);
+	private Dokumentoversikt getDokumentoversikt(ResponseEntity<GraphQLResponse> responseEntity) {
+		Map<String, Object> responseEntityData = (Map<String, Object>) responseEntity.getBody().getData().get("dokumentoversiktBruker");
+		return objectMapper.convertValue(responseEntityData, Dokumentoversikt.class);
 	}
 
-	private ResponseEntity<LinkedHashMap> callDokumentOversikBrukerWithFraDato(Map<String, Object> variables) throws IOException, URISyntaxException {
+	private ResponseEntity<GraphQLResponse> callDokumentOversikBrukerWithFraDato(Map<String, Object> variables) throws IOException, URISyntaxException {
 		GraphQLRequest request = new GraphQLRequest(stringFromClasspath("dokumentoversiktBruker/dokumentoversiktbruker_literals.query"), null, variables);
 		RequestEntity<GraphQLRequest> requestEntity = new RequestEntity<>(request, createHeaders(), HttpMethod.POST, new URI("/graphql"));
-		return restTemplate.exchange(requestEntity, LinkedHashMap.class);
+		return restTemplate.exchange(requestEntity, GraphQLResponse.class);
 	}
 }

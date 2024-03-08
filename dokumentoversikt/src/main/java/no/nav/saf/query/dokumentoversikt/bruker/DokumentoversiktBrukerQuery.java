@@ -15,6 +15,7 @@ import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 import no.nav.saf.domain.visningsmodell.Dokumentoversikt;
 import no.nav.saf.domain.visningsmodell.Journalpost;
 import no.nav.saf.exceptions.SafFunctionalException;
+import no.nav.saf.exceptions.TilgangskontrollException;
 import no.nav.saf.metrics.Monitor;
 import no.nav.saf.query.dokumentoversikt.DokumentoversiktVisningsmodellRepository;
 import no.nav.saf.query.dokumentoversikt.SideInfoMapper;
@@ -30,7 +31,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static no.nav.saf.graphql.ErrorCode.FORBIDDEN;
 import static no.nav.saf.graphql.ErrorCode.NOT_FOUND;
 import static no.nav.saf.tilgangskontroll.pep.DenyReasonFactory.createPep1gDenyReasonDokumentoversikt;
 import static no.nav.saf.util.MDCUtility.addMdcData;
@@ -92,7 +92,7 @@ class DokumentoversiktBrukerQuery {
 
 		AbacAnswer pep1gAnswer = this.pep1g.hasAccessWithAnswer(tilgangBruker, safRequestContext);
 		if (pep1gAnswer.isDeny()) {
-			throw new SafFunctionalException(createPep1gDenyReasonDokumentoversikt(safRequestContext, pep1gAnswer), FORBIDDEN);
+			throw new TilgangskontrollException(createPep1gDenyReasonDokumentoversikt(safRequestContext, pep1gAnswer), pep1gAnswer);
 		}
 
 		//  Resultat fra pep2d caches lokalt og brukes i JournalpostDtoMapper.java. Med bakgrunn i resultat fra pep2d, pep6d og pep7d settes feltet saksbehandlerHarTilgang=true/false.

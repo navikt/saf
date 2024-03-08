@@ -4,8 +4,6 @@ import no.nav.saf.domain.kode.Tema;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 
-import static no.nav.saf.tilgangskontroll.pep.Pep1gImpl.ORGANISASJON_ER_NAV_STAT_KREVER_EGEN_ANSATT_TILGANG;
-
 /**
  * Menneskelesbare grunner til deny fra PEP.
  */
@@ -47,25 +45,25 @@ public final class DenyReasonFactory {
 	public static String createPep1gDenyReasonDokumentoversikt(SafRequestContext safRequestContext, AbacAnswer abacAnswer) {
 		boolean isSystem = safRequestContext.getSecurityContext().isSystem();
 		String consumerType = saksbehandlerEllerSystem(isSystem);
-		return switch (abacAnswer.getDenyReasonSporing()) {
-			case "saf_info=" + ORGANISASJON_ER_NAV_STAT_KREVER_EGEN_ANSATT_TILGANG ->
-					"Tilgang til dokumentoversikt for organisasjon ble avvist. " +
-					"Organisasjonen er underlagt NAV og det krever egen ansatt behandling for oppslag på denne. " +
-					"NAV ansatt må være medlem av gruppen 0000-GA-Egne_ansatte";
-			default -> "Tilgang til dokumentoversikt ble avvist. " + consumerType + PEP1G_DENY_REASON +
-					   (isSystem ? "" : PEP1G_DENY_SAKSBEHANDLER_INFO) + CONTACT_US_SUFFIX;
-		};
+
+		if (abacAnswer.getAbacDenyReason().getAbacDenyReasonCode() == AbacDenyReasonCode.ORGNR_NAV_STAT) {
+			return DENY_PREFIX +
+				   "Dokumentoversikten er knyttet til organisasjon underlagt NAV og det krever egen ansatt behandling for oppslag på denne. " +
+				   "NAV ansatt må være medlem av gruppen 0000-GA-Egne_ansatte";
+		}
+		return "Tilgang til dokumentoversikt ble avvist. " + consumerType + PEP1G_DENY_REASON +
+			   (isSystem ? "" : PEP1G_DENY_SAKSBEHANDLER_INFO) + CONTACT_US_SUFFIX;
 	}
 
 	public static String createPep1gDenyReason(SafRequestContext safRequestContext, AbacAnswer abacAnswer) {
 		boolean isSystem = safRequestContext.getSecurityContext().isSystem();
 		if (abacAnswer.getAbacDenyReason().getAbacDenyReasonCode() == AbacDenyReasonCode.ORGNR_NAV_STAT) {
 			return DENY_PREFIX +
-					"Journalpost/dokument er knyttet til organisasjon underlagt NAV og det krever egen ansatt behandling for oppslag på denne. " +
-					"NAV ansatt må være medlem av gruppen 0000-GA-Egne_ansatte";
+				   "Journalpost/dokument er knyttet til organisasjon underlagt NAV og det krever egen ansatt behandling for oppslag på denne. " +
+				   "NAV ansatt må være medlem av gruppen 0000-GA-Egne_ansatte";
 		}
 		return DENY_PREFIX + saksbehandlerEllerSystem(isSystem) + PEP1G_DENY_REASON +
-				(isSystem ? "" : PEP1G_DENY_SAKSBEHANDLER_INFO) + CONTACT_US_SUFFIX;
+			   (isSystem ? "" : PEP1G_DENY_SAKSBEHANDLER_INFO) + CONTACT_US_SUFFIX;
 	}
 
 	public static String createPep2DenyReason(SafRequestContext safRequestContext) {

@@ -60,7 +60,6 @@ import static no.nav.saf.tilgangskontroll.pep.AbacDenyReasonCode.FORTROLIG_ADRES
 import static no.nav.saf.tilgangskontroll.pep.AbacDenyReasonCode.JOURNALSTATUS;
 import static no.nav.saf.tilgangskontroll.pep.AbacDenyReasonCode.ORGNR_NAV_STAT;
 import static no.nav.saf.tilgangskontroll.pep.AbacDenyReasonCode.TEMA;
-import static no.nav.saf.tilgangskontroll.pep.AbacDenyReasonCode.UKJENT;
 import static no.nav.saf.tilgangskontroll.pep.DenyReasonFactory.PEP1G_DENY_REASON;
 import static no.nav.saf.tilgangskontroll.pep.DenyReasonFactory.PEP2_DENY_REASON;
 import static no.nav.saf.tilgangskontroll.pep.DenyReasonFactory.PEP3_DENY_REASON;
@@ -475,7 +474,7 @@ class JournalpostIT extends AbstractItest {
 		stubDokarkivJournalpost("journalpost-gsak-inngaaende-happy.json");
 
 		GraphQLResponse graphQLResponse = journalpostQuery();
-		assertErrorWithCodeAndReason(graphQLResponse, FORBIDDEN, UKJENT);
+		assertErrorWithCodeAndReason(graphQLResponse, FORBIDDEN, FORTROLIG_ADRESSE);
 		assertErrorWithMessage(graphQLResponse, PEP1G_DENY_REASON);
 	}
 
