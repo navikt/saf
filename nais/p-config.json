@@ -249,6 +249,11 @@
       "cluster": "prod-gcp"
     },
     {
+      "app": "eessi-pensjon-oppgave",
+      "namespace": "eessipensjon",
+      "cluster": "prod-gcp"
+    },
+    {
       "app": "pensjon-pen",
       "namespace": "pensjondeployer",
       "cluster": "prod-fss"
