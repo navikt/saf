@@ -6,9 +6,9 @@ import no.nav.saf.domain.tilgangsmodell.TilgangRelevantTredjepart;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlRequest;
-import no.nav.saf.tilgangskontroll.abac.dto.response.Advice;
 import no.nav.saf.tilgangskontroll.abac.dto.response.XacmlResponse;
 import no.nav.saf.tilgangskontroll.abac.service.AbacService;
+import no.nav.saf.tilgangskontroll.pep.reasons.EgenAnsattReason;
 import no.nav.saf.tilgangskontroll.pep.reasons.FortroligAdresseReason;
 import no.nav.saf.tilgangskontroll.pep.reasons.StrengtFortroligAdresseReason;
 import no.nav.saf.tilgangskontroll.pep.reasons.StrengtFortroligAdresseUtlandReason;
@@ -28,6 +28,7 @@ import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_RESOURC
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_SAF_TREDJEPART;
 import static no.nav.saf.tilgangskontroll.pep.AbacAnswer.deny;
 import static no.nav.saf.tilgangskontroll.pep.AbacAnswer.permit;
+import static no.nav.saf.tilgangskontroll.pep.AbacDenyReasonCode.EGEN_ANSATT;
 import static no.nav.saf.tilgangskontroll.pep.AbacDenyReasonCode.FORTROLIG_ADRESSE;
 import static no.nav.saf.tilgangskontroll.pep.AbacDenyReasonCode.STRENGT_FORTROLIG_ADRESSE;
 import static no.nav.saf.tilgangskontroll.pep.AbacDenyReasonCode.STRENGT_FORTROLIG_ADRESSE_UTLAND;
@@ -91,6 +92,8 @@ public class Pep3Impl extends StandardPep<TilgangSak> {
 			return deny(new StrengtFortroligAdresseReason(advices));
 		} else if (STRENGT_FORTROLIG_ADRESSE_UTLAND.matchesAbacAdvice(advices)) {
 			return deny(new StrengtFortroligAdresseUtlandReason(advices));
+		} else if(EGEN_ANSATT.matchesAbacAdvice(advices)) {
+			return deny(new EgenAnsattReason(advices));
 		}
 		log.warn("pep3 kunne ikke matche abac-response til DenyReason advices={}", advices);
 		return deny(new UkjentEllerTekniskReason());
