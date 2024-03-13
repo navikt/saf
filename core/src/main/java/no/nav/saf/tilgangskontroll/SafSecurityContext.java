@@ -42,7 +42,7 @@ public class SafSecurityContext {
 
 	private static final String SERVICEUSER_PREFIX = "srv";
 	private static final String AUTH_ERRORMESSAGE = "Tilgang er avvist. " +
-			"Ingen gyldig token på Authorization header. Token må være utsted av NAV onprem security-token-service eller azure.";
+													"Ingen gyldig token på Authorization header. Token må være utsted av NAV onprem security-token-service eller azure.";
 	private static final String UKJENT_CONSUMER_ID = "ukjentConsumerId";
 	private static final String UKJENT_USER_ID = "ukjentUserId";
 	@Deprecated
@@ -63,8 +63,10 @@ public class SafSecurityContext {
 	SafSecurityContext(TokenValidationContext tokenValidationContext,
 					   Map<String, Boolean> privilegiedServiceusers,
 					   String navUserId) {
-		this.jwtToken = tokenValidationContext.getFirstValidToken()
-				.orElseThrow(() -> new AuthorizationException(AUTH_ERRORMESSAGE));
+		this.jwtToken = tokenValidationContext.getFirstValidToken();
+		if (this.jwtToken == null) {
+			throw new AuthorizationException(AUTH_ERRORMESSAGE);
+		}
 		this.tokenValidationContext = tokenValidationContext;
 		this.privilegiedServiceusers = privilegiedServiceusers;
 		// Nav-User-Id header. Valgfri
@@ -72,7 +74,7 @@ public class SafSecurityContext {
 		// Payload fra JWT hentes ut en gang pga den blir hentet ut fra kontekst ofte.
 		JWT jwt;
 		try {
-			jwt = JWTParser.parse(this.jwtToken.getTokenAsString());
+			jwt = JWTParser.parse(this.jwtToken.getEncodedToken());
 		} catch (ParseException e) {
 			throw new AuthorizationException("Kunne ikke parse JWT token.", e);
 		}
@@ -147,7 +149,7 @@ public class SafSecurityContext {
 	 * @return true hvis tema rollen finnes. Ellers false
 	 */
 	public boolean hasTemaAzureRole(Tema tema) {
-		if(containsAzureRole(AZURE_ROLE_ALLE_TEMA)) {
+		if (containsAzureRole(AZURE_ROLE_ALLE_TEMA)) {
 			return true;
 		}
 		return tema != null && containsAzureRole("tema_" + tema.name().toLowerCase());
@@ -213,22 +215,22 @@ public class SafSecurityContext {
 
 	protected boolean isRestStsSystemToken() {
 		return tokenValidationContext.hasTokenFor(ISSUER_REST_STS)
-				&& jwtToken.getSubject().toLowerCase().startsWith(SERVICEUSER_PREFIX);
+			   && jwtToken.getSubject().toLowerCase().startsWith(SERVICEUSER_PREFIX);
 	}
 
 	protected boolean isOnBehalfOfFlowToken() {
 		final JwtTokenClaims jwtTokenClaims = jwtToken.getJwtTokenClaims();
 		return jwtTokenClaims.getStringClaim(AZURE_CLAIM_SUB) != null &&
-				jwtTokenClaims.getStringClaim(AZURE_CLAIM_OID) != null &&
-				!jwtTokenClaims.getStringClaim(AZURE_CLAIM_SUB).equals(jwtTokenClaims.getStringClaim(AZURE_CLAIM_OID));
+			   jwtTokenClaims.getStringClaim(AZURE_CLAIM_OID) != null &&
+			   !jwtTokenClaims.getStringClaim(AZURE_CLAIM_SUB).equals(jwtTokenClaims.getStringClaim(AZURE_CLAIM_OID));
 	}
 
 	protected boolean isClientCredentialFlowToken(JwtToken jwtToken) {
 		if (isJwtIssuedByAzure()) {
 			final JwtTokenClaims jwtTokenClaims = jwtToken.getJwtTokenClaims();
 			return jwtTokenClaims.getStringClaim(AZURE_CLAIM_SUB) != null &&
-					jwtTokenClaims.getStringClaim(AZURE_CLAIM_OID) != null &&
-					jwtTokenClaims.getStringClaim(AZURE_CLAIM_SUB).equals(jwtTokenClaims.getStringClaim(AZURE_CLAIM_OID));
+				   jwtTokenClaims.getStringClaim(AZURE_CLAIM_OID) != null &&
+				   jwtTokenClaims.getStringClaim(AZURE_CLAIM_SUB).equals(jwtTokenClaims.getStringClaim(AZURE_CLAIM_OID));
 		} else {
 			return false;
 		}
