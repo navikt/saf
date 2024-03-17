@@ -338,36 +338,6 @@
       "cluster": "dev-fss"
     },
     {
-      "app": "fpformidling",
-      "namespace": "teamforeldrepenger",
-      "cluster": "dev-fss",
-      "roles": ["tema_for"]
-    },
-    {
-      "app": "fpsak",
-      "namespace": "teamforeldrepenger",
-      "cluster": "dev-fss",
-      "roles": ["tema_for"]
-    },
-    {
-      "app": "fpfordel",
-      "namespace": "teamforeldrepenger",
-      "cluster": "dev-fss",
-      "roles": ["tema_for"]
-    },
-    {
-      "app": "fptilbake",
-      "namespace": "teamforeldrepenger",
-      "cluster": "dev-fss",
-      "roles": ["tema_for"]
-    },
-    {
-      "app": "fpoversikt",
-      "namespace": "teamforeldrepenger",
-      "cluster": "dev-gcp",
-      "roles": ["tema_for"]
-    },
-    {
       "app": "k9-sak",
       "namespace": "k9saksbehandling",
       "cluster": "dev-fss",
