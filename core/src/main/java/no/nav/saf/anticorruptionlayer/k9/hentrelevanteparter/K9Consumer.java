@@ -24,8 +24,6 @@ import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 
-// Ved evt overgang til WebClient, pass på proxy og kubernetes service discover endpoint url
-// Kan hende den forsøker kalle med webproxy pga endepunkt ikke ligger inne i default noProxy config
 @Component
 public class K9Consumer {
 	private static final String K9_INSTANCE = "k9sak";

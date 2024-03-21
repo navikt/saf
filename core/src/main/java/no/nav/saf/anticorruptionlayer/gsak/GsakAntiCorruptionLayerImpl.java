@@ -16,8 +16,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import static no.nav.saf.domain.DomainConstants.AKTOER_ID_LIST;
-import static no.nav.saf.domain.DomainConstants.TIDSSONE_NORGE;
 import static no.nav.saf.domain.DomainConstants.ORGNR_LIST;
+import static no.nav.saf.domain.DomainConstants.TIDSSONE_NORGE;
 
 @Slf4j
 @Component
@@ -48,7 +48,7 @@ class GsakAntiCorruptionLayerImpl implements GsakAntiCorruptionLayer {
 
 			return mapToArkivsak(gsakSakerToFiltered);
 		} catch (Exception e) {
-			log.warn("Klarte ikke hente gsaker for aktoerId={}", aktoerIder, e);
+			log.warn("Klarte ikke hente gsaker for aktoerId", e);
 			return new ArrayList<>();
 		}
 	}
@@ -85,7 +85,7 @@ class GsakAntiCorruptionLayerImpl implements GsakAntiCorruptionLayer {
 
 			return mapToArkivsak(gsakConsumer.hentSakerByAktoerId(aktoerId));
 		} catch (Exception e) {
-			log.warn("Klarte ikke hente gsaker for aktoerId={}", aktoerId, e);
+			log.warn("Klarte ikke hente gsaker for aktoerId", e);
 			return new ArrayList<>();
 		}
 	}
