@@ -11,8 +11,6 @@ spec:
       value: {{ ABAC_PDP_ENDPOINT_URL }}
     - name: SAK_SAKER_URL
       value: {{ SAK_SAKER_URL }}
-    - name: FPSAK_URL
-      value: {{ FPSAK_URL }}
     - name: K9SAK_URL
       value: {{ K9SAK_URL }}
     - name: SPRINGDOC_ENABLED
@@ -43,6 +41,10 @@ spec:
       value: {{SAF_ENDPOINTS_DOKARKIV_URL}}
     - name: SAF_ENDPOINTS_DOKARKIV_SCOPE
       value: {{SAF_ENDPOINTS_DOKARKIV_SCOPE}}
+    - name: SAF_ENDPOINTS_FPSAK_URL
+      value: {{SAF_ENDPOINTS_FPSAK_URL}}
+    - name: SAF_ENDPOINTS_FPSAK_SCOPE
+      value: {{SAF_ENDPOINTS_FPSAK_SCOPE}}
     - name: SAF_ENDPOINTS_HR_NAV_URL
       value: {{SAF_ENDPOINTS_HR_NAV_URL}}
     - name: RESTSECURITYTOKENSERVICE_URL

@@ -48,6 +48,12 @@ public class SafProperties {
 		 */
 		@NotNull
 		private AzureEndpoint dokarkiv;
+
+		/**
+		 * Url og scope til fpsak PIP
+		 */
+		@NotNull
+		private AzureEndpoint fpsak;
 	}
 
 	@Data
