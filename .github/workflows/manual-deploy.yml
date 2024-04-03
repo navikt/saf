@@ -12,8 +12,11 @@ on:
         type: choice
         options:
           - p
+          - q0
           - q1
           - q2
+          - q4
+          - q5
       ref_name:
         description: 'Git ref_name. branch or tag'
         required: true
