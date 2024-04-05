@@ -67,6 +67,7 @@ import static org.apache.commons.lang3.StringUtils.trim;
 public class ArkivJournalpostMapper {
 	static final String FILTYPE_PDF = "PDF";
 	static final String FILTYPE_PDFA = "PDFA";
+	public static final String ARKIVJOURNALPOST_OVERSTYRTINNSYN_STANDARD = "BRUK_STANDARDREGLER";
 
 	public static Journalpost mapJournalpost(ArkivJournalpost arkivJournalpost, RequestCache requestCache) {
 		if (arkivJournalpost == null) {
@@ -103,7 +104,7 @@ public class ArkivJournalpostMapper {
 				.relevanteDatoer(mapRelevanteDatoer(arkivJournalpost))
 				.tilleggsopplysninger(mapTilleggsopplysninger(arkivJournalpost))
 				.antallRetur(mapAntallRetur(arkivJournalpost))
-				.overstyrinnsynsregler(arkivJournalpost.innsyn() == null ? "STANDARD_REGLER" : arkivJournalpost.innsyn())
+				.overstyrinnsynsregler(arkivJournalpost.innsyn() == null ? ARKIVJOURNALPOST_OVERSTYRTINNSYN_STANDARD : arkivJournalpost.innsyn())
 				.overstyrinnsynsreglerNavn(arkivJournalpost.innsynsbeskrivelse())
 				.eksternReferanseId(arkivJournalpost.kanalreferanseId())
 				.utsendingsinfo(mapUtsendingsInfo(arkivJournalpost))

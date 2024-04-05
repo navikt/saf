@@ -65,7 +65,7 @@ import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostTestObjects.A
 import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostTestObjects.ARKIVJOURNALPOST_LEST_DATO;
 import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostTestObjects.ARKIVJOURNALPOST_MOTTAT_DATO;
 import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostTestObjects.ARKIVJOURNALPOST_OPPRETTET_AV_NAVN;
-import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostTestObjects.ARKIVJOURNALPOST_OVERSTYRTINNSYN_STANDARD;
+import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostMapper.ARKIVJOURNALPOST_OVERSTYRTINNSYN_STANDARD;
 import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostTestObjects.ARKIVJOURNALPOST_SENDT_PRINT_DATO;
 import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostTestObjects.ARKIVSAKRELASJON_FAGSYSTEM;
 import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostTestObjects.ARKIVSAKSRELASJON_SAK_ID;

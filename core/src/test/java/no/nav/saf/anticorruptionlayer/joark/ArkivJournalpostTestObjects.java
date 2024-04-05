@@ -77,7 +77,6 @@ public class ArkivJournalpostTestObjects {
 	static final String FILTYPE_1 = "PDFA";
 	static final String FILTYPE_2 = "PDF";
 	static final String ARKIVDOKUMENTINFO_TITTEL = "NAV 10-07.34 Tilskudd ved kjøp av briller til barn";
-	static final String ARKIVJOURNALPOST_OVERSTYRTINNSYN_STANDARD = "STANDARD_REGLER";
 
 
 	static ArkivJournalpost utgaaendeArkivJournalpost(JournalStatusCode journalStatusCode, ArkivUtsendingsInfo arkivUtsendingsInfo, UtsendingsKanalCode kanalCode) {
