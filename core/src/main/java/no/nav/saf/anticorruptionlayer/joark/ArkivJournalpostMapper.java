@@ -103,6 +103,8 @@ public class ArkivJournalpostMapper {
 				.relevanteDatoer(mapRelevanteDatoer(arkivJournalpost))
 				.tilleggsopplysninger(mapTilleggsopplysninger(arkivJournalpost))
 				.antallRetur(mapAntallRetur(arkivJournalpost))
+				.overstyrinnsynsregler(arkivJournalpost.innsyn() == null ? "STANDARD_REGLER" : arkivJournalpost.innsyn())
+				.overstyrinnsynsreglerNavn(arkivJournalpost.innsynsbeskrivelse())
 				.eksternReferanseId(arkivJournalpost.kanalreferanseId())
 				.utsendingsinfo(mapUtsendingsInfo(arkivJournalpost))
 				.build();

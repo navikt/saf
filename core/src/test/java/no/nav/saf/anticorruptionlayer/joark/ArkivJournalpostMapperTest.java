@@ -65,6 +65,7 @@ import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostTestObjects.A
 import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostTestObjects.ARKIVJOURNALPOST_LEST_DATO;
 import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostTestObjects.ARKIVJOURNALPOST_MOTTAT_DATO;
 import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostTestObjects.ARKIVJOURNALPOST_OPPRETTET_AV_NAVN;
+import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostTestObjects.ARKIVJOURNALPOST_OVERSTYRTINNSYN_STANDARD;
 import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostTestObjects.ARKIVJOURNALPOST_SENDT_PRINT_DATO;
 import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostTestObjects.ARKIVSAKRELASJON_FAGSYSTEM;
 import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostTestObjects.ARKIVSAKSRELASJON_SAK_ID;
@@ -151,6 +152,7 @@ class ArkivJournalpostMapperTest {
 						new RelevantDato(ARKIVJOURNALPOST_SENDT_PRINT_DATO, DATO_SENDT_PRINT),
 						new RelevantDato(ARKIVJOURNALPOST_EKSPEDERT_DATO, DATO_EKSPEDERT),
 						new RelevantDato(ARKIVJOURNALPOST_LEST_DATO, DATO_LEST));
+		assertThat(journalpost.getOverstyrinnsynsregler()).isEqualTo(ARKIVJOURNALPOST_OVERSTYRTINNSYN_STANDARD);
 		assertThat(journalpost.getUtsendingsinfo().getFysiskpostSendt().getAdressetekstKonvolutt()).isEqualTo(FORVENTET_ADRESSETEKST_KONVOLUTT);
 	}
 
