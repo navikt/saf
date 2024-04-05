@@ -235,6 +235,11 @@
       "cluster": "prod-gcp"
     },
     {
+      "app": "eux-journalarkivar",
+      "namespace": "eessibasis",
+      "cluster": "prod-gcp"
+    },
+    {
       "app": "eessi-pensjon-fagmodul",
       "namespace": "eessipensjon",
       "cluster": "prod-gcp"

@@ -264,6 +264,11 @@
       "cluster": "dev-gcp"
     },
     {
+      "app": "eux-journalarkivar-q1",
+      "namespace": "eessibasis",
+      "cluster": "dev-gcp"
+    },
+    {
       "app": "bidrag-dokument-arkiv",
       "namespace": "bidrag",
       "cluster": "dev-fss",
