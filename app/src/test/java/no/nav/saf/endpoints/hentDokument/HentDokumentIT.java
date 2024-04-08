@@ -320,7 +320,7 @@ class HentDokumentIT extends AbstractItest {
 	}
 
 	@Test
-	void shouldGetUnauthorizedFromPep1g() {
+	void shouldGetForbiddenFromPep1g() {
 		abacDenyPep1g();
 		stubDokarkivJournalpost("journalpost-dokumentinfo-gsak-happy.json");
 
@@ -331,7 +331,7 @@ class HentDokumentIT extends AbstractItest {
 	}
 
 	@Test
-	void shouldGetUnauthorizedFromPep2() {
+	void shouldGetForbiddenFromPep2() {
 		abacDenyPep2();
 		stubDokarkivJournalpost("journalpost-dokumentinfo-gsak-tema-far.json");
 
@@ -343,7 +343,7 @@ class HentDokumentIT extends AbstractItest {
 
 	@Test
 	@DisplayName("Skal ikke hente farskap dokument hvis journalpost ikke har sakstilknytning eller bruker")
-	void shouldGetUnauthorizedFromPep2WhenMidlertidigJournalpost() {
+	void shouldGetForbiddenFromPep2WhenMidlertidigJournalpost() {
 		abacDenyPep2MidlertidigJournalpost();
 		stubDokarkivJournalpost("journalpost-dokumentinfo-gsak-midlertidig-ingen-bruker-tema-far.json");
 
@@ -354,7 +354,7 @@ class HentDokumentIT extends AbstractItest {
 	}
 
 	@Test
-	void shouldGetUnauthorizedFromPep2d() {
+	void shouldGetForbiddenFromPep2d() {
 		abacDenyPep2d();
 		stubHappyBisysSak();
 		stubDokarkivJournalpost("journalpost-dokumentinfo-gsak-tema-bid.json");
@@ -366,7 +366,7 @@ class HentDokumentIT extends AbstractItest {
 	}
 
 	@Test
-	void shouldGetUnauthorizedFromPep3() {
+	void shouldGetForbiddenFromPep3() {
 		abacDenyPep3SkipPep2dAndPep2();
 		stubHappyBisysSak();
 		stubDokarkivJournalpost("journalpost-dokumentinfo-gsak-tema-bid.json");
@@ -378,7 +378,7 @@ class HentDokumentIT extends AbstractItest {
 	}
 
 	@Test
-	void shouldGetUnauthorizedFromPep4WhenJournalstatusUtgaar() {
+	void shouldGetForbiddenFromPep4WhenJournalstatusUtgaar() {
 		abacDenyPep4SkipPep2OrPep3();
 		stubHappyBisysSak();
 		stubDokarkivJournalpost("journalpost-dokumentinfo-gsak-tema-bid-utgaar.json");
@@ -390,7 +390,7 @@ class HentDokumentIT extends AbstractItest {
 	}
 
 	@Test
-	void shouldGetUnauthorizedFromPep4WhenJournalpostSkjermet() {
+	void shouldGetForbiddenFromPep4WhenJournalpostSkjermet() {
 		abacDenyPep4SkipPep2OrPep3();
 		stubHappyBisysSak();
 		stubDokarkivJournalpost("journalpost-dokumentinfo-gsak-tema-bid-journalpost-skjerming.json");
@@ -402,7 +402,7 @@ class HentDokumentIT extends AbstractItest {
 	}
 
 	@Test
-	void shouldGetUnauthorizedFromPep5WhenDokumentinfoSkjermet() {
+	void shouldGetForbiddenFromPep5WhenDokumentinfoSkjermet() {
 		abacDenyPep5SkipPep4();
 		stubHappyBisysSak();
 		stubDokarkivJournalpost("journalpost-dokumentinfo-gsak-tema-bid-dokumentinfo-skjerming.json");
@@ -414,7 +414,7 @@ class HentDokumentIT extends AbstractItest {
 	}
 
 	@Test
-	void shouldGetUnauthorizedFromPep6d() {
+	void shouldGetForbiddenFromPep6d() {
 		abacDenyPep6dSkipPep2Pep4Pep5();
 		stubHappyHentDokument();
 		stubHappyBisysSak();
@@ -427,7 +427,7 @@ class HentDokumentIT extends AbstractItest {
 	}
 
 	@Test
-	void shouldGetUnauthorizedFromPep7dWhenTemaForeldrepenger() {
+	void shouldGetForbiddenFromPep7dWhenTemaForeldrepenger() {
 		abacDenyPep7dSkipPep2Pep3Pep4Pep5Pep6d();
 		stubDokarkivJournalpost("journalpost-dokumentinfo-gsak-tema-for.json");
 		stubFor(get("/fpsak?saksnummer=FOR2000")
@@ -443,7 +443,7 @@ class HentDokumentIT extends AbstractItest {
 	}
 
 	@Test
-	void shouldGetUnauthorizedFromPep7dWhenK9TemaFri() {
+	void shouldGetForbiddenFromPep7dWhenK9TemaFri() {
 		abacDenyPep7dSkipPep2Pep3Pep4Pep5Pep6d();
 		stubDokarkivJournalpost("journalpost-dokumentinfo-gsak-tema-fri.json");
 		stubFor(get("/k9sak?saksnummer=K92000")
@@ -459,7 +459,7 @@ class HentDokumentIT extends AbstractItest {
 	}
 
 	@Test
-	void shouldGetUnauthorizedFromPep7ForK9TemaOms() {
+	void shouldGetForbiddenFromPep7ForK9TemaOms() {
 		abacDenyPep7dSkipPep2Pep3Pep4Pep5Pep6d();
 		stubDokarkivJournalpost("journalpost-dokumentinfo-gsak-tema-oms.json");
 		stubFor(get("/k9sak?saksnummer=K92000")

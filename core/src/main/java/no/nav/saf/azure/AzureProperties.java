@@ -18,4 +18,5 @@ public record AzureProperties(
 	public static final String CLIENT_REGISTRATION_DOKARKIV = "azure-dokarkiv";
 	public static final String CLIENT_REGISTRATION_PDL = "azure-pdl";
 	public static final String CLIENT_REGISTRATION_PENSJON = "azure-pensjon";
+	public static final String CLIENT_REGISTRATION_FPSAK = "azure-fpsak";
 }

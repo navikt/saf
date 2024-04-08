@@ -13,7 +13,6 @@ import no.nav.saf.anticorruptionlayer.joark.safintern.journalpost.ArkivJournalpo
 import no.nav.saf.config.SafProperties;
 import no.nav.saf.exceptions.DokumentIkkeFunnetException;
 import no.nav.saf.exceptions.JournalpostIkkeFunnetException;
-import no.nav.saf.exceptions.NginxException;
 import no.nav.saf.exceptions.SafFunctionalException;
 import no.nav.saf.exceptions.SafTechnicalException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +30,6 @@ import static no.nav.saf.azure.AzureProperties.CLIENT_REGISTRATION_DOKARKIV;
 import static no.nav.saf.headers.NavHeaders.NAV_CALLID;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.http.MediaType.APPLICATION_PDF;
-import static org.springframework.http.MediaType.TEXT_HTML;
 import static org.springframework.security.oauth2.client.web.reactive.function.client.ServerOAuth2AuthorizedClientExchangeFilterFunction.clientRegistrationId;
 
 @Slf4j
@@ -92,7 +90,6 @@ public class DokarkivConsumer {
 	private Consumer<Throwable> handleErrorHentDokument(String dokumentInfoId, String variantFormat) {
 		return error -> {
 			if (error instanceof WebClientResponseException.NotFound notFound) {
-				handleMidlertidigNginxError(notFound);
 				throw new DokumentIkkeFunnetException(format("Dokument med dokumentInfoId=%s, variantFormat=%s ikke funnet. feilmelding=%s",
 						dokumentInfoId, variantFormat, error.getMessage()));
 			}
@@ -130,7 +127,6 @@ public class DokarkivConsumer {
 	private Consumer<Throwable> handleErrorJournalpostById(String journalpostId) {
 		return error -> {
 			if (error instanceof WebClientResponseException.NotFound notFound) {
-				handleMidlertidigNginxError(notFound);
 				throw new JournalpostIkkeFunnetException("Journalpost med journalpostId=" + journalpostId + " ikke funnet.");
 			}
 			throw new SafTechnicalException("Henting av journalpostId=" + journalpostId + " feilet med ukjent teknisk feil.", error);
@@ -159,7 +155,6 @@ public class DokarkivConsumer {
 	private Consumer<Throwable> handleErrorJournalpostByEksternReferanseId(String eksternReferanseId) {
 		return error -> {
 			if (error instanceof WebClientResponseException.NotFound notFound) {
-				handleMidlertidigNginxError(notFound);
 				throw new JournalpostIkkeFunnetException("Journalpost med eksternReferanseId=" + eksternReferanseId + " ikke funnet.");
 			}
 			throw new SafTechnicalException("Henting av eksternReferanseId=" + eksternReferanseId + " feilet med ukjent teknisk feil.", error);
@@ -188,7 +183,6 @@ public class DokarkivConsumer {
 	private Consumer<Throwable> handleErrorJournalpostByIdAndDokumentInfoId(String journalpostId, String dokumentInfoId) {
 		return error -> {
 			if (error instanceof WebClientResponseException.NotFound notFound) {
-				handleMidlertidigNginxError(notFound);
 				throw new DokumentIkkeFunnetException(format("Journalpost med journalpostId=%s, dokumentInfoId=%s ikke funnet i Joark.",
 						journalpostId, dokumentInfoId));
 			}
@@ -202,16 +196,5 @@ public class DokarkivConsumer {
 				}
 			}
 		};
-	}
-
-	private static void handleMidlertidigNginxError(WebClientResponseException.NotFound notFound) {
-		String responseBody = notFound.getResponseBodyAs(String.class);
-		if (isNginxResponse(notFound, responseBody)) {
-			throw new NginxException("Midlertidig feil mot nginx loadbalancer. Forsøker retry", notFound);
-		}
-	}
-
-	private static boolean isNginxResponse(WebClientResponseException.NotFound notFound, String responseBody) {
-		return responseBody != null && responseBody.contains("nginx") && TEXT_HTML.equals(notFound.getHeaders().getContentType());
 	}
 }

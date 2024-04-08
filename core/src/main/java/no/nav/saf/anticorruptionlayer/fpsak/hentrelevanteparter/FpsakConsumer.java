@@ -1,73 +1,64 @@
 package no.nav.saf.anticorruptionlayer.fpsak.hentrelevanteparter;
 
-import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
-import no.nav.saf.anticorruptionlayer.sts.StsRestConsumer;
+import io.github.resilience4j.circuitbreaker.CircuitBreaker;
+import io.github.resilience4j.circuitbreaker.CircuitBreakerRegistry;
+import io.github.resilience4j.reactor.circuitbreaker.operator.CircuitBreakerOperator;
+import no.nav.saf.config.SafProperties;
 import no.nav.saf.exceptions.SafFunctionalException;
 import no.nav.saf.exceptions.SafTechnicalException;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.ResponseEntity;
-import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 
-import java.time.Duration;
 import java.util.List;
+import java.util.function.Consumer;
 
-import static java.time.Duration.ofSeconds;
+import static no.nav.saf.azure.AzureProperties.CLIENT_REGISTRATION_FPSAK;
 import static no.nav.saf.cache.LokalCacheConfig.FPSAK_RELEVANTE_PARTER_BY_SAKID_CACHE;
-import static org.springframework.http.HttpMethod.GET;
-import static org.springframework.http.HttpStatus.BAD_REQUEST;
-import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
-import static org.springframework.http.HttpStatus.OK;
-import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.security.oauth2.client.web.reactive.function.client.ServerOAuth2AuthorizedClientExchangeFilterFunction.clientRegistrationId;
 
 @Component
 public class FpsakConsumer {
 	private static final String FPSAK_INSTANCE = "fpsak";
 
-	private final String fpsakUrl;
-	private final RestTemplate restTemplate;
-	private final StsRestConsumer stsRestConsumer;
+	private final WebClient webClient;
+	private final CircuitBreaker circuitBreaker;
 
-	public FpsakConsumer(RestTemplateBuilder restTemplateBuilder,
-						 ClientHttpRequestFactory clientHttpRequestFactory,
-						 @Value("${fpsak.url}") String fpsakUrl,
-						 StsRestConsumer stsRestConsumer) {
-		this.fpsakUrl = fpsakUrl;
-		this.restTemplate = restTemplateBuilder
-				.requestFactory(() -> clientHttpRequestFactory)
+	public FpsakConsumer(WebClient webClient,
+						 CircuitBreakerRegistry circuitBreakerRegistry,
+						 SafProperties safProperties) {
+		this.webClient = webClient.mutate()
+				.baseUrl(safProperties.getEndpoints().getFpsak().getUrl())
 				.build();
-		this.stsRestConsumer = stsRestConsumer;
+		this.circuitBreaker = circuitBreakerRegistry.circuitBreaker(FPSAK_INSTANCE);
 	}
 
-	@CircuitBreaker(name = FPSAK_INSTANCE)
 	@Cacheable(cacheNames = FPSAK_RELEVANTE_PARTER_BY_SAKID_CACHE, key = "#sakId")
 	public List<String> hentAktoerForSak(final String sakId) {
-		HttpHeaders headers = createHeaders();
-		ResponseEntity<List<String>> response = restTemplate.exchange(fpsakUrl + "?saksnummer=" + sakId, GET, new HttpEntity<>(headers), new ParameterizedTypeReference<>() {
-		});
-
-		if (OK.equals(response.getStatusCode())) {
-			return response.getBody();
-		} else if (BAD_REQUEST.equals(response.getStatusCode()) && response.getBody() != null) {
-			throw new SafFunctionalException(String.format("hentAktoerForSak feilet funksjonelt. Feilmelding: %s", response.getBody()), response.getStatusCode());
-		} else if (UNAUTHORIZED.equals(response.getStatusCode())) {
-			throw new SafTechnicalException("hentAktoerForSak feilet teknisk. Tilgang avvist.", response.getStatusCode());
-		} else {
-			throw new SafTechnicalException("hentAktoerForSak feilet med ukjent feil i FpsakConsumer.", response.getStatusCode());
-		}
+		return webClient.get()
+				.uri(uriBuilder -> uriBuilder.queryParam("saksnummer", sakId).build())
+				.accept(APPLICATION_JSON)
+				.attributes(clientRegistrationId(CLIENT_REGISTRATION_FPSAK))
+				.retrieve()
+				.bodyToMono(new ParameterizedTypeReference<List<String>>() {
+				})
+				.doOnError(handleErrors(sakId))
+				.transformDeferred(CircuitBreakerOperator.of(circuitBreaker))
+				.block();
 	}
 
-	private HttpHeaders createHeaders() {
-		HttpHeaders headers = new HttpHeaders();
-		headers.setContentType(APPLICATION_JSON);
-		headers.setBearerAuth(stsRestConsumer.getStsToken().getAccess_token());
-		return headers;
+	private Consumer<Throwable> handleErrors(final String sakId) {
+		return error -> {
+			if (error instanceof WebClientResponseException webException) {
+				if (webException.getStatusCode().is4xxClientError()) {
+					throw new SafFunctionalException("Klarte ikke hente fpsak for sakId=" + sakId + ", feilmelding=" + webException.getResponseBodyAsString(), webException.getStatusCode());
+				} else {
+					throw new SafTechnicalException("Klarte ikke hente fpsak for sakId=" + sakId + ", feilmelding=" + webException.getResponseBodyAsString(), webException.getStatusCode());
+				}
+			}
+		};
 	}
 }
