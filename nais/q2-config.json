@@ -348,12 +348,14 @@
     {
       "app": "melosys-q1",
       "namespace": "teammelosys",
-      "cluster": "dev-fss"
+      "cluster": "dev-fss",
+      "roles": ["tema_med", "tema_ufm", "tema_try"]
     },
     {
       "app": "melosys",
       "namespace": "teammelosys",
-      "cluster": "dev-fss"
+      "cluster": "dev-fss",
+      "roles": ["tema_med", "tema_ufm", "tema_try"]
     },
     {
       "app": "syk-dig-backend",
