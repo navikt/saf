@@ -517,7 +517,7 @@
       "app": "mottak",
       "namespace": "aap",
       "cluster": "dev-gcp",
-      "roles": ["tema_aap" ]
+      "roles": ["tema_aap"]
     }
   ]
 }
