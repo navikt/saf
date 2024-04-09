@@ -241,6 +241,11 @@
       "cluster": "dev-gcp"
     },
     {
+      "app": "eux-journalarkivar-q2",
+      "namespace": "eessibasis",
+      "cluster": "dev-gcp"
+    },
+    {
       "app": "eessi-pensjon-fagmodul-q2",
       "namespace": "eessipensjon",
       "cluster": "dev-gcp"
@@ -343,12 +348,14 @@
     {
       "app": "melosys-q1",
       "namespace": "teammelosys",
-      "cluster": "dev-fss"
+      "cluster": "dev-fss",
+      "roles": ["tema_med", "tema_ufm", "tema_try"]
     },
     {
       "app": "melosys",
       "namespace": "teammelosys",
-      "cluster": "dev-fss"
+      "cluster": "dev-fss",
+      "roles": ["tema_med", "tema_ufm", "tema_try"]
     },
     {
       "app": "syk-dig-backend",
@@ -517,7 +524,8 @@
     {
       "app": "mottak",
       "namespace": "aap",
-      "cluster": "dev-gcp"
+      "cluster": "dev-gcp",
+      "roles": ["tema_aap"]
     }
   ]
 }
