@@ -301,7 +301,7 @@ type Journalpost {
     overstyrinnsynsregler: String!
 
     # Menneskevennlig beskrivelse av aktuell overstyrende innsynsregel. Kun satt om innsyn er overstyrt.
-    overstyrinnsynsreglerNavn: String
+    overstyrinnsynsreglerBeskrivelse: String!
 
     # Liste over fagspesifikke metadata som er tilknyttet journalpost.
     tilleggsopplysninger: [Tilleggsopplysning]
