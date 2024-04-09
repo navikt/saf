@@ -68,6 +68,7 @@ public class ArkivJournalpostMapper {
 	static final String FILTYPE_PDF = "PDF";
 	static final String FILTYPE_PDFA = "PDFA";
 	public static final String ARKIVJOURNALPOST_OVERSTYRTINNSYN_STANDARD = "BRUK_STANDARDREGLER";
+	public static final String ARKIVJOURNALPOST_OVERSTYRTINNSYN_STANDARD_BESKRIVELSE = "Standardreglene avgjør om dokumentet vises";
 
 	public static Journalpost mapJournalpost(ArkivJournalpost arkivJournalpost, RequestCache requestCache) {
 		if (arkivJournalpost == null) {
@@ -105,7 +106,7 @@ public class ArkivJournalpostMapper {
 				.tilleggsopplysninger(mapTilleggsopplysninger(arkivJournalpost))
 				.antallRetur(mapAntallRetur(arkivJournalpost))
 				.overstyrinnsynsregler(arkivJournalpost.innsyn() == null ? ARKIVJOURNALPOST_OVERSTYRTINNSYN_STANDARD : arkivJournalpost.innsyn())
-				.overstyrinnsynsreglerNavn(arkivJournalpost.innsynsbeskrivelse())
+				.overstyrinnsynsreglerBeskrivelse(arkivJournalpost.innsynsbeskrivelse() == null ? ARKIVJOURNALPOST_OVERSTYRTINNSYN_STANDARD_BESKRIVELSE : arkivJournalpost.innsynsbeskrivelse())
 				.eksternReferanseId(arkivJournalpost.kanalreferanseId())
 				.utsendingsinfo(mapUtsendingsInfo(arkivJournalpost))
 				.build();

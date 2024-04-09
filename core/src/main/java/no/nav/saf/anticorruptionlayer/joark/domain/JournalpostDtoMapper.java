@@ -3,7 +3,6 @@ package no.nav.saf.anticorruptionlayer.joark.domain;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.BrukerTypeCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.FagomradeCode;
-import no.nav.saf.anticorruptionlayer.joark.domain.kode.FagsystemCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.JournalpostTypeCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.Sakstype;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.dto.BrukerDto;
@@ -41,6 +40,8 @@ import java.util.stream.Collectors;
 
 import static java.lang.Integer.valueOf;
 import static java.util.Objects.nonNull;
+import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostMapper.ARKIVJOURNALPOST_OVERSTYRTINNSYN_STANDARD;
+import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostMapper.ARKIVJOURNALPOST_OVERSTYRTINNSYN_STANDARD_BESKRIVELSE;
 import static no.nav.saf.anticorruptionlayer.joark.domain.kode.JournalpostTypeCode.U;
 import static no.nav.saf.cache.KeyGeneratorLocalCaching.getKeyForPep2d;
 import static no.nav.saf.cache.KeyGeneratorLocalCaching.getKeyForPep5;
@@ -55,7 +56,6 @@ import static org.apache.commons.lang3.StringUtils.trim;
 @Component
 public class JournalpostDtoMapper {
 	private final AvsenderMottakerMapper avsenderMottakerMapper = new AvsenderMottakerMapper();
-	private final UtsendingsInfoMapper utsendingsInfoMapper = new UtsendingsInfoMapper();
 	static final String FILTYPE_PDF = "PDF";
 	static final String FILTYPE_PDFA = "PDFA";
 
@@ -96,6 +96,8 @@ public class JournalpostDtoMapper {
 				.tilleggsopplysninger(mapTilleggsopplysninger(journalpostDto))
 				.antallRetur(mapAntallRetur(journalpostDto))
 				.eksternReferanseId(journalpostDto.getKanalReferanseId())
+				.overstyrinnsynsregler(journalpostDto.getInnsyn() == null ? ARKIVJOURNALPOST_OVERSTYRTINNSYN_STANDARD : journalpostDto.getInnsyn())
+				.overstyrinnsynsreglerBeskrivelse(journalpostDto.getInnsynbeskrivelse() == null ? ARKIVJOURNALPOST_OVERSTYRTINNSYN_STANDARD_BESKRIVELSE : journalpostDto.getInnsynbeskrivelse())
 				.utsendingsinfo(getUtgaaendeJournalpostUtsendingsInfo(journalpostDto))
 				.build();
 		List<DokumentInfo> dokumenter = journalpostDto.getDokumenter().stream()
