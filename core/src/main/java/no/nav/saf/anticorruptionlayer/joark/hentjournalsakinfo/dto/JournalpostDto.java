@@ -55,6 +55,8 @@ public class JournalpostDto {
 	private String antallRetur;
 	private String kanalReferanseId;
 	private UtsendingsInfoDto utsendingsInfo;
+	private String innsyn;
+	private String innsynbeskrivelse;
 
 	public boolean isTilknyttetSak() {
 		return saksrelasjon != null && saksrelasjon.getSakId() != null;

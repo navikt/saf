@@ -27,6 +27,8 @@ public class Journalpost {
 	Bruker bruker;
 	AvsenderMottaker avsenderMottaker;
 	Utsendingsinfo utsendingsinfo;
+	String innsynsregel;
+	String innsynsregelBeskrivelse;
 	/**
 	 * @since 4.5.0
 	 * @deprecated Konsumenter bes bruke {@code AvsenderMottaker.id} i stedet. Feltet overvåkes for bruk og vil bli fjernet i fremtiden.

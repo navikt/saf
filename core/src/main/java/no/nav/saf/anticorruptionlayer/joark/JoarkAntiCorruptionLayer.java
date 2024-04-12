@@ -32,6 +32,7 @@ public interface JoarkAntiCorruptionLayer {
 			"opprettetAvNavn",
 			"antallRetur",
 			"innsyn",
+			"innsynsbeskrivelse",
 			"skjerming",
 			"relevanteDatoer",
 			"avsenderMottaker",

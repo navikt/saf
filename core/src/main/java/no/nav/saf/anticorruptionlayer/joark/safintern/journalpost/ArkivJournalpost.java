@@ -22,6 +22,7 @@ public record ArkivJournalpost(
 		String fagomraadenavn,
 		String innhold,
 		String innsyn,
+		String innsynsbeskrivelse,
 		String journalfoerendeEnhet,
 		String journalfoertAvNavn,
 		String kanalreferanseId,
