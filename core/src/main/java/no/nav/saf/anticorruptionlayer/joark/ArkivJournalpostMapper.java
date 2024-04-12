@@ -105,8 +105,8 @@ public class ArkivJournalpostMapper {
 				.relevanteDatoer(mapRelevanteDatoer(arkivJournalpost))
 				.tilleggsopplysninger(mapTilleggsopplysninger(arkivJournalpost))
 				.antallRetur(mapAntallRetur(arkivJournalpost))
-				.overstyrinnsynsregler(arkivJournalpost.innsyn() == null ? ARKIVJOURNALPOST_OVERSTYRTINNSYN_STANDARD : arkivJournalpost.innsyn())
-				.overstyrinnsynsreglerBeskrivelse(arkivJournalpost.innsynsbeskrivelse() == null ? ARKIVJOURNALPOST_OVERSTYRTINNSYN_STANDARD_BESKRIVELSE : arkivJournalpost.innsynsbeskrivelse())
+				.innsynsregel(arkivJournalpost.innsyn() == null ? ARKIVJOURNALPOST_OVERSTYRTINNSYN_STANDARD : arkivJournalpost.innsyn())
+				.innsynsregelBeskrivelse(arkivJournalpost.innsynsbeskrivelse() == null ? ARKIVJOURNALPOST_OVERSTYRTINNSYN_STANDARD_BESKRIVELSE : arkivJournalpost.innsynsbeskrivelse())
 				.eksternReferanseId(arkivJournalpost.kanalreferanseId())
 				.utsendingsinfo(mapUtsendingsInfo(arkivJournalpost))
 				.build();

@@ -152,7 +152,7 @@ class ArkivJournalpostMapperTest {
 						new RelevantDato(ARKIVJOURNALPOST_SENDT_PRINT_DATO, DATO_SENDT_PRINT),
 						new RelevantDato(ARKIVJOURNALPOST_EKSPEDERT_DATO, DATO_EKSPEDERT),
 						new RelevantDato(ARKIVJOURNALPOST_LEST_DATO, DATO_LEST));
-		assertThat(journalpost.getOverstyrinnsynsregler()).isEqualTo(ARKIVJOURNALPOST_OVERSTYRTINNSYN_STANDARD);
+		assertThat(journalpost.getInnsynsregel()).isEqualTo(ARKIVJOURNALPOST_OVERSTYRTINNSYN_STANDARD);
 		assertThat(journalpost.getUtsendingsinfo().getFysiskpostSendt().getAdressetekstKonvolutt()).isEqualTo(FORVENTET_ADRESSETEKST_KONVOLUTT);
 	}
 

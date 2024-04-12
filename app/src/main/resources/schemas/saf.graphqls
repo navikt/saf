@@ -298,10 +298,10 @@ type Journalpost {
     utsendingsinfo: Utsendingsinfo
 
     # Regel for innsyn for denne journalposten. Verdi er "BRUK_STANDARDREGLER" om innsyn ikke er overstyrt.
-    overstyrinnsynsregler: String!
+    innsynsregel: String!
 
-    # Menneskevennlig beskrivelse av aktuell overstyrende innsynsregel. Kun satt om innsyn er overstyrt.
-    overstyrinnsynsreglerBeskrivelse: String!
+    # Menneskevennlig beskrivelse av aktuell innsynsregel.
+    innsynsregelBeskrivelse: String!
 
     # Liste over fagspesifikke metadata som er tilknyttet journalpost.
     tilleggsopplysninger: [Tilleggsopplysning]
