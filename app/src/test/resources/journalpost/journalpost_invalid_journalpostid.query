@@ -80,5 +80,7 @@
                 varslingstekst
             }
         }
+        innsynsregel
+        innsynsregelBeskrivelse
     }
 }

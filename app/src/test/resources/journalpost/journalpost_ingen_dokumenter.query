@@ -72,6 +72,8 @@
                 varslingstidspunkt
             }
         }
+        innsynsregel
+        innsynsregelBeskrivelse
     }
 }
 
