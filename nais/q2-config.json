@@ -251,6 +251,11 @@
       "cluster": "dev-gcp"
     },
     {
+      "app": "eessi-pensjon-fagmodul-q1",
+      "namespace": "eessipensjon",
+      "cluster": "dev-gcp"
+    },
+    {
       "app": "eessi-pensjon-pdl-produsent-q2",
       "namespace": "eessipensjon",
       "cluster": "dev-gcp"
