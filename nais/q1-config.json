@@ -513,6 +513,12 @@
       "app": "dokumentfordeling",
       "namespace": "arbeidsgiver",
       "cluster": "dev-fss"
+    },
+    {
+      "app": "dp-mottak",
+      "namespace": "teamdagpenger",
+      "cluster": "dev-gcp",
+      "roles": ["tema_dag"]
     }
   ]
 }
