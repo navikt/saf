@@ -527,6 +527,11 @@
       "cluster": "dev-gcp"
     },
     {
+      "app": "melosys-eessi",
+      "namespace": "teammelosys",
+      "cluster": "dev-fss"
+    },
+    {
       "app": "mottak",
       "namespace": "aap",
       "cluster": "dev-gcp",
