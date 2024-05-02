@@ -334,6 +334,11 @@
       "cluster": "dev-fss"
     },
     {
+      "app": "melosys-eessi-q1",
+      "namespace": "teammelosys",
+      "cluster": "dev-fss"
+    },
+    {
       "app": "syk-dig-backend",
       "namespace": "teamsykmelding",
       "cluster": "dev-gcp"

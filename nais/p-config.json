@@ -399,6 +399,11 @@
       "roles": ["tema_med", "tema_ufm", "tema_try"]
     },
     {
+      "app": "melosys-eessi",
+      "namespace": "teammelosys",
+      "cluster": "prod-fss"
+    },
+    {
       "app": "k9-sak",
       "namespace": "k9saksbehandling",
       "cluster": "prod-fss",
