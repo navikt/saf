@@ -1,14 +1,17 @@
 package no.nav.saf.hentdokument;
 
 import lombok.extern.slf4j.Slf4j;
+import no.nav.common.audit_log.cef.CefMessage;
+import no.nav.common.audit_log.cef.CefMessageEvent;
+import no.nav.common.audit_log.cef.CefMessageSeverity;
 import no.nav.saf.domain.kode.Tema;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
-import no.nav.saf.exceptions.HentdokumentTilgangskontrollException;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 
-import static no.nav.saf.hentdokument.HentDokumentSporingLogglinje.BESLUTNING_DENY;
-import static no.nav.saf.hentdokument.HentDokumentSporingLogglinje.BESLUTNING_PERMIT;
+import java.time.Instant;
+
+import static no.nav.common.audit_log.cef.AuthorizationDecision.PERMIT;
 
 /**
  * Sporingslogger til nais.audit.
@@ -18,36 +21,45 @@ import static no.nav.saf.hentdokument.HentDokumentSporingLogglinje.BESLUTNING_PE
 class HentDokumentSporbarhetslogger {
 	private static final Tema UKJENT_TEMA = Tema.UKJ;
 	private static final String UKJENT_BRUKERID = "ukjent";
+	private static final String MACHINE_HENT_DOKUMENT_SYSTEM = "hentdokument_system";
+	private static final String MACHINE_HENT_DOKUMENT_SAKSBEHANDLER = "hentdokument_saksbehandler";
+	private static final String HENT_DOKUMENT_SYSTEM = "System hentet dokument som gjelder bruker";
+	private static final String HENT_DOKUMENT_SAKSBEHANDLER = "Saksbehandler hentet dokument som gjelder bruker";
 
-	void logPermit(final String journalpostId, final String dokumentInfoId, final String variantFormat,
-				   TilgangSak tilgangSak, TilgangBruker tilgangBruker, final SafRequestContext safRequestContext) {
-		logAccess(HentDokumentSporingLogglinje.builder()
-				.brukerId(getBrukerId(tilgangBruker))
-				.navIdent(safRequestContext.getUserId())
-				.tilgangsbeslutning(BESLUTNING_PERMIT)
-				.journalpostId(journalpostId)
-				.dokumentInfoId(dokumentInfoId)
-				.variantformat(variantFormat)
-				.tema(getTema(tilgangSak))
-				.build());
+	void logPermit(String journalpostId, String dokumentInfoId, String variantFormat,
+				   HentDokumentTilgang hentDokumentTilgang, SafRequestContext safRequestContext) {
+		String journalpostTittel = hentDokumentTilgang.tilgangJournalpost().getJournalpostTittel();
+		String sourceUserId = safRequestContext.getUserId();
+		CefMessage message = CefMessage.builder()
+				.version(0)
+				.applicationName("joark")
+				.loggerName("saf_hentdokument")
+				.logFormatVersion("1.0")
+				.event(CefMessageEvent.ACCESS)
+				.severity(CefMessageSeverity.INFO)
+				.timeEnded(Instant.now().toEpochMilli())
+				.callId(safRequestContext.getNavCallId())
+				.name(humanReadableAction(safRequestContext))
+				.destinationUserId(getBrukerId(hentDokumentTilgang.tilgangBruker()))
+				.sourceUserId(sourceUserId)
+				.authorizationDecision(PERMIT)
+				.extension("devicePayloadId", safRequestContext.getNavCallId())
+				.extension("act", machineReadableAction(safRequestContext))
+				.flexString(1, "journalpostId", journalpostId)
+				.flexString(2, "dokumentInfoId", dokumentInfoId)
+				.customString(1, "variantformat", variantFormat)
+				.customString(2, "tittel", journalpostTittel != null ? journalpostTittel : "ukjent tittel")
+				.customString(3, "tema", getTema(hentDokumentTilgang.tilgangSak()))
+				.build();
+		log.info(message.toString());
 	}
 
-	void logDeny(final String journalpostId, final String dokumentInfoId, final String variantFormat,
-				 TilgangSak tilgangSak, TilgangBruker tilgangBruker, final SafRequestContext safRequestContext, HentdokumentTilgangskontrollException e) {
-		logAccess(HentDokumentSporingLogglinje.builder()
-				.brukerId(getBrukerId(tilgangBruker))
-				.navIdent(safRequestContext.getUserId())
-				.tilgangsbeslutning(BESLUTNING_DENY)
-				.begrunnelse(e.getDenyReason())
-				.journalpostId(journalpostId)
-				.dokumentInfoId(dokumentInfoId)
-				.variantformat(variantFormat)
-				.tema(getTema(tilgangSak))
-				.build());
+	private String humanReadableAction(SafRequestContext safRequestContext) {
+		return safRequestContext.getSecurityContext().isSystem() ? HENT_DOKUMENT_SYSTEM : HENT_DOKUMENT_SAKSBEHANDLER;
 	}
 
-	private void logAccess(HentDokumentSporingLogglinje hentDokumentSporingLogglinje) {
-		log.info(hentDokumentSporingLogglinje.toString());
+	private String machineReadableAction(SafRequestContext safRequestContext) {
+		return safRequestContext.getSecurityContext().isSystem() ? MACHINE_HENT_DOKUMENT_SYSTEM : MACHINE_HENT_DOKUMENT_SAKSBEHANDLER;
 	}
 
 	private String getTema(TilgangSak tilgangSak) {

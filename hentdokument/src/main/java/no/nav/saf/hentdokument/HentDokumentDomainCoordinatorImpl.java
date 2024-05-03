@@ -74,10 +74,9 @@ class HentDokumentDomainCoordinatorImpl implements HentDokumentDomainCoordinator
 
 		try {
 			doTilgangskontroll(hentDokumentTilgang, safRequestContext);
-			hentDokumentSporbarhetslogger.logPermit(journalpostId, dokumentInfoId, variantFormat, hentDokumentTilgang.tilgangSak(), hentDokumentTilgang.tilgangBruker(), safRequestContext);
+			hentDokumentSporbarhetslogger.logPermit(journalpostId, dokumentInfoId, variantFormat, hentDokumentTilgang, safRequestContext);
 			return hentDokumentAntiCorruptionLayer.hentDokument(dokumentInfoId, variantFormat);
 		} catch (HentdokumentTilgangskontrollException e) {
-			hentDokumentSporbarhetslogger.logDeny(journalpostId, dokumentInfoId, variantFormat, hentDokumentTilgang.tilgangSak(), hentDokumentTilgang.tilgangBruker(), safRequestContext, e);
 			throw e;
 		}
 	}
