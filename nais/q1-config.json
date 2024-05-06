@@ -512,7 +512,8 @@
    {
       "app": "dokumentfordeling",
       "namespace": "arbeidsgiver",
-      "cluster": "dev-fss"
+      "cluster": "dev-fss",
+      "roles": ["tema_til"]
     },
     {
       "app": "dp-mottak",
