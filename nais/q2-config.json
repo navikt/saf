@@ -181,7 +181,8 @@
     {
       "app": "su-se-bakover",
       "namespace": "supstonad",
-      "cluster": "dev-fss"
+      "cluster": "dev-fss",
+      "roles": ["tema_sup"]
     },
     {
       "app": "arena",

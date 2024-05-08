@@ -217,11 +217,6 @@
       "cluster": "dev-gcp"
     },
     {
-      "app": "su-se-bakover",
-      "namespace": "supstonad",
-      "cluster": "dev-fss"
-    },
-    {
       "app": "arena",
       "namespace": "teamarenanais",
       "cluster": "dev-fss",
