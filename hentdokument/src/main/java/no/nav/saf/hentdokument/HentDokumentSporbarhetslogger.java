@@ -47,9 +47,9 @@ class HentDokumentSporbarhetslogger {
 				.extension("act", machineReadableAction(safRequestContext))
 				.flexString(1, "journalpostId", journalpostId)
 				.flexString(2, "dokumentInfoId", dokumentInfoId)
-				.customString(1, "variantformat", variantFormat)
-				.customString(2, "tittel", journalpostTittel != null ? journalpostTittel : "ukjent tittel")
-				.customString(3, "tema", getTema(hentDokumentTilgang.tilgangSak()))
+				.customString(3, "variantformat", variantFormat)
+				.customString(5, "tittel", journalpostTittel != null ? journalpostTittel : "ukjent tittel")
+				.customString(6, "tema", getTema(hentDokumentTilgang.tilgangSak()))
 				.build();
 		log.info(message.toString());
 	}
