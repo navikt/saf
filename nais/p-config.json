@@ -551,6 +551,11 @@
       "namespace": "amt",
       "cluster": "prod-gcp",
       "roles": ["tema_opp"]
+    },
+    {
+      "app": "tiltak-vedtaksbrev",
+      "namespace": "arbeidsgiver",
+      "cluster": "prod-gcp"
     }
   ]
 }

@@ -359,7 +359,7 @@
       "app": "k9-klage",
       "namespace": "k9saksbehandling",
       "cluster": "dev-fss",
-      "roles": ["tema_oms", "tema_fri"]      
+      "roles": ["tema_oms", "tema_fri"]
     },
     {
       "app": "k9-tilbake",
@@ -515,6 +515,11 @@
       "namespace": "teamdagpenger",
       "cluster": "dev-gcp",
       "roles": ["tema_dag"]
+    },
+    {
+      "app": "tiltak-vedtaksbrev",
+      "namespace": "arbeidsgiver",
+      "cluster": "dev-gcp"
     }
   ]
 }
