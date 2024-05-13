@@ -543,6 +543,13 @@
       "namespace": "amt",
       "cluster": "dev-gcp",
       "roles": ["tema_opp"]
-    }
+    },
+    {
+      "app": "tilbakemeldingsmottak-api",
+      "namespace": "teamserviceklage",
+      "cluster": "dev-gcp",
+      "roles": ["tema_ser"]
+    },
+
   ]
 }
