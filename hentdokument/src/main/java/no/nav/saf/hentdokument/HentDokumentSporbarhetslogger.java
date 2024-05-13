@@ -43,7 +43,6 @@ class HentDokumentSporbarhetslogger {
 				.destinationUserId(getBrukerId(hentDokumentTilgang.tilgangBruker()))
 				.sourceUserId(sourceUserId)
 				.authorizationDecision(PERMIT)
-				.extension("devicePayloadId", safRequestContext.getNavCallId())
 				.extension("act", machineReadableAction(safRequestContext))
 				.flexString(1, "journalpostId", journalpostId)
 				.flexString(2, "dokumentInfoId", dokumentInfoId)

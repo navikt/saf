@@ -89,7 +89,7 @@ class HentDokumentIT extends AbstractItest {
 				"suid=" + NAV_IDENT_SAKSBEHANDLER,
 				"cs3=ARKIV",
 				"cs3Label=variantformat",
-				"cs5=Journalposttittel",
+				"cs5=Journalposttittel – med mellomrom? It's more likely than you think",
 				"cs5Label=tittel",
 				"cs6=HJE",
 				"cs6Label=tema",
@@ -98,7 +98,6 @@ class HentDokumentIT extends AbstractItest {
 				"flexString2=" + DOKUMENT_ID,
 				"flexString2Label=dokumentInfoId",
 				"act=hentdokument_saksbehandler",
-				"devicePayloadId=",
 				"sproc=",
 				"end=");
 	}
