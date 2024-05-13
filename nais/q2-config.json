@@ -549,7 +549,6 @@
       "namespace": "teamserviceklage",
       "cluster": "dev-gcp",
       "roles": ["tema_ser"]
-    },
-
+    }
   ]
 }
