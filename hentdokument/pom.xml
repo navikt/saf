@@ -17,6 +17,10 @@
 			<groupId>no.nav.saf</groupId>
 			<artifactId>core</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>no.nav.common</groupId>
+			<artifactId>audit-log</artifactId>
+		</dependency>
 	</dependencies>
 
 </project>

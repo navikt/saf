@@ -1,13 +1,19 @@
 package no.nav.saf.endpoints.hentDokument;
 
+import ch.qos.logback.classic.Logger;
+import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.core.read.ListAppender;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.VariantFormatCode;
 import no.nav.saf.endpoints.AbstractItest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+
+import java.util.List;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
@@ -63,10 +69,37 @@ class HentDokumentIT extends AbstractItest {
 		stubHappyHentDokument();
 		stubDokarkivJournalpost("journalpost-dokumentinfo-gsak-happy.json");
 
+		Logger logger = (Logger) LoggerFactory.getLogger("hentdokument_sporbarhetslogg");
+		ListAppender<ILoggingEvent> listAppender = new ListAppender<>();
+		listAppender.start();
+		logger.addAppender(listAppender);
+
 		ResponseEntity<String> responseEntity = callHentDokument();
 
 		assertOkArkivResponse(responseEntity);
 		verify(getRequestedFor(urlEqualTo("/dokarkiv/hentdokument/" + DOKUMENT_ID + "/" + VARIANTFORMAT)));
+
+		List<String> auditLog = listAppender.list.stream().map(ILoggingEvent::getMessage).toList();
+		assertThat(auditLog).hasSize(1);
+
+		String cefLogLine = auditLog.getFirst();
+		assertThat(cefLogLine).startsWith("CEF:0|joark|saf_hentdokument|1.0|audit:access|Saksbehandler hentet dokument som gjelder bruker|INFO|");
+		assertThat(cefLogLine).contains(
+				"duid=12345678910",
+				"suid=" + NAV_IDENT_SAKSBEHANDLER,
+				"cs3=ARKIV",
+				"cs3Label=variantformat",
+				"cs5=Journalposttittel – med mellomrom? It's more likely than you think",
+				"cs5Label=tittel",
+				"cs6=HJE",
+				"cs6Label=tema",
+				"flexString1=" + JOURNALPOST_ID,
+				"flexString1Label=journalpostId",
+				"flexString2=" + DOKUMENT_ID,
+				"flexString2Label=dokumentInfoId",
+				"act=hentdokument_saksbehandler",
+				"sproc=",
+				"end=");
 	}
 
 	@Test

@@ -194,6 +194,7 @@ class HentDokumentTilgangService {
 		return TilgangJournalpost.builder()
 				.journalpostId(valueOf(journalpostId))
 				.journalstatus(valueOf(arkivJournalpost.status()).toSafJournalstatus())
+				.journalpostTittel(arkivJournalpost.innhold())
 				.skjerming(mapSkjerming(arkivJournalpost.skjerming()))
 				.dokumenter(mapTilgangDokumentInfo(journalpostId, variantFormat, arkivDokumentinfoOpt))
 				.build();

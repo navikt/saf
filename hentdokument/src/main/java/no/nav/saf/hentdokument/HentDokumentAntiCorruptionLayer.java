@@ -15,7 +15,7 @@ import static no.nav.saf.util.MimetypeFileextensionMapper.toFileextension;
 @Slf4j
 @Component
 public class HentDokumentAntiCorruptionLayer {
-	public static final Set<String> HENTDOKUMENT_TILGANG_FIELDS = Set.of("journalpostId", "fagomraade", "status", "skjerming", "bruker", "saksrelasjon", "dokumenter.dokumentInfoId", "dokumenter.skjerming", "dokumenter.fildetaljer");
+	public static final Set<String> HENTDOKUMENT_TILGANG_FIELDS = Set.of("journalpostId", "fagomraade", "status", "skjerming", "bruker", "saksrelasjon", "dokumenter.dokumentInfoId", "dokumenter.skjerming", "dokumenter.fildetaljer", "innhold");
 
 	private final DokarkivConsumer dokarkivConsumer;
 

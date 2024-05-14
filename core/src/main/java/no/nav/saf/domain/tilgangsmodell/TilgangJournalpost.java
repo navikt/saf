@@ -15,15 +15,16 @@ public class TilgangJournalpost {
 	/**
 	 * Attributter brukt for tilgangskontroll
 	 **/
-	private final Journalstatus journalstatus;
-	private final Skjerming skjerming;
-	private final TilgangSak tilgangSak;
+	Journalstatus journalstatus;
+	Skjerming skjerming;
+	TilgangSak tilgangSak;
+	String journalpostTittel;
 	@Builder.Default
-	private final List<TilgangDokumentInfo> dokumenter = new ArrayList<>();
+	List<TilgangDokumentInfo> dokumenter = new ArrayList<>();
 
 	/**
 	 * Attributt brukt for å forenkle kodeflyt
 	 **/
-	private final String journalpostId;
+	String journalpostId;
 
 }

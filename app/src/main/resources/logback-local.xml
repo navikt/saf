@@ -10,7 +10,7 @@
 
 	<appender name="hentdokument_sporbarhetslogg" class="ch.qos.logback.core.ConsoleAppender">
 		<layout class="ch.qos.logback.classic.PatternLayout">
-			<pattern>[%X{callId}] - %m%n</pattern>
+			<pattern>%m%n%xEx</pattern>
 		</layout>
 	</appender>
 
