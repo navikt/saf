@@ -19,6 +19,8 @@ import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.post;
+import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
@@ -107,6 +109,10 @@ class HentDokumentIT extends AbstractItest {
 		abacPermit();
 		stubHappyHentDokument();
 		stubDokarkivJournalpost("journalpost-dokumentinfo-gsak-bruker-organisasjon-og-aktoerid.json");
+		stubFor(post("/pdl")
+				.willReturn(aResponse().withStatus(OK.value())
+						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("pdl/pdl-fagsak-aktoerid-historisk.json")));
 
 		Logger logger = (Logger) LoggerFactory.getLogger("hentdokument_sporbarhetslogg");
 		ListAppender<ILoggingEvent> listAppender = new ListAppender<>();
@@ -117,6 +123,7 @@ class HentDokumentIT extends AbstractItest {
 
 		assertOkArkivResponse(responseEntity);
 		verify(getRequestedFor(urlEqualTo("/dokarkiv/hentdokument/" + DOKUMENT_ID + "/" + VARIANTFORMAT)));
+		verify(postRequestedFor(urlEqualTo("/pdl")));
 
 		List<String> auditLog = listAppender.list.stream().map(ILoggingEvent::getMessage).toList();
 		assertThat(auditLog).hasSize(1);
@@ -124,7 +131,7 @@ class HentDokumentIT extends AbstractItest {
 		String cefLogLine = auditLog.getFirst();
 		assertThat(cefLogLine).startsWith("CEF:0|joark|saf_hentdokument|1.0|audit:access|Saksbehandler hentet dokument som gjelder bruker|INFO|");
 		assertThat(cefLogLine).contains(
-				"duid=ukjent",
+				"duid=11111111111",
 				"suid=" + NAV_IDENT_SAKSBEHANDLER,
 				"cs3=ARKIV",
 				"cs3Label=variantformat",

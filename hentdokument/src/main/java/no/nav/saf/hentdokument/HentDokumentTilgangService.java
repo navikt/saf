@@ -1,6 +1,7 @@
 package no.nav.saf.hentdokument;
 
 import lombok.extern.slf4j.Slf4j;
+import no.nav.saf.anticorruptionlayer.aktoer.PdlAntiCorruptionLayer;
 import no.nav.saf.anticorruptionlayer.bisys.BisysAntiCorruptionLayer;
 import no.nav.saf.anticorruptionlayer.fpsak.FpsakAntiCorruptionLayer;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.SkjermingTypeCode;
@@ -37,6 +38,7 @@ import static no.nav.saf.domain.kode.Arkivsakssystem.GSAK;
 import static no.nav.saf.domain.kode.Arkivsakssystem.PSAK;
 import static no.nav.saf.domain.kode.Tema.PEN;
 import static no.nav.saf.domain.kode.Tema.UFO;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.apache.commons.lang3.StringUtils.trim;
 
 @Slf4j
@@ -47,17 +49,19 @@ class HentDokumentTilgangService {
 	private final BisysAntiCorruptionLayer bisysAntiCorruptionLayer;
 	private final FpsakAntiCorruptionLayer fpsakAntiCorruptionLayer;
 	private final K9AntiCorruptionLayer k9AntiCorruptionLayer;
+	private final PdlAntiCorruptionLayer pdlAntiCorruptionLayerImpl;
 
 	public HentDokumentTilgangService(HentDokumentAntiCorruptionLayer hentDokumentAntiCorruptionLayer,
 									  PensjonSakAntiCorruptionLayer pensjonSakAntiCorruptionLayer,
 									  BisysAntiCorruptionLayer bisysAntiCorruptionLayer,
 									  FpsakAntiCorruptionLayer fpsakAntiCorruptionLayer,
-									  K9AntiCorruptionLayer k9AntiCorruptionLayer) {
+									  K9AntiCorruptionLayer k9AntiCorruptionLayer, PdlAntiCorruptionLayer pdlAntiCorruptionLayer) {
 		this.hentDokumentAntiCorruptionLayer = hentDokumentAntiCorruptionLayer;
 		this.pensjonSakAntiCorruptionLayer = pensjonSakAntiCorruptionLayer;
 		this.bisysAntiCorruptionLayer = bisysAntiCorruptionLayer;
 		this.fpsakAntiCorruptionLayer = fpsakAntiCorruptionLayer;
 		this.k9AntiCorruptionLayer = k9AntiCorruptionLayer;
+		this.pdlAntiCorruptionLayerImpl = pdlAntiCorruptionLayer;
 	}
 
 	HentDokumentTilgang hentDokumentTilgang(String journalpostId, String dokumentInfoId, String variantFormat) {
@@ -90,9 +94,17 @@ class HentDokumentTilgangService {
 		} else {
 			ArkivSak arkivSak = arkivSaksrelasjon.sak();
 			ArkivBruker arkivBruker = arkivJournalpost.bruker();
+			if (isNotBlank(arkivSak.aktoerId())) {
+				if (arkivBruker == null || !arkivBruker.isPerson() || arkivBruker.id() == null) {
+					return pdlAntiCorruptionLayerImpl.hentTilgangBrukerByAktoerId(arkivSak.aktoerId());
+				}
+				return TilgangBruker.builder()
+						.aktoerId(arkivSak.aktoerId())
+						.foedselsnr(arkivBruker.id())
+						.build();
+			}
 			return TilgangBruker.builder()
-					.aktoerId(arkivSak.aktoerId())
-					.orgnummer(arkivSak.aktoerId() == null ? trim(arkivSak.orgNr()) : null)
+					.orgnummer(trim(arkivSak.orgNr()))
 					.foedselsnr(arkivBruker != null && arkivBruker.isPerson() ? arkivBruker.id() : null)
 					.build();
 		}
