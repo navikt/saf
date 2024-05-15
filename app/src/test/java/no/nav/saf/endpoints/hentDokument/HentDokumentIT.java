@@ -20,6 +20,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
+import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
@@ -122,6 +123,7 @@ class HentDokumentIT extends AbstractItest {
 
 		assertOkArkivResponse(responseEntity);
 		verify(getRequestedFor(urlEqualTo("/dokarkiv/hentdokument/" + DOKUMENT_ID + "/" + VARIANTFORMAT)));
+		verify(postRequestedFor(urlEqualTo("/pdl")));
 
 		List<String> auditLog = listAppender.list.stream().map(ILoggingEvent::getMessage).toList();
 		assertThat(auditLog).hasSize(1);

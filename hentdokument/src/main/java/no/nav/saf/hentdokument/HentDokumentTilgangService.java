@@ -38,6 +38,7 @@ import static no.nav.saf.domain.kode.Arkivsakssystem.GSAK;
 import static no.nav.saf.domain.kode.Arkivsakssystem.PSAK;
 import static no.nav.saf.domain.kode.Tema.PEN;
 import static no.nav.saf.domain.kode.Tema.UFO;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.apache.commons.lang3.StringUtils.trim;
 
 @Slf4j
@@ -65,17 +66,10 @@ class HentDokumentTilgangService {
 
 	HentDokumentTilgang hentDokumentTilgang(String journalpostId, String dokumentInfoId, String variantFormat) {
 		ArkivJournalpost arkivJournalpost = hentDokumentAntiCorruptionLayer.hentDokumentTilgang(journalpostId, dokumentInfoId);
-		TilgangBruker tilgangBruker = enrichTilgangBrukerFromPDLIfNeeded(mapTilgangBruker(arkivJournalpost));
+		TilgangBruker tilgangBruker = mapTilgangBruker(arkivJournalpost);
 		TilgangSak tilgangSak = mapTilgangSak(tilgangBruker, arkivJournalpost);
 		TilgangJournalpost tilgangJournalpost = mapTilgangJournalpost(variantFormat, arkivJournalpost);
 		return new HentDokumentTilgang(tilgangBruker, tilgangSak, tilgangJournalpost);
-	}
-
-	private TilgangBruker enrichTilgangBrukerFromPDLIfNeeded(TilgangBruker tilgangBruker) {
-		if (tilgangBruker != null && tilgangBruker.isPerson() && tilgangBruker.getFoedselsnr() == null) {
-			return pdlAntiCorruptionLayerImpl.hentTilgangBrukerByAktoerId(tilgangBruker.getAktoerId());
-		}
-		return tilgangBruker;
 	}
 
 	private TilgangBruker mapTilgangBruker(ArkivJournalpost arkivJournalpost) {
@@ -100,9 +94,17 @@ class HentDokumentTilgangService {
 		} else {
 			ArkivSak arkivSak = arkivSaksrelasjon.sak();
 			ArkivBruker arkivBruker = arkivJournalpost.bruker();
+			if (isNotBlank(arkivSak.aktoerId())) {
+				if (arkivBruker == null || !arkivBruker.isPerson() || arkivBruker.id() == null) {
+					return pdlAntiCorruptionLayerImpl.hentTilgangBrukerByAktoerId(arkivSak.aktoerId());
+				}
+				return TilgangBruker.builder()
+						.aktoerId(arkivSak.aktoerId())
+						.foedselsnr(arkivBruker.id())
+						.build();
+			}
 			return TilgangBruker.builder()
-					.aktoerId(arkivSak.aktoerId())
-					.orgnummer(arkivSak.aktoerId() == null ? trim(arkivSak.orgNr()) : null)
+					.orgnummer(trim(arkivSak.orgNr()))
 					.foedselsnr(arkivBruker != null && arkivBruker.isPerson() ? arkivBruker.id() : null)
 					.build();
 		}
