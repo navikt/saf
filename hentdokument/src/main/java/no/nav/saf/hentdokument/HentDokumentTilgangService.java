@@ -1,6 +1,7 @@
 package no.nav.saf.hentdokument;
 
 import lombok.extern.slf4j.Slf4j;
+import no.nav.saf.anticorruptionlayer.aktoer.PdlAntiCorruptionLayer;
 import no.nav.saf.anticorruptionlayer.bisys.BisysAntiCorruptionLayer;
 import no.nav.saf.anticorruptionlayer.fpsak.FpsakAntiCorruptionLayer;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.SkjermingTypeCode;
@@ -47,25 +48,34 @@ class HentDokumentTilgangService {
 	private final BisysAntiCorruptionLayer bisysAntiCorruptionLayer;
 	private final FpsakAntiCorruptionLayer fpsakAntiCorruptionLayer;
 	private final K9AntiCorruptionLayer k9AntiCorruptionLayer;
+	private final PdlAntiCorruptionLayer pdlAntiCorruptionLayerImpl;
 
 	public HentDokumentTilgangService(HentDokumentAntiCorruptionLayer hentDokumentAntiCorruptionLayer,
 									  PensjonSakAntiCorruptionLayer pensjonSakAntiCorruptionLayer,
 									  BisysAntiCorruptionLayer bisysAntiCorruptionLayer,
 									  FpsakAntiCorruptionLayer fpsakAntiCorruptionLayer,
-									  K9AntiCorruptionLayer k9AntiCorruptionLayer) {
+									  K9AntiCorruptionLayer k9AntiCorruptionLayer, PdlAntiCorruptionLayer pdlAntiCorruptionLayer) {
 		this.hentDokumentAntiCorruptionLayer = hentDokumentAntiCorruptionLayer;
 		this.pensjonSakAntiCorruptionLayer = pensjonSakAntiCorruptionLayer;
 		this.bisysAntiCorruptionLayer = bisysAntiCorruptionLayer;
 		this.fpsakAntiCorruptionLayer = fpsakAntiCorruptionLayer;
 		this.k9AntiCorruptionLayer = k9AntiCorruptionLayer;
+		this.pdlAntiCorruptionLayerImpl = pdlAntiCorruptionLayer;
 	}
 
 	HentDokumentTilgang hentDokumentTilgang(String journalpostId, String dokumentInfoId, String variantFormat) {
 		ArkivJournalpost arkivJournalpost = hentDokumentAntiCorruptionLayer.hentDokumentTilgang(journalpostId, dokumentInfoId);
-		TilgangBruker tilgangBruker = mapTilgangBruker(arkivJournalpost);
+		TilgangBruker tilgangBruker = enrichTilgangBrukerFromPDLIfNeeded(mapTilgangBruker(arkivJournalpost));
 		TilgangSak tilgangSak = mapTilgangSak(tilgangBruker, arkivJournalpost);
 		TilgangJournalpost tilgangJournalpost = mapTilgangJournalpost(variantFormat, arkivJournalpost);
 		return new HentDokumentTilgang(tilgangBruker, tilgangSak, tilgangJournalpost);
+	}
+
+	private TilgangBruker enrichTilgangBrukerFromPDLIfNeeded(TilgangBruker tilgangBruker) {
+		if (tilgangBruker != null && tilgangBruker.isPerson() && tilgangBruker.getFoedselsnr() == null) {
+			return pdlAntiCorruptionLayerImpl.hentTilgangBrukerByAktoerId(tilgangBruker.getAktoerId());
+		}
+		return tilgangBruker;
 	}
 
 	private TilgangBruker mapTilgangBruker(ArkivJournalpost arkivJournalpost) {
