@@ -43,14 +43,15 @@ class HentDokumentDomainCoordinatorImpl implements HentDokumentDomainCoordinator
 	@Autowired
 	public HentDokumentDomainCoordinatorImpl(HentDokumentAntiCorruptionLayer hentDokumentAntiCorruptionLayer,
 											 HentDokumentTilgangService hentDokumentTilgangService,
-											 @Autowired Pep<TilgangBruker> pep1g,
-											 @Autowired Pep<TilgangSak> pep2,
-											 @Autowired Pep<TilgangSak> pep2d,
-											 @Autowired Pep<TilgangSak> pep3,
-											 @Autowired Pep<TilgangJournalpost> pep4,
-											 @Autowired Pep<TilgangDokumentInfo> pep5,
-											 @Autowired Pep<TilgangDokumentvariant> pep6d,
-											 @Autowired Pep<TilgangSak> pep7d) {
+											 Pep<TilgangBruker> pep1g,
+											 Pep<TilgangSak> pep2,
+											 Pep<TilgangSak> pep2d,
+											 Pep<TilgangSak> pep3,
+											 Pep<TilgangJournalpost> pep4,
+											 Pep<TilgangDokumentInfo> pep5,
+											 Pep<TilgangDokumentvariant> pep6d,
+											 Pep<TilgangSak> pep7d,
+											 HentDokumentSporbarhetslogger hentDokumentSporbarhetslogger) {
 		this.hentDokumentAntiCorruptionLayer = hentDokumentAntiCorruptionLayer;
 		this.hentDokumentTilgangService = hentDokumentTilgangService;
 		this.pep1g = pep1g;
@@ -61,7 +62,7 @@ class HentDokumentDomainCoordinatorImpl implements HentDokumentDomainCoordinator
 		this.pep5 = pep5;
 		this.pep6d = pep6d;
 		this.pep7d = pep7d;
-		this.hentDokumentSporbarhetslogger = new HentDokumentSporbarhetslogger();
+		this.hentDokumentSporbarhetslogger = hentDokumentSporbarhetslogger;
 	}
 
 	@Override

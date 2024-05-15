@@ -3,12 +3,15 @@ package no.nav.saf.endpoints.hentDokument;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.read.ListAppender;
+import no.nav.saf.anticorruptionlayer.aktoer.PdlAntiCorruptionLayer;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.VariantFormatCode;
+import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.endpoints.AbstractItest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,6 +38,8 @@ import static no.nav.saf.tilgangskontroll.pep.DenyReasonFactory.PEP6D_DENY_REASO
 import static no.nav.saf.tilgangskontroll.pep.DenyReasonFactory.PEP7D_DENY_REASON;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
@@ -56,6 +61,11 @@ class HentDokumentIT extends AbstractItest {
 	private static final VariantFormatCode VARIANTFORMAT = ARKIV;
 	private static final VariantFormatCode SLADDET_VARIANTFORMAT = SLADDET;
 	private static final byte[] TEST_FILE_BYTES = "TestThis".getBytes();
+	private static final String AKTOER_ID = "2000000000000";
+	private static final String FOEDSELSNR = "12345678910";
+
+	@MockBean
+	PdlAntiCorruptionLayer pdlAntiCorruptionLayer;
 
 	@BeforeEach
 	public void setup() {
@@ -85,7 +95,7 @@ class HentDokumentIT extends AbstractItest {
 		String cefLogLine = auditLog.getFirst();
 		assertThat(cefLogLine).startsWith("CEF:0|joark|saf_hentdokument|1.0|audit:access|Saksbehandler hentet dokument som gjelder bruker|INFO|");
 		assertThat(cefLogLine).contains(
-				"duid=12345678910",
+				"duid=" + FOEDSELSNR,
 				"suid=" + NAV_IDENT_SAKSBEHANDLER,
 				"cs3=ARKIV",
 				"cs3Label=variantformat",
@@ -107,6 +117,7 @@ class HentDokumentIT extends AbstractItest {
 		abacPermit();
 		stubHappyHentDokument();
 		stubDokarkivJournalpost("journalpost-dokumentinfo-gsak-bruker-organisasjon-og-aktoerid.json");
+		when(pdlAntiCorruptionLayer.hentTilgangBrukerByAktoerId(eq(AKTOER_ID))).thenReturn(getTilgangBruker());
 
 		Logger logger = (Logger) LoggerFactory.getLogger("hentdokument_sporbarhetslogg");
 		ListAppender<ILoggingEvent> listAppender = new ListAppender<>();
@@ -124,7 +135,7 @@ class HentDokumentIT extends AbstractItest {
 		String cefLogLine = auditLog.getFirst();
 		assertThat(cefLogLine).startsWith("CEF:0|joark|saf_hentdokument|1.0|audit:access|Saksbehandler hentet dokument som gjelder bruker|INFO|");
 		assertThat(cefLogLine).contains(
-				"duid=ukjent",
+				"duid=" + FOEDSELSNR,
 				"suid=" + NAV_IDENT_SAKSBEHANDLER,
 				"cs3=ARKIV",
 				"cs3Label=variantformat",
@@ -634,5 +645,12 @@ class HentDokumentIT extends AbstractItest {
 	private ResponseEntity<String> callHentDokumentSladdetVariant() {
 		String uri = "/rest/hentdokument/" + JOURNALPOST_ID + "/" + DOKUMENT_ID + "/" + SLADDET_VARIANTFORMAT;
 		return this.restTemplate.exchange(uri, HttpMethod.GET, createHttpEntity(), String.class);
+	}
+
+	private static TilgangBruker getTilgangBruker() {
+		return TilgangBruker.builder()
+				.aktoerId(AKTOER_ID)
+				.foedselsnr(FOEDSELSNR)
+				.build();
 	}
 }
