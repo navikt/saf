@@ -556,7 +556,7 @@
       "app": "tiltak-vedtaksbrev",
       "namespace": "arbeidsgiver",
       "cluster": "prod-gcp",
-      "roles": ["tema_til"]
+      "roles": ["tema_til", "tema_opp"]
     }
   ]
 }
