@@ -549,6 +549,11 @@
       "namespace": "teamserviceklage",
       "cluster": "dev-gcp",
       "roles": ["tema_ser"]
+    },
+    {
+      "app": "gosys-oppgavebehandling-api",
+      "namespace": "oppgavehandtering",
+      "cluster": "dev-gcp"
     }
   ]
 }
