@@ -1,7 +1,10 @@
 package no.nav.saf.query.tilknyttedejournalposter;
 
+import no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostMapper;
 import no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoMapper;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.dto.JournalpostDto;
+import no.nav.saf.anticorruptionlayer.joark.safintern.DokarkivTilknyttetDokumentConsumer;
+import no.nav.saf.anticorruptionlayer.joark.safintern.journalpost.ArkivJournalpost;
 import no.nav.saf.domain.Arkivsak;
 import no.nav.saf.domain.kode.Tilknytning;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
@@ -24,6 +27,7 @@ import static no.nav.saf.util.MDCUtility.addMdcData;
 @Component
 public class TilknyttedeJournalposterQuery {
 	private final TilknyttedeJournalposterTilgangRepository tilknyttedeJournalposterTilgangRepository;
+	private final DokarkivTilknyttetDokumentConsumer dokarkivTilknyttetDokumentConsumer;
 	private final JournalpostDtoMapper journalpostDtoMapper;
 	private final Pep<TilgangBruker> pep1g;
 	private final Pep<TilgangSak> pep2;
@@ -37,6 +41,7 @@ public class TilknyttedeJournalposterQuery {
 	@Autowired
 	public TilknyttedeJournalposterQuery(
 			TilknyttedeJournalposterTilgangRepository tilknyttedeJournalposterTilgangRepository,
+			DokarkivTilknyttetDokumentConsumer dokarkivTilknyttetDokumentConsumer,
 			JournalpostDtoMapper journalpostDtoMapper,
 			@Autowired Pep<TilgangBruker> pep1g,
 			@Autowired Pep<TilgangSak> pep2,
@@ -47,6 +52,7 @@ public class TilknyttedeJournalposterQuery {
 			@Autowired Pep<TilgangDokumentvariant> pep6d,
 			@Autowired Pep<TilgangSak> pep7d) {
 		this.tilknyttedeJournalposterTilgangRepository = tilknyttedeJournalposterTilgangRepository;
+		this.dokarkivTilknyttetDokumentConsumer = dokarkivTilknyttetDokumentConsumer;
 		this.journalpostDtoMapper = journalpostDtoMapper;
 		this.pep1g = pep1g;
 		this.pep2 = pep2;
@@ -60,7 +66,7 @@ public class TilknyttedeJournalposterQuery {
 
 	public List<Journalpost> hentTilknyttedeJournalposter(String dokumentInfoId, Tilknytning tilknytning, SafRequestContext safRequestContext) {
 		addMdcData(safRequestContext);
-		List<JournalpostDto> datagrunnlag = tilknyttedeJournalposterTilgangRepository.datagrunnlag(dokumentInfoId, tilknytning);
+		List<ArkivJournalpost> datagrunnlag = dokarkivTilknyttetDokumentConsumer.hentTilknyttetJournalpost(dokumentInfoId);
 		Set<Arkivsak> arkivsaker = tilknyttedeJournalposterTilgangRepository.arkivsaker(datagrunnlag, safRequestContext);
 
 		Set<TilgangBruker> filteredTilgangBruker = tilknyttedeJournalposterTilgangRepository.tilgangBrukere(arkivsaker, datagrunnlag)
@@ -98,8 +104,8 @@ public class TilknyttedeJournalposterQuery {
 	private List<Journalpost> mapJournalpostDto(final List<TilgangJournalpost> tilgangJournalposts, final SafRequestContext safRequestContext) {
 		return tilgangJournalposts.stream()
 				.map(tj -> {
-					JournalpostDto journalpostDto = safRequestContext.getRequestCache().getJournalpost(tj.getJournalpostId());
-					return journalpostDtoMapper.mapJournalpostDto(journalpostDto, safRequestContext.getRequestCache());
+					ArkivJournalpost arkivJournalpost = safRequestContext.getRequestCache().getArkivJournalpost(tj.getJournalpostId());
+					return ArkivJournalpostMapper.mapJournalpost(arkivJournalpost, safRequestContext.getRequestCache());
 				}).collect(Collectors.toList());
 	}
 }

@@ -62,14 +62,10 @@ class TilknyttedeJournalposterIT extends AbstractItest {
 	@Test
 	void shouldReturnTilknyttedeJournalposter() throws Exception {
 		abacPermit();
-		stubFor(get("/hentjournalsakinfo/tilknyttedejournalposter/" + DOKUMENT_INFO_ID + "/GJENBRUK")
+		stubFor(get("/dokarkiv/tilknyttedeJournalposter/gjenbruk/dokumentInfoId/" + DOKUMENT_INFO_ID)
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("hentjournalsakinfo/tilknyttedejournalposter_not_bid-happy.json")));
-		stubFor(post("/reststs")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("sts/sts-token.json")));
+						.withBodyFile("safintern/tilknyttetjournalpost/tilknyttedejournalposter-not-bid-happy.json")));
 		stubFor(post("/pdl")
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
@@ -77,7 +73,7 @@ class TilknyttedeJournalposterIT extends AbstractItest {
 
 		List<Journalpost> tilknyttedeJournalposter = parseJournalpost(tilknyttedeJournalposterGjenbrukQuery());
 		assertThat(tilknyttedeJournalposter, hasSize(1));
-		Journalpost journalpost = tilknyttedeJournalposter.get(0);
+		Journalpost journalpost = tilknyttedeJournalposter.getFirst();
 
 		assertThat(journalpost.getJournalpostId(), is(JOURNALPOST_ID));
 		assertThat(journalpost.getTittel(), is("En søknad om noe"));
@@ -128,14 +124,10 @@ class TilknyttedeJournalposterIT extends AbstractItest {
 	@Test
 	void shouldReturnNoJournalpostsWhenDenyOnPep1g() throws Exception {
 		abacDenyPep1g();
-		stubFor(get("/hentjournalsakinfo/tilknyttedejournalposter/" + DOKUMENT_INFO_ID + "/GJENBRUK")
+		stubFor(get("/dokarkiv/tilknyttedeJournalposter/gjenbruk/dokumentInfoId/" + DOKUMENT_INFO_ID)
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("hentjournalsakinfo/tilknyttedejournalposter_not_bid-happy.json")));
-		stubFor(post("/reststs")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("sts/sts-token.json")));
+						.withBodyFile("safintern/tilknyttetjournalpost/tilknyttedejournalposter-not-bid-happy.json")));
 		stubFor(post("/pdl")
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
@@ -148,14 +140,10 @@ class TilknyttedeJournalposterIT extends AbstractItest {
 	@Test
 	void shouldReturnNoJournalpostsWhenDenyOnPep2() throws Exception {
 		abacDenyPep2();
-		stubFor(get("/hentjournalsakinfo/tilknyttedejournalposter/" + DOKUMENT_INFO_ID + "/GJENBRUK")
+		stubFor(get("/dokarkiv/tilknyttedeJournalposter/gjenbruk/dokumentInfoId/" + DOKUMENT_INFO_ID)
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("hentjournalsakinfo/tilknyttedejournalposter_far-happy.json")));
-		stubFor(post("/reststs")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("sts/sts-token.json")));
+						.withBodyFile("safintern/tilknyttetjournalpost/tilknyttedejournalposter-far-happy.json")));
 		stubFor(post("/pdl")
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
@@ -168,14 +156,10 @@ class TilknyttedeJournalposterIT extends AbstractItest {
 	@Test
 	void shouldReturnSaksbehandlerTilgangFalseWhenDenyOnPep2d() throws Exception {
 		abacDenyPep2dSkipPep2();
-		stubFor(get("/hentjournalsakinfo/tilknyttedejournalposter/" + DOKUMENT_INFO_ID + "/GJENBRUK")
+		stubFor(get("/dokarkiv/tilknyttedeJournalposter/gjenbruk/dokumentInfoId/" + DOKUMENT_INFO_ID)
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("hentjournalsakinfo/tilknyttedejournalposter_not_bid-happy.json")));
-		stubFor(post("/reststs")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("sts/sts-token.json")));
+						.withBodyFile("safintern/tilknyttetjournalpost/tilknyttedejournalposter-not-bid-happy.json")));
 		stubFor(post("/pdl")
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
@@ -189,10 +173,10 @@ class TilknyttedeJournalposterIT extends AbstractItest {
 	@Test
 	void shouldReturnNoJournalpostsWhenDenyOnPep3() throws Exception {
 		abacDenyPep3SkipPep2();
-		stubFor(get("/hentjournalsakinfo/tilknyttedejournalposter/" + DOKUMENT_INFO_ID + "/GJENBRUK")
+		stubFor(get("/dokarkiv/tilknyttedeJournalposter/gjenbruk/dokumentInfoId/" + DOKUMENT_INFO_ID)
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("hentjournalsakinfo/tilknyttedejournalposter_bid-happy.json")));
+						.withBodyFile("safintern/tilknyttetjournalpost/tilknyttedejournalposter-bid-happy.json")));
 		stubFor(get("/gsak/" + GSAK_ID)
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
@@ -201,10 +185,6 @@ class TilknyttedeJournalposterIT extends AbstractItest {
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("bidrag/bidragsak-happy.json")));
-		stubFor(post("/reststs")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("sts/sts-token.json")));
 		stubFor(post("/pdl")
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
@@ -217,14 +197,10 @@ class TilknyttedeJournalposterIT extends AbstractItest {
 	@Test
 	void shouldReturnNoJournalpostWhenDenyOnPep4() throws Exception {
 		abacDenyPep4SkipPep2Pep3();
-		stubFor(get("/hentjournalsakinfo/tilknyttedejournalposter/" + DOKUMENT_INFO_ID + "/GJENBRUK")
+		stubFor(get("/dokarkiv/tilknyttedeJournalposter/gjenbruk/dokumentInfoId/" + DOKUMENT_INFO_ID)
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("hentjournalsakinfo/tilknyttedejournalposter_jp_pol_skjerming-happy.json")));
-		stubFor(post("/reststs")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("sts/sts-token.json")));
+						.withBodyFile("safintern/tilknyttetjournalpost/tilknyttedejournalposter-skjerming-jp-pol-happy.json")));
 		stubFor(post("/pdl")
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
@@ -237,14 +213,10 @@ class TilknyttedeJournalposterIT extends AbstractItest {
 	@Test
 	void shouldReturnJournalpostWithOneFilteredDokumentInfoWhenDenyOnPep5() throws Exception {
 		abacDenyPep5SkipPep2Pep3Pep4();
-		stubFor(get("/hentjournalsakinfo/tilknyttedejournalposter/" + DOKUMENT_INFO_ID + "/GJENBRUK")
+		stubFor(get("/dokarkiv/tilknyttedeJournalposter/gjenbruk/dokumentInfoId/" + DOKUMENT_INFO_ID)
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("hentjournalsakinfo/tilknyttedejournalposter_dokumentinfo_pol_skjerming-happy.json")));
-		stubFor(post("/reststs")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("sts/sts-token.json")));
+						.withBodyFile("safintern/tilknyttetjournalpost/tilknyttedejournalposter-skjerming-dokumentinfo-pol-happy.json")));
 		stubFor(post("/pdl")
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
@@ -252,23 +224,20 @@ class TilknyttedeJournalposterIT extends AbstractItest {
 
 		List<Journalpost> tilknyttedeJournalposter = parseJournalpost(tilknyttedeJournalposterGjenbrukQuery());
 		assertThat(tilknyttedeJournalposter.get(0).getDokumenter(), hasSize(1));
+		assertThat(tilknyttedeJournalposter.get(0).getDokumenter().getFirst().getDokumentInfoId(), is("500000001"));
 	}
 
 	@Test
 	void shouldReturnSaksbehandlerTilgangFalseOnVariantWithDenyOnPep6d() throws Exception {
 		abacDenyPep6dSkipPep2Pep3Pep4Pep5();
-		stubFor(get("/hentjournalsakinfo/tilknyttedejournalposter/" + DOKUMENT_INFO_ID + "/GJENBRUK")
+		stubFor(get("/dokarkiv/tilknyttedeJournalposter/gjenbruk/dokumentInfoId/" + DOKUMENT_INFO_ID)
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("hentjournalsakinfo/tilknyttedejournalposter_variant_pol_skjerming-happy.json")));
+						.withBodyFile("safintern/tilknyttetjournalpost/tilknyttedejournalposter-skjerming-variant-pol-happy.json")));
 		stubFor(get("/gsak/" + GSAK_ID)
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("gsak/gsak-sakBySaksId_not_bid-happy.json")));
-		stubFor(post("/reststs")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("sts/sts-token.json")));
 		stubFor(post("/pdl")
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)

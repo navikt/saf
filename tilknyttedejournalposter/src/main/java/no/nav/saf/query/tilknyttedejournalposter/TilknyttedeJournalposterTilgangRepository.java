@@ -3,6 +3,7 @@ package no.nav.saf.query.tilknyttedejournalposter;
 import no.nav.saf.anticorruptionlayer.aktoer.PdlAntiCorruptionLayer;
 import no.nav.saf.anticorruptionlayer.bisys.BisysAntiCorruptionLayer;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.FagsystemCode;
+import no.nav.saf.anticorruptionlayer.joark.domain.kode.JournalStatusCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.SkjermingTypeCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.VariantFormatCode;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.HentJournalsakinfo;
@@ -10,9 +11,14 @@ import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.dto.BrukerDto;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.dto.JournalpostDto;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.dto.SaksrelasjonDto;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark903.TilknytningUriParam;
+import no.nav.saf.anticorruptionlayer.joark.safintern.journalpost.ArkivBruker;
+import no.nav.saf.anticorruptionlayer.joark.safintern.journalpost.ArkivJournalpost;
+import no.nav.saf.anticorruptionlayer.joark.safintern.journalpost.ArkivSaksrelasjon;
 import no.nav.saf.anticorruptionlayer.pensjonsak.PensjonSakAntiCorruptionLayer;
 import no.nav.saf.domain.Arkivsak;
 import no.nav.saf.domain.BidragSak;
+import no.nav.saf.domain.kode.Journalstatus;
+import no.nav.saf.domain.kode.Skjerming;
 import no.nav.saf.domain.kode.Tema;
 import no.nav.saf.domain.kode.Tilknytning;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
@@ -62,21 +68,21 @@ class TilknyttedeJournalposterTilgangRepository {
 				.getTilknyttedeJournalposter();
 	}
 
-	Set<Arkivsak> arkivsaker(final List<JournalpostDto> tilknyttetJournalpostDto, SafRequestContext safRequestContext) {
+	Set<Arkivsak> arkivsaker(final List<ArkivJournalpost> tilknyttetJournalpostDto, SafRequestContext safRequestContext) {
 		return tilknyttetJournalpostDto.stream()
-				.map(journalpostDto -> {
-					safRequestContext.getRequestCache().putJournalpost(journalpostDto.getJournalpostId().toString(), journalpostDto);
-					if (journalpostDto.isTilknyttetSak()) {
-						SaksrelasjonDto saksrelasjon = journalpostDto.getSaksrelasjon();
+				.map(arkivJournalpost -> {
+					safRequestContext.getRequestCache().putArkivJournalpost(arkivJournalpost.journalpostId().toString(), arkivJournalpost);
+					if (arkivJournalpost.isTilknyttetSak()) {
+						ArkivSaksrelasjon saksrelasjon = arkivJournalpost.saksrelasjon();
 						return Arkivsak.builder()
-								.arkivsaksnummer(saksrelasjon.getSakId())
-								.arkivsaksystem(FagsystemCode.toSafArkivsaksystem(saksrelasjon.getFagsystem()))
-								.fagsaksystem(saksrelasjon.getApplikasjon())
-								.fagsakId(saksrelasjon.getFagsakNr())
-								.orgnummer(saksrelasjon.getOrgnr())
-								.aktoerId(saksrelasjon.getAktoerId())
-								.tema(Arkivsak.mapTema(saksrelasjon.getTema()))
-								.datoOpprettet(Optional.ofNullable(saksrelasjon.getOpprettetTidspunkt())
+								.arkivsaksnummer(String.valueOf(saksrelasjon.sakId()))
+								.arkivsaksystem(FagsystemCode.toSafArkivsaksystem(saksrelasjon.fagsystem()))
+								.fagsaksystem(saksrelasjon.sak().applikasjon())
+								.fagsakId(saksrelasjon.sak().fagsakNr())
+								.orgnummer(saksrelasjon.sak().orgNr())
+								.aktoerId(saksrelasjon.sak().aktoerId())
+								.tema(Arkivsak.mapTema(saksrelasjon.sak().tema()))
+								.datoOpprettet(Optional.ofNullable(arkivJournalpost.relevanteDatoer().opprettet())
 										.map(o -> o.atZoneSameInstant(TIDSSONE_NORGE))
 										.map(ZonedDateTime::toLocalDateTime)
 										.orElse(null))
@@ -88,7 +94,7 @@ class TilknyttedeJournalposterTilgangRepository {
 				.collect(Collectors.toSet());
 	}
 
-	Set<TilgangBruker> tilgangBrukere(final Set<Arkivsak> arkivsaker, final List<JournalpostDto> tilknyttetJournalpostDto) {
+	Set<TilgangBruker> tilgangBrukere(final Set<Arkivsak> arkivsaker, final List<ArkivJournalpost> tilknyttetJournalpostDto) {
 		return Stream.concat(sakstilknyttedeTilgangBrukere(arkivsaker), ikkeSakstilknyttedeTilgangBrukere(tilknyttetJournalpostDto)).collect(Collectors.toSet());
 	}
 
@@ -97,13 +103,13 @@ class TilknyttedeJournalposterTilgangRepository {
 				.map(this::sakstilknyttetTilgangBruker);
 	}
 
-	private Stream<TilgangBruker> ikkeSakstilknyttedeTilgangBrukere(final List<JournalpostDto> tilknyttetJournalpostDto) {
+	private Stream<TilgangBruker> ikkeSakstilknyttedeTilgangBrukere(final List<ArkivJournalpost> tilknyttetJournalpostDto) {
 		return tilknyttetJournalpostDto.stream()
-				.map(journalpostDto -> {
-					if (journalpostDto.isTilknyttetSak()) {
+				.map(journalpost -> {
+					if (journalpost.isTilknyttetSak()) {
 						return null;
 					} else {
-						return midlertidigTilgangBrukerPersonOrganisasjon(journalpostDto.getBruker());
+						return midlertidigTilgangBrukerPersonOrganisasjon(journalpost.bruker());
 					}
 				}).filter(Objects::nonNull);
 	}
@@ -130,12 +136,12 @@ class TilknyttedeJournalposterTilgangRepository {
 		}
 	}
 
-	private TilgangBruker midlertidigTilgangBrukerPersonOrganisasjon(BrukerDto bruker) {
+	private TilgangBruker midlertidigTilgangBrukerPersonOrganisasjon(ArkivBruker bruker) {
 		if (bruker.isPerson()) {
-			return aktoerAntiCorruptionLayer.hentTilgangBrukerByFoedselsnummer(bruker.getBrukerId());
+			return aktoerAntiCorruptionLayer.hentTilgangBrukerByFoedselsnummer(bruker.id());
 		} else if (bruker.isOrganisasjon()) {
 			return TilgangBruker.builder()
-					.orgnummer(bruker.getBrukerId())
+					.orgnummer(bruker.id())
 					.build();
 		} else {
 			return null;
@@ -191,13 +197,13 @@ class TilknyttedeJournalposterTilgangRepository {
 				}).findFirst().orElse(null);
 	}
 
-	List<TilgangJournalpost> tilgangJournalposter(Set<TilgangSak> filteredTilgangSaker, List<JournalpostDto> datagrunnlag) {
+	List<TilgangJournalpost> tilgangJournalposter(Set<TilgangSak> filteredTilgangSaker, List<ArkivJournalpost> datagrunnlag) {
 		return datagrunnlag.stream()
 				.filter(journalpostDto -> {
 					if (journalpostDto.isTilknyttetSak()) {
 						return filteredTilgangSaker.stream().anyMatch(tilgangSak -> {
-							SaksrelasjonDto saksrelasjon = journalpostDto.getSaksrelasjon();
-							return tilgangSak.getArkivsaksnummer().equals(saksrelasjon.getSakId()) && tilgangSak.getArkivsaksystem() == FagsystemCode.toSafArkivsaksystem(saksrelasjon.getFagsystem());
+							ArkivSaksrelasjon saksrelasjon = journalpostDto.saksrelasjon();
+							return tilgangSak.getArkivsaksnummer().equals(saksrelasjon.sakId().toString()) && tilgangSak.getArkivsaksystem() == FagsystemCode.toSafArkivsaksystem(saksrelasjon.fagsystem());
 						});
 					} else {
 						return true;
@@ -207,21 +213,22 @@ class TilknyttedeJournalposterTilgangRepository {
 				.collect(Collectors.toList());
 	}
 
-	private TilgangJournalpost mapTilgangJournalpost(JournalpostDto dto) {
+	private TilgangJournalpost mapTilgangJournalpost(ArkivJournalpost dto) {
 		return TilgangJournalpost.builder()
-				.journalpostId(dto.getJournalpostId().toString())
-				.journalstatus(dto.getJournalstatus().toSafJournalstatus())
-				.skjerming(SkjermingTypeCode.toSafSkjerming(dto.getSkjerming()))
-				.dokumenter(dto.getDokumenter().stream().map(dokdto -> TilgangDokumentInfo.builder()
-						.journalpostId(dto.getJournalpostId().toString())
-						.dokumentInfoId(dokdto.getDokumentInfoId())
-						.skjerming(SkjermingTypeCode.toSafSkjerming(dokdto.getSkjerming()))
-						.tilgangDokumentvarianter(dokdto.getVarianter().stream()
+				.journalpostId(dto.journalpostId().toString())
+				.journalstatus(JournalStatusCode.valueOf(dto.status()).toSafJournalstatus())
+				.skjerming(dto.skjerming() != null ? Skjerming.valueOf(dto.skjerming()) : null)
+				.dokumenter(dto.dokumenter().stream().map(dokdto ->
+						TilgangDokumentInfo.builder()
+						.journalpostId(dto.journalpostId().toString())
+						.dokumentInfoId(dokdto.dokumentInfoId().toString())
+						.skjerming( dokdto.skjerming() != null ? Skjerming.valueOf(dokdto.skjerming()) : null)
+						.tilgangDokumentvarianter(dokdto.fildetaljer().stream()
 								.map(variantDto -> TilgangDokumentvariant.builder()
-										.skjerming(SkjermingTypeCode.toSafSkjerming(variantDto.getSkjerming()))
-										.variantformat(VariantFormatCode.toSafVariantformat(variantDto.getVariantf()))
-										.journalpostId(dto.getJournalpostId().toString())
-										.dokumentInfoId(dokdto.getDokumentInfoId())
+										.skjerming(variantDto.skjerming() != null ? Skjerming.valueOf(variantDto.skjerming()) : null)
+										.variantformat(VariantFormatCode.toSafVariantformat(variantDto.format()))
+										.journalpostId(dto.journalpostId().toString())
+										.dokumentInfoId(dokdto.dokumentInfoId().toString())
 										.build())
 								.collect(Collectors.toList())
 						)
