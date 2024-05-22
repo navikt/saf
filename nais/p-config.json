@@ -547,6 +547,12 @@
       "roles": ["tema_dag"]
     },
     {
+      "app": "dp-saksbehandling-frontend",
+      "namespace": "teamdagpenger",
+      "cluster": "prod-gcp",
+      "roles": ["tema_dag"]
+    },
+    {
       "app": "amt-distribusjon",
       "namespace": "amt",
       "cluster": "prod-gcp",
