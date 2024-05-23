@@ -1,8 +1,6 @@
 package no.nav.saf.query.tilknyttedejournalposter;
 
 import no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostMapper;
-import no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoMapper;
-import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.dto.JournalpostDto;
 import no.nav.saf.anticorruptionlayer.joark.safintern.DokarkivTilknyttetDokumentConsumer;
 import no.nav.saf.anticorruptionlayer.joark.safintern.journalpost.ArkivJournalpost;
 import no.nav.saf.domain.Arkivsak;
@@ -28,7 +26,6 @@ import static no.nav.saf.util.MDCUtility.addMdcData;
 public class TilknyttedeJournalposterQuery {
 	private final TilknyttedeJournalposterTilgangRepository tilknyttedeJournalposterTilgangRepository;
 	private final DokarkivTilknyttetDokumentConsumer dokarkivTilknyttetDokumentConsumer;
-	private final JournalpostDtoMapper journalpostDtoMapper;
 	private final Pep<TilgangBruker> pep1g;
 	private final Pep<TilgangSak> pep2;
 	private final Pep<TilgangSak> pep2d;
@@ -42,7 +39,6 @@ public class TilknyttedeJournalposterQuery {
 	public TilknyttedeJournalposterQuery(
 			TilknyttedeJournalposterTilgangRepository tilknyttedeJournalposterTilgangRepository,
 			DokarkivTilknyttetDokumentConsumer dokarkivTilknyttetDokumentConsumer,
-			JournalpostDtoMapper journalpostDtoMapper,
 			@Autowired Pep<TilgangBruker> pep1g,
 			@Autowired Pep<TilgangSak> pep2,
 			@Autowired Pep<TilgangSak> pep2d,
@@ -53,7 +49,6 @@ public class TilknyttedeJournalposterQuery {
 			@Autowired Pep<TilgangSak> pep7d) {
 		this.tilknyttedeJournalposterTilgangRepository = tilknyttedeJournalposterTilgangRepository;
 		this.dokarkivTilknyttetDokumentConsumer = dokarkivTilknyttetDokumentConsumer;
-		this.journalpostDtoMapper = journalpostDtoMapper;
 		this.pep1g = pep1g;
 		this.pep2 = pep2;
 		this.pep2d = pep2d;
@@ -98,10 +93,10 @@ public class TilknyttedeJournalposterQuery {
 				}))
 				.collect(Collectors.toList());
 
-		return mapJournalpostDto(filteredTilgangJournalposter, safRequestContext);
+		return mapArkivJournalpost(filteredTilgangJournalposter, safRequestContext);
 	}
 
-	private List<Journalpost> mapJournalpostDto(final List<TilgangJournalpost> tilgangJournalposts, final SafRequestContext safRequestContext) {
+	private List<Journalpost> mapArkivJournalpost(final List<TilgangJournalpost> tilgangJournalposts, final SafRequestContext safRequestContext) {
 		return tilgangJournalposts.stream()
 				.map(tj -> {
 					ArkivJournalpost arkivJournalpost = safRequestContext.getRequestCache().getArkivJournalpost(tj.getJournalpostId());

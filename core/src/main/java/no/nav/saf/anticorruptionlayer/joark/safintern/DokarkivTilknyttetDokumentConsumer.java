@@ -23,6 +23,7 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 import java.util.List;
 import java.util.function.Consumer;
 
+import static no.nav.saf.anticorruptionlayer.joark.safintern.DokarkivConsumer.DOKARKIV_METADATA;
 import static no.nav.saf.azure.AzureProperties.CLIENT_REGISTRATION_DOKARKIV;
 import static no.nav.saf.headers.NavHeaders.NAV_CALLID;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -31,8 +32,6 @@ import static org.springframework.security.oauth2.client.web.reactive.function.c
 @Slf4j
 @Service
 public class DokarkivTilknyttetDokumentConsumer {
-	private static final String DOKARKIV_METADATA = "dokarkivmetadata";
-
 	private final WebClient webClient;
 	private final CircuitBreaker dokarkivMetadataCircuitBreaker;
 	private final Retry dokarkivMetadataRetry;
