@@ -6,10 +6,12 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import no.nav.saf.domain.kode.Arkivsakssystem;
 import no.nav.saf.domain.kode.Journalposttype;
 import no.nav.saf.domain.kode.Journalstatus;
+import no.nav.saf.domain.visningsmodell.AvsenderMottaker;
 import no.nav.saf.domain.visningsmodell.DokumentInfo;
 import no.nav.saf.domain.visningsmodell.Journalpost;
 import no.nav.saf.endpoints.AbstractItest;
 import no.nav.saf.endpoints.graphql.GraphQLRequest;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpMethod;
@@ -29,15 +31,22 @@ import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME;
+import static no.nav.saf.anticorruptionlayer.joark.domain.kode.Sakstype.FAGSAK;
 import static no.nav.saf.anticorruptionlayer.joark.domain.kode.Sakstype.GENERELL_SAK;
+import static no.nav.saf.domain.kode.Datotype.DATO_DOKUMENT;
 import static no.nav.saf.domain.kode.Datotype.DATO_EKSPEDERT;
 import static no.nav.saf.domain.kode.Dokumentstatus.FERDIGSTILT;
 import static no.nav.saf.domain.kode.Kanal.SDP;
+import static no.nav.saf.domain.kode.Kanal.SENTRAL_UTSKRIFT;
 import static no.nav.saf.domain.kode.Tema.FOR;
+import static no.nav.saf.domain.kode.Tema.PEN;
+import static no.nav.saf.domain.kode.Tema.UFO;
 import static no.nav.saf.domain.kode.Variantformat.ARKIV;
+import static no.nav.saf.domain.kode.Variantformat.PRODUKSJON;
 import static no.nav.saf.domain.visningsmodell.BrukerIdType.AKTOERID;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -66,10 +75,7 @@ class TilknyttedeJournalposterIT extends AbstractItest {
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("safintern/tilknyttetjournalpost/tilknyttedejournalposter-not-bid-happy.json")));
-		stubFor(post("/pdl")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("pdl/hentPdlDataForIdent-happy.json")));
+		stubPdl();
 
 		List<Journalpost> tilknyttedeJournalposter = parseJournalpost(tilknyttedeJournalposterGjenbrukQuery());
 		assertThat(tilknyttedeJournalposter, hasSize(1));
@@ -122,16 +128,102 @@ class TilknyttedeJournalposterIT extends AbstractItest {
 	}
 
 	@Test
+	void shouldReturnTilknyttedeJournalposterPsak() throws Exception {
+		abacPermit();
+		stubPensjonBrukerForSak();
+		stubPensjonSakSammendrag();
+		stubFor(get("/dokarkiv/tilknyttedeJournalposter/gjenbruk/dokumentInfoId/" + DOKUMENT_INFO_ID)
+				.willReturn(aResponse().withStatus(OK.value())
+						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("safintern/tilknyttetjournalpost/tilknyttedejournalposter-psak-utgaaende-happy.json")));
+		stubPdl();
+
+		List<Journalpost> tilknyttedeJournalposter = parseJournalpost(tilknyttedeJournalposterGjenbrukQuery());
+		assertThat(tilknyttedeJournalposter, hasSize(1));
+		Journalpost journalpost = tilknyttedeJournalposter.getFirst();
+
+		assertThat(journalpost.getJournalpostId(), is(JOURNALPOST_ID));
+		assertThat(journalpost.getTittel(), is("Vedtak – omregning fra uføretrygd til alderspensjon"));
+		assertThat(journalpost.getJournalposttype(), is(Journalposttype.U));
+		assertThat(journalpost.getJournalstatus(), is(Journalstatus.FERDIGSTILT));
+		assertThat(journalpost.getTema(), is(UFO));
+		assertThat(journalpost.getTemanavn(), is(UFO.getTemanavn()));
+		assertThat(journalpost.getBehandlingstema(), nullValue());
+		assertThat(journalpost.getBehandlingstemanavn(), nullValue());
+		assertThat(journalpost.getSak().getArkivsaksnummer(), is("21998969"));
+		assertThat(journalpost.getSak().getArkivsaksystem(), is(Arkivsakssystem.PSAK));
+		assertThat(journalpost.getSak().getTema(), is(UFO));
+		assertThat(journalpost.getSak().getFagsakId(), is("21998969"));
+		assertThat(journalpost.getSak().getFagsaksystem(), is("PP01"));
+		assertThat(journalpost.getSak().getDatoOpprettet(), is(LocalDateTime.parse("2015-06-01T00:00:00", ISO_LOCAL_DATE_TIME)));
+		assertThat(journalpost.getSak().getSakstype(), is(FAGSAK));
+		assertThat(journalpost.getBruker().getId(), is("1912374211459"));
+		assertThat(journalpost.getBruker().getType(), is(AKTOERID));
+		assertThat(journalpost.getAvsenderMottaker().getId(), is("10525619171"));
+		assertThat(journalpost.getAvsenderMottaker().getNavn(), is("FISKEBOLLE FROM"));
+		assertThat(journalpost.getAvsenderMottaker().getLand(), is("NO"));
+		assertTrue(journalpost.getAvsenderMottaker().isErLikBruker());
+		assertThat(journalpost.getAvsenderMottakerId(), is("10525619171"));
+		assertThat(journalpost.getAvsenderMottakerNavn(), is("FISKEBOLLE FROM"));
+		assertThat(journalpost.getAvsenderMottakerLand(), is("NO"));
+		assertThat(journalpost.getJournalforendeEnhet(), is("4808"));
+		assertThat(journalpost.getJournalfoerendeEnhet(), is("4808"));
+		assertThat(journalpost.getJournalfortAvNavn(), is("PESYS_MASKINELL"));
+		assertThat(journalpost.getOpprettetAvNavn(), is("PESYS_MASKINELL"));
+		assertThat(journalpost.getKanal(), is(SENTRAL_UTSKRIFT));
+		assertThat(journalpost.getKanalnavn(), is(SENTRAL_UTSKRIFT.getKanalnavn()));
+		assertThat(journalpost.getDatoOpprettet(), notNullValue());
+		assertThat(journalpost.getRelevanteDatoer().get(0).getDatotype(), is(DATO_DOKUMENT));
+		assertThat(journalpost.getTilleggsopplysninger(), hasSize(0));
+		assertThat(journalpost.getDokumenter(), hasSize(4));
+
+		DokumentInfo dokumentInfo1 = journalpost.getDokumenter().getFirst();
+		assertThat(dokumentInfo1.getDokumentInfoId(), is("500000000"));
+		assertThat(dokumentInfo1.getTittel(), is("Vedtak – omregning fra uføretrygd til alderspensjon"));
+		assertThat(dokumentInfo1.getBrevkode(), is("000086"));
+		assertThat(dokumentInfo1.getDokumentstatus(), is(FERDIGSTILT));
+		assertThat(dokumentInfo1.getOriginalJournalpostId(), is(JOURNALPOST_ID));
+		assertThat(dokumentInfo1.getLogiskeVedlegg(), hasSize(0));
+		assertThat(dokumentInfo1.getDokumentvarianter(), hasSize(2));
+		assertThat(dokumentInfo1.getDokumentvarianter().get(0).getVariantformat(), is(ARKIV));
+		assertTrue(dokumentInfo1.getDokumentvarianter().get(0).isSaksbehandlerHarTilgang());
+		assertThat(dokumentInfo1.getDokumentvarianter().get(1).getVariantformat(), is(PRODUKSJON));
+		assertTrue(dokumentInfo1.getDokumentvarianter().get(1).isSaksbehandlerHarTilgang());
+	}
+
+	@Test
+	void shouldReturnTilknyttedeJournalposterWithEmptyAvsendermottakerWhenOriginalAvsendermottakerIsNull() throws Exception {
+		abacPermit();
+		stubFor(get("/dokarkiv/tilknyttedeJournalposter/gjenbruk/dokumentInfoId/" + DOKUMENT_INFO_ID)
+				.willReturn(aResponse().withStatus(OK.value())
+						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("safintern/tilknyttetjournalpost/tilknyttedejournalposter-no-avsendermottaker-happy.json")));
+		stubPdl();
+
+		List<Journalpost> tilknyttedeJournalposter = parseJournalpost(tilknyttedeJournalposterGjenbrukQuery());
+		assertThat(tilknyttedeJournalposter, hasSize(1));
+		Journalpost journalpost = tilknyttedeJournalposter.getFirst();
+
+		assertThat(journalpost.getJournalpostId(), is(JOURNALPOST_ID));
+
+		assertThat(journalpost.getAvsenderMottaker(), notNullValue(AvsenderMottaker.class));
+		assertThat(journalpost.getAvsenderMottaker().getId(), nullValue());
+		assertThat(journalpost.getAvsenderMottaker().getNavn(), nullValue());
+		assertThat(journalpost.getAvsenderMottaker().getLand(), nullValue());
+		assertThat(journalpost.getAvsenderMottaker().isErLikBruker(), is(false));
+		assertThat(journalpost.getAvsenderMottakerId(), nullValue());
+		assertThat(journalpost.getAvsenderMottakerNavn(), nullValue());
+		assertThat(journalpost.getAvsenderMottakerLand(), nullValue());
+	}
+
+	@Test
 	void shouldReturnNoJournalpostsWhenDenyOnPep1g() throws Exception {
 		abacDenyPep1g();
 		stubFor(get("/dokarkiv/tilknyttedeJournalposter/gjenbruk/dokumentInfoId/" + DOKUMENT_INFO_ID)
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("safintern/tilknyttetjournalpost/tilknyttedejournalposter-not-bid-happy.json")));
-		stubFor(post("/pdl")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("pdl/hentPdlDataForIdent-happy.json")));
+		stubPdl();
 
 		List<Journalpost> tilknyttedeJournalposter = parseJournalpost(tilknyttedeJournalposterGjenbrukQuery());
 		assertThat(tilknyttedeJournalposter, hasSize(0));
@@ -144,10 +236,7 @@ class TilknyttedeJournalposterIT extends AbstractItest {
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("safintern/tilknyttetjournalpost/tilknyttedejournalposter-far-happy.json")));
-		stubFor(post("/pdl")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("pdl/hentPdlDataForIdent-happy.json")));
+		stubPdl();
 
 		List<Journalpost> tilknyttedeJournalposter = parseJournalpost(tilknyttedeJournalposterGjenbrukQuery());
 		assertThat(tilknyttedeJournalposter, hasSize(0));
@@ -160,10 +249,7 @@ class TilknyttedeJournalposterIT extends AbstractItest {
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("safintern/tilknyttetjournalpost/tilknyttedejournalposter-not-bid-happy.json")));
-		stubFor(post("/pdl")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("pdl/hentPdlDataForIdent-happy.json")));
+		stubPdl();
 
 		List<Journalpost> tilknyttedeJournalposter = parseJournalpost(tilknyttedeJournalposterGjenbrukQuery());
 		DokumentInfo dokumentInfo = tilknyttedeJournalposter.get(0).getDokumenter().get(0);
@@ -185,10 +271,7 @@ class TilknyttedeJournalposterIT extends AbstractItest {
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("bidrag/bidragsak-happy.json")));
-		stubFor(post("/pdl")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("pdl/hentPdlDataForIdent-happy.json")));
+		stubPdl();
 
 		List<Journalpost> tilknyttedeJournalposter = parseJournalpost(tilknyttedeJournalposterGjenbrukQuery());
 		assertThat(tilknyttedeJournalposter, hasSize(0));
@@ -201,10 +284,7 @@ class TilknyttedeJournalposterIT extends AbstractItest {
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("safintern/tilknyttetjournalpost/tilknyttedejournalposter-skjerming-jp-pol-happy.json")));
-		stubFor(post("/pdl")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("pdl/hentPdlDataForIdent-happy.json")));
+		stubPdl();
 
 		List<Journalpost> tilknyttedeJournalposter = parseJournalpost(tilknyttedeJournalposterGjenbrukQuery());
 		assertThat(tilknyttedeJournalposter, hasSize(0));
@@ -217,10 +297,7 @@ class TilknyttedeJournalposterIT extends AbstractItest {
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("safintern/tilknyttetjournalpost/tilknyttedejournalposter-skjerming-dokumentinfo-pol-happy.json")));
-		stubFor(post("/pdl")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("pdl/hentPdlDataForIdent-happy.json")));
+		stubPdl();
 
 		List<Journalpost> tilknyttedeJournalposter = parseJournalpost(tilknyttedeJournalposterGjenbrukQuery());
 		assertThat(tilknyttedeJournalposter.get(0).getDokumenter(), hasSize(1));
@@ -238,10 +315,7 @@ class TilknyttedeJournalposterIT extends AbstractItest {
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("gsak/gsak-sakBySaksId_not_bid-happy.json")));
-		stubFor(post("/pdl")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("pdl/hentPdlDataForIdent-happy.json")));
+		stubPdl();
 
 		List<Journalpost> tilknyttedeJournalposter = parseJournalpost(tilknyttedeJournalposterGjenbrukQuery());
 		DokumentInfo dokumentInfo = tilknyttedeJournalposter.get(0).getDokumenter().get(0);

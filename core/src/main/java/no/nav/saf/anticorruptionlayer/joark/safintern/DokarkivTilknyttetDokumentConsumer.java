@@ -65,13 +65,13 @@ public class DokarkivTilknyttetDokumentConsumer {
 				.retrieve()
 				.bodyToMono(new ParameterizedTypeReference<List<ArkivJournalpost>>() {
 				})
-				.doOnError(handleErrorTilknyttetDokumentinfo(dokumentInfoId))
+				.doOnError(handleErrorTilknyttetJournalposterDokumentinfo(dokumentInfoId))
 				.transformDeferred(CircuitBreakerOperator.of(dokarkivMetadataCircuitBreaker))
 				.transformDeferred(RetryOperator.of(dokarkivMetadataRetry))
 				.block();
 	}
 
-	private Consumer<Throwable> handleErrorTilknyttetDokumentinfo(String dokumentinfoId) {
+	private Consumer<Throwable> handleErrorTilknyttetJournalposterDokumentinfo(String dokumentinfoId) {
 		return error -> {
 			if (error instanceof WebClientResponseException.NotFound notFound) {
 				throw new JournalpostIkkeFunnetException("Fant ingen journalposter tilknyttet dokumentinfoId=" + dokumentinfoId);
