@@ -36,7 +36,7 @@ import static org.springframework.security.oauth2.client.web.reactive.function.c
 @Service
 public class DokarkivConsumer {
 	private static final String DOKARKIV_HENTDOKUMENT = "dokarkivhentdokument";
-	private static final String DOKARKIV_METADATA = "dokarkivmetadata";
+	static final String DOKARKIV_METADATA = "dokarkivmetadata";
 
 	private final WebClient webClient;
 	private final CircuitBreaker dokarkivHentdokumentCircuitBreaker;

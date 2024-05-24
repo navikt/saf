@@ -1,0 +1,78 @@
+[{
+  "journalpostId": 400000000,
+  "type": "U",
+  "fagomraade": "FOR",
+  "fagomraadenavn": "Fred Delano Roosevelt",
+  "status": "FS",
+  "skjerming": "POL",
+  "saksrelasjon": {
+    "fagsystem": "FS22",
+    "sak": {
+      "aktoerId": "1912374211459",
+      "applikasjon": "FS22",
+      "fagsakNr": "abc123",
+      "opprettetTid": "2018-07-17T13:49:01.839",
+      "tema": "FOR"
+    },
+    "sakId": 100000000
+  },
+  "relevanteDatoer": {
+    "ekspedert": "2018-06-26T23:24:41.000+00:00",
+    "opprettet": "2018-06-27T02:02:13.174+00:00"
+  },
+  "avsenderMottaker": {
+    "id": "11111111111",
+    "navn": "Bjarne Betjent",
+    "type": "FNR",
+    "land": "NO"
+  },
+  "antallRetur": null,
+  "behandlingstema": "sok1",
+  "behandlingstemanavn": "En viktig søknad",
+  "bruker": {
+    "id": "11111111111",
+    "type": "PERSON"
+  },
+  "dokumenter": [
+    {
+      "dokumentInfoId": 500000000,
+      "brevkode": "for123",
+      "fildetaljer": [
+        {
+          "format": "ARKIV",
+          "navn": "tilskudd.pdf",
+          "stoerrelse": "4721",
+          "type": "PDFA",
+          "uuid": "4b4d0d13-5c8c-4f6b-922c-4026f1679069"
+        },
+        {
+          "format": "SKANNING_META",
+          "navn": "skanning.xml",
+          "stoerrelse": "5000",
+          "type": "XML",
+          "uuid": "4b4d0d13-5c8c-4f6b-922c-4026f1679070"
+        }
+      ],
+      "kategori": "IS",
+      "logiskVedlegg": [
+        {
+          "tittel": "Hei",
+          "vedleggId": 300000000
+        }
+      ],
+      "originalJournalpostId": 400000000,
+      "status": "FERDIGSTILT",
+      "tilknyttetSom": "HOVEDDOKUMENT",
+      "tittel": "Dokument1"
+    }
+  ],
+  "innhold": "En søknad om noe",
+  "kanalreferanseId": "d35c8412-7b98-4a66-8fdd-51f44ed6c632HJE-DIGITAL-SOKNAD",
+  "journalfoerendeEnhet": "2990",
+  "journalfoertAvNavn": "Max Mekker",
+  "utsendingskanal": "SDP",
+  "opprettetAvNavn": "Max Mekker",
+  "tilleggsopplysninger": {
+    "min_nokkel": "min_verdi"
+  }
+}]
