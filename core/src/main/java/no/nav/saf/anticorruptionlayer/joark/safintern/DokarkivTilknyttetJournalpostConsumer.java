@@ -12,7 +12,6 @@ import no.nav.saf.anticorruptionlayer.joark.safintern.journalpost.ArkivJournalpo
 import no.nav.saf.config.SafProperties;
 import no.nav.saf.exceptions.JournalpostIkkeFunnetException;
 import no.nav.saf.exceptions.SafTechnicalException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.codec.CodecProperties;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
@@ -31,17 +30,16 @@ import static org.springframework.security.oauth2.client.web.reactive.function.c
 
 @Slf4j
 @Service
-public class DokarkivTilknyttetDokumentConsumer {
+public class DokarkivTilknyttetJournalpostConsumer {
 	private final WebClient webClient;
 	private final CircuitBreaker dokarkivMetadataCircuitBreaker;
 	private final Retry dokarkivMetadataRetry;
 
-	@Autowired
-	public DokarkivTilknyttetDokumentConsumer(final SafProperties safProperties,
-											  final CodecProperties codecProperties,
-											  final WebClient webClient,
-											  final CircuitBreakerRegistry circuitBreakerRegistry,
-											  final RetryRegistry retryRegistry) {
+	public DokarkivTilknyttetJournalpostConsumer(SafProperties safProperties,
+												 CodecProperties codecProperties,
+												 WebClient webClient,
+												 CircuitBreakerRegistry circuitBreakerRegistry,
+												 RetryRegistry retryRegistry) {
 		this.webClient = webClient.mutate()
 				.baseUrl(safProperties.getEndpoints().getDokarkiv().getUrl())
 				.filter(new CallIdExchangeFilterFunction(NAV_CALLID))
@@ -56,7 +54,7 @@ public class DokarkivTilknyttetDokumentConsumer {
 		this.dokarkivMetadataRetry = retryRegistry.retry(DOKARKIV_METADATA);
 	}
 
-	public List<ArkivJournalpost> hentTilknyttetJournalpost(String dokumentInfoId) {
+	public List<ArkivJournalpost> hentTilknyttedeJournalposter(String dokumentInfoId) {
 		return webClient.get()
 				.uri(uriBuilder -> uriBuilder.path("/tilknyttedeJournalposter/gjenbruk/dokumentInfoId/{dokumentInfoId}")
 						.build(dokumentInfoId))

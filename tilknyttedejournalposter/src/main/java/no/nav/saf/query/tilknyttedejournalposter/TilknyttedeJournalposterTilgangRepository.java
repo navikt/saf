@@ -5,9 +5,6 @@ import no.nav.saf.anticorruptionlayer.bisys.BisysAntiCorruptionLayer;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.FagsystemCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.JournalStatusCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.VariantFormatCode;
-import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.HentJournalsakinfo;
-import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.dto.JournalpostDto;
-import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark903.TilknytningUriParam;
 import no.nav.saf.anticorruptionlayer.joark.safintern.journalpost.ArkivBruker;
 import no.nav.saf.anticorruptionlayer.joark.safintern.journalpost.ArkivJournalpost;
 import no.nav.saf.anticorruptionlayer.joark.safintern.journalpost.ArkivSak;
@@ -17,14 +14,12 @@ import no.nav.saf.domain.Arkivsak;
 import no.nav.saf.domain.BidragSak;
 import no.nav.saf.domain.kode.Skjerming;
 import no.nav.saf.domain.kode.Tema;
-import no.nav.saf.domain.kode.Tilknytning;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.domain.tilgangsmodell.TilgangDokumentInfo;
 import no.nav.saf.domain.tilgangsmodell.TilgangDokumentvariant;
 import no.nav.saf.domain.tilgangsmodell.TilgangJournalpost;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -39,30 +34,21 @@ import static no.nav.saf.domain.kode.Arkivsakssystem.GSAK;
 import static no.nav.saf.domain.kode.Arkivsakssystem.PSAK;
 
 @Component
-class TilknyttedeJournalposterTilgangRepository {
+public class TilknyttedeJournalposterTilgangRepository {
 
-	private final HentJournalsakinfo hentJournalsakinfo;
 	private final PensjonSakAntiCorruptionLayer pensjonSakAntiCorruptionLayer;
 	private final PdlAntiCorruptionLayer aktoerAntiCorruptionLayer;
 	private final BisysAntiCorruptionLayer bisysAntiCorruptionLayer;
 
-	@Autowired
-	TilknyttedeJournalposterTilgangRepository(HentJournalsakinfo hentJournalsakinfo,
-											  PensjonSakAntiCorruptionLayer pensjonSakAntiCorruptionLayer,
+	TilknyttedeJournalposterTilgangRepository(PensjonSakAntiCorruptionLayer pensjonSakAntiCorruptionLayer,
 											  PdlAntiCorruptionLayer aktoerAntiCorruptionLayer,
 											  BisysAntiCorruptionLayer bisysAntiCorruptionLayer) {
-		this.hentJournalsakinfo = hentJournalsakinfo;
 		this.pensjonSakAntiCorruptionLayer = pensjonSakAntiCorruptionLayer;
 		this.aktoerAntiCorruptionLayer = aktoerAntiCorruptionLayer;
 		this.bisysAntiCorruptionLayer = bisysAntiCorruptionLayer;
 	}
 
-	List<JournalpostDto> datagrunnlag(final String dokumentInfoId, final Tilknytning tilknytning) {
-		return hentJournalsakinfo.tilknyttedeJournalposter(dokumentInfoId, TilknytningUriParam.toUriParam(tilknytning))
-				.getTilknyttedeJournalposter();
-	}
-
-	Set<Arkivsak> arkivsaker(final List<ArkivJournalpost> tilknyttetArkivJournalposter, SafRequestContext safRequestContext) {
+	Set<Arkivsak> arkivsaker(List<ArkivJournalpost> tilknyttetArkivJournalposter, SafRequestContext safRequestContext) {
 		tilknyttetArkivJournalposter.forEach(arkivJournalpost ->
 				safRequestContext.getRequestCache().putArkivJournalpost(arkivJournalpost.journalpostId().toString(), arkivJournalpost));
 
