@@ -563,6 +563,11 @@
       "namespace": "arbeidsgiver",
       "cluster": "prod-gcp",
       "roles": ["tema_til", "tema_opp"]
+    },
+    {
+      "app": "gosys-oppgavebehandling-api",
+      "namespace": "oppgavehandtering",
+      "cluster": "prod-gcp"
     }
   ]
 }
