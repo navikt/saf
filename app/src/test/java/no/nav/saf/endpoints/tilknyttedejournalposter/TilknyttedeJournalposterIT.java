@@ -330,6 +330,9 @@ class TilknyttedeJournalposterIT extends AbstractItest {
 		List<Journalpost> tilknyttedeJournalposter = parseJournalpost(tilknyttedeJournalposterGjenbrukQuery());
 
 		assertThat(tilknyttedeJournalposter, hasSize(1));
+		assertThat(tilknyttedeJournalposter.getFirst().getSak(), nullValue());
+		assertThat(tilknyttedeJournalposter.getFirst().getBruker(), nullValue());
+
 	}
 
 
@@ -345,6 +348,8 @@ class TilknyttedeJournalposterIT extends AbstractItest {
 		List<Journalpost> tilknyttedeJournalposter = parseJournalpost(tilknyttedeJournalposterGjenbrukQuery());
 
 		assertThat(tilknyttedeJournalposter, hasSize(1));
+		assertThat(tilknyttedeJournalposter.getFirst().getSak(), nullValue());
+		assertThat(tilknyttedeJournalposter.getFirst().getBruker().getId(), is("11111111111"));
 	}
 
 	private ResponseEntity<LinkedHashMap> tilknyttedeJournalposterGjenbrukQuery() throws IOException, URISyntaxException {
