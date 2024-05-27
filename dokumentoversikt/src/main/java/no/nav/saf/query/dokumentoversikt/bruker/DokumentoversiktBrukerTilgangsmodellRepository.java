@@ -70,6 +70,7 @@ class DokumentoversiktBrukerTilgangsmodellRepository {
 						.build();
 			};
 		} catch (PersonIkkeFunnetException e) {
+			log.info("Fant ikke person i Persondataløsningen (PDL).");
 			return null;
 		}
 	}

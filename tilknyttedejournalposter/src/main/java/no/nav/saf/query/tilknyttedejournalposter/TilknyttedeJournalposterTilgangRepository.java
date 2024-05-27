@@ -1,5 +1,6 @@
 package no.nav.saf.query.tilknyttedejournalposter;
 
+import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.anticorruptionlayer.aktoer.PdlAntiCorruptionLayer;
 import no.nav.saf.anticorruptionlayer.bisys.BisysAntiCorruptionLayer;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.FagsystemCode;
@@ -37,6 +38,7 @@ import static no.nav.saf.domain.kode.Arkivsakssystem.PSAK;
 import static no.nav.saf.domain.tilgangsmodell.IdentType.AKTOERID;
 import static no.nav.saf.domain.tilgangsmodell.IdentType.FOLKEREGISTERIDENT;
 
+@Slf4j
 @Component
 public class TilknyttedeJournalposterTilgangRepository {
 
@@ -136,6 +138,7 @@ public class TilknyttedeJournalposterTilgangRepository {
 			}
 			return aktoerAntiCorruptionLayer.hentTilgangBrukerByAktoerId(brukerId);
 		} catch (PersonIkkeFunnetException e) {
+			log.info("Fant ikke person i Persondataløsningen (PDL).");
 			return TilgangBruker.builder().build();
 		}
 	}

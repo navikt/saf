@@ -73,6 +73,7 @@ public class TilknyttedeJournalposterQuery {
 				.stream()
 				.filter(tilgangSak -> filteredTilgangBruker.stream()
 						.filter(Objects::nonNull)
+						.filter(tilgangBruker -> !tilgangBruker.isUkjent())
 						.anyMatch(tilgangBruker -> {
 							if (tilgangBruker.isPerson()) {
 								return tilgangBruker.getAktoerId().equals(tilgangSak.getAktoerId());
