@@ -9,11 +9,13 @@ import no.nav.saf.anticorruptionlayer.joark.safintern.journalpost.ArkivBruker;
 import no.nav.saf.anticorruptionlayer.joark.safintern.journalpost.ArkivJournalpost;
 import no.nav.saf.anticorruptionlayer.joark.safintern.journalpost.ArkivSak;
 import no.nav.saf.anticorruptionlayer.joark.safintern.journalpost.ArkivSaksrelasjon;
+import no.nav.saf.anticorruptionlayer.pdl.PersonIkkeFunnetException;
 import no.nav.saf.anticorruptionlayer.pensjonsak.PensjonSakAntiCorruptionLayer;
 import no.nav.saf.domain.Arkivsak;
 import no.nav.saf.domain.BidragSak;
 import no.nav.saf.domain.kode.Skjerming;
 import no.nav.saf.domain.kode.Tema;
+import no.nav.saf.domain.tilgangsmodell.IdentType;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.domain.tilgangsmodell.TilgangDokumentInfo;
 import no.nav.saf.domain.tilgangsmodell.TilgangDokumentvariant;
@@ -32,6 +34,8 @@ import java.util.stream.Stream;
 
 import static no.nav.saf.domain.kode.Arkivsakssystem.GSAK;
 import static no.nav.saf.domain.kode.Arkivsakssystem.PSAK;
+import static no.nav.saf.domain.tilgangsmodell.IdentType.AKTOERID;
+import static no.nav.saf.domain.tilgangsmodell.IdentType.FOLKEREGISTERIDENT;
 
 @Component
 public class TilknyttedeJournalposterTilgangRepository {
@@ -105,25 +109,38 @@ public class TilknyttedeJournalposterTilgangRepository {
 			if (!tilgangBruker.isPerson()) {
 				return tilgangBruker;
 			} else {
-				return aktoerAntiCorruptionLayer.hentTilgangBrukerByAktoerId(tilgangBruker.getAktoerId());
+				return hentTilgangBruker(arkivsak.getAktoerId(), AKTOERID);
 			}
 		} else if (arkivsak.getArkivsaksystem() == PSAK) {
 			// PSAK
 			String foedselsnummer = pensjonSakAntiCorruptionLayer.findFoedselsnummerBySakId(arkivsak.getArkivsaksnummer());
-			return aktoerAntiCorruptionLayer.hentTilgangBrukerByFoedselsnummer(foedselsnummer);
+			return hentTilgangBruker(foedselsnummer, FOLKEREGISTERIDENT);
 		} else {
 			return null;
 		}
 	}
 
 	private TilgangBruker midlertidigTilgangBrukerPersonOrganisasjon(ArkivBruker bruker) {
-		if (bruker.isPerson()) {
-			return aktoerAntiCorruptionLayer.hentTilgangBrukerByFoedselsnummer(bruker.id());
+		if (bruker == null) {
+			return null;
+		} else if (bruker.isPerson()) {
+			return hentTilgangBruker(bruker.id(), FOLKEREGISTERIDENT);
 		} else if (bruker.isOrganisasjon()) {
 			return TilgangBruker.builder()
 					.orgnummer(bruker.id())
 					.build();
 		} else {
+			return null;
+		}
+	}
+
+	private TilgangBruker hentTilgangBruker(String brukerId, IdentType identType) {
+		try {
+			if (identType == FOLKEREGISTERIDENT) {
+				return aktoerAntiCorruptionLayer.hentTilgangBrukerByFoedselsnummer(brukerId);
+			}
+			return aktoerAntiCorruptionLayer.hentTilgangBrukerByAktoerId(brukerId);
+		} catch (PersonIkkeFunnetException e) {
 			return null;
 		}
 	}

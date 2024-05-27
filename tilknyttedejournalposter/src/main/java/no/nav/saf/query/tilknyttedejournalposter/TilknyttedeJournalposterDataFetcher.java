@@ -30,7 +30,7 @@ public class TilknyttedeJournalposterDataFetcher implements DataFetcher<DataFetc
 		final String dokumentInfoId = environment.getArgument("dokumentInfoId");
 		final Tilknytning tilknytning = environment.getArgument("tilknytning");
 		log.info("tilknyttedeJournalposter for dokumentInfoId={}, tilknytning={}", dokumentInfoId, tilknytning);
-		List<Journalpost> tilknyttedeJournalposter = tilknyttedeJournalposterQuery.hentTilknyttedeJournalposter(dokumentInfoId, tilknytning, safRequestContext);
+		List<Journalpost> tilknyttedeJournalposter = tilknyttedeJournalposterQuery.hentTilknyttedeJournalposter(dokumentInfoId, safRequestContext);
 		log.info("tilknyttedeJournalposter hentet for dokumentInfoId={}, tilknytning={}", dokumentInfoId, tilknytning);
 		return DataFetcherResult.<List<Journalpost>>newResult()
 				.data(tilknyttedeJournalposter)

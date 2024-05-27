@@ -6,6 +6,7 @@ import io.github.resilience4j.reactor.circuitbreaker.operator.CircuitBreakerOper
 import io.github.resilience4j.reactor.retry.RetryOperator;
 import io.github.resilience4j.retry.Retry;
 import io.github.resilience4j.retry.RetryRegistry;
+import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.anticorruptionlayer.CallIdExchangeFilterFunction;
 import no.nav.saf.config.SafProperties;
 import org.springframework.stereotype.Component;
@@ -23,6 +24,7 @@ import static org.springframework.security.oauth2.client.web.reactive.function.c
 /**
  * PDL implementasjon av {@link IdentConsumer}
  */
+@Slf4j
 @Component
 class PdlIdentConsumer implements IdentConsumer {
 	private static final String PDL_INSTANCE = "pdl";
@@ -71,6 +73,7 @@ class PdlIdentConsumer implements IdentConsumer {
 			return pdlResponse.getData().getHentIdenter().getIdenter();
 		} else {
 			if (PERSON_IKKE_FUNNET_CODE.equals(pdlResponse.getErrors().get(0).getExtensions().getCode())) {
+				log.info("Fant ikke person i Persondataløsningen (PDL).");
 				throw new PersonIkkeFunnetException("Fant ikke person i Persondataløsningen (PDL).");
 			}
 			throw new PdlFunctionalException("Kunne ikke hente aktørid for folkeregisterident i pdl. " + pdlResponse.getErrors());
