@@ -89,13 +89,8 @@ public class TilknyttedeJournalposterTilgangRepository {
 
 	private Stream<TilgangBruker> ikkeSakstilknyttedeTilgangBrukere(final List<ArkivJournalpost> tilknyttetJournalpostDto) {
 		return tilknyttetJournalpostDto.stream()
-				.map(journalpost -> {
-					if (journalpost.isTilknyttetSak()) {
-						return null;
-					} else {
-						return midlertidigTilgangBrukerPersonOrganisasjon(journalpost.bruker());
-					}
-				}).filter(Objects::nonNull);
+				.filter(arkivJournalpost -> !arkivJournalpost.isTilknyttetSak())
+				.map(journalpost -> midlertidigTilgangBrukerPersonOrganisasjon(journalpost.bruker()));
 	}
 
 	private TilgangBruker sakstilknyttetTilgangBruker(Arkivsak arkivsak) {
@@ -122,7 +117,7 @@ public class TilknyttedeJournalposterTilgangRepository {
 
 	private TilgangBruker midlertidigTilgangBrukerPersonOrganisasjon(ArkivBruker bruker) {
 		if (bruker == null) {
-			return null;
+			return TilgangBruker.builder().build();
 		} else if (bruker.isPerson()) {
 			return hentTilgangBruker(bruker.id(), FOLKEREGISTERIDENT);
 		} else if (bruker.isOrganisasjon()) {
@@ -130,7 +125,7 @@ public class TilknyttedeJournalposterTilgangRepository {
 					.orgnummer(bruker.id())
 					.build();
 		} else {
-			return null;
+			return TilgangBruker.builder().build();
 		}
 	}
 
@@ -141,7 +136,7 @@ public class TilknyttedeJournalposterTilgangRepository {
 			}
 			return aktoerAntiCorruptionLayer.hentTilgangBrukerByAktoerId(brukerId);
 		} catch (PersonIkkeFunnetException e) {
-			return null;
+			return TilgangBruker.builder().build();
 		}
 	}
 
