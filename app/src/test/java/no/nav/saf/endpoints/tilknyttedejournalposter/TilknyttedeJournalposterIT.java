@@ -41,6 +41,7 @@ import static no.nav.saf.domain.kode.Tema.UFO;
 import static no.nav.saf.domain.kode.Variantformat.ARKIV;
 import static no.nav.saf.domain.kode.Variantformat.PRODUKSJON;
 import static no.nav.saf.domain.visningsmodell.BrukerIdType.AKTOERID;
+import static no.nav.saf.domain.visningsmodell.BrukerIdType.FNR;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
@@ -345,11 +346,16 @@ class TilknyttedeJournalposterIT extends AbstractItest {
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("safintern/tilknyttetjournalpost/tilknyttedejournalposter-no-sak-happy.json")));
 
-		List<Journalpost> tilknyttedeJournalposter = parseJournalpost(tilknyttedeJournalposterGjenbrukQuery());
+		var response = tilknyttedeJournalposterGjenbrukQuery();
+
+		assertThat(response.getBody().get("errors"), nullValue());
+
+		List<Journalpost> tilknyttedeJournalposter = parseJournalpost(response);
 
 		assertThat(tilknyttedeJournalposter, hasSize(1));
 		assertThat(tilknyttedeJournalposter.getFirst().getSak(), nullValue());
 		assertThat(tilknyttedeJournalposter.getFirst().getBruker().getId(), is("11111111111"));
+		assertThat(tilknyttedeJournalposter.getFirst().getBruker().getType(), is(FNR));
 	}
 
 	private ResponseEntity<LinkedHashMap> tilknyttedeJournalposterGjenbrukQuery() throws IOException, URISyntaxException {
