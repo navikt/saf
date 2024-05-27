@@ -35,6 +35,7 @@ import static org.springframework.security.oauth2.client.web.reactive.function.c
 @Slf4j
 @Service
 public class DokarkivConsumer {
+
 	private static final String DOKARKIV_HENTDOKUMENT = "dokarkivhentdokument";
 	static final String DOKARKIV_METADATA = "dokarkivmetadata";
 
@@ -44,7 +45,6 @@ public class DokarkivConsumer {
 	private final Retry dokarkivHentdokumentRetry;
 	private final Retry dokarkivMetadataRetry;
 
-	@Autowired
 	public DokarkivConsumer(final SafProperties safProperties,
 							final CodecProperties codecProperties,
 							final WebClient webClient,
@@ -89,7 +89,7 @@ public class DokarkivConsumer {
 
 	private Consumer<Throwable> handleErrorHentDokument(String dokumentInfoId, String variantFormat) {
 		return error -> {
-			if (error instanceof WebClientResponseException.NotFound notFound) {
+			if (error instanceof WebClientResponseException.NotFound) {
 				throw new DokumentIkkeFunnetException(format("Dokument med dokumentInfoId=%s, variantFormat=%s ikke funnet. feilmelding=%s",
 						dokumentInfoId, variantFormat, error.getMessage()));
 			}
@@ -126,7 +126,7 @@ public class DokarkivConsumer {
 
 	private Consumer<Throwable> handleErrorJournalpostById(String journalpostId) {
 		return error -> {
-			if (error instanceof WebClientResponseException.NotFound notFound) {
+			if (error instanceof WebClientResponseException.NotFound) {
 				throw new JournalpostIkkeFunnetException("Journalpost med journalpostId=" + journalpostId + " ikke funnet.");
 			}
 			throw new SafTechnicalException("Henting av journalpostId=" + journalpostId + " feilet med ukjent teknisk feil.", error);
@@ -154,7 +154,7 @@ public class DokarkivConsumer {
 
 	private Consumer<Throwable> handleErrorJournalpostByEksternReferanseId(String eksternReferanseId) {
 		return error -> {
-			if (error instanceof WebClientResponseException.NotFound notFound) {
+			if (error instanceof WebClientResponseException.NotFound) {
 				throw new JournalpostIkkeFunnetException("Journalpost med eksternReferanseId=" + eksternReferanseId + " ikke funnet.");
 			}
 			throw new SafTechnicalException("Henting av eksternReferanseId=" + eksternReferanseId + " feilet med ukjent teknisk feil.", error);
@@ -182,7 +182,7 @@ public class DokarkivConsumer {
 
 	private Consumer<Throwable> handleErrorJournalpostByIdAndDokumentInfoId(String journalpostId, String dokumentInfoId) {
 		return error -> {
-			if (error instanceof WebClientResponseException.NotFound notFound) {
+			if (error instanceof WebClientResponseException.NotFound) {
 				throw new DokumentIkkeFunnetException(format("Journalpost med journalpostId=%s, dokumentInfoId=%s ikke funnet i Joark.",
 						journalpostId, dokumentInfoId));
 			}

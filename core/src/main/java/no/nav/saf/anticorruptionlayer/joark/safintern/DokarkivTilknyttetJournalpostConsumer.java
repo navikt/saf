@@ -71,7 +71,7 @@ public class DokarkivTilknyttetJournalpostConsumer {
 
 	private Consumer<Throwable> handleErrorTilknyttetJournalposterDokumentinfo(String dokumentinfoId) {
 		return error -> {
-			if (error instanceof WebClientResponseException.NotFound notFound) {
+			if (error instanceof WebClientResponseException.NotFound) {
 				throw new JournalpostIkkeFunnetException("Fant ingen journalposter tilknyttet dokumentinfoId=" + dokumentinfoId);
 			}
 			throw new SafTechnicalException("Henting av journalposter tilknytttet dokumentinfoId=" + dokumentinfoId + " feilet med ukjent teknisk feil.", error);
