@@ -1,5 +1,6 @@
 package no.nav.saf.query.tilknyttedejournalposter;
 
+import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.anticorruptionlayer.aktoer.PdlAntiCorruptionLayer;
 import no.nav.saf.anticorruptionlayer.bisys.BisysAntiCorruptionLayer;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.FagsystemCode;
@@ -9,11 +10,13 @@ import no.nav.saf.anticorruptionlayer.joark.safintern.journalpost.ArkivBruker;
 import no.nav.saf.anticorruptionlayer.joark.safintern.journalpost.ArkivJournalpost;
 import no.nav.saf.anticorruptionlayer.joark.safintern.journalpost.ArkivSak;
 import no.nav.saf.anticorruptionlayer.joark.safintern.journalpost.ArkivSaksrelasjon;
+import no.nav.saf.anticorruptionlayer.pdl.PersonIkkeFunnetException;
 import no.nav.saf.anticorruptionlayer.pensjonsak.PensjonSakAntiCorruptionLayer;
 import no.nav.saf.domain.Arkivsak;
 import no.nav.saf.domain.BidragSak;
 import no.nav.saf.domain.kode.Skjerming;
 import no.nav.saf.domain.kode.Tema;
+import no.nav.saf.domain.tilgangsmodell.IdentType;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.domain.tilgangsmodell.TilgangDokumentInfo;
 import no.nav.saf.domain.tilgangsmodell.TilgangDokumentvariant;
@@ -32,7 +35,10 @@ import java.util.stream.Stream;
 
 import static no.nav.saf.domain.kode.Arkivsakssystem.GSAK;
 import static no.nav.saf.domain.kode.Arkivsakssystem.PSAK;
+import static no.nav.saf.domain.tilgangsmodell.IdentType.AKTOERID;
+import static no.nav.saf.domain.tilgangsmodell.IdentType.FOLKEREGISTERIDENT;
 
+@Slf4j
 @Component
 public class TilknyttedeJournalposterTilgangRepository {
 
@@ -85,13 +91,8 @@ public class TilknyttedeJournalposterTilgangRepository {
 
 	private Stream<TilgangBruker> ikkeSakstilknyttedeTilgangBrukere(final List<ArkivJournalpost> tilknyttetJournalpostDto) {
 		return tilknyttetJournalpostDto.stream()
-				.map(journalpost -> {
-					if (journalpost.isTilknyttetSak()) {
-						return null;
-					} else {
-						return midlertidigTilgangBrukerPersonOrganisasjon(journalpost.bruker());
-					}
-				}).filter(Objects::nonNull);
+				.filter(arkivJournalpost -> !arkivJournalpost.isTilknyttetSak())
+				.map(journalpost -> midlertidigTilgangBrukerPersonOrganisasjon(journalpost.bruker()));
 	}
 
 	private TilgangBruker sakstilknyttetTilgangBruker(Arkivsak arkivsak) {
@@ -105,26 +106,40 @@ public class TilknyttedeJournalposterTilgangRepository {
 			if (!tilgangBruker.isPerson()) {
 				return tilgangBruker;
 			} else {
-				return aktoerAntiCorruptionLayer.hentTilgangBrukerByAktoerId(tilgangBruker.getAktoerId());
+				return hentTilgangBruker(arkivsak.getAktoerId(), AKTOERID);
 			}
 		} else if (arkivsak.getArkivsaksystem() == PSAK) {
 			// PSAK
 			String foedselsnummer = pensjonSakAntiCorruptionLayer.findFoedselsnummerBySakId(arkivsak.getArkivsaksnummer());
-			return aktoerAntiCorruptionLayer.hentTilgangBrukerByFoedselsnummer(foedselsnummer);
+			return hentTilgangBruker(foedselsnummer, FOLKEREGISTERIDENT);
 		} else {
 			return null;
 		}
 	}
 
 	private TilgangBruker midlertidigTilgangBrukerPersonOrganisasjon(ArkivBruker bruker) {
-		if (bruker.isPerson()) {
-			return aktoerAntiCorruptionLayer.hentTilgangBrukerByFoedselsnummer(bruker.id());
+		if (bruker == null) {
+			return TilgangBruker.builder().build();
+		} else if (bruker.isPerson()) {
+			return hentTilgangBruker(bruker.id(), FOLKEREGISTERIDENT);
 		} else if (bruker.isOrganisasjon()) {
 			return TilgangBruker.builder()
 					.orgnummer(bruker.id())
 					.build();
 		} else {
-			return null;
+			return TilgangBruker.builder().build();
+		}
+	}
+
+	private TilgangBruker hentTilgangBruker(String brukerId, IdentType identType) {
+		try {
+			if (identType == FOLKEREGISTERIDENT) {
+				return aktoerAntiCorruptionLayer.hentTilgangBrukerByFoedselsnummer(brukerId);
+			}
+			return aktoerAntiCorruptionLayer.hentTilgangBrukerByAktoerId(brukerId);
+		} catch (PersonIkkeFunnetException e) {
+			log.info("Fant ikke person i Persondataløsningen (PDL).");
+			return TilgangBruker.builder().build();
 		}
 	}
 

@@ -1,10 +1,10 @@
 package no.nav.saf.query.tilknyttedejournalposter;
 
+import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostMapper;
 import no.nav.saf.anticorruptionlayer.joark.safintern.DokarkivTilknyttetJournalpostConsumer;
 import no.nav.saf.anticorruptionlayer.joark.safintern.journalpost.ArkivJournalpost;
 import no.nav.saf.domain.Arkivsak;
-import no.nav.saf.domain.kode.Tilknytning;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.domain.tilgangsmodell.TilgangDokumentInfo;
 import no.nav.saf.domain.tilgangsmodell.TilgangDokumentvariant;
@@ -13,15 +13,16 @@ import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 import no.nav.saf.domain.visningsmodell.Journalpost;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.pep.Pep;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import static no.nav.saf.util.MDCUtility.addMdcData;
 
+@Slf4j
 @Component
 public class TilknyttedeJournalposterQuery {
 	private final TilknyttedeJournalposterTilgangRepository tilknyttedeJournalposterTilgangRepository;
@@ -58,24 +59,27 @@ public class TilknyttedeJournalposterQuery {
 		this.pep7d = pep7d;
 	}
 
-	public List<Journalpost> hentTilknyttedeJournalposter(String dokumentInfoId, Tilknytning tilknytning, SafRequestContext safRequestContext) {
+	public List<Journalpost> hentTilknyttedeJournalposter(String dokumentInfoId, SafRequestContext safRequestContext) {
 		addMdcData(safRequestContext);
-		List<ArkivJournalpost> datagrunnlag = dokarkivTilknyttetJournalpostConsumer.hentTilknyttedeJournalposter(dokumentInfoId);
-		Set<Arkivsak> arkivsaker = tilknyttedeJournalposterTilgangRepository.arkivsaker(datagrunnlag, safRequestContext);
+		List<ArkivJournalpost> journalposter = dokarkivTilknyttetJournalpostConsumer.hentTilknyttedeJournalposter(dokumentInfoId);
+		Set<Arkivsak> arkivsaker = tilknyttedeJournalposterTilgangRepository.arkivsaker(journalposter, safRequestContext);
 
-		Set<TilgangBruker> filteredTilgangBruker = tilknyttedeJournalposterTilgangRepository.tilgangBrukere(arkivsaker, datagrunnlag)
+		Set<TilgangBruker> filteredTilgangBruker = tilknyttedeJournalposterTilgangRepository.tilgangBrukere(arkivsaker, journalposter)
 				.stream()
 				.filter(tilgangBruker -> pep1g.hasAccess(tilgangBruker, safRequestContext))
 				.collect(Collectors.toSet());
 
 		Set<TilgangSak> filteredTilgangSaker = tilknyttedeJournalposterTilgangRepository.tilgangSaker(arkivsaker, safRequestContext)
 				.stream()
-				.filter(tilgangSak -> filteredTilgangBruker.stream().anyMatch(tilgangBruker -> {
-					if (tilgangBruker.isPerson()) {
-						return tilgangBruker.getAktoerId().equals(tilgangSak.getAktoerId());
-					} else {
-						return tilgangBruker.getOrgnummer().equals(tilgangSak.getOrgnummer());
-					}
+				.filter(tilgangSak -> filteredTilgangBruker.stream()
+						.filter(Objects::nonNull)
+						.filter(tilgangBruker -> !tilgangBruker.isUkjent())
+						.anyMatch(tilgangBruker -> {
+							if (tilgangBruker.isPerson()) {
+								return tilgangBruker.getAktoerId().equals(tilgangSak.getAktoerId());
+							} else {
+								return tilgangBruker.getOrgnummer().equals(tilgangSak.getOrgnummer());
+							}
 				}))
 				.filter(tilgangSak -> pep2.hasAccess(tilgangSak, safRequestContext))
 				.peek(tilgangSak -> pep2d.hasAccess(tilgangSak, safRequestContext))
@@ -83,7 +87,7 @@ public class TilknyttedeJournalposterQuery {
 				.peek(tilgangSak -> pep7d.hasAccess(tilgangSak, safRequestContext))
 				.collect(Collectors.toSet());
 
-		List<TilgangJournalpost> filteredTilgangJournalposter = tilknyttedeJournalposterTilgangRepository.tilgangJournalposter(filteredTilgangSaker, datagrunnlag)
+		List<TilgangJournalpost> filteredTilgangJournalposter = tilknyttedeJournalposterTilgangRepository.tilgangJournalposter(filteredTilgangSaker, journalposter)
 				.stream()
 				.filter(tj -> pep4.hasAccess(tj, safRequestContext))
 				.peek(tj -> tj.getDokumenter().forEach(td -> {

@@ -11,7 +11,6 @@ import no.nav.saf.domain.visningsmodell.DokumentInfo;
 import no.nav.saf.domain.visningsmodell.Journalpost;
 import no.nav.saf.endpoints.AbstractItest;
 import no.nav.saf.endpoints.graphql.GraphQLRequest;
-import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpMethod;
@@ -28,7 +27,6 @@ import java.util.Map;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
-import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME;
 import static no.nav.saf.anticorruptionlayer.joark.domain.kode.Sakstype.FAGSAK;
@@ -39,11 +37,11 @@ import static no.nav.saf.domain.kode.Dokumentstatus.FERDIGSTILT;
 import static no.nav.saf.domain.kode.Kanal.SDP;
 import static no.nav.saf.domain.kode.Kanal.SENTRAL_UTSKRIFT;
 import static no.nav.saf.domain.kode.Tema.FOR;
-import static no.nav.saf.domain.kode.Tema.PEN;
 import static no.nav.saf.domain.kode.Tema.UFO;
 import static no.nav.saf.domain.kode.Variantformat.ARKIV;
 import static no.nav.saf.domain.kode.Variantformat.PRODUKSJON;
 import static no.nav.saf.domain.visningsmodell.BrukerIdType.AKTOERID;
+import static no.nav.saf.domain.visningsmodell.BrukerIdType.FNR;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
@@ -320,6 +318,44 @@ class TilknyttedeJournalposterIT extends AbstractItest {
 		List<Journalpost> tilknyttedeJournalposter = parseJournalpost(tilknyttedeJournalposterGjenbrukQuery());
 		DokumentInfo dokumentInfo = tilknyttedeJournalposter.get(0).getDokumenter().get(0);
 		assertFalse(dokumentInfo.getDokumentvarianter().get(0).isSaksbehandlerHarTilgang());
+	}
+
+	@Test
+	void shouldReturnTilknyttedeJournalposterWithoutSakOrBruker() throws Exception {
+		abacPermit();
+		stubFor(get("/dokarkiv/tilknyttedeJournalposter/gjenbruk/dokumentInfoId/" + DOKUMENT_INFO_ID)
+				.willReturn(aResponse().withStatus(OK.value())
+						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("safintern/tilknyttetjournalpost/tilknyttedejournalposter-no-sak-no-bruker-happy.json")));
+
+		List<Journalpost> tilknyttedeJournalposter = parseJournalpost(tilknyttedeJournalposterGjenbrukQuery());
+
+		assertThat(tilknyttedeJournalposter, hasSize(1));
+		assertThat(tilknyttedeJournalposter.getFirst().getSak(), nullValue());
+		assertThat(tilknyttedeJournalposter.getFirst().getBruker(), nullValue());
+
+	}
+
+
+	@Test
+	void shouldReturnTilknyttedeJournalposterWhenBrukerNotFoundInPDL() throws Exception {
+		abacPermit();
+		stubPdl("pdl-person-ikke-funnet.json");
+		stubFor(get("/dokarkiv/tilknyttedeJournalposter/gjenbruk/dokumentInfoId/" + DOKUMENT_INFO_ID)
+				.willReturn(aResponse().withStatus(OK.value())
+						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("safintern/tilknyttetjournalpost/tilknyttedejournalposter-no-sak-happy.json")));
+
+		var response = tilknyttedeJournalposterGjenbrukQuery();
+
+		assertThat(response.getBody().get("errors"), nullValue());
+
+		List<Journalpost> tilknyttedeJournalposter = parseJournalpost(response);
+
+		assertThat(tilknyttedeJournalposter, hasSize(1));
+		assertThat(tilknyttedeJournalposter.getFirst().getSak(), nullValue());
+		assertThat(tilknyttedeJournalposter.getFirst().getBruker().getId(), is("11111111111"));
+		assertThat(tilknyttedeJournalposter.getFirst().getBruker().getType(), is(FNR));
 	}
 
 	private ResponseEntity<LinkedHashMap> tilknyttedeJournalposterGjenbrukQuery() throws IOException, URISyntaxException {
