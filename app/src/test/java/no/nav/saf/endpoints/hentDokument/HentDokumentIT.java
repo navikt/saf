@@ -70,6 +70,7 @@ class HentDokumentIT extends AbstractItest {
 		abacPermit();
 		stubHappyHentDokument();
 		stubDokarkivJournalpost("journalpost-dokumentinfo-gsak-happy.json");
+		stubPdl();
 
 		Logger logger = (Logger) LoggerFactory.getLogger("hentdokument_sporbarhetslogg");
 		ListAppender<ILoggingEvent> listAppender = new ListAppender<>();
@@ -80,6 +81,7 @@ class HentDokumentIT extends AbstractItest {
 
 		assertOkArkivResponse(responseEntity);
 		verify(getRequestedFor(urlEqualTo("/dokarkiv/hentdokument/" + DOKUMENT_ID + "/" + VARIANTFORMAT)));
+		verify(postRequestedFor(urlEqualTo("/pdl")));
 
 		List<String> auditLog = listAppender.list.stream().map(ILoggingEvent::getMessage).toList();
 		assertThat(auditLog).hasSize(1);
@@ -87,7 +89,7 @@ class HentDokumentIT extends AbstractItest {
 		String cefLogLine = auditLog.getFirst();
 		assertThat(cefLogLine).startsWith("CEF:0|joark|saf_hentdokument|1.0|audit:access|Saksbehandler hentet dokument som gjelder bruker|INFO|");
 		assertThat(cefLogLine).contains(
-				"duid=12345678910",
+				"duid=11111111111",
 				"suid=" + NAV_IDENT_SAKSBEHANDLER,
 				"cs3=ARKIV",
 				"cs3Label=variantformat",
@@ -109,10 +111,7 @@ class HentDokumentIT extends AbstractItest {
 		abacPermit();
 		stubHappyHentDokument();
 		stubDokarkivJournalpost("journalpost-dokumentinfo-gsak-bruker-organisasjon-og-aktoerid.json");
-		stubFor(post("/pdl")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("pdl/pdl-fagsak-aktoerid-historisk.json")));
+		stubPdl();
 
 		Logger logger = (Logger) LoggerFactory.getLogger("hentdokument_sporbarhetslogg");
 		ListAppender<ILoggingEvent> listAppender = new ListAppender<>();
@@ -153,21 +152,25 @@ class HentDokumentIT extends AbstractItest {
 		abacPermit();
 		stubHappyHentDokumentXml();
 		stubDokarkivJournalpost("journalpost-dokumentinfo-gsak-happy.json");
+		stubPdl();
 
 		ResponseEntity<String> responseEntity = callHentDokument(ORIGINAL);
 
 		assertOkXmlOriginalResponse(responseEntity);
+		verify(postRequestedFor(urlEqualTo("/pdl")));
 		verify(getRequestedFor(urlEqualTo("/dokarkiv/hentdokument/" + DOKUMENT_ID + "/" + ORIGINAL)));
 	}
 
 	@Test
 	void shouldHentJsonOriginalWhenHappy() {
 		abacPermit();
+		stubPdl();
 		stubHappyHentDokumentJson();
 		stubDokarkivJournalpost("journalpost-dokumentinfo-gsak-happy.json");
 
 		ResponseEntity<String> responseEntity = callHentDokument(ORIGINAL);
 
+		verify(postRequestedFor(urlEqualTo("/pdl")));
 		assertOkJsonResponse(responseEntity);
 		verify(getRequestedFor(urlEqualTo("/dokarkiv/hentdokument/" + DOKUMENT_ID + "/" + ORIGINAL)));
 	}
@@ -283,6 +286,7 @@ class HentDokumentIT extends AbstractItest {
 	@Test
 	void shouldHentDokumentWhenSladdet() {
 		abacPermit();
+		stubPdl();
 		stubFor(get("/dokarkiv/hentdokument/" + DOKUMENT_ID + "/" + SLADDET_VARIANTFORMAT)
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_PDF_VALUE)
@@ -291,6 +295,7 @@ class HentDokumentIT extends AbstractItest {
 
 		ResponseEntity<String> responseEntity = callHentDokumentSladdetVariant();
 
+		verify(postRequestedFor(urlEqualTo("/pdl")));
 		assertOkSladdetResponse(responseEntity);
 		verify(getRequestedFor(urlEqualTo("/dokarkiv/hentdokument/" + DOKUMENT_ID + "/" + SLADDET_VARIANTFORMAT)));
 	}
@@ -338,12 +343,14 @@ class HentDokumentIT extends AbstractItest {
 	@Test
 	void shouldReturnNotFoundWhenDokumentNotFound() {
 		abacPermit();
+		stubPdl();
 		stubFor(get("/dokarkiv/hentdokument/" + DOKUMENT_ID + "/" + VARIANTFORMAT)
 				.willReturn(aResponse().withStatus(NOT_FOUND.value())));
 		stubDokarkivJournalpost("journalpost-dokumentinfo-gsak-happy.json");
 
 		ResponseEntity<String> responseEntity = callHentDokument();
 
+		verify(postRequestedFor(urlEqualTo("/pdl")));
 		assertEquals(NOT_FOUND, responseEntity.getStatusCode());
 	}
 
@@ -371,10 +378,12 @@ class HentDokumentIT extends AbstractItest {
 	@Test
 	void shouldReturnNotFoundWhenOriginalVariantDoesNotExist() {
 		abacPermit();
+		stubPdl();
 		stubDokarkivJournalpost("journalpost-dokumentinfo-gsak-dokumentvariant-notmatched.json");
 
 		ResponseEntity<String> responseEntity = callHentDokument(ORIGINAL);
 
+		verify(postRequestedFor(urlEqualTo("/pdl")));
 		assertEquals(NOT_FOUND, responseEntity.getStatusCode());
 	}
 
@@ -401,10 +410,12 @@ class HentDokumentIT extends AbstractItest {
 	@Test
 	void shouldGetForbiddenFromPep1g() {
 		abacDenyPep1g();
+		stubPdl();
 		stubDokarkivJournalpost("journalpost-dokumentinfo-gsak-happy.json");
 
 		ResponseEntity<String> responseEntity = callHentDokument();
 
+		verify(postRequestedFor(urlEqualTo("/pdl")));
 		verifyabacDenyPep1gAndHttpStatusCode(FORBIDDEN, responseEntity.getStatusCode());
 		assertThat(responseEntity.getBody()).contains(PEP1G_DENY_REASON);
 	}
@@ -412,10 +423,12 @@ class HentDokumentIT extends AbstractItest {
 	@Test
 	void shouldGetForbiddenFromPep2() {
 		abacDenyPep2();
+		stubPdl();
 		stubDokarkivJournalpost("journalpost-dokumentinfo-gsak-tema-far.json");
 
 		ResponseEntity<String> responseEntity = callHentDokument();
 
+		verify(postRequestedFor(urlEqualTo("/pdl")));
 		verifyabacDenyPep2AndHttpStatusCode(FORBIDDEN, responseEntity.getStatusCode());
 		assertThat(responseEntity.getBody()).contains(PEP2_DENY_REASON);
 	}
@@ -436,10 +449,12 @@ class HentDokumentIT extends AbstractItest {
 	void shouldGetForbiddenFromPep2d() {
 		abacDenyPep2d();
 		stubHappyBisysSak();
+		stubPdl();
 		stubDokarkivJournalpost("journalpost-dokumentinfo-gsak-tema-bid.json");
 
 		ResponseEntity<String> responseEntity = callHentDokument();
 
+		verify(postRequestedFor(urlEqualTo("/pdl")));
 		assertEquals(FORBIDDEN, responseEntity.getStatusCode());
 		assertThat(responseEntity.getBody()).contains("Saksbehandler har ikke tilgang til tema ressursen tilhører eller geografisk område");
 	}
@@ -448,10 +463,12 @@ class HentDokumentIT extends AbstractItest {
 	void shouldGetForbiddenFromPep3() {
 		abacDenyPep3SkipPep2dAndPep2();
 		stubHappyBisysSak();
+		stubPdl();
 		stubDokarkivJournalpost("journalpost-dokumentinfo-gsak-tema-bid.json");
 
 		ResponseEntity<String> responseEntity = callHentDokument();
 
+		verify(postRequestedFor(urlEqualTo("/pdl")));
 		assertEquals(FORBIDDEN, responseEntity.getStatusCode());
 		assertThat(responseEntity.getBody()).contains(PEP3_DENY_REASON);
 	}
@@ -460,10 +477,12 @@ class HentDokumentIT extends AbstractItest {
 	void shouldGetForbiddenFromPep4WhenJournalstatusUtgaar() {
 		abacDenyPep4SkipPep2OrPep3();
 		stubHappyBisysSak();
+		stubPdl();
 		stubDokarkivJournalpost("journalpost-dokumentinfo-gsak-tema-bid-utgaar.json");
 
 		ResponseEntity<String> responseEntity = callHentDokument();
 
+		verify(postRequestedFor(urlEqualTo("/pdl")));
 		assertEquals(FORBIDDEN, responseEntity.getStatusCode());
 		assertThat(responseEntity.getBody()).contains(PEP4_DENY_REASON);
 	}
@@ -472,10 +491,12 @@ class HentDokumentIT extends AbstractItest {
 	void shouldGetForbiddenFromPep4WhenJournalpostSkjermet() {
 		abacDenyPep4SkipPep2OrPep3();
 		stubHappyBisysSak();
+		stubPdl();
 		stubDokarkivJournalpost("journalpost-dokumentinfo-gsak-tema-bid-journalpost-skjerming.json");
 
 		ResponseEntity<String> responseEntity = callHentDokument();
 
+		verify(postRequestedFor(urlEqualTo("/pdl")));
 		assertEquals(FORBIDDEN, responseEntity.getStatusCode());
 		assertThat(responseEntity.getBody()).contains(PEP4_DENY_REASON);
 	}
@@ -485,9 +506,11 @@ class HentDokumentIT extends AbstractItest {
 		abacDenyPep5SkipPep4();
 		stubHappyBisysSak();
 		stubDokarkivJournalpost("journalpost-dokumentinfo-gsak-tema-bid-dokumentinfo-skjerming.json");
+		stubPdl();
 
 		ResponseEntity<String> responseEntity = callHentDokument();
 
+		verify(postRequestedFor(urlEqualTo("/pdl")));
 		assertEquals(FORBIDDEN, responseEntity.getStatusCode());
 		assertThat(responseEntity.getBody()).contains(PEP5_DENY_REASON);
 	}
@@ -497,10 +520,12 @@ class HentDokumentIT extends AbstractItest {
 		abacDenyPep6dSkipPep2Pep4Pep5();
 		stubHappyHentDokument();
 		stubHappyBisysSak();
+		stubPdl();
 		stubDokarkivJournalpost("journalpost-dokumentinfo-gsak-tema-bid-fildetaljer-skjerming.json");
 
 		ResponseEntity<String> responseEntity = callHentDokument();
 
+		verify(postRequestedFor(urlEqualTo("/pdl")));
 		assertEquals(FORBIDDEN, responseEntity.getStatusCode());
 		assertThat(responseEntity.getBody()).contains(PEP6D_DENY_REASON);
 	}
@@ -514,11 +539,13 @@ class HentDokumentIT extends AbstractItest {
 						.withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("fpsak/happy-response.json")));
+		stubPdl();
 
 		ResponseEntity<String> responseEntity = callHentDokument();
 
 		assertEquals(FORBIDDEN, responseEntity.getStatusCode());
 		assertThat(responseEntity.getBody()).contains(PEP7D_DENY_REASON);
+		verify(postRequestedFor(urlEqualTo("/pdl")));
 	}
 
 	@Test
@@ -530,16 +557,19 @@ class HentDokumentIT extends AbstractItest {
 						.withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("k9/happy-response.json")));
+		stubPdl();
 
 		ResponseEntity<String> responseEntity = callHentDokument();
 
 		assertEquals(FORBIDDEN, responseEntity.getStatusCode());
 		assertThat(responseEntity.getBody()).contains(PEP7D_DENY_REASON);
+		verify(postRequestedFor(urlEqualTo("/pdl")));
 	}
 
 	@Test
 	void shouldGetForbiddenFromPep7ForK9TemaOms() {
 		abacDenyPep7dSkipPep2Pep3Pep4Pep5Pep6d();
+		stubPdl();
 		stubDokarkivJournalpost("journalpost-dokumentinfo-gsak-tema-oms.json");
 		stubFor(get("/k9sak?saksnummer=K92000")
 				.willReturn(aResponse()
@@ -549,6 +579,7 @@ class HentDokumentIT extends AbstractItest {
 
 		ResponseEntity<String> responseEntity = callHentDokument();
 
+		verify(postRequestedFor(urlEqualTo("/pdl")));
 		assertEquals(FORBIDDEN, responseEntity.getStatusCode());
 		assertThat(responseEntity.getBody()).contains(PEP7D_DENY_REASON);
 	}
@@ -641,5 +672,12 @@ class HentDokumentIT extends AbstractItest {
 	private ResponseEntity<String> callHentDokumentSladdetVariant() {
 		String uri = "/rest/hentdokument/" + JOURNALPOST_ID + "/" + DOKUMENT_ID + "/" + SLADDET_VARIANTFORMAT;
 		return this.restTemplate.exchange(uri, HttpMethod.GET, createHttpEntity(), String.class);
+	}
+
+	private static void stubPdlHistorisk() {
+		stubFor(post("/pdl")
+				.willReturn(aResponse().withStatus(OK.value())
+						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("pdl/pdl-fagsak-aktoerid-historisk.json")));
 	}
 }

@@ -95,15 +95,13 @@ class HentDokumentTilgangService {
 			ArkivSak arkivSak = arkivSaksrelasjon.sak();
 			ArkivBruker arkivBruker = arkivJournalpost.bruker();
 			if (isNotBlank(arkivSak.aktoerId())) {
-				if (arkivBruker == null || !arkivBruker.isPerson() || arkivBruker.id() == null) {
-					return pdlAntiCorruptionLayerImpl.hentTilgangBrukerByAktoerId(arkivSak.aktoerId());
+				TilgangBruker tilgangBruker = pdlAntiCorruptionLayerImpl.hentTilgangBrukerByAktoerId(arkivSak.aktoerId());
+				if (tilgangBruker != null && tilgangBruker.isPerson() && tilgangBruker.getFoedselsnr() != null) {
+					return tilgangBruker;
 				}
-				return TilgangBruker.builder()
-						.aktoerId(arkivSak.aktoerId())
-						.foedselsnr(arkivBruker.id())
-						.build();
 			}
 			return TilgangBruker.builder()
+					.aktoerId(arkivSak.aktoerId())
 					.orgnummer(trim(arkivSak.orgNr()))
 					.foedselsnr(arkivBruker != null && arkivBruker.isPerson() ? arkivBruker.id() : null)
 					.build();
