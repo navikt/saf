@@ -73,7 +73,9 @@ class HentDokumentDomainCoordinatorImpl implements HentDokumentDomainCoordinator
 		}
 
 		doTilgangskontroll(hentDokumentTilgang, safRequestContext);
-		hentDokumentSporbarhetslogger.logPermit(journalpostId, dokumentInfoId, variantFormat, hentDokumentTilgang, safRequestContext);
+		if(safRequestContext.isUserIdNavAnsatt()) {
+			hentDokumentSporbarhetslogger.logPermit(journalpostId, dokumentInfoId, variantFormat, hentDokumentTilgang, safRequestContext);
+		}
 		return hentDokumentAntiCorruptionLayer.hentDokument(dokumentInfoId, variantFormat);
 	}
 
