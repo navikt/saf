@@ -19,7 +19,6 @@ import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
@@ -58,6 +57,8 @@ class HentDokumentIT extends AbstractItest {
 	private static final VariantFormatCode VARIANTFORMAT = ARKIV;
 	private static final VariantFormatCode SLADDET_VARIANTFORMAT = SLADDET;
 	private static final byte[] TEST_FILE_BYTES = "TestThis".getBytes();
+	private static final String USER_FNR_FROM_T_BRUKER = "12345678910";
+	private static final String USER_FNR_FROM_PDL = "11111111111";
 
 	@BeforeEach
 	public void setup() {
@@ -89,7 +90,7 @@ class HentDokumentIT extends AbstractItest {
 		String cefLogLine = auditLog.getFirst();
 		assertThat(cefLogLine).startsWith("CEF:0|joark|saf_hentdokument|1.0|audit:access|Saksbehandler hentet dokument som gjelder bruker|INFO|");
 		assertThat(cefLogLine).contains(
-				"duid=11111111111",
+				"duid=" + USER_FNR_FROM_PDL,
 				"suid=" + NAV_IDENT_SAKSBEHANDLER,
 				"cs3=ARKIV",
 				"cs3Label=variantformat",
@@ -130,7 +131,7 @@ class HentDokumentIT extends AbstractItest {
 		String cefLogLine = auditLog.getFirst();
 		assertThat(cefLogLine).startsWith("CEF:0|joark|saf_hentdokument|1.0|audit:access|Saksbehandler hentet dokument som gjelder bruker|INFO|");
 		assertThat(cefLogLine).contains(
-				"duid=11111111111",
+				"duid=" + USER_FNR_FROM_PDL,
 				"suid=" + NAV_IDENT_SAKSBEHANDLER,
 				"cs3=ARKIV",
 				"cs3Label=variantformat",
@@ -584,6 +585,48 @@ class HentDokumentIT extends AbstractItest {
 		assertThat(responseEntity.getBody()).contains(PEP7D_DENY_REASON);
 	}
 
+
+	@Test
+	void shouldHentDokumentAlsoWhenUserNotFoundInPDL() {
+		abacPermit();
+		stubHappyHentDokument();
+		stubDokarkivJournalpost("journalpost-dokumentinfo-gsak-happy.json");
+		stubPdl("pdl-person-ikke-funnet.json");
+
+		Logger logger = (Logger) LoggerFactory.getLogger("hentdokument_sporbarhetslogg");
+		ListAppender<ILoggingEvent> listAppender = new ListAppender<>();
+		listAppender.start();
+		logger.addAppender(listAppender);
+
+		ResponseEntity<String> responseEntity = callHentDokument();
+
+		assertOkArkivResponse(responseEntity);
+		verify(getRequestedFor(urlEqualTo("/dokarkiv/hentdokument/" + DOKUMENT_ID + "/" + VARIANTFORMAT)));
+		verify(postRequestedFor(urlEqualTo("/pdl")));
+
+		List<String> auditLog = listAppender.list.stream().map(ILoggingEvent::getMessage).toList();
+		assertThat(auditLog).hasSize(1);
+
+		String cefLogLine = auditLog.getFirst();
+		assertThat(cefLogLine).startsWith("CEF:0|joark|saf_hentdokument|1.0|audit:access|Saksbehandler hentet dokument som gjelder bruker|INFO|");
+		assertThat(cefLogLine).contains(
+				"duid=" + USER_FNR_FROM_T_BRUKER,
+				"suid=" + NAV_IDENT_SAKSBEHANDLER,
+				"cs3=ARKIV",
+				"cs3Label=variantformat",
+				"cs5=Journalposttittel – med mellomrom? It's more likely than you think",
+				"cs5Label=tittel",
+				"cs6=HJE",
+				"cs6Label=tema",
+				"flexString1=" + JOURNALPOST_ID,
+				"flexString1Label=journalpostId",
+				"flexString2=" + DOKUMENT_ID,
+				"flexString2Label=dokumentInfoId",
+				"act=hentdokument_saksbehandler",
+				"sproc=",
+				"end=");
+	}
+
 	private static void stubHappyHentDokument() {
 		stubFor(get("/dokarkiv/hentdokument/" + DOKUMENT_ID + "/" + VARIANTFORMAT)
 				.willReturn(aResponse().withStatus(OK.value())
@@ -672,12 +715,5 @@ class HentDokumentIT extends AbstractItest {
 	private ResponseEntity<String> callHentDokumentSladdetVariant() {
 		String uri = "/rest/hentdokument/" + JOURNALPOST_ID + "/" + DOKUMENT_ID + "/" + SLADDET_VARIANTFORMAT;
 		return this.restTemplate.exchange(uri, HttpMethod.GET, createHttpEntity(), String.class);
-	}
-
-	private static void stubPdlHistorisk() {
-		stubFor(post("/pdl")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("pdl/pdl-fagsak-aktoerid-historisk.json")));
 	}
 }
