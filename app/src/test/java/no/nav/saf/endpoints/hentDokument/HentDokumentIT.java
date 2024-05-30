@@ -626,6 +626,7 @@ class HentDokumentIT extends AbstractItest {
 	@Test
 	void shouldAuditLogWhenNavUserIdHeaderAndSystemTilSystem() {
 		abacPermit();
+		stubPdl();
 		stubHappyHentDokument();
 		stubDokarkivJournalpost("journalpost-dokumentinfo-gsak-happy.json");
 
@@ -640,7 +641,7 @@ class HentDokumentIT extends AbstractItest {
 		String cefLogLine = auditLog.getFirst();
 		assertThat(cefLogLine).startsWith("CEF:0|joark|saf_hentdokument|1.0|audit:access|Saksbehandler hentet dokument som gjelder bruker|INFO|");
 		assertThat(cefLogLine).contains(
-				"duid=12345678910",
+				"duid=" + USER_FNR_FROM_PDL,
 				"suid=" + NAV_IDENT_SAKSBEHANDLER,
 				"cs3=ARKIV",
 				"cs3Label=variantformat",
@@ -660,6 +661,7 @@ class HentDokumentIT extends AbstractItest {
 	@Test
 	void shouldNotAuditLogWhenSystemTilSystem() {
 		abacPermit();
+		stubPdl();
 		stubHappyHentDokument();
 		stubDokarkivJournalpost("journalpost-dokumentinfo-gsak-happy.json");
 
