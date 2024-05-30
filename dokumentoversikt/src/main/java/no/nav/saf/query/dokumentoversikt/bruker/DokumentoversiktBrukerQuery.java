@@ -158,9 +158,11 @@ class DokumentoversiktBrukerQuery {
 				.filter(j -> filterFeilregistrerte(dokumentoversiktBrukerArguments, j))
 				.collect(Collectors.toList());
 
+		var sisteJournalpostId = tilgangJournalposter.isEmpty() ? null : tilgangJournalposter.getLast().getJournalpostId();
+
 		return Dokumentoversikt.builder()
 				.journalposter(visningJournalposterFiltrert)
-				.sideInfo(sideInfoMapper.mapSideInfo(dokumentoversiktBrukerArguments.getPagination(), visningJournalposterSortert, safRequestContext))
+				.sideInfo(sideInfoMapper.mapFilteredSideInfo(sisteJournalpostId, visningJournalposterFiltrert, safRequestContext))
 				.build();
 	}
 
