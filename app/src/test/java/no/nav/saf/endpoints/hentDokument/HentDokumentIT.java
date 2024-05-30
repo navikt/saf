@@ -5,10 +5,12 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.read.ListAppender;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.VariantFormatCode;
 import no.nav.saf.endpoints.AbstractItest;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -71,10 +73,7 @@ class HentDokumentIT extends AbstractItest {
 		stubHappyHentDokument();
 		stubDokarkivJournalpost("journalpost-dokumentinfo-gsak-happy.json");
 
-		Logger logger = (Logger) LoggerFactory.getLogger("hentdokument_sporbarhetslogg");
-		ListAppender<ILoggingEvent> listAppender = new ListAppender<>();
-		listAppender.start();
-		logger.addAppender(listAppender);
+		ListAppender<ILoggingEvent> listAppender = initialiseLogAppender();
 
 		ResponseEntity<String> responseEntity = callHentDokument();
 
@@ -114,10 +113,7 @@ class HentDokumentIT extends AbstractItest {
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("pdl/pdl-fagsak-aktoerid-historisk.json")));
 
-		Logger logger = (Logger) LoggerFactory.getLogger("hentdokument_sporbarhetslogg");
-		ListAppender<ILoggingEvent> listAppender = new ListAppender<>();
-		listAppender.start();
-		logger.addAppender(listAppender);
+		ListAppender<ILoggingEvent> listAppender = initialiseLogAppender();
 
 		ResponseEntity<String> responseEntity = callHentDokument();
 
@@ -553,6 +549,55 @@ class HentDokumentIT extends AbstractItest {
 		assertThat(responseEntity.getBody()).contains(PEP7D_DENY_REASON);
 	}
 
+	@Test
+	void shouldAuditLogWhenNavUserIdHeaderAndSystemTilSystem() {
+		abacPermit();
+		stubHappyHentDokument();
+		stubDokarkivJournalpost("journalpost-dokumentinfo-gsak-happy.json");
+
+		ListAppender<ILoggingEvent> listAppender = initialiseLogAppender();
+
+		ResponseEntity<String> responseEntity = callHentDokument(new HttpEntity<>(createHeadersNavUserId()));
+		assertOkArkivResponse(responseEntity);
+
+		List<String> auditLog = listAppender.list.stream().map(ILoggingEvent::getMessage).toList();
+		assertThat(auditLog).hasSize(1);
+
+		String cefLogLine = auditLog.getFirst();
+		assertThat(cefLogLine).startsWith("CEF:0|joark|saf_hentdokument|1.0|audit:access|Saksbehandler hentet dokument som gjelder bruker|INFO|");
+		assertThat(cefLogLine).contains(
+				"duid=12345678910",
+				"suid=" + NAV_IDENT_SAKSBEHANDLER,
+				"cs3=ARKIV",
+				"cs3Label=variantformat",
+				"cs5=Journalposttittel – med mellomrom? It's more likely than you think",
+				"cs5Label=tittel",
+				"cs6=HJE",
+				"cs6Label=tema",
+				"flexString1=" + JOURNALPOST_ID,
+				"flexString1Label=journalpostId",
+				"flexString2=" + DOKUMENT_ID,
+				"flexString2Label=dokumentInfoId",
+				"act=hentdokument_saksbehandler",
+				"sproc=",
+				"end=");
+	}
+
+	@Test
+	void shouldNotAuditLogWhenSystemTilSystem() {
+		abacPermit();
+		stubHappyHentDokument();
+		stubDokarkivJournalpost("journalpost-dokumentinfo-gsak-happy.json");
+
+		ListAppender<ILoggingEvent> listAppender = initialiseLogAppender();
+
+		ResponseEntity<String> responseEntity = callHentDokument(new HttpEntity<>(createHeadersClientCredential()));
+		assertOkArkivResponse(responseEntity);
+
+		List<String> auditLog = listAppender.list.stream().map(ILoggingEvent::getMessage).toList();
+		assertThat(auditLog).hasSize(0);
+	}
+
 	private static void stubHappyHentDokument() {
 		stubFor(get("/dokarkiv/hentdokument/" + DOKUMENT_ID + "/" + VARIANTFORMAT)
 				.willReturn(aResponse().withStatus(OK.value())
@@ -596,6 +641,14 @@ class HentDokumentIT extends AbstractItest {
 						.withBodyFile("bidrag/bidragsak-happy.json")));
 	}
 
+	private static @NotNull ListAppender<ILoggingEvent> initialiseLogAppender() {
+		Logger logger = (Logger) LoggerFactory.getLogger("hentdokument_sporbarhetslogg");
+		ListAppender<ILoggingEvent> listAppender = new ListAppender<>();
+		listAppender.start();
+		logger.addAppender(listAppender);
+		return listAppender;
+	}
+
 	private void assertOkArkivResponse(ResponseEntity<String> responseEntity) {
 		assertEquals(DOKUMENT_ID + "_" + VARIANTFORMAT + ".pdf", responseEntity.getHeaders().getContentDisposition().getFilename());
 	}
@@ -629,8 +682,12 @@ class HentDokumentIT extends AbstractItest {
 	}
 
 	private ResponseEntity<String> callHentDokument() {
+		return callHentDokument(createHttpEntity());
+	}
+
+	private ResponseEntity<String> callHentDokument(HttpEntity<?> httpEntity) {
 		String uri = "/rest/hentdokument/" + JOURNALPOST_ID + "/" + DOKUMENT_ID + "/" + VARIANTFORMAT;
-		return this.restTemplate.exchange(uri, HttpMethod.GET, createHttpEntity(), String.class);
+		return this.restTemplate.exchange(uri, HttpMethod.GET, httpEntity, String.class);
 	}
 
 	private ResponseEntity<String> callHentDokument(VariantFormatCode variantFormat) {

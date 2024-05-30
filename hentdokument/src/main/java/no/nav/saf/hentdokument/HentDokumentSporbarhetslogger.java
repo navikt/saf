@@ -25,9 +25,7 @@ class HentDokumentSporbarhetslogger {
 
 	private static final Tema UKJENT_TEMA = Tema.UKJ;
 	private static final String UKJENT_BRUKERID = "ukjent";
-	private static final String MACHINE_HENT_DOKUMENT_SYSTEM = "hentdokument_system";
 	private static final String MACHINE_HENT_DOKUMENT_SAKSBEHANDLER = "hentdokument_saksbehandler";
-	private static final String HENT_DOKUMENT_SYSTEM = "System hentet dokument som gjelder bruker";
 	private static final String HENT_DOKUMENT_SAKSBEHANDLER = "Saksbehandler hentet dokument som gjelder bruker";
 
 	void logPermit(String journalpostId, String dokumentInfoId, String variantFormat,
@@ -44,11 +42,11 @@ class HentDokumentSporbarhetslogger {
 					.severity(CefMessageSeverity.INFO)
 					.timeEnded(Instant.now().toEpochMilli())
 					.callId(safRequestContext.getNavCallId())
-					.name(humanReadableAction(safRequestContext))
+					.name(HENT_DOKUMENT_SAKSBEHANDLER)
 					.destinationUserId(getBrukerId(hentDokumentTilgang.tilgangBruker()))
-					.sourceUserId(sourceUserId != null ? sourceUserId : "Ukjent Bruker")
+					.sourceUserId(sourceUserId != null ? sourceUserId : "ukjent bruker")
 					.authorizationDecision(PERMIT)
-					.extension("act", machineReadableAction(safRequestContext))
+					.extension("act", MACHINE_HENT_DOKUMENT_SAKSBEHANDLER)
 					.flexString(1, "journalpostId", journalpostId)
 					.flexString(2, "dokumentInfoId", dokumentInfoId)
 					.customString(3, "variantformat", variantFormat)
@@ -59,14 +57,6 @@ class HentDokumentSporbarhetslogger {
 		} catch (NullPointerException e) {
 			log.error("saf hentdokument Unable to audit log for journalpostId={} dokumentInfoId={}, variantFormat={}", journalpostId, dokumentInfoId, variantFormat, e);
 		}
-	}
-
-	private String humanReadableAction(SafRequestContext safRequestContext) {
-		return safRequestContext.getSecurityContext().isSystem() ? HENT_DOKUMENT_SYSTEM : HENT_DOKUMENT_SAKSBEHANDLER;
-	}
-
-	private String machineReadableAction(SafRequestContext safRequestContext) {
-		return safRequestContext.getSecurityContext().isSystem() ? MACHINE_HENT_DOKUMENT_SYSTEM : MACHINE_HENT_DOKUMENT_SAKSBEHANDLER;
 	}
 
 	private String getTema(TilgangSak tilgangSak) {
