@@ -13,6 +13,8 @@ import no.nav.saf.anticorruptionlayer.joark.safintern.journalpost.ArkivJournalpo
 import no.nav.saf.anticorruptionlayer.joark.safintern.journalpost.ArkivSak;
 import no.nav.saf.anticorruptionlayer.joark.safintern.journalpost.ArkivSaksrelasjon;
 import no.nav.saf.anticorruptionlayer.k9.K9AntiCorruptionLayer;
+import no.nav.saf.anticorruptionlayer.pdl.PdlFunctionalException;
+import no.nav.saf.anticorruptionlayer.pdl.PersonIkkeFunnetException;
 import no.nav.saf.anticorruptionlayer.pensjonsak.PensjonSakAntiCorruptionLayer;
 import no.nav.saf.domain.Arkivsak;
 import no.nav.saf.domain.BidragSak;
@@ -95,15 +97,17 @@ class HentDokumentTilgangService {
 			ArkivSak arkivSak = arkivSaksrelasjon.sak();
 			ArkivBruker arkivBruker = arkivJournalpost.bruker();
 			if (isNotBlank(arkivSak.aktoerId())) {
-				if (arkivBruker == null || !arkivBruker.isPerson() || arkivBruker.id() == null) {
-					return pdlAntiCorruptionLayerImpl.hentTilgangBrukerByAktoerId(arkivSak.aktoerId());
+				try {
+					TilgangBruker tilgangBruker = pdlAntiCorruptionLayerImpl.hentTilgangBrukerByAktoerId(arkivSak.aktoerId());
+					if (tilgangBruker != null && tilgangBruker.isPerson() && tilgangBruker.getFoedselsnr() != null) {
+						return tilgangBruker;
+					}
+				} catch (PersonIkkeFunnetException e) {
+					log.warn("Fant ikke bruker for aktørId={} i PDL, fortsetter med data fra t_bruker", arkivSak.aktoerId(), e);
 				}
-				return TilgangBruker.builder()
-						.aktoerId(arkivSak.aktoerId())
-						.foedselsnr(arkivBruker.id())
-						.build();
 			}
 			return TilgangBruker.builder()
+					.aktoerId(arkivSak.aktoerId())
 					.orgnummer(trim(arkivSak.orgNr()))
 					.foedselsnr(arkivBruker != null && arkivBruker.isPerson() ? arkivBruker.id() : null)
 					.build();
