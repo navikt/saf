@@ -36,6 +36,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.containing;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
@@ -297,6 +298,14 @@ public abstract class AbstractItest {
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("abac/abac-permit.json")));
+	}
+
+	protected static void abacDenyForAttribute(String attribute) {
+		stubFor(post(urlEqualTo("/abac"))
+				.withRequestBody(containing("{\"AttributeId\":\"no.nav.abac.attributter.resource.saf.%s\"".formatted(attribute)))
+				.willReturn(aResponse().withStatus(OK.value())
+						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("abac/abac-deny.json")));
 	}
 
 	protected void abacDenyPep6dSkipPep3OrPep2() {

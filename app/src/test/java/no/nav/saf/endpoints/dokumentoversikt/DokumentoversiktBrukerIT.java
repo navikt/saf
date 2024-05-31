@@ -3,6 +3,7 @@ package no.nav.saf.endpoints.dokumentoversikt;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.matching.EqualToPattern;
 import no.nav.saf.domain.visningsmodell.Dokumentoversikt;
+import no.nav.saf.domain.visningsmodell.Journalpost;
 import no.nav.saf.endpoints.AbstractItest;
 import no.nav.saf.endpoints.graphql.GraphQLRequest;
 import no.nav.saf.endpoints.graphql.GraphQLResponse;
@@ -472,6 +473,39 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter"))
 				.withRequestBody(containing("{\"gsakSakIds\":[\"135695442\"],\"psakSakIds\":[],\"fraDato\":\"0001-01-01\",\"tilDato\":null,\"inkluderJournalStatus\":[\"FL\",\"FS\",\"J\",\"E\"],\"inkluderJournalpostType\":[\"I\",\"U\",\"N\"],\"visFeilregistrerte\":false,\"alleIdenter\":[\"11111111111\"],\"foerste\":3,\"etterPeker\":null}")));
 		verifyabacDenyPep7dSkipPep2Pep3Pep4Pep5Pep6dAndHttpStatusCode(OK, responseEntity.getStatusCode());
+	}
+
+	/*
+	 * Totalt seks journalposter (totaltAntall i response fra finnJournalposter) returnes for gitt bruker, GraphQL-query
+	 * spør etter første tre. En journalpost filtreres bort fra de første tre pga skjerming. Testen verifiserer at resultatet
+	 * inneholder sideInfo hvor antall journalposter er 2, nesteSideFinnes er true, og dokumentoversikt med kun de to
+	 * journalpostene uten skjerming.
+	 */
+	@Test
+	void shouldReturnFinnesNesteSideTrueWhenDocumentsAreFilteredFromPageAndNesteSideExists() throws URISyntaxException {
+		abacPermit();
+		abacDenyForAttribute("skjerming");
+		stubPdl();
+		stubSak();
+		stubFinnjournalposter("finnjournalposter-paged-first-happy.json");
+		stubPensjonSakSammendrag("psak-hentSakSammendragListe-happy-empty.json");
+
+		ResponseEntity<GraphQLResponse> responseEntity = callDokumentOversikBrukerWithAktoerIdWithSideinfo();
+		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
+
+		assertThat(responseEntity.getStatusCode()).isEqualTo(OK);
+		assertThat(dokumentoversikt.getSideInfo().isFinnesNesteSide()).isTrue();
+		assertThat(dokumentoversikt.getSideInfo().getAntall()).isEqualTo(2);
+		assertThat(dokumentoversikt.getJournalposter())
+				.hasSize(2)
+				.extracting(Journalpost::getJournalpostId)
+				.containsExactly("429837417", "429837329");
+	}
+
+	private ResponseEntity<GraphQLResponse> callDokumentOversikBrukerWithAktoerIdWithSideinfo() throws URISyntaxException {
+		GraphQLRequest request = new GraphQLRequest(stringFromClasspath("dokumentoversiktBruker/dokumentoversiktbruker_aktoerid_with_sideinfo.query"), null, null);
+		RequestEntity<GraphQLRequest> requestEntity = new RequestEntity<>(request, createHeaders(), HttpMethod.POST, new URI("/graphql"));
+		return restTemplate.exchange(requestEntity, GraphQLResponse.class);
 	}
 
 	private ResponseEntity<GraphQLResponse> callDokumentOversikBrukerWithAktoerId() throws IOException, URISyntaxException {
