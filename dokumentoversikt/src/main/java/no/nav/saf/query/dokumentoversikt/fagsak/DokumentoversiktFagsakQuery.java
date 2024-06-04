@@ -144,9 +144,11 @@ class DokumentoversiktFagsakQuery {
 				.filter(j -> filterFeilregistrerte(dokumentoversiktFagsakArguments, j))
 				.collect(Collectors.toList());
 
+		var sistJournalpostId = visningJournalposterSortert.isEmpty() ? null : visningJournalposterSortert.getLast().getJournalpostId();
+
 		return Dokumentoversikt.builder()
 				.journalposter(visningJournalposterFiltrert)
-				.sideInfo(sideInfoMapper.mapSideInfo(dokumentoversiktFagsakArguments.getPagination(), visningJournalposterSortert, safRequestContext))
+				.sideInfo(sideInfoMapper.mapFilteredSideInfo(sistJournalpostId, visningJournalposterSortert, safRequestContext))
 				.build();
 	}
 

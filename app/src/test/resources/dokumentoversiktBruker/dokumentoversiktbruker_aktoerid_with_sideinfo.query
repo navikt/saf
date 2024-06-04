@@ -1,0 +1,19 @@
+{
+  dokumentoversiktBruker(brukerId: {id: "1912374211459", type: AKTOERID}, foerste: 3) {
+    journalposter {
+      journalpostId
+      eksternReferanseId
+      dokumenter {
+        dokumentvarianter {
+          saksbehandlerHarTilgang
+        }
+      }
+    }
+    sideInfo {
+      sluttpeker
+      finnesNesteSide
+      antall
+      totaltAntall
+    }
+  }
+}
