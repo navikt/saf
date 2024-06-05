@@ -241,6 +241,11 @@
       "cluster": "prod-gcp"
     },
     {
+      "app": "eux-barnetrygd",
+      "namespace": "eessibasis",
+      "cluster": "prod-gcp"
+    },
+    {
       "app": "eessi-pensjon-fagmodul",
       "namespace": "eessipensjon",
       "cluster": "prod-gcp"
