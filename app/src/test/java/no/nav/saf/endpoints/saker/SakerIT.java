@@ -42,7 +42,6 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 class SakerIT extends AbstractItest {
 
-	private static final String AKTOER_ID = "1912374211459";
 	private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper().registerModule(new JavaTimeModule());
 
 	@BeforeEach
@@ -52,7 +51,7 @@ class SakerIT extends AbstractItest {
 	}
 
 	@Test
-	void shouldRemoveSakDuplicates() {
+	void shouldReturnOldestGsakWhenDuplicates() {
 		abacPermit();
 		stubFor(post("/pdl")
 				.willReturn(aResponse().withStatus(OK.value())
@@ -65,7 +64,7 @@ class SakerIT extends AbstractItest {
 		stubFor(get(PENSJON_SPRINGAPI_SAK_SAMMENDRAG_URL)
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
-						.withBodyFile("psak/psak-hentSakSammendragListe-happy-duplicates.json")));
+						.withBodyFile("psak/psak-hentSakSammendragListe-happy.json")));
 
 		await().atMost(Duration.ofSeconds(10)).untilAsserted(() -> {
 			ResponseEntity<LinkedHashMap> responseEntity = callSakerWithAktoerId();
@@ -82,6 +81,31 @@ class SakerIT extends AbstractItest {
 		});
 	}
 
+	@Test
+	void shouldReturnPsakWhenDuplicatesContainsPsak() {
+		abacPermit();
+		stubFor(post("/pdl")
+				.willReturn(aResponse().withStatus(OK.value())
+						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("pdl/hentPdlDataForIdent-happy.json")));
+		stubFor(get("/gsak?aktoerId=" + AKTOER_ID)
+				.willReturn(aResponse().withStatus(OK.value())
+						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("gsak/gsak-sakerBySaksId-happy-duplicates-psak.json")));
+		stubFor(get(PENSJON_SPRINGAPI_SAK_SAMMENDRAG_URL)
+				.willReturn(aResponse().withStatus(OK.value())
+						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("psak/psak-hentSakSammendragListe-happy.json")));
+
+		await().atMost(Duration.ofSeconds(10)).untilAsserted(() -> {
+			var responseEntity = callSakerWithAktoerId();
+			var saker = parseSaker(responseEntity);
+
+			assertThat(OK, is(responseEntity.getStatusCode()));
+			assertThat(saker, hasSize(1));
+			assertPsak(saker.getFirst());
+		});
+	}
 
 	@Test
 	void shouldGetSakerForAktoerID() {

@@ -13,13 +13,15 @@ import no.nav.saf.tjeneste.argumenter.BrukerIdInput;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-import static no.nav.saf.domain.DomainConstants.TILGANG_BRUKER;
+import static java.util.Arrays.asList;
+import static java.util.Comparator.comparing;
+import static java.util.Comparator.nullsLast;
+import static java.util.stream.Collectors.groupingBy;
 import static no.nav.saf.util.MDCUtility.addMdcData;
 
 @Component
@@ -68,11 +70,37 @@ class SakerQuery {
 				.sequential()
 				.toList().blockingGet();
 
-		return filteredTilgangSakList.stream()
+		var distictSaker = filteredTilgangSakList.stream()
 				.map(tilgangSak ->
 						sakMapper.mapSak(tilgangSak, safRequestContext.getRequestCache()))
 				.filter(Objects::nonNull)
 				.distinct()
 				.toList();
+
+		return distictByArkivsaksnummerAndTemaAndArkivsaksystem(distictSaker);
+	}
+
+	private List<Sak> distictByArkivsaksnummerAndTemaAndArkivsaksystem(List<Sak> saker) {
+		return saker.stream()
+				.collect(groupingBy(sak -> asList(sak.getArkivsaksnummer(), sak.getTema())))
+				.values()
+				.stream()
+				.map(this::filterByArkivsaksystem)
+				.flatMap(this::getMinByDatoOpprettet)
+				.toList();
+	}
+
+	private List<Sak> filterByArkivsaksystem(List<Sak> saker) {
+		var psaker = saker.stream()
+				.filter(Sak::isPsak)
+				.toList();
+
+		return psaker.isEmpty() ? saker : psaker;
+	}
+
+	private Stream<Sak> getMinByDatoOpprettet(List<Sak> saker) {
+		return saker.stream()
+				.min(nullsLast(comparing(Sak::getDatoOpprettet)))
+				.stream();
 	}
 }
