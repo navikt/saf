@@ -3,18 +3,18 @@ package no.nav.saf.endpoints.saker;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import lombok.SneakyThrows;
 import no.nav.saf.domain.visningsmodell.Sak;
 import no.nav.saf.endpoints.AbstractItest;
 import no.nav.saf.endpoints.graphql.GraphQLRequest;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 
-import java.io.IOException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
@@ -27,11 +27,13 @@ import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME;
 import static no.nav.saf.anticorruptionlayer.joark.domain.kode.Sakstype.FAGSAK;
+import static no.nav.saf.anticorruptionlayer.joark.domain.kode.Sakstype.GENERELL_SAK;
 import static no.nav.saf.domain.kode.Arkivsakssystem.GSAK;
 import static no.nav.saf.domain.kode.Arkivsakssystem.PSAK;
 import static no.nav.saf.domain.kode.Tema.BID;
 import static no.nav.saf.domain.kode.Tema.UFO;
 import static org.apache.hc.core5.http.ContentType.APPLICATION_JSON;
+import static org.assertj.core.api.Assertions.tuple;
 import static org.awaitility.Awaitility.await;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
@@ -97,14 +99,45 @@ class SakerIT extends AbstractItest {
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("psak/psak-hentSakSammendragListe-happy.json")));
 
-		await().atMost(Duration.ofSeconds(10)).untilAsserted(() -> {
-			var responseEntity = callSakerWithAktoerId();
-			var saker = parseSaker(responseEntity);
+		var responseEntity = callSakerWithAktoerId();
+		var saker = parseSaker(responseEntity);
 
-			assertThat(OK, is(responseEntity.getStatusCode()));
-			assertThat(saker, hasSize(1));
-			assertPsak(saker.getFirst());
-		});
+		assertThat(OK, is(responseEntity.getStatusCode()));
+		assertThat(saker, hasSize(1));
+		assertPsak(saker.getFirst());
+
+	}
+
+	@Test
+	void shouldReturnPsakAndGenerellSakWhenDuplicatesContainsPsak() {
+		abacPermit();
+		stubFor(post("/pdl")
+				.willReturn(aResponse().withStatus(OK.value())
+						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("pdl/hentPdlDataForIdent-happy.json")));
+		stubFor(get("/gsak?aktoerId=" + AKTOER_ID)
+				.willReturn(aResponse().withStatus(OK.value())
+						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("gsak/gsak-sakerBySaksId-happy-duplicates-psak-with-generell-sak.json")));
+		stubFor(get(PENSJON_SPRINGAPI_SAK_SAMMENDRAG_URL)
+				.willReturn(aResponse().withStatus(OK.value())
+						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("psak/psak-hentSakSammendragListe-happy.json")));
+
+		var responseEntity = callSakerWithAktoerId();
+		var saker = parseSaker(responseEntity);
+
+		assertThat(OK, is(responseEntity.getStatusCode()));
+		assertThat(saker, hasSize(2));
+
+		Assertions.assertThat(saker)
+				.hasSize(2)
+				.extracting("arkivsaksnummer", "arkivsaksystem", "sakstype")
+				.containsExactly(
+						tuple("135695444", GSAK, GENERELL_SAK),
+						tuple("21998969", PSAK, FAGSAK)
+				);
+
 	}
 
 	@Test
@@ -218,7 +251,8 @@ class SakerIT extends AbstractItest {
 		assertThat(psak.getTema(), is(UFO));
 	}
 
-	private ResponseEntity<LinkedHashMap> callSakerWithAktoerId() throws IOException, URISyntaxException {
+	@SneakyThrows
+	private ResponseEntity<LinkedHashMap> callSakerWithAktoerId() {
 		GraphQLRequest request = new GraphQLRequest(stringFromClasspath("saker/saker_aktoerid.query"), null, null);
 		RequestEntity<GraphQLRequest> requestEntity = new RequestEntity<>(request, createHeaders(), HttpMethod.POST, new URI("/graphql"));
 		return restTemplate.exchange(requestEntity, LinkedHashMap.class);

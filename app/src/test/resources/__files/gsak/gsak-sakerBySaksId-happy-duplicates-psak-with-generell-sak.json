@@ -10,12 +10,22 @@
     "opprettetTidspunkt": "2018-07-17T13:49:01.839+02:00"
   },
   {
-    "id": 135695443,
+  "id": 135695443,
+  "tema": "UFO",
+  "applikasjon": "PP01",
+  "aktoerId": "1912374211459",
+  "orgnr": null,
+  "fagsakNr": "21998969",
+  "opprettetAv": "srvsyfoservice",
+  "opprettetTidspunkt": "2018-07-17T13:49:01.839+02:00"
+  },
+  {
+    "id": 135695444,
     "tema": "UFO",
-    "applikasjon": "PP01",
+    "applikasjon": "FS22",
     "aktoerId": "1912374211459",
     "orgnr": null,
-    "fagsakNr": "21998969",
+    "fagsakNr": null,
     "opprettetAv": "srvsyfoservice",
     "opprettetTidspunkt": "2018-07-17T13:49:01.839+02:00"
   }

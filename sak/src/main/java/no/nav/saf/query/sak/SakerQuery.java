@@ -70,24 +70,29 @@ class SakerQuery {
 				.sequential()
 				.toList().blockingGet();
 
-		var distictSaker = filteredTilgangSakList.stream()
+		var distinctSaker = filteredTilgangSakList.stream()
 				.map(tilgangSak ->
 						sakMapper.mapSak(tilgangSak, safRequestContext.getRequestCache()))
 				.filter(Objects::nonNull)
 				.distinct()
 				.toList();
 
-		return distictByArkivsaksnummerAndTemaAndArkivsaksystem(distictSaker);
+		return distinctByArkivsaksnummerAndTemaAndArkivsaksystem(distinctSaker);
 	}
 
-	private List<Sak> distictByArkivsaksnummerAndTemaAndArkivsaksystem(List<Sak> saker) {
+	private List<Sak> distinctByArkivsaksnummerAndTemaAndArkivsaksystem(List<Sak> saker) {
 		return saker.stream()
-				.collect(groupingBy(sak -> asList(sak.getArkivsaksnummer(), sak.getTema())))
+				.collect(groupingBy(sak -> asList(getSakKey(sak), sak.getTema())))
 				.values()
 				.stream()
 				.map(this::filterByArkivsaksystem)
 				.flatMap(this::getMinByDatoOpprettet)
+				.sorted(comparing(Sak::getFagsaksystem))
 				.toList();
+	}
+
+	private static String getSakKey(Sak sak) {
+		return sak.getFagsakId() != null ? sak.getFagsakId() : sak.getArkivsaksnummer();
 	}
 
 	private List<Sak> filterByArkivsaksystem(List<Sak> saker) {
