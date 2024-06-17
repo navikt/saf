@@ -1,0 +1,83 @@
+[
+  {
+    "id": 135695442,
+    "tema": "UFO",
+    "applikasjon": "PP01",
+    "aktoerId": "1912374211459",
+    "orgnr": null,
+    "fagsakNr": "21998969",
+    "opprettetAv": "srvsyfoservice",
+    "opprettetTidspunkt": "2018-07-17T13:49:01.839+02:00"
+  },
+  {
+    "id": 135695443,
+    "tema": "UFO",
+    "applikasjon": "PP01",
+    "aktoerId": "1912374211459",
+    "orgnr": null,
+    "fagsakNr": "21998969",
+    "opprettetAv": "srvsyfoservice",
+    "opprettetTidspunkt": "2018-07-17T13:49:01.839+02:00"
+  },
+  {
+    "id": 135695444,
+    "tema": "PEN",
+    "applikasjon": "PP01",
+    "aktoerId": "1912374211459",
+    "orgnr": null,
+    "fagsakNr": "21998970",
+    "opprettetAv": "srvsyfoservice",
+    "opprettetTidspunkt": "2018-07-18T13:49:01.839+02:00"
+  },
+  {
+    "id": 135695445,
+    "tema": "PEN",
+    "applikasjon": "PP01",
+    "aktoerId": "1912374211459",
+    "orgnr": null,
+    "fagsakNr": "21998970",
+    "opprettetAv": "srvsyfoservice",
+    "opprettetTidspunkt": "2018-07-17T13:49:01.839+02:00"
+  },
+  {
+    "id": 135695446,
+    "tema": "AAP",
+    "applikasjon": "AO01",
+    "aktoerId": "1912374211459",
+    "orgnr": null,
+    "fagsakNr": "21998971",
+    "opprettetAv": "srvsyfoservice",
+    "opprettetTidspunkt": "2018-07-18T13:49:01.839+02:00"
+  },
+  {
+    "id": 135695447,
+    "tema": "AAP",
+    "applikasjon": "AO01",
+    "aktoerId": "1912374211459",
+    "orgnr": null,
+    "fagsakNr": "21998971",
+    "opprettetAv": "srvsyfoservice",
+    "opprettetTidspunkt": "2018-07-17T13:49:01.839+02:00"
+  },
+  {
+    "id": 135695448,
+    "tema": "OPP",
+    "applikasjon": "AO01",
+    "aktoerId": "1912374211459",
+    "orgnr": null,
+    "fagsakNr": null,
+    "opprettetAv": "srvsyfoservice",
+    "opprettetTidspunkt": "2018-07-18T13:49:01.839+02:00"
+  },
+  {
+    "id": 135695449,
+    "tema": "OPP",
+    "applikasjon": "AO01",
+    "aktoerId": "1912374211459",
+    "orgnr": null,
+    "fagsakNr": null,
+    "opprettetAv": "srvsyfoservice",
+    "opprettetTidspunkt": "2018-07-17T13:49:01.839+02:00"
+  }
+
+]

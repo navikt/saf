@@ -30,7 +30,10 @@ import static no.nav.saf.anticorruptionlayer.joark.domain.kode.Sakstype.FAGSAK;
 import static no.nav.saf.anticorruptionlayer.joark.domain.kode.Sakstype.GENERELL_SAK;
 import static no.nav.saf.domain.kode.Arkivsakssystem.GSAK;
 import static no.nav.saf.domain.kode.Arkivsakssystem.PSAK;
+import static no.nav.saf.domain.kode.Tema.AAP;
 import static no.nav.saf.domain.kode.Tema.BID;
+import static no.nav.saf.domain.kode.Tema.OPP;
+import static no.nav.saf.domain.kode.Tema.PEN;
 import static no.nav.saf.domain.kode.Tema.UFO;
 import static org.apache.hc.core5.http.ContentType.APPLICATION_JSON;
 import static org.assertj.core.api.Assertions.tuple;
@@ -128,7 +131,6 @@ class SakerIT extends AbstractItest {
 		var saker = parseSaker(responseEntity);
 
 		assertThat(OK, is(responseEntity.getStatusCode()));
-		assertThat(saker, hasSize(2));
 
 		Assertions.assertThat(saker)
 				.hasSize(2)
@@ -137,7 +139,39 @@ class SakerIT extends AbstractItest {
 						tuple("135695444", GSAK, GENERELL_SAK),
 						tuple("21998969", PSAK, FAGSAK)
 				);
+	}
 
+	@Test
+	void shouldReturnFilteredByTemaWhenDuplicates() {
+		abacPermit();
+		stubFor(post("/pdl")
+				.willReturn(aResponse().withStatus(OK.value())
+						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("pdl/hentPdlDataForIdent-happy.json")));
+		stubFor(get("/gsak?aktoerId=" + AKTOER_ID)
+				.willReturn(aResponse().withStatus(OK.value())
+						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("gsak/gsak-sakerBySaksId-happy-multiple-duplicates.json")));
+		stubFor(get(PENSJON_SPRINGAPI_SAK_SAMMENDRAG_URL)
+				.willReturn(aResponse().withStatus(OK.value())
+						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("psak/psak-hentSakSammendragListe-happy.json")));
+
+		var responseEntity = callSakerWithAktoerId();
+		var saker = parseSaker(responseEntity);
+
+		assertThat(OK, is(responseEntity.getStatusCode()));
+
+		Assertions.assertThat(saker)
+				.hasSize(5)
+				.extracting("arkivsaksnummer", "arkivsaksystem", "tema")
+				.containsExactly(
+						tuple("135695445", GSAK, PEN),
+						tuple("135695447", GSAK, AAP),
+						tuple("135695448", GSAK, OPP),
+						tuple("135695449", GSAK, OPP),
+						tuple("21998969", PSAK, UFO)
+				);
 	}
 
 	@Test

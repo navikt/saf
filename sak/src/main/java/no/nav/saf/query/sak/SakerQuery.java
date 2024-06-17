@@ -86,8 +86,8 @@ class SakerQuery {
 				.values()
 				.stream()
 				.map(this::filterByArkivsaksystem)
-				.flatMap(this::getMinByDatoOpprettet)
-				.sorted(comparing(Sak::getFagsaksystem))
+				.flatMap(this::getOldestByDatoOpprettet)
+				.sorted(nullsLast(comparing(Sak::getArkivsaksnummer)))
 				.toList();
 	}
 
@@ -103,7 +103,7 @@ class SakerQuery {
 		return psaker.isEmpty() ? saker : psaker;
 	}
 
-	private Stream<Sak> getMinByDatoOpprettet(List<Sak> saker) {
+	private Stream<Sak> getOldestByDatoOpprettet(List<Sak> saker) {
 		return saker.stream()
 				.min(nullsLast(comparing(Sak::getDatoOpprettet)))
 				.stream();
