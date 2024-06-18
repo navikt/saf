@@ -8,15 +8,41 @@
     "fagsakNr": "654321",
     "opprettetAv": "srvsyfoservice",
     "opprettetTidspunkt": "2018-07-17T13:49:01.839+02:00"
-  },
-  {
-    "id": 135695443,
-    "tema": "BID",
-    "applikasjon": "BISYS",
-    "aktoerId": "1912374211459",
-    "orgnr": null,
-    "fagsakNr": "654321",
-    "opprettetAv": "srvsyfoservice",
-    "opprettetTidspunkt": "2018-07-18T13:49:01.839+02:00"
-  }
+  },{
+  "id": 135695442,
+  "tema": "BID",
+  "applikasjon": "BISYS",
+  "aktoerId": "1912374211459",
+  "orgnr": null,
+  "fagsakNr": "654321",
+  "opprettetAv": "srvsyfoservice",
+  "opprettetTidspunkt": "2018-07-17T13:49:01.839+02:00"
+},{
+  "id": 135695442,
+  "tema": "BID",
+  "applikasjon": "BISYS",
+  "aktoerId": "1912374211459",
+  "orgnr": null,
+  "fagsakNr": "654321",
+  "opprettetAv": "srvsyfoservice",
+  "opprettetTidspunkt": "2018-07-17T13:49:01.839+02:00"
+},{
+  "id": 135695442,
+  "tema": "BID",
+  "applikasjon": "BISYS",
+  "aktoerId": "1912374211459",
+  "orgnr": null,
+  "fagsakNr": "654321",
+  "opprettetAv": "srvsyfoservice",
+  "opprettetTidspunkt": "2018-07-17T13:49:01.839+02:00"
+},{
+  "id": 135695442,
+  "tema": "BID",
+  "applikasjon": "BISYS",
+  "aktoerId": "1912374211459",
+  "orgnr": null,
+  "fagsakNr": "654321",
+  "opprettetAv": "srvsyfoservice",
+  "opprettetTidspunkt": "2018-07-17T13:49:01.839+02:00"
+}
 ]
