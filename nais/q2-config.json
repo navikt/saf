@@ -538,6 +538,12 @@
       "cluster": "dev-fss"
     },
     {
+      "app": "behandlingsflyt",
+      "namespace": "aap",
+      "cluster": "dev-gcp",
+      "roles": ["tema_aap"]
+    },
+    {
       "app": "mottak",
       "namespace": "aap",
       "cluster": "dev-gcp",
