@@ -565,6 +565,12 @@
       "app": "gosys-oppgavebehandling-api",
       "namespace": "oppgavehandtering",
       "cluster": "dev-gcp"
+    },
+    {
+      "app": "tilleggsstonader-integrasjoner",
+      "namespace": "tilleggsstonader",
+      "cluster": "dev-gcp",
+      "roles": ["tema_tso"]
     }
   ]
 }
