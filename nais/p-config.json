@@ -557,6 +557,12 @@
       "roles": ["tema_dag"]
     },
     {
+      "app": "dp-behov-distribuering",
+      "namespace": "teamdagpenger",
+      "cluster": "prod-gcp",
+      "roles": ["tema_dag"]
+    },
+    {
       "app": "dp-saksbehandling-frontend",
       "namespace": "teamdagpenger",
       "cluster": "prod-gcp",
