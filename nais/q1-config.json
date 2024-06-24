@@ -474,6 +474,12 @@
       "roles":["tema_ind","tema_til"]
     },
     {
+      "app": "dp-behov-distribuering",
+      "namespace": "teamdagpenger",
+      "cluster": "dev-gcp",
+      "roles": ["tema_dag"]
+    },
+    {
       "app": "dp-saksbehandling-frontend",
       "namespace": "teamdagpenger",
       "cluster": "dev-gcp",
