@@ -181,12 +181,14 @@
     {
       "app": "yrkesskade-melding-api",
       "namespace": "yrkesskade",
-      "cluster": "dev-gcp"
+      "cluster": "dev-gcp",
+      "roles": ["tema_yrk"]
     },
     {
       "app": "yrkesskade-melding-mottak",
       "namespace": "yrkesskade",
-      "cluster": "dev-gcp"
+      "cluster": "dev-gcp",
+      "roles": ["tema_yrk"]
     },
     {
       "app": "yrkesskade-saksbehandling-backend",
