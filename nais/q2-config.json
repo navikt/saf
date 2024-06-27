@@ -345,6 +345,11 @@
       "cluster": "dev-fss"
     },
     {
+      "app": "modia-robot-api",
+      "namespace": "personoversikt",
+      "cluster": "dev-gcp"
+    },
+    {
       "app": "esyfovarsel",
       "namespace": "team-esyfo",
       "cluster": "dev-gcp",
