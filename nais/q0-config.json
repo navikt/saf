@@ -41,6 +41,12 @@
       "roles": ["tema_alle"]
     },
     {
+      "app": "dokprod-q0",
+      "namespace": "teamdokumenthandtering",
+      "cluster": "dev-fss",
+      "roles": ["tema_alle"]
+    },
+    {
       "app": "arena",
       "namespace": "teamarenanais",
       "cluster": "dev-fss",
