@@ -453,6 +453,12 @@
       "roles": ["tema_alle"]
     },
     {
+      "app": "dokprod",
+      "namespace": "teamdokumenthandtering",
+      "cluster": "prod-fss",
+      "roles": ["tema_alle"]
+    },
+    {
       "app": "syk-dig-oppgavelytter",
       "namespace": "teamsykmelding",
       "cluster": "prod-gcp"
