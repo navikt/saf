@@ -397,6 +397,12 @@
       "roles": ["tema_alle"]
     },
     {
+      "app": "dokprod-q1",
+      "namespace": "teamdokumenthandtering",
+      "cluster": "dev-fss",
+      "roles": ["tema_alle"]
+    },
+    {
       "app": "dokumenter",
       "namespace": "aap",
       "cluster": "dev-gcp"
