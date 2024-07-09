@@ -6,11 +6,6 @@ import no.nav.saf.anticorruptionlayer.aktoer.PdlAntiCorruptionLayer;
 import no.nav.saf.anticorruptionlayer.bisys.BisysAntiCorruptionLayer;
 import no.nav.saf.anticorruptionlayer.fpsak.FpsakAntiCorruptionLayer;
 import no.nav.saf.anticorruptionlayer.joark.JoarkAntiCorruptionLayer;
-import no.nav.saf.anticorruptionlayer.joark.domain.kode.JournalStatusCode;
-import no.nav.saf.anticorruptionlayer.joark.domain.kode.SkjermingTypeCode;
-import no.nav.saf.anticorruptionlayer.joark.domain.kode.VariantFormatCode;
-import no.nav.saf.anticorruptionlayer.joark.safintern.journalpost.ArkivBruker;
-import no.nav.saf.anticorruptionlayer.joark.safintern.journalpost.ArkivFildetaljer;
 import no.nav.saf.anticorruptionlayer.joark.safintern.journalpost.ArkivJournalpost;
 import no.nav.saf.anticorruptionlayer.joark.safintern.journalpost.ArkivSak;
 import no.nav.saf.anticorruptionlayer.joark.safintern.journalpost.ArkivSaksrelasjon;
@@ -18,11 +13,7 @@ import no.nav.saf.anticorruptionlayer.k9.K9AntiCorruptionLayer;
 import no.nav.saf.anticorruptionlayer.pensjonsak.PensjonSakAntiCorruptionLayer;
 import no.nav.saf.domain.Arkivsak;
 import no.nav.saf.domain.BidragSak;
-import no.nav.saf.domain.kode.Skjerming;
-import no.nav.saf.domain.kode.Tema;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
-import no.nav.saf.domain.tilgangsmodell.TilgangDokumentInfo;
-import no.nav.saf.domain.tilgangsmodell.TilgangDokumentvariant;
 import no.nav.saf.domain.tilgangsmodell.TilgangJournalpost;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
@@ -32,16 +23,17 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import static java.lang.String.valueOf;
 import static no.nav.saf.anticorruptionlayer.joark.JoarkAntiCorruptionLayer.SAFINTERN_FETCHPATHS_UTEN_DOKUMENTER;
-import static no.nav.saf.anticorruptionlayer.joark.domain.kode.BrukerTypeCode.ORGANISASJON;
-import static no.nav.saf.anticorruptionlayer.joark.domain.kode.BrukerTypeCode.PERSON;
+import static no.nav.saf.anticorruptionlayer.joark.domain.ArkivsakMapper.mapArkivsak;
 import static no.nav.saf.domain.kode.Arkivsakssystem.GSAK;
 import static no.nav.saf.domain.kode.Arkivsakssystem.PSAK;
 import static no.nav.saf.domain.kode.Tema.PEN;
 import static no.nav.saf.domain.kode.Tema.UFO;
+import static no.nav.saf.domain.tilgangsmodell.BaseTilgangMapper.mapTilgangBrukerUtenTilknyttetSak;
+import static no.nav.saf.domain.tilgangsmodell.BaseTilgangMapper.mapTilgangJournalpost;
+import static no.nav.saf.domain.tilgangsmodell.BaseTilgangMapper.mapTilgangSakUtenSakstilknytning;
 import static no.nav.saf.query.journalpost.JournalpostQuery.SELECTION_JOURNALPOST_DOKUMENTER;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.apache.commons.lang3.StringUtils.trim;
@@ -121,25 +113,6 @@ public class JournalpostService {
 		}
 	}
 
-	private static TilgangBruker mapTilgangBrukerUtenTilknyttetSak(ArkivJournalpost arkivJournalpost) {
-		ArkivBruker bruker = arkivJournalpost.bruker();
-		if (bruker == null || bruker.type() == null) {
-			return null;
-		}
-		return switch (bruker.type()) {
-			case PERSON -> TilgangBruker.builder()
-					.foedselsnr(bruker.id())
-					.build();
-			case ORGANISASJON -> TilgangBruker.builder()
-					.orgnummer(trim(bruker.id()))
-					.build();
-			default -> {
-				log.error("Forventet bruker.type=(PERSON, ORGANISASJON) for journalpost uten sakstilknytning med journalpostId={}. Fikk bruker.type={}", arkivJournalpost.journalpostId(), bruker.type());
-				yield null;
-			}
-		};
-	}
-
 	private TilgangSak mapTilgangSak(TilgangBruker tilgangBruker, ArkivJournalpost arkivJournalpost, SafRequestContext safRequestContext) {
 		if (arkivJournalpost.isTilknyttetSak()) {
 			return mapTilgangSakMedSakstilknytning(tilgangBruker, arkivJournalpost, safRequestContext);
@@ -193,69 +166,4 @@ public class JournalpostService {
 				.orElseGet(() -> mapTilgangSakUtenSakstilknytning(arkivJournalpost));
 	}
 
-	private static TilgangSak mapTilgangSakUtenSakstilknytning(ArkivJournalpost arkivJournalpost) {
-		return TilgangSak.builder()
-				.tema(Tema.valueOf(arkivJournalpost.fagomraade()))
-				.build();
-	}
-
-	private Arkivsak mapArkivsak(ArkivJournalpost arkivJournalpost) {
-		ArkivSaksrelasjon arkivSaksrelasjon = arkivJournalpost.saksrelasjon();
-		ArkivSak arkivSak = arkivSaksrelasjon.sak();
-		return Arkivsak.builder()
-				.arkivsaksnummer(valueOf(arkivSaksrelasjon.sakId()))
-				.arkivsaksystem(arkivSaksrelasjon.isPensjonsak() ? PSAK : GSAK)
-				.fagsakId(arkivSak.fagsakNr())
-				.fagsaksystem(arkivSak.applikasjon())
-				.orgnummer(trim(arkivSak.orgNr()))
-				.aktoerId(arkivSak.aktoerId())
-				.tema(Arkivsak.mapTema(arkivSak.tema()))
-				.build();
-	}
-
-	private TilgangJournalpost mapTilgangJournalpost(ArkivJournalpost arkivJournalpost) {
-		Long journalpostId = arkivJournalpost.journalpostId();
-		return TilgangJournalpost.builder()
-				.journalpostId(valueOf(journalpostId))
-				.journalstatus(JournalStatusCode.valueOf(arkivJournalpost.status()).toSafJournalstatus())
-				.skjerming(mapSkjerming(arkivJournalpost.skjerming()))
-				.dokumenter(mapTilgangDokumentInfo(arkivJournalpost))
-				.build();
-	}
-
-	private static List<TilgangDokumentInfo> mapTilgangDokumentInfo(ArkivJournalpost arkivJournalpost) {
-		Long journalpostId = arkivJournalpost.journalpostId();
-		if (arkivJournalpost.dokumenter() == null) {
-			return List.of();
-		}
-		return arkivJournalpost.dokumenter().stream()
-				.map(arkivDokumentinfo -> {
-					Long dokumentInfoId = arkivDokumentinfo.dokumentInfoId();
-					return TilgangDokumentInfo.builder()
-							.skjerming(mapSkjerming(arkivDokumentinfo.skjerming()))
-							.tilgangDokumentvarianter(mapTilgangDokumentvarianter(journalpostId, dokumentInfoId, arkivDokumentinfo.fildetaljer()))
-							.journalpostId(valueOf(journalpostId))
-							.dokumentInfoId(valueOf(dokumentInfoId))
-							.build();
-				}).collect(Collectors.toList());
-	}
-
-	private static List<TilgangDokumentvariant> mapTilgangDokumentvarianter(Long journalpostId, Long dokumentInfoId, List<ArkivFildetaljer> fildetaljer) {
-		return fildetaljer.stream()
-				.map(arkivFildetaljer -> TilgangDokumentvariant.builder()
-						.skjerming(mapSkjerming(arkivFildetaljer.skjerming()))
-						.variantformat(VariantFormatCode.toSafVariantformat(arkivFildetaljer.format()))
-						.journalpostId(valueOf(journalpostId))
-						.dokumentInfoId(valueOf(dokumentInfoId))
-						.build()).collect(Collectors.toList());
-	}
-
-	private static Skjerming mapSkjerming(String skjerming) {
-		try {
-			return skjerming == null ? null : SkjermingTypeCode.valueOf(skjerming).getSafSkjerming();
-		} catch (IllegalArgumentException e) {
-			// I tilfelle det introduseres en ny kodeverdi her uten at denne appen er i synk
-			return Skjerming.FEIL;
-		}
-	}
 }

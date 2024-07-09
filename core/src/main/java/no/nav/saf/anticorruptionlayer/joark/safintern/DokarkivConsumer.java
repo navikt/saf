@@ -8,20 +8,26 @@ import io.github.resilience4j.retry.Retry;
 import io.github.resilience4j.retry.RetryRegistry;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.anticorruptionlayer.CallIdExchangeFilterFunction;
+import no.nav.saf.anticorruptionlayer.joark.domain.kode.JournalStatusCode;
 import no.nav.saf.anticorruptionlayer.joark.safintern.hentdokument.HentDokumentResponseTo;
 import no.nav.saf.anticorruptionlayer.joark.safintern.journalpost.ArkivJournalpost;
+import no.nav.saf.anticorruptionlayer.joark.safintern.journalpost.JournalpostJournalstatusRequest;
+import no.nav.saf.anticorruptionlayer.joark.safintern.journalpost.PaginatedArkivJournalpost;
 import no.nav.saf.config.SafProperties;
+import no.nav.saf.domain.kode.Journalposttype;
 import no.nav.saf.exceptions.DokumentIkkeFunnetException;
 import no.nav.saf.exceptions.JournalpostIkkeFunnetException;
 import no.nav.saf.exceptions.SafFunctionalException;
 import no.nav.saf.exceptions.SafTechnicalException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.codec.CodecProperties;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.ExchangeStrategies;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
 
@@ -197,4 +203,40 @@ public class DokarkivConsumer {
 			}
 		};
 	}
+
+	public PaginatedArkivJournalpost finnJournalposterStatus(JournalStatusCode journalstatus, List<Journalposttype> journalposttype, LocalDate startDato, int antallRader, String etterPeker, Set<String> fields) {
+		return webClient.post()
+				.uri(uriBuilder -> {
+					uriBuilder.pathSegment("finnjournalposterstatus");
+					if (!fields.isEmpty()) {
+						uriBuilder.queryParam("fields", String.join(",", fields));
+					}
+					return uriBuilder.build();
+				})
+				.contentType(APPLICATION_JSON)
+				.bodyValue(new JournalpostJournalstatusRequest(journalstatus.name(), DateTimeFormatter.ISO_DATE.format(startDato), journalposttype.stream().map(Journalposttype::name).toList(), antallRader, etterPeker))
+				.attributes(clientRegistrationId(CLIENT_REGISTRATION_DOKARKIV))
+				.accept(APPLICATION_JSON)
+				.retrieve()
+				.bodyToMono(PaginatedArkivJournalpost.class)
+				.doOnError(handleErrorFinnJournalposterStatus(journalstatus, journalposttype))
+				.transformDeferred(CircuitBreakerOperator.of(dokarkivMetadataCircuitBreaker))
+				.transformDeferred(RetryOperator.of(dokarkivMetadataRetry))
+				.block();
+	}
+
+	private Consumer<Throwable> handleErrorFinnJournalposterStatus(JournalStatusCode journalstatus, List<Journalposttype> journalposttyper) {
+		return error -> {
+			if (error instanceof WebClientResponseException webException) {
+				if (webException.getStatusCode().is4xxClientError()) {
+					throw new SafFunctionalException(format("finnJournalposterStatus feilet funksjonelt. status=%s, journalstatus=%s, journalposttyper=%s. Feilmelding=%s",
+							webException.getStatusCode(), journalstatus, journalposttyper, webException.getMessage()));
+				} else {
+					throw new SafTechnicalException(format("finnJournalposterStatus feilet teknisk. status=%s, journalstatus=%s, journalposttyper=%s. Feilmelding=%s",
+							webException.getStatusCode(), journalstatus, journalposttyper, webException.getMessage()), webException, webException.getStatusCode());
+				}
+			}
+		};
+	}
+
 }

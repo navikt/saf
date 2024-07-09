@@ -4,13 +4,21 @@ import no.nav.saf.anticorruptionlayer.joark.domain.kode.FagomradeCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.FagsystemCode;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.dto.JournalpostDto;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.dto.SaksrelasjonDto;
+import no.nav.saf.anticorruptionlayer.joark.safintern.journalpost.ArkivJournalpost;
+import no.nav.saf.anticorruptionlayer.joark.safintern.journalpost.ArkivSak;
+import no.nav.saf.anticorruptionlayer.joark.safintern.journalpost.ArkivSaksrelasjon;
 import no.nav.saf.domain.Arkivsak;
 import org.springframework.stereotype.Component;
+
+import static java.lang.String.valueOf;
+import static no.nav.saf.domain.kode.Arkivsakssystem.GSAK;
+import static no.nav.saf.domain.kode.Arkivsakssystem.PSAK;
+import static org.apache.commons.lang3.StringUtils.trim;
 
 @Component
 public class ArkivsakMapper {
 
-	public Arkivsak map(final JournalpostDto journalpostDto) {
+	public static Arkivsak map(final JournalpostDto journalpostDto) {
 		if (journalpostDto == null || journalpostDto.getSaksrelasjon() == null) {
 			return null;
 		}
@@ -35,6 +43,20 @@ public class ArkivsakMapper {
 				.aktoerId(aktoerId)
 				.orgnummer(orgnummer)
 				.tema(FagomradeCode.toSafTema(journalpostDto.getFagomrade()))
+				.build();
+	}
+
+	public static Arkivsak mapArkivsak(ArkivJournalpost arkivJournalpost) {
+		ArkivSaksrelasjon arkivSaksrelasjon = arkivJournalpost.saksrelasjon();
+		ArkivSak arkivSak = arkivSaksrelasjon.sak();
+		return Arkivsak.builder()
+				.arkivsaksnummer(valueOf(arkivSaksrelasjon.sakId()))
+				.arkivsaksystem(arkivSaksrelasjon.isPensjonsak() ? PSAK : GSAK)
+				.fagsakId(arkivSak.fagsakNr())
+				.fagsaksystem(arkivSak.applikasjon())
+				.orgnummer(trim(arkivSak.orgNr()))
+				.aktoerId(arkivSak.aktoerId())
+				.tema(Arkivsak.mapTema(arkivSak.tema()))
 				.build();
 	}
 }

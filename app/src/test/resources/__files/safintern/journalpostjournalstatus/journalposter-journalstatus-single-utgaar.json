@@ -1,0 +1,65 @@
+{
+  "journalposter": [
+    {
+      "journalpostId": 453466679,
+      "innhold": "Ettersendelse til søknad om foreldrepenger",
+      "fagomraade": "FOR",
+      "fagomraadenavn": "FOR",
+      "behandlingstema": "ab0001",
+      "behandlingstemanavn": "Ordinære dagpenger",
+      "status": "U",
+      "avsenderMottaker": {
+        "id": "999263550",
+        "type": "ORGNR",
+        "navn": "NAV"
+      },
+      "opprettetAvNavn": "srvjoarkadmin",
+      "mottakskanal": "NAV_NO",
+      "type": "I",
+      "saksrelasjon": {
+        "sak": {
+          "sakId": "111111111",
+          "tema": "FOR",
+          "feilregistrert": null
+        },
+        "fagsystem": "FS22"
+      },
+      "bruker": {
+        "brukerId": "12345678910",
+        "brukerIdType": "PERSON"
+      },
+      "relevanteDatoer": {
+        "opprettet": "2019-08-06T07:30:40.868+0000",
+        "forsendelseMottatt": "2019-08-05T22:00:00.000+0000",
+        "hoveddokument": "2019-08-05T22:00:00.000+0000"
+      },
+      "skjerming": "POL",
+      "tilleggsopplysninger": {
+        "ForsendelseMottakId": "eksempel_unik_verdi"
+      },
+      "dokumenter": [
+        {
+          "dokumentInfoId": 470148851,
+          "brevkode": "NAV 14-05.09",
+          "fildetaljer": [
+            {
+              "format": "ARKIV",
+              "uuid": "250209a8-e78e-4a2a-895c-e1c20bfad5b8",
+              "type": "PDFA",
+              "skjerming": "POL"
+            }
+          ],
+          "innhold": "Søknad om foreldrepenger ved fødsel",
+          "skjerming": "POL",
+          "origJournalpostId": 453466679,
+          "logiskVedlegg": []
+        }
+      ]
+    }
+  ],
+  "antallRader": 1,
+  "totaltAntallRader": 1,
+  "page": 1,
+  "totalPages": 1,
+  "nextPage": null
+}

@@ -1,0 +1,105 @@
+{
+  "journalposter": [
+    {
+      "journalpostId": 639658603,
+      "relevanteDatoer": {
+        "forsendelseMottatt": "2024-06-27T12:18:39.796+00:00",
+        "hoveddokument": "2024-06-27T12:18:39.796+00:00",
+        "opprettet": "2024-06-27T12:18:39.801+00:00"
+      },
+      "dokumenter": [
+        {
+          "fildetaljer": [],
+          "logiskVedlegg": []
+        }
+      ],
+      "opprettetAvNavn": "dolly:testnav-dokarkiv-proxy-trygdeetate",
+      "tilleggsopplysninger": {}
+    },
+    {
+      "journalpostId": 639658601,
+      "relevanteDatoer": {
+        "forsendelseMottatt": "2024-06-27T12:08:20.775+00:00",
+        "hoveddokument": "2024-06-27T12:08:20.775+00:00",
+        "opprettet": "2024-06-27T12:08:20.779+00:00"
+      },
+      "dokumenter": [
+        {
+          "fildetaljer": [],
+          "logiskVedlegg": []
+        }
+      ],
+      "opprettetAvNavn": "dolly:testnav-dokarkiv-proxy-trygdeetate",
+      "tilleggsopplysninger": {}
+    },
+    {
+      "journalpostId": 639658521,
+      "relevanteDatoer": {
+        "forsendelseMottatt": "2024-06-26T15:28:12.450+00:00",
+        "hoveddokument": "2024-06-26T15:28:12.450+00:00",
+        "opprettet": "2024-06-26T15:28:12.454+00:00"
+      },
+      "dokumenter": [
+        {
+          "fildetaljer": [],
+          "logiskVedlegg": []
+        }
+      ],
+      "opprettetAvNavn": "dolly:testnav-dokarkiv-proxy-trygdeetate",
+      "tilleggsopplysninger": {}
+    },
+    {
+      "journalpostId": 639658501,
+      "relevanteDatoer": {
+        "forsendelseMottatt": "2024-06-26T11:17:00.294+00:00",
+        "hoveddokument": "2024-06-26T11:17:00.294+00:00",
+        "opprettet": "2024-06-26T11:17:00.298+00:00"
+      },
+      "dokumenter": [
+        {
+          "fildetaljer": [],
+          "logiskVedlegg": []
+        }
+      ],
+      "opprettetAvNavn": "dolly:testnav-dokarkiv-proxy-trygdeetate",
+      "tilleggsopplysninger": {}
+    },
+    {
+      "journalpostId": 639658307,
+      "relevanteDatoer": {
+        "forsendelseMottatt": "2024-06-25T13:07:46.047+00:00",
+        "hoveddokument": "2024-06-25T13:07:46.047+00:00",
+        "opprettet": "2024-06-25T13:07:46.051+00:00"
+      },
+      "dokumenter": [
+        {
+          "fildetaljer": [],
+          "logiskVedlegg": []
+        }
+      ],
+      "opprettetAvNavn": "dolly:testnav-dokarkiv-proxy-trygdeetate",
+      "tilleggsopplysninger": {}
+    },
+    {
+      "journalpostId": 639658258,
+      "relevanteDatoer": {
+        "forsendelseMottatt": "2024-06-25T11:57:55.485+00:00",
+        "hoveddokument": "2024-06-25T11:57:55.485+00:00",
+        "opprettet": "2024-06-25T11:57:55.489+00:00"
+      },
+      "dokumenter": [
+        {
+          "fildetaljer": [],
+          "logiskVedlegg": []
+        }
+      ],
+      "opprettetAvNavn": "dolly:testnav-dokarkiv-proxy-trygdeetate",
+      "tilleggsopplysninger": {}
+    }
+  ],
+  "antallRader": 6,
+  "totaltAntallRader": 6,
+  "page": 1,
+  "totalPages": 1,
+  "nextPage": "NjM5NjU4NjAzOjYzOTY1ODI1ODox"
+}

@@ -1,0 +1,125 @@
+{
+  "journalposter": [
+    {
+      "journalpostId": 639658307,
+      "type": "I",
+      "fagomraade": "OMS",
+      "fagomraadenavn": "Omsorgspenger, pleiepenger og opplæringspenger",
+      "status": "U",
+      "saksrelasjon": {
+        "fagsystem": "FS22",
+        "feilregistrert": true,
+        "sak": {
+          "aktoerId": "2482912631251",
+          "applikasjon": "FS22",
+          "opprettetTid": "2024-06-25T13:57:55.480625",
+          "tema": "OMS"
+        },
+        "sakId": 181771050
+      },
+      "relevanteDatoer": {
+        "forsendelseMottatt": "2024-06-25T13:07:46.047+00:00",
+        "hoveddokument": "2024-06-25T13:07:46.047+00:00",
+        "opprettet": "2024-06-25T13:07:46.051+00:00"
+      },
+      "avsenderMottaker": {
+        "id": "17418643641",
+        "navn": "HEL FARGE",
+        "type": "FNR"
+      },
+      "antallRetur": 0,
+      "bruker": {
+        "id": "17418643641",
+        "type": "PERSON"
+      },
+      "dokumenter": [
+        {
+          "dokumentInfoId": 669215451,
+          "fildetaljer": [
+            {
+              "format": "ARKIV",
+              "stoerrelse": "18357",
+              "type": "PDF",
+              "uuid": "ec65b505-b16b-47d4-b0df-16b3d1ca8ba1"
+            }
+          ],
+          "kategori": "IS",
+          "logiskVedlegg": [],
+          "originalJournalpostId": 639658307,
+          "sensitivt": false,
+          "tilknyttetSom": "HOVEDDOKUMENT",
+          "tittel": "Ettersendelse til Søknad om opplæringspenger"
+        }
+      ],
+      "innhold": "Ettersendelse til Søknad om opplæringspenger",
+      "journalfoerendeEnhet": "2950",
+      "kanalreferanseId": "72533905-30de-4bf9-883d-bc75c2306fb7",
+      "mottakskanal": "SKAN_IM",
+      "opprettetAvNavn": "dolly:testnav-dokarkiv-proxy-trygdeetate",
+      "tilleggsopplysninger": {}
+    },
+    {
+      "journalpostId": 639658258,
+      "type": "I",
+      "fagomraade": "OMS",
+      "fagomraadenavn": "Omsorgspenger, pleiepenger og opplæringspenger",
+      "status": "U",
+      "saksrelasjon": {
+        "fagsystem": "FS22",
+        "feilregistrert": true,
+        "sak": {
+          "aktoerId": "2482912631251",
+          "applikasjon": "FS22",
+          "opprettetTid": "2024-06-25T13:57:55.480625",
+          "tema": "OMS"
+        },
+        "sakId": 181771050
+      },
+      "relevanteDatoer": {
+        "forsendelseMottatt": "2024-06-25T11:57:55.485+00:00",
+        "hoveddokument": "2024-06-25T11:57:55.485+00:00",
+        "opprettet": "2024-06-25T11:57:55.489+00:00"
+      },
+      "avsenderMottaker": {
+        "id": "17418643641",
+        "navn": "HEL FARGE",
+        "type": "FNR"
+      },
+      "antallRetur": 0,
+      "bruker": {
+        "id": "17418643641",
+        "type": "PERSON"
+      },
+      "dokumenter": [
+        {
+          "dokumentInfoId": 669215402,
+          "fildetaljer": [
+            {
+              "format": "ARKIV",
+              "stoerrelse": "18357",
+              "type": "PDF",
+              "uuid": "f06a3693-5187-41bd-99ab-eaf403b78d5f"
+            }
+          ],
+          "kategori": "IS",
+          "logiskVedlegg": [],
+          "originalJournalpostId": 639658258,
+          "sensitivt": false,
+          "tilknyttetSom": "HOVEDDOKUMENT",
+          "tittel": "Ettersendelse til Legeerklæring: Pleiepenger for sykt barn"
+        }
+      ],
+      "innhold": "Ettersendelse til Legeerklæring: Pleiepenger for sykt barn",
+      "journalfoerendeEnhet": "2950",
+      "kanalreferanseId": "e83bb2b1-b710-46f4-a653-52ff94d48871",
+      "mottakskanal": "SKAN_IM",
+      "opprettetAvNavn": "dolly:testnav-dokarkiv-proxy-trygdeetate",
+      "tilleggsopplysninger": {}
+    }
+  ],
+  "antallRader": 2,
+  "totaltAntallRader": 6,
+  "page": 2,
+  "totalPages": 2,
+  "nextPage": "NjM5NjU4MzA3OjYzOTY1ODI1ODoy"
+}
