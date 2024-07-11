@@ -23,7 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Comparator;
-import java.util.EnumSet;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -37,7 +37,12 @@ import static no.nav.saf.util.MDCUtility.addMdcData;
 class DokumentoversiktJournalstatusQuery {
 
 	// Hvis nye gyldige journalstatuser legges til må PEP1G, PEP2, PEP2D og PEP3 filtrering vurderes innført
-	private static final EnumSet<Journalstatus> GYLDIGE_JOURNALSTATUSER = EnumSet.of(Journalstatus.UTGAAR, Journalstatus.UKJENT_BRUKER);
+	private static final EnumMap<Journalstatus, JournalStatusCode> GYLDIGE_JOURNALSTATUSER = new EnumMap<>(Journalstatus.class);
+
+	static {
+		GYLDIGE_JOURNALSTATUSER.put(JournalStatusCode.U.toSafJournalstatus(), JournalStatusCode.U);
+		GYLDIGE_JOURNALSTATUSER.put(JournalStatusCode.UB.toSafJournalstatus(), JournalStatusCode.UB);
+	}
 
 	private final TilgangsmodellRepository tilgangsmodellRepository;
 	private final DokumentoversiktVisningsmodellRepository visningsmodellRepository;
@@ -113,11 +118,11 @@ class DokumentoversiktJournalstatusQuery {
 
 	private JournalStatusCode validateAndGetJournalstatus(List<Journalstatus> journalstatuser) {
 		Journalstatus journalstatus = journalstatuser.get(0); // vil alltid inneholde eksakt 1 journalstatus
-		if (!GYLDIGE_JOURNALSTATUSER.contains(journalstatus)) {
+		if (!GYLDIGE_JOURNALSTATUSER.containsKey(journalstatus)) {
 			throw new UgyldigInputException(String.format("Ugyldig input: journalstatus=%s. journalstatus må være en av: %s.",
 					journalstatus, GYLDIGE_JOURNALSTATUSER));
 		}
-		return JournalStatusCode.from(journalstatus);
+		return GYLDIGE_JOURNALSTATUSER.get(journalstatus);
 	}
 
 	private boolean filterFeilregistrerte(DokumentoversiktJournalstatusArguments dokumentoversiktJournalstatusArguments, Journalpost j) {

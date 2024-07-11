@@ -68,23 +68,4 @@ public enum JournalStatusCode {
 	public static List<JournalStatusCode> asList() {
 		return Arrays.asList(values());
 	}
-
-	public static JournalStatusCode from(Journalstatus safJournalstatus) {
-		return switch (safJournalstatus) {
-			case MOTTATT -> M;
-			case JOURNALFOERT -> J;
-			case EKSPEDERT -> E;
-			case UNDER_ARBEID -> D;
-			case UTGAAR -> U;
-			case AVBRUTT -> A;
-			case UKJENT_BRUKER -> UB;
-			case RESERVERT -> R;
-			case OPPLASTING_DOKUMENT -> OD;
-			case UKJENT -> U;
-			case FERDIGSTILT ->
-					throw new IllegalArgumentException("Det finnes ingen entydig mapping fra SAF journalstatus FERDIGSTILT til JournalStatusCode");
-			case FEILREGISTRERT ->
-					throw new IllegalArgumentException("Det finnes ingen mapping fra SAF journalstatus FEILREGISTRERT til JournalStatusCode");
-		};
-	}
 }
