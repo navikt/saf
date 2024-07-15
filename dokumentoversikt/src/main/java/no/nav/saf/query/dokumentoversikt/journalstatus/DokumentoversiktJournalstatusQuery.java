@@ -3,6 +3,9 @@ package no.nav.saf.query.dokumentoversikt.journalstatus;
 import io.reactivex.rxjava3.core.Flowable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 import lombok.extern.slf4j.Slf4j;
+import no.nav.saf.anticorruptionlayer.joark.domain.ArkivsakMapper;
+import no.nav.saf.anticorruptionlayer.joark.domain.kode.JournalStatusCode;
+import no.nav.saf.anticorruptionlayer.joark.safintern.journalpost.PaginatedArkivJournalpost;
 import no.nav.saf.domain.TilgangsmodellRepository;
 import no.nav.saf.domain.kode.Journalstatus;
 import no.nav.saf.domain.tilgangsmodell.TilgangDokumentInfo;
@@ -10,21 +13,23 @@ import no.nav.saf.domain.tilgangsmodell.TilgangDokumentvariant;
 import no.nav.saf.domain.tilgangsmodell.TilgangJournalpost;
 import no.nav.saf.domain.visningsmodell.Dokumentoversikt;
 import no.nav.saf.domain.visningsmodell.Journalpost;
+import no.nav.saf.domain.visningsmodell.SideInfo;
 import no.nav.saf.exceptions.UgyldigInputException;
 import no.nav.saf.metrics.Monitor;
 import no.nav.saf.query.dokumentoversikt.DokumentoversiktVisningsmodellRepository;
-import no.nav.saf.query.dokumentoversikt.SideInfoMapper;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.pep.Pep;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Comparator;
-import java.util.EnumSet;
+import java.util.EnumMap;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
+import static java.util.Collections.emptyList;
 import static no.nav.saf.domain.kode.Journalstatus.FEILREGISTRERT;
+import static no.nav.saf.domain.tilgangsmodell.BaseTilgangMapper.mapTilgangJournalpost;
 import static no.nav.saf.util.MDCUtility.addMdcData;
 
 @Slf4j
@@ -32,10 +37,13 @@ import static no.nav.saf.util.MDCUtility.addMdcData;
 class DokumentoversiktJournalstatusQuery {
 
 	// Hvis nye gyldige journalstatuser legges til må PEP1G, PEP2, PEP2D og PEP3 filtrering vurderes innført
-	private static final EnumSet<Journalstatus> GYLDIGE_JOURNALSTATUSER = EnumSet.of(Journalstatus.UTGAAR, Journalstatus.UKJENT_BRUKER);
+	private static final EnumMap<Journalstatus, JournalStatusCode> GYLDIGE_JOURNALSTATUSER = new EnumMap<>(Journalstatus.class);
 
-	private final SideInfoMapper sideInfoMapper = new SideInfoMapper();
-	private final DokumentoversiktJournalstatusTilgangsmodellRepository dokumentoversiktJournalstatusTilgangsmodellRepository;
+	static {
+		GYLDIGE_JOURNALSTATUSER.put(JournalStatusCode.U.toSafJournalstatus(), JournalStatusCode.U);
+		GYLDIGE_JOURNALSTATUSER.put(JournalStatusCode.UB.toSafJournalstatus(), JournalStatusCode.UB);
+	}
+
 	private final TilgangsmodellRepository tilgangsmodellRepository;
 	private final DokumentoversiktVisningsmodellRepository visningsmodellRepository;
 	private final Pep<TilgangJournalpost> pep4;
@@ -43,13 +51,11 @@ class DokumentoversiktJournalstatusQuery {
 	private final Pep<TilgangDokumentvariant> pep6d;
 
 	@Autowired
-	public DokumentoversiktJournalstatusQuery(DokumentoversiktJournalstatusTilgangsmodellRepository dokumentoversiktJournalstatusTilgangsmodellRepository,
-											  TilgangsmodellRepository tilgangsmodellRepository,
+	public DokumentoversiktJournalstatusQuery(TilgangsmodellRepository tilgangsmodellRepository,
 											  DokumentoversiktVisningsmodellRepository visningsmodellRepository,
 											  @Autowired Pep<TilgangJournalpost> pep4,
 											  @Autowired Pep<TilgangDokumentInfo> pep5,
 											  @Autowired Pep<TilgangDokumentvariant> pep6d) {
-		this.dokumentoversiktJournalstatusTilgangsmodellRepository = dokumentoversiktJournalstatusTilgangsmodellRepository;
 		this.tilgangsmodellRepository = tilgangsmodellRepository;
 		this.visningsmodellRepository = visningsmodellRepository;
 		this.pep4 = pep4;
@@ -60,17 +66,18 @@ class DokumentoversiktJournalstatusQuery {
 	@Monitor(value = "dok_request", extraTags = {"process", "dokumentOversikt", "requestType", "journalstatus"}, histogram = true)
 	public Dokumentoversikt hentDokumentoversikt(DokumentoversiktJournalstatusArguments dokumentoversiktJournalstatusArguments, SafRequestContext safRequestContext) {
 
-		Journalstatus journalstatus = validateAndGetJournalstatus(dokumentoversiktJournalstatusArguments.getFilters().getJournalstatuser());
+		JournalStatusCode journalstatus = validateAndGetJournalstatus(dokumentoversiktJournalstatusArguments.getFilters().getJournalstatuser());
 
-		final List<TilgangJournalpost> tilgangJournalpostList = tilgangsmodellRepository.findTilgangJournalposterStatus(
+		Optional<PaginatedArkivJournalpost> paginatedArkivJournalpost = tilgangsmodellRepository.findTilgangJournalposterStatus(
 				dokumentoversiktJournalstatusArguments.getFilters().getFraDato(),
 				dokumentoversiktJournalstatusArguments.getFilters().getJournalposttyper(),
 				journalstatus,
 				dokumentoversiktJournalstatusArguments.getPagination().getFoerste(),
-				dokumentoversiktJournalstatusArguments.getPagination().getEtterPeker(),
-				safRequestContext);
+				dokumentoversiktJournalstatusArguments.getPagination().getEtterPeker());
 
-		String sluttJournalpostId = sluttJournalpostId(tilgangJournalpostList);
+		final List<TilgangJournalpost> tilgangJournalpostList = paginatedArkivJournalpost
+				.map(journalposter -> cacheAndMapTilgangJournalposts(safRequestContext, journalposter))
+				.orElse(emptyList());
 
 		final List<TilgangJournalpost> filteredTilgangJournalpostList = Flowable.fromIterable(tilgangJournalpostList)
 				.parallel(10)
@@ -87,34 +94,35 @@ class DokumentoversiktJournalstatusQuery {
 				.blockingGet();
 
 		// cache evt. saksinfo for bruk ved mapping til Journalpost
-		dokumentoversiktJournalstatusTilgangsmodellRepository.mapOgCacheArkivsaker(filteredTilgangJournalpostList, safRequestContext);
+		mapOgCacheArkivsaker(filteredTilgangJournalpostList, safRequestContext);
 
-		List<Journalpost> journalposter = visningsmodellRepository.findJournalposter(filteredTilgangJournalpostList.stream()
-						.map(TilgangJournalpost::getJournalpostId)
-						.sorted(Comparator.reverseOrder())
-						.collect(Collectors.toList()), safRequestContext)
-				.stream()
+		List<Journalpost> journalposter = visningsmodellRepository.findJournalposterCurrent(filteredTilgangJournalpostList.stream()
+								.map(TilgangJournalpost::getJournalpostId)
+								.sorted(Comparator.reverseOrder())
+						, safRequestContext)
 				.filter(j -> dokumentoversiktJournalstatusArguments.getFilters().getTema().contains(j.getTema()))
 				.filter(j -> filterFeilregistrerte(dokumentoversiktJournalstatusArguments, j))
-				.collect(Collectors.toList());
+				.toList();
 
 		return Dokumentoversikt.builder()
 				.journalposter(journalposter)
-				.sideInfo(sideInfoMapper.mapFilteredSideInfo(sluttJournalpostId, journalposter, safRequestContext))
+				.sideInfo(paginatedArkivJournalpost
+						.map(journalpostPagination -> new SideInfo(
+								journalpostPagination.nextPage(),
+								journalpostPagination.page() < journalpostPagination.totalPages(),
+								journalposter.size(),
+								journalpostPagination.totaltAntallRader()
+						)).orElse(SideInfo.empty()))
 				.build();
 	}
 
-	private Journalstatus validateAndGetJournalstatus(List<Journalstatus> journalstatuser) {
+	private JournalStatusCode validateAndGetJournalstatus(List<Journalstatus> journalstatuser) {
 		Journalstatus journalstatus = journalstatuser.get(0); // vil alltid inneholde eksakt 1 journalstatus
-		if (!GYLDIGE_JOURNALSTATUSER.contains(journalstatus)) {
+		if (!GYLDIGE_JOURNALSTATUSER.containsKey(journalstatus)) {
 			throw new UgyldigInputException(String.format("Ugyldig input: journalstatus=%s. journalstatus må være en av: %s.",
 					journalstatus, GYLDIGE_JOURNALSTATUSER));
 		}
-		return journalstatus;
-	}
-
-	private String sluttJournalpostId(List<TilgangJournalpost> tilgangJournalposter) {
-		return tilgangJournalposter.isEmpty() ? null : tilgangJournalposter.get(tilgangJournalposter.size() - 1).getJournalpostId();
+		return GYLDIGE_JOURNALSTATUSER.get(journalstatus);
 	}
 
 	private boolean filterFeilregistrerte(DokumentoversiktJournalstatusArguments dokumentoversiktJournalstatusArguments, Journalpost j) {
@@ -122,5 +130,23 @@ class DokumentoversiktJournalstatusQuery {
 			return dokumentoversiktJournalstatusArguments.getFilters().isVisFeilregistrerte();
 		}
 		return true;
+	}
+
+	public static void mapOgCacheArkivsaker(final List<TilgangJournalpost> filteredTilgangJournalpostList, final SafRequestContext safRequestContext) {
+		filteredTilgangJournalpostList.stream()
+				.map(tj -> safRequestContext.getRequestCache().getArkivJournalpost(tj.getJournalpostId()))
+				.filter(jp -> jp.saksrelasjon() != null)
+				.map(ArkivsakMapper::mapArkivsak)
+				.forEach(arkivsak -> safRequestContext.getRequestCache().putArkivsak(arkivsak));
+	}
+
+	public List<TilgangJournalpost> cacheAndMapTilgangJournalposts(SafRequestContext safRequestContext, PaginatedArkivJournalpost journalpostPage) {
+		return journalpostPage.journalposter().stream()
+				.map(journalpost -> {
+					safRequestContext.getRequestCache()
+							.putArkivJournalpost(journalpost);
+					return mapTilgangJournalpost(journalpost);
+				})
+				.toList();
 	}
 }

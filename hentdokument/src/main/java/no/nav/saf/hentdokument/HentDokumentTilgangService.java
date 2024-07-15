@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static java.lang.String.valueOf;
+import static no.nav.saf.anticorruptionlayer.joark.domain.ArkivsakMapper.mapArkivsak;
 import static no.nav.saf.anticorruptionlayer.joark.domain.kode.BrukerTypeCode.ORGANISASJON;
 import static no.nav.saf.anticorruptionlayer.joark.domain.kode.BrukerTypeCode.PERSON;
 import static no.nav.saf.anticorruptionlayer.joark.domain.kode.JournalStatusCode.valueOf;
@@ -40,6 +41,9 @@ import static no.nav.saf.domain.kode.Arkivsakssystem.GSAK;
 import static no.nav.saf.domain.kode.Arkivsakssystem.PSAK;
 import static no.nav.saf.domain.kode.Tema.PEN;
 import static no.nav.saf.domain.kode.Tema.UFO;
+import static no.nav.saf.domain.tilgangsmodell.BaseTilgangMapper.mapSkjerming;
+import static no.nav.saf.domain.tilgangsmodell.BaseTilgangMapper.mapTilgangBrukerUtenTilknyttetSak;
+import static no.nav.saf.domain.tilgangsmodell.BaseTilgangMapper.mapTilgangSakUtenSakstilknytning;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.apache.commons.lang3.StringUtils.trim;
 
@@ -114,25 +118,6 @@ class HentDokumentTilgangService {
 		}
 	}
 
-	private static TilgangBruker mapTilgangBrukerUtenTilknyttetSak(ArkivJournalpost arkivJournalpost) {
-		ArkivBruker bruker = arkivJournalpost.bruker();
-		if (bruker == null || bruker.type() == null) {
-			return null;
-		}
-		return switch (bruker.type()) {
-			case PERSON -> TilgangBruker.builder()
-					.foedselsnr(bruker.id())
-					.build();
-			case ORGANISASJON -> TilgangBruker.builder()
-					.orgnummer(trim(bruker.id()))
-					.build();
-			default -> {
-				log.warn("Forventet bruker.type=(PERSON, ORGANISASJON) for journalpost uten sakstilknytning med journalpostId={}. Fikk bruker.type={}", arkivJournalpost.journalpostId(), bruker.type());
-				yield null;
-			}
-		};
-	}
-
 	private TilgangSak mapTilgangSak(TilgangBruker tilgangBruker, ArkivJournalpost arkivJournalpost) {
 		if (arkivJournalpost.isTilknyttetSak()) {
 			return tilgangSakMedSakstilknytning(tilgangBruker, arkivJournalpost);
@@ -184,26 +169,6 @@ class HentDokumentTilgangService {
 				.orElseGet(() -> mapTilgangSakUtenSakstilknytning(arkivJournalpost));
 	}
 
-	private static TilgangSak mapTilgangSakUtenSakstilknytning(ArkivJournalpost arkivJournalpost) {
-		return TilgangSak.builder()
-				.tema(Tema.valueOf(arkivJournalpost.fagomraade()))
-				.build();
-	}
-
-	private Arkivsak mapArkivsak(ArkivJournalpost arkivJournalpost) {
-		ArkivSaksrelasjon arkivSaksrelasjon = arkivJournalpost.saksrelasjon();
-		ArkivSak arkivSak = arkivSaksrelasjon.sak();
-		return Arkivsak.builder()
-				.arkivsaksnummer(valueOf(arkivSaksrelasjon.sakId()))
-				.arkivsaksystem(arkivSaksrelasjon.isPensjonsak() ? PSAK : GSAK)
-				.fagsakId(arkivSak.fagsakNr())
-				.fagsaksystem(arkivSak.applikasjon())
-				.orgnummer(trim(arkivSak.orgNr()))
-				.aktoerId(arkivSak.aktoerId())
-				.tema(Arkivsak.mapTema(arkivSak.tema()))
-				.build();
-	}
-
 	private TilgangJournalpost mapTilgangJournalpost(String variantFormat, ArkivJournalpost arkivJournalpost) {
 		ArkivDokumentinfo arkivDokumentinfoOpt = arkivJournalpost.dokumenter().get(0);
 		Long journalpostId = arkivJournalpost.journalpostId();
@@ -237,12 +202,4 @@ class HentDokumentTilgangService {
 						.build()).collect(Collectors.toList());
 	}
 
-	private static Skjerming mapSkjerming(String skjerming) {
-		try {
-			return skjerming == null ? null : SkjermingTypeCode.valueOf(skjerming).getSafSkjerming();
-		} catch (IllegalArgumentException e) {
-			// I tilfelle det introduseres en ny kodeverdi her uten at denne appen er i synk
-			return Skjerming.FEIL;
-		}
-	}
 }

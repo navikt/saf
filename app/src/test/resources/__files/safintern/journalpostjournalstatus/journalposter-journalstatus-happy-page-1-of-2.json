@@ -1,0 +1,232 @@
+{
+  "journalposter": [
+    {
+      "journalpostId": 639658603,
+      "type": "I",
+      "fagomraade": "OMS",
+      "fagomraadenavn": "Omsorgspenger, pleiepenger og opplæringspenger",
+      "status": "U",
+      "saksrelasjon": {
+        "fagsystem": "FS22",
+        "sak": {
+          "aktoerId": "2343216135408",
+          "applikasjon": "FS22",
+          "opprettetTid": "2024-01-30T19:02:58.704067",
+          "tema": "OMS"
+        },
+        "sakId": 181758318
+      },
+      "relevanteDatoer": {
+        "forsendelseMottatt": "2024-06-27T12:18:39.796+00:00",
+        "hoveddokument": "2024-06-27T12:18:39.796+00:00",
+        "opprettet": "2024-06-27T12:18:39.801+00:00"
+      },
+      "avsenderMottaker": {
+        "id": "17457943989",
+        "navn": "MUSIKALSK, GREND",
+        "type": "FNR"
+      },
+      "bruker": {
+        "id": "17457943989",
+        "type": "PERSON"
+      },
+      "dokumenter": [
+        {
+          "dokumentInfoId": 669215790,
+          "brevkode": "NAVe 09-16.02",
+          "fildetaljer": [
+            {
+              "format": "ARKIV",
+              "stoerrelse": "1407037",
+              "type": "PDFA",
+              "uuid": "0ed8e73c-befd-4555-bdb6-7c54d0a4a099"
+            }
+          ],
+          "kategori": "IS",
+          "logiskVedlegg": [],
+          "originalJournalpostId": 639658603,
+          "tilknyttetSom": "HOVEDDOKUMENT",
+          "tittel": "Legeerklæring pleiepenger.pdf"
+        }
+      ],
+      "innhold": "Ettersendelse til Legeerklæring: Pleiepenger for sykt barn",
+      "kanalreferanseId": "a83c858c-755e-4ef1-a246-5c011db48f25",
+      "mottakskanal": "SKAN_IM",
+      "opprettetAvNavn": "dolly:testnav-dokarkiv-proxy-trygdeetate",
+      "tilleggsopplysninger": {}
+    },
+    {
+      "journalpostId": 639658601,
+      "type": "I",
+      "fagomraade": "OMS",
+      "fagomraadenavn": "Omsorgspenger, pleiepenger og opplæringspenger",
+      "status": "U",
+      "saksrelasjon": {
+        "fagsystem": "FS22",
+        "sak": {
+          "aktoerId": "2343216135408",
+          "applikasjon": "FS22",
+          "opprettetTid": "2024-01-30T19:02:58.704067",
+          "tema": "OMS"
+        },
+        "sakId": 181758318
+      },
+      "relevanteDatoer": {
+        "forsendelseMottatt": "2024-06-27T12:08:20.775+00:00",
+        "hoveddokument": "2024-06-27T12:08:20.775+00:00",
+        "opprettet": "2024-06-27T12:08:20.779+00:00"
+      },
+      "avsenderMottaker": {
+        "id": "17457943989",
+        "navn": "MUSIKALSK, GREND",
+        "type": "FNR"
+      },
+      "bruker": {
+        "id": "17457943989",
+        "type": "PERSON"
+      },
+      "dokumenter": [
+        {
+          "dokumentInfoId": 669215788,
+          "brevkode": "NAVe 09-16.02",
+          "fildetaljer": [
+            {
+              "format": "ARKIV",
+              "stoerrelse": "18357",
+              "type": "PDFA",
+              "uuid": "7608b639-f587-4f13-bdfc-a8aa6022f7ae"
+            }
+          ],
+          "kategori": "IS",
+          "logiskVedlegg": [],
+          "originalJournalpostId": 639658601,
+          "tilknyttetSom": "HOVEDDOKUMENT",
+          "tittel": "Ettersendelse til Legeerklæring: Pleiepenger for sykt barn"
+        }
+      ],
+      "innhold": "Ettersendelse til Legeerklæring: Pleiepenger for sykt barn",
+      "kanalreferanseId": "6161dd7f-5702-4d39-afdd-5deb44ae8b95",
+      "mottakskanal": "SKAN_IM",
+      "opprettetAvNavn": "dolly:testnav-dokarkiv-proxy-trygdeetate",
+      "tilleggsopplysninger": {}
+    },
+    {
+      "journalpostId": 639658521,
+      "type": "I",
+      "fagomraade": "OMS",
+      "fagomraadenavn": "Omsorgspenger, pleiepenger og opplæringspenger",
+      "status": "U",
+      "saksrelasjon": {
+        "fagsystem": "FS22",
+        "sak": {
+          "aktoerId": "2845909447708",
+          "applikasjon": "FS22",
+          "opprettetTid": "2024-06-26T17:28:12.445681",
+          "tema": "OMS"
+        },
+        "sakId": 181773259
+      },
+      "relevanteDatoer": {
+        "forsendelseMottatt": "2024-06-26T15:28:12.450+00:00",
+        "hoveddokument": "2024-06-26T15:28:12.450+00:00",
+        "opprettet": "2024-06-26T15:28:12.454+00:00"
+      },
+      "avsenderMottaker": {
+        "id": "13838599502",
+        "navn": "FAST, LOMME",
+        "type": "FNR"
+      },
+      "bruker": {
+        "id": "13838599502",
+        "type": "PERSON"
+      },
+      "dokumenter": [
+        {
+          "dokumentInfoId": 669215683,
+          "brevkode": "NAVe 09-16.02",
+          "fildetaljer": [
+            {
+              "format": "ARKIV",
+              "stoerrelse": "18357",
+              "type": "PDFA",
+              "uuid": "1ee49549-8d78-42bd-9a4b-3abd5cfa6864"
+            }
+          ],
+          "kategori": "IS",
+          "logiskVedlegg": [],
+          "originalJournalpostId": 639658521,
+          "tilknyttetSom": "HOVEDDOKUMENT",
+          "tittel": "Ettersendelse til Legeerklæring: Pleiepenger for sykt barn"
+        }
+      ],
+      "innhold": "Ettersendelse til Legeerklæring: Pleiepenger for sykt barn",
+      "kanalreferanseId": "a2568545-1af6-419d-8ae1-4824c4f6fc8a",
+      "mottakskanal": "SKAN_IM",
+      "opprettetAvNavn": "dolly:testnav-dokarkiv-proxy-trygdeetate",
+      "tilleggsopplysninger": {}
+    },
+    {
+      "journalpostId": 639658501,
+      "type": "I",
+      "fagomraade": "OMS",
+      "fagomraadenavn": "Omsorgspenger, pleiepenger og opplæringspenger",
+      "status": "U",
+      "saksrelasjon": {
+        "fagsystem": "FS22",
+        "feilregistrert": true,
+        "sak": {
+          "aktoerId": "2482912631251",
+          "applikasjon": "FS22",
+          "opprettetTid": "2024-06-25T13:57:55.480625",
+          "tema": "OMS"
+        },
+        "sakId": 181771050
+      },
+      "relevanteDatoer": {
+        "forsendelseMottatt": "2024-06-26T11:17:00.294+00:00",
+        "hoveddokument": "2024-06-26T11:17:00.294+00:00",
+        "opprettet": "2024-06-26T11:17:00.298+00:00"
+      },
+      "avsenderMottaker": {
+        "id": "17418643641",
+        "navn": "HEL FARGE",
+        "type": "FNR"
+      },
+      "antallRetur": 0,
+      "bruker": {
+        "id": "17418643641",
+        "type": "PERSON"
+      },
+      "dokumenter": [
+        {
+          "dokumentInfoId": 669215659,
+          "fildetaljer": [
+            {
+              "format": "ARKIV",
+              "stoerrelse": "18357",
+              "type": "PDF",
+              "uuid": "92066ae5-01b7-427e-a736-67c4bc7aead5"
+            }
+          ],
+          "kategori": "IS",
+          "logiskVedlegg": [],
+          "originalJournalpostId": 639658501,
+          "sensitivt": false,
+          "tilknyttetSom": "HOVEDDOKUMENT",
+          "tittel": "Søknad om pleiepenger"
+        }
+      ],
+      "innhold": "Søknad om pleiepenger",
+      "journalfoerendeEnhet": "2950",
+      "kanalreferanseId": "5a123a9b-ef69-4f45-b76c-2e20e5db0695",
+      "mottakskanal": "SKAN_IM",
+      "opprettetAvNavn": "dolly:testnav-dokarkiv-proxy-trygdeetate",
+      "tilleggsopplysninger": {}
+    }
+  ],
+  "antallRader": 4,
+  "totaltAntallRader": 6,
+  "page": 1,
+  "totalPages": 2,
+  "nextPage": "NjM5NjU4NjAzOjYzOTY1ODUwMTox"
+}

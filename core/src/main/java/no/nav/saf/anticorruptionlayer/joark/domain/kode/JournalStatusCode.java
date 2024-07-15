@@ -43,15 +43,15 @@ public enum JournalStatusCode {
 	 */
 	A(Journalstatus.AVBRUTT),
 	/**
-	 * Mottatt   
+	 * Mottatt
 	 */
 	MO(Journalstatus.MOTTATT),
 	/**
-	 * Ukjent bruker 
+	 * Ukjent bruker
 	 */
 	UB(Journalstatus.UKJENT_BRUKER),
 	/**
-	 * Opplasting dokument 
+	 * Opplasting dokument
 	 */
 	OD(Journalstatus.OPPLASTING_DOKUMENT);
 

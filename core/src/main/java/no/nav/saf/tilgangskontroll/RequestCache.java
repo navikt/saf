@@ -22,8 +22,8 @@ public class RequestCache {
 		holder.put(key, abacAnswer);
 	}
 
-	public void putArkivJournalpost(String key, ArkivJournalpost object) {
-		holder.put(key, object);
+	public void putArkivJournalpost(ArkivJournalpost object) {
+		holder.put(object.journalpostId().toString(), object);
 	}
 
 	public void putJournalpost(String key, JournalpostDto object) {

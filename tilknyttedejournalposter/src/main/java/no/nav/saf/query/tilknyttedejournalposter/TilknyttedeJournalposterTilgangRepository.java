@@ -56,7 +56,7 @@ public class TilknyttedeJournalposterTilgangRepository {
 
 	Set<Arkivsak> arkivsaker(List<ArkivJournalpost> tilknyttetArkivJournalposter, SafRequestContext safRequestContext) {
 		tilknyttetArkivJournalposter.forEach(arkivJournalpost ->
-				safRequestContext.getRequestCache().putArkivJournalpost(arkivJournalpost.journalpostId().toString(), arkivJournalpost));
+				safRequestContext.getRequestCache().putArkivJournalpost(arkivJournalpost));
 
 		return tilknyttetArkivJournalposter.stream()
 				.filter(ArkivJournalpost::isTilknyttetSak)
