@@ -588,6 +588,12 @@
       "namespace": "arbeidsgiver",
       "cluster": "dev-gcp",
       "roles": ["tema_til", "tema_opp"]
+    },
+    {
+      "app": "dsop-kontroll",
+      "namespace": "dsopkontroll",
+      "cluster": "dev-fss",
+      "roles": ["tema_ktr"]
     }
   ]
 }

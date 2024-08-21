@@ -597,6 +597,12 @@
       "app": "gosys-oppgavebehandling-api",
       "namespace": "oppgavehandtering",
       "cluster": "prod-gcp"
+    },
+    {
+      "app": "dsop-kontroll",
+      "namespace": "dsopkontroll",
+      "cluster": "prod-fss",
+      "roles": ["tema_ktr"]
     }
   ]
 }
