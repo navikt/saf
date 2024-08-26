@@ -116,6 +116,11 @@
       "cluster": "prod-external"
     },
     {
+      "app": "saas-proxy",
+      "namespace": "teamcrm",
+      "cluster": "prod-gcp"
+    },
+    {
       "app": "kabal-document",
       "namespace": "klage",
       "cluster": "prod-gcp",
