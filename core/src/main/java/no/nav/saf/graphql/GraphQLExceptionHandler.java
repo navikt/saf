@@ -42,14 +42,14 @@ public class GraphQLExceptionHandler implements DataFetcherExceptionHandler {
 			case CallNotPermittedException e -> {
 				log.error("query {} circuitbreaker feil. melding={}", path, e.getMessage(), e);
 				return new SafTechnicalException("Circuitbreaker feil i saf. Den har en avhengighet som feiler. " +
-												 "Hvis dette vedvarer, meld fra til #team_dokumentløsninger på Slack. melding=" + e.getMessage(), exception)
-						.asAnonymizedGraphQlError();
+												 "Hvis dette vedvarer, meld fra til #team_dokumentløsninger på Slack. melding=" + e.getMessage(), e)
+						.asMessageGraphQlError();
 			}
 			case SafTechnicalException e -> {
 				log.error("query {} teknisk feil. melding={}", path, e.getMessage(), e);
 				return e.asAnonymizedGraphQlError();
 			}
-			case null, default -> {
+			default -> {
 				log.error("query {} ukjent teknisk feil. melding={}", path, exception.getMessage(), exception);
 				return new SafTechnicalException("Ukjent teknisk feil. Meld fra til #team_dokumentløsninger på Slack.", exception)
 						.asAnonymizedGraphQlError();

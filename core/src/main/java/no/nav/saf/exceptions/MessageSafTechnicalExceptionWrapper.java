@@ -11,10 +11,10 @@ import java.util.Map;
 import static graphql.ErrorType.DataFetchingException;
 import static java.util.Collections.emptyList;
 
-public class AnonymizedSafTechnicalExceptionWrapper implements GraphQLError {
+public class MessageSafTechnicalExceptionWrapper implements GraphQLError {
 	private final SafTechnicalException safTechnicalException;
 
-	AnonymizedSafTechnicalExceptionWrapper(SafTechnicalException safTechnicalException) {
+	MessageSafTechnicalExceptionWrapper(SafTechnicalException safTechnicalException) {
 		this.safTechnicalException = safTechnicalException;
 	}
 
@@ -25,7 +25,7 @@ public class AnonymizedSafTechnicalExceptionWrapper implements GraphQLError {
 
 	@Override
 	public String getMessage() {
-		return "Teknisk feil. Hvis feilen vedvarer, meld fra til #team_dokumentløsninger på Slack.";
+		return safTechnicalException.getMessage();
 	}
 
 	@Override
