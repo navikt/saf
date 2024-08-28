@@ -25,7 +25,7 @@ public class AnonymizedSafTechnicalExceptionWrapper implements GraphQLError {
 
 	@Override
 	public String getMessage() {
-		return "Ukjent teknisk feil. Meld fra til #team_dokumentløsninger på Slack.";
+		return safTechnicalException.getMessage();
 	}
 
 	@Override
