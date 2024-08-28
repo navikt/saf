@@ -37,4 +37,8 @@ public class SafTechnicalException extends RuntimeException {
 	public AnonymizedSafTechnicalExceptionWrapper asAnonymizedGraphQlError() {
 		return new AnonymizedSafTechnicalExceptionWrapper(this);
 	}
+
+	public MessageSafTechnicalExceptionWrapper asMessageGraphQlError() {
+		return new MessageSafTechnicalExceptionWrapper(this);
+	}
 }
