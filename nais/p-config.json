@@ -607,7 +607,7 @@
       "app": "dsop-kontroll",
       "namespace": "dsopkontroll",
       "cluster": "prod-fss",
-      "roles": ["tema_ktr"]
+      "roles": ["tema_ktr", "tema_kta"]
     }
   ]
 }
