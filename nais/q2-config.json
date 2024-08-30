@@ -593,7 +593,7 @@
       "app": "dsop-kontroll",
       "namespace": "dsopkontroll",
       "cluster": "dev-fss",
-      "roles": ["tema_ktr"]
+      "roles": ["tema_ktr", "tema_kta"]
     }
   ]
 }
