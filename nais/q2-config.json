@@ -561,6 +561,12 @@
       "roles": ["tema_aap"]
     },
     {
+      "app": "postmottak-backend",
+      "namespace": "aap",
+      "cluster": "dev-gcp",
+      "roles": ["tema_aap"]
+    },
+    {
       "app": "amt-distribusjon",
       "namespace": "amt",
       "cluster": "dev-gcp",
