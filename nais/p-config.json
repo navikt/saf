@@ -61,6 +61,11 @@
       "cluster": "prod-gcp"
     },
     {
+      "app": "brev-administrasjon",
+      "namespace": "isa",
+      "cluster": "prod-gcp"
+    },
+    {
       "app": "trygderetten-vedlegg",
       "namespace": "isa",
       "cluster": "prod-gcp"
