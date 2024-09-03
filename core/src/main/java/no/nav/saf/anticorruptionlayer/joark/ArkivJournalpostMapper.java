@@ -82,7 +82,7 @@ public class ArkivJournalpostMapper {
 
 		Journalpost journalpost = Journalpost.builder()
 				.journalpostId(journalpostId)
-				.tittel(arkivJournalpost.innhold())
+				.tittel(mapTittel(arkivJournalpost.innhold(), tema, requestCache))
 				.journalposttype(mapToJournalpostType(arkivJournalpost.type()))
 				.journalstatus(mapJournalstatus(arkivJournalpost))
 				.tema(tema)
@@ -114,6 +114,14 @@ public class ArkivJournalpostMapper {
 
 		journalpost.getDokumenter().addAll(mapDokumenter(journalpost, arkivJournalpost, requestCache));
 		return journalpost;
+	}
+
+
+	private static String mapTittel(String originalTittel, Tema tema, RequestCache requestCache) {
+		if(getDecisionFromPep2d(tema, requestCache)) {
+			return originalTittel;
+		}
+		return SKJULT_TITTEL;
 	}
 
 	private static Sak mapSak(ArkivSaksrelasjon saksrelasjon, RequestCache requestCache) {
@@ -380,7 +388,7 @@ public class ArkivJournalpostMapper {
 				.filter(dokumentinfo -> shouldMapDokumentInfo(arkivJournalpost.journalpostId().toString(), dokumentinfo.dokumentInfoId().toString(), requestCache))
 				.map(dokumentinfo -> DokumentInfo.builder()
 						.dokumentInfoId(dokumentinfo.dokumentInfoId().toString())
-						.tittel(dokumentinfo.tittel())
+						.tittel(mapTittel(dokumentinfo.tittel(), journalpost.getTema(), requestCache))
 						.brevkode(mapBrevkode(arkivJournalpost, dokumentinfo))
 						.dokumentstatus(mapDokumentstatus(dokumentinfo))
 						.datoFerdigstilt(mapDokumentFerdigstilt(dokumentinfo))

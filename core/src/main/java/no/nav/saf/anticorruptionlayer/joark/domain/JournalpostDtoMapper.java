@@ -42,6 +42,7 @@ import static java.lang.Integer.valueOf;
 import static java.util.Objects.nonNull;
 import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostMapper.ARKIVJOURNALPOST_OVERSTYRTINNSYN_STANDARD;
 import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostMapper.ARKIVJOURNALPOST_OVERSTYRTINNSYN_STANDARD_BESKRIVELSE;
+import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostMapper.SKJULT_TITTEL;
 import static no.nav.saf.anticorruptionlayer.joark.domain.kode.JournalpostTypeCode.U;
 import static no.nav.saf.cache.KeyGeneratorLocalCaching.getKeyForPep2d;
 import static no.nav.saf.cache.KeyGeneratorLocalCaching.getKeyForPep5;
@@ -66,13 +67,14 @@ public class JournalpostDtoMapper {
 		final Kanal kanal = mapKanal(journalpostDto);
 		final String journalpostId = journalpostDto.getJournalpostId().toString();
 
+		Tema tema = mapTema(journalpostDto, requestCache);
 		Journalpost journalpost = Journalpost.builder()
 				.journalpostId(journalpostId)
-				.tittel(journalpostDto.getInnhold())
+				.tittel(mapTittel(journalpostDto.getInnhold(), tema, requestCache))
 				.journalposttype(JournalpostTypeCode.mapToJournalpostType(journalpostDto.getJournalposttype()))
 				.journalstatus(mapJournalstatus(journalpostDto))
-				.tema(mapTema(journalpostDto, requestCache))
-				.temanavn(mapTema(journalpostDto, requestCache).getTemanavn())
+				.tema(tema)
+				.temanavn(tema.getTemanavn())
 				.behandlingstema(journalpostDto.getBehandlingstema())
 				.behandlingstemanavn(journalpostDto.getBehandlingstemanavn())
 				.sak(mapSak(journalpostDto.getSaksrelasjon(), requestCache))
@@ -105,7 +107,7 @@ public class JournalpostDtoMapper {
 				.map(dokumentInfoDto -> DokumentInfo.builder()
 						.parent(journalpost)
 						.dokumentInfoId(dokumentInfoDto.getDokumentInfoId())
-						.tittel(dokumentInfoDto.getTittel())
+						.tittel(mapTittel(dokumentInfoDto.getTittel(), tema, requestCache))
 						.brevkode(mapBrevkode(journalpostDto, dokumentInfoDto))
 						.dokumentstatus(mapDokumentstatus(dokumentInfoDto))
 						.datoFerdigstilt(dokumentInfoDto.getDatoFerdigstilt() == null ? null :
@@ -135,6 +137,13 @@ public class JournalpostDtoMapper {
 						.build()).toList();
 		journalpost.getDokumenter().addAll(dokumenter);
 		return journalpost;
+	}
+
+	private String mapTittel(String originalTittel, Tema tema, RequestCache requestCache) {
+		if(getDecisionFromPep2d(tema, requestCache)) {
+			return originalTittel;
+		}
+		return SKJULT_TITTEL;
 	}
 
 	private String mapFiltype(VariantDto variantDto) {

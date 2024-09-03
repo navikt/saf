@@ -128,7 +128,7 @@ class JournalpostDtoMapperTest {
 	@Test
 	void shouldMapJournalpostDtoWithUtgaaendeJournalpost() {
 		JournalpostDto journalpostDto = buildJournalpostDtoUtgaaendeType(E, createUtsendingsInfoDtoWithFysiskPostadresse(), S);
-		RequestCache requestCache = pep5RequestCache();
+		RequestCache requestCache = defaultRequestCache();
 
 		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, requestCache);
 
@@ -152,7 +152,7 @@ class JournalpostDtoMapperTest {
 	@Test
 	void shouldMapJournalpostUtsendingInfoWhenUtsendingsKanalErNAV_NO() {
 		JournalpostDto journalpostDto = buildJournalpostDtoUtgaaendeType(E, createUtsendingsInfoDtoWithNavNoVarslingOldVarselStructure(EPOST_VEDTAK_INPUT_VARSLINGSTEKST, EPOST_VEDTAK_INPUT_DIGITAL_KONTAKTINFO), NAV_NO);
-		RequestCache requestCache = pep5RequestCache();
+		RequestCache requestCache = defaultRequestCache();
 
 		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, requestCache);
 
@@ -170,7 +170,7 @@ class JournalpostDtoMapperTest {
 	@Test
 	void shouldMapJournalpostUtsendingInfoWhenUtsendingsKanalErSDP() {
 		JournalpostDto journalpostDto = buildJournalpostDtoUtgaaendeType(E, createUtsendingsInfoDtoWithDigitalPostadresseOldVarselStructure(), SDP);
-		RequestCache requestCache = pep5RequestCache();
+		RequestCache requestCache = defaultRequestCache();
 
 		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, requestCache);
 
@@ -184,7 +184,7 @@ class JournalpostDtoMapperTest {
 	@Test
 	void shouldReturnNullUtsendingInfoWhenUtsendingsKanalErUkjent() {
 		JournalpostDto journalpostDto = buildJournalpostDtoUtgaaendeType(E, createUtsendingsInfoDtoWithDigitalPostadresseOldVarselStructure(), null);
-		RequestCache requestCache = pep5RequestCache();
+		RequestCache requestCache = defaultRequestCache();
 
 		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, requestCache);
 
@@ -197,7 +197,7 @@ class JournalpostDtoMapperTest {
 	void shouldReturnNullUtsendingInfoWhenJournalpostTypeErUtgående() {
 		JournalpostDto journalpostDto = JournalpostDtoTestObjects.buildJournalpostDtoInngaaendeType();
 
-		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, pep5RequestCache());
+		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, defaultRequestCache());
 
 		assertCommonMetadata(journalpost);
 
@@ -208,7 +208,7 @@ class JournalpostDtoMapperTest {
 	void shouldMapJournalpostDtoWithInngaaendeJournalpost() {
 		JournalpostDto journalpostDto = JournalpostDtoTestObjects.buildJournalpostDtoInngaaendeType();
 
-		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, pep5RequestCache());
+		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, defaultRequestCache());
 
 		assertCommonMetadata(journalpost);
 
@@ -229,7 +229,7 @@ class JournalpostDtoMapperTest {
 	@Test
 	void shouldMapJournalpostDtoWithNotatJournalpost() {
 		JournalpostDto journalpostDto = JournalpostDtoTestObjects.buildJournalpostDtoInternNotatType();
-		RequestCache requestCache = createTilgangBrukerRequestCache();
+		RequestCache requestCache = defaultRequestCache();
 		String tilgangKeyPep5LocalCaching = KeyGeneratorLocalCaching.getKeyForPep5(String.valueOf(JOURNALPOST_ID), DOKUMENT_INFO_ID);
 		requestCache.putDecision(tilgangKeyPep5LocalCaching, AbacAnswer.permit());
 
@@ -325,7 +325,7 @@ class JournalpostDtoMapperTest {
 	void shouldMapJournalpostWithKasserDokument() {
 		JournalpostDto journalpostDto = buildJournalpostDtoUtgaaendeType(E, null, null);
 		journalpostDto.getDokumenter().get(0).setKassert(true);
-		RequestCache requestCache = pep5RequestCache();
+		RequestCache requestCache = defaultRequestCache();
 
 		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, requestCache);
 
@@ -337,7 +337,7 @@ class JournalpostDtoMapperTest {
 		JournalpostDto journalpostDto = buildJournalpostDtoUtgaaendeType(E, null, null);
 		journalpostDto.getDokumenter().get(0).setDokumentstatus(null);
 		journalpostDto.getDokumenter().get(0).setKassert(null);
-		RequestCache requestCache = pep5RequestCache();
+		RequestCache requestCache = defaultRequestCache();
 
 		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, requestCache);
 
@@ -349,22 +349,15 @@ class JournalpostDtoMapperTest {
 	void shouldMapSaksbehandlerHarTilgang() {
 		JournalpostDto journalpostDto = JournalpostDtoTestObjects.buildJournalpostDtoPenSaksrelasjonDto();
 
-		String tilgangKeyPep2dLocalCaching = KeyGeneratorLocalCaching.getKeyForPep2d(FagomradeCode.toSafTema(journalpostDto.getFagomrade()));
-
-		String tilgangKeyPep5LocalCaching = KeyGeneratorLocalCaching.getKeyForPep5(String.valueOf(JOURNALPOST_ID), DOKUMENT_INFO_ID);
-
 		String tilgangKeyPep6dLocalCachingVariantArkiv = KeyGeneratorLocalCaching.getKeyForPep6d(
 				String.valueOf(JOURNALPOST_ID), DOKUMENT_INFO_ID, VARIANT_FORMAT_CODE_ARKIV.getSafVariantformat()
 						.name(), SKJERMING_TYPE_CODE_POL.getSafSkjerming().name());
-
 		String tilgangKeyPep6dLocalCachingVariantSladdet = KeyGeneratorLocalCaching.getKeyForPep6d(
 				String.valueOf(JOURNALPOST_ID), DOKUMENT_INFO_ID, VARIANT_FORMAT_CODE_SLADDET.getSafVariantformat()
 						.name(), SKJERMING_TYPE_CODE_POL.getSafSkjerming().name());
 
 
-		RequestCache requestCache = new RequestCache();
-		requestCache.putDecision(tilgangKeyPep2dLocalCaching, AbacAnswer.permit());
-		requestCache.putDecision(tilgangKeyPep5LocalCaching, AbacAnswer.permit());
+		RequestCache requestCache = defaultRequestCache();
 		requestCache.putDecision(tilgangKeyPep6dLocalCachingVariantArkiv, AbacAnswer.permit());
 		requestCache.putDecision(tilgangKeyPep6dLocalCachingVariantSladdet, AbacAnswer.deny(new UkjentEllerTekniskReason()));
 
@@ -383,7 +376,7 @@ class JournalpostDtoMapperTest {
 
 		String tilgangKeyPep2dLocalCaching = KeyGeneratorLocalCaching.getKeyForPep2d(FagomradeCode.toSafTema(journalpostDto.getFagomrade()));
 
-		RequestCache requestCache = new RequestCache();
+		RequestCache requestCache = defaultRequestCache();
 		requestCache.putDecision(tilgangKeyPep2dLocalCaching, AbacAnswer.deny(new TemaReason("cause_0013_ikketilgangtiltema", "saf_pep2d", "mangler_tema", Tema.FOR)));
 
 		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, requestCache);
@@ -521,7 +514,7 @@ class JournalpostDtoMapperTest {
 
 	@Test
 	void shouldMapBrevkodeAsBrevkodeWhenJournalpostIsInngaaende() {
-		RequestCache requestCache = pep5RequestCache();
+		RequestCache requestCache = defaultRequestCache();
 		JournalpostDto journalpostDto = JournalpostDtoTestObjects.buildJournalpostDtoInngaaendeType();
 
 		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, requestCache);
@@ -533,7 +526,7 @@ class JournalpostDtoMapperTest {
 	void shouldMapBrevkodeAsBrevkodeWhenJournalpostIsNotat() {
 		JournalpostDto journalpostDto = JournalpostDtoTestObjects.buildJournalpostDtoInngaaendeType();
 
-		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, pep5RequestCache());
+		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, defaultRequestCache());
 
 		assertThat(journalpost.getDokumenter().get(0).getBrevkode(), is(BREVKODE));
 	}
@@ -542,7 +535,7 @@ class JournalpostDtoMapperTest {
 	void shouldMapDokumenttypeIdAsBrevkodeWhenJournalpostIsUtgaaende() {
 		JournalpostDto journalpostDto = buildJournalpostDtoUtgaaendeType(E, null, null);
 
-		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, pep5RequestCache());
+		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, defaultRequestCache());
 
 		assertThat(journalpost.getDokumenter().get(0).getBrevkode(), is(JournalpostDtoTestObjects.DOKUMENTTYPE_ID));
 	}
@@ -552,7 +545,7 @@ class JournalpostDtoMapperTest {
 		JournalpostDto journalpostDto = buildJournalpostDtoUtgaaendeType(E, null, null);
 		journalpostDto.getDokumenter().get(0).setDokumenttypeId(null);
 
-		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, pep5RequestCache());
+		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, defaultRequestCache());
 
 		assertThat(journalpost.getDokumenter().get(0).getBrevkode(), is(BREVKODE));
 	}
@@ -630,9 +623,11 @@ class JournalpostDtoMapperTest {
 		assertEquals(UTGAAR, journalpost.getJournalstatus());
 	}
 
-	private RequestCache pep5RequestCache() {
+	private RequestCache defaultRequestCache() {
 		RequestCache requestCache = createArkivsakCacheRequestCache();
+		String tilgangKeyPep2dLocalCaching = KeyGeneratorLocalCaching.getKeyForPep2d(FagomradeCode.toSafTema(FAGOMRADE));
 		String tilgangKeyPep5LocalCaching = KeyGeneratorLocalCaching.getKeyForPep5(String.valueOf(JOURNALPOST_ID), DOKUMENT_INFO_ID);
+		requestCache.putDecision(tilgangKeyPep2dLocalCaching, AbacAnswer.permit());
 		requestCache.putDecision(tilgangKeyPep5LocalCaching, AbacAnswer.permit());
 		return requestCache;
 	}
