@@ -23,6 +23,7 @@ import no.nav.saf.domain.visningsmodell.RelevantDato;
 import no.nav.saf.domain.visningsmodell.Utsendingsinfo;
 import no.nav.saf.tilgangskontroll.RequestCache;
 import no.nav.saf.tilgangskontroll.pep.AbacAnswer;
+import no.nav.saf.tilgangskontroll.pep.reasons.TemaReason;
 import no.nav.saf.tilgangskontroll.pep.reasons.UkjentEllerTekniskReason;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -30,6 +31,7 @@ import org.junit.jupiter.api.Test;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 
+import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostMapper.SKJULT_TITTEL;
 import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoMapper.FILTYPE_PDF;
 import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.AKTOER_ID;
 import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.ANTALL_RETUR;
@@ -376,6 +378,21 @@ class JournalpostDtoMapperTest {
 	}
 
 	@Test
+	void shouldMapSkjultTittelWhenPep2dDeny() {
+		JournalpostDto journalpostDto = JournalpostDtoTestObjects.buildJournalpostDtoPenSaksrelasjonDto();
+
+		String tilgangKeyPep2dLocalCaching = KeyGeneratorLocalCaching.getKeyForPep2d(FagomradeCode.toSafTema(journalpostDto.getFagomrade()));
+
+		RequestCache requestCache = new RequestCache();
+		requestCache.putDecision(tilgangKeyPep2dLocalCaching, AbacAnswer.deny(new TemaReason("cause_0013_ikketilgangtiltema", "saf_pep2d", "mangler_tema", Tema.FOR)));
+
+		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, requestCache);
+
+		Assertions.assertThat(journalpost.getTittel()).isEqualTo(SKJULT_TITTEL);
+		Assertions.assertThat(journalpost.getDokumenter().get(0).getTittel()).isEqualTo(SKJULT_TITTEL);
+	}
+
+	@Test
 	void shouldHaveSaksbehandlerHarTilgangTrueWhenJournalstatusMottatt() {
 		JournalpostDto journalpostDto = JournalpostDtoTestObjects.buildJournalpostDtoInngaaendeType();
 		journalpostDto.setJournalstatus(M);
@@ -667,7 +684,8 @@ class JournalpostDtoMapperTest {
 				.containsExactlyInAnyOrder(
 						tuple(VARIANT_FORMAT_CODE_ARKIV.getSafVariantformat(),
 								JournalpostDtoTestObjects.FILNAVN_1,
-								JournalpostDtoTestObjects.FILUUID_1, false,
+								JournalpostDtoTestObjects.FILUUID_1,
+								false,
 								POL,
 								1024,
 								FILTYPE_PDF),

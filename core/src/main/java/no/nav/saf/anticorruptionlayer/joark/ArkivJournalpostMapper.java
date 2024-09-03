@@ -69,6 +69,7 @@ public class ArkivJournalpostMapper {
 	static final String FILTYPE_PDFA = "PDFA";
 	public static final String ARKIVJOURNALPOST_OVERSTYRTINNSYN_STANDARD = "BRUK_STANDARDREGLER";
 	public static final String ARKIVJOURNALPOST_OVERSTYRTINNSYN_STANDARD_BESKRIVELSE = "Standardreglene avgjør om dokumentet vises";
+	public static final String SKJULT_TITTEL = "*****";
 
 	public static Journalpost mapJournalpost(ArkivJournalpost arkivJournalpost, RequestCache requestCache) {
 		if (arkivJournalpost == null) {

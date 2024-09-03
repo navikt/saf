@@ -3,7 +3,9 @@
     journalposter {
       journalpostId
       eksternReferanseId
+      tittel
       dokumenter {
+        tittel
         dokumentvarianter {
           saksbehandlerHarTilgang
         }

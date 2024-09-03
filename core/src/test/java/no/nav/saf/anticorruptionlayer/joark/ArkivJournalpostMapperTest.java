@@ -31,6 +31,7 @@ import no.nav.saf.domain.visningsmodell.Tilleggsopplysning;
 import no.nav.saf.domain.visningsmodell.Utsendingsinfo;
 import no.nav.saf.tilgangskontroll.RequestCache;
 import no.nav.saf.tilgangskontroll.pep.AbacAnswer;
+import no.nav.saf.tilgangskontroll.pep.reasons.TemaReason;
 import no.nav.saf.tilgangskontroll.pep.reasons.UkjentEllerTekniskReason;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -38,7 +39,9 @@ import org.junit.jupiter.params.provider.EnumSource;
 
 import java.util.List;
 
+import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostMapper.ARKIVJOURNALPOST_OVERSTYRTINNSYN_STANDARD;
 import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostMapper.FILTYPE_PDF;
+import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostMapper.SKJULT_TITTEL;
 import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostMapper.mapJournalpost;
 import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostTestObjects.ARKIVDOKUMENTINFO_BREVKODE;
 import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostTestObjects.ARKIVDOKUMENTINFO_DOKUMENTTYPE_ID;
@@ -65,7 +68,6 @@ import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostTestObjects.A
 import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostTestObjects.ARKIVJOURNALPOST_LEST_DATO;
 import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostTestObjects.ARKIVJOURNALPOST_MOTTAT_DATO;
 import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostTestObjects.ARKIVJOURNALPOST_OPPRETTET_AV_NAVN;
-import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostMapper.ARKIVJOURNALPOST_OVERSTYRTINNSYN_STANDARD;
 import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostTestObjects.ARKIVJOURNALPOST_SENDT_PRINT_DATO;
 import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostTestObjects.ARKIVSAKRELASJON_FAGSYSTEM;
 import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostTestObjects.ARKIVSAKSRELASJON_SAK_ID;
@@ -393,6 +395,20 @@ class ArkivJournalpostMapperTest {
 				.hasSize(2)
 				.containsExactlyInAnyOrder(tuple(VARIANT_FORMAT_CODE_SLADDET.getSafVariantformat(), false),
 						tuple(VARIANT_FORMAT_CODE_ARKIV.getSafVariantformat(), true));
+	}
+
+	@Test
+	void shouldMapSkjultTittelWhenPep2dDeny() {
+		ArkivJournalpost arkivJournalpost = pensjonSakArkivJournalpost();
+		String tilgangKeyPep2dLocalCaching = KeyGeneratorLocalCaching.getKeyForPep2d(Tema.PEN);
+
+		RequestCache requestCache = createTilgangBrukerRequestCachePSAK();
+		requestCache.putDecision(tilgangKeyPep2dLocalCaching, AbacAnswer.deny(new TemaReason("cause_0013_ikketilgangtiltema", "saf_pep2d", "mangler_tema", Tema.FOR)));
+
+		Journalpost journalpost = mapJournalpost(arkivJournalpost, requestCache);
+
+		assertThat(journalpost.getTittel()).isEqualTo(SKJULT_TITTEL);
+		assertThat(journalpost.getDokumenter().get(0).getTittel()).isEqualTo(SKJULT_TITTEL);
 	}
 
 	@Test
