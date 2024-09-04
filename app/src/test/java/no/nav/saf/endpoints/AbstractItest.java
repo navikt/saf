@@ -852,9 +852,15 @@ public abstract class AbstractItest {
 	}
 
 	protected void assertSkjultTittel(Dokumentoversikt dokumentoversikt) {
+		assertThat(dokumentoversikt.getJournalposter()).hasSizeGreaterThan(0);
 		dokumentoversikt.getJournalposter().forEach(journalpost -> {
 			assertThat(journalpost.getTittel()).isEqualTo(SKJULT_TITTEL);
-			journalpost.getDokumenter().forEach(dokumentInfo -> assertThat(dokumentInfo.getTittel()).isEqualTo(SKJULT_TITTEL));
+			assertThat(journalpost.getDokumenter()).hasSizeGreaterThan(0);
+			journalpost.getDokumenter().forEach(dokumentInfo -> {
+				assertThat(dokumentInfo.getTittel()).isEqualTo(SKJULT_TITTEL);
+				assertThat(dokumentInfo.getLogiskeVedlegg()).hasSizeGreaterThan(0);
+				dokumentInfo.getLogiskeVedlegg().forEach(logiskVedlegg -> assertThat(logiskVedlegg.getTittel()).isEqualTo(SKJULT_TITTEL));
+			});
 		});
 	}
 

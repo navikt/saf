@@ -121,7 +121,7 @@ class TilknyttedeJournalposterIT extends AbstractItest {
 		assertThat(dokumentInfo1.getBrevkode(), is("for123"));
 		assertThat(dokumentInfo1.getDokumentstatus(), is(FERDIGSTILT));
 		assertThat(dokumentInfo1.getOriginalJournalpostId(), is(JOURNALPOST_ID));
-		assertThat(dokumentInfo1.getLogiskeVedlegg().get(0).getTittel(), is("Hei"));
+		assertThat(dokumentInfo1.getLogiskeVedlegg().get(0).getTittel(), is("Søknadsinfo"));
 		assertThat(dokumentInfo1.getDokumentvarianter().get(0).getVariantformat(), is(ARKIV));
 		assertTrue(dokumentInfo1.getDokumentvarianter().get(0).isSaksbehandlerHarTilgang());
 	}
@@ -256,6 +256,7 @@ class TilknyttedeJournalposterIT extends AbstractItest {
 		DokumentInfo dokumentInfo = journalpost.getDokumenter().get(0);
 		assertThat(dokumentInfo.getTittel(), is(SKJULT_TITTEL));
 		assertFalse(dokumentInfo.getDokumentvarianter().get(0).isSaksbehandlerHarTilgang());
+		assertThat(dokumentInfo.getLogiskeVedlegg().get(0).getTittel(), is(SKJULT_TITTEL));
 	}
 
 	@Test

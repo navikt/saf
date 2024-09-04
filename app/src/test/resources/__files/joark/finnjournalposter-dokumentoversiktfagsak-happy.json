@@ -38,7 +38,12 @@
             }
           ],
           "tittel": "Bekreftelse fra arbeidsgiver",
-          "logiske": []
+          "logiske": [
+            {
+              "vedleggId": "1",
+              "tittel": "Bekreftelse fra arbeidsgiver"
+            }
+          ]
         }
       ],
       "kanalReferanseId": "KANAL REFERANSE ID"
@@ -80,7 +85,12 @@
             }
           ],
           "tittel": "Dokumentasjon av etterlønn/sluttvederlag",
-          "logiske": [],
+          "logiske": [
+            {
+              "vedleggId": "2",
+              "tittel": "Dokumentasjon av etterlønn/sluttvederlag"
+            }
+          ],
           "skjerming": null
         }
       ],
@@ -124,7 +134,12 @@
             }
           ],
           "tittel": "Søknad om foreldrepenger ved fødsel",
-          "logiske": []
+          "logiske": [
+            {
+              "vedleggId": "3",
+              "tittel": "Søknad om foreldrepenger ved fødsel"
+            }
+          ]
         }
       ],
       "kanalReferanseId": "KANAL REFERANSE ID"
@@ -167,7 +182,12 @@
             }
           ],
           "tittel": "Søknad om foreldrepenger ved fødsel",
-          "logiske": []
+          "logiske": [
+            {
+              "vedleggId": "4",
+              "tittel": "Søknad om foreldrepenger ved fødsel"
+            }
+          ]
         }
       ],
       "kanalReferanseId": "KANAL REFERANSE ID",

@@ -398,7 +398,7 @@ public class ArkivJournalpostMapper {
 								.map(fildetaljer -> mapDokumentvariant(journalpost, requestCache, dokumentinfo, fildetaljer))
 								.filter(Objects::nonNull)
 								.collect(Collectors.toList()))
-						.logiskeVedlegg(mapLogiskeVedlegg(dokumentinfo))
+						.logiskeVedlegg(mapLogiskeVedlegg(dokumentinfo, journalpost.getTema(), requestCache))
 						.build()).toList();
 	}
 
@@ -418,9 +418,9 @@ public class ArkivJournalpostMapper {
 				.build();
 	}
 
-	private static List<LogiskVedlegg> mapLogiskeVedlegg(ArkivDokumentinfo dokumentinfo) {
+	private static List<LogiskVedlegg> mapLogiskeVedlegg(ArkivDokumentinfo dokumentinfo, Tema tema, RequestCache requestCache) {
 		return dokumentinfo.logiskVedlegg().stream()
-				.map(logiskVedlegg -> new LogiskVedlegg(logiskVedlegg.vedleggId().toString(), logiskVedlegg.tittel()))
+				.map(logiskVedlegg -> new LogiskVedlegg(logiskVedlegg.vedleggId().toString(), mapTittel(logiskVedlegg.tittel(), tema, requestCache)))
 				.collect(Collectors.toList());
 	}
 

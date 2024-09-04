@@ -515,6 +515,7 @@ type LogiskVedlegg {
     logiskVedleggId: String!
 
     # Tittel på det logiske vedlegget, f.eks. *"Legeerklæring"*
+    # Hvis NAV ansatt eller system ikke har tilgang til tema returneres tittel: "*****"
     tittel: String
 }
 

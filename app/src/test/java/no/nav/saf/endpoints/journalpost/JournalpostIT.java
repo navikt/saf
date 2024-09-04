@@ -505,6 +505,7 @@ class JournalpostIT extends AbstractItest {
 		DokumentInfo dokumentInfo = journalpost.getDokumenter().get(0);
 		assertThat(dokumentInfo.getTittel()).isEqualTo(SKJULT_TITTEL);
 		assertThat(dokumentInfo.getDokumentvarianter().get(0).isSaksbehandlerHarTilgang()).isFalse();
+		assertThat(dokumentInfo.getLogiskeVedlegg().get(0).getTittel()).isEqualTo(SKJULT_TITTEL);
 	}
 
 	@Test

@@ -408,7 +408,10 @@ class ArkivJournalpostMapperTest {
 		Journalpost journalpost = mapJournalpost(arkivJournalpost, requestCache);
 
 		assertThat(journalpost.getTittel()).isEqualTo(SKJULT_TITTEL);
-		assertThat(journalpost.getDokumenter().get(0).getTittel()).isEqualTo(SKJULT_TITTEL);
+		DokumentInfo dokumentInfo = journalpost.getDokumenter().get(0);
+		assertThat(dokumentInfo.getTittel()).isEqualTo(SKJULT_TITTEL);
+		LogiskVedlegg logiskVedlegg = dokumentInfo.getLogiskeVedlegg().get(0);
+		assertThat(logiskVedlegg.getTittel()).isEqualTo(SKJULT_TITTEL);
 	}
 
 	@Test

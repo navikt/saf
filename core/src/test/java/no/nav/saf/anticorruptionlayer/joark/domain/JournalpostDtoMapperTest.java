@@ -19,6 +19,7 @@ import no.nav.saf.domain.visningsmodell.BrukerIdType;
 import no.nav.saf.domain.visningsmodell.DokumentInfo;
 import no.nav.saf.domain.visningsmodell.Dokumentvariant;
 import no.nav.saf.domain.visningsmodell.Journalpost;
+import no.nav.saf.domain.visningsmodell.LogiskVedlegg;
 import no.nav.saf.domain.visningsmodell.RelevantDato;
 import no.nav.saf.domain.visningsmodell.Utsendingsinfo;
 import no.nav.saf.tilgangskontroll.RequestCache;
@@ -382,7 +383,10 @@ class JournalpostDtoMapperTest {
 		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, requestCache);
 
 		Assertions.assertThat(journalpost.getTittel()).isEqualTo(SKJULT_TITTEL);
-		Assertions.assertThat(journalpost.getDokumenter().get(0).getTittel()).isEqualTo(SKJULT_TITTEL);
+		DokumentInfo dokumentInfo = journalpost.getDokumenter().get(0);
+		Assertions.assertThat(dokumentInfo.getTittel()).isEqualTo(SKJULT_TITTEL);
+		LogiskVedlegg logiskVedlegg = dokumentInfo.getLogiskeVedlegg().get(0);
+		Assertions.assertThat(logiskVedlegg.getTittel()).isEqualTo(SKJULT_TITTEL);
 	}
 
 	@Test
