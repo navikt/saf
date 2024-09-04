@@ -212,7 +212,7 @@ type Journalpost {
     journalpostId: String!
 
     # Beskriver innholdet i journalposten samlet, f.eks. "Ettersendelse til søknad om foreldrepenger"
-    # Hvis NAV ansatt eller system ikke har tilgang til tema returneres tittel: "*****"
+    # Hvis NAV ansatt ikke har tilgang til tema returneres tittel: "*****"
     tittel: String
 
     # Sier hvorvidt journalposten er et inngående dokument, et utgående dokument eller et notat.
@@ -480,7 +480,7 @@ type DokumentInfo {
     dokumentInfoId: String!
 
     # Dokumentets tittel, f.eks. *"Søknad om foreldrepenger ved fødsel"* eller *"Legeerklæring"*.
-    # Hvis NAV ansatt eller system ikke har tilgang til tema returneres tittel: "*****"
+    # Hvis NAV ansatt ikke har tilgang til tema returneres tittel: "*****"
     tittel: String
 
     # Kode som sier noe om dokumentets innhold og oppbygning.
@@ -515,7 +515,7 @@ type LogiskVedlegg {
     logiskVedleggId: String!
 
     # Tittel på det logiske vedlegget, f.eks. *"Legeerklæring"*
-    # Hvis NAV ansatt eller system ikke har tilgang til tema returneres tittel: "*****"
+    # Hvis NAV ansatt ikke har tilgang til tema returneres tittel: "*****"
     tittel: String
 }
 
