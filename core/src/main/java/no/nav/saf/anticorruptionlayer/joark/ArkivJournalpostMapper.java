@@ -116,9 +116,8 @@ public class ArkivJournalpostMapper {
 		return journalpost;
 	}
 
-
 	private static String mapTittel(String originalTittel, Tema tema, RequestCache requestCache) {
-		if(getDecisionFromPep2d(tema, requestCache)) {
+		if (requestCache.isSystem() || getDecisionFromPep2d(tema, requestCache)) {
 			return originalTittel;
 		}
 		return SKJULT_TITTEL;
@@ -381,7 +380,7 @@ public class ArkivJournalpostMapper {
 	}
 
 	private static List<DokumentInfo> mapDokumenter(Journalpost journalpost, ArkivJournalpost arkivJournalpost, RequestCache requestCache) {
-		if(arkivJournalpost.dokumenter() == null) {
+		if (arkivJournalpost.dokumenter() == null) {
 			return List.of();
 		}
 		return arkivJournalpost.dokumenter().stream()
@@ -404,7 +403,7 @@ public class ArkivJournalpostMapper {
 
 	private static Dokumentvariant mapDokumentvariant(Journalpost journalpost, RequestCache requestCache, ArkivDokumentinfo dokumentinfo, ArkivFildetaljer fildetaljer) {
 		Variantformat variantformat = mapVariantformat(fildetaljer);
-		if(variantformat == null) {
+		if (variantformat == null) {
 			return null;
 		}
 		return Dokumentvariant.builder()

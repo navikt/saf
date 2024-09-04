@@ -48,6 +48,7 @@ import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObje
 import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.BRUKER_ID_PERSON;
 import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.DATO_FERDIGSTILT;
 import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.DATO_OPPRETTET;
+import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.DOKUMENTINFO_TITTEL;
 import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.DOKUMENT_DATO;
 import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.DOKUMENT_INFO_ID;
 import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.EKSPEDERT_DATO;
@@ -390,6 +391,25 @@ class JournalpostDtoMapperTest {
 	}
 
 	@Test
+	void shouldNotMapSkjultTittelWhenPep2dDenyAndIsSystem() {
+		JournalpostDto journalpostDto = JournalpostDtoTestObjects.buildJournalpostDtoPenSaksrelasjonDto();
+
+		RequestCache requestCache = new RequestCache(true);
+		String tilgangKeyPep2dLocalCaching = KeyGeneratorLocalCaching.getKeyForPep2d(FagomradeCode.toSafTema(journalpostDto.getFagomrade()));
+		String tilgangKeyPep5LocalCaching = KeyGeneratorLocalCaching.getKeyForPep5(String.valueOf(JOURNALPOST_ID), DOKUMENT_INFO_ID);
+		requestCache.putDecision(tilgangKeyPep2dLocalCaching, AbacAnswer.deny(new TemaReason("cause_0013_ikketilgangtiltema", "saf_pep2d", "mangler_tema", Tema.FOR)));
+		requestCache.putDecision(tilgangKeyPep5LocalCaching, AbacAnswer.permit());
+
+		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, requestCache);
+
+		Assertions.assertThat(journalpost.getTittel()).isEqualTo(INNHOLD);
+		DokumentInfo dokumentInfo = journalpost.getDokumenter().get(0);
+		Assertions.assertThat(dokumentInfo.getTittel()).isEqualTo(DOKUMENTINFO_TITTEL);
+		LogiskVedlegg logiskVedlegg = dokumentInfo.getLogiskeVedlegg().get(0);
+		Assertions.assertThat(logiskVedlegg.getTittel()).isEqualTo(LOGISK_VEDLEGG_TITTEL);
+	}
+
+	@Test
 	void shouldHaveSaksbehandlerHarTilgangTrueWhenJournalstatusMottatt() {
 		JournalpostDto journalpostDto = JournalpostDtoTestObjects.buildJournalpostDtoInngaaendeType();
 		journalpostDto.setJournalstatus(M);
@@ -402,7 +422,7 @@ class JournalpostDtoMapperTest {
 				String.valueOf(JOURNALPOST_ID), DOKUMENT_INFO_ID, VARIANT_FORMAT_CODE_SLADDET.getSafVariantformat()
 						.name(), null);
 
-		RequestCache requestCache = new RequestCache();
+		RequestCache requestCache = new RequestCache(false);
 		requestCache.putDecision(tilgangKeyPep5LocalCaching, AbacAnswer.permit());
 		requestCache.putDecision(tilgangKeyPep6dLocalCachingVariantArkiv, AbacAnswer.permit());
 		requestCache.putDecision(tilgangKeyPep6dLocalCachingVariantSladdet, AbacAnswer.permit());
@@ -430,7 +450,7 @@ class JournalpostDtoMapperTest {
 				String.valueOf(JOURNALPOST_ID), DOKUMENT_INFO_ID, VARIANT_FORMAT_CODE_SLADDET.getSafVariantformat()
 						.name(), null);
 
-		RequestCache requestCache = new RequestCache();
+		RequestCache requestCache = new RequestCache(false);
 		requestCache.putDecision(tilgangKeyPep5LocalCaching, AbacAnswer.permit());
 		requestCache.putDecision(tilgangKeyPep6dLocalCachingVariantArkiv, AbacAnswer.permit());
 		requestCache.putDecision(tilgangKeyPep6dLocalCachingVariantSladdet, AbacAnswer.permit());
@@ -458,7 +478,7 @@ class JournalpostDtoMapperTest {
 				String.valueOf(JOURNALPOST_ID), DOKUMENT_INFO_ID, VARIANT_FORMAT_CODE_SLADDET.getSafVariantformat()
 						.name(), null);
 
-		RequestCache requestCache = new RequestCache();
+		RequestCache requestCache = new RequestCache(false);
 		requestCache.putDecision(tilgangKeyPep5LocalCaching, AbacAnswer.permit());
 		requestCache.putDecision(tilgangKeyPep6dLocalCachingVariantArkiv, AbacAnswer.permit());
 		requestCache.putDecision(tilgangKeyPep6dLocalCachingVariantSladdet, AbacAnswer.permit());
@@ -565,7 +585,7 @@ class JournalpostDtoMapperTest {
 						.build())
 				.fagomrade(FagomradeCode.AAP).build();
 
-		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, new RequestCache());
+		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, new RequestCache(false));
 
 		assertThat(journalpost.getBruker().getId(), is(BRUKER_ID_PERSON));
 		assertThat(journalpost.getBruker().getType(), is(BrukerIdType.FNR));
@@ -582,7 +602,7 @@ class JournalpostDtoMapperTest {
 						.build())
 				.fagomrade(FagomradeCode.AAP).build();
 
-		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, new RequestCache());
+		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, new RequestCache(false));
 
 		assertThat(journalpost.getBruker().getId(), is(BRUKER_ID_ORGANISASJON));
 		assertThat(journalpost.getBruker().getType(), is(ORGNR));
@@ -599,7 +619,7 @@ class JournalpostDtoMapperTest {
 						.build())
 				.fagomrade(FagomradeCode.AAP).build();
 
-		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, new RequestCache());
+		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, new RequestCache(false));
 
 		assertThat(journalpost.getBruker().getId(), is(BRUKER_ID_ORGANISASJON));
 		assertThat(journalpost.getBruker().getType(), is(ORGNR));
@@ -702,7 +722,7 @@ class JournalpostDtoMapperTest {
 	}
 
 	private RequestCache createArkivsakCacheRequestCache() {
-		RequestCache requestCache = new RequestCache();
+		RequestCache requestCache = new RequestCache(false);
 		requestCache.putArkivsak(
 				Arkivsak.builder()
 						.arkivsaksnummer(SAKS_ID)
@@ -715,7 +735,7 @@ class JournalpostDtoMapperTest {
 	}
 
 	private RequestCache createTilgangBrukerRequestCache() {
-		RequestCache requestCache = new RequestCache();
+		RequestCache requestCache = new RequestCache(false);
 		requestCache.putTilgangBruker(
 				TilgangBruker.builder()
 						.foedselsnr(JournalpostDtoTestObjects.FNR)
@@ -726,7 +746,7 @@ class JournalpostDtoMapperTest {
 	}
 
 	private RequestCache createTilgangBrukerRequestCachePSAK() {
-		RequestCache requestCache = new RequestCache();
+		RequestCache requestCache = new RequestCache(false);
 		requestCache.putArkivsak(
 				Arkivsak.builder()
 						.aktoerId(AKTOER_ID)
@@ -739,7 +759,7 @@ class JournalpostDtoMapperTest {
 	}
 
 	private RequestCache createTilgangBrukerCacheWithOrganisasjonSak() {
-		RequestCache requestCache = new RequestCache();
+		RequestCache requestCache = new RequestCache(false);
 		requestCache.putTilgangBruker(
 				TilgangBruker.builder()
 						.orgnummer(ORG_NR)

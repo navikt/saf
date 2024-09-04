@@ -140,7 +140,7 @@ public class JournalpostDtoMapper {
 	}
 
 	private String mapTittel(String originalTittel, Tema tema, RequestCache requestCache) {
-		if(getDecisionFromPep2d(tema, requestCache)) {
+		if(requestCache.isSystem() || getDecisionFromPep2d(tema, requestCache)) {
 			return originalTittel;
 		}
 		return SKJULT_TITTEL;

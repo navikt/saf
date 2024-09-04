@@ -18,9 +18,9 @@ public class SafRequestContext {
 	private final RequestCache requestCache;
 
 	public SafRequestContext(String navCallId, String navUserId, TokenValidationContext tokenValidationContext, Map<String, Boolean> privilegiedServiceusers) {
-		this.requestCache = new RequestCache();
 		this.navCallId = navCallId;
 		this.securityContext = new SafSecurityContext(tokenValidationContext, privilegiedServiceusers, navUserId);
+		this.requestCache = new RequestCache(securityContext.isSystem());
 	}
 
 	/**
