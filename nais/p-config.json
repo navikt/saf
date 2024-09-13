@@ -177,6 +177,12 @@
       "roles": ["tema_opp"]
     },
     {
+      "app": "veilarbvedtaksstotte",
+      "namespace": "obo",
+      "cluster": "prod-gcp",
+      "roles": ["tema_opp"]
+    },
+    {
       "app": "yrkesskade-melding-api",
       "namespace": "yrkesskade",
       "cluster": "prod-gcp",
