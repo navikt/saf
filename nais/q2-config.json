@@ -192,8 +192,8 @@
     },
     {
       "app": "veilarbvedtaksstotte",
-      "namespace": "pto",
-      "cluster": "dev-fss",
+      "namespace": "obo",
+      "cluster": "dev-gcp",
       "roles": ["tema_opp"]
     },
     {
