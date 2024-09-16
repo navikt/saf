@@ -555,12 +555,6 @@
       "roles": ["tema_aap"]
     },
     {
-      "app": "mottak",
-      "namespace": "aap",
-      "cluster": "dev-gcp",
-      "roles": ["tema_aap"]
-    },
-    {
       "app": "postmottak-backend",
       "namespace": "aap",
       "cluster": "dev-gcp",
