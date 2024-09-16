@@ -461,11 +461,6 @@
       "roles": ["tema_alle"]
     },
     {
-      "app": "dokumenter",
-      "namespace": "aap",
-      "cluster": "dev-gcp"
-    },
-    {
       "app": "gosys-q2",
       "namespace": "isa",
       "cluster": "dev-fss"
@@ -550,12 +545,6 @@
     },
     {
       "app": "behandlingsflyt",
-      "namespace": "aap",
-      "cluster": "dev-gcp",
-      "roles": ["tema_aap"]
-    },
-    {
-      "app": "mottak",
       "namespace": "aap",
       "cluster": "dev-gcp",
       "roles": ["tema_aap"]
