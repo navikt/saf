@@ -461,11 +461,6 @@
       "roles": ["tema_alle"]
     },
     {
-      "app": "dokumenter",
-      "namespace": "aap",
-      "cluster": "dev-gcp"
-    },
-    {
       "app": "gosys-q2",
       "namespace": "isa",
       "cluster": "dev-fss"
