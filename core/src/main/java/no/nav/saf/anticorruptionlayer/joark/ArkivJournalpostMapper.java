@@ -69,6 +69,7 @@ public class ArkivJournalpostMapper {
 	static final String FILTYPE_PDFA = "PDFA";
 	public static final String ARKIVJOURNALPOST_OVERSTYRTINNSYN_STANDARD = "BRUK_STANDARDREGLER";
 	public static final String ARKIVJOURNALPOST_OVERSTYRTINNSYN_STANDARD_BESKRIVELSE = "Standardreglene avgjør om dokumentet vises";
+	public static final String SKJULT_TITTEL = "*****";
 
 	public static Journalpost mapJournalpost(ArkivJournalpost arkivJournalpost, RequestCache requestCache) {
 		if (arkivJournalpost == null) {
@@ -81,7 +82,7 @@ public class ArkivJournalpostMapper {
 
 		Journalpost journalpost = Journalpost.builder()
 				.journalpostId(journalpostId)
-				.tittel(arkivJournalpost.innhold())
+				.tittel(mapTittel(arkivJournalpost.innhold(), tema, requestCache))
 				.journalposttype(mapToJournalpostType(arkivJournalpost.type()))
 				.journalstatus(mapJournalstatus(arkivJournalpost))
 				.tema(tema)
@@ -113,6 +114,13 @@ public class ArkivJournalpostMapper {
 
 		journalpost.getDokumenter().addAll(mapDokumenter(journalpost, arkivJournalpost, requestCache));
 		return journalpost;
+	}
+
+	private static String mapTittel(String originalTittel, Tema tema, RequestCache requestCache) {
+		if (requestCache.isSystem() || getDecisionFromPep2d(tema, requestCache)) {
+			return originalTittel;
+		}
+		return SKJULT_TITTEL;
 	}
 
 	private static Sak mapSak(ArkivSaksrelasjon saksrelasjon, RequestCache requestCache) {
@@ -372,14 +380,14 @@ public class ArkivJournalpostMapper {
 	}
 
 	private static List<DokumentInfo> mapDokumenter(Journalpost journalpost, ArkivJournalpost arkivJournalpost, RequestCache requestCache) {
-		if(arkivJournalpost.dokumenter() == null) {
+		if (arkivJournalpost.dokumenter() == null) {
 			return List.of();
 		}
 		return arkivJournalpost.dokumenter().stream()
 				.filter(dokumentinfo -> shouldMapDokumentInfo(arkivJournalpost.journalpostId().toString(), dokumentinfo.dokumentInfoId().toString(), requestCache))
 				.map(dokumentinfo -> DokumentInfo.builder()
 						.dokumentInfoId(dokumentinfo.dokumentInfoId().toString())
-						.tittel(dokumentinfo.tittel())
+						.tittel(mapTittel(dokumentinfo.tittel(), journalpost.getTema(), requestCache))
 						.brevkode(mapBrevkode(arkivJournalpost, dokumentinfo))
 						.dokumentstatus(mapDokumentstatus(dokumentinfo))
 						.datoFerdigstilt(mapDokumentFerdigstilt(dokumentinfo))
@@ -389,13 +397,13 @@ public class ArkivJournalpostMapper {
 								.map(fildetaljer -> mapDokumentvariant(journalpost, requestCache, dokumentinfo, fildetaljer))
 								.filter(Objects::nonNull)
 								.collect(Collectors.toList()))
-						.logiskeVedlegg(mapLogiskeVedlegg(dokumentinfo))
+						.logiskeVedlegg(mapLogiskeVedlegg(dokumentinfo, journalpost.getTema(), requestCache))
 						.build()).toList();
 	}
 
 	private static Dokumentvariant mapDokumentvariant(Journalpost journalpost, RequestCache requestCache, ArkivDokumentinfo dokumentinfo, ArkivFildetaljer fildetaljer) {
 		Variantformat variantformat = mapVariantformat(fildetaljer);
-		if(variantformat == null) {
+		if (variantformat == null) {
 			return null;
 		}
 		return Dokumentvariant.builder()
@@ -409,9 +417,9 @@ public class ArkivJournalpostMapper {
 				.build();
 	}
 
-	private static List<LogiskVedlegg> mapLogiskeVedlegg(ArkivDokumentinfo dokumentinfo) {
+	private static List<LogiskVedlegg> mapLogiskeVedlegg(ArkivDokumentinfo dokumentinfo, Tema tema, RequestCache requestCache) {
 		return dokumentinfo.logiskVedlegg().stream()
-				.map(logiskVedlegg -> new LogiskVedlegg(logiskVedlegg.vedleggId().toString(), logiskVedlegg.tittel()))
+				.map(logiskVedlegg -> new LogiskVedlegg(logiskVedlegg.vedleggId().toString(), mapTittel(logiskVedlegg.tittel(), tema, requestCache)))
 				.collect(Collectors.toList());
 	}
 

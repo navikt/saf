@@ -38,7 +38,12 @@
             }
           ],
           "tittel": "Bekreftelse fra arbeidsgiver",
-          "logiske": []
+          "logiske": [
+            {
+              "vedleggId": "1",
+              "tittel": "Bekreftelse fra arbeidsgiver"
+            }
+          ]
         }
       ]
     }

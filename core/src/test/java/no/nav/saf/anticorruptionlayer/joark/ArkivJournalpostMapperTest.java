@@ -31,6 +31,7 @@ import no.nav.saf.domain.visningsmodell.Tilleggsopplysning;
 import no.nav.saf.domain.visningsmodell.Utsendingsinfo;
 import no.nav.saf.tilgangskontroll.RequestCache;
 import no.nav.saf.tilgangskontroll.pep.AbacAnswer;
+import no.nav.saf.tilgangskontroll.pep.reasons.TemaReason;
 import no.nav.saf.tilgangskontroll.pep.reasons.UkjentEllerTekniskReason;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -38,11 +39,14 @@ import org.junit.jupiter.params.provider.EnumSource;
 
 import java.util.List;
 
+import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostMapper.ARKIVJOURNALPOST_OVERSTYRTINNSYN_STANDARD;
 import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostMapper.FILTYPE_PDF;
+import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostMapper.SKJULT_TITTEL;
 import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostMapper.mapJournalpost;
 import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostTestObjects.ARKIVDOKUMENTINFO_BREVKODE;
 import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostTestObjects.ARKIVDOKUMENTINFO_DOKUMENTTYPE_ID;
 import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostTestObjects.ARKIVDOKUMENTINFO_DOKUMENT_INFO_ID;
+import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostTestObjects.ARKIVDOKUMENTINFO_TITTEL;
 import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostTestObjects.ARKIVDOKUMENT_INFO_DATO_FERDIGSTILT;
 import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostTestObjects.ARKIVFILDETALJER_FILNAVN_1;
 import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostTestObjects.ARKIVFILDETALJER_FILNAVN_2;
@@ -65,7 +69,6 @@ import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostTestObjects.A
 import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostTestObjects.ARKIVJOURNALPOST_LEST_DATO;
 import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostTestObjects.ARKIVJOURNALPOST_MOTTAT_DATO;
 import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostTestObjects.ARKIVJOURNALPOST_OPPRETTET_AV_NAVN;
-import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostMapper.ARKIVJOURNALPOST_OVERSTYRTINNSYN_STANDARD;
 import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostTestObjects.ARKIVJOURNALPOST_SENDT_PRINT_DATO;
 import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostTestObjects.ARKIVSAKRELASJON_FAGSYSTEM;
 import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostTestObjects.ARKIVSAKSRELASJON_SAK_ID;
@@ -133,7 +136,7 @@ class ArkivJournalpostMapperTest {
 	@Test
 	void shouldMapWithUtgaaendeArkivJournalpost() {
 		ArkivJournalpost arkivJournalpost = utgaaendeArkivJournalpost(E, utsendingsInfoDtoWithFysiskPostadresse(), S);
-		RequestCache requestCache = pep5RequestCache();
+		RequestCache requestCache = defaultRequestCache();
 
 		Journalpost journalpost = mapJournalpost(arkivJournalpost, requestCache);
 
@@ -159,7 +162,7 @@ class ArkivJournalpostMapperTest {
 	@Test
 	void shouldMapJournalpostUtsendingInfoWhenUtsendingsKanalErNAV_NO() {
 		ArkivJournalpost arkivJournalpost = utgaaendeArkivJournalpost(E, arkivUtsendingsInfoWithNavNoVarslingOldVarselStructure(EPOST_VEDTAK_INPUT_VARSLINGSTEKST, EPOST_VEDTAK_INPUT_DIGITAL_KONTAKTINFO), NAV_NO);
-		RequestCache requestCache = pep5RequestCache();
+		RequestCache requestCache = defaultRequestCache();
 
 		Journalpost journalpost = mapJournalpost(arkivJournalpost, requestCache);
 
@@ -177,7 +180,7 @@ class ArkivJournalpostMapperTest {
 	@Test
 	void shouldMapJournalpostUtsendingInfoWhenUtsendingsKanalErSDP() {
 		ArkivJournalpost arkivJournalpost = utgaaendeArkivJournalpost(E, arkivUtsendingsInfoWithDigitalPostadresseOldVarselStructure(), SDP);
-		RequestCache requestCache = pep5RequestCache();
+		RequestCache requestCache = defaultRequestCache();
 
 		Journalpost journalpost = mapJournalpost(arkivJournalpost, requestCache);
 
@@ -192,7 +195,7 @@ class ArkivJournalpostMapperTest {
 	@Test
 	void shouldReturnNullUtsendingInfoWhenUtsendingsKanalErUkjent() {
 		ArkivJournalpost arkivJournalpost = utgaaendeArkivJournalpost(E, arkivUtsendingsInfoWithDigitalPostadresseOldVarselStructure(), null);
-		RequestCache requestCache = pep5RequestCache();
+		RequestCache requestCache = defaultRequestCache();
 
 		Journalpost journalpost = mapJournalpost(arkivJournalpost, requestCache);
 
@@ -205,7 +208,7 @@ class ArkivJournalpostMapperTest {
 	void shouldReturnNullUtsendingInfoWhenJournalpostTypeErInngaaende() {
 		ArkivJournalpost arkivJournalpost = inngaaendeArkivJournalpost();
 
-		Journalpost journalpost = mapJournalpost(arkivJournalpost, pep5RequestCache());
+		Journalpost journalpost = mapJournalpost(arkivJournalpost, defaultRequestCache());
 
 		assertCommonMetadata(journalpost);
 
@@ -216,7 +219,7 @@ class ArkivJournalpostMapperTest {
 	void shouldMapWithInngaaendeArkivJournalpost() {
 		ArkivJournalpost arkivJournalpost = inngaaendeArkivJournalpost();
 
-		Journalpost journalpost = mapJournalpost(arkivJournalpost, pep5RequestCache());
+		Journalpost journalpost = mapJournalpost(arkivJournalpost, defaultRequestCache());
 
 		assertCommonMetadata(journalpost);
 
@@ -235,9 +238,7 @@ class ArkivJournalpostMapperTest {
 	@Test
 	void shouldMapArkivJournalpostWithNotatJournalpost() {
 		ArkivJournalpost arkivJournalpost = notatArkivJournalpost();
-		RequestCache requestCache = createTilgangBrukerRequestCache();
-		String tilgangKeyPep5LocalCaching = KeyGeneratorLocalCaching.getKeyForPep5(String.valueOf(ARKIVJOURNALPOST_JOURNALPOST_ID), String.valueOf(ARKIVDOKUMENTINFO_DOKUMENT_INFO_ID));
-		requestCache.putDecision(tilgangKeyPep5LocalCaching, AbacAnswer.permit());
+		RequestCache requestCache = defaultRequestCache();
 
 		Journalpost journalpost = mapJournalpost(arkivJournalpost, requestCache);
 
@@ -343,7 +344,7 @@ class ArkivJournalpostMapperTest {
 						.kassert(true)
 						.build()))
 				.build();
-		RequestCache requestCache = pep5RequestCache();
+		RequestCache requestCache = defaultRequestCache();
 
 		Journalpost journalpost = mapJournalpost(arkivJournalpost, requestCache);
 
@@ -359,7 +360,7 @@ class ArkivJournalpostMapperTest {
 						.status(null)
 						.build()))
 				.build();
-		RequestCache requestCache = pep5RequestCache();
+		RequestCache requestCache = defaultRequestCache();
 
 		Journalpost journalpost = mapJournalpost(arkivJournalpost, requestCache);
 
@@ -396,6 +397,44 @@ class ArkivJournalpostMapperTest {
 	}
 
 	@Test
+	void shouldMapSkjultTittelWhenPep2dDeny() {
+		ArkivJournalpost arkivJournalpost = pensjonSakArkivJournalpost();
+
+		RequestCache requestCache = createTilgangBrukerRequestCachePSAK();
+		String tilgangKeyPep2dLocalCaching = KeyGeneratorLocalCaching.getKeyForPep2d(Tema.PEN);
+		String tilgangKeyPep5LocalCaching = KeyGeneratorLocalCaching.getKeyForPep5(String.valueOf(ARKIVJOURNALPOST_JOURNALPOST_ID), String.valueOf(ARKIVDOKUMENTINFO_DOKUMENT_INFO_ID));
+		requestCache.putDecision(tilgangKeyPep2dLocalCaching, AbacAnswer.deny(new TemaReason("cause_0013_ikketilgangtiltema", "saf_pep2d", "mangler_tema", Tema.PEN)));
+		requestCache.putDecision(tilgangKeyPep5LocalCaching, AbacAnswer.permit());
+
+		Journalpost journalpost = mapJournalpost(arkivJournalpost, requestCache);
+
+		assertThat(journalpost.getTittel()).isEqualTo(SKJULT_TITTEL);
+		DokumentInfo dokumentInfo = journalpost.getDokumenter().get(0);
+		assertThat(dokumentInfo.getTittel()).isEqualTo(SKJULT_TITTEL);
+		LogiskVedlegg logiskVedlegg = dokumentInfo.getLogiskeVedlegg().get(0);
+		assertThat(logiskVedlegg.getTittel()).isEqualTo(SKJULT_TITTEL);
+	}
+
+	@Test
+	void shouldNotMapSkjultTittelWhenPep2dDenyAndIsSystem() {
+		ArkivJournalpost arkivJournalpost = pensjonSakArkivJournalpost();
+
+		RequestCache requestCache = new RequestCache(true);
+		String tilgangKeyPep2dLocalCaching = KeyGeneratorLocalCaching.getKeyForPep2d(Tema.PEN);
+		String tilgangKeyPep5LocalCaching = KeyGeneratorLocalCaching.getKeyForPep5(String.valueOf(ARKIVJOURNALPOST_JOURNALPOST_ID), String.valueOf(ARKIVDOKUMENTINFO_DOKUMENT_INFO_ID));
+		requestCache.putDecision(tilgangKeyPep2dLocalCaching, AbacAnswer.deny(new TemaReason("cause_0013_ikketilgangtiltema", "saf_pep2d", "mangler_tema", Tema.PEN)));
+		requestCache.putDecision(tilgangKeyPep5LocalCaching, AbacAnswer.permit());
+
+		Journalpost journalpost = mapJournalpost(arkivJournalpost, requestCache);
+
+		assertThat(journalpost.getTittel()).isEqualTo(ARKIVJOURNALPOST_INNHOLD);
+		DokumentInfo dokumentInfo = journalpost.getDokumenter().get(0);
+		assertThat(dokumentInfo.getTittel()).isEqualTo(ARKIVDOKUMENTINFO_TITTEL);
+		LogiskVedlegg logiskVedlegg = dokumentInfo.getLogiskeVedlegg().get(0);
+		assertThat(logiskVedlegg.getTittel()).isEqualTo(LOGISK_VEDLEGG_TITTEL);
+	}
+
+	@Test
 	void shouldHaveSaksbehandlerHarTilgangTrueWhenJournalstatusMottatt() {
 		ArkivJournalpost arkivJournalpost = baseArkivJournalpost()
 				.type(JournalpostTypeCode.I.name())
@@ -410,7 +449,7 @@ class ArkivJournalpostMapperTest {
 				String.valueOf(ARKIVJOURNALPOST_JOURNALPOST_ID), String.valueOf(ARKIVDOKUMENTINFO_DOKUMENT_INFO_ID), VARIANT_FORMAT_CODE_SLADDET.getSafVariantformat()
 						.name(), null);
 
-		RequestCache requestCache = new RequestCache();
+		RequestCache requestCache = new RequestCache(false);
 		requestCache.putDecision(tilgangKeyPep5LocalCaching, AbacAnswer.permit());
 		requestCache.putDecision(tilgangKeyPep6dLocalCachingVariantArkiv, AbacAnswer.permit());
 		requestCache.putDecision(tilgangKeyPep6dLocalCachingVariantSladdet, AbacAnswer.permit());
@@ -438,7 +477,7 @@ class ArkivJournalpostMapperTest {
 				String.valueOf(ARKIVJOURNALPOST_JOURNALPOST_ID), String.valueOf(ARKIVDOKUMENTINFO_DOKUMENT_INFO_ID), VARIANT_FORMAT_CODE_SLADDET.getSafVariantformat()
 						.name(), null);
 
-		RequestCache requestCache = new RequestCache();
+		RequestCache requestCache = new RequestCache(false);
 		requestCache.putDecision(tilgangKeyPep5LocalCaching, AbacAnswer.permit());
 		requestCache.putDecision(tilgangKeyPep6dLocalCachingVariantArkiv, AbacAnswer.permit());
 		requestCache.putDecision(tilgangKeyPep6dLocalCachingVariantSladdet, AbacAnswer.permit());
@@ -468,7 +507,7 @@ class ArkivJournalpostMapperTest {
 				String.valueOf(ARKIVJOURNALPOST_JOURNALPOST_ID), String.valueOf(ARKIVDOKUMENTINFO_DOKUMENT_INFO_ID), VARIANT_FORMAT_CODE_SLADDET.getSafVariantformat()
 						.name(), null);
 
-		RequestCache requestCache = new RequestCache();
+		RequestCache requestCache = new RequestCache(false);
 		requestCache.putDecision(tilgangKeyPep5LocalCaching, AbacAnswer.permit());
 		requestCache.putDecision(tilgangKeyPep6dLocalCachingVariantArkiv, AbacAnswer.permit());
 		requestCache.putDecision(tilgangKeyPep6dLocalCachingVariantSladdet, AbacAnswer.permit());
@@ -531,7 +570,7 @@ class ArkivJournalpostMapperTest {
 	@ParameterizedTest
 	@EnumSource(names = {"I", "N"})
 	void shouldMapBrevkodeAsBrevkodeWhenJournalpostIsInngaaendeAndNotat(JournalpostTypeCode type) {
-		RequestCache requestCache = pep5RequestCache();
+		RequestCache requestCache = defaultRequestCache();
 		ArkivJournalpost arkivJournalpost = baseArkivJournalpost()
 				.type(type.name())
 				.build();
@@ -545,7 +584,7 @@ class ArkivJournalpostMapperTest {
 	void shouldMapDokumenttypeIdAsBrevkodeWhenJournalpostIsUtgaaende() {
 		ArkivJournalpost arkivJournalpost = utgaaendeArkivJournalpost(E, null, null);
 
-		Journalpost journalpost = mapJournalpost(arkivJournalpost, pep5RequestCache());
+		Journalpost journalpost = mapJournalpost(arkivJournalpost, defaultRequestCache());
 
 		assertThat(journalpost.getDokumenter().get(0).getBrevkode()).isEqualTo(ARKIVDOKUMENTINFO_DOKUMENTTYPE_ID);
 	}
@@ -558,7 +597,7 @@ class ArkivJournalpostMapperTest {
 						.build()))
 				.build();
 
-		Journalpost journalpost = mapJournalpost(arkivJournalpost, pep5RequestCache());
+		Journalpost journalpost = mapJournalpost(arkivJournalpost, defaultRequestCache());
 
 		assertThat(journalpost.getDokumenter().get(0).getBrevkode()).isEqualTo(ARKIVDOKUMENTINFO_BREVKODE);
 	}
@@ -571,7 +610,7 @@ class ArkivJournalpostMapperTest {
 				.bruker(new ArkivBruker(BRUKER_ID_PERSON, BrukerTypeCode.PERSON))
 				.build();
 
-		Journalpost journalpost = mapJournalpost(journalpostDto, new RequestCache());
+		Journalpost journalpost = mapJournalpost(journalpostDto, new RequestCache(false));
 
 		assertThat(journalpost.getBruker().getId()).isEqualTo(BRUKER_ID_PERSON);
 		assertThat(journalpost.getBruker().getType()).isEqualTo(BrukerIdType.FNR);
@@ -585,7 +624,7 @@ class ArkivJournalpostMapperTest {
 				.bruker(new ArkivBruker(BRUKER_ID_ORGANISASJON, ORGANISASJON))
 				.build();
 
-		Journalpost journalpost = mapJournalpost(arkivJournalpost, new RequestCache());
+		Journalpost journalpost = mapJournalpost(arkivJournalpost, new RequestCache(false));
 
 		assertThat(journalpost.getBruker().getId()).isEqualTo(BRUKER_ID_ORGANISASJON);
 		assertThat(journalpost.getBruker().getType()).isEqualTo(BrukerIdType.ORGNR);
@@ -599,7 +638,7 @@ class ArkivJournalpostMapperTest {
 				.bruker(new ArkivBruker(BRUKER_ID_ORGANISASJON + "   ", ORGANISASJON))
 				.build();
 
-		Journalpost journalpost = mapJournalpost(arkivJournalpost, new RequestCache());
+		Journalpost journalpost = mapJournalpost(arkivJournalpost, new RequestCache(false));
 
 		assertThat(journalpost.getBruker().getId()).isEqualTo(BRUKER_ID_ORGANISASJON);
 		assertThat(journalpost.getBruker().getType()).isEqualTo(BrukerIdType.ORGNR);
@@ -631,9 +670,11 @@ class ArkivJournalpostMapperTest {
 		assertThat(journalpost.getJournalstatus()).isEqualTo(UTGAAR);
 	}
 
-	private RequestCache pep5RequestCache() {
+	private RequestCache defaultRequestCache() {
 		RequestCache requestCache = createArkivsakCacheRequestCache();
+		String tilgangKeyPep2dLocalCaching = KeyGeneratorLocalCaching.getKeyForPep2d(FagomradeCode.toSafTema(ARKIVJOURNALPOST_FAGOMRAADE));
 		String tilgangKeyPep5LocalCaching = KeyGeneratorLocalCaching.getKeyForPep5(String.valueOf(ARKIVJOURNALPOST_JOURNALPOST_ID), String.valueOf(ARKIVDOKUMENTINFO_DOKUMENT_INFO_ID));
+		requestCache.putDecision(tilgangKeyPep2dLocalCaching, AbacAnswer.permit());
 		requestCache.putDecision(tilgangKeyPep5LocalCaching, AbacAnswer.permit());
 		return requestCache;
 	}
@@ -709,7 +750,7 @@ class ArkivJournalpostMapperTest {
 	}
 
 	private RequestCache createArkivsakCacheRequestCache() {
-		RequestCache requestCache = new RequestCache();
+		RequestCache requestCache = new RequestCache(false);
 		requestCache.putArkivsak(
 				Arkivsak.builder()
 						.arkivsaksnummer(String.valueOf(ARKIVSAKSRELASJON_SAK_ID))
@@ -722,7 +763,7 @@ class ArkivJournalpostMapperTest {
 	}
 
 	private RequestCache createTilgangBrukerRequestCache() {
-		RequestCache requestCache = new RequestCache();
+		RequestCache requestCache = new RequestCache(false);
 		requestCache.putTilgangBruker(
 				TilgangBruker.builder()
 						.foedselsnr(FNR)
@@ -733,7 +774,7 @@ class ArkivJournalpostMapperTest {
 	}
 
 	private RequestCache createTilgangBrukerRequestCachePSAK() {
-		RequestCache requestCache = new RequestCache();
+		RequestCache requestCache = new RequestCache(false);
 		Arkivsak pensjonArkivsak = Arkivsak.builder()
 				.aktoerId(ARKIVSAK_AKTOERID)
 				.arkivsaksystem(PSAK)
@@ -749,7 +790,7 @@ class ArkivJournalpostMapperTest {
 	}
 
 	private RequestCache createTilgangBrukerCacheWithOrganisasjonSak() {
-		RequestCache requestCache = new RequestCache();
+		RequestCache requestCache = new RequestCache(false);
 		requestCache.putTilgangBruker(
 				TilgangBruker.builder()
 						.orgnummer(BRUKER_ID_ORGANISASJON)

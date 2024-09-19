@@ -30,7 +30,6 @@ import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.nio.charset.StandardCharsets;
-import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -46,6 +45,8 @@ import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static com.github.tomakehurst.wiremock.core.Options.DYNAMIC_PORT;
 import static com.github.tomakehurst.wiremock.stubbing.Scenario.STARTED;
 import static java.util.Objects.requireNonNull;
+import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostMapper.SKJULT_TITTEL;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -190,7 +191,8 @@ public abstract class AbstractItest {
 	}
 
 	protected static void stubNavHrOrganisasjonJa(String organisasjonsnummer) {
-		stubNavHrOrganisasjon(organisasjonsnummer, "hr-nav-organisasjon-ja.json");	}
+		stubNavHrOrganisasjon(organisasjonsnummer, "hr-nav-organisasjon-ja.json");
+	}
 
 	protected static void stubNavHrOrganisasjonNei(String organisasjonsnummer) {
 		stubNavHrOrganisasjon(organisasjonsnummer, "hr-nav-organisasjon-nei.json");
@@ -849,11 +851,17 @@ public abstract class AbstractItest {
 		);
 	}
 
-	protected String base64(String journalpostId) {
-		if (journalpostId == null) {
-			return null;
-		}
-		return Base64.getEncoder().encodeToString(journalpostId.getBytes());
+	protected void assertSkjultTittel(Dokumentoversikt dokumentoversikt) {
+		assertThat(dokumentoversikt.getJournalposter()).hasSizeGreaterThan(0);
+		dokumentoversikt.getJournalposter().forEach(journalpost -> {
+			assertThat(journalpost.getTittel()).isEqualTo(SKJULT_TITTEL);
+			assertThat(journalpost.getDokumenter()).hasSizeGreaterThan(0);
+			journalpost.getDokumenter().forEach(dokumentInfo -> {
+				assertThat(dokumentInfo.getTittel()).isEqualTo(SKJULT_TITTEL);
+				assertThat(dokumentInfo.getLogiskeVedlegg()).hasSizeGreaterThan(0);
+				dokumentInfo.getLogiskeVedlegg().forEach(logiskVedlegg -> assertThat(logiskVedlegg.getTittel()).isEqualTo(SKJULT_TITTEL));
+			});
+		});
 	}
 
 	@SneakyThrows

@@ -33,6 +33,7 @@ import java.util.Set;
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
+import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostMapper.SKJULT_TITTEL;
 import static no.nav.saf.anticorruptionlayer.joark.JoarkAntiCorruptionLayer.SAFINTERN_FETCHPATHS_UTEN_DOKUMENTER;
 import static no.nav.saf.anticorruptionlayer.joark.domain.kode.Sakstype.FAGSAK;
 import static no.nav.saf.anticorruptionlayer.joark.domain.kode.Sakstype.GENERELL_SAK;
@@ -495,13 +496,16 @@ class JournalpostIT extends AbstractItest {
 	}
 
 	@Test
-	void shouldReturnSaksbehandlerTilgangFalseWhenDenyOnPep2d() {
+	void shouldReturnSaksbehandlerTilgangFalseAndSkjultTittelWhenDenyOnPep2d() {
 		abacDenyPep2dSkipPep2();
 		stubDokarkivJournalpost("journalpost-gsak-inngaaende-happy.json");
 
 		Journalpost journalpost = parseJournalpost(journalpostQuery());
+		assertThat(journalpost.getTittel()).isEqualTo(SKJULT_TITTEL);
 		DokumentInfo dokumentInfo = journalpost.getDokumenter().get(0);
+		assertThat(dokumentInfo.getTittel()).isEqualTo(SKJULT_TITTEL);
 		assertThat(dokumentInfo.getDokumentvarianter().get(0).isSaksbehandlerHarTilgang()).isFalse();
+		assertThat(dokumentInfo.getLogiskeVedlegg().get(0).getTittel()).isEqualTo(SKJULT_TITTEL);
 	}
 
 	@Test

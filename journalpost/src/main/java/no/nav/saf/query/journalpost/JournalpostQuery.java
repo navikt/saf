@@ -18,7 +18,6 @@ import org.springframework.stereotype.Component;
 
 import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostMapper.mapJournalpost;
 import static no.nav.saf.domain.kode.Journalstatus.MOTTATT;
-import static no.nav.saf.graphql.ErrorCode.FORBIDDEN;
 import static no.nav.saf.graphql.ErrorCode.NOT_FOUND;
 import static no.nav.saf.tilgangskontroll.pep.DenyReasonFactory.createPep1gDenyReason;
 import static no.nav.saf.tilgangskontroll.pep.DenyReasonFactory.createPep2DenyReason;
@@ -89,6 +88,10 @@ class JournalpostQuery {
 				if (tilgangJournalpost.getJournalstatus() != MOTTATT) {
 					pep2d.hasAccess(tilgangSak, safRequestContext);
 					pep7d.hasAccess(tilgangSak, safRequestContext);
+				}
+			} else {
+				if (tilgangJournalpost.getJournalstatus() != MOTTATT) {
+					pep2d.hasAccess(tilgangSak, safRequestContext);
 				}
 			}
 

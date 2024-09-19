@@ -72,6 +72,7 @@ public class JournalpostDtoTestObjects {
 	static final String KANAL_REFERANSE_ID = "KANAL REFERANSE ID";
 	static final String FILTYPE_1 = "PDFA";
 	static final String FILTYPE_2 = "PDF";
+	static final String DOKUMENTINFO_TITTEL = "veldigViktigTittel";
 
 	static JournalpostDto buildJournalpostDtoUtgaaendeType(JournalStatusCode journalStatusCode, UtsendingsInfoDto utsendingsInfoDto, UtsendingsKanalCode kanalCode) {
 		return baseJournalpostDto()
@@ -148,7 +149,7 @@ public class JournalpostDtoTestObjects {
 		return Collections.singletonList(
 				DokumentInfoDto.builder()
 						.dokumentInfoId(JournalpostDtoTestObjects.DOKUMENT_INFO_ID)
-						.tittel("veldigViktigTittel")
+						.tittel(DOKUMENTINFO_TITTEL)
 						.brevkode(JournalpostDtoTestObjects.BREVKODE)
 						.dokumenttypeId(JournalpostDtoTestObjects.DOKUMENTTYPE_ID)
 						.dokumentstatus(DokumentStatusCode.FERDIGSTILT)

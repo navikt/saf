@@ -361,7 +361,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 	}
 
 	@Test
-	void shouldGetUnauthorizedFromPep2d() throws IOException, URISyntaxException {
+	void shouldReturnSaksbehandlerHarTilgangFalseAndSkjultTittelWhenDenyPep2d() throws IOException, URISyntaxException {
 		abacDenyPep2dSkipPep2();
 		stubPdl();
 		stubSak("gsak-sakerBySaksId-happy.json");
@@ -374,6 +374,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 
 		assertEquals("429837417", dokumentoversikt.getJournalposter().get(0).getJournalpostId());
 		assertSaksbehandlerHarIkkeTilgang(dokumentoversikt);
+		assertSkjultTittel(dokumentoversikt);
 		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter"))
 				.withRequestBody(containing("{\"gsakSakIds\":[\"135695442\"],\"psakSakIds\":[],\"fraDato\":\"0001-01-01\",\"tilDato\":null,\"inkluderJournalStatus\":[\"FL\",\"FS\",\"J\",\"E\"],\"inkluderJournalpostType\":[\"I\",\"U\",\"N\"],\"visFeilregistrerte\":false,\"alleIdenter\":[\"11111111111\"],\"foerste\":3,\"etterPeker\":null}")));
 		verifyabacDenyPep2dAndHttpStatusCode(true, OK, responseEntity.getStatusCode());

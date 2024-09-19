@@ -1,5 +1,6 @@
 package no.nav.saf.tilgangskontroll;
 
+import lombok.Getter;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.FagsystemCode;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.dto.JournalpostDto;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.dto.SaksrelasjonDto;
@@ -16,7 +17,14 @@ import java.util.concurrent.ConcurrentHashMap;
 import static no.nav.saf.domain.DomainConstants.TILGANG_BRUKER;
 
 public class RequestCache {
+	@Getter
+	private final boolean isSystem;
+
 	private final Map<String, Object> holder = new ConcurrentHashMap<>(300);
+
+	public RequestCache(boolean isSystem) {
+		this.isSystem = isSystem;
+	}
 
 	public void putDecision(String key, AbacAnswer abacAnswer) {
 		holder.put(key, abacAnswer);

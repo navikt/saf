@@ -29,6 +29,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME;
+import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostMapper.SKJULT_TITTEL;
 import static no.nav.saf.anticorruptionlayer.joark.domain.kode.Sakstype.FAGSAK;
 import static no.nav.saf.anticorruptionlayer.joark.domain.kode.Sakstype.GENERELL_SAK;
 import static no.nav.saf.domain.kode.Datotype.DATO_DOKUMENT;
@@ -120,7 +121,7 @@ class TilknyttedeJournalposterIT extends AbstractItest {
 		assertThat(dokumentInfo1.getBrevkode(), is("for123"));
 		assertThat(dokumentInfo1.getDokumentstatus(), is(FERDIGSTILT));
 		assertThat(dokumentInfo1.getOriginalJournalpostId(), is(JOURNALPOST_ID));
-		assertThat(dokumentInfo1.getLogiskeVedlegg().get(0).getTittel(), is("Hei"));
+		assertThat(dokumentInfo1.getLogiskeVedlegg().get(0).getTittel(), is("Søknadsinfo"));
 		assertThat(dokumentInfo1.getDokumentvarianter().get(0).getVariantformat(), is(ARKIV));
 		assertTrue(dokumentInfo1.getDokumentvarianter().get(0).isSaksbehandlerHarTilgang());
 	}
@@ -250,8 +251,12 @@ class TilknyttedeJournalposterIT extends AbstractItest {
 		stubPdl();
 
 		List<Journalpost> tilknyttedeJournalposter = parseJournalpost(tilknyttedeJournalposterGjenbrukQuery());
-		DokumentInfo dokumentInfo = tilknyttedeJournalposter.get(0).getDokumenter().get(0);
+		Journalpost journalpost = tilknyttedeJournalposter.get(0);
+		assertThat(journalpost.getTittel(), is(SKJULT_TITTEL));
+		DokumentInfo dokumentInfo = journalpost.getDokumenter().get(0);
+		assertThat(dokumentInfo.getTittel(), is(SKJULT_TITTEL));
 		assertFalse(dokumentInfo.getDokumentvarianter().get(0).isSaksbehandlerHarTilgang());
+		assertThat(dokumentInfo.getLogiskeVedlegg().get(0).getTittel(), is(SKJULT_TITTEL));
 	}
 
 	@Test
@@ -333,9 +338,7 @@ class TilknyttedeJournalposterIT extends AbstractItest {
 		assertThat(tilknyttedeJournalposter, hasSize(1));
 		assertThat(tilknyttedeJournalposter.getFirst().getSak(), nullValue());
 		assertThat(tilknyttedeJournalposter.getFirst().getBruker(), nullValue());
-
 	}
-
 
 	@Test
 	void shouldReturnTilknyttedeJournalposterWhenBrukerNotFoundInPDL() throws Exception {

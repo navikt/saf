@@ -27,6 +27,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static org.apache.hc.core5.http.ContentType.APPLICATION_JSON;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -347,15 +348,15 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 
 	@Test
 	void shouldGetUnauthorizedFromPep2d() throws IOException, URISyntaxException {
-		abacDenyPep2d();
+		abacDenyPep2dSkipPep2();
 		stubFor(get("/gsak?fagsakNr=" + FAGSAK_ID + "&applikasjon=" + FAGSAK_SYSTEM)
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("gsak/gsak-sakerByFagsakIdAndFagsaksystem-FAR-happy.json")));
+						.withBodyFile("gsak/gsak-sakerByFagsakIdAndFagsaksystem-happy.json")));
 		stubFor(post("/hentjournalsakinfo/finnjournalposter")
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("joark/finnjournalposter_single_bidragAndSkjerming-happy.json")));
+						.withBodyFile("joark/finnjournalposter-dokumentoversiktfagsak-happy.json")));
 		stubFor(post("/pdl")
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
@@ -365,9 +366,10 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
 
 		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter"))
-				.withRequestBody(containing("{\"gsakSakIds\":[\"112233445\"],\"psakSakIds\":[],\"fraDato\":\"0001-01-01\",\"tilDato\":null,\"inkluderJournalStatus\":[\"FL\",\"FS\",\"J\",\"E\"],\"inkluderJournalpostType\":[\"I\",\"U\",\"N\"],\"visFeilregistrerte\":false,\"alleIdenter\":[],\"foerste\":5,\"etterPeker\":null}")));
-		assertSaksbehandlerHarTilgang(dokumentoversikt);
-		verifyabacDenyPep2dAndHttpStatusCode(true, OK, responseEntity.getStatusCode());
+				.withRequestBody(containing("{\"gsakSakIds\":[\"119185782\"],\"psakSakIds\":[],\"fraDato\":\"0001-01-01\",\"tilDato\":null,\"inkluderJournalStatus\":[\"FL\",\"FS\",\"J\",\"E\"],\"inkluderJournalpostType\":[\"I\",\"U\",\"N\"],\"visFeilregistrerte\":false,\"alleIdenter\":[],\"foerste\":5,\"etterPeker\":null}")));
+		assertSaksbehandlerHarIkkeTilgang(dokumentoversikt);
+		assertSkjultTittel(dokumentoversikt);
+		assertThat(responseEntity.getStatusCode()).isEqualTo(OK);
 	}
 
 	@Test
