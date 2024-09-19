@@ -296,6 +296,12 @@ class JournalpostIT extends AbstractItest {
 				.flatExtracting(DokumentInfo::getDokumentvarianter)
 				.extracting(Dokumentvariant::isSaksbehandlerHarTilgang)
 				.containsExactly(true);
+		String expectedTittel = "NAV 10-07.34 Tilskudd ved kjøp av briller til barn";
+		assertThat(journalpost.getTittel()).isEqualTo(expectedTittel);
+		DokumentInfo dokumentInfo = journalpost.getDokumenter().get(0);
+		assertThat(dokumentInfo.getTittel()).isEqualTo(expectedTittel);
+		assertThat(dokumentInfo.getDokumentvarianter().get(0).isSaksbehandlerHarTilgang()).isTrue();
+		assertThat(dokumentInfo.getLogiskeVedlegg().get(0).getTittel()).isEqualTo("Skjema");
 	}
 
 	@Test
