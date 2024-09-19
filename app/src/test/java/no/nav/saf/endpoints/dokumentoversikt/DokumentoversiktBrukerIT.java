@@ -2,6 +2,7 @@ package no.nav.saf.endpoints.dokumentoversikt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.matching.EqualToPattern;
+import no.nav.saf.domain.visningsmodell.DokumentInfo;
 import no.nav.saf.domain.visningsmodell.Dokumentoversikt;
 import no.nav.saf.domain.visningsmodell.Journalpost;
 import no.nav.saf.endpoints.AbstractItest;
@@ -189,8 +190,13 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
 
 		assertEquals(OK, responseEntity.getStatusCode());
-		assertEquals("429812815", dokumentoversikt.getJournalposter().get(0).getJournalpostId());
+		Journalpost journalpost = dokumentoversikt.getJournalposter().get(0);
+		assertEquals("429812815", journalpost.getJournalpostId());
 		assertSaksbehandlerHarTilgang(dokumentoversikt);
+		assertThat(journalpost.getTittel()).isEqualTo("SØKNAD_FORELDREPENGER_FØDSEL");
+		DokumentInfo dokumentInfo = journalpost.getDokumenter().get(0);
+		assertThat(dokumentInfo.getTittel()).isEqualTo("Søknad om foreldrepenger ved fødsel");
+
 		verify(2, postRequestedFor(urlEqualTo("/abac")));
 		verify(postRequestedFor(urlEqualTo("/pdl")).withRequestBody(matchingJsonPath("$.variables.ident", equalTo(AKTOER_ID))));
 		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter"))

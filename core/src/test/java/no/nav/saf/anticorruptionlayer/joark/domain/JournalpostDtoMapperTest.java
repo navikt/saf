@@ -410,7 +410,7 @@ class JournalpostDtoMapperTest {
 	}
 
 	@Test
-	void shouldHaveSaksbehandlerHarTilgangTrueWhenJournalstatusMottatt() {
+	void shouldHaveSaksbehandlerHarTilgangTrueAndTittelWhenJournalstatusMottatt() {
 		JournalpostDto journalpostDto = JournalpostDtoTestObjects.buildJournalpostDtoInngaaendeType();
 		journalpostDto.setJournalstatus(M);
 
@@ -430,10 +430,13 @@ class JournalpostDtoMapperTest {
 		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, requestCache);
 
 		assertThat(journalpost.getDokumenter(), hasSize(1));
+		Assertions.assertThat(journalpost.getTittel()).isEqualTo(INNHOLD);
+		DokumentInfo dokInfo = journalpost.getDokumenter().get(0);
+		Assertions.assertThat(dokInfo.getTittel()).isEqualTo(DOKUMENTINFO_TITTEL);
+		LogiskVedlegg logiskVedlegg = dokInfo.getLogiskeVedlegg().get(0);
+		Assertions.assertThat(logiskVedlegg.getTittel()).isEqualTo(LOGISK_VEDLEGG_TITTEL);
 		journalpost.getDokumenter().forEach(dokumentInfo ->
-				dokumentInfo.getDokumentvarianter().forEach(dokumentvariant -> {
-					assertTrue(dokumentvariant.isSaksbehandlerHarTilgang());
-				}));
+				dokumentInfo.getDokumentvarianter().forEach(dokumentvariant -> assertTrue(dokumentvariant.isSaksbehandlerHarTilgang())));
 	}
 
 	@Test
