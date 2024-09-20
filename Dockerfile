@@ -5,10 +5,10 @@ RUN java -Djarmode=layertools -jar app.jar extract
 
 FROM ghcr.io/navikt/baseimages/temurin:21-appdynamics
 WORKDIR /app
-COPY --from=builder build/dependencies/ ./
-COPY --from=builder build/snapshot-dependencies/ ./
-COPY --from=builder build/spring-boot-loader/ ./
-COPY --from=builder build/application/ ./
+COPY --from=builder /build/dependencies/ ./
+COPY --from=builder /build/snapshot-dependencies/ ./
+COPY --from=builder /build/spring-boot-loader/ ./
+COPY --from=builder /build/application/ ./
 COPY export-vault-secrets.sh /init-scripts/10-export-vault-secrets.sh
 COPY run-java.sh /
 
