@@ -174,7 +174,7 @@ class DokumentoversiktBrukerQuery {
 	}
 
 	private boolean pep2CheckMidlertidigAccess(TilgangJournalpost tj, SafRequestContext safRequestContext) {
-		if (tj.getJournalstatus().equals(Journalstatus.MOTTATT)) {
+		if (tj.getJournalstatus() == Journalstatus.MOTTATT) {
 			TilgangSak midlertidigTilgangSak = mapToTilgangSak(tj.getJournalpostId(), safRequestContext);
 			return pep2.hasAccess(midlertidigTilgangSak, safRequestContext);
 		} else {

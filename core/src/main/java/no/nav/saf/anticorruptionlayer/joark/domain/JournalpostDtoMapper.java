@@ -48,6 +48,7 @@ import static no.nav.saf.cache.KeyGeneratorLocalCaching.getKeyForPep2d;
 import static no.nav.saf.cache.KeyGeneratorLocalCaching.getKeyForPep5;
 import static no.nav.saf.cache.KeyGeneratorLocalCaching.getKeyForPep6d;
 import static no.nav.saf.cache.KeyGeneratorLocalCaching.getKeyForPep7d;
+import static no.nav.saf.domain.kode.Journalstatus.MOTTATT;
 import static no.nav.saf.domain.visningsmodell.RelevantDato.INVALID_DATE;
 import static org.apache.commons.lang3.BooleanUtils.isTrue;
 import static org.apache.commons.lang3.StringUtils.isBlank;
@@ -68,11 +69,12 @@ public class JournalpostDtoMapper {
 		final String journalpostId = journalpostDto.getJournalpostId().toString();
 
 		Tema tema = mapTema(journalpostDto, requestCache);
+		Journalstatus journalstatus = mapJournalstatus(journalpostDto);
 		Journalpost journalpost = Journalpost.builder()
 				.journalpostId(journalpostId)
-				.tittel(mapTittel(journalpostDto.getInnhold(), tema, requestCache))
+				.tittel(mapTittel(journalpostDto.getInnhold(), tema, journalstatus, requestCache))
 				.journalposttype(JournalpostTypeCode.mapToJournalpostType(journalpostDto.getJournalposttype()))
-				.journalstatus(mapJournalstatus(journalpostDto))
+				.journalstatus(journalstatus)
 				.tema(tema)
 				.temanavn(tema.getTemanavn())
 				.behandlingstema(journalpostDto.getBehandlingstema())
@@ -107,7 +109,7 @@ public class JournalpostDtoMapper {
 				.map(dokumentInfoDto -> DokumentInfo.builder()
 						.parent(journalpost)
 						.dokumentInfoId(dokumentInfoDto.getDokumentInfoId())
-						.tittel(mapTittel(dokumentInfoDto.getTittel(), tema, requestCache))
+						.tittel(mapTittel(dokumentInfoDto.getTittel(), tema, journalstatus, requestCache))
 						.brevkode(mapBrevkode(journalpostDto, dokumentInfoDto))
 						.dokumentstatus(mapDokumentstatus(dokumentInfoDto))
 						.datoFerdigstilt(dokumentInfoDto.getDatoFerdigstilt() == null ? null :
@@ -132,15 +134,15 @@ public class JournalpostDtoMapper {
 										.build())
 								.collect(Collectors.toList()))
 						.logiskeVedlegg(dokumentInfoDto.getLogiske().stream()
-								.map(logiskVedleggDto -> new LogiskVedlegg(logiskVedleggDto.getVedleggId(), mapTittel(logiskVedleggDto.getTittel(), tema, requestCache)))
+								.map(logiskVedleggDto -> new LogiskVedlegg(logiskVedleggDto.getVedleggId(), mapTittel(logiskVedleggDto.getTittel(), tema, journalstatus, requestCache)))
 								.collect(Collectors.toList()))
 						.build()).toList();
 		journalpost.getDokumenter().addAll(dokumenter);
 		return journalpost;
 	}
 
-	private String mapTittel(String originalTittel, Tema tema, RequestCache requestCache) {
-		if(requestCache.isSystem() || getDecisionFromPep2d(tema, requestCache)) {
+	private String mapTittel(String originalTittel, Tema tema, Journalstatus journalstatus, RequestCache requestCache) {
+		if (requestCache.isSystem() || journalstatus == MOTTATT || getDecisionFromPep2d(tema, requestCache)) {
 			return originalTittel;
 		}
 		return SKJULT_TITTEL;
@@ -166,7 +168,6 @@ public class JournalpostDtoMapper {
 			case U ->
 					isBlank(dokumentInfoDto.getDokumenttypeId()) ? dokumentInfoDto.getBrevkode() : dokumentInfoDto.getDokumenttypeId();
 			case I, N -> dokumentInfoDto.getBrevkode();
-			default -> dokumentInfoDto.getBrevkode();
 		};
 	}
 
@@ -248,7 +249,7 @@ public class JournalpostDtoMapper {
 	private Journalstatus mapJournalstatus(JournalpostDto journalpostDto) {
 		SaksrelasjonDto saksrelasjon = journalpostDto.getSaksrelasjon();
 		if (saksrelasjon != null && saksrelasjon.getFeilregistrert() != null && saksrelasjon.getFeilregistrert()
-				&& !Journalstatus.UTGAAR.equals(journalpostDto.getJournalstatus().toSafJournalstatus())) {
+			&& !Journalstatus.UTGAAR.equals(journalpostDto.getJournalstatus().toSafJournalstatus())) {
 			return Journalstatus.FEILREGISTRERT;
 		} else {
 			return journalpostDto.getJournalstatus().toSafJournalstatus();
@@ -372,7 +373,7 @@ public class JournalpostDtoMapper {
 	}
 
 	private boolean determineSaksbehandlerTilgang(Journalpost journalpost, DokumentInfoDto dokumentInfoDto, VariantDto variantDto, RequestCache requestCache) {
-		if (journalpost.getJournalstatus() == Journalstatus.MOTTATT || journalpost.getSak() == null) {
+		if (journalpost.getJournalstatus() == MOTTATT || journalpost.getSak() == null) {
 			// Midlertidige journalposter skal ikke ha tilgangskontroll på tema. Her skal saksbehandler ha tilgang uansett.
 			// https://jira.adeo.no/browse/MMA-2494
 			return getDecisionFromPep6d(journalpost.getJournalpostId(), dokumentInfoDto.getDokumentInfoId(), variantDto, requestCache);
@@ -382,8 +383,8 @@ public class JournalpostDtoMapper {
 			return getDecisionFromPep6d(journalpost.getJournalpostId(), dokumentInfoDto.getDokumentInfoId(), variantDto, requestCache);
 		} else {
 			return getDecisionFromPep2d(journalpost.getTema(), requestCache) &&
-					getDecisionFromPep6d(journalpost.getJournalpostId(), dokumentInfoDto.getDokumentInfoId(), variantDto, requestCache) &&
-					getDecisionFromPep7d(journalpost.getSak().getArkivsaksystem(), journalpost.getSak().getArkivsaksnummer(), requestCache);
+				   getDecisionFromPep6d(journalpost.getJournalpostId(), dokumentInfoDto.getDokumentInfoId(), variantDto, requestCache) &&
+				   getDecisionFromPep7d(journalpost.getSak().getArkivsaksystem(), journalpost.getSak().getArkivsaksnummer(), requestCache);
 		}
 	}
 

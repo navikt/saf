@@ -59,6 +59,7 @@ import static no.nav.saf.cache.KeyGeneratorLocalCaching.getKeyForPep5;
 import static no.nav.saf.cache.KeyGeneratorLocalCaching.getKeyForPep6d;
 import static no.nav.saf.cache.KeyGeneratorLocalCaching.getKeyForPep7d;
 import static no.nav.saf.domain.DomainConstants.TIDSSONE_NORGE;
+import static no.nav.saf.domain.kode.Journalstatus.MOTTATT;
 import static no.nav.saf.domain.visningsmodell.RelevantDato.INVALID_DATE;
 import static org.apache.commons.lang3.BooleanUtils.isTrue;
 import static org.apache.commons.lang3.StringUtils.isBlank;
@@ -79,12 +80,13 @@ public class ArkivJournalpostMapper {
 		Kanal kanal = mapKanal(arkivJournalpost);
 		Tema tema = mapTema(arkivJournalpost, requestCache);
 		AvsenderMottaker avsenderMottaker = mapArkivAvsenderMottaker(arkivJournalpost);
+		Journalstatus journalstatus = mapJournalstatus(arkivJournalpost);
 
 		Journalpost journalpost = Journalpost.builder()
 				.journalpostId(journalpostId)
-				.tittel(mapTittel(arkivJournalpost.innhold(), tema, requestCache))
+				.tittel(mapTittel(arkivJournalpost.innhold(), tema, journalstatus, requestCache))
 				.journalposttype(mapToJournalpostType(arkivJournalpost.type()))
-				.journalstatus(mapJournalstatus(arkivJournalpost))
+				.journalstatus(journalstatus)
 				.tema(tema)
 				.temanavn(tema == null ? null : tema.getTemanavn())
 				.behandlingstema(arkivJournalpost.behandlingstema())
@@ -116,8 +118,8 @@ public class ArkivJournalpostMapper {
 		return journalpost;
 	}
 
-	private static String mapTittel(String originalTittel, Tema tema, RequestCache requestCache) {
-		if (requestCache.isSystem() || getDecisionFromPep2d(tema, requestCache)) {
+	private static String mapTittel(String originalTittel, Tema tema, Journalstatus journalstatus, RequestCache requestCache) {
+		if (requestCache.isSystem() || journalstatus == MOTTATT || getDecisionFromPep2d(tema, requestCache)) {
 			return originalTittel;
 		}
 		return SKJULT_TITTEL;
@@ -387,7 +389,7 @@ public class ArkivJournalpostMapper {
 				.filter(dokumentinfo -> shouldMapDokumentInfo(arkivJournalpost.journalpostId().toString(), dokumentinfo.dokumentInfoId().toString(), requestCache))
 				.map(dokumentinfo -> DokumentInfo.builder()
 						.dokumentInfoId(dokumentinfo.dokumentInfoId().toString())
-						.tittel(mapTittel(dokumentinfo.tittel(), journalpost.getTema(), requestCache))
+						.tittel(mapTittel(dokumentinfo.tittel(), journalpost.getTema(), journalpost.getJournalstatus(), requestCache))
 						.brevkode(mapBrevkode(arkivJournalpost, dokumentinfo))
 						.dokumentstatus(mapDokumentstatus(dokumentinfo))
 						.datoFerdigstilt(mapDokumentFerdigstilt(dokumentinfo))
@@ -397,7 +399,7 @@ public class ArkivJournalpostMapper {
 								.map(fildetaljer -> mapDokumentvariant(journalpost, requestCache, dokumentinfo, fildetaljer))
 								.filter(Objects::nonNull)
 								.collect(Collectors.toList()))
-						.logiskeVedlegg(mapLogiskeVedlegg(dokumentinfo, journalpost.getTema(), requestCache))
+						.logiskeVedlegg(mapLogiskeVedlegg(dokumentinfo, journalpost.getTema(), journalpost.getJournalstatus(), requestCache))
 						.build()).toList();
 	}
 
@@ -417,9 +419,9 @@ public class ArkivJournalpostMapper {
 				.build();
 	}
 
-	private static List<LogiskVedlegg> mapLogiskeVedlegg(ArkivDokumentinfo dokumentinfo, Tema tema, RequestCache requestCache) {
+	private static List<LogiskVedlegg> mapLogiskeVedlegg(ArkivDokumentinfo dokumentinfo, Tema tema, Journalstatus journalstatus, RequestCache requestCache) {
 		return dokumentinfo.logiskVedlegg().stream()
-				.map(logiskVedlegg -> new LogiskVedlegg(logiskVedlegg.vedleggId().toString(), mapTittel(logiskVedlegg.tittel(), tema, requestCache)))
+				.map(logiskVedlegg -> new LogiskVedlegg(logiskVedlegg.vedleggId().toString(), mapTittel(logiskVedlegg.tittel(), tema, journalstatus, requestCache)))
 				.collect(Collectors.toList());
 	}
 
@@ -467,7 +469,7 @@ public class ArkivJournalpostMapper {
 
 
 	private static boolean determineSaksbehandlerTilgang(Journalpost journalpost, ArkivDokumentinfo arkivDokumentinfo, ArkivFildetaljer arkivFildetaljer, RequestCache requestCache) {
-		if (journalpost.getJournalstatus() == Journalstatus.MOTTATT || journalpost.getSak() == null) {
+		if (journalpost.getJournalstatus() == MOTTATT || journalpost.getSak() == null) {
 			// Midlertidige journalposter skal ikke ha tilgangskontroll på tema. Her skal saksbehandler ha tilgang uansett.
 			// https://jira.adeo.no/browse/MMA-2494
 			return getDecisionFromPep6d(journalpost.getJournalpostId(), String.valueOf(arkivDokumentinfo.dokumentInfoId()), arkivFildetaljer, requestCache);

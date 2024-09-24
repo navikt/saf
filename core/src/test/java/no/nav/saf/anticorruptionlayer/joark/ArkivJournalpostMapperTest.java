@@ -456,6 +456,11 @@ class ArkivJournalpostMapperTest {
 
 		Journalpost journalpost = mapJournalpost(arkivJournalpost, requestCache);
 
+		assertThat(journalpost.getTittel()).isEqualTo(ARKIVJOURNALPOST_INNHOLD);
+		DokumentInfo dokumentInfo = journalpost.getDokumenter().get(0);
+		assertThat(dokumentInfo.getTittel()).isEqualTo(ARKIVDOKUMENTINFO_TITTEL);
+		LogiskVedlegg logiskVedlegg = dokumentInfo.getLogiskeVedlegg().get(0);
+		assertThat(logiskVedlegg.getTittel()).isEqualTo(LOGISK_VEDLEGG_TITTEL);
 		assertThat(journalpost.getDokumenter())
 				.hasSize(1)
 				.flatExtracting(DokumentInfo::getDokumentvarianter)
