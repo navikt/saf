@@ -8,6 +8,8 @@ import no.nav.saf.domain.kode.Tema;
 
 import java.time.LocalDateTime;
 
+import static no.nav.saf.domain.kode.Arkivsakssystem.PSAK;
+
 @Value
 @Builder
 public class Sak {
@@ -16,16 +18,20 @@ public class Sak {
 	 * @since 7.3.8
 	 */
 	@Deprecated(since = "7.3.8")
-	private final String arkivsaksnummer;
+	String arkivsaksnummer;
 	/**
 	 * @deprecated NB: Arkivsak skal anses som Joark-internt. Fagsystemene skal kun bruke denne etter avtale.
 	 * @since 7.3.8
 	 */
 	@Deprecated(since = "7.3.8")
-	private final Arkivsakssystem arkivsaksystem;
-	private final String fagsakId;
-	private final String fagsaksystem;
-	private final LocalDateTime datoOpprettet;
-	private final Sakstype sakstype;
-	private final Tema tema;
+	Arkivsakssystem arkivsaksystem;
+	String fagsakId;
+	String fagsaksystem;
+	LocalDateTime datoOpprettet;
+	Sakstype sakstype;
+	Tema tema;
+
+	public boolean isPsak() {
+		return PSAK.equals(arkivsaksystem);
+	}
 }
