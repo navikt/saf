@@ -148,13 +148,7 @@
       "roles": ["tema_opp"]
     },
     {
-      "app": "tiltakspenger-mottak",
-      "namespace": "tpts",
-      "cluster": "prod-gcp",
-      "roles": ["tema_ind"]
-    },
-    {
-      "app": "tiltakspenger-dokument",
+      "app": "tiltakspenger-vedtak",
       "namespace": "tpts",
       "cluster": "prod-gcp",
       "roles": ["tema_ind"]
