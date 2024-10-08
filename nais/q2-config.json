@@ -551,6 +551,12 @@
       "roles": ["tema_aap"]
     },
     {
+      "app": "tilgang",
+      "namespace": "aap",
+      "cluster": "dev-gcp",
+      "roles": ["tema_aap"]
+    },
+    {
       "app": "amt-distribusjon",
       "namespace": "amt",
       "cluster": "dev-gcp",
