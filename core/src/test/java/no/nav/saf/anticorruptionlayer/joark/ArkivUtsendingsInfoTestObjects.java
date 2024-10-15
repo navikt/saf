@@ -25,6 +25,11 @@ public class ArkivUtsendingsInfoTestObjects {
 			adresselinje3
 			postnummer poststed
 			landkode""";
+
+	public static final String FORVENTET_ADRESSETEKST_KONVOLUTT_UTEN_LANDKODE_FOR_NORSKADRESSE = """
+			adresselinje1
+			adresselinje2
+			postnummer poststed""";
 	public static final String INGEN_POSTNUMMER_POSTSTED_FORVENTET_ADRESSETEKST_KONVOLUTT = """
 			adresselinje1
 			adresselinje2

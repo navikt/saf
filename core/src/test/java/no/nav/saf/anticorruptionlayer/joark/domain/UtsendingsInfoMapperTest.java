@@ -22,6 +22,7 @@ import static no.nav.saf.anticorruptionlayer.joark.domain.UtsendingsInfoDtoTestO
 import static no.nav.saf.anticorruptionlayer.joark.domain.UtsendingsInfoDtoTestObjects.EPOST_VEDTAK_INPUT_DIGITAL_KONTAKTINFO;
 import static no.nav.saf.anticorruptionlayer.joark.domain.UtsendingsInfoDtoTestObjects.EPOST_VEDTAK_INPUT_VARSLINGSTEKST;
 import static no.nav.saf.anticorruptionlayer.joark.domain.UtsendingsInfoDtoTestObjects.FORVENTET_ADRESSETEKST_KONVOLUTT;
+import static no.nav.saf.anticorruptionlayer.joark.domain.UtsendingsInfoDtoTestObjects.FORVENTET_NORSK_ADRESSETEKST_KONVOLUTT;
 import static no.nav.saf.anticorruptionlayer.joark.domain.UtsendingsInfoDtoTestObjects.INGEN_POSTNUMMER_POSTSTED_FORVENTET_ADRESSETEKST_KONVOLUTT;
 import static no.nav.saf.anticorruptionlayer.joark.domain.UtsendingsInfoDtoTestObjects.KUN_POSTNUMMER_POSTSTED_LANDKODE_FORVENTET_ADRESSETEKST_KONVOLUTT;
 import static no.nav.saf.anticorruptionlayer.joark.domain.UtsendingsInfoDtoTestObjects.LANDKODE;
@@ -39,6 +40,7 @@ import static no.nav.saf.anticorruptionlayer.joark.domain.UtsendingsInfoDtoTestO
 import static no.nav.saf.anticorruptionlayer.joark.domain.UtsendingsInfoDtoTestObjects.createUtsendingsInfoDtoWithDigitalPostadresse;
 import static no.nav.saf.anticorruptionlayer.joark.domain.UtsendingsInfoDtoTestObjects.createUtsendingsInfoDtoWithNavNoVarsling;
 import static no.nav.saf.anticorruptionlayer.joark.domain.UtsendingsInfoDtoTestObjects.createUtsendingsInfoDtoWithNavNoVarslingOldVarselStructure;
+import static no.nav.saf.anticorruptionlayer.joark.domain.UtsendingsInfoMapper.NORGE_LANDKODE;
 import static no.nav.saf.anticorruptionlayer.joark.domain.kode.UtsendingsKanalCode.NAV_NO;
 import static no.nav.saf.anticorruptionlayer.joark.domain.kode.UtsendingsKanalCode.S;
 import static no.nav.saf.anticorruptionlayer.joark.domain.kode.UtsendingsKanalCode.SDP;
@@ -221,6 +223,29 @@ public class UtsendingsInfoMapperTest {
 	}
 
 	@Test
+	void shouldConcatenateNorskAdresseUtenLandKode() {
+		UtsendingsInfoDto utsendingsInfoDto = UtsendingsInfoDto.builder()
+				.fysiskPostadresse(UtsendingsInfoDto.FysiskPostadresseDto.builder()
+						.adresselinje1(ADRESSELINJE1)
+						.adresselinje2(ADRESSELINJE2)
+						.postnummer(POSTNUMMER)
+						.poststed(POSTSTED)
+						.landkode(NORGE_LANDKODE)
+						.build())
+				.build();
+
+		Utsendingsinfo utsendingsinfo = UtsendingsInfoMapper.mapUtsendingsInfo(utsendingsInfoDto, S)
+				.orElse(null);
+
+		assertThat(utsendingsinfo).isNotNull();
+		Utsendingsinfo.FysiskpostSendt fysiskpostSendt = utsendingsinfo.getFysiskpostSendt();
+		assertThat(fysiskpostSendt.getAdressetekstKonvolutt()).isEqualTo(FORVENTET_NORSK_ADRESSETEKST_KONVOLUTT);
+		assertThat(utsendingsinfo.getEpostVarselSendt()).isNull();
+		assertThat(utsendingsinfo.getSmsVarselSendt()).isNull();
+		assertThat(utsendingsinfo.getDigitalpostSendt()).isNull();
+	}
+
+	@Test
 	void shouldOnlyConcatenateAdresselinjeWhenPostnummerOgPoststedIsNull() {
 		UtsendingsInfoDto utsendingsInfoDto = UtsendingsInfoDto.builder()
 				.fysiskPostadresse(UtsendingsInfoDto.FysiskPostadresseDto.builder()
@@ -243,6 +268,8 @@ public class UtsendingsInfoMapperTest {
 		assertThat(utsendingsinfo.getSmsVarselSendt()).isNull();
 		assertThat(utsendingsinfo.getDigitalpostSendt()).isNull();
 	}
+
+
 
 	@Test
 	void shouldOnlyConcatenatePostnummerPoststedWhenOtherFieldsAreNull() {

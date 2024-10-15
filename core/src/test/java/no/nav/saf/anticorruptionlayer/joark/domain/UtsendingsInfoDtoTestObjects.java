@@ -14,6 +14,11 @@ public class UtsendingsInfoDtoTestObjects {
 	public static final String POSTNUMMER = "postnummer";
 	public static final String POSTSTED = "poststed";
 	public static final String LANDKODE = "landkode";
+
+	public static final String FORVENTET_NORSK_ADRESSETEKST_KONVOLUTT = """
+			adresselinje1
+			adresselinje2
+			postnummer poststed""";
 	public static final String FORVENTET_ADRESSETEKST_KONVOLUTT = """
 			adresselinje1
 			adresselinje2
