@@ -25,6 +25,7 @@ import java.util.stream.Stream;
 import static java.util.Objects.isNull;
 import static java.util.Optional.empty;
 import static java.util.function.Predicate.not;
+import static no.nav.saf.anticorruptionlayer.joark.domain.UtsendingsInfoMapper.NORGE_LANDKODE;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 
@@ -237,7 +238,7 @@ public class ArkivUtsendingsInfoMapper {
 						arkivFysiskPostadresse.adresselinje2(),
 						arkivFysiskPostadresse.adresselinje3(),
 						postnummer + " " + poststed,
-						arkivFysiskPostadresse.landkode())
+						NORGE_LANDKODE.equals(arkivFysiskPostadresse.landkode()) ? "" : arkivFysiskPostadresse.landkode())
 				.filter(StringUtils::isNotBlank)
 				.collect(Collectors.joining("\n")).strip();
 	}

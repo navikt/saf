@@ -27,6 +27,7 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 
 public class UtsendingsInfoMapper {
 
+	public static final String NORGE_LANDKODE = "NO";
 	private final static ObjectMapper mapper = new ObjectMapper();
 	private static final Pattern EPOST_VARSLINGSTEKST_PATTERN = Pattern.compile("Tittel\\s(?<epostTittel>.*),\\sTekst\\s(?<epostVarslingstekst>.*)", Pattern.DOTALL);
 
@@ -234,7 +235,7 @@ public class UtsendingsInfoMapper {
 						fysiskPostadresse.getAdresselinje2(),
 						fysiskPostadresse.getAdresselinje3(),
 						postnummer + " " + poststed,
-						fysiskPostadresse.getLandkode())
+						NORGE_LANDKODE.equals(fysiskPostadresse.getLandkode()) ? "" : fysiskPostadresse.getLandkode())
 				.filter(StringUtils::isNotBlank)
 				.collect(Collectors.joining("\n")).strip();
 	}

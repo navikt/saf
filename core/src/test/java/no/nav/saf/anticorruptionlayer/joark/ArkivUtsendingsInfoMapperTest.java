@@ -24,6 +24,7 @@ import static no.nav.saf.anticorruptionlayer.joark.ArkivUtsendingsInfoTestObject
 import static no.nav.saf.anticorruptionlayer.joark.ArkivUtsendingsInfoTestObjects.EPOST_VEDTAK_INPUT_DIGITAL_KONTAKTINFO;
 import static no.nav.saf.anticorruptionlayer.joark.ArkivUtsendingsInfoTestObjects.EPOST_VEDTAK_INPUT_VARSLINGSTEKST;
 import static no.nav.saf.anticorruptionlayer.joark.ArkivUtsendingsInfoTestObjects.FORVENTET_ADRESSETEKST_KONVOLUTT;
+import static no.nav.saf.anticorruptionlayer.joark.ArkivUtsendingsInfoTestObjects.FORVENTET_ADRESSETEKST_KONVOLUTT_UTEN_LANDKODE_FOR_NORSKADRESSE;
 import static no.nav.saf.anticorruptionlayer.joark.ArkivUtsendingsInfoTestObjects.INGEN_POSTNUMMER_POSTSTED_FORVENTET_ADRESSETEKST_KONVOLUTT;
 import static no.nav.saf.anticorruptionlayer.joark.ArkivUtsendingsInfoTestObjects.KUN_POSTNUMMER_POSTSTED_LANDKODE_FORVENTET_ADRESSETEKST_KONVOLUTT;
 import static no.nav.saf.anticorruptionlayer.joark.ArkivUtsendingsInfoTestObjects.LANDKODE;
@@ -41,6 +42,7 @@ import static no.nav.saf.anticorruptionlayer.joark.ArkivUtsendingsInfoTestObject
 import static no.nav.saf.anticorruptionlayer.joark.ArkivUtsendingsInfoTestObjects.arkivUtsendingsInfoWithDigitalPostadresse;
 import static no.nav.saf.anticorruptionlayer.joark.ArkivUtsendingsInfoTestObjects.arkivUtsendingsInfoWithNavNoVarsling;
 import static no.nav.saf.anticorruptionlayer.joark.ArkivUtsendingsInfoTestObjects.arkivUtsendingsInfoWithNavNoVarslingOldVarselStructure;
+import static no.nav.saf.anticorruptionlayer.joark.domain.UtsendingsInfoMapper.NORGE_LANDKODE;
 import static no.nav.saf.anticorruptionlayer.joark.domain.kode.UtsendingsKanalCode.NAV_NO;
 import static no.nav.saf.anticorruptionlayer.joark.domain.kode.UtsendingsKanalCode.S;
 import static no.nav.saf.anticorruptionlayer.joark.domain.kode.UtsendingsKanalCode.SDP;
@@ -196,6 +198,29 @@ public class ArkivUtsendingsInfoMapperTest {
 		Optional<Utsendingsinfo> utsendingsinfo = mapArkivUtsendingsInfo(arkivUtsendingsInfoWithNavNoVarslingOldVarselStructure(SMS_OG_EPOST_AVVIK_NULL_INPUT_VARSLINGSTEKST, SMS_OG_EPOST_AVVIK_NULL_INPUT_DIGITAL_KONTAKTINFO), NAV_NO);
 
 		assertThat(utsendingsinfo).isEmpty();
+	}
+
+	@Test
+	void shouldMapNorskFysiskPostadresse() {
+		ArkivUtsendingsInfo arkivUtsendingsInfo = ArkivUtsendingsInfo.builder()
+				.fysiskPostadresse(ArkivFysiskPostadresse.builder()
+						.adresselinje1(ADRESSELINJE1)
+						.adresselinje2(ADRESSELINJE2)
+						.postnummer(POSTNUMMER)
+						.poststed(POSTSTED)
+						.landkode(NORGE_LANDKODE)
+						.build())
+				.build();
+
+		Utsendingsinfo utsendingsinfo = mapArkivUtsendingsInfo(arkivUtsendingsInfo, S)
+				.orElse(null);
+
+		assertThat(utsendingsinfo).isNotNull();
+		Utsendingsinfo.FysiskpostSendt fysiskpostSendt = utsendingsinfo.getFysiskpostSendt();
+		assertThat(fysiskpostSendt.getAdressetekstKonvolutt()).isEqualTo(FORVENTET_ADRESSETEKST_KONVOLUTT_UTEN_LANDKODE_FOR_NORSKADRESSE);
+		assertThat(utsendingsinfo.getEpostVarselSendt()).isNull();
+		assertThat(utsendingsinfo.getSmsVarselSendt()).isNull();
+		assertThat(utsendingsinfo.getDigitalpostSendt()).isNull();
 	}
 
 	@Test
