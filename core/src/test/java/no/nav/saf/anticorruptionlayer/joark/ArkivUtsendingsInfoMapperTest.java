@@ -201,7 +201,7 @@ public class ArkivUtsendingsInfoMapperTest {
 	}
 
 	@Test
-	void shouldMapNorskFysiskPostadresseUtenLandkode() {
+	void shouldMapNorskFysiskPostadresse() {
 		ArkivUtsendingsInfo arkivUtsendingsInfo = ArkivUtsendingsInfo.builder()
 				.fysiskPostadresse(ArkivFysiskPostadresse.builder()
 						.adresselinje1(ADRESSELINJE1)

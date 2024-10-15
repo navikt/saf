@@ -235,7 +235,7 @@ public class UtsendingsInfoMapper {
 						fysiskPostadresse.getAdresselinje2(),
 						fysiskPostadresse.getAdresselinje3(),
 						postnummer + " " + poststed,
-						NORGE_LANDKODE.equalsIgnoreCase(fysiskPostadresse.getLandkode()) ? "" : fysiskPostadresse.getLandkode())
+						NORGE_LANDKODE.equals(fysiskPostadresse.getLandkode()) ? "" : fysiskPostadresse.getLandkode())
 				.filter(StringUtils::isNotBlank)
 				.collect(Collectors.joining("\n")).strip();
 	}

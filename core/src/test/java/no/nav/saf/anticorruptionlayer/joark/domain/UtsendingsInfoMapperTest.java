@@ -269,8 +269,6 @@ public class UtsendingsInfoMapperTest {
 		assertThat(utsendingsinfo.getDigitalpostSendt()).isNull();
 	}
 
-
-
 	@Test
 	void shouldOnlyConcatenatePostnummerPoststedWhenOtherFieldsAreNull() {
 		UtsendingsInfoDto utsendingsInfoDto = UtsendingsInfoDto.builder()
