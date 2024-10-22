@@ -9,6 +9,7 @@ import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.exceptions.SafFunctionalException;
 import no.nav.saf.exceptions.SafTechnicalException;
+import no.nav.saf.exceptions.SakstilknytningTechnicalException;
 import org.springframework.stereotype.Component;
 
 import java.util.concurrent.CompletableFuture;
@@ -44,6 +45,10 @@ public class GraphQLExceptionHandler implements DataFetcherExceptionHandler {
 				return new SafTechnicalException("Circuitbreaker feil i saf. Den har en avhengighet som feiler. " +
 												 "Hvis dette vedvarer, meld fra til #team_dokumentløsninger på Slack. melding=" + e.getMessage(), e)
 						.asMessageGraphQlError();
+			}
+			case SakstilknytningTechnicalException e -> {
+				log.error("query {} sakstilknytning metadata teknisk feil. melding={}", path, e.getMessage(), e);
+				return e.asMessageGraphQlError();
 			}
 			case SafTechnicalException e -> {
 				log.error("query {} teknisk feil. melding={}", path, e.getMessage(), e);

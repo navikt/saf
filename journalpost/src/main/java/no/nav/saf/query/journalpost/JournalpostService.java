@@ -16,6 +16,7 @@ import no.nav.saf.domain.BidragSak;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.domain.tilgangsmodell.TilgangJournalpost;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
+import no.nav.saf.exceptions.SakstilknytningTechnicalException;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import org.springframework.stereotype.Component;
 
@@ -106,6 +107,12 @@ public class JournalpostService {
 			}
 		} else {
 			ArkivSak arkivSak = arkivSaksrelasjon.sak();
+			if (arkivSak == null) {
+				throw new SakstilknytningTechnicalException("Journalpostens sakstilknytning peker ikke på en arkivsak. " +
+															"Sannsynligvis gjelder dette en pensjon-sakstilknytning som har feil metadata. " +
+															"Dette er en metadata feil i arkivet og må korrigeres av #team_dokumentløsninger. " +
+															"journalpostId=" + arkivJournalpost.journalpostId() + ", saksrelasjon.sakId=" + arkivSaksrelasjon.sakId() + ", saksrelasjon.fagsystem=" + arkivSaksrelasjon.fagsystem());
+			}
 			return TilgangBruker.builder()
 					.aktoerId(arkivSak.aktoerId())
 					.orgnummer(arkivSak.aktoerId() == null ? trim(arkivSak.orgNr()) : null)

@@ -575,6 +575,16 @@ class JournalpostIT extends AbstractItest {
 	}
 
 	@Test
+	void shouldReturnErrorCodeServerErrorWhenSaksrelasjonMetadataMismatch() {
+		abacPermit();
+		stubDokarkivJournalpost("journalpost-gsak-inngaaende-faktisk-pen.json");
+		GraphQLResponse graphQLResponse = journalpostQuery();
+
+		assertErrorWithCode(graphQLResponse, SERVER_ERROR);
+		assertErrorWithMessage(graphQLResponse, "Journalpostens sakstilknytning peker ikke på en arkivsak");
+	}
+
+	@Test
 	void shouldReturnErrorCodeBadRequestWhenJournalpostIdNotValid() {
 		assertErrorWithCode(journalpostQuery("journalpost_invalid_journalpostid.query"), BAD_REQUEST);
 	}
