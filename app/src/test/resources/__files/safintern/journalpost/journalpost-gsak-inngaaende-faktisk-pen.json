@@ -1,0 +1,64 @@
+{
+  "journalpostId": 400000000,
+  "type": "I",
+  "fagomraade": "PEN",
+  "fagomraadenavn": "Alderspensjon",
+  "status": "J",
+  "saksrelasjon": {
+    "fagsystem": "FS22",
+    "sak": null,
+    "sakId": 20000000
+  },
+  "relevanteDatoer": {
+    "forsendelseMottatt": "2023-08-16T11:15:00.290+00:00",
+    "hoveddokument": "2023-08-16T11:15:00.290+00:00",
+    "journalfoert": "2023-09-12T13:42:13.647+00:00",
+    "opprettet": "2023-08-16T11:15:00.292+00:00"
+  },
+  "avsenderMottaker": {
+    "id": "07480966982",
+    "navn": "Sitrongul Ovn",
+    "type": "FNR",
+    "land": "NO"
+  },
+  "antallRetur": null,
+  "behandlingstema": null,
+  "behandlingstemanavn": null,
+  "bruker": {
+    "id": "07480966982",
+    "type": "PERSON"
+  },
+  "dokumenter": [
+    {
+      "dokumentInfoId": 500000000,
+      "brevkode": "NAV 00-03.00 U",
+      "fildetaljer": [
+        {
+          "format": "ARKIV",
+          "navn": "REFERANSE_17.10.2024_R500000000_0_0001.pdf",
+          "stoerrelse": "4721",
+          "type": "PDFA",
+          "uuid": "4b4d0d13-5c8c-4f6b-922c-4026f1679069"
+        },
+        {
+          "format": "SKANNING_META",
+          "navn": "REFERANSE_17.10.2024_R500000000_0_0001.xml",
+          "stoerrelse": "5000",
+          "type": "XML",
+          "uuid": "4b4d0d13-5c8c-4f6b-922c-4026f1679070"
+        }
+      ],
+      "kategori": "IS",
+      "originalJournalpostId": 400000000,
+      "status": "FERDIGSTILT",
+      "tilknyttetSom": "HOVEDDOKUMENT",
+      "tittel": "Annen post Utland"
+    }
+  ],
+  "innhold": "Annen post Utland",
+  "kanalreferanseId": "pesys-20000000-1",
+  "journalfoerendeEnhet": "4819",
+  "journalfoertAvNavn": "Behandlersen, Sak",
+  "mottakskanal": "SKAN_IM",
+  "opprettetAvNavn": "srvskanmotreferanse"
+}
