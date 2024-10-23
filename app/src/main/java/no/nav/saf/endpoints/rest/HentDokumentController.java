@@ -18,6 +18,7 @@ import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.SafSecurityContext;
 import no.nav.saf.tilgangskontroll.pep.AbacAnswer;
 import no.nav.saf.tilgangskontroll.pep.reasons.UkjentEllerTekniskReason;
+import no.nav.saf.util.LogSanitizer;
 import no.nav.security.token.support.core.api.Protected;
 import no.nav.security.token.support.core.context.TokenValidationContextHolder;
 import org.slf4j.MDC;
@@ -38,6 +39,7 @@ import static no.nav.saf.endpoints.HeaderUtils.createNavCallid;
 import static no.nav.saf.headers.NavHeaders.NAV_CALLID;
 import static no.nav.saf.headers.NavHeaders.NAV_USER_ID;
 import static no.nav.saf.headers.NavHeaders.X_CORRELATION_ID;
+import static no.nav.saf.util.LogSanitizer.removeUnsafeChars;
 import static no.nav.saf.util.MDCConstants.DOKUMENT_INFO_ID;
 import static no.nav.saf.util.MDCConstants.JOURNALPOST_ID;
 import static no.nav.saf.util.MDCUtility.addMdcData;
@@ -120,10 +122,10 @@ public class HentDokumentController {
 
 	private void validateInput(String journalpostId, String dokumentInfoId, String variantFormat) {
 		if (!isNumeric(journalpostId)) {
-			throw new UgyldigInputException("journalpostId må være et tall. journalpostId=" + journalpostId);
+			throw new UgyldigInputException("journalpostId må være et tall. journalpostId=" + removeUnsafeChars(journalpostId));
 		}
 		if (!isNumeric(dokumentInfoId)) {
-			throw new UgyldigInputException("dokumentInfoId må være et tall. dokumentInfoId=" + dokumentInfoId);
+			throw new UgyldigInputException("dokumentInfoId må være et tall. dokumentInfoId=" + removeUnsafeChars(dokumentInfoId));
 		}
 		try {
 			VariantFormatCode.valueOf(variantFormat);
