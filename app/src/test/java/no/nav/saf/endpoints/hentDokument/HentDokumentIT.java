@@ -38,6 +38,7 @@ import static no.nav.saf.tilgangskontroll.pep.DenyReasonFactory.PEP6D_DENY_REASO
 import static no.nav.saf.tilgangskontroll.pep.DenyReasonFactory.PEP7D_DENY_REASON;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
@@ -382,6 +383,19 @@ class HentDokumentIT extends AbstractItest {
 
 		verify(postRequestedFor(urlEqualTo("/pdl")));
 		assertEquals(NOT_FOUND, responseEntity.getStatusCode());
+	}
+	@Test
+	void shouldReturnNotFoundWhenDokumentVariantisWrong() {
+		abacPermit();
+		stubPdl();
+		stubDokarkivJournalpost("journalpost-dokumentinfo-gsak-dokumentvariant-notmatched.json");
+
+		String uri = "/rest/hentdokument/" + JOURNALPOST_ID + "/" + DOKUMENT_ID + "/" + "ugyldigVariantFormat";
+
+		ResponseEntity<String> responseEntity = this.restTemplate.exchange(uri, HttpMethod.GET, createHttpEntity(), String.class);
+
+		assertEquals(BAD_REQUEST, responseEntity.getStatusCode());
+		assertThat(responseEntity.getBody()).contains("Ugyldig variantFormat");
 	}
 
 	@Test

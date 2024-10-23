@@ -3,6 +3,7 @@ package no.nav.saf.endpoints.rest;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
+import no.nav.saf.anticorruptionlayer.joark.domain.kode.VariantFormatCode;
 import no.nav.saf.domain.HentDokument;
 import no.nav.saf.domain.kode.Variantformat;
 import no.nav.saf.exceptions.DokumentIkkeFunnetException;
@@ -30,6 +31,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Arrays;
 import java.util.Map;
 
 import static no.nav.saf.endpoints.HeaderUtils.createNavCallid;
@@ -78,7 +80,7 @@ public class HentDokumentController {
 			@Parameter(name = NAV_USER_ID, description = "(Valgfri) NAV ident som overstyrer sporing for kall fra servicebrukere.") @RequestHeader(value = NAV_USER_ID, required = false) String navUserId,
 			@Parameter(name = X_CORRELATION_ID, description = "@Deprecated. Bruk " + NAV_CALLID, hidden = true) @RequestHeader(value = X_CORRELATION_ID, required = false) String xCorrelationId
 	) {
-		validateInput(journalpostId, dokumentInfoId);
+		validateInput(journalpostId, dokumentInfoId, variantFormat);
 		final SafRequestContext safRequestContext = new SafRequestContext(createNavCallid(navCallid, xCorrelationId),
 				navUserId,
 				tokenValidationContextHolder.getTokenValidationContext(),
@@ -116,13 +118,19 @@ public class HentDokumentController {
 		}
 	}
 
-	private void validateInput(String journalpostId, String dokumentInfoId) {
+	private void validateInput(String journalpostId, String dokumentInfoId, String variantFormat) {
 		if (!isNumeric(journalpostId)) {
 			throw new UgyldigInputException("journalpostId må være et tall. journalpostId=" + journalpostId);
 		}
 		if (!isNumeric(dokumentInfoId)) {
 			throw new UgyldigInputException("dokumentInfoId må være et tall. dokumentInfoId=" + dokumentInfoId);
 		}
+		try {
+			VariantFormatCode.valueOf(variantFormat);
+		}
+			catch (IllegalArgumentException illegalArgumentException){
+				throw new UgyldigInputException("Ugyldig variantFormat. variantFormat må være en av verdiene" + Arrays.toString(VariantFormatCode.values()) );
+			}
 	}
 
 	private void mdcSporing(String journalpostId, String dokumentInfoId) {
