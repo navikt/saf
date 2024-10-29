@@ -3,6 +3,7 @@ package no.nav.saf.endpoints.rest;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
+import no.nav.saf.anticorruptionlayer.joark.domain.kode.VariantFormatCode;
 import no.nav.saf.domain.HentDokument;
 import no.nav.saf.domain.kode.Variantformat;
 import no.nav.saf.exceptions.DokumentIkkeFunnetException;
@@ -30,12 +31,15 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Arrays;
 import java.util.Map;
 
+import static java.lang.String.format;
 import static no.nav.saf.endpoints.HeaderUtils.createNavCallid;
 import static no.nav.saf.headers.NavHeaders.NAV_CALLID;
 import static no.nav.saf.headers.NavHeaders.NAV_USER_ID;
 import static no.nav.saf.headers.NavHeaders.X_CORRELATION_ID;
+import static no.nav.saf.util.LogSanitizer.removeUnsafeChars;
 import static no.nav.saf.util.MDCConstants.DOKUMENT_INFO_ID;
 import static no.nav.saf.util.MDCConstants.JOURNALPOST_ID;
 import static no.nav.saf.util.MDCUtility.addMdcData;
@@ -78,7 +82,7 @@ public class HentDokumentController {
 			@Parameter(name = NAV_USER_ID, description = "(Valgfri) NAV ident som overstyrer sporing for kall fra servicebrukere.") @RequestHeader(value = NAV_USER_ID, required = false) String navUserId,
 			@Parameter(name = X_CORRELATION_ID, description = "@Deprecated. Bruk " + NAV_CALLID, hidden = true) @RequestHeader(value = X_CORRELATION_ID, required = false) String xCorrelationId
 	) {
-		validateInput(journalpostId, dokumentInfoId);
+		validateInput(journalpostId, dokumentInfoId, variantFormat);
 		final SafRequestContext safRequestContext = new SafRequestContext(createNavCallid(navCallid, xCorrelationId),
 				navUserId,
 				tokenValidationContextHolder.getTokenValidationContext(),
@@ -116,12 +120,17 @@ public class HentDokumentController {
 		}
 	}
 
-	private void validateInput(String journalpostId, String dokumentInfoId) {
+	private void validateInput(String journalpostId, String dokumentInfoId, String variantFormat) {
 		if (!isNumeric(journalpostId)) {
-			throw new UgyldigInputException("journalpostId må være et tall. journalpostId=" + journalpostId);
+			throw new UgyldigInputException("journalpostId må være et tall. journalpostId=" + removeUnsafeChars(journalpostId));
 		}
 		if (!isNumeric(dokumentInfoId)) {
-			throw new UgyldigInputException("dokumentInfoId må være et tall. dokumentInfoId=" + dokumentInfoId);
+			throw new UgyldigInputException("dokumentInfoId må være et tall. dokumentInfoId=" + removeUnsafeChars(dokumentInfoId));
+		}
+		try {
+			VariantFormatCode.valueOf(variantFormat);
+		} catch (IllegalArgumentException illegalArgumentException) {
+			throw new UgyldigInputException(format("Ugyldig variantFormat. variantFormat må være en av verdiene=%s", Arrays.toString(VariantFormatCode.values())));
 		}
 	}
 
@@ -139,8 +148,8 @@ public class HentDokumentController {
 		if (securityContext.isSystem() && !Variantformat.ORIGINAL.name().equals(variantFormat)) {
 			throw new HentdokumentTilgangskontrollException(
 					"Servicebruker forsøker å hente dokument med variantFormat=" +
-					variantFormat + ". Servicebrukere har kun tilgang til variantFormat=" + Variantformat.ORIGINAL +
-					" med mindre man har en avtale med Team Dokumentløsninger. Snakk med oss om behov.", AbacAnswer.deny(new UkjentEllerTekniskReason()));
+							variantFormat + ". Servicebrukere har kun tilgang til variantFormat=" + Variantformat.ORIGINAL +
+							" med mindre man har en avtale med Team Dokumentløsninger. Snakk med oss om behov.", AbacAnswer.deny(new UkjentEllerTekniskReason()));
 		}
 	}
 }
