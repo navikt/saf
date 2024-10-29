@@ -384,8 +384,9 @@ class HentDokumentIT extends AbstractItest {
 		verify(postRequestedFor(urlEqualTo("/pdl")));
 		assertEquals(NOT_FOUND, responseEntity.getStatusCode());
 	}
+
 	@Test
-	void shouldReturnNotFoundWhenDokumentVariantisWrong() {
+	void shouldReturnBadRequestWhenDokumentVariantIsWrong() {
 		abacPermit();
 		stubPdl();
 		stubDokarkivJournalpost("journalpost-dokumentinfo-gsak-dokumentvariant-notmatched.json");

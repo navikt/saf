@@ -18,7 +18,6 @@ import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.SafSecurityContext;
 import no.nav.saf.tilgangskontroll.pep.AbacAnswer;
 import no.nav.saf.tilgangskontroll.pep.reasons.UkjentEllerTekniskReason;
-import no.nav.saf.util.LogSanitizer;
 import no.nav.security.token.support.core.api.Protected;
 import no.nav.security.token.support.core.context.TokenValidationContextHolder;
 import org.slf4j.MDC;
@@ -35,6 +34,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Arrays;
 import java.util.Map;
 
+import static java.lang.String.format;
 import static no.nav.saf.endpoints.HeaderUtils.createNavCallid;
 import static no.nav.saf.headers.NavHeaders.NAV_CALLID;
 import static no.nav.saf.headers.NavHeaders.NAV_USER_ID;
@@ -129,10 +129,9 @@ public class HentDokumentController {
 		}
 		try {
 			VariantFormatCode.valueOf(variantFormat);
+		} catch (IllegalArgumentException illegalArgumentException) {
+			throw new UgyldigInputException(format("Ugyldig variantFormat. variantFormat må være en av verdiene=%s", Arrays.toString(VariantFormatCode.values())));
 		}
-			catch (IllegalArgumentException illegalArgumentException){
-				throw new UgyldigInputException("Ugyldig variantFormat. variantFormat må være en av verdiene" + Arrays.toString(VariantFormatCode.values()) );
-			}
 	}
 
 	private void mdcSporing(String journalpostId, String dokumentInfoId) {
@@ -149,8 +148,8 @@ public class HentDokumentController {
 		if (securityContext.isSystem() && !Variantformat.ORIGINAL.name().equals(variantFormat)) {
 			throw new HentdokumentTilgangskontrollException(
 					"Servicebruker forsøker å hente dokument med variantFormat=" +
-					variantFormat + ". Servicebrukere har kun tilgang til variantFormat=" + Variantformat.ORIGINAL +
-					" med mindre man har en avtale med Team Dokumentløsninger. Snakk med oss om behov.", AbacAnswer.deny(new UkjentEllerTekniskReason()));
+							variantFormat + ". Servicebrukere har kun tilgang til variantFormat=" + Variantformat.ORIGINAL +
+							" med mindre man har en avtale med Team Dokumentløsninger. Snakk med oss om behov.", AbacAnswer.deny(new UkjentEllerTekniskReason()));
 		}
 	}
 }
