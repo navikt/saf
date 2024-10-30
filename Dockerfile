@@ -3,7 +3,7 @@ WORKDIR /build
 COPY app/target/app.jar app.jar
 RUN java -Djarmode=layertools -jar app.jar extract
 
-FROM ghcr.io/navikt/baseimages/temurin:21-appdynamics
+FROM ghcr.io/navikt/baseimages/temurin:21
 WORKDIR /app
 COPY --from=builder /build/dependencies/ ./
 COPY --from=builder /build/snapshot-dependencies/ ./
@@ -16,7 +16,6 @@ USER root
 RUN chmod +x /run-java.sh
 USER apprunner
 
-ENV APPD_ENABLED=true
 ENV MAIN_CLASS="org.springframework.boot.loader.launch.JarLauncher"
 ENV JAVA_OPTS="-Xmx1792m \
                -Djava.security.egd=file:/dev/./urandom \

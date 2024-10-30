@@ -30,8 +30,6 @@
   "SAF_ENDPOINTS_HR_NAV_URL": "https://tdv-p.adeo.no/",
   "SAF_REDIS_HOSTNAME":  "saf-redis-q4",
   "RESTSECURITYTOKENSERVICE_URL": "https://security-token-service.dev.adeo.no/rest/v1/sts/token",
-  "APPDYNAMICS": "/apikey/appdynamics/dev",
-  "APPD_NAME": "saf_q4",
   "APP_NAME": "saf-q4",
   "AZURE_IAC_RULES": [
     {
