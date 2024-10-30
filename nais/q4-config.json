@@ -1,4 +1,6 @@
 {
+  "APP_NAME": "saf-q4",
+  "ENVIRONMENT": "q4",
   "NAMESPACE": "teamdokumenthandtering",
   "MIN_REPLICAS": 1,
   "MAX_REPLICAS": 2,
@@ -28,27 +30,41 @@
   "SAF_ENDPOINTS_FPSAK_URL": "http://fpsak.teamforeldrepenger.svc.nais.local/fpsak/api/pip/aktoer-for-sak",
   "SAF_ENDPOINTS_FPSAK_SCOPE": "api://dev-fss.teamforeldrepenger.fpsak/.default",
   "SAF_ENDPOINTS_HR_NAV_URL": "https://tdv-p.adeo.no/",
-  "SAF_REDIS_HOSTNAME":  "saf-redis-q4",
+  "SAF_REDIS_HOSTNAME": "saf-redis-q4",
   "RESTSECURITYTOKENSERVICE_URL": "https://security-token-service.dev.adeo.no/rest/v1/sts/token",
-  "APP_NAME": "saf-q4",
   "AZURE_IAC_RULES": [
     {
       "app": "dokarkiv-q4",
       "namespace": "teamdokumenthandtering",
       "cluster": "dev-fss",
-      "roles": ["tema_alle"]
+      "roles": [
+        "tema_alle"
+      ]
     },
     {
       "app": "dokprod-q4",
       "namespace": "teamdokumenthandtering",
       "cluster": "dev-fss",
-      "roles": ["tema_alle"]
+      "roles": [
+        "tema_alle"
+      ]
     },
     {
       "app": "arena",
       "namespace": "teamarenanais",
       "cluster": "dev-fss",
-      "roles": ["tema_aap", "tema_dag", "tema_fei", "tema_ind", "tema_opp", "tema_sym", "tema_til", "tema_tso", "tema_tsr", "tema_saa"]
+      "roles": [
+        "tema_aap",
+        "tema_dag",
+        "tema_fei",
+        "tema_ind",
+        "tema_opp",
+        "tema_sym",
+        "tema_til",
+        "tema_tso",
+        "tema_tsr",
+        "tema_saa"
+      ]
     },
     {
       "app": "ida",
@@ -59,13 +75,17 @@
       "app": "ezbrev-backend-q4",
       "namespace": "teamdokumenthandtering",
       "cluster": "dev-fss",
-      "roles": ["tema_alle"]
+      "roles": [
+        "tema_alle"
+      ]
     },
     {
       "app": "testnav-saf-proxy-trygdeetaten",
       "namespace": "dolly",
       "cluster": "dev-fss",
-      "roles": ["tema_alle"]
+      "roles": [
+        "tema_alle"
+      ]
     }
   ]
 }

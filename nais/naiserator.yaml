@@ -51,6 +51,8 @@ spec:
       value: {{ RESTSECURITYTOKENSERVICE_URL }}
     - name: SAF_REDIS_HOSTNAME
       value: {{ SAF_REDIS_HOSTNAME }}
+    - name: OTEL_RESOURCE_ATTRIBUTES
+      value: "deployment.environment.name={{ ENVIRONMENT }}"
   image: {{ image }}
   ingresses:
     {{#each INGRESSES}}
@@ -94,7 +96,6 @@ spec:
         extra:
           - "NAVident"
           - "azp_name"
-{{#if AZURE_IAC_RULES}}
   accessPolicy:
     inbound:
       rules:
@@ -110,4 +111,9 @@ spec:
               {{/each}}
           {{/if}}
     {{/each}}
-{{/if}}
+  observability:
+    autoInstrumentation:
+      enabled: true
+      runtime: java
+      destinations:
+        - id: "elastic-apm"

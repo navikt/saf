@@ -1,4 +1,6 @@
 {
+  "APP_NAME": "saf",
+  "ENVIRONMENT": "p",
   "NAMESPACE": "teamdokumenthandtering",
   "MIN_REPLICAS": 6,
   "MAX_REPLICAS": 20,
@@ -30,7 +32,6 @@
   "SAF_ENDPOINTS_HR_NAV_URL": "https://tdv-p.adeo.no/",
   "SAF_REDIS_HOSTNAME":  "saf-redis",
   "RESTSECURITYTOKENSERVICE_URL": "https://security-token-service.nais.adeo.no/rest/v1/sts/token",
-  "APP_NAME": "saf",
   "AZURE_IAC_RULES": [
     {
       "app": "familie-integrasjoner",
