@@ -1,7 +1,6 @@
 {
   "APP_NAME": "saf-q4",
   "ENVIRONMENT": "q4",
-  "NAMESPACE": "teamdokumenthandtering",
   "MIN_REPLICAS": 1,
   "MAX_REPLICAS": 2,
   "ABAC_PDP_ENDPOINT_URL": "http://abac-saf.teamdokumenthandtering.svc.nais.local/application/asm-pdp/authorize",
