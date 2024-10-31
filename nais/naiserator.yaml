@@ -2,7 +2,7 @@ kind: Application
 apiVersion: nais.io/v1alpha1
 metadata:
   name: {{ APP_NAME }}
-  namespace: {{ NAMESPACE }}
+  namespace: teamdokumenthandtering
   labels:
     team: teamdokumenthandtering
 spec:
@@ -49,10 +49,10 @@ spec:
       value: {{SAF_ENDPOINTS_HR_NAV_URL}}
     - name: RESTSECURITYTOKENSERVICE_URL
       value: {{ RESTSECURITYTOKENSERVICE_URL }}
-    - name: APPD_NAME
-      value: {{ APPD_NAME }}
     - name: SAF_REDIS_HOSTNAME
       value: {{ SAF_REDIS_HOSTNAME }}
+    - name: OTEL_RESOURCE_ATTRIBUTES
+      value: "deployment.environment.name={{ ENVIRONMENT }}"
   image: {{ image }}
   ingresses:
     {{#each INGRESSES}}
@@ -87,8 +87,6 @@ spec:
     paths:
       - kvPath: {{ SRVSAF }}
         mountPath: "/secrets/serviceuser/srvsaf"
-      - kvPath: {{ APPDYNAMICS }}
-        mountPath: /var/run/secrets/nais.io/appdynamics
   webproxy: true
   azure:
     application:
@@ -98,7 +96,6 @@ spec:
         extra:
           - "NAVident"
           - "azp_name"
-{{#if AZURE_IAC_RULES}}
   accessPolicy:
     inbound:
       rules:
@@ -114,4 +111,9 @@ spec:
               {{/each}}
           {{/if}}
     {{/each}}
-{{/if}}
+  observability:
+    autoInstrumentation:
+      enabled: true
+      runtime: java
+      destinations:
+        - id: "elastic-apm"

@@ -1,5 +1,6 @@
 {
-  "NAMESPACE": "teamdokumenthandtering",
+  "APP_NAME": "saf-q5",
+  "ENVIRONMENT": "q5",
   "MIN_REPLICAS": 1,
   "MAX_REPLICAS": 2,
   "ABAC_PDP_ENDPOINT_URL": "http://abac-saf.teamdokumenthandtering.svc.nais.local/application/asm-pdp/authorize",
@@ -29,9 +30,6 @@
   "SAF_ENDPOINTS_HR_NAV_URL": "https://tdv-p.adeo.no/",
   "SAF_REDIS_HOSTNAME":  "saf-redis-q5",
   "RESTSECURITYTOKENSERVICE_URL": "https://security-token-service.dev.adeo.no/rest/v1/sts/token",
-  "APPDYNAMICS": "/apikey/appdynamics/dev",
-  "APPD_NAME": "saf_q5",
-  "APP_NAME": "saf-q5",
   "AZURE_IAC_RULES": [
     {
       "app": "dokarkiv-q5",
