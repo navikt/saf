@@ -153,7 +153,7 @@
       ]
     },
     {
-      "app": "tiltakspenger-vedtak",
+      "app": "tiltakspenger-saksbehandling-api",
       "namespace": "tpts",
       "cluster": "prod-gcp",
       "roles": [
