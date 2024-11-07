@@ -417,6 +417,15 @@
       ]
     },
     {
+      "app": "ung-sak",
+      "namespace": "k9saksbehandling",
+      "cluster": "dev-gcp",
+      "roles": [
+        "tema_oms",
+        "tema_fri"
+      ]
+    },
+    {
       "app": "k9-fordel",
       "namespace": "k9saksbehandling",
       "cluster": "dev-fss",
