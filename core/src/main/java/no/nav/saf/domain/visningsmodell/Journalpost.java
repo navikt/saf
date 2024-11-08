@@ -68,4 +68,6 @@ public class Journalpost {
 	List<Tilleggsopplysning> tilleggsopplysninger = new ArrayList<>();
 	@Builder.Default
 	List<DokumentInfo> dokumenter = new ArrayList<>();
+	List<BrukerTilgangAvvistBegrunnelse> brukerTilgangAvvistBegrunnelser;
+	boolean brukerHarTilgang;
 }

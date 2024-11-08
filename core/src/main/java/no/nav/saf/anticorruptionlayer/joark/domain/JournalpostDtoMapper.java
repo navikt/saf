@@ -20,6 +20,7 @@ import no.nav.saf.domain.kode.Tema;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.domain.visningsmodell.Bruker;
 import no.nav.saf.domain.visningsmodell.BrukerIdType;
+import no.nav.saf.domain.visningsmodell.BrukerTilgangAvvistBegrunnelse;
 import no.nav.saf.domain.visningsmodell.DokumentInfo;
 import no.nav.saf.domain.visningsmodell.Dokumentvariant;
 import no.nav.saf.domain.visningsmodell.Journalpost;
@@ -43,6 +44,7 @@ import static java.util.Objects.nonNull;
 import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostMapper.ARKIVJOURNALPOST_OVERSTYRTINNSYN_STANDARD;
 import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostMapper.ARKIVJOURNALPOST_OVERSTYRTINNSYN_STANDARD_BESKRIVELSE;
 import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostMapper.SKJULT_TITTEL;
+import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostMapper.mockBrukerTilgangAvvistBegrunnnelser;
 import static no.nav.saf.anticorruptionlayer.joark.domain.kode.JournalpostTypeCode.U;
 import static no.nav.saf.cache.KeyGeneratorLocalCaching.getKeyForPep2d;
 import static no.nav.saf.cache.KeyGeneratorLocalCaching.getKeyForPep5;
@@ -70,6 +72,7 @@ public class JournalpostDtoMapper {
 
 		Tema tema = mapTema(journalpostDto, requestCache);
 		Journalstatus journalstatus = mapJournalstatus(journalpostDto);
+		List<BrukerTilgangAvvistBegrunnelse> brukerTilgangAvvistBegrunnelser = mockBrukerTilgangAvvistBegrunnnelser();
 		Journalpost journalpost = Journalpost.builder()
 				.journalpostId(journalpostId)
 				.tittel(mapTittel(journalpostDto.getInnhold(), tema, journalstatus, requestCache))
@@ -103,6 +106,8 @@ public class JournalpostDtoMapper {
 				.innsynsregel(journalpostDto.getInnsyn() == null ? ARKIVJOURNALPOST_OVERSTYRTINNSYN_STANDARD : journalpostDto.getInnsyn())
 				.innsynsregelBeskrivelse(journalpostDto.getInnsynbeskrivelse() == null ? ARKIVJOURNALPOST_OVERSTYRTINNSYN_STANDARD_BESKRIVELSE : journalpostDto.getInnsynbeskrivelse())
 				.utsendingsinfo(getUtgaaendeJournalpostUtsendingsInfo(journalpostDto))
+				.brukerTilgangAvvistBegrunnelser(brukerTilgangAvvistBegrunnelser)
+				.brukerHarTilgang(brukerTilgangAvvistBegrunnelser.isEmpty())
 				.build();
 		List<DokumentInfo> dokumenter = journalpostDto.getDokumenter().stream()
 				.filter(dokumentInfoDto -> shouldMapDokumentInfo(journalpostId, dokumentInfoDto.getDokumentInfoId(), requestCache))
@@ -131,6 +136,8 @@ public class JournalpostDtoMapper {
 										.skjerming(variantDto.getSkjerming() == null ? null : variantDto.getSkjerming()
 												.getSafSkjerming())
 										.filstoerrelse(isBlank(variantDto.getFilstorrelse()) ? 0 : valueOf(variantDto.getFilstorrelse()))
+										.brukerTilgangAvvistBegrunnelser(brukerTilgangAvvistBegrunnelser)
+										.brukerHarTilgang(brukerTilgangAvvistBegrunnelser.isEmpty())
 										.build())
 								.collect(Collectors.toList()))
 						.logiskeVedlegg(dokumentInfoDto.getLogiske().stream()
