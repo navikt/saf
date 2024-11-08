@@ -1038,7 +1038,12 @@ enum Sakstype {
     FAGSAK
 }
 
+# Begrunnelse for hvorfor pålogget bruker i selvbetjeningsløsningen eventuelt nektes tilgang til å se for eksempel en journalpost
+# eller et dokument.
 type TilgangAvvistBegrunnelse {
+    # En kode som beskriver grunnen at brukeren ikke har tilgang i selvbetjeningsløsningen
     kode: String!
+    # En menneske-vennlig tekst som forklarer grunnen beskrevet med kode over. Teksten er formulert med mål om at den skal
+    # gi mening for en saksbehandler, men ikke nødvendigvis for en sivilist.
     begrunnelse: String!
 }
