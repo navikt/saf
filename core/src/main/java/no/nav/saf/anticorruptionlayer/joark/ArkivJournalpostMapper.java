@@ -32,6 +32,7 @@ import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.domain.visningsmodell.AvsenderMottaker;
 import no.nav.saf.domain.visningsmodell.Bruker;
 import no.nav.saf.domain.visningsmodell.BrukerIdType;
+import no.nav.saf.domain.visningsmodell.BrukerTilgangAvvistBegrunnelse;
 import no.nav.saf.domain.visningsmodell.DokumentInfo;
 import no.nav.saf.domain.visningsmodell.Dokumentvariant;
 import no.nav.saf.domain.visningsmodell.Journalpost;
@@ -48,8 +49,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.random.RandomGenerator;
 import java.util.stream.Collectors;
 
+import static java.util.Collections.emptyList;
 import static no.nav.saf.anticorruptionlayer.joark.ArkivAvsenderMottakerMapper.mapArkivAvsenderMottaker;
 import static no.nav.saf.anticorruptionlayer.joark.ArkivUtsendingsInfoMapper.mapArkivUtsendingsInfo;
 import static no.nav.saf.anticorruptionlayer.joark.domain.kode.JournalpostTypeCode.U;
@@ -72,6 +75,8 @@ public class ArkivJournalpostMapper {
 	public static final String ARKIVJOURNALPOST_OVERSTYRTINNSYN_STANDARD_BESKRIVELSE = "Standardreglene avgjør om dokumentet vises";
 	public static final String SKJULT_TITTEL = "*****";
 
+	private static final RandomGenerator randomGenerator = RandomGenerator.of("L64X128MixRandom");
+
 	public static Journalpost mapJournalpost(ArkivJournalpost arkivJournalpost, RequestCache requestCache) {
 		if (arkivJournalpost == null) {
 			return null;
@@ -81,6 +86,7 @@ public class ArkivJournalpostMapper {
 		Tema tema = mapTema(arkivJournalpost, requestCache);
 		AvsenderMottaker avsenderMottaker = mapArkivAvsenderMottaker(arkivJournalpost);
 		Journalstatus journalstatus = mapJournalstatus(arkivJournalpost);
+		List<BrukerTilgangAvvistBegrunnelse> brukerTilgangAvvistBegrunnelser = mockBrukerTilgangAvvistBegrunnnelser();
 
 		Journalpost journalpost = Journalpost.builder()
 				.journalpostId(journalpostId)
@@ -112,9 +118,11 @@ public class ArkivJournalpostMapper {
 				.innsynsregelBeskrivelse(arkivJournalpost.innsynsbeskrivelse() == null ? ARKIVJOURNALPOST_OVERSTYRTINNSYN_STANDARD_BESKRIVELSE : arkivJournalpost.innsynsbeskrivelse())
 				.eksternReferanseId(arkivJournalpost.kanalreferanseId())
 				.utsendingsinfo(mapUtsendingsInfo(arkivJournalpost))
+				.brukerTilgangAvvistBegrunnelser(brukerTilgangAvvistBegrunnelser)
+				.brukerHarTilgang(brukerTilgangAvvistBegrunnelser.isEmpty())
 				.build();
 
-		journalpost.getDokumenter().addAll(mapDokumenter(journalpost, arkivJournalpost, requestCache));
+		journalpost.getDokumenter().addAll(mapDokumenter(journalpost, arkivJournalpost, requestCache, brukerTilgangAvvistBegrunnelser));
 		return journalpost;
 	}
 
@@ -381,7 +389,7 @@ public class ArkivJournalpostMapper {
 		return null;
 	}
 
-	private static List<DokumentInfo> mapDokumenter(Journalpost journalpost, ArkivJournalpost arkivJournalpost, RequestCache requestCache) {
+	private static List<DokumentInfo> mapDokumenter(Journalpost journalpost, ArkivJournalpost arkivJournalpost, RequestCache requestCache, List<BrukerTilgangAvvistBegrunnelse> brukerTilgangAvvistBegrunnelser) {
 		if (arkivJournalpost.dokumenter() == null) {
 			return List.of();
 		}
@@ -396,14 +404,14 @@ public class ArkivJournalpostMapper {
 						.originalJournalpostId(dokumentinfo.originalJournalpostId() == null ? null : dokumentinfo.originalJournalpostId().toString())
 						.skjerming(mapSkjerming(dokumentinfo.skjerming()))
 						.dokumentvarianter(dokumentinfo.fildetaljer().stream()
-								.map(fildetaljer -> mapDokumentvariant(journalpost, requestCache, dokumentinfo, fildetaljer))
+								.map(fildetaljer -> mapDokumentvariant(journalpost, requestCache, dokumentinfo, fildetaljer, brukerTilgangAvvistBegrunnelser))
 								.filter(Objects::nonNull)
 								.collect(Collectors.toList()))
 						.logiskeVedlegg(mapLogiskeVedlegg(dokumentinfo, journalpost.getTema(), journalpost.getJournalstatus(), requestCache))
 						.build()).toList();
 	}
 
-	private static Dokumentvariant mapDokumentvariant(Journalpost journalpost, RequestCache requestCache, ArkivDokumentinfo dokumentinfo, ArkivFildetaljer fildetaljer) {
+	private static Dokumentvariant mapDokumentvariant(Journalpost journalpost, RequestCache requestCache, ArkivDokumentinfo dokumentinfo, ArkivFildetaljer fildetaljer, List<BrukerTilgangAvvistBegrunnelse> brukerTilgangAvvistBegrunnelser) {
 		Variantformat variantformat = mapVariantformat(fildetaljer);
 		if (variantformat == null) {
 			return null;
@@ -416,6 +424,8 @@ public class ArkivJournalpostMapper {
 				.filtype(mapFiltype(fildetaljer))
 				.skjerming(mapSkjerming(fildetaljer.skjerming()))
 				.filstoerrelse(mapFilstoerrelse(fildetaljer))
+				.brukerTilgangAvvistBegrunnelser(brukerTilgangAvvistBegrunnelser)
+				.brukerHarTilgang(brukerTilgangAvvistBegrunnelser.isEmpty())
 				.build();
 	}
 
@@ -510,5 +520,13 @@ public class ArkivJournalpostMapper {
 	private static boolean getCachedDecision(RequestCache requestCache, String tilgangKey) {
 		AbacAnswer abacAnswer = requestCache.getCachedDecision(tilgangKey);
 		return abacAnswer != null && abacAnswer.isPermit();
+	}
+
+	public static List<BrukerTilgangAvvistBegrunnelse> mockBrukerTilgangAvvistBegrunnnelser() {
+		boolean simulateDeny = randomGenerator.nextBoolean();
+		if (simulateDeny) {
+			return List.of(new BrukerTilgangAvvistBegrunnelse("test_feil", "TEST brukeren har ikke tilgang til å se denne i selvbetjening TEST"));
+		}
+		return emptyList();
 	}
 }

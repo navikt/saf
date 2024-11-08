@@ -63,6 +63,9 @@ import static no.nav.saf.tilgangskontroll.pep.DenyReasonFactory.PEP3_DENY_REASON
 import static no.nav.saf.tilgangskontroll.pep.DenyReasonFactory.PEP4_DENY_REASON;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.OK;
@@ -134,6 +137,12 @@ class JournalpostIT extends AbstractItest {
 		assertThat(journalpost.getTilleggsopplysninger().get(0).getVerdi()).isEqualTo("trippel-brille");
 		assertThat(journalpost.getEksternReferanseId()).isEqualTo("d35c8412-7b98-4a66-8fdd-51f44ed6c632HJE-DIGITAL-SOKNAD");
 		assertThat(journalpost.getUtsendingsinfo()).isNull();
+		assertNotNull(journalpost.getBrukerTilgangAvvistBegrunnelser());
+		if (journalpost.getBrukerTilgangAvvistBegrunnelser().isEmpty()) {
+			assertTrue(journalpost.isBrukerHarTilgang());
+		} else {
+			assertFalse(journalpost.isBrukerHarTilgang());
+		}
 	}
 
 	private static void assertInngaaendeDokumenter(Journalpost journalpost) {
