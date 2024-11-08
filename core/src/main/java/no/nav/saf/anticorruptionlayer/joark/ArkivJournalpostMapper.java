@@ -75,7 +75,7 @@ public class ArkivJournalpostMapper {
 	public static final String ARKIVJOURNALPOST_OVERSTYRTINNSYN_STANDARD_BESKRIVELSE = "Standardreglene avgjør om dokumentet vises";
 	public static final String SKJULT_TITTEL = "*****";
 
-	private static final RandomGenerator randomGenerator = RandomGenerator.of("L64X128MixRandom");
+	private static final RandomGenerator randomGenerator = RandomGenerator.of("SecureRandom");
 
 	public static Journalpost mapJournalpost(ArkivJournalpost arkivJournalpost, RequestCache requestCache) {
 		if (arkivJournalpost == null) {
