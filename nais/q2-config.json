@@ -707,6 +707,11 @@
         "tema_ktr",
         "tema_kta"
       ]
+    },
+    {
+      "app": "sif-innsyn-api",
+      "namespace": "dusseldorf",
+      "cluster": "dev-gcp"
     }
   ]
 }
