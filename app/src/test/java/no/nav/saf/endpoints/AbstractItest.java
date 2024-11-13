@@ -29,7 +29,6 @@ import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.test.context.ActiveProfiles;
 
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -44,6 +43,8 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static com.github.tomakehurst.wiremock.core.Options.DYNAMIC_PORT;
 import static com.github.tomakehurst.wiremock.stubbing.Scenario.STARTED;
+import static java.net.URLEncoder.encode;
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Objects.requireNonNull;
 import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostMapper.SKJULT_TITTEL;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -199,7 +200,8 @@ public abstract class AbstractItest {
 	}
 
 	protected static void stubNavHrOrganisasjon(String organisasjonsnummer, String filename) {
-		stubFor(get("/hrnavorganisasjon/json/Hr/Nav_Orgnummer/ER_NAV_ORGNUMMER?ORGNUMMER_INN=" + organisasjonsnummer)
+		stubFor(get("/hrnavorganisasjon/ords/dvh/dt_hr/nav_organisasjon_orgnummer?q=" +
+				encode("{\"nav_org_nr\":\"" + organisasjonsnummer + "\"}", UTF_8))
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("nav/" + filename)));
@@ -866,6 +868,6 @@ public abstract class AbstractItest {
 
 	@SneakyThrows
 	protected String stringFromClasspath(String resourcename) {
-		return new String(requireNonNull(this.getClass().getClassLoader().getResourceAsStream(resourcename)).readAllBytes(), StandardCharsets.UTF_8);
+		return new String(requireNonNull(this.getClass().getClassLoader().getResourceAsStream(resourcename)).readAllBytes(), UTF_8);
 	}
 }
