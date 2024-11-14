@@ -47,7 +47,7 @@ public class NavHrOrganisasjonConsumer {
 			return nei(organisasjonsnummer);
 		}
 
-		NavHrOrganisasjonORDSResponse response = webClient.get()
+		return webClient.get()
 				.uri(uriBuilder -> uriBuilder.path("/ords/dvh/dt_hr/nav_organisasjon_orgnummer")
 						.queryParam("q", "{json}")
 						.build("{\"nav_org_nr\":\"" + organisasjonsnummer + "\"}"))
@@ -60,9 +60,9 @@ public class NavHrOrganisasjonConsumer {
 				.transformDeferred(CircuitBreakerOperator.of(circuitBreaker))
 				.switchIfEmpty(Mono.error(new DecodingException("Tom respons fra endepunkt")))
 				.doOnError(Throwable.class, e -> logError(organisasjonsnummer, circuitBreaker, e))
-				.onErrorReturn(new NavHrOrganisasjonORDSResponse(-1))
+				.mapNotNull(response -> response.count() > 0 ? ja(organisasjonsnummer) : nei(organisasjonsnummer))
+				.onErrorReturn(nei(organisasjonsnummer))
 				.block();
-		return response.count() > 0 ? ja(organisasjonsnummer) : nei(organisasjonsnummer);
 	}
 
 	private void logError(String organisasjonsnummer, CircuitBreaker circuitBreaker, Throwable e) {
