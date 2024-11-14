@@ -111,6 +111,9 @@ spec:
               {{/each}}
           {{/if}}
     {{/each}}
+    outbound:
+      external:
+        - host: dvh.adeo.no
   observability:
     autoInstrumentation:
       enabled: true
