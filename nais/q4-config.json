@@ -66,6 +66,11 @@
       ]
     },
     {
+      "app": "azure-token-generator",
+      "namespace": "aura",
+      "cluster": "dev-gcp"
+    },
+    {
       "app": "ida",
       "namespace": "traktor",
       "cluster": "prod-fss"
