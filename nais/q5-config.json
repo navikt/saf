@@ -27,7 +27,7 @@
   "SAF_ENDPOINTS_DOKARKIV_SCOPE": "api://dev-fss.teamdokumenthandtering.dokarkiv-q5/.default",
   "SAF_ENDPOINTS_FPSAK_URL": "http://fpsak.teamforeldrepenger.svc.nais.local/fpsak/api/pip/aktoer-for-sak",
   "SAF_ENDPOINTS_FPSAK_SCOPE": "api://dev-fss.teamforeldrepenger.fpsak/.default",
-  "SAF_ENDPOINTS_HR_NAV_URL": "https://tdv-p.adeo.no/",
+  "SAF_ENDPOINTS_HR_NAV_URL": "https://dvh.adeo.no/",
   "SAF_REDIS_HOSTNAME":  "saf-redis-q5",
   "RESTSECURITYTOKENSERVICE_URL": "https://security-token-service.dev.adeo.no/rest/v1/sts/token",
   "AZURE_IAC_RULES": [
@@ -47,6 +47,11 @@
       "app": "pensjon-pen-q5",
       "namespace": "pensjon-q5",
       "cluster": "dev-fss"
+    },
+    {
+      "app": "azure-token-generator",
+      "namespace": "aura",
+      "cluster": "dev-gcp"
     },
     {
       "app": "ida",

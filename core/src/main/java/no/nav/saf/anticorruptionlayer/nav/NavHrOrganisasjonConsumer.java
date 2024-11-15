@@ -17,6 +17,7 @@ import reactor.netty.http.client.HttpClientRequest;
 import java.util.regex.Pattern;
 
 import static java.time.Duration.ofSeconds;
+import static no.nav.saf.anticorruptionlayer.nav.NavHrOrganisasjonResponse.ja;
 import static no.nav.saf.anticorruptionlayer.nav.NavHrOrganisasjonResponse.nei;
 import static no.nav.saf.cache.LokalCacheConfig.HR_NAV_ORGANISASJON_CACHE;
 
@@ -47,18 +48,19 @@ public class NavHrOrganisasjonConsumer {
 		}
 
 		return webClient.get()
-				.uri(uriBuilder -> uriBuilder.path("/json/Hr/Nav_Orgnummer/ER_NAV_ORGNUMMER")
-						.queryParam("ORGNUMMER_INN", organisasjonsnummer)
-						.build())
+				.uri(uriBuilder -> uriBuilder.path("/ords/dvh/dt_hr/nav_organisasjon_orgnummer")
+						.queryParam("q", "{json}")
+						.build("{\"nav_org_nr\":\"" + organisasjonsnummer + "\"}"))
 				.httpRequest(httpRequest -> {
 					HttpClientRequest reactorRequest = httpRequest.getNativeRequest();
 					reactorRequest.responseTimeout(ofSeconds(5));
 				})
 				.retrieve()
-				.bodyToMono(NavHrOrganisasjonResponse.class)
+				.bodyToMono(NavHrOrganisasjonORDSResponse.class)
 				.transformDeferred(CircuitBreakerOperator.of(circuitBreaker))
 				.switchIfEmpty(Mono.error(new DecodingException("Tom respons fra endepunkt")))
 				.doOnError(Throwable.class, e -> logError(organisasjonsnummer, circuitBreaker, e))
+				.mapNotNull(response -> response.count() > 0 ? ja(organisasjonsnummer) : nei(organisasjonsnummer))
 				.onErrorReturn(nei(organisasjonsnummer))
 				.block();
 	}
