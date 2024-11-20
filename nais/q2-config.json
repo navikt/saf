@@ -311,7 +311,11 @@
     {
       "app": "pensjon-pen-q2",
       "namespace": "pensjon-q2",
-      "cluster": "dev-fss"
+      "cluster": "dev-fss",
+      "roles": [
+        "tema_pen",
+        "tema_ufo"
+      ]
     },
     {
       "app": "pensjon-pselv-q2",
