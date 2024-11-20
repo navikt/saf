@@ -510,7 +510,11 @@
     {
       "app": "pensjon-pen-q1",
       "namespace": "pensjon-q1",
-      "cluster": "dev-fss"
+      "cluster": "dev-fss",
+      "roles": [
+        "tema_pen",
+        "tema_ufo"
+      ]
     },
     {
       "app": "azure-token-generator",
