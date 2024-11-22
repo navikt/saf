@@ -21,6 +21,7 @@ import no.nav.saf.metrics.Monitor;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.pep.AbacAnswer;
 import no.nav.saf.tilgangskontroll.pep.Pep;
+import no.nav.safselvbetjening.tilgang.Ident;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -30,7 +31,11 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import static java.util.Collections.emptySet;
 import static no.nav.saf.graphql.ErrorCode.NOT_FOUND;
 import static no.nav.saf.query.dokumentoversikt.SideInfoMapper.mapFilteredSideInfo;
 import static no.nav.saf.tilgangskontroll.pep.DenyReasonFactory.createPep1gDenyReasonDokumentoversikt;
@@ -148,12 +153,13 @@ class DokumentoversiktBrukerQuery {
 				.toList()
 				.blockingGet();
 
+		Set<Ident> brukerIdenter = getBrukersIdenterFraTilgangBruker(tilgangBruker);
 		List<Journalpost> visningJournalposterSortert = filteredTilgangJournalpostList.stream()
 				.map(TilgangJournalpost::getJournalpostId)
 				.sorted(Comparator.reverseOrder())
 				.map(journalposter::get)
 				.map(journalpostDto ->
-						journalpostDtoMapper.mapJournalpostDto(journalpostDto, safRequestContext.getRequestCache()))
+						journalpostDtoMapper.mapJournalpostDto(journalpostDto, brukerIdenter, safRequestContext.getRequestCache()))
 				.filter(Objects::nonNull)
 				.toList();
 
@@ -175,6 +181,15 @@ class DokumentoversiktBrukerQuery {
 			String sisteJournalpostId = visningJournalposterSortert.getLast().getJournalpostId();
 			return journalpostDtoMap.get(Long.parseLong(sisteJournalpostId));
 		}
+	}
+
+	private static Set<Ident> getBrukersIdenterFraTilgangBruker(TilgangBruker tilgangBruker) {
+		if (tilgangBruker == null) {
+			return emptySet();
+		}
+		return Stream.concat(tilgangBruker.getAlleIdenter().stream(), tilgangBruker.getAlleAktoerIds().stream())
+				.map(Ident::of)
+				.collect(Collectors.toSet());
 	}
 
 	private boolean filterFeilregistrerte(DokumentoversiktBrukerArguments dokumentoversiktBrukerArguments, Journalpost j) {

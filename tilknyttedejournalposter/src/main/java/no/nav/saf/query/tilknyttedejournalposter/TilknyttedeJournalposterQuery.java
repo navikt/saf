@@ -21,6 +21,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static java.util.Collections.emptySet;
 import static no.nav.saf.util.MDCUtility.addMdcData;
 
 @Slf4j
@@ -101,7 +102,7 @@ public class TilknyttedeJournalposterQuery {
 				.map(TilgangJournalpost::getJournalpostId)
 				.map(arkivJournalposter::get)
 				.map(arkivJournalpost ->
-						ArkivJournalpostMapper.mapJournalpost(arkivJournalpost, safRequestContext.getRequestCache()))
+						ArkivJournalpostMapper.mapJournalpost(arkivJournalpost, emptySet(), safRequestContext.getRequestCache()))
 				.toList();
 	}
 

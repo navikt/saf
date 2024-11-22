@@ -42,16 +42,25 @@ import no.nav.saf.domain.visningsmodell.Tilleggsopplysning;
 import no.nav.saf.domain.visningsmodell.Utsendingsinfo;
 import no.nav.saf.tilgangskontroll.RequestCache;
 import no.nav.saf.tilgangskontroll.pep.AbacAnswer;
+import no.nav.safselvbetjening.tilgang.Ident;
+import no.nav.safselvbetjening.tilgang.TilgangDenyReason;
+import no.nav.safselvbetjening.tilgang.TilgangDokument;
+import no.nav.safselvbetjening.tilgang.TilgangGosysSak;
+import no.nav.safselvbetjening.tilgang.TilgangJournalpost;
+import no.nav.safselvbetjening.tilgang.TilgangPensjonSak;
+import no.nav.safselvbetjening.tilgang.TilgangSak;
+import no.nav.safselvbetjening.tilgang.UtledTilgangService;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.random.RandomGenerator;
+import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-import static java.util.Collections.emptyList;
+import static java.util.Collections.emptySet;
 import static no.nav.saf.anticorruptionlayer.joark.ArkivAvsenderMottakerMapper.mapArkivAvsenderMottaker;
 import static no.nav.saf.anticorruptionlayer.joark.ArkivUtsendingsInfoMapper.mapArkivUtsendingsInfo;
 import static no.nav.saf.anticorruptionlayer.joark.domain.kode.JournalpostTypeCode.U;
@@ -60,6 +69,7 @@ import static no.nav.saf.cache.KeyGeneratorLocalCaching.getKeyForPep2d;
 import static no.nav.saf.cache.KeyGeneratorLocalCaching.getKeyForPep5;
 import static no.nav.saf.cache.KeyGeneratorLocalCaching.getKeyForPep6d;
 import static no.nav.saf.cache.KeyGeneratorLocalCaching.getKeyForPep7d;
+import static no.nav.saf.domain.DomainConstants.SAF_SELVBETJENING_TIDLIGSTE_INNSYN;
 import static no.nav.saf.domain.DomainConstants.TIDSSONE_NORGE;
 import static no.nav.saf.domain.kode.Journalstatus.MOTTATT;
 import static no.nav.saf.domain.visningsmodell.RelevantDato.INVALID_DATE;
@@ -73,10 +83,11 @@ public class ArkivJournalpostMapper {
 	public static final String ARKIVJOURNALPOST_OVERSTYRTINNSYN_STANDARD = "BRUK_STANDARDREGLER";
 	public static final String ARKIVJOURNALPOST_OVERSTYRTINNSYN_STANDARD_BESKRIVELSE = "Standardreglene avgjør om dokumentet vises";
 	public static final String SKJULT_TITTEL = "*****";
+	public static final String TILKNYTTET_SOM_HOVEDDOKUMENT = "HOVEDDOKUMENT";
 
-	private static final RandomGenerator randomGenerator = RandomGenerator.of("SecureRandom");
+	private static final UtledTilgangService utledTilgangService = new UtledTilgangService(SAF_SELVBETJENING_TIDLIGSTE_INNSYN);
 
-	public static Journalpost mapJournalpost(ArkivJournalpost arkivJournalpost, RequestCache requestCache) {
+	public static Journalpost mapJournalpost(ArkivJournalpost arkivJournalpost, Set<Ident> brukerIdenter, RequestCache requestCache) {
 		if (arkivJournalpost == null) {
 			return null;
 		}
@@ -85,7 +96,9 @@ public class ArkivJournalpostMapper {
 		Tema tema = mapTema(arkivJournalpost, requestCache);
 		AvsenderMottaker avsenderMottaker = mapArkivAvsenderMottaker(arkivJournalpost);
 		Journalstatus journalstatus = mapJournalstatus(arkivJournalpost);
-		List<BrukerTilgangAvvistBegrunnelse> brukerTilgangAvvistBegrunnelser = mockBrukerTilgangAvvistBegrunnnelser();
+		Sak sak = mapSak(arkivJournalpost.saksrelasjon(), requestCache);
+		TilgangJournalpost tilgangJournalpost = arkivJournalpost.getJournalpostTilgang(mapTilgangSak(arkivJournalpost.saksrelasjon(), requestCache));
+		List<BrukerTilgangAvvistBegrunnelse> brukerTilgangAvvistBegrunnelser = mapbrukerTilgangAvvistBegrunnelser(utledTilgangService.utledTilgangJournalpost(tilgangJournalpost, brukerIdenter));
 
 		Journalpost journalpost = Journalpost.builder()
 				.journalpostId(journalpostId)
@@ -96,7 +109,7 @@ public class ArkivJournalpostMapper {
 				.temanavn(tema == null ? null : tema.getTemanavn())
 				.behandlingstema(arkivJournalpost.behandlingstema())
 				.behandlingstemanavn(arkivJournalpost.behandlingstemanavn())
-				.sak(mapSak(arkivJournalpost.saksrelasjon(), requestCache))
+				.sak(sak)
 				.bruker(mapBruker(arkivJournalpost.bruker(), arkivJournalpost.saksrelasjon(), requestCache))
 				.avsenderMottaker(avsenderMottaker)
 				.avsenderMottakerId(avsenderMottaker == null ? null : avsenderMottaker.getId())
@@ -121,7 +134,7 @@ public class ArkivJournalpostMapper {
 				.brukerHarTilgang(brukerTilgangAvvistBegrunnelser.isEmpty())
 				.build();
 
-		journalpost.getDokumenter().addAll(mapDokumenter(journalpost, arkivJournalpost, requestCache, brukerTilgangAvvistBegrunnelser));
+		journalpost.getDokumenter().addAll(mapDokumenter(tilgangJournalpost, journalpost, arkivJournalpost, requestCache));
 		return journalpost;
 	}
 
@@ -130,6 +143,36 @@ public class ArkivJournalpostMapper {
 			return originalTittel;
 		}
 		return SKJULT_TITTEL;
+	}
+
+
+	public static TilgangSak mapTilgangSak(ArkivSaksrelasjon saksrelasjon, RequestCache requestCache) {
+		if (saksrelasjon == null) {
+			return null;
+		}
+
+		if (saksrelasjon.isPensjonsak()) {
+			Arkivsak arkivsak = requestCache.getArkivsak(saksrelasjon);
+			if (arkivsak == null) {
+				return null;
+			}
+			return TilgangPensjonSak.builder()
+					.feilregistrert(saksrelasjon.feilregistrert() != null && saksrelasjon.feilregistrert())
+					.tema(arkivsak.getTema() != null ? arkivsak.getTema().getTemanavn() : null)
+					.foedselsnummer(Ident.of(arkivsak.getAktoerId()))
+					.build();
+		} else {
+			ArkivSak arkivSak = saksrelasjon.sak();
+			if (arkivSak == null) {
+				return null;
+			}
+			return TilgangGosysSak.builder()
+					.feilregistrert(saksrelasjon.feilregistrert() != null && saksrelasjon.feilregistrert())
+					.tema(arkivSak.tema())
+					.aktoerId(Ident.ofNullable(findFirstNonNull(arkivSak.aktoerId(), arkivSak.orgNr())))
+					.build();
+		}
+
 	}
 
 	private static Sak mapSak(ArkivSaksrelasjon saksrelasjon, RequestCache requestCache) {
@@ -387,7 +430,7 @@ public class ArkivJournalpostMapper {
 		return null;
 	}
 
-	private static List<DokumentInfo> mapDokumenter(Journalpost journalpost, ArkivJournalpost arkivJournalpost, RequestCache requestCache, List<BrukerTilgangAvvistBegrunnelse> brukerTilgangAvvistBegrunnelser) {
+	private static List<DokumentInfo> mapDokumenter(TilgangJournalpost tilgangJournalpost, Journalpost journalpost, ArkivJournalpost arkivJournalpost, RequestCache requestCache) {
 		if (arkivJournalpost.dokumenter() == null) {
 			return List.of();
 		}
@@ -402,18 +445,20 @@ public class ArkivJournalpostMapper {
 						.originalJournalpostId(dokumentinfo.originalJournalpostId() == null ? null : dokumentinfo.originalJournalpostId().toString())
 						.skjerming(mapSkjerming(dokumentinfo.skjerming()))
 						.dokumentvarianter(dokumentinfo.fildetaljer().stream()
-								.map(fildetaljer -> mapDokumentvariant(journalpost, requestCache, dokumentinfo, fildetaljer, brukerTilgangAvvistBegrunnelser))
+								.map(fildetaljer -> mapDokumentvariant(tilgangJournalpost, journalpost, requestCache, dokumentinfo, fildetaljer))
 								.filter(Objects::nonNull)
 								.collect(Collectors.toList()))
 						.logiskeVedlegg(mapLogiskeVedlegg(dokumentinfo, journalpost.getTema(), journalpost.getJournalstatus(), requestCache))
 						.build()).toList();
 	}
 
-	private static Dokumentvariant mapDokumentvariant(Journalpost journalpost, RequestCache requestCache, ArkivDokumentinfo dokumentinfo, ArkivFildetaljer fildetaljer, List<BrukerTilgangAvvistBegrunnelse> brukerTilgangAvvistBegrunnelser) {
+	private static Dokumentvariant mapDokumentvariant(TilgangJournalpost tilgangJournalpost, Journalpost journalpost, RequestCache requestCache, ArkivDokumentinfo dokumentinfo, ArkivFildetaljer fildetaljer) {
 		Variantformat variantformat = mapVariantformat(fildetaljer);
 		if (variantformat == null) {
 			return null;
 		}
+		TilgangDokument tilgangDokument = tilgangJournalpost.getDokumenter().stream().filter(dok -> dok.id() == dokumentinfo.dokumentInfoId()).findFirst().orElse(null);
+		List<BrukerTilgangAvvistBegrunnelse> brukerTilgangAvvistBegrunnelser = mapbrukerTilgangAvvistBegrunnelser(utledTilgangService.utledTilgangDokument(tilgangJournalpost, tilgangDokument, fildetaljer.getTilgangVariant(), emptySet()));
 		return Dokumentvariant.builder()
 				.saksbehandlerHarTilgang(determineSaksbehandlerTilgang(journalpost, dokumentinfo, fildetaljer, requestCache))
 				.variantformat(variantformat)
@@ -498,8 +543,8 @@ public class ArkivJournalpostMapper {
 	}
 
 	private static boolean getDecisionFromPep6d(String journalpostId, String dokumentInfoId, ArkivFildetaljer arkivFildetaljer, RequestCache requestCache) {
-		String variantFormat = arkivFildetaljer.format() == null ? null : arkivFildetaljer.format();
-		String skjerming = arkivFildetaljer.skjerming() == null ? null : arkivFildetaljer.skjerming();
+		String variantFormat = arkivFildetaljer.format();
+		String skjerming = arkivFildetaljer.skjerming();
 		String tilgangKeyPep6dLocalCaching = getKeyForPep6d(journalpostId, dokumentInfoId, variantFormat, skjerming);
 		return getCachedDecision(requestCache, tilgangKeyPep6dLocalCaching);
 	}
@@ -520,11 +565,39 @@ public class ArkivJournalpostMapper {
 		return abacAnswer != null && abacAnswer.isPermit();
 	}
 
-	public static List<BrukerTilgangAvvistBegrunnelse> mockBrukerTilgangAvvistBegrunnnelser() {
-		boolean simulateDeny = randomGenerator.nextBoolean();
-		if (simulateDeny) {
-			return List.of(new BrukerTilgangAvvistBegrunnelse("test_feil", "TEST brukeren har ikke tilgang til å se denne i selvbetjening TEST"));
-		}
-		return emptyList();
+	public static List<BrukerTilgangAvvistBegrunnelse> mapbrukerTilgangAvvistBegrunnelser(List<TilgangDenyReason> tilgangDenyReasons) {
+		return tilgangDenyReasons.stream()
+				.map(denyReason -> new BrukerTilgangAvvistBegrunnelse(
+						denyReason.reason,
+						mapTilgangAvvistHumanReadable(denyReason)
+				))
+				.toList();
+	}
+
+	private static String mapTilgangAvvistHumanReadable(TilgangDenyReason denyReason) {
+		return switch (denyReason) {
+			case DENY_REASON_ANNEN_PART ->
+					"Brukeren kan ikke se dokumentet fordi dokumentet er sendt til/fra andre parter enn bruker.";
+			case DENY_REASON_INNSYNSDATO ->
+					"Brukeren kan ikke se journalposten fordi journalposten er opprettet før tidligste innsynsdato (04.06.2016).";
+			case DENY_REASON_UGYLDIG_JOURNALSTATUS ->
+					"Brukeren kan ikke se journalposten fordi journalposten ikke har status ferdigstilt eller midlertidig.";
+			case DENY_REASON_FEILREGISTRERT ->
+					"Brukeren kan ikke se journalposten fordi journalposten er feilregistrert.";
+			case DENY_REASON_TEMAER_UNNTATT_INNSYN ->
+					"Brukeren kan ikke se journalposten fordi journalposten er markert som kontrollsak eller farskapssak.";
+			case DENY_REASON_GDPR -> "Brukeren kan ikke se journalposten ihht. GDPR.";
+			case DENY_REASON_FORVALTNINGSNOTAT ->
+					"Brukeren kan ikke se journalposten fordi journalposten er et notat, men hoveddokumentet er ikke et forvaltningsnotat.";
+			case DENY_REASON_SKJULT_INNSYN -> "Brukeren kan ikke se journalposten fordi journalposten er skjult.";
+			case DENY_REASON_SKANNET_DOKUMENT -> "Brukeren kan ikke se dokumentet fordi dokumentet er skannet.";
+			case DENY_REASON_UGYLDIG_VARIANTFORMAT ->
+					"Brukeren kan ikke se dokumentet fordi bruker kun kan se dokument med variantformat enten SLADDET eller ARKIV.";
+			case DENY_REASON_KASSERT -> "Brukeren kan ikke se dokumentet fordi dokumentet er kassert.";
+		};
+	}
+
+	private static String findFirstNonNull(String... str) {
+		return Stream.of(str).filter(Objects::nonNull).findFirst().orElse(null);
 	}
 }

@@ -32,6 +32,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 import static java.util.Collections.emptyList;
+import static java.util.Collections.emptySet;
 import static no.nav.saf.domain.kode.Journalstatus.FEILREGISTRERT;
 import static no.nav.saf.domain.tilgangsmodell.BaseTilgangMapper.mapTilgangJournalpost;
 import static no.nav.saf.util.MDCUtility.addMdcData;
@@ -112,7 +113,7 @@ class DokumentoversiktJournalstatusQuery {
 				.sorted(Comparator.reverseOrder())
 				.map(arkivJournalpostCache::get)
 				.map(arkivJournalpost ->
-						ArkivJournalpostMapper.mapJournalpost(arkivJournalpost, safRequestContext.getRequestCache()))
+						ArkivJournalpostMapper.mapJournalpost(arkivJournalpost, emptySet(), safRequestContext.getRequestCache()))
 				.filter(Objects::nonNull)
 				.filter(j -> dokumentoversiktJournalstatusArguments.getFilters().getTema().contains(j.getTema()))
 				.filter(j -> filterFeilregistrerte(dokumentoversiktJournalstatusArguments, j))

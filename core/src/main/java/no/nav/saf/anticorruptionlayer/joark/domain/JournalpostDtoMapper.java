@@ -3,6 +3,7 @@ package no.nav.saf.anticorruptionlayer.joark.domain;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.BrukerTypeCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.FagomradeCode;
+import no.nav.saf.anticorruptionlayer.joark.domain.kode.FagsystemCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.JournalpostTypeCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.Sakstype;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.dto.BrukerDto;
@@ -30,25 +31,35 @@ import no.nav.saf.domain.visningsmodell.Tilleggsopplysning;
 import no.nav.saf.domain.visningsmodell.Utsendingsinfo;
 import no.nav.saf.tilgangskontroll.RequestCache;
 import no.nav.saf.tilgangskontroll.pep.AbacAnswer;
+import no.nav.safselvbetjening.tilgang.Ident;
+import no.nav.safselvbetjening.tilgang.TilgangDokument;
+import no.nav.safselvbetjening.tilgang.TilgangGosysSak;
+import no.nav.safselvbetjening.tilgang.TilgangJournalpost;
+import no.nav.safselvbetjening.tilgang.TilgangPensjonSak;
+import no.nav.safselvbetjening.tilgang.TilgangSak;
+import no.nav.safselvbetjening.tilgang.UtledTilgangService;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static java.lang.Integer.valueOf;
+import static java.util.Collections.emptySet;
 import static java.util.Objects.nonNull;
 import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostMapper.ARKIVJOURNALPOST_OVERSTYRTINNSYN_STANDARD;
 import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostMapper.ARKIVJOURNALPOST_OVERSTYRTINNSYN_STANDARD_BESKRIVELSE;
 import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostMapper.SKJULT_TITTEL;
-import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostMapper.mockBrukerTilgangAvvistBegrunnnelser;
+import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostMapper.mapbrukerTilgangAvvistBegrunnelser;
 import static no.nav.saf.anticorruptionlayer.joark.domain.kode.JournalpostTypeCode.U;
 import static no.nav.saf.cache.KeyGeneratorLocalCaching.getKeyForPep2d;
 import static no.nav.saf.cache.KeyGeneratorLocalCaching.getKeyForPep5;
 import static no.nav.saf.cache.KeyGeneratorLocalCaching.getKeyForPep6d;
 import static no.nav.saf.cache.KeyGeneratorLocalCaching.getKeyForPep7d;
+import static no.nav.saf.domain.DomainConstants.SAF_SELVBETJENING_TIDLIGSTE_INNSYN;
 import static no.nav.saf.domain.kode.Journalstatus.MOTTATT;
 import static no.nav.saf.domain.visningsmodell.RelevantDato.INVALID_DATE;
 import static org.apache.commons.lang3.BooleanUtils.isTrue;
@@ -58,11 +69,12 @@ import static org.apache.commons.lang3.StringUtils.trim;
 @Slf4j
 @Component
 public class JournalpostDtoMapper {
-	private final AvsenderMottakerMapper avsenderMottakerMapper = new AvsenderMottakerMapper();
+	private static final AvsenderMottakerMapper avsenderMottakerMapper = new AvsenderMottakerMapper();
+	private static final UtledTilgangService utledTilgangService = new UtledTilgangService(SAF_SELVBETJENING_TIDLIGSTE_INNSYN);
 	static final String FILTYPE_PDF = "PDF";
 	static final String FILTYPE_PDFA = "PDFA";
 
-	public Journalpost mapJournalpostDto(final JournalpostDto journalpostDto, final RequestCache requestCache) {
+	public Journalpost mapJournalpostDto(JournalpostDto journalpostDto, Set<Ident> brukerIdenter, RequestCache requestCache) {
 		if (journalpostDto == null) {
 			return null;
 		}
@@ -71,7 +83,9 @@ public class JournalpostDtoMapper {
 
 		Tema tema = mapTema(journalpostDto, requestCache);
 		Journalstatus journalstatus = mapJournalstatus(journalpostDto);
-		List<BrukerTilgangAvvistBegrunnelse> brukerTilgangAvvistBegrunnelser = mockBrukerTilgangAvvistBegrunnnelser();
+		TilgangSak tilgangSak = mapTilgangSak(journalpostDto.getSaksrelasjon(), requestCache);
+		TilgangJournalpost tilgangJournalpost = journalpostDto.getJournalpostTilgang(tilgangSak);
+		List<BrukerTilgangAvvistBegrunnelse> brukerTilgangAvvistBegrunnelser = mapbrukerTilgangAvvistBegrunnelser(utledTilgangService.utledTilgangJournalpost(tilgangJournalpost, brukerIdenter));
 		Journalpost journalpost = Journalpost.builder()
 				.journalpostId(journalpostId)
 				.tittel(mapTittel(journalpostDto.getInnhold(), tema, journalstatus, requestCache))
@@ -126,18 +140,22 @@ public class JournalpostDtoMapper {
 								.getSafSkjerming()
 						)
 						.dokumentvarianter(dokumentInfoDto.getVarianter().stream()
-								.map(variantDto -> Dokumentvariant.builder()
-										.saksbehandlerHarTilgang(determineSaksbehandlerTilgang(journalpost, dokumentInfoDto, variantDto, requestCache))
-										.variantformat(variantDto.getVariantf().getSafVariantformat())
-										.filnavn(variantDto.getFilnavn())
-										.filuuid(variantDto.getFiluuid())
-										.filtype(mapFiltype(variantDto))
-										.skjerming(variantDto.getSkjerming() == null ? null : variantDto.getSkjerming()
-												.getSafSkjerming())
-										.filstoerrelse(isBlank(variantDto.getFilstorrelse()) ? 0 : valueOf(variantDto.getFilstorrelse()))
-										.brukerTilgangAvvistBegrunnelser(brukerTilgangAvvistBegrunnelser)
-										.brukerHarTilgang(brukerTilgangAvvistBegrunnelser.isEmpty())
-										.build())
+								.map(variantDto -> {
+									TilgangDokument tilgangDokument = tilgangJournalpost.getDokumenter().stream().filter(dok -> dok.id() == Long.parseLong(dokumentInfoDto.getDokumentInfoId())).findFirst().orElse(null);
+									List<BrukerTilgangAvvistBegrunnelse> variantBrukerTilgangAvvistBegrunnelser = mapbrukerTilgangAvvistBegrunnelser(utledTilgangService.utledTilgangDokument(tilgangJournalpost, tilgangDokument, variantDto.getTilgangVariant(), emptySet()));
+									return Dokumentvariant.builder()
+											.saksbehandlerHarTilgang(determineSaksbehandlerTilgang(journalpost, dokumentInfoDto, variantDto, requestCache))
+											.variantformat(variantDto.getVariantf().getSafVariantformat())
+											.filnavn(variantDto.getFilnavn())
+											.filuuid(variantDto.getFiluuid())
+											.filtype(mapFiltype(variantDto))
+											.skjerming(variantDto.getSkjerming() == null ? null : variantDto.getSkjerming()
+													.getSafSkjerming())
+											.filstoerrelse(isBlank(variantDto.getFilstorrelse()) ? 0 : valueOf(variantDto.getFilstorrelse()))
+											.brukerTilgangAvvistBegrunnelser(variantBrukerTilgangAvvistBegrunnelser)
+											.brukerHarTilgang(variantBrukerTilgangAvvistBegrunnelser.isEmpty())
+											.build();
+								})
 								.collect(Collectors.toList()))
 						.logiskeVedlegg(dokumentInfoDto.getLogiske().stream()
 								.map(logiskVedleggDto -> new LogiskVedlegg(logiskVedleggDto.getVedleggId(), mapTittel(logiskVedleggDto.getTittel(), tema, journalstatus, requestCache)))
@@ -250,6 +268,31 @@ public class JournalpostDtoMapper {
 					.tema(arkivsak.getTema())
 					.build();
 		}
+	}
+
+	public static TilgangSak mapTilgangSak(SaksrelasjonDto saksrelasjon, RequestCache requestCache) {
+		if (saksrelasjon == null) {
+			return null;
+		}
+
+		if (saksrelasjon.getFagsystem() == FagsystemCode.PEN) {
+			Arkivsak arkivsak = requestCache.getArkivsak(saksrelasjon);
+			if (arkivsak == null) {
+				return null;
+			}
+			return TilgangPensjonSak.builder()
+					.feilregistrert(saksrelasjon.getFeilregistrert() != null && saksrelasjon.getFeilregistrert())
+					.tema(arkivsak.getTema() != null ? arkivsak.getTema().getTemanavn() : null)
+					.foedselsnummer(Ident.of(arkivsak.getAktoerId()))
+					.build();
+		} else {
+			return TilgangGosysSak.builder()
+					.feilregistrert(saksrelasjon.getFeilregistrert() != null && saksrelasjon.getFeilregistrert())
+					.tema(saksrelasjon.getTema())
+					.aktoerId(Ident.ofNullable(saksrelasjon.getAktoerId()))
+					.build();
+		}
+
 	}
 
 	private Journalstatus mapJournalstatus(JournalpostDto journalpostDto) {

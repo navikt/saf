@@ -93,6 +93,11 @@
         }
         innsynsregel
         innsynsregelBeskrivelse
+        brukerHarTilgang
+        brukerTilgangAvvistBegrunnelser {
+          kode
+          begrunnelse
+        }
     }
 }
 

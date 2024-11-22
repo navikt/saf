@@ -9,6 +9,7 @@ import no.nav.saf.domain.kode.Journalposttype;
 import no.nav.saf.domain.kode.Journalstatus;
 import no.nav.saf.domain.kode.Tema;
 import no.nav.saf.domain.visningsmodell.AvsenderMottakerIdType;
+import no.nav.saf.domain.visningsmodell.BrukerTilgangAvvistBegrunnelse;
 import no.nav.saf.domain.visningsmodell.DokumentInfo;
 import no.nav.saf.domain.visningsmodell.Dokumentvariant;
 import no.nav.saf.domain.visningsmodell.Journalpost;
@@ -137,12 +138,10 @@ class JournalpostIT extends AbstractItest {
 		assertThat(journalpost.getTilleggsopplysninger().get(0).getVerdi()).isEqualTo("trippel-brille");
 		assertThat(journalpost.getEksternReferanseId()).isEqualTo("d35c8412-7b98-4a66-8fdd-51f44ed6c632HJE-DIGITAL-SOKNAD");
 		assertThat(journalpost.getUtsendingsinfo()).isNull();
+
 		assertNotNull(journalpost.getBrukerTilgangAvvistBegrunnelser());
-		if (journalpost.getBrukerTilgangAvvistBegrunnelser().isEmpty()) {
-			assertTrue(journalpost.isBrukerHarTilgang());
-		} else {
-			assertFalse(journalpost.isBrukerHarTilgang());
-		}
+		assertThat(journalpost.getBrukerTilgangAvvistBegrunnelser()).isEmpty();
+		assertThat(journalpost.isBrukerHarTilgang()).isTrue();
 	}
 
 	private static void assertInngaaendeDokumenter(Journalpost journalpost) {
@@ -254,6 +253,10 @@ class JournalpostIT extends AbstractItest {
 						tuple("SMS", null, "Du har fått et vedtak fra NAV. Les det i din digitale postkasse.", "+47NNNNNNNNN", LocalDateTime.parse("2023-11-10T10:48:14")));
 		assertThat(utsendingsInfo.getSmsVarselSendt()).isNull();
 		assertThat(utsendingsInfo.getFysiskpostSendt()).isNull();
+
+		assertNotNull(journalpost.getBrukerTilgangAvvistBegrunnelser());
+		assertThat(journalpost.getBrukerTilgangAvvistBegrunnelser()).isEmpty();
+		assertThat(journalpost.isBrukerHarTilgang()).isTrue();
 	}
 
 	@Test
@@ -264,6 +267,8 @@ class JournalpostIT extends AbstractItest {
 		Journalpost journalpost = parseJournalpost(journalpostQuery("journalpost_with_journalpostid_eksternreferanseid.query"));
 
 		assertThat(journalpost.getJournalpostId()).isEqualTo(JOURNALPOST_ID);
+		assertThat(journalpost.getBrukerTilgangAvvistBegrunnelser()).isNotNull().isEmpty();
+		assertThat(journalpost.isBrukerHarTilgang()).isTrue();
 	}
 
 	@Test
@@ -288,6 +293,9 @@ class JournalpostIT extends AbstractItest {
 		assertThat(journalpost.getSak().getTema()).isEqualTo(HJE);
 		assertThat(journalpost.getBruker().getId()).isEqualTo(AKTOER_ID);
 		assertThat(journalpost.getBruker().getType()).isEqualTo(AKTOERID);
+
+		assertThat(journalpost.getBrukerTilgangAvvistBegrunnelser()).isEmpty();
+		assertThat(journalpost.isBrukerHarTilgang()).isTrue();
 	}
 
 	@Test
@@ -295,7 +303,8 @@ class JournalpostIT extends AbstractItest {
 		abacPermit();
 		stubDokarkivJournalpost("journalpost-gsak-inngaaende-midlertidig.json");
 
-		Journalpost journalpost = parseJournalpost(journalpostQuery());
+		GraphQLResponse graphQLResponse = journalpostQuery();
+		Journalpost journalpost = parseJournalpost(graphQLResponse);
 		assertThat(journalpost.getJournalstatus()).isEqualTo(MOTTATT);
 		assertThat(journalpost.getTema()).isEqualTo(HJE);
 		assertThat(journalpost.getSak()).isNull();
@@ -311,6 +320,8 @@ class JournalpostIT extends AbstractItest {
 		assertThat(dokumentInfo.getTittel()).isEqualTo(expectedTittel);
 		assertThat(dokumentInfo.getDokumentvarianter().get(0).isSaksbehandlerHarTilgang()).isTrue();
 		assertThat(dokumentInfo.getLogiskeVedlegg().get(0).getTittel()).isEqualTo("Skjema");
+		assertThat(journalpost.getBrukerTilgangAvvistBegrunnelser()).containsExactly(new BrukerTilgangAvvistBegrunnelse("annen_part", "Brukeren kan ikke se dokumentet fordi dokumentet er sendt til/fra andre parter enn bruker."));
+		assertThat(journalpost.isBrukerHarTilgang()).isFalse();
 	}
 
 	@Test
@@ -332,6 +343,9 @@ class JournalpostIT extends AbstractItest {
 		assertThat(journalpost.getSak().getDatoOpprettet()).isEqualTo(LocalDateTime.parse("2015-06-01T00:00"));
 		assertThat(journalpost.getBruker().getId()).isEqualTo(AKTOER_ID);
 		assertThat(journalpost.getBruker().getType()).isEqualTo(AKTOERID);
+
+		assertThat(journalpost.getBrukerTilgangAvvistBegrunnelser()).isNotNull().isEmpty();
+		assertThat(journalpost.isBrukerHarTilgang()).isTrue();
 	}
 
 	@Test
@@ -369,6 +383,9 @@ class JournalpostIT extends AbstractItest {
 		assertThat(journalpost).isNotNull();
 		assertThat(journalpost.getBruker().getId()).isEqualTo("894705922");
 		assertThat(journalpost.getBruker().getType()).isEqualTo(ORGNR);
+
+		assertThat(journalpost.getBrukerTilgangAvvistBegrunnelser()).isNotNull().isEmpty();
+		assertThat(journalpost.isBrukerHarTilgang()).isTrue();
 	}
 
 	@Test
@@ -395,6 +412,9 @@ class JournalpostIT extends AbstractItest {
 		assertThat(journalpost).isNotNull();
 		assertThat(journalpost.getBruker().getId()).isEqualTo("894705922");
 		assertThat(journalpost.getBruker().getType()).isEqualTo(ORGNR);
+
+		assertThat(journalpost.getBrukerTilgangAvvistBegrunnelser()).isNotNull().isEmpty();
+		assertThat(journalpost.isBrukerHarTilgang()).isTrue();
 	}
 
 	@Test
@@ -410,6 +430,9 @@ class JournalpostIT extends AbstractItest {
 		assertThat(journalpost).isNotNull();
 		assertThat(journalpost.getBruker().getId()).isEqualTo("894705922");
 		assertThat(journalpost.getBruker().getType()).isEqualTo(ORGNR);
+
+		assertThat(journalpost.getBrukerTilgangAvvistBegrunnelser()).isNotNull().isEmpty();
+		assertThat(journalpost.isBrukerHarTilgang()).isTrue();
 	}
 
 	@Test
@@ -436,6 +459,9 @@ class JournalpostIT extends AbstractItest {
 		assertThat(journalpost).isNotNull();
 		assertThat(journalpost.getBruker().getId()).isEqualTo("894705922");
 		assertThat(journalpost.getBruker().getType()).isEqualTo(ORGNR);
+
+		assertThat(journalpost.getBrukerTilgangAvvistBegrunnelser()).isNotNull().isEmpty();
+		assertThat(journalpost.isBrukerHarTilgang()).isTrue();
 	}
 
 	@Test
@@ -449,6 +475,9 @@ class JournalpostIT extends AbstractItest {
 		assertThat(journalpost).isNotNull();
 		assertThat(journalpost.getBruker().getId()).isEqualTo("894705922");
 		assertThat(journalpost.getBruker().getType()).isEqualTo(ORGNR);
+
+		assertThat(journalpost.getBrukerTilgangAvvistBegrunnelser()).isNotNull().isEmpty();
+		assertThat(journalpost.isBrukerHarTilgang()).isTrue();
 	}
 
 	@Test
@@ -464,6 +493,9 @@ class JournalpostIT extends AbstractItest {
 		assertThat(journalpost).isNotNull();
 		assertThat(journalpost.getBruker().getId()).isEqualTo("894705922");
 		assertThat(journalpost.getBruker().getType()).isEqualTo(ORGNR);
+
+		assertThat(journalpost.getBrukerTilgangAvvistBegrunnelser()).isNotNull().isEmpty();
+		assertThat(journalpost.isBrukerHarTilgang()).isTrue();
 	}
 
 	@Test
@@ -521,6 +553,9 @@ class JournalpostIT extends AbstractItest {
 		assertThat(dokumentInfo.getTittel()).isEqualTo(SKJULT_TITTEL);
 		assertThat(dokumentInfo.getDokumentvarianter().get(0).isSaksbehandlerHarTilgang()).isFalse();
 		assertThat(dokumentInfo.getLogiskeVedlegg().get(0).getTittel()).isEqualTo(SKJULT_TITTEL);
+
+		assertThat(journalpost.getBrukerTilgangAvvistBegrunnelser()).isNotNull().isEmpty();
+		assertThat(journalpost.isBrukerHarTilgang()).isTrue();
 	}
 
 	@Test
@@ -551,6 +586,9 @@ class JournalpostIT extends AbstractItest {
 
 		Journalpost journalpost = parseJournalpost(journalpostQuery());
 		assertThat(journalpost.getDokumenter()).hasSize(1);
+
+		assertThat(journalpost.getBrukerTilgangAvvistBegrunnelser()).isNotNull().isEmpty();
+		assertThat(journalpost.isBrukerHarTilgang()).isTrue();
 	}
 
 	@Test
@@ -565,6 +603,9 @@ class JournalpostIT extends AbstractItest {
 				.hasSize(1)
 				.extracting(Dokumentvariant::getVariantformat, Dokumentvariant::isSaksbehandlerHarTilgang)
 				.contains(tuple(ARKIV, false));
+
+		assertThat(journalpost.getBrukerTilgangAvvistBegrunnelser()).isNotNull().isEmpty();
+		assertThat(journalpost.isBrukerHarTilgang()).isTrue();
 	}
 
 	@Test

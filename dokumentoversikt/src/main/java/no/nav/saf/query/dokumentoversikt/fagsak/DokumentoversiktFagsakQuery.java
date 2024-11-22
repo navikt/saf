@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import static java.util.Collections.emptySet;
 import static no.nav.saf.domain.kode.Journalstatus.FEILREGISTRERT;
 import static no.nav.saf.query.dokumentoversikt.SideInfoMapper.mapFilteredSideInfo;
 import static no.nav.saf.util.MDCUtility.addMdcData;
@@ -142,7 +143,7 @@ class DokumentoversiktFagsakQuery {
 				.sorted(Comparator.reverseOrder())
 				.map(journalposter::get)
 				.map(journalpostDto ->
-						journalpostDtoMapper.mapJournalpostDto(journalpostDto, safRequestContext.getRequestCache()))
+						journalpostDtoMapper.mapJournalpostDto(journalpostDto, emptySet(), safRequestContext.getRequestCache()))
 				.filter(Objects::nonNull)
 				.toList();
 
