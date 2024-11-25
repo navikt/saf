@@ -660,6 +660,14 @@
       ]
     },
     {
+      "app": "brev",
+      "namespace": "aap",
+      "cluster": "dev-gcp",
+      "roles": [
+        "tema_aap"
+      ]
+    },
+    {
       "app": "postmottak-backend",
       "namespace": "aap",
       "cluster": "dev-gcp",
