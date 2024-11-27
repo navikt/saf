@@ -16,6 +16,7 @@ import no.nav.saf.tilgangskontroll.pep.Pep;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -62,6 +63,9 @@ public class TilknyttedeJournalposterQuery {
 	public List<Journalpost> hentTilknyttedeJournalposter(String dokumentInfoId, SafRequestContext safRequestContext) {
 		addMdcData(safRequestContext);
 		List<ArkivJournalpost> journalposter = dokarkivTilknyttetJournalpostConsumer.hentTilknyttedeJournalposter(dokumentInfoId);
+		Map<Long, ArkivJournalpost> arkivJournalposter = journalposter.stream()
+				.collect(Collectors.toMap(ArkivJournalpost::journalpostId, arkivJournalpost -> arkivJournalpost));
+
 		Set<Arkivsak> arkivsaker = tilknyttedeJournalposterTilgangRepository.arkivsaker(journalposter, safRequestContext);
 
 		Set<TilgangBruker> filteredTilgangBruker = tilknyttedeJournalposterTilgangRepository.tilgangBrukere(arkivsaker, journalposter)
@@ -80,30 +84,26 @@ public class TilknyttedeJournalposterQuery {
 							} else {
 								return tilgangBruker.getOrgnummer().equals(tilgangSak.getOrgnummer());
 							}
-				}))
+						}))
 				.filter(tilgangSak -> pep2.hasAccess(tilgangSak, safRequestContext))
 				.peek(tilgangSak -> pep2d.hasAccess(tilgangSak, safRequestContext))
 				.filter(tilgangSak -> pep3.hasAccess(tilgangSak, safRequestContext))
 				.peek(tilgangSak -> pep7d.hasAccess(tilgangSak, safRequestContext))
 				.collect(Collectors.toSet());
 
-		List<TilgangJournalpost> filteredTilgangJournalposter = tilknyttedeJournalposterTilgangRepository.tilgangJournalposter(filteredTilgangSaker, journalposter)
+		return tilknyttedeJournalposterTilgangRepository.tilgangJournalposter(filteredTilgangSaker, journalposter)
 				.stream()
-				.filter(tj -> pep4.hasAccess(tj, safRequestContext))
-				.peek(tj -> tj.getDokumenter().forEach(td -> {
+				.filter(tj1 -> pep4.hasAccess(tj1, safRequestContext))
+				.peek(tj1 -> tj1.getDokumenter().forEach(td -> {
 					pep5.hasAccess(td, safRequestContext);
 					td.getTilgangDokumentvarianter().forEach(tdv -> pep6d.hasAccess(tdv, safRequestContext));
 				}))
-				.collect(Collectors.toList());
-
-		return mapArkivJournalpost(filteredTilgangJournalposter, safRequestContext);
+				.map(TilgangJournalpost::getJournalpostId)
+				.map(Long::parseLong)
+				.map(arkivJournalposter::get)
+				.map(arkivJournalpost ->
+						ArkivJournalpostMapper.mapJournalpost(arkivJournalpost, safRequestContext.getRequestCache()))
+				.toList();
 	}
 
-	private List<Journalpost> mapArkivJournalpost(final List<TilgangJournalpost> tilgangJournalposts, final SafRequestContext safRequestContext) {
-		return tilgangJournalposts.stream()
-				.map(tj -> {
-					ArkivJournalpost arkivJournalpost = safRequestContext.getRequestCache().getArkivJournalpost(tj.getJournalpostId());
-					return ArkivJournalpostMapper.mapJournalpost(arkivJournalpost, safRequestContext.getRequestCache());
-				}).collect(Collectors.toList());
-	}
 }

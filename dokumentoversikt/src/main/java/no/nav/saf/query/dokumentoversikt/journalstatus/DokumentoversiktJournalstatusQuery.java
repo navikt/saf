@@ -3,8 +3,10 @@ package no.nav.saf.query.dokumentoversikt.journalstatus;
 import io.reactivex.rxjava3.core.Flowable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 import lombok.extern.slf4j.Slf4j;
+import no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostMapper;
 import no.nav.saf.anticorruptionlayer.joark.domain.ArkivsakMapper;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.JournalStatusCode;
+import no.nav.saf.anticorruptionlayer.joark.safintern.journalpost.ArkivJournalpost;
 import no.nav.saf.anticorruptionlayer.joark.safintern.journalpost.PaginatedArkivJournalpost;
 import no.nav.saf.domain.TilgangsmodellRepository;
 import no.nav.saf.domain.kode.Journalstatus;
@@ -16,7 +18,6 @@ import no.nav.saf.domain.visningsmodell.Journalpost;
 import no.nav.saf.domain.visningsmodell.SideInfo;
 import no.nav.saf.exceptions.UgyldigInputException;
 import no.nav.saf.metrics.Monitor;
-import no.nav.saf.query.dokumentoversikt.DokumentoversiktVisningsmodellRepository;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.pep.Pep;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +25,10 @@ import org.springframework.stereotype.Component;
 
 import java.util.Comparator;
 import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 import static java.util.Collections.emptyList;
@@ -45,19 +49,16 @@ class DokumentoversiktJournalstatusQuery {
 	}
 
 	private final TilgangsmodellRepository tilgangsmodellRepository;
-	private final DokumentoversiktVisningsmodellRepository visningsmodellRepository;
 	private final Pep<TilgangJournalpost> pep4;
 	private final Pep<TilgangDokumentInfo> pep5;
 	private final Pep<TilgangDokumentvariant> pep6d;
 
 	@Autowired
 	public DokumentoversiktJournalstatusQuery(TilgangsmodellRepository tilgangsmodellRepository,
-											  DokumentoversiktVisningsmodellRepository visningsmodellRepository,
 											  @Autowired Pep<TilgangJournalpost> pep4,
 											  @Autowired Pep<TilgangDokumentInfo> pep5,
 											  @Autowired Pep<TilgangDokumentvariant> pep6d) {
 		this.tilgangsmodellRepository = tilgangsmodellRepository;
-		this.visningsmodellRepository = visningsmodellRepository;
 		this.pep4 = pep4;
 		this.pep5 = pep5;
 		this.pep6d = pep6d;
@@ -65,7 +66,6 @@ class DokumentoversiktJournalstatusQuery {
 
 	@Monitor(value = "dok_request", extraTags = {"process", "dokumentOversikt", "requestType", "journalstatus"}, histogram = true)
 	public Dokumentoversikt hentDokumentoversikt(DokumentoversiktJournalstatusArguments dokumentoversiktJournalstatusArguments, SafRequestContext safRequestContext) {
-
 		JournalStatusCode journalstatus = validateAndGetJournalstatus(dokumentoversiktJournalstatusArguments.getFilters().getJournalstatuser());
 
 		Optional<PaginatedArkivJournalpost> paginatedArkivJournalpost = tilgangsmodellRepository.findTilgangJournalposterStatus(
@@ -75,9 +75,16 @@ class DokumentoversiktJournalstatusQuery {
 				dokumentoversiktJournalstatusArguments.getPagination().getFoerste(),
 				dokumentoversiktJournalstatusArguments.getPagination().getEtterPeker());
 
-		final List<TilgangJournalpost> tilgangJournalpostList = paginatedArkivJournalpost
-				.map(journalposter -> cacheAndMapTilgangJournalposts(safRequestContext, journalposter))
-				.orElse(emptyList());
+		Map<Long, ArkivJournalpost> arkivJournalpostCache = new HashMap<>();
+
+		final List<TilgangJournalpost> tilgangJournalpostList =
+				paginatedArkivJournalpost.map(PaginatedArkivJournalpost::journalposter).orElse(emptyList())
+						.stream()
+						.map(journalpost -> {
+							arkivJournalpostCache.put(journalpost.journalpostId(), journalpost);
+							return mapTilgangJournalpost(journalpost);
+						})
+						.toList();
 
 		final List<TilgangJournalpost> filteredTilgangJournalpostList = Flowable.fromIterable(tilgangJournalpostList)
 				.parallel(10)
@@ -94,12 +101,20 @@ class DokumentoversiktJournalstatusQuery {
 				.blockingGet();
 
 		// cache evt. saksinfo for bruk ved mapping til Journalpost
-		mapOgCacheArkivsaker(filteredTilgangJournalpostList, safRequestContext);
+		filteredTilgangJournalpostList.stream()
+				.map(tj -> arkivJournalpostCache.get(Long.parseLong(tj.getJournalpostId())))
+				.filter(jp -> jp.saksrelasjon() != null)
+				.map(ArkivsakMapper::mapArkivsak)
+				.forEach(arkivsak -> safRequestContext.getRequestCache().putArkivsak(arkivsak));
 
-		List<Journalpost> journalposter = visningsmodellRepository.findJournalposterCurrent(filteredTilgangJournalpostList.stream()
-								.map(TilgangJournalpost::getJournalpostId)
-								.sorted(Comparator.reverseOrder())
-						, safRequestContext)
+		List<Journalpost> journalposter = filteredTilgangJournalpostList.stream()
+				.map(TilgangJournalpost::getJournalpostId)
+				.sorted(Comparator.reverseOrder())
+				.map(Long::parseLong)
+				.map(arkivJournalpostCache::get)
+				.map(arkivJournalpost ->
+						ArkivJournalpostMapper.mapJournalpost(arkivJournalpost, safRequestContext.getRequestCache()))
+				.filter(Objects::nonNull)
 				.filter(j -> dokumentoversiktJournalstatusArguments.getFilters().getTema().contains(j.getTema()))
 				.filter(j -> filterFeilregistrerte(dokumentoversiktJournalstatusArguments, j))
 				.toList();
@@ -132,21 +147,4 @@ class DokumentoversiktJournalstatusQuery {
 		return true;
 	}
 
-	public static void mapOgCacheArkivsaker(final List<TilgangJournalpost> filteredTilgangJournalpostList, final SafRequestContext safRequestContext) {
-		filteredTilgangJournalpostList.stream()
-				.map(tj -> safRequestContext.getRequestCache().getArkivJournalpost(tj.getJournalpostId()))
-				.filter(jp -> jp.saksrelasjon() != null)
-				.map(ArkivsakMapper::mapArkivsak)
-				.forEach(arkivsak -> safRequestContext.getRequestCache().putArkivsak(arkivsak));
-	}
-
-	public List<TilgangJournalpost> cacheAndMapTilgangJournalposts(SafRequestContext safRequestContext, PaginatedArkivJournalpost journalpostPage) {
-		return journalpostPage.journalposter().stream()
-				.map(journalpost -> {
-					safRequestContext.getRequestCache()
-							.putArkivJournalpost(journalpost);
-					return mapTilgangJournalpost(journalpost);
-				})
-				.toList();
-	}
 }

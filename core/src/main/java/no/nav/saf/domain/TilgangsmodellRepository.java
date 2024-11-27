@@ -20,11 +20,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static java.util.Collections.emptyMap;
 import static java.util.Collections.emptySet;
 
 @Repository
@@ -41,37 +42,32 @@ public class TilgangsmodellRepository {
 		this.dokarkivConsumer = dokarkivConsumer;
 	}
 
-	public List<TilgangJournalpost> findTilgangJournalposter(List<TilgangBruker> tilgangBrukere,
-															 List<TilgangSak> tilgangSakList,
-															 LocalDate fraDato,
-															 LocalDate tilDato,
-															 List<Journalposttype> inkluderJournalposttyper,
-															 List<Journalstatus> inkluderJournalstatuses,
-															 Integer foerste, String etterPeker,
-															 SafRequestContext safRequestContext) {
+	public Map<Long, JournalpostDto> findJournalposter(List<TilgangBruker> tilgangBrukere,
+													   List<TilgangSak> tilgangSakList,
+													   LocalDate fraDato,
+													   LocalDate tilDato,
+													   List<Journalposttype> inkluderJournalposttyper,
+													   List<Journalstatus> inkluderJournalstatuses,
+													   Integer foerste, String etterPeker,
+													   SafRequestContext safRequestContext) {
 		try {
 			List<String> identer = tilgangBrukere.stream()
 					.flatMap(t -> t.getAlleIdenter().stream())
-					.collect(Collectors.toList());
-			List<JournalpostDto> journalposter = joarkAntiCorruptionLayer.finnJournalposter(identer,
-					tilgangSakList, fraDato, tilDato, inkluderJournalposttyper, inkluderJournalstatuses, foerste, etterPeker);
-			return journalposter.stream()
-					.map(journalpostDto -> {
-						safRequestContext.getRequestCache()
-								.putJournalpost(journalpostDto.getJournalpostId().toString(), journalpostDto);
-						return mapTilgangJournalpost(journalpostDto);
-					})
-					.collect(Collectors.toList());
+					.toList();
+			return joarkAntiCorruptionLayer.finnJournalposter(identer,
+							tilgangSakList, fraDato, tilDato, inkluderJournalposttyper, inkluderJournalstatuses, foerste, etterPeker)
+					.stream()
+					.collect(Collectors.toMap(JournalpostDto::getJournalpostId, journalpost -> journalpost));
 		} catch (Exception e) {
 			if (tilgangSakList.size() < MAX_ARKIVSAKER_LOGG) {
 				List<String> arkivsaksId = tilgangSakList.stream()
 						.map(TilgangSak::getArkivsaksnummer)
-						.collect(Collectors.toList());
+						.toList();
 				log.error("finnJournalposter feilet ved henting av journalposter på arkivsaker={}.", arkivsaksId, e);
 			} else {
 				log.error("finnJournalposter feilet ved henting av journalposter på arkivsaker. Det var flere enn 1000 arkivsaker. Disse logges ikke da så lange logglinjer ikke støttes i logstash.", e);
 			}
-			return new ArrayList<>();
+			return emptyMap();
 		}
 	}
 
@@ -89,7 +85,7 @@ public class TilgangsmodellRepository {
 		}
 	}
 
-	private TilgangJournalpost mapTilgangJournalpost(JournalpostDto dto) {
+	public static TilgangJournalpost mapTilgangJournalpost(JournalpostDto dto) {
 		return TilgangJournalpost.builder()
 				.journalpostId(dto.getJournalpostId().toString())
 				.journalstatus(dto.getJournalstatus().toSafJournalstatus())
@@ -105,9 +101,9 @@ public class TilgangsmodellRepository {
 										.journalpostId(dto.getJournalpostId().toString())
 										.dokumentInfoId(dokdto.getDokumentInfoId())
 										.build())
-								.collect(Collectors.toList())
+								.toList()
 						)
-						.build()).collect(Collectors.toList()))
+						.build()).toList())
 				.build();
 	}
 }

@@ -2,9 +2,7 @@ package no.nav.saf.tilgangskontroll;
 
 import lombok.Getter;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.FagsystemCode;
-import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.dto.JournalpostDto;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.dto.SaksrelasjonDto;
-import no.nav.saf.anticorruptionlayer.joark.safintern.journalpost.ArkivJournalpost;
 import no.nav.saf.anticorruptionlayer.joark.safintern.journalpost.ArkivSaksrelasjon;
 import no.nav.saf.domain.Arkivsak;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
@@ -30,14 +28,6 @@ public class RequestCache {
 		holder.put(key, abacAnswer);
 	}
 
-	public void putArkivJournalpost(ArkivJournalpost object) {
-		holder.put(object.journalpostId().toString(), object);
-	}
-
-	public void putJournalpost(String key, JournalpostDto object) {
-		holder.put(key, object);
-	}
-
 	public void putArkivsak(Arkivsak arkivsak) {
 		holder.put(arkivsak.getKey(), arkivsak);
 	}
@@ -48,14 +38,6 @@ public class RequestCache {
 
 	public AbacAnswer getCachedDecision(String key) {
 		return (AbacAnswer) holder.get(key);
-	}
-
-	public JournalpostDto getJournalpost(String key) {
-		return (JournalpostDto) holder.get(key);
-	}
-
-	public ArkivJournalpost getArkivJournalpost(String key) {
-		return (ArkivJournalpost) holder.get(key);
 	}
 
 	public TilgangBruker getTilgangBruker() {

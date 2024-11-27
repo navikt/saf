@@ -3,6 +3,7 @@ package no.nav.saf.query.dokumentoversikt.bruker;
 import io.reactivex.rxjava3.core.Flowable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 import lombok.extern.slf4j.Slf4j;
+import no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoMapper;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.FagomradeCode;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.dto.JournalpostDto;
 import no.nav.saf.domain.TilgangsmodellRepository;
@@ -17,7 +18,6 @@ import no.nav.saf.domain.visningsmodell.Journalpost;
 import no.nav.saf.exceptions.SafFunctionalException;
 import no.nav.saf.exceptions.TilgangskontrollException;
 import no.nav.saf.metrics.Monitor;
-import no.nav.saf.query.dokumentoversikt.DokumentoversiktVisningsmodellRepository;
 import no.nav.saf.query.dokumentoversikt.SideInfoMapper;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.pep.AbacAnswer;
@@ -29,7 +29,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Map;
+import java.util.Objects;
 
 import static no.nav.saf.graphql.ErrorCode.NOT_FOUND;
 import static no.nav.saf.tilgangskontroll.pep.DenyReasonFactory.createPep1gDenyReasonDokumentoversikt;
@@ -41,10 +42,8 @@ class DokumentoversiktBrukerQuery {
 
 	public static final String PERSON_IKKE_FUNNET_REASON = """
 			Fant ikke bruker i Persondataløsningen (PDL). Kan derfor ikke slå opp dokumentoversikten til bruker. Hvis du ser dette i test, forsøk å gjenopprett brukeren i Dolly. Hvis det ikke hjelper, ta kontakt med #team_dokumentløsninger på slack""";
-	private final SideInfoMapper sideInfoMapper = new SideInfoMapper();
 	private final DokumentoversiktBrukerTilgangsmodellRepository dokumentoversiktBrukerTilgangsmodellRepository;
 	private final TilgangsmodellRepository tilgangsmodellRepository;
-	private final DokumentoversiktVisningsmodellRepository visningsmodellRepository;
 	private final Pep<TilgangBruker> pep1g;
 	private final Pep<TilgangSak> pep2;
 	private final Pep<TilgangSak> pep2d;
@@ -53,11 +52,11 @@ class DokumentoversiktBrukerQuery {
 	private final Pep<TilgangDokumentInfo> pep5;
 	private final Pep<TilgangDokumentvariant> pep6d;
 	private final Pep<TilgangSak> pep7d;
+	private final JournalpostDtoMapper journalpostDtoMapper = new JournalpostDtoMapper();
 
 	@Autowired
 	public DokumentoversiktBrukerQuery(DokumentoversiktBrukerTilgangsmodellRepository dokumentoversiktBrukerTilgangsmodellRepository,
 									   TilgangsmodellRepository tilgangsmodellRepository,
-									   DokumentoversiktVisningsmodellRepository visningsmodellRepository,
 									   @Autowired Pep<TilgangBruker> pep1g,
 									   @Autowired Pep<TilgangSak> pep2,
 									   @Autowired Pep<TilgangSak> pep2d,
@@ -69,7 +68,6 @@ class DokumentoversiktBrukerQuery {
 	) {
 		this.dokumentoversiktBrukerTilgangsmodellRepository = dokumentoversiktBrukerTilgangsmodellRepository;
 		this.tilgangsmodellRepository = tilgangsmodellRepository;
-		this.visningsmodellRepository = visningsmodellRepository;
 		this.pep1g = pep1g;
 		this.pep2 = pep2;
 		this.pep2d = pep2d;
@@ -110,7 +108,7 @@ class DokumentoversiktBrukerQuery {
 				.sequential()
 				.toList().blockingGet();
 
-		List<TilgangJournalpost> tilgangJournalposter = tilgangsmodellRepository.findTilgangJournalposter(
+		Map<Long, JournalpostDto> journalposter = tilgangsmodellRepository.findJournalposter(
 				Collections.singletonList(tilgangBruker),
 				filteredTilgangSakList,
 				dokumentoversiktBrukerArguments.getFilters().getFraDato(),
@@ -121,6 +119,9 @@ class DokumentoversiktBrukerQuery {
 				dokumentoversiktBrukerArguments.getPagination().getEtterPeker(),
 				safRequestContext
 		);
+		List<TilgangJournalpost> tilgangJournalposter = journalposter.values().stream()
+				.map(TilgangsmodellRepository::mapTilgangJournalpost)
+				.toList();
 
 		// Pep2 og pep2d må utføres på midlertidige journalposter, da disse først dukker opp på bruker-søk i joark i forrige steg.
 		final List<TilgangJournalpost> filteredTilgangJournalpostList = Flowable.fromIterable(tilgangJournalposter)
@@ -128,7 +129,7 @@ class DokumentoversiktBrukerQuery {
 				.runOn(Schedulers.io())
 				.doOnNext(ts -> addMdcData(safRequestContext))
 				.filter(tj -> pep4.hasAccess(tj, safRequestContext))
-				.filter(tj -> pep2CheckMidlertidigAccess(tj, safRequestContext))
+				.filter(tj -> pep2CheckMidlertidigAccess(tj, safRequestContext, journalposter))
 				.sequential()
 				.toList()
 				.blockingGet();
@@ -148,22 +149,34 @@ class DokumentoversiktBrukerQuery {
 				.toList()
 				.blockingGet();
 
-		List<Journalpost> visningJournalposterSortert = visningsmodellRepository.findJournalposter(filteredTilgangJournalpostList.stream()
+		List<Journalpost> visningJournalposterSortert = filteredTilgangJournalpostList.stream()
 				.map(TilgangJournalpost::getJournalpostId)
 				.sorted(Comparator.reverseOrder())
-				.collect(Collectors.toList()), safRequestContext);
+				.map(Long::parseLong)
+				.map(journalposter::get)
+				.map(journalpostDto ->
+						journalpostDtoMapper.mapJournalpostDto(journalpostDto, safRequestContext.getRequestCache()))
+				.filter(Objects::nonNull)
+				.toList();
 
 		List<Journalpost> visningJournalposterFiltrert = visningJournalposterSortert.stream()
 				.filter(j -> dokumentoversiktBrukerArguments.getFilters().getTema().contains(j.getTema()))
 				.filter(j -> filterFeilregistrerte(dokumentoversiktBrukerArguments, j))
-				.collect(Collectors.toList());
-
-		var sisteJournalpostId = tilgangJournalposter.isEmpty() ? null : tilgangJournalposter.getLast().getJournalpostId();
+				.toList();
 
 		return Dokumentoversikt.builder()
 				.journalposter(visningJournalposterFiltrert)
-				.sideInfo(sideInfoMapper.mapFilteredSideInfo(sisteJournalpostId, visningJournalposterFiltrert, safRequestContext))
+				.sideInfo(SideInfoMapper.mapFilteredSideInfo(getLastJournalpostOnPage(journalposter, visningJournalposterSortert), visningJournalposterFiltrert))
 				.build();
+	}
+
+	private static JournalpostDto getLastJournalpostOnPage(Map<Long, JournalpostDto> journalpostDtoMap, List<Journalpost> visningJournalposterSortert) {
+		if (visningJournalposterSortert.isEmpty()) {
+			return null;
+		} else {
+			String sistJournalpostId = visningJournalposterSortert.getLast().getJournalpostId();
+			return journalpostDtoMap.get(Long.parseLong(sistJournalpostId));
+		}
 	}
 
 	private boolean filterFeilregistrerte(DokumentoversiktBrukerArguments dokumentoversiktBrukerArguments, Journalpost j) {
@@ -173,18 +186,16 @@ class DokumentoversiktBrukerQuery {
 		return true;
 	}
 
-	private boolean pep2CheckMidlertidigAccess(TilgangJournalpost tj, SafRequestContext safRequestContext) {
+	private boolean pep2CheckMidlertidigAccess(TilgangJournalpost tj, SafRequestContext safRequestContext, Map<Long, JournalpostDto> journalpostDtoMap) {
 		if (tj.getJournalstatus() == Journalstatus.MOTTATT) {
-			TilgangSak midlertidigTilgangSak = mapToTilgangSak(tj.getJournalpostId(), safRequestContext);
+			TilgangSak midlertidigTilgangSak = mapToTilgangSak(journalpostDtoMap.get(Long.parseLong(tj.getJournalpostId())));
 			return pep2.hasAccess(midlertidigTilgangSak, safRequestContext);
 		} else {
 			return true;
 		}
 	}
 
-	private TilgangSak mapToTilgangSak(String journalpostId, SafRequestContext safRequestContext) {
-		JournalpostDto journalpostDto = safRequestContext.getRequestCache().getJournalpost(journalpostId);
-
+	private TilgangSak mapToTilgangSak(JournalpostDto journalpostDto) {
 		return TilgangSak.builder()
 				.tema(FagomradeCode.toSafTema(journalpostDto.getFagomrade()))
 				.relevanteTredjeparter(new ArrayList<>())

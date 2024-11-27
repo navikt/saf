@@ -55,9 +55,6 @@ public class TilknyttedeJournalposterTilgangRepository {
 	}
 
 	Set<Arkivsak> arkivsaker(List<ArkivJournalpost> tilknyttetArkivJournalposter, SafRequestContext safRequestContext) {
-		tilknyttetArkivJournalposter.forEach(arkivJournalpost ->
-				safRequestContext.getRequestCache().putArkivJournalpost(arkivJournalpost));
-
 		return tilknyttetArkivJournalposter.stream()
 				.filter(ArkivJournalpost::isTilknyttetSak)
 				.map(arkivJournalpost -> {
@@ -205,7 +202,7 @@ public class TilknyttedeJournalposterTilgangRepository {
 					}
 				})
 				.map(this::mapTilgangJournalpost)
-				.collect(Collectors.toList());
+				.toList();
 	}
 
 	private TilgangJournalpost mapTilgangJournalpost(ArkivJournalpost arkivJournalpost) {
@@ -225,9 +222,9 @@ public class TilknyttedeJournalposterTilgangRepository {
 												.journalpostId(arkivJournalpost.journalpostId().toString())
 												.dokumentInfoId(dokdto.dokumentInfoId().toString())
 												.build())
-										.collect(Collectors.toList())
+										.toList()
 								)
-								.build()).collect(Collectors.toList()))
+								.build()).toList())
 				.build();
 	}
 }
