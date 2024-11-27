@@ -6,10 +6,10 @@ import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.dto.SaksrelasjonD
 import no.nav.saf.anticorruptionlayer.joark.safintern.journalpost.ArkivSaksrelasjon;
 import no.nav.saf.domain.Arkivsak;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
-import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 import no.nav.saf.tilgangskontroll.pep.AbacAnswer;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static no.nav.saf.domain.DomainConstants.TILGANG_BRUKER;
@@ -40,12 +40,8 @@ public class RequestCache {
 		return (AbacAnswer) holder.get(key);
 	}
 
-	public TilgangBruker getTilgangBruker() {
-		return (TilgangBruker) holder.get(TILGANG_BRUKER);
-	}
-
-	public Arkivsak getArkivsak(TilgangSak sak) {
-		return (Arkivsak) holder.get(sak.getArkivsaksnummer() + sak.getArkivsaksystem());
+	public Optional<TilgangBruker> getTilgangBruker() {
+		return Optional.ofNullable((TilgangBruker) holder.get(TILGANG_BRUKER));
 	}
 
 	public Arkivsak getArkivsak(SaksrelasjonDto saksrelasjon) {

@@ -3,17 +3,14 @@ package no.nav.saf.query.sak;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.Sakstype;
 import no.nav.saf.domain.Arkivsak;
-import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 import no.nav.saf.domain.visningsmodell.Sak;
-import no.nav.saf.tilgangskontroll.RequestCache;
 import org.springframework.stereotype.Component;
 
 @Slf4j
 @Component
 public class SakMapper {
 
-	public Sak mapSak(TilgangSak sak, RequestCache requestCache) {
-		Arkivsak arkivsak = requestCache.getArkivsak(sak);
+	public Sak mapSak(Arkivsak arkivsak) {
 		if (arkivsak == null) {
 			return null;
 		}
