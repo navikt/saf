@@ -102,7 +102,7 @@ class DokumentoversiktJournalstatusQuery {
 
 		// cache evt. saksinfo for bruk ved mapping til Journalpost
 		filteredTilgangJournalpostList.stream()
-				.map(tj -> arkivJournalpostCache.get(Long.parseLong(tj.getJournalpostId())))
+				.map(tj -> arkivJournalpostCache.get(tj.getJournalpostId()))
 				.filter(jp -> jp.saksrelasjon() != null)
 				.map(ArkivsakMapper::mapArkivsak)
 				.forEach(arkivsak -> safRequestContext.getRequestCache().putArkivsak(arkivsak));
@@ -110,7 +110,6 @@ class DokumentoversiktJournalstatusQuery {
 		List<Journalpost> journalposter = filteredTilgangJournalpostList.stream()
 				.map(TilgangJournalpost::getJournalpostId)
 				.sorted(Comparator.reverseOrder())
-				.map(Long::parseLong)
 				.map(arkivJournalpostCache::get)
 				.map(arkivJournalpost ->
 						ArkivJournalpostMapper.mapJournalpost(arkivJournalpost, safRequestContext.getRequestCache()))

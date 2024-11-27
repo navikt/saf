@@ -49,7 +49,7 @@ public class BaseTilgangMapper {
 	public static TilgangJournalpost mapTilgangJournalpost(ArkivJournalpost arkivJournalpost) {
 		Long journalpostId = arkivJournalpost.journalpostId();
 		return TilgangJournalpost.builder()
-				.journalpostId(valueOf(journalpostId))
+				.journalpostId(journalpostId)
 				.journalstatus(JournalStatusCode.valueOf(arkivJournalpost.status()).toSafJournalstatus())
 				.skjerming(mapSkjerming(arkivJournalpost.skjerming()))
 				.dokumenter(mapTilgangDokumentInfo(arkivJournalpost))

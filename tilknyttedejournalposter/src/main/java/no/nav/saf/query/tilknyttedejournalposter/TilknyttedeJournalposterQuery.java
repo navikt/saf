@@ -99,7 +99,6 @@ public class TilknyttedeJournalposterQuery {
 					td.getTilgangDokumentvarianter().forEach(tdv -> pep6d.hasAccess(tdv, safRequestContext));
 				}))
 				.map(TilgangJournalpost::getJournalpostId)
-				.map(Long::parseLong)
 				.map(arkivJournalposter::get)
 				.map(arkivJournalpost ->
 						ArkivJournalpostMapper.mapJournalpost(arkivJournalpost, safRequestContext.getRequestCache()))

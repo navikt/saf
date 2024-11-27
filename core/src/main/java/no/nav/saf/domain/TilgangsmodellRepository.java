@@ -87,7 +87,7 @@ public class TilgangsmodellRepository {
 
 	public static TilgangJournalpost mapTilgangJournalpost(JournalpostDto dto) {
 		return TilgangJournalpost.builder()
-				.journalpostId(dto.getJournalpostId().toString())
+				.journalpostId(dto.getJournalpostId())
 				.journalstatus(dto.getJournalstatus().toSafJournalstatus())
 				.skjerming(SkjermingTypeCode.toSafSkjerming(dto.getSkjerming()))
 				.dokumenter(dto.getDokumenter().stream().map(dokdto -> TilgangDokumentInfo.builder()

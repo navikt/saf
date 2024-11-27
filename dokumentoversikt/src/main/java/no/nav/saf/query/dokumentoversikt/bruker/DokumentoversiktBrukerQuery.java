@@ -152,7 +152,6 @@ class DokumentoversiktBrukerQuery {
 		List<Journalpost> visningJournalposterSortert = filteredTilgangJournalpostList.stream()
 				.map(TilgangJournalpost::getJournalpostId)
 				.sorted(Comparator.reverseOrder())
-				.map(Long::parseLong)
 				.map(journalposter::get)
 				.map(journalpostDto ->
 						journalpostDtoMapper.mapJournalpostDto(journalpostDto, safRequestContext.getRequestCache()))
@@ -188,7 +187,7 @@ class DokumentoversiktBrukerQuery {
 
 	private boolean pep2CheckMidlertidigAccess(TilgangJournalpost tj, SafRequestContext safRequestContext, Map<Long, JournalpostDto> journalpostDtoMap) {
 		if (tj.getJournalstatus() == Journalstatus.MOTTATT) {
-			TilgangSak midlertidigTilgangSak = mapToTilgangSak(journalpostDtoMap.get(Long.parseLong(tj.getJournalpostId())));
+			TilgangSak midlertidigTilgangSak = mapToTilgangSak(journalpostDtoMap.get(tj.getJournalpostId()));
 			return pep2.hasAccess(midlertidigTilgangSak, safRequestContext);
 		} else {
 			return true;

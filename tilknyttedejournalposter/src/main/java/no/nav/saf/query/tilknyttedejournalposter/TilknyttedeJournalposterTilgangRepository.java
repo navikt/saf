@@ -207,7 +207,7 @@ public class TilknyttedeJournalposterTilgangRepository {
 
 	private TilgangJournalpost mapTilgangJournalpost(ArkivJournalpost arkivJournalpost) {
 		return TilgangJournalpost.builder()
-				.journalpostId(arkivJournalpost.journalpostId().toString())
+				.journalpostId(arkivJournalpost.journalpostId())
 				.journalstatus(JournalStatusCode.valueOf(arkivJournalpost.status()).toSafJournalstatus())
 				.skjerming(arkivJournalpost.skjerming() != null ? Skjerming.valueOf(arkivJournalpost.skjerming()) : null)
 				.dokumenter(arkivJournalpost.dokumenter().stream().map(dokdto ->

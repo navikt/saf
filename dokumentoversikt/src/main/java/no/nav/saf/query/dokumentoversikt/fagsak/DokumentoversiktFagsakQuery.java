@@ -137,12 +137,9 @@ class DokumentoversiktFagsakQuery {
 				.blockingGet();
 
 
-		List<String> journalpostIds = filteredTilgangJournalpostList.stream()
+		List<Journalpost> visningJournalposterSortert = filteredTilgangJournalpostList.stream()
 				.map(TilgangJournalpost::getJournalpostId)
 				.sorted(Comparator.reverseOrder())
-				.toList();
-		List<Journalpost> visningJournalposterSortert = journalpostIds.stream()
-				.map(Long::parseLong)
 				.map(journalposter::get)
 				.map(journalpostDto ->
 						journalpostDtoMapper.mapJournalpostDto(journalpostDto, safRequestContext.getRequestCache()))
