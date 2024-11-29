@@ -25,6 +25,6 @@ public class TilgangJournalpost {
 	/**
 	 * Attributt brukt for å forenkle kodeflyt
 	 **/
-	String journalpostId;
+	Long journalpostId;
 
 }

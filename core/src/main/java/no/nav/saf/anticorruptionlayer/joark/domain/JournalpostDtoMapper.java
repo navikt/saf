@@ -17,7 +17,6 @@ import no.nav.saf.domain.kode.Dokumentstatus;
 import no.nav.saf.domain.kode.Journalstatus;
 import no.nav.saf.domain.kode.Kanal;
 import no.nav.saf.domain.kode.Tema;
-import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.domain.visningsmodell.Bruker;
 import no.nav.saf.domain.visningsmodell.BrukerIdType;
 import no.nav.saf.domain.visningsmodell.BrukerTilgangAvvistBegrunnelse;
@@ -256,7 +255,7 @@ public class JournalpostDtoMapper {
 	private Journalstatus mapJournalstatus(JournalpostDto journalpostDto) {
 		SaksrelasjonDto saksrelasjon = journalpostDto.getSaksrelasjon();
 		if (saksrelasjon != null && saksrelasjon.getFeilregistrert() != null && saksrelasjon.getFeilregistrert()
-			&& !Journalstatus.UTGAAR.equals(journalpostDto.getJournalstatus().toSafJournalstatus())) {
+				&& !Journalstatus.UTGAAR.equals(journalpostDto.getJournalstatus().toSafJournalstatus())) {
 			return Journalstatus.FEILREGISTRERT;
 		} else {
 			return journalpostDto.getJournalstatus().toSafJournalstatus();
@@ -358,17 +357,16 @@ public class JournalpostDtoMapper {
 
 	// journalposten er midlertidig journalført
 	private Bruker getBrukerFromTilgangBrukerCache(RequestCache requestCache) {
-		TilgangBruker tilgangBruker = requestCache.getTilgangBruker();
-		if (tilgangBruker == null) {
-			return null;
-		}
-		if (tilgangBruker.isPerson()) {
-			return new Bruker(tilgangBruker.getAktoerId(), BrukerIdType.AKTOERID);
-		} else if (tilgangBruker.isOrganisasjon()) {
-			return new Bruker(tilgangBruker.getOrgnummer(), BrukerIdType.ORGNR);
-		} else {
-			return null;
-		}
+		return requestCache.getTilgangBruker()
+				.map(tilgangBruker -> {
+					if (tilgangBruker.isPerson()) {
+						return new Bruker(tilgangBruker.getAktoerId(), BrukerIdType.AKTOERID);
+					} else if (tilgangBruker.isOrganisasjon()) {
+						return new Bruker(tilgangBruker.getOrgnummer(), BrukerIdType.ORGNR);
+					} else {
+						return null;
+					}
+				}).orElse(null);
 	}
 
 	private Utsendingsinfo getUtgaaendeJournalpostUtsendingsInfo(JournalpostDto journalpostDto) {
@@ -390,8 +388,8 @@ public class JournalpostDtoMapper {
 			return getDecisionFromPep6d(journalpost.getJournalpostId(), dokumentInfoDto.getDokumentInfoId(), variantDto, requestCache);
 		} else {
 			return getDecisionFromPep2d(journalpost.getTema(), requestCache) &&
-				   getDecisionFromPep6d(journalpost.getJournalpostId(), dokumentInfoDto.getDokumentInfoId(), variantDto, requestCache) &&
-				   getDecisionFromPep7d(journalpost.getSak().getArkivsaksystem(), journalpost.getSak().getArkivsaksnummer(), requestCache);
+					getDecisionFromPep6d(journalpost.getJournalpostId(), dokumentInfoDto.getDokumentInfoId(), variantDto, requestCache) &&
+					getDecisionFromPep7d(journalpost.getSak().getArkivsaksystem(), journalpost.getSak().getArkivsaksnummer(), requestCache);
 		}
 	}
 

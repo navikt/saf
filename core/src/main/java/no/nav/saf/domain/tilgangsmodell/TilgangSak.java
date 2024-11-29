@@ -27,4 +27,8 @@ public class TilgangSak {
 	// Ekstra attributter for å forenkle kodeflyt
 	String arkivsaksnummer;
 	Arkivsakssystem arkivsaksystem;
+
+	public String getCacheKey() {
+		return arkivsaksnummer + arkivsaksystem;
+	}
 }

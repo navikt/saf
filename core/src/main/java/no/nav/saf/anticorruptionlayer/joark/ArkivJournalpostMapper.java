@@ -28,7 +28,6 @@ import no.nav.saf.domain.kode.Kanal;
 import no.nav.saf.domain.kode.Skjerming;
 import no.nav.saf.domain.kode.Tema;
 import no.nav.saf.domain.kode.Variantformat;
-import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.domain.visningsmodell.AvsenderMottaker;
 import no.nav.saf.domain.visningsmodell.Bruker;
 import no.nav.saf.domain.visningsmodell.BrukerIdType;
@@ -221,21 +220,20 @@ public class ArkivJournalpostMapper {
 
 	// journalposten er midlertidig journalført
 	private static Bruker mapBrukerFromTilgangBrukerCache(RequestCache requestCache) {
-		TilgangBruker tilgangBruker = requestCache.getTilgangBruker();
-		if (tilgangBruker == null) {
-			return null;
-		}
-		if (tilgangBruker.isPerson()) {
-			if (tilgangBruker.getAktoerId() == null) {
-				return new Bruker(tilgangBruker.getFoedselsnr(), BrukerIdType.FNR);
-			} else {
-				return new Bruker(tilgangBruker.getAktoerId(), BrukerIdType.AKTOERID);
-			}
-		} else if (tilgangBruker.isOrganisasjon()) {
-			return new Bruker(tilgangBruker.getOrgnummer(), BrukerIdType.ORGNR);
-		} else {
-			return null;
-		}
+		return requestCache.getTilgangBruker()
+				.map(tilgangBruker -> {
+					if (tilgangBruker.isPerson()) {
+						if (tilgangBruker.getAktoerId() == null) {
+							return new Bruker(tilgangBruker.getFoedselsnr(), BrukerIdType.FNR);
+						} else {
+							return new Bruker(tilgangBruker.getAktoerId(), BrukerIdType.AKTOERID);
+						}
+					} else if (tilgangBruker.isOrganisasjon()) {
+						return new Bruker(tilgangBruker.getOrgnummer(), BrukerIdType.ORGNR);
+					} else {
+						return null;
+					}
+				}).orElse(null);
 	}
 
 	private static Journalstatus mapJournalstatus(ArkivJournalpost arkivJournalpost) {
@@ -243,7 +241,7 @@ public class ArkivJournalpostMapper {
 			ArkivSaksrelasjon saksrelasjon = arkivJournalpost.saksrelasjon();
 			Journalstatus journalstatus = JournalStatusCode.valueOf(arkivJournalpost.status()).toSafJournalstatus();
 			if (saksrelasjon != null && saksrelasjon.feilregistrert() != null && saksrelasjon.feilregistrert()
-				&& !(Journalstatus.UTGAAR == journalstatus)) {
+					&& !(Journalstatus.UTGAAR == journalstatus)) {
 				return Journalstatus.FEILREGISTRERT;
 			} else {
 				return journalstatus;
@@ -489,8 +487,8 @@ public class ArkivJournalpostMapper {
 			return getDecisionFromPep6d(journalpost.getJournalpostId(), String.valueOf(arkivDokumentinfo.dokumentInfoId()), arkivFildetaljer, requestCache);
 		} else {
 			return getDecisionFromPep2d(journalpost.getTema(), requestCache) &&
-				   getDecisionFromPep6d(journalpost.getJournalpostId(), String.valueOf(arkivDokumentinfo.dokumentInfoId()), arkivFildetaljer, requestCache) &&
-				   getDecisionFromPep7d(journalpost.getSak().getArkivsaksystem(), journalpost.getSak().getArkivsaksnummer(), requestCache);
+					getDecisionFromPep6d(journalpost.getJournalpostId(), String.valueOf(arkivDokumentinfo.dokumentInfoId()), arkivFildetaljer, requestCache) &&
+					getDecisionFromPep7d(journalpost.getSak().getArkivsaksystem(), journalpost.getSak().getArkivsaksnummer(), requestCache);
 		}
 	}
 

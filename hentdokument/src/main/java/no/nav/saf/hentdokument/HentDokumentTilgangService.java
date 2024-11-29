@@ -173,7 +173,7 @@ class HentDokumentTilgangService {
 		ArkivDokumentinfo arkivDokumentinfoOpt = arkivJournalpost.dokumenter().get(0);
 		Long journalpostId = arkivJournalpost.journalpostId();
 		return TilgangJournalpost.builder()
-				.journalpostId(valueOf(journalpostId))
+				.journalpostId(journalpostId)
 				.journalstatus(valueOf(arkivJournalpost.status()).toSafJournalstatus())
 				.journalpostTittel(arkivJournalpost.innhold())
 				.skjerming(mapSkjerming(arkivJournalpost.skjerming()))

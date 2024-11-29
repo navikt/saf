@@ -2,6 +2,8 @@ package no.nav.saf.query.dokumentoversikt.fagsak;
 
 import io.reactivex.rxjava3.core.Flowable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
+import no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoMapper;
+import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.dto.JournalpostDto;
 import no.nav.saf.domain.TilgangsmodellRepository;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.domain.tilgangsmodell.TilgangDokumentInfo;
@@ -11,8 +13,6 @@ import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 import no.nav.saf.domain.visningsmodell.Dokumentoversikt;
 import no.nav.saf.domain.visningsmodell.Journalpost;
 import no.nav.saf.metrics.Monitor;
-import no.nav.saf.query.dokumentoversikt.DokumentoversiktVisningsmodellRepository;
-import no.nav.saf.query.dokumentoversikt.SideInfoMapper;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.pep.Pep;
 import no.nav.saf.tjeneste.argumenter.FagsakInput;
@@ -22,18 +22,19 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Map;
+import java.util.Objects;
 
 import static no.nav.saf.domain.kode.Journalstatus.FEILREGISTRERT;
+import static no.nav.saf.query.dokumentoversikt.SideInfoMapper.mapFilteredSideInfo;
 import static no.nav.saf.util.MDCUtility.addMdcData;
 
 @Component
 class DokumentoversiktFagsakQuery {
 
-	private final SideInfoMapper sideInfoMapper = new SideInfoMapper();
+	private final JournalpostDtoMapper journalpostDtoMapper = new JournalpostDtoMapper();
 	private final DokumentoversiktFagsakTilgangsmodellRepository dokumentoversiktFagsakTilgangsmodellRepository;
 	private final TilgangsmodellRepository tilgangsmodellRepository;
-	private final DokumentoversiktVisningsmodellRepository visningsmodellRepository;
 	private final Pep<TilgangBruker> pep1g;
 	private final Pep<TilgangSak> pep2;
 	private final Pep<TilgangSak> pep2d;
@@ -47,7 +48,6 @@ class DokumentoversiktFagsakQuery {
 	public DokumentoversiktFagsakQuery(
 			DokumentoversiktFagsakTilgangsmodellRepository dokumentoversiktFagsakTilgangsmodellRepository,
 			TilgangsmodellRepository tilgangsmodellRepository,
-			DokumentoversiktVisningsmodellRepository visningsmodellRepository,
 			@Autowired Pep<TilgangBruker> pep1g,
 			@Autowired Pep<TilgangSak> pep2,
 			@Autowired Pep<TilgangSak> pep2d,
@@ -58,7 +58,6 @@ class DokumentoversiktFagsakQuery {
 			@Autowired Pep<TilgangSak> pep7d) {
 		this.dokumentoversiktFagsakTilgangsmodellRepository = dokumentoversiktFagsakTilgangsmodellRepository;
 		this.tilgangsmodellRepository = tilgangsmodellRepository;
-		this.visningsmodellRepository = visningsmodellRepository;
 		this.pep1g = pep1g;
 		this.pep2 = pep2;
 		this.pep2d = pep2d;
@@ -99,7 +98,7 @@ class DokumentoversiktFagsakQuery {
 				.toList()
 				.blockingGet();
 
-		final List<TilgangJournalpost> tilgangJournalpostList = tilgangsmodellRepository.findTilgangJournalposter(
+		final Map<Long, JournalpostDto> journalposter = tilgangsmodellRepository.findJournalposter(
 				new ArrayList<>(),
 				filteredTilgangSakList,
 				dokumentoversiktFagsakArguments.getFilters().getFraDato(),
@@ -107,8 +106,12 @@ class DokumentoversiktFagsakQuery {
 				dokumentoversiktFagsakArguments.getFilters().getJournalposttyper(),
 				dokumentoversiktFagsakArguments.getFilters().getJournalstatuser(),
 				dokumentoversiktFagsakArguments.getPagination().getFoerste(),
-				dokumentoversiktFagsakArguments.getPagination().getEtterPeker(),
-				safRequestContext);
+				dokumentoversiktFagsakArguments.getPagination().getEtterPeker()
+		);
+
+		final List<TilgangJournalpost> tilgangJournalpostList = journalposter.values().stream()
+				.map(TilgangsmodellRepository::mapTilgangJournalpost)
+				.toList();
 
 		final List<TilgangJournalpost> filteredTilgangJournalpostList = Flowable.fromIterable(tilgangJournalpostList)
 				.parallel(10)
@@ -134,22 +137,33 @@ class DokumentoversiktFagsakQuery {
 				.blockingGet();
 
 
-		List<Journalpost> visningJournalposterSortert = visningsmodellRepository.findJournalposter(filteredTilgangJournalpostList.stream()
+		List<Journalpost> visningJournalposterSortert = filteredTilgangJournalpostList.stream()
 				.map(TilgangJournalpost::getJournalpostId)
 				.sorted(Comparator.reverseOrder())
-				.collect(Collectors.toList()), safRequestContext);
+				.map(journalposter::get)
+				.map(journalpostDto ->
+						journalpostDtoMapper.mapJournalpostDto(journalpostDto, safRequestContext.getRequestCache()))
+				.filter(Objects::nonNull)
+				.toList();
 
 		List<Journalpost> visningJournalposterFiltrert = visningJournalposterSortert.stream()
 				.filter(j -> dokumentoversiktFagsakArguments.getFilters().getTema().contains(j.getTema()))
 				.filter(j -> filterFeilregistrerte(dokumentoversiktFagsakArguments, j))
-				.collect(Collectors.toList());
-
-		var sistJournalpostId = visningJournalposterSortert.isEmpty() ? null : visningJournalposterSortert.getLast().getJournalpostId();
+				.toList();
 
 		return Dokumentoversikt.builder()
 				.journalposter(visningJournalposterFiltrert)
-				.sideInfo(sideInfoMapper.mapFilteredSideInfo(sistJournalpostId, visningJournalposterSortert, safRequestContext))
+				.sideInfo(mapFilteredSideInfo(getLastJournalpostOnPage(journalposter, visningJournalposterSortert), visningJournalposterSortert))
 				.build();
+	}
+
+	private static JournalpostDto getLastJournalpostOnPage(Map<Long, JournalpostDto> safRequestContext, List<Journalpost> visningJournalposterSortert) {
+		if (visningJournalposterSortert.isEmpty()) {
+			return null;
+		} else {
+			String sisteJournalpostId = visningJournalposterSortert.getLast().getJournalpostId();
+			return safRequestContext.get(Long.parseLong(sisteJournalpostId));
+		}
 	}
 
 	private boolean filterFeilregistrerte(DokumentoversiktFagsakArguments dokumentoversiktFagsakArguments, Journalpost j) {
