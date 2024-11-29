@@ -28,7 +28,7 @@ public class TilgangSak {
 	String arkivsaksnummer;
 	Arkivsakssystem arkivsaksystem;
 
-	public String getKey() {
+	public String getCacheKey() {
 		return arkivsaksnummer + arkivsaksystem;
 	}
 }

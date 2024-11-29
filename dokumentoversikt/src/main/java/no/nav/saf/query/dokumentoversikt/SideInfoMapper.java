@@ -8,6 +8,9 @@ import java.util.Base64;
 import java.util.List;
 
 public class SideInfoMapper {
+	private SideInfoMapper() {
+	}
+
 	public static SideInfo mapFilteredSideInfo(JournalpostDto sisteJournalpostDto, List<Journalpost> journalposter) {
 		if (sisteJournalpostDto == null) {
 			return SideInfo.empty();

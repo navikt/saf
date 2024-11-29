@@ -15,7 +15,6 @@ import no.nav.saf.domain.tilgangsmodell.TilgangDokumentInfo;
 import no.nav.saf.domain.tilgangsmodell.TilgangDokumentvariant;
 import no.nav.saf.domain.tilgangsmodell.TilgangJournalpost;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
-import no.nav.saf.tilgangskontroll.SafRequestContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -48,14 +47,13 @@ public class TilgangsmodellRepository {
 													   LocalDate tilDato,
 													   List<Journalposttype> inkluderJournalposttyper,
 													   List<Journalstatus> inkluderJournalstatuses,
-													   Integer foerste, String etterPeker,
-													   SafRequestContext safRequestContext) {
+													   Integer foerste, String etterPeker) {
 		try {
 			List<String> identer = tilgangBrukere.stream()
 					.flatMap(t -> t.getAlleIdenter().stream())
 					.toList();
-			return joarkAntiCorruptionLayer.finnJournalposter(identer,
-							tilgangSakList, fraDato, tilDato, inkluderJournalposttyper, inkluderJournalstatuses, foerste, etterPeker)
+			return joarkAntiCorruptionLayer.finnJournalposter(identer, tilgangSakList, fraDato, tilDato,
+							inkluderJournalposttyper, inkluderJournalstatuses, foerste, etterPeker)
 					.stream()
 					.collect(Collectors.toMap(JournalpostDto::getJournalpostId, journalpost -> journalpost));
 		} catch (Exception e) {

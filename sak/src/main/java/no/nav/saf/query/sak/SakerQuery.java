@@ -33,16 +33,16 @@ class SakerQuery {
 	private final Pep<TilgangBruker> pep1g;
 	private final Pep<TilgangSak> pep2;
 	private final Pep<TilgangSak> pep3;
-	private final SakBrukerTilgangsmodellRepository saksoversiktBrukerTilgangsmodellRepository;
+	private final SakBrukerTilgangsmodellRepository sakBrukerTilgangsmodellRepository;
 	private final SakMapper sakMapper;
 
 	@Autowired
 	public SakerQuery(Pep<TilgangBruker> pep1g,
 					  Pep<TilgangSak> pep2,
 					  Pep<TilgangSak> pep3,
-					  SakBrukerTilgangsmodellRepository saksoversiktBrukerTilgangsmodellRepository,
+					  SakBrukerTilgangsmodellRepository sakBrukerTilgangsmodellRepository,
 					  SakMapper sakermapper) {
-		this.saksoversiktBrukerTilgangsmodellRepository = saksoversiktBrukerTilgangsmodellRepository;
+		this.sakBrukerTilgangsmodellRepository = sakBrukerTilgangsmodellRepository;
 		this.sakMapper = sakermapper;
 		this.pep1g = pep1g;
 		this.pep2 = pep2;
@@ -51,7 +51,7 @@ class SakerQuery {
 
 	@Monitor(value = "dok_request", extraTags = {"process", "saker", "requestType", "bruker"}, histogram = true)
 	public List<Sak> hentSaker(BrukerIdInput brukerIdInput, SafRequestContext safRequestContext) {
-		TilgangBruker tilgangBruker = saksoversiktBrukerTilgangsmodellRepository.findTilgangBruker(brukerIdInput);
+		TilgangBruker tilgangBruker = sakBrukerTilgangsmodellRepository.findTilgangBruker(brukerIdInput);
 		if (tilgangBruker != null) {
 			safRequestContext.getRequestCache().putTilgangBruker(tilgangBruker);
 		}
@@ -63,7 +63,7 @@ class SakerQuery {
 		}
 
 		Map<String, Arkivsak> arkivsakMap = new HashMap<>();
-		final Flowable<TilgangSak> tilgangSakFlow = saksoversiktBrukerTilgangsmodellRepository.findTilgangSaker(tilgangBruker, arkivsakMap);
+		final Flowable<TilgangSak> tilgangSakFlow = sakBrukerTilgangsmodellRepository.findTilgangSaker(tilgangBruker, arkivsakMap);
 		List<TilgangSak> filteredTilgangSakList = tilgangSakFlow
 				.onErrorResumeWith(Flowable.empty())
 				.parallel(10)
@@ -76,7 +76,7 @@ class SakerQuery {
 
 		var distinctSaker = filteredTilgangSakList.stream()
 				.map(tilgangSak ->
-						sakMapper.mapSak(arkivsakMap.get(tilgangSak.getKey())))
+						sakMapper.mapSak(arkivsakMap.get(tilgangSak.getCacheKey())))
 				.filter(Objects::nonNull)
 				.distinct()
 				.toList();

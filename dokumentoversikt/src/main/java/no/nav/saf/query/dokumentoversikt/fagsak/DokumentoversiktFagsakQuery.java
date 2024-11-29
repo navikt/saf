@@ -13,7 +13,6 @@ import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 import no.nav.saf.domain.visningsmodell.Dokumentoversikt;
 import no.nav.saf.domain.visningsmodell.Journalpost;
 import no.nav.saf.metrics.Monitor;
-import no.nav.saf.query.dokumentoversikt.SideInfoMapper;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.pep.Pep;
 import no.nav.saf.tjeneste.argumenter.FagsakInput;
@@ -27,6 +26,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import static no.nav.saf.domain.kode.Journalstatus.FEILREGISTRERT;
+import static no.nav.saf.query.dokumentoversikt.SideInfoMapper.mapFilteredSideInfo;
 import static no.nav.saf.util.MDCUtility.addMdcData;
 
 @Component
@@ -106,8 +106,8 @@ class DokumentoversiktFagsakQuery {
 				dokumentoversiktFagsakArguments.getFilters().getJournalposttyper(),
 				dokumentoversiktFagsakArguments.getFilters().getJournalstatuser(),
 				dokumentoversiktFagsakArguments.getPagination().getFoerste(),
-				dokumentoversiktFagsakArguments.getPagination().getEtterPeker(),
-				safRequestContext);
+				dokumentoversiktFagsakArguments.getPagination().getEtterPeker()
+		);
 
 		final List<TilgangJournalpost> tilgangJournalpostList = journalposter.values().stream()
 				.map(TilgangsmodellRepository::mapTilgangJournalpost)
@@ -153,7 +153,7 @@ class DokumentoversiktFagsakQuery {
 
 		return Dokumentoversikt.builder()
 				.journalposter(visningJournalposterFiltrert)
-				.sideInfo(SideInfoMapper.mapFilteredSideInfo(getLastJournalpostOnPage(journalposter, visningJournalposterSortert), visningJournalposterSortert))
+				.sideInfo(mapFilteredSideInfo(getLastJournalpostOnPage(journalposter, visningJournalposterSortert), visningJournalposterSortert))
 				.build();
 	}
 
@@ -161,8 +161,8 @@ class DokumentoversiktFagsakQuery {
 		if (visningJournalposterSortert.isEmpty()) {
 			return null;
 		} else {
-			String sistJournalpostId = visningJournalposterSortert.getLast().getJournalpostId();
-			return safRequestContext.get(Long.parseLong(sistJournalpostId));
+			String sisteJournalpostId = visningJournalposterSortert.getLast().getJournalpostId();
+			return safRequestContext.get(Long.parseLong(sisteJournalpostId));
 		}
 	}
 

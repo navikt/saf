@@ -18,7 +18,6 @@ import no.nav.saf.domain.visningsmodell.Journalpost;
 import no.nav.saf.exceptions.SafFunctionalException;
 import no.nav.saf.exceptions.TilgangskontrollException;
 import no.nav.saf.metrics.Monitor;
-import no.nav.saf.query.dokumentoversikt.SideInfoMapper;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.pep.AbacAnswer;
 import no.nav.saf.tilgangskontroll.pep.Pep;
@@ -33,6 +32,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import static no.nav.saf.graphql.ErrorCode.NOT_FOUND;
+import static no.nav.saf.query.dokumentoversikt.SideInfoMapper.mapFilteredSideInfo;
 import static no.nav.saf.tilgangskontroll.pep.DenyReasonFactory.createPep1gDenyReasonDokumentoversikt;
 import static no.nav.saf.util.MDCUtility.addMdcData;
 
@@ -116,8 +116,7 @@ class DokumentoversiktBrukerQuery {
 				dokumentoversiktBrukerArguments.getFilters().getJournalposttyper(),
 				dokumentoversiktBrukerArguments.getFilters().getJournalstatuser(),
 				dokumentoversiktBrukerArguments.getPagination().getFoerste(),
-				dokumentoversiktBrukerArguments.getPagination().getEtterPeker(),
-				safRequestContext
+				dokumentoversiktBrukerArguments.getPagination().getEtterPeker()
 		);
 		List<TilgangJournalpost> tilgangJournalposter = journalposter.values().stream()
 				.map(TilgangsmodellRepository::mapTilgangJournalpost)
@@ -165,7 +164,7 @@ class DokumentoversiktBrukerQuery {
 
 		return Dokumentoversikt.builder()
 				.journalposter(visningJournalposterFiltrert)
-				.sideInfo(SideInfoMapper.mapFilteredSideInfo(getLastJournalpostOnPage(journalposter, visningJournalposterSortert), visningJournalposterFiltrert))
+				.sideInfo(mapFilteredSideInfo(getLastJournalpostOnPage(journalposter, visningJournalposterSortert), visningJournalposterFiltrert))
 				.build();
 	}
 
@@ -173,8 +172,8 @@ class DokumentoversiktBrukerQuery {
 		if (visningJournalposterSortert.isEmpty()) {
 			return null;
 		} else {
-			String sistJournalpostId = visningJournalposterSortert.getLast().getJournalpostId();
-			return journalpostDtoMap.get(Long.parseLong(sistJournalpostId));
+			String sisteJournalpostId = visningJournalposterSortert.getLast().getJournalpostId();
+			return journalpostDtoMap.get(Long.parseLong(sisteJournalpostId));
 		}
 	}
 
