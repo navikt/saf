@@ -20,6 +20,7 @@ public enum Kanal {
 	INNSENDT_NAV_ANSATT("Registrert av Nav-ansatt"),
 	NAV_NO_CHAT("Innlogget samtale"),
 	DPVT("Taushetsbelagt Post via Altinn"),
+	DPO("Digital Post Offentlig"),
 	E_POST("E-post"),
 	ALTINN_INNBOKS("Altinn Innboks");
 
