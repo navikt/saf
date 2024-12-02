@@ -759,7 +759,7 @@ enum Kanal {
     # * Brukes for utgående journalposter.
     DPVT
 
-    # Brevet er sendt via digital post offentlig og bruker Altinn 3 broker.
+    # Brevet er sendt via digital post offentlig ved bruk av Altinn 3 broker.
     # * Brukes for utgående journalposter.
     DPO
 
