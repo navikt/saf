@@ -740,6 +740,10 @@ enum Kanal {
     # * Brukes for utgående journalposter.
     DPVT
 
+    # Brevet ser sendt til virksomhet gjennom eFormidling-kanalen DPO.
+    # * Brukes for utgående journalposter.
+    DPO
+
     # Forsendelsen er mottatt på e-post.
     # * Brukes for inngående journalposter.
     E_POST
