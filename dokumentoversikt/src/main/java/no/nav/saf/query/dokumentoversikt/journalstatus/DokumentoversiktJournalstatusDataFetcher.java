@@ -1,10 +1,13 @@
 package no.nav.saf.query.dokumentoversikt.journalstatus;
 
+import graphql.GraphQLError;
 import graphql.execution.DataFetcherResult;
 import graphql.schema.DataFetcher;
 import graphql.schema.DataFetchingEnvironment;
+import graphql.schema.SelectedField;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.domain.visningsmodell.Dokumentoversikt;
+import no.nav.saf.exceptions.SafFunctionalException;
 import no.nav.saf.graphql.GraphQLExceptionHandler;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import org.springframework.stereotype.Component;
@@ -26,6 +29,17 @@ public class DokumentoversiktJournalstatusDataFetcher implements DataFetcher<Dat
 		SafRequestContext safRequestContext = environment.getGraphQlContext().get(SafRequestContext.KEY);
 		addMdcData(safRequestContext);
 		try {
+			var unsupportedFields = environment.getSelectionSet().getFields("**/brukerHarTilgang", "**/brukerTilgangAvvistBegrunnelser");
+			if (!unsupportedFields.isEmpty()) {
+				String feilmelding = prettyPrintList(unsupportedFields.stream().map(SelectedField::getQualifiedName).toArray(String[]::new));
+				String fieldPluralSingular = unsupportedFields.size() == 1 ? "Feltet" : "Feltene";
+				SafFunctionalException safFunctionalException = new SafFunctionalException(
+						fieldPluralSingular + " " + feilmelding + " er ikke støttet i DokumentoversiktJournalstatus-queriet");
+
+				log.warn("query DokumentoversiktJournalstatus funksjonell feil. {} {} er med i queriet, men de{} er ikke støttet her.",
+						fieldPluralSingular, feilmelding, unsupportedFields.size() == 1 ? "t" : "");
+				return createDataFetcherErrorResponse(safFunctionalException);
+			}
 			DokumentoversiktJournalstatusArguments arguments = DokumentoversiktJournalstatusArguments.create(environment);
 			log.info("dokumentoversiktJournalstatus hentes for filter={}", arguments.getFilters());
 			Dokumentoversikt dokumentoversikt = dokumentoversiktJournalstatusQuery.hentDokumentoversikt(arguments, safRequestContext);
@@ -35,10 +49,26 @@ public class DokumentoversiktJournalstatusDataFetcher implements DataFetcher<Dat
 					.data(dokumentoversikt)
 					.build();
 		} catch (Exception e) {
-			return DataFetcherResult.<Dokumentoversikt>newResult()
-					.data(Dokumentoversikt.empty())
-					.error(GraphQLExceptionHandler.categorizeThrowableLogAndCreateError(e, "DokumentoversiktJournalsak"))
-					.build();
+			return createDataFetcherErrorResponse(GraphQLExceptionHandler.categorizeThrowableLogAndCreateError(e, "DokumentoversiktJournalstatus"));
 		}
+	}
+
+	private static DataFetcherResult<Dokumentoversikt> createDataFetcherErrorResponse(GraphQLError graphQLError) {
+		return DataFetcherResult.<Dokumentoversikt>newResult()
+				.data(Dokumentoversikt.empty())
+				.error(graphQLError)
+				.build();
+	}
+
+	private static String prettyPrintList(String... list) {
+		if (list.length == 1) {
+			return list[0];
+		}
+		String commaSeparated = "";
+		int length = list.length - 1;
+		for (int i = 0; i < length - 1; i++) {
+			commaSeparated += list[i] + ", ";
+		}
+		return commaSeparated + list[length - 1] + " og " + list[length];
 	}
 }
