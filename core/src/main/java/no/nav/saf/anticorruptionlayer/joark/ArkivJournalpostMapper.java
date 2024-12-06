@@ -60,7 +60,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static java.util.Collections.emptySet;
 import static no.nav.saf.anticorruptionlayer.joark.ArkivAvsenderMottakerMapper.mapArkivAvsenderMottaker;
 import static no.nav.saf.anticorruptionlayer.joark.ArkivUtsendingsInfoMapper.mapArkivUtsendingsInfo;
 import static no.nav.saf.anticorruptionlayer.joark.domain.kode.JournalpostTypeCode.U;
@@ -134,7 +133,7 @@ public class ArkivJournalpostMapper {
 				.brukerHarTilgang(brukerTilgangAvvistBegrunnelser.isEmpty())
 				.build();
 
-		journalpost.getDokumenter().addAll(mapDokumenter(tilgangJournalpost, journalpost, arkivJournalpost, requestCache));
+		journalpost.getDokumenter().addAll(mapDokumenter(tilgangJournalpost, journalpost, arkivJournalpost, brukerIdenter, requestCache));
 		return journalpost;
 	}
 
@@ -430,7 +429,7 @@ public class ArkivJournalpostMapper {
 		return null;
 	}
 
-	private static List<DokumentInfo> mapDokumenter(TilgangJournalpost tilgangJournalpost, Journalpost journalpost, ArkivJournalpost arkivJournalpost, RequestCache requestCache) {
+	private static List<DokumentInfo> mapDokumenter(TilgangJournalpost tilgangJournalpost, Journalpost journalpost, ArkivJournalpost arkivJournalpost, Set<Ident> brukerIdenter, RequestCache requestCache) {
 		if (arkivJournalpost.dokumenter() == null) {
 			return List.of();
 		}
@@ -445,20 +444,20 @@ public class ArkivJournalpostMapper {
 						.originalJournalpostId(dokumentinfo.originalJournalpostId() == null ? null : dokumentinfo.originalJournalpostId().toString())
 						.skjerming(mapSkjerming(dokumentinfo.skjerming()))
 						.dokumentvarianter(dokumentinfo.fildetaljer().stream()
-								.map(fildetaljer -> mapDokumentvariant(tilgangJournalpost, journalpost, requestCache, dokumentinfo, fildetaljer))
+								.map(fildetaljer -> mapDokumentvariant(tilgangJournalpost, journalpost, brukerIdenter, requestCache, dokumentinfo, fildetaljer))
 								.filter(Objects::nonNull)
 								.collect(Collectors.toList()))
 						.logiskeVedlegg(mapLogiskeVedlegg(dokumentinfo, journalpost.getTema(), journalpost.getJournalstatus(), requestCache))
 						.build()).toList();
 	}
 
-	private static Dokumentvariant mapDokumentvariant(TilgangJournalpost tilgangJournalpost, Journalpost journalpost, RequestCache requestCache, ArkivDokumentinfo dokumentinfo, ArkivFildetaljer fildetaljer) {
+	private static Dokumentvariant mapDokumentvariant(TilgangJournalpost tilgangJournalpost, Journalpost journalpost, Set<Ident> brukerIdenter, RequestCache requestCache, ArkivDokumentinfo dokumentinfo, ArkivFildetaljer fildetaljer) {
 		Variantformat variantformat = mapVariantformat(fildetaljer);
 		if (variantformat == null) {
 			return null;
 		}
 		TilgangDokument tilgangDokument = tilgangJournalpost.getDokumenter().stream().filter(dok -> dok.id() == dokumentinfo.dokumentInfoId()).findFirst().orElse(null);
-		List<BrukerTilgangAvvistBegrunnelse> brukerTilgangAvvistBegrunnelser = mapbrukerTilgangAvvistBegrunnelser(utledTilgangService.utledTilgangDokument(tilgangJournalpost, tilgangDokument, fildetaljer.getTilgangVariant(), emptySet()));
+		List<BrukerTilgangAvvistBegrunnelse> brukerTilgangAvvistBegrunnelser = mapbrukerTilgangAvvistBegrunnelser(utledTilgangService.utledTilgangDokument(tilgangJournalpost, tilgangDokument, fildetaljer.getTilgangVariant(), brukerIdenter));
 		return Dokumentvariant.builder()
 				.saksbehandlerHarTilgang(determineSaksbehandlerTilgang(journalpost, dokumentinfo, fildetaljer, requestCache))
 				.variantformat(variantformat)

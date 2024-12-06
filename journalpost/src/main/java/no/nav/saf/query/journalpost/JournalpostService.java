@@ -113,9 +113,13 @@ public class JournalpostService {
 															"Dette er en metadata feil i arkivet og må korrigeres av #team_dokumentløsninger. " +
 															"journalpostId=" + arkivJournalpost.journalpostId() + ", saksrelasjon.sakId=" + arkivSaksrelasjon.sakId() + ", saksrelasjon.fagsystem=" + arkivSaksrelasjon.fagsystem());
 			}
-			return TilgangBruker.builder()
+			TilgangBruker tilgangBrukerMedFnr = pdlAntiCorruptionLayer.hentTilgangBrukerByAktoerId(arkivSak.aktoerId());
+			return
+					TilgangBruker.builder()
 					.aktoerId(arkivSak.aktoerId())
 					.orgnummer(arkivSak.aktoerId() == null ? trim(arkivSak.orgNr()) : null)
+					.foedselsnr(tilgangBrukerMedFnr.getFoedselsnr())
+					// trenger brukers fnr for at dette skal bli riktig i tilgangssjekken på dokumentnivå
 					.build();
 		}
 	}

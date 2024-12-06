@@ -118,7 +118,8 @@ class JournalpostQuery {
 							pep6d.hasAccess(tilgangDokumentvariant, safRequestContext));
 				});
 			}
-			return mapJournalpost(journalpostHolder.arkivJournalpost(), getBrukersIdenterFraTilgangBruker(tilgangBruker), safRequestContext.getRequestCache());
+			Set<Ident> brukersIdenterFraTilgangBruker = getBrukersIdenterFraTilgangBruker(tilgangBruker);
+			return mapJournalpost(journalpostHolder.arkivJournalpost(), brukersIdenterFraTilgangBruker, safRequestContext.getRequestCache());
 		} catch (JournalpostIkkeFunnetException e) {
 			throw new SafFunctionalException("Fant ikke journalpost i fagarkivet. " + errLog(journalpostId, eksternReferanseId), NOT_FOUND);
 		}

@@ -142,7 +142,7 @@ public class JournalpostDtoMapper {
 						.dokumentvarianter(dokumentInfoDto.getVarianter().stream()
 								.map(variantDto -> {
 									TilgangDokument tilgangDokument = tilgangJournalpost.getDokumenter().stream().filter(dok -> dok.id() == Long.parseLong(dokumentInfoDto.getDokumentInfoId())).findFirst().orElse(null);
-									List<BrukerTilgangAvvistBegrunnelse> variantBrukerTilgangAvvistBegrunnelser = mapbrukerTilgangAvvistBegrunnelser(utledTilgangService.utledTilgangDokument(tilgangJournalpost, tilgangDokument, variantDto.getTilgangVariant(), emptySet()));
+									List<BrukerTilgangAvvistBegrunnelse> variantBrukerTilgangAvvistBegrunnelser = mapbrukerTilgangAvvistBegrunnelser(utledTilgangService.utledTilgangDokument(tilgangJournalpost, tilgangDokument, variantDto.getTilgangVariant(), brukerIdenter));
 									return Dokumentvariant.builder()
 											.saksbehandlerHarTilgang(determineSaksbehandlerTilgang(journalpost, dokumentInfoDto, variantDto, requestCache))
 											.variantformat(variantDto.getVariantf().getSafVariantformat())
