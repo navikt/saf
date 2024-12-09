@@ -1,6 +1,7 @@
 package no.nav.saf.endpoints.dokumentoversikt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import no.nav.saf.domain.visningsmodell.BrukerTilgangAvvistBegrunnelse;
 import no.nav.saf.domain.visningsmodell.Dokumentoversikt;
 import no.nav.saf.endpoints.AbstractItest;
 import no.nav.saf.endpoints.graphql.GraphQLRequest;
@@ -79,6 +80,12 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 		assertEquals(KANAL_REFERANSE_ID, dokumentoversikt.getJournalposter().get(0).getEksternReferanseId());
 		assertEquals(KANAL_REFERANSE_ID, dokumentoversikt.getJournalposter().get(1).getEksternReferanseId());
 		assertEquals(KANAL_REFERANSE_ID, dokumentoversikt.getJournalposter().get(2).getEksternReferanseId());
+		assertTrue(dokumentoversikt.getJournalposter().get(0).isBrukerHarTilgang());
+		assertTrue(dokumentoversikt.getJournalposter().get(1).isBrukerHarTilgang());
+		assertTrue(dokumentoversikt.getJournalposter().get(2).isBrukerHarTilgang());
+		assertThat(dokumentoversikt.getJournalposter().get(0).getBrukerTilgangAvvistBegrunnelser()).isEmpty();
+		assertThat(dokumentoversikt.getJournalposter().get(1).getBrukerTilgangAvvistBegrunnelser()).isEmpty();
+		assertThat(dokumentoversikt.getJournalposter().get(2).getBrukerTilgangAvvistBegrunnelser()).isEmpty();
 
 		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter")).withRequestBody(matchingJsonPath("$.gsakSakIds", containing("119185782"))));
 	}
@@ -111,6 +118,9 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 		assertEquals(KANAL_REFERANSE_ID, dokumentoversikt.getJournalposter().get(0).getEksternReferanseId());
 		assertEquals(KANAL_REFERANSE_ID, dokumentoversikt.getJournalposter().get(1).getEksternReferanseId());
 		assertEquals(KANAL_REFERANSE_ID, dokumentoversikt.getJournalposter().get(2).getEksternReferanseId());
+		assertThat(dokumentoversikt.getJournalposter().get(0).getBrukerTilgangAvvistBegrunnelser()).isEmpty();
+		assertThat(dokumentoversikt.getJournalposter().get(1).getBrukerTilgangAvvistBegrunnelser()).isEmpty();
+		assertThat(dokumentoversikt.getJournalposter().get(2).getBrukerTilgangAvvistBegrunnelser()).isEmpty();
 	}
 
 	@Test
@@ -145,6 +155,9 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 		assertEquals(KANAL_REFERANSE_ID, dokumentoversikt.getJournalposter().get(0).getEksternReferanseId());
 		assertEquals(KANAL_REFERANSE_ID, dokumentoversikt.getJournalposter().get(1).getEksternReferanseId());
 		assertEquals(KANAL_REFERANSE_ID, dokumentoversikt.getJournalposter().get(2).getEksternReferanseId());
+		assertThat(dokumentoversikt.getJournalposter().get(0).getBrukerTilgangAvvistBegrunnelser()).isEmpty();
+		assertThat(dokumentoversikt.getJournalposter().get(1).getBrukerTilgangAvvistBegrunnelser()).isEmpty();
+		assertThat(dokumentoversikt.getJournalposter().get(2).getBrukerTilgangAvvistBegrunnelser()).isEmpty();
 
 		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter")).withRequestBody(matchingJsonPath("$.psakSakIds", containing("21998969"))));
 	}
@@ -168,6 +181,7 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 		assertEquals(OK, responseEntity.getStatusCode());
 		assertEquals("429837417", dokumentoversikt.getJournalposter().get(0).getJournalpostId());
 		assertEquals(KANAL_REFERANSE_ID, dokumentoversikt.getJournalposter().get(0).getEksternReferanseId());
+		assertThat(dokumentoversikt.getJournalposter().get(0).getBrukerTilgangAvvistBegrunnelser()).containsExactly(new BrukerTilgangAvvistBegrunnelse("annen_part", null));
 	}
 
 	@Test
@@ -317,6 +331,9 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
 
 		assertEquals(4, dokumentoversikt.getJournalposter().size());
+		assertThat(dokumentoversikt.getJournalposter().get(0).getBrukerTilgangAvvistBegrunnelser()).isEmpty();
+		assertThat(dokumentoversikt.getJournalposter().get(1).getBrukerTilgangAvvistBegrunnelser()).isEmpty();
+		assertThat(dokumentoversikt.getJournalposter().get(2).getBrukerTilgangAvvistBegrunnelser()).isEmpty();
 		assertNull(dokumentoversikt.getSideInfo());
 		verifyabacDenyPep1gAndHttpStatusCode(OK, responseEntity.getStatusCode());
 	}
@@ -422,7 +439,7 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 
 		verifyEmptyJournalpostListeAndNullSideInfo(dokumentoversikt);
 		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter"))
-				.withRequestBody(containing("{\"gsakSakIds\":[\"112233445\"],\"psakSakIds\":[],\"fraDato\":\"0001-01-01\",\"tilDato\":null,\"inkluderJournalStatus\":[\"FL\",\"FS\",\"J\",\"E\"],\"inkluderJournalpostType\":[\"I\",\"U\",\"N\"],\"visFeilregistrerte\":false,\"alleIdenter\":[],\"foerste\":5,\"etterPeker\":null}")));
+				.withRequestBody(containing("{\"gsakSakIds\":[\"135695442\"],\"psakSakIds\":[],\"fraDato\":\"0001-01-01\",\"tilDato\":null,\"inkluderJournalStatus\":[\"FL\",\"FS\",\"J\",\"E\"],\"inkluderJournalpostType\":[\"I\",\"U\",\"N\"],\"visFeilregistrerte\":false,\"alleIdenter\":[],\"foerste\":5,\"etterPeker\":null}")));
 		verifyabacDenyPep4SkipPep2OrPep3AndHttpStatusCode(OK, responseEntity.getStatusCode());
 	}
 
@@ -449,7 +466,7 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 		assertEquals("429837417", dokumentoversikt.getJournalposter().get(0).getJournalpostId());
 		assertTrue(dokumentoversikt.getJournalposter().get(0).getDokumenter().isEmpty());
 		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter"))
-				.withRequestBody(containing("{\"gsakSakIds\":[\"112233445\"],\"psakSakIds\":[],\"fraDato\":\"0001-01-01\",\"tilDato\":null,\"inkluderJournalStatus\":[\"FL\",\"FS\",\"J\",\"E\"],\"inkluderJournalpostType\":[\"I\",\"U\",\"N\"],\"visFeilregistrerte\":false,\"alleIdenter\":[],\"foerste\":5,\"etterPeker\":null}")));
+				.withRequestBody(containing("{\"gsakSakIds\":[\"135695442\"],\"psakSakIds\":[],\"fraDato\":\"0001-01-01\",\"tilDato\":null,\"inkluderJournalStatus\":[\"FL\",\"FS\",\"J\",\"E\"],\"inkluderJournalpostType\":[\"I\",\"U\",\"N\"],\"visFeilregistrerte\":false,\"alleIdenter\":[],\"foerste\":5,\"etterPeker\":null}")));
 		verifyabacDenyPep5SkipPep2OrPep3AndHttpStatusCode(true, OK, responseEntity.getStatusCode());
 	}
 
@@ -474,9 +491,11 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
 
 		assertEquals("429837417", dokumentoversikt.getJournalposter().get(0).getJournalpostId());
+		assertThat(dokumentoversikt.getJournalposter()).hasSize(1);
+		assertThat(dokumentoversikt.getJournalposter().getFirst().getBrukerTilgangAvvistBegrunnelser()).containsExactly(new BrukerTilgangAvvistBegrunnelse("gdpr", null));
 		assertSaksbehandlerHarIkkeTilgang(dokumentoversikt);
 		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter"))
-				.withRequestBody(containing("{\"gsakSakIds\":[\"112233445\"],\"psakSakIds\":[],\"fraDato\":\"0001-01-01\",\"tilDato\":null,\"inkluderJournalStatus\":[\"FL\",\"FS\",\"J\",\"E\"],\"inkluderJournalpostType\":[\"I\",\"U\",\"N\"],\"visFeilregistrerte\":false,\"alleIdenter\":[],\"foerste\":5,\"etterPeker\":null}")));
+				.withRequestBody(containing("{\"gsakSakIds\":[\"135695442\"],\"psakSakIds\":[],\"fraDato\":\"0001-01-01\",\"tilDato\":null,\"inkluderJournalStatus\":[\"FL\",\"FS\",\"J\",\"E\"],\"inkluderJournalpostType\":[\"I\",\"U\",\"N\"],\"visFeilregistrerte\":false,\"alleIdenter\":[],\"foerste\":5,\"etterPeker\":null}")));
 		verifyabacDenyPep6dSkipPep2AndHttpStatusCode(OK, responseEntity.getStatusCode());
 	}
 

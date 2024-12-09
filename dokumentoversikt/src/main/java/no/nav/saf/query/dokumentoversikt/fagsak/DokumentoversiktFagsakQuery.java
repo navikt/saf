@@ -140,7 +140,7 @@ class DokumentoversiktFagsakQuery {
 				.toList()
 				.blockingGet();
 
-		Set<Ident> identer = filteredTilgangBrukerList.stream().flatMap(DokumentoversiktFagsakQuery::getBrukersIdenterFraTilgangBruker).collect(Collectors.toSet());
+		Set<Ident> identer = tilgangBrukerList.stream().flatMap(DokumentoversiktFagsakQuery::getBrukersIdenterFraTilgangBruker).collect(Collectors.toSet());
 		List<Journalpost> visningJournalposterSortert = filteredTilgangJournalpostList.stream()
 				.map(TilgangJournalpost::getJournalpostId)
 				.sorted(Comparator.reverseOrder())

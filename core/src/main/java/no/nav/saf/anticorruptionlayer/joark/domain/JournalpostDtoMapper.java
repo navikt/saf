@@ -48,7 +48,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static java.lang.Integer.valueOf;
-import static java.util.Collections.emptySet;
 import static java.util.Objects.nonNull;
 import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostMapper.ARKIVJOURNALPOST_OVERSTYRTINNSYN_STANDARD;
 import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostMapper.ARKIVJOURNALPOST_OVERSTYRTINNSYN_STANDARD_BESKRIVELSE;
@@ -286,11 +285,20 @@ public class JournalpostDtoMapper {
 					.foedselsnummer(Ident.of(arkivsak.getAktoerId()))
 					.build();
 		} else {
-			return TilgangGosysSak.builder()
-					.feilregistrert(saksrelasjon.getFeilregistrert() != null && saksrelasjon.getFeilregistrert())
-					.tema(saksrelasjon.getTema())
-					.aktoerId(Ident.ofNullable(saksrelasjon.getAktoerId()))
-					.build();
+			Arkivsak arkivsak = requestCache.getArkivsak(saksrelasjon);
+			if (arkivsak == null) {
+				return TilgangGosysSak.builder()
+						.feilregistrert(saksrelasjon.getFeilregistrert() != null && saksrelasjon.getFeilregistrert())
+						.tema(saksrelasjon.getTema())
+						.aktoerId(Ident.ofNullable(saksrelasjon.getAktoerId()))
+						.build();
+			} else {
+				return TilgangGosysSak.builder()
+						.feilregistrert(saksrelasjon.getFeilregistrert() != null && saksrelasjon.getFeilregistrert())
+						.tema(arkivsak.getTema() != null ? arkivsak.getTema().getTemanavn() : saksrelasjon.getTema())
+						.aktoerId(Ident.ofNullable(arkivsak.getAktoerId() != null ? arkivsak.getAktoerId() : saksrelasjon.getAktoerId()))
+						.build();
+			}
 		}
 
 	}
