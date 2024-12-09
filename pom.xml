@@ -40,7 +40,7 @@
 		<bcprov-jdk18on.version>1.79</bcprov-jdk18on.version>
 
 		<!-- Test -->
-		<spring-cloud-starter-contract-stub-runner.version>4.1.2</spring-cloud-starter-contract-stub-runner.version>
+		<spring-cloud-starter-contract-stub-runner.version>4.2.0</spring-cloud-starter-contract-stub-runner.version>
 
 		<!-- Plugins -->
 		<maven-toolchains-plugin.version>3.2.0</maven-toolchains-plugin.version>
