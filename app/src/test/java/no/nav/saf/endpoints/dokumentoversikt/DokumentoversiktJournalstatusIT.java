@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
@@ -28,6 +29,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -120,8 +122,9 @@ class DokumentoversiktJournalstatusIT extends AbstractItest {
 
 		assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
 		assertEquals(0, dokumentoversikt.getJournalposter().size());
-
-		verify(0, postRequestedFor(urlEqualTo("/abac"))); // ingen skjerming så kun pep4 sjekkes
+		Map<String,String> errors = ((List<Map>)responseEntity.getBody().get("errors")).getFirst();
+		assertThat(errors).isNotNull();
+		assertThat(errors.get("message")).contains("Feltene journalposter/dokumenter/dokumentvarianter/brukerHarTilgang, journalposter/dokumenter/dokumentvarianter/brukerTilgangAvvistBegrunnelser og journalposter/brukerTilgangAvvistBegrunnelser er ikke støttet i DokumentoversiktJournalstatus-queriet");
 	}
 
 	@Test

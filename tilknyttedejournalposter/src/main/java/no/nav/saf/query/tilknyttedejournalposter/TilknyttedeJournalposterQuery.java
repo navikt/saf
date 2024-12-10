@@ -72,7 +72,6 @@ public class TilknyttedeJournalposterQuery {
 
 		Map<Long, Arkivsak> arkivsaker = tilknyttedeJournalposterTilgangRepository.arkivsaker(journalposter);
 
-		// gjøre om de to under til å være Map<JournalpostID, Tilgangbruker>
 		Map<Long, TilgangBruker> filteredTilgangBruker = tilknyttedeJournalposterTilgangRepository.getTilgangBrukerMap(arkivsaker, journalposter)
 				.filter(tilgangBruker -> pep1g.hasAccess(tilgangBruker.getValue(), safRequestContext))
 				.collect(Collectors.toMap(Entry::getKey, Entry::getValue));
