@@ -5,11 +5,13 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.Value;
+import no.nav.safselvbetjening.tilgang.Ident;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
@@ -63,5 +65,9 @@ public class TilgangBruker {
 				.collect(Collectors.toList());
 		idents.add(aktoerId);
 		return idents;
+	}
+
+	public Stream<Ident> getBrukersIdenterSomTilgangsIdenter() {
+		return Stream.concat(this.getAlleIdenter().stream(), this.getAlleAktoerIds().stream()).map(Ident::of);
 	}
 }

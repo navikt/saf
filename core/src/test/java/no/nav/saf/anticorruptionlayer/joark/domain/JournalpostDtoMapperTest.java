@@ -30,7 +30,6 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 
 import static java.util.Collections.emptySet;
 import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostMapper.SKJULT_TITTEL;
@@ -93,6 +92,7 @@ import static no.nav.saf.anticorruptionlayer.joark.domain.kode.JournalpostTypeCo
 import static no.nav.saf.anticorruptionlayer.joark.domain.kode.UtsendingsKanalCode.NAV_NO;
 import static no.nav.saf.anticorruptionlayer.joark.domain.kode.UtsendingsKanalCode.S;
 import static no.nav.saf.anticorruptionlayer.joark.domain.kode.UtsendingsKanalCode.SDP;
+import static no.nav.saf.domain.DomainConstants.TIDSSONE_NORGE;
 import static no.nav.saf.domain.kode.Arkivsakssystem.PSAK;
 import static no.nav.saf.domain.kode.Datotype.DATO_AVS_RETUR;
 import static no.nav.saf.domain.kode.Datotype.DATO_DOKUMENT;
@@ -680,7 +680,7 @@ class JournalpostDtoMapperTest {
 		assertEquals(POL, journalpost.getSkjerming());
 
 		assertEquals(LocalDateTime.from(DATO_OPPRETTET.toInstant()
-				.atZone(ZoneId.systemDefault())), LocalDateTime.from(journalpost.getDatoOpprettet()));
+				.atZone(TIDSSONE_NORGE)), LocalDateTime.from(journalpost.getDatoOpprettet()));
 		assertEquals(1, journalpost.getDokumenter().size());
 		assertThat(journalpost.getTilleggsopplysninger(), hasSize(1));
 		assertThat(journalpost.getTilleggsopplysninger().get(0).getNokkel(), is(TILLEGGSOPPLYSNING_NOKKEL));
@@ -689,7 +689,7 @@ class JournalpostDtoMapperTest {
 		DokumentInfo dokumentInfo1 = journalpost.getDokumenter().get(0);
 		assertEquals(DOKUMENT_INFO_ID, dokumentInfo1.getDokumentInfoId());
 		assertThat(dokumentInfo1.getDatoFerdigstilt(), equalTo(LocalDateTime.from(DATO_FERDIGSTILT.toInstant()
-				.atZone(ZoneId.systemDefault()))));
+				.atZone(TIDSSONE_NORGE))));
 		assertEquals(Long.toString(JOURNALPOST_ID), dokumentInfo1.getOriginalJournalpostId());
 		assertEquals(POL, dokumentInfo1.getSkjerming());
 		assertThat(dokumentInfo1.getLogiskeVedlegg().get(0).getLogiskVedleggId(), is(LOGISK_VEDLEGG_ID));

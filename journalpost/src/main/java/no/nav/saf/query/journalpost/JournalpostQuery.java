@@ -19,7 +19,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static java.util.Collections.emptySet;
 import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostMapper.mapJournalpost;
@@ -118,19 +117,11 @@ class JournalpostQuery {
 							pep6d.hasAccess(tilgangDokumentvariant, safRequestContext));
 				});
 			}
-			Set<Ident> brukersIdenterFraTilgangBruker = getBrukersIdenterFraTilgangBruker(tilgangBruker);
+			Set<Ident> brukersIdenterFraTilgangBruker = tilgangBruker == null ? emptySet() : tilgangBruker.getBrukersIdenterSomTilgangsIdenter().collect(Collectors.toSet());
 			return mapJournalpost(journalpostHolder.arkivJournalpost(), brukersIdenterFraTilgangBruker, safRequestContext.getRequestCache());
 		} catch (JournalpostIkkeFunnetException e) {
 			throw new SafFunctionalException("Fant ikke journalpost i fagarkivet. " + errLog(journalpostId, eksternReferanseId), NOT_FOUND);
 		}
-	}
-
-	private static Set<Ident> getBrukersIdenterFraTilgangBruker(TilgangBruker tilgangBruker) {
-		if (tilgangBruker == null) {
-			return emptySet();
-		}
-		return Stream.concat(tilgangBruker.getAlleIdenter().stream(), tilgangBruker.getAlleAktoerIds().stream())
-				.map(Ident::of).collect(Collectors.toSet());
 	}
 
 	private String errLog(String journalpostId, String eksternReferanseId) {

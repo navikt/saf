@@ -41,7 +41,6 @@ import no.nav.safselvbetjening.tilgang.UtledTilgangService;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -59,6 +58,7 @@ import static no.nav.saf.cache.KeyGeneratorLocalCaching.getKeyForPep5;
 import static no.nav.saf.cache.KeyGeneratorLocalCaching.getKeyForPep6d;
 import static no.nav.saf.cache.KeyGeneratorLocalCaching.getKeyForPep7d;
 import static no.nav.saf.domain.DomainConstants.SAF_SELVBETJENING_TIDLIGSTE_INNSYN;
+import static no.nav.saf.domain.DomainConstants.TIDSSONE_NORGE;
 import static no.nav.saf.domain.kode.Journalstatus.MOTTATT;
 import static no.nav.saf.domain.visningsmodell.RelevantDato.INVALID_DATE;
 import static org.apache.commons.lang3.BooleanUtils.isTrue;
@@ -110,7 +110,7 @@ public class JournalpostDtoMapper {
 						.getSafSkjerming())
 				.datoOpprettet(journalpostDto.getDatoOpprettet() == null ? INVALID_DATE : LocalDateTime.from(journalpostDto.getDatoOpprettet()
 						.toInstant()
-						.atZone(ZoneId.systemDefault())))
+						.atZone(TIDSSONE_NORGE)))
 				.relevanteDatoer(mapRelevanteDatoer(journalpostDto))
 				.tilleggsopplysninger(mapTilleggsopplysninger(journalpostDto))
 				.antallRetur(mapAntallRetur(journalpostDto))
@@ -132,7 +132,7 @@ public class JournalpostDtoMapper {
 						.datoFerdigstilt(dokumentInfoDto.getDatoFerdigstilt() == null ? null :
 								LocalDateTime.from(dokumentInfoDto.getDatoFerdigstilt()
 										.toInstant()
-										.atZone(ZoneId.systemDefault())))
+										.atZone(TIDSSONE_NORGE)))
 						.originalJournalpostId(dokumentInfoDto.getOrigJournalpostId() == null ? null : dokumentInfoDto.getOrigJournalpostId()
 								.toString())
 						.skjerming(dokumentInfoDto.getSkjerming() == null ? null : dokumentInfoDto.getSkjerming()
@@ -281,7 +281,7 @@ public class JournalpostDtoMapper {
 			}
 			return TilgangPensjonSak.builder()
 					.feilregistrert(saksrelasjon.getFeilregistrert() != null && saksrelasjon.getFeilregistrert())
-					.tema(arkivsak.getTema() != null ? arkivsak.getTema().getTemanavn() : null)
+					.tema(arkivsak.getTema() != null ? arkivsak.getTema().name() : null)
 					.foedselsnummer(Ident.of(arkivsak.getAktoerId()))
 					.build();
 		} else {
@@ -295,12 +295,11 @@ public class JournalpostDtoMapper {
 			} else {
 				return TilgangGosysSak.builder()
 						.feilregistrert(saksrelasjon.getFeilregistrert() != null && saksrelasjon.getFeilregistrert())
-						.tema(arkivsak.getTema() != null ? arkivsak.getTema().getTemanavn() : saksrelasjon.getTema())
+						.tema(arkivsak.getTema() != null ? arkivsak.getTema().name() : saksrelasjon.getTema())
 						.aktoerId(Ident.ofNullable(arkivsak.getAktoerId() != null ? arkivsak.getAktoerId() : saksrelasjon.getAktoerId()))
 						.build();
 			}
 		}
-
 	}
 
 	private Journalstatus mapJournalstatus(JournalpostDto journalpostDto) {

@@ -11,27 +11,23 @@ import no.nav.saf.anticorruptionlayer.joark.domain.kode.JournalpostTypeCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.MottaksKanalCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.SkjermingTypeCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.UtsendingsKanalCode;
-import no.nav.saf.anticorruptionlayer.joark.safintern.journalpost.ArkivSak;
 import no.nav.safselvbetjening.tilgang.Ident;
 import no.nav.safselvbetjening.tilgang.TilgangBruker;
-import no.nav.safselvbetjening.tilgang.TilgangGosysSak;
 import no.nav.safselvbetjening.tilgang.TilgangInnsyn;
 import no.nav.safselvbetjening.tilgang.TilgangJournalpost;
 import no.nav.safselvbetjening.tilgang.TilgangJournalposttype;
 import no.nav.safselvbetjening.tilgang.TilgangJournalstatus;
 import no.nav.safselvbetjening.tilgang.TilgangMottakskanal;
-import no.nav.safselvbetjening.tilgang.TilgangPensjonSak;
 import no.nav.safselvbetjening.tilgang.TilgangSak;
 import no.nav.safselvbetjening.tilgang.TilgangSkjermingType;
 
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Stream;
 
 import static java.util.Collections.emptyList;
+import static no.nav.saf.domain.DomainConstants.TIDSSONE_NORGE;
 
 @Data
 @NoArgsConstructor
@@ -105,7 +101,7 @@ public class JournalpostDto {
 		if (date == null) {
 			return defaultValue;
 		}
-		return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+		return date.toInstant().atZone(TIDSSONE_NORGE).toLocalDateTime();
 	}
 
 	private Ident mapAvsenderMottakerId() {

@@ -39,7 +39,7 @@ import static no.nav.saf.util.MDCUtility.addMdcData;
 
 @Slf4j
 @Component
-class DokumentoversiktJournalstatusQuery {
+public class DokumentoversiktJournalstatusQuery {
 
 	// Hvis nye gyldige journalstatuser legges til må PEP1G, PEP2, PEP2D og PEP3 filtrering vurderes innført
 	private static final EnumMap<Journalstatus, JournalStatusCode> GYLDIGE_JOURNALSTATUSER = new EnumMap<>(Journalstatus.class);

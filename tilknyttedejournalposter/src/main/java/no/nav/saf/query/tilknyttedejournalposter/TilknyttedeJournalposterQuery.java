@@ -22,7 +22,6 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static java.util.Collections.emptySet;
 import static no.nav.saf.util.MDCUtility.addMdcData;
@@ -104,19 +103,15 @@ public class TilknyttedeJournalposterQuery {
 				.map(TilgangJournalpost::getJournalpostId)
 				.map(arkivJournalposter::get)
 				.map(arkivJournalpost ->
-						ArkivJournalpostMapper.mapJournalpost(arkivJournalpost,
-								getBrukersIdenterFraTilgangBruker(filteredTilgangBruker.get(arkivJournalpost.journalpostId())),
-								safRequestContext.getRequestCache()))
+				{
+					TilgangBruker tilgangBruker = filteredTilgangBruker.get(arkivJournalpost.journalpostId());
+					Set<Ident> brukerIdenter = tilgangBruker == null ? emptySet() :
+							tilgangBruker.getBrukersIdenterSomTilgangsIdenter().collect(Collectors.toSet());
+					return ArkivJournalpostMapper.mapJournalpost(arkivJournalpost,
+							brukerIdenter,
+							safRequestContext.getRequestCache());
+				})
 				.toList();
-	}
-
-	private static Set<Ident> getBrukersIdenterFraTilgangBruker(TilgangBruker tilgangBruker) {
-		if (tilgangBruker == null) {
-			return emptySet();
-		}
-		return Stream.concat(tilgangBruker.getAlleIdenter().stream(), tilgangBruker.getAlleAktoerIds().stream())
-				.map(Ident::of)
-				.collect(Collectors.toSet());
 	}
 
 }

@@ -157,7 +157,7 @@ public class ArkivJournalpostMapper {
 			}
 			return TilgangPensjonSak.builder()
 					.feilregistrert(saksrelasjon.feilregistrert() != null && saksrelasjon.feilregistrert())
-					.tema(arkivsak.getTema() != null ? arkivsak.getTema().getTemanavn() : null)
+					.tema(arkivsak.getTema() != null ? arkivsak.getTema().name() : null)
 					.foedselsnummer(Ident.of(arkivsak.getAktoerId()))
 					.build();
 		} else {

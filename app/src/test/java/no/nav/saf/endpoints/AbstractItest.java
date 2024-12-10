@@ -4,6 +4,7 @@ import lombok.SneakyThrows;
 import no.nav.saf.ApplicationConfig;
 import no.nav.saf.azure.AzureProperties;
 import no.nav.saf.domain.visningsmodell.Dokumentoversikt;
+import no.nav.saf.domain.visningsmodell.Journalpost;
 import no.nav.saf.headers.NavHeaders;
 import no.nav.saf.integration.azure.AzureTokenConsumer;
 import no.nav.security.mock.oauth2.MockOAuth2Server;
@@ -864,6 +865,13 @@ public abstract class AbstractItest {
 				dokumentInfo.getLogiskeVedlegg().forEach(logiskVedlegg -> assertThat(logiskVedlegg.getTittel()).isEqualTo(SKJULT_TITTEL));
 			});
 		});
+	}
+
+	protected static void assertBrukerTilgang(Journalpost... journalposter) {
+		for (Journalpost journalpost : journalposter) {
+			assertTrue(journalpost.isBrukerHarTilgang());
+			assertThat(journalpost.getBrukerTilgangAvvistBegrunnelser()).isEmpty();
+		}
 	}
 
 	@SneakyThrows

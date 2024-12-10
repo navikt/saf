@@ -27,7 +27,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static no.nav.saf.domain.kode.Journalstatus.FEILREGISTRERT;
 import static no.nav.saf.query.dokumentoversikt.SideInfoMapper.mapFilteredSideInfo;
@@ -140,7 +139,7 @@ class DokumentoversiktFagsakQuery {
 				.toList()
 				.blockingGet();
 
-		Set<Ident> identer = tilgangBrukerList.stream().flatMap(DokumentoversiktFagsakQuery::getBrukersIdenterFraTilgangBruker).collect(Collectors.toSet());
+		Set<Ident> identer = tilgangBrukerList.stream().flatMap(TilgangBruker::getBrukersIdenterSomTilgangsIdenter).collect(Collectors.toSet());
 		List<Journalpost> visningJournalposterSortert = filteredTilgangJournalpostList.stream()
 				.map(TilgangJournalpost::getJournalpostId)
 				.sorted(Comparator.reverseOrder())
@@ -159,14 +158,6 @@ class DokumentoversiktFagsakQuery {
 				.journalposter(visningJournalposterFiltrert)
 				.sideInfo(mapFilteredSideInfo(getLastJournalpostOnPage(journalposter, visningJournalposterSortert), visningJournalposterSortert))
 				.build();
-	}
-
-	private static Stream<Ident> getBrukersIdenterFraTilgangBruker(TilgangBruker tilgangBruker) {
-		if (tilgangBruker == null) {
-			return Stream.empty();
-		}
-		return Stream.concat(tilgangBruker.getAlleIdenter().stream(), tilgangBruker.getAlleAktoerIds().stream())
-				.map(Ident::of);
 	}
 
 	private static JournalpostDto getLastJournalpostOnPage(Map<Long, JournalpostDto> safRequestContext, List<Journalpost> visningJournalposterSortert) {

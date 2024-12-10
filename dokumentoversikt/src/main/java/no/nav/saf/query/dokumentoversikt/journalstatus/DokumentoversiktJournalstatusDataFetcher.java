@@ -12,6 +12,8 @@ import no.nav.saf.graphql.GraphQLExceptionHandler;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 import static no.nav.saf.util.MDCUtility.addMdcData;
 
 @Slf4j
@@ -31,14 +33,8 @@ public class DokumentoversiktJournalstatusDataFetcher implements DataFetcher<Dat
 		try {
 			var unsupportedFields = environment.getSelectionSet().getFields("**/brukerHarTilgang", "**/brukerTilgangAvvistBegrunnelser");
 			if (!unsupportedFields.isEmpty()) {
-				String feilmelding = prettyPrintList(unsupportedFields.stream().map(SelectedField::getQualifiedName).toArray(String[]::new));
-				String fieldPluralSingular = unsupportedFields.size() == 1 ? "Feltet" : "Feltene";
-				SafFunctionalException safFunctionalException = new SafFunctionalException(
-						fieldPluralSingular + " " + feilmelding + " er ikke støttet i DokumentoversiktJournalstatus-queriet");
-
-				log.warn("query DokumentoversiktJournalstatus funksjonell feil. {} {} er med i queriet, men de{} er ikke støttet her.",
-						fieldPluralSingular, feilmelding, unsupportedFields.size() == 1 ? "t" : "");
-				return createDataFetcherErrorResponse(safFunctionalException);
+				final String errorMessage = createErrorMessageAndLog(unsupportedFields);
+				return createDataFetcherErrorResponse(new SafFunctionalException(errorMessage));
 			}
 			DokumentoversiktJournalstatusArguments arguments = DokumentoversiktJournalstatusArguments.create(environment);
 			log.info("dokumentoversiktJournalstatus hentes for filter={}", arguments.getFilters());
@@ -60,10 +56,21 @@ public class DokumentoversiktJournalstatusDataFetcher implements DataFetcher<Dat
 				.build();
 	}
 
+	private static String createErrorMessageAndLog(List<SelectedField> unsupportedFields) {
+		String feilmelding = prettyPrintList(unsupportedFields.stream().map(SelectedField::getQualifiedName).toArray(String[]::new));
+		String fieldPluralSingular = unsupportedFields.size() == 1 ? "Feltet" : "Feltene";
+
+		log.warn("query DokumentoversiktJournalstatus funksjonell feil. {} {} er med i queriet, men de{} er ikke støttet her.",
+				fieldPluralSingular, feilmelding, unsupportedFields.size() == 1 ? "t" : "");
+
+		return fieldPluralSingular + " " + feilmelding + " er ikke støttet i DokumentoversiktJournalstatus-queriet";
+	}
+
 	private static String prettyPrintList(String... list) {
 		if (list.length == 1) {
 			return list[0];
 		}
+
 		String commaSeparated = "";
 		int length = list.length - 1;
 		for (int i = 0; i < length - 1; i++) {
