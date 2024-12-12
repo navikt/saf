@@ -601,7 +601,7 @@
       "cluster": "prod-gcp"
     },
     {
-      "app": "routing",
+      "app": "postmottak-backend",
       "namespace": "aap",
       "cluster": "prod-gcp",
       "roles": [
