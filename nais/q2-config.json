@@ -64,6 +64,15 @@
       ]
     },
     {
+      "app": "k9-punsj",
+      "namespace": "k9saksbehandling",
+      "cluster": "dev-gcp",
+      "roles": [
+        "tema_oms",
+        "tema_fri"
+      ]
+    },
+    {
       "app": "familie-integrasjoner",
       "namespace": "teamfamilie",
       "cluster": "dev-fss"
@@ -96,11 +105,6 @@
     {
       "app": "jfr-arena-q2",
       "namespace": "isa",
-      "cluster": "dev-gcp"
-    },
-    {
-      "app": "aap-jfr-arena",
-      "namespace": "aap",
       "cluster": "dev-gcp"
     },
     {
