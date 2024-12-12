@@ -47,6 +47,15 @@
       ]
     },
     {
+      "app": "k9-punsj",
+      "namespace": "k9saksbehandling",
+      "cluster": "prod-gcp",
+      "roles": [
+        "tema_oms",
+        "tema_fri"
+      ]
+    },
+    {
       "app": "journalforing-frontend",
       "namespace": "isa",
       "cluster": "prod-fss"

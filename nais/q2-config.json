@@ -64,6 +64,15 @@
       ]
     },
     {
+      "app": "k9-punsj",
+      "namespace": "k9saksbehandling",
+      "cluster": "dev-gcp",
+      "roles": [
+        "tema_oms",
+        "tema_fri"
+      ]
+    },
+    {
       "app": "familie-integrasjoner",
       "namespace": "teamfamilie",
       "cluster": "dev-fss"
