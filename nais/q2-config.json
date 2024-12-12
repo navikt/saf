@@ -62,7 +62,8 @@
         "tema_oms",
         "tema_fri"
       ]
-    },    {
+    },
+    {
       "app": "k9-punsj",
       "namespace": "k9saksbehandling",
       "cluster": "dev-gcp",
