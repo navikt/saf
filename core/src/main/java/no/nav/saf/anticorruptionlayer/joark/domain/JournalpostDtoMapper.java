@@ -33,9 +33,7 @@ import no.nav.saf.tilgangskontroll.RequestCache;
 import no.nav.saf.tilgangskontroll.pep.AbacAnswer;
 import no.nav.safselvbetjening.tilgang.Ident;
 import no.nav.safselvbetjening.tilgang.TilgangDokument;
-import no.nav.safselvbetjening.tilgang.TilgangGosysSak;
 import no.nav.safselvbetjening.tilgang.TilgangJournalpost;
-import no.nav.safselvbetjening.tilgang.TilgangPensjonSak;
 import no.nav.safselvbetjening.tilgang.TilgangSak;
 import no.nav.safselvbetjening.tilgang.UtledTilgangService;
 import org.springframework.stereotype.Component;
@@ -43,21 +41,22 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static java.lang.Integer.valueOf;
 import static java.util.Objects.nonNull;
 import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostMapper.ARKIVJOURNALPOST_OVERSTYRTINNSYN_STANDARD;
 import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostMapper.ARKIVJOURNALPOST_OVERSTYRTINNSYN_STANDARD_BESKRIVELSE;
 import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostMapper.SKJULT_TITTEL;
-import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostMapper.mapbrukerTilgangAvvistBegrunnelser;
+import static no.nav.saf.anticorruptionlayer.joark.TilgangAvvistMapper.mapbrukerTilgangAvvistBegrunnelser;
 import static no.nav.saf.anticorruptionlayer.joark.domain.kode.JournalpostTypeCode.U;
 import static no.nav.saf.cache.KeyGeneratorLocalCaching.getKeyForPep2d;
 import static no.nav.saf.cache.KeyGeneratorLocalCaching.getKeyForPep5;
 import static no.nav.saf.cache.KeyGeneratorLocalCaching.getKeyForPep6d;
 import static no.nav.saf.cache.KeyGeneratorLocalCaching.getKeyForPep7d;
-import static no.nav.saf.domain.DomainConstants.SAF_SELVBETJENING_TIDLIGSTE_INNSYN;
 import static no.nav.saf.domain.DomainConstants.TIDSSONE_NORGE;
 import static no.nav.saf.domain.kode.Journalstatus.MOTTATT;
 import static no.nav.saf.domain.visningsmodell.RelevantDato.INVALID_DATE;
@@ -69,7 +68,7 @@ import static org.apache.commons.lang3.StringUtils.trim;
 @Component
 public class JournalpostDtoMapper {
 	private static final AvsenderMottakerMapper avsenderMottakerMapper = new AvsenderMottakerMapper();
-	private static final UtledTilgangService utledTilgangService = new UtledTilgangService(SAF_SELVBETJENING_TIDLIGSTE_INNSYN);
+	private static final UtledTilgangService utledTilgangService = new UtledTilgangService();
 	static final String FILTYPE_PDF = "PDF";
 	static final String FILTYPE_PDFA = "PDFA";
 
@@ -279,24 +278,24 @@ public class JournalpostDtoMapper {
 			if (arkivsak == null) {
 				return null;
 			}
-			return TilgangPensjonSak.builder()
+			return TilgangSak.builder()
 					.feilregistrert(saksrelasjon.getFeilregistrert() != null && saksrelasjon.getFeilregistrert())
 					.tema(arkivsak.getTema() != null ? arkivsak.getTema().name() : null)
-					.foedselsnummer(Ident.of(arkivsak.getAktoerId()))
+					.ident(Ident.of(arkivsak.getAktoerId()))
 					.build();
 		} else {
 			Arkivsak arkivsak = requestCache.getArkivsak(saksrelasjon);
 			if (arkivsak == null) {
-				return TilgangGosysSak.builder()
+				return TilgangSak.builder()
 						.feilregistrert(saksrelasjon.getFeilregistrert() != null && saksrelasjon.getFeilregistrert())
 						.tema(saksrelasjon.getTema())
-						.aktoerId(Ident.ofNullable(saksrelasjon.getAktoerId()))
+						.ident(Ident.ofNullable(saksrelasjon.getAktoerId()))
 						.build();
 			} else {
-				return TilgangGosysSak.builder()
+				return TilgangSak.builder()
 						.feilregistrert(saksrelasjon.getFeilregistrert() != null && saksrelasjon.getFeilregistrert())
 						.tema(arkivsak.getTema() != null ? arkivsak.getTema().name() : saksrelasjon.getTema())
-						.aktoerId(Ident.ofNullable(arkivsak.getAktoerId() != null ? arkivsak.getAktoerId() : saksrelasjon.getAktoerId()))
+						.ident(Ident.ofNullable(findFirstNonNull(arkivsak.getAktoerId(), saksrelasjon.getAktoerId())))
 						.build();
 			}
 		}
@@ -469,5 +468,9 @@ public class JournalpostDtoMapper {
 	private boolean getCachedDecision(RequestCache requestCache, String tilgangKey) {
 		AbacAnswer abacAnswer = requestCache.getCachedDecision(tilgangKey);
 		return abacAnswer != null && abacAnswer.isPermit();
+	}
+
+	private static String findFirstNonNull(String... str) {
+		return Stream.of(str).filter(Objects::nonNull).findFirst().orElse(null);
 	}
 }

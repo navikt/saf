@@ -1,6 +1,5 @@
 package no.nav.saf.domain;
 
-import java.time.LocalDate;
 import java.time.ZoneId;
 
 public final class DomainConstants {
@@ -18,8 +17,6 @@ public final class DomainConstants {
 	public static final String FAGSAKSYSTEM_K9 = "K9";
 
 	public static final ZoneId TIDSSONE_NORGE = ZoneId.of("Europe/Oslo");
-
-	public static final LocalDate SAF_SELVBETJENING_TIDLIGSTE_INNSYN = LocalDate.of(2016, 6, 4);
 
 	// PEP funksjonelt navn. Se https://confluence.adeo.no/display/BOA/saf+-+Tilgangskontroll
 	public static final String PEP1G = "pep1g";

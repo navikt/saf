@@ -43,11 +43,8 @@ import no.nav.saf.domain.visningsmodell.Utsendingsinfo;
 import no.nav.saf.tilgangskontroll.RequestCache;
 import no.nav.saf.tilgangskontroll.pep.AbacAnswer;
 import no.nav.safselvbetjening.tilgang.Ident;
-import no.nav.safselvbetjening.tilgang.TilgangDenyReason;
 import no.nav.safselvbetjening.tilgang.TilgangDokument;
-import no.nav.safselvbetjening.tilgang.TilgangGosysSak;
 import no.nav.safselvbetjening.tilgang.TilgangJournalpost;
-import no.nav.safselvbetjening.tilgang.TilgangPensjonSak;
 import no.nav.safselvbetjening.tilgang.TilgangSak;
 import no.nav.safselvbetjening.tilgang.UtledTilgangService;
 
@@ -68,7 +65,6 @@ import static no.nav.saf.cache.KeyGeneratorLocalCaching.getKeyForPep2d;
 import static no.nav.saf.cache.KeyGeneratorLocalCaching.getKeyForPep5;
 import static no.nav.saf.cache.KeyGeneratorLocalCaching.getKeyForPep6d;
 import static no.nav.saf.cache.KeyGeneratorLocalCaching.getKeyForPep7d;
-import static no.nav.saf.domain.DomainConstants.SAF_SELVBETJENING_TIDLIGSTE_INNSYN;
 import static no.nav.saf.domain.DomainConstants.TIDSSONE_NORGE;
 import static no.nav.saf.domain.kode.Journalstatus.MOTTATT;
 import static no.nav.saf.domain.visningsmodell.RelevantDato.INVALID_DATE;
@@ -84,7 +80,7 @@ public class ArkivJournalpostMapper {
 	public static final String SKJULT_TITTEL = "*****";
 	public static final String TILKNYTTET_SOM_HOVEDDOKUMENT = "HOVEDDOKUMENT";
 
-	private static final UtledTilgangService utledTilgangService = new UtledTilgangService(SAF_SELVBETJENING_TIDLIGSTE_INNSYN);
+	private static final UtledTilgangService utledTilgangService = new UtledTilgangService();
 
 	public static Journalpost mapJournalpost(ArkivJournalpost arkivJournalpost, Set<Ident> brukerIdenter, RequestCache requestCache) {
 		if (arkivJournalpost == null) {
@@ -97,7 +93,7 @@ public class ArkivJournalpostMapper {
 		Journalstatus journalstatus = mapJournalstatus(arkivJournalpost);
 		Sak sak = mapSak(arkivJournalpost.saksrelasjon(), requestCache);
 		TilgangJournalpost tilgangJournalpost = arkivJournalpost.getJournalpostTilgang(mapTilgangSak(arkivJournalpost.saksrelasjon(), requestCache));
-		List<BrukerTilgangAvvistBegrunnelse> brukerTilgangAvvistBegrunnelser = mapbrukerTilgangAvvistBegrunnelser(utledTilgangService.utledTilgangJournalpost(tilgangJournalpost, brukerIdenter));
+		List<BrukerTilgangAvvistBegrunnelse> brukerTilgangAvvistBegrunnelser = TilgangAvvistMapper.mapbrukerTilgangAvvistBegrunnelser(utledTilgangService.utledTilgangJournalpost(tilgangJournalpost, brukerIdenter));
 
 		Journalpost journalpost = Journalpost.builder()
 				.journalpostId(journalpostId)
@@ -155,20 +151,20 @@ public class ArkivJournalpostMapper {
 			if (arkivsak == null) {
 				return null;
 			}
-			return TilgangPensjonSak.builder()
+			return TilgangSak.builder()
 					.feilregistrert(saksrelasjon.feilregistrert() != null && saksrelasjon.feilregistrert())
 					.tema(arkivsak.getTema() != null ? arkivsak.getTema().name() : null)
-					.foedselsnummer(Ident.of(arkivsak.getAktoerId()))
+					.ident(Ident.of(arkivsak.getAktoerId()))
 					.build();
 		} else {
 			ArkivSak arkivSak = saksrelasjon.sak();
 			if (arkivSak == null) {
 				return null;
 			}
-			return TilgangGosysSak.builder()
+			return TilgangSak.builder()
 					.feilregistrert(saksrelasjon.feilregistrert() != null && saksrelasjon.feilregistrert())
 					.tema(arkivSak.tema())
-					.aktoerId(Ident.ofNullable(findFirstNonNull(arkivSak.aktoerId(), arkivSak.orgNr())))
+					.ident(Ident.ofNullable(findFirstNonNull(arkivSak.aktoerId(), arkivSak.orgNr())))
 					.build();
 		}
 
@@ -457,7 +453,7 @@ public class ArkivJournalpostMapper {
 			return null;
 		}
 		TilgangDokument tilgangDokument = tilgangJournalpost.getDokumenter().stream().filter(dok -> dok.id() == dokumentinfo.dokumentInfoId()).findFirst().orElse(null);
-		List<BrukerTilgangAvvistBegrunnelse> brukerTilgangAvvistBegrunnelser = mapbrukerTilgangAvvistBegrunnelser(utledTilgangService.utledTilgangDokument(tilgangJournalpost, tilgangDokument, fildetaljer.getTilgangVariant(), brukerIdenter));
+		List<BrukerTilgangAvvistBegrunnelse> brukerTilgangAvvistBegrunnelser = TilgangAvvistMapper.mapbrukerTilgangAvvistBegrunnelser(utledTilgangService.utledTilgangDokument(tilgangJournalpost, tilgangDokument, fildetaljer.getTilgangVariant(), brukerIdenter));
 		return Dokumentvariant.builder()
 				.saksbehandlerHarTilgang(determineSaksbehandlerTilgang(journalpost, dokumentinfo, fildetaljer, requestCache))
 				.variantformat(variantformat)
@@ -562,38 +558,6 @@ public class ArkivJournalpostMapper {
 	private static boolean getCachedDecision(RequestCache requestCache, String tilgangKey) {
 		AbacAnswer abacAnswer = requestCache.getCachedDecision(tilgangKey);
 		return abacAnswer != null && abacAnswer.isPermit();
-	}
-
-	public static List<BrukerTilgangAvvistBegrunnelse> mapbrukerTilgangAvvistBegrunnelser(List<TilgangDenyReason> tilgangDenyReasons) {
-		return tilgangDenyReasons.stream()
-				.map(denyReason -> new BrukerTilgangAvvistBegrunnelse(
-						denyReason.reason,
-						mapTilgangAvvistHumanReadable(denyReason)
-				))
-				.toList();
-	}
-
-	private static String mapTilgangAvvistHumanReadable(TilgangDenyReason denyReason) {
-		return switch (denyReason) {
-			case DENY_REASON_ANNEN_PART ->
-					"Brukeren kan ikke se dokumentet fordi dokumentet er sendt til/fra andre parter enn bruker.";
-			case DENY_REASON_INNSYNSDATO ->
-					"Brukeren kan ikke se journalposten fordi journalposten er opprettet før tidligste innsynsdato (04.06.2016).";
-			case DENY_REASON_UGYLDIG_JOURNALSTATUS ->
-					"Brukeren kan ikke se journalposten fordi journalposten ikke har status ferdigstilt eller midlertidig.";
-			case DENY_REASON_FEILREGISTRERT ->
-					"Brukeren kan ikke se journalposten fordi journalposten er feilregistrert.";
-			case DENY_REASON_TEMAER_UNNTATT_INNSYN ->
-					"Brukeren kan ikke se journalposten fordi journalposten er markert som kontrollsak eller farskapssak.";
-			case DENY_REASON_GDPR -> "Brukeren kan ikke se journalposten ihht. GDPR.";
-			case DENY_REASON_FORVALTNINGSNOTAT ->
-					"Brukeren kan ikke se journalposten fordi journalposten er et notat, men hoveddokumentet er ikke et forvaltningsnotat.";
-			case DENY_REASON_SKJULT_INNSYN -> "Brukeren kan ikke se journalposten fordi journalposten er skjult.";
-			case DENY_REASON_SKANNET_DOKUMENT -> "Brukeren kan ikke se dokumentet fordi dokumentet er skannet.";
-			case DENY_REASON_UGYLDIG_VARIANTFORMAT ->
-					"Brukeren kan ikke se dokumentet fordi bruker kun kan se dokument med variantformat enten SLADDET eller ARKIV.";
-			case DENY_REASON_KASSERT -> "Brukeren kan ikke se dokumentet fordi dokumentet er kassert.";
-		};
 	}
 
 	private static String findFirstNonNull(String... str) {
