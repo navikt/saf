@@ -8,6 +8,10 @@
           saksbehandlerHarTilgang
         }
       }
+      brukerHarTilgang
+      brukerTilgangAvvistBegrunnelser {
+        kode
+      }
     }
   }
 }

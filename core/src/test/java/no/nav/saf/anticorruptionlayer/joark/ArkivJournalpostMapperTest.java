@@ -39,6 +39,7 @@ import org.junit.jupiter.params.provider.EnumSource;
 
 import java.util.List;
 
+import static java.util.Collections.emptySet;
 import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostMapper.ARKIVJOURNALPOST_OVERSTYRTINNSYN_STANDARD;
 import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostMapper.FILTYPE_PDF;
 import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostMapper.SKJULT_TITTEL;
@@ -138,7 +139,7 @@ class ArkivJournalpostMapperTest {
 		ArkivJournalpost arkivJournalpost = utgaaendeArkivJournalpost(E, utsendingsInfoDtoWithFysiskPostadresse(), S);
 		RequestCache requestCache = defaultRequestCache();
 
-		Journalpost journalpost = mapJournalpost(arkivJournalpost, requestCache);
+		Journalpost journalpost = mapJournalpost(arkivJournalpost, emptySet(), requestCache);
 
 		assertCommonMetadata(journalpost);
 
@@ -164,7 +165,7 @@ class ArkivJournalpostMapperTest {
 		ArkivJournalpost arkivJournalpost = utgaaendeArkivJournalpost(E, arkivUtsendingsInfoWithNavNoVarslingOldVarselStructure(EPOST_VEDTAK_INPUT_VARSLINGSTEKST, EPOST_VEDTAK_INPUT_DIGITAL_KONTAKTINFO), NAV_NO);
 		RequestCache requestCache = defaultRequestCache();
 
-		Journalpost journalpost = mapJournalpost(arkivJournalpost, requestCache);
+		Journalpost journalpost = mapJournalpost(arkivJournalpost, emptySet(), requestCache);
 
 		assertCommonMetadata(journalpost);
 
@@ -182,7 +183,7 @@ class ArkivJournalpostMapperTest {
 		ArkivJournalpost arkivJournalpost = utgaaendeArkivJournalpost(E, arkivUtsendingsInfoWithDigitalPostadresseOldVarselStructure(), SDP);
 		RequestCache requestCache = defaultRequestCache();
 
-		Journalpost journalpost = mapJournalpost(arkivJournalpost, requestCache);
+		Journalpost journalpost = mapJournalpost(arkivJournalpost, emptySet(), requestCache);
 
 		assertCommonMetadata(journalpost);
 
@@ -197,7 +198,7 @@ class ArkivJournalpostMapperTest {
 		ArkivJournalpost arkivJournalpost = utgaaendeArkivJournalpost(E, arkivUtsendingsInfoWithDigitalPostadresseOldVarselStructure(), null);
 		RequestCache requestCache = defaultRequestCache();
 
-		Journalpost journalpost = mapJournalpost(arkivJournalpost, requestCache);
+		Journalpost journalpost = mapJournalpost(arkivJournalpost, emptySet(), requestCache);
 
 		assertCommonMetadata(journalpost);
 
@@ -208,7 +209,7 @@ class ArkivJournalpostMapperTest {
 	void shouldReturnNullUtsendingInfoWhenJournalpostTypeErInngaaende() {
 		ArkivJournalpost arkivJournalpost = inngaaendeArkivJournalpost();
 
-		Journalpost journalpost = mapJournalpost(arkivJournalpost, defaultRequestCache());
+		Journalpost journalpost = mapJournalpost(arkivJournalpost, emptySet(), defaultRequestCache());
 
 		assertCommonMetadata(journalpost);
 
@@ -219,7 +220,7 @@ class ArkivJournalpostMapperTest {
 	void shouldMapWithInngaaendeArkivJournalpost() {
 		ArkivJournalpost arkivJournalpost = inngaaendeArkivJournalpost();
 
-		Journalpost journalpost = mapJournalpost(arkivJournalpost, defaultRequestCache());
+		Journalpost journalpost = mapJournalpost(arkivJournalpost, emptySet(), defaultRequestCache());
 
 		assertCommonMetadata(journalpost);
 
@@ -240,7 +241,7 @@ class ArkivJournalpostMapperTest {
 		ArkivJournalpost arkivJournalpost = notatArkivJournalpost();
 		RequestCache requestCache = defaultRequestCache();
 
-		Journalpost journalpost = mapJournalpost(arkivJournalpost, requestCache);
+		Journalpost journalpost = mapJournalpost(arkivJournalpost, emptySet(), requestCache);
 
 		assertCommonMetadata(journalpost);
 
@@ -261,7 +262,7 @@ class ArkivJournalpostMapperTest {
 		String tilgangKeyPep5LocalCaching = KeyGeneratorLocalCaching.getKeyForPep5(String.valueOf(ARKIVJOURNALPOST_JOURNALPOST_ID), String.valueOf(ARKIVDOKUMENTINFO_DOKUMENT_INFO_ID));
 		requestCache.putDecision(tilgangKeyPep5LocalCaching, AbacAnswer.deny(new UkjentEllerTekniskReason()));
 
-		Journalpost journalpost = mapJournalpost(arkivJournalpost, requestCache);
+		Journalpost journalpost = mapJournalpost(arkivJournalpost, emptySet(), requestCache);
 
 		assertThat(journalpost).isNotNull();
 		assertThat(journalpost.getJournalpostId()).isEqualTo(String.valueOf(ARKIVJOURNALPOST_JOURNALPOST_ID));
@@ -273,7 +274,7 @@ class ArkivJournalpostMapperTest {
 		ArkivJournalpost arkivJournalpost = notatArkivJournalpost();
 		RequestCache requestCache = createTilgangBrukerRequestCache();
 
-		Journalpost journalpost = mapJournalpost(arkivJournalpost, requestCache);
+		Journalpost journalpost = mapJournalpost(arkivJournalpost, emptySet(), requestCache);
 
 		assertThat(journalpost.getKanal()).isEqualTo(INGEN_DISTRIBUSJON);
 	}
@@ -283,7 +284,7 @@ class ArkivJournalpostMapperTest {
 		ArkivJournalpost arkivJournalpost = utgaaendeArkivJournalpost(JournalStatusCode.FS, null, null);
 		RequestCache requestCache = createTilgangBrukerRequestCache();
 
-		Journalpost journalpost = mapJournalpost(arkivJournalpost, requestCache);
+		Journalpost journalpost = mapJournalpost(arkivJournalpost, emptySet(), requestCache);
 
 		assertThat(journalpost.getKanal()).isEqualTo(SENTRAL_UTSKRIFT);
 	}
@@ -293,7 +294,7 @@ class ArkivJournalpostMapperTest {
 		ArkivJournalpost arkivJournalpost = utgaaendeArkivJournalpost(JournalStatusCode.FL, null, null);
 		RequestCache requestCache = createTilgangBrukerRequestCache();
 
-		Journalpost journalpost = mapJournalpost(arkivJournalpost, requestCache);
+		Journalpost journalpost = mapJournalpost(arkivJournalpost, emptySet(), requestCache);
 
 		assertThat(journalpost.getKanal()).isEqualTo(LOKAL_UTSKRIFT);
 	}
@@ -304,7 +305,7 @@ class ArkivJournalpostMapperTest {
 		ArkivJournalpost arkivJournalpost = pensjonSakArkivJournalpost();
 		RequestCache requestCache = createTilgangBrukerRequestCachePSAK();
 
-		Journalpost journalpost = mapJournalpost(arkivJournalpost, requestCache);
+		Journalpost journalpost = mapJournalpost(arkivJournalpost, emptySet(), requestCache);
 
 		assertThat(journalpost.getSak().getArkivsaksnummer()).isEqualTo(ARKIVSAKSRELASJON_SAK_ID.toString());
 		assertThat(journalpost.getSak().getArkivsaksystem()).isEqualTo(PSAK);
@@ -320,7 +321,7 @@ class ArkivJournalpostMapperTest {
 				.build();
 		RequestCache requestCache = createTilgangBrukerRequestCachePSAK();
 
-		Journalpost journalpost = mapJournalpost(arkivJournalpost, requestCache);
+		Journalpost journalpost = mapJournalpost(arkivJournalpost, emptySet(), requestCache);
 
 		assertThat(journalpost.getSkjerming()).isEqualTo(Skjerming.FEIL);
 	}
@@ -330,7 +331,7 @@ class ArkivJournalpostMapperTest {
 		ArkivJournalpost arkivJournalpost = utgaaendeArkivJournalpost(E, null, null);
 		RequestCache requestCache = createTilgangBrukerCacheWithOrganisasjonSak();
 
-		Journalpost journalpost = mapJournalpost(arkivJournalpost, requestCache);
+		Journalpost journalpost = mapJournalpost(arkivJournalpost, emptySet(), requestCache);
 
 		assertThat(journalpost.getBruker().getId()).isEqualTo(BRUKER_ID_ORGANISASJON);
 		assertThat(journalpost.getBruker().getType()).isEqualTo(BrukerIdType.ORGNR);
@@ -346,7 +347,7 @@ class ArkivJournalpostMapperTest {
 				.build();
 		RequestCache requestCache = defaultRequestCache();
 
-		Journalpost journalpost = mapJournalpost(arkivJournalpost, requestCache);
+		Journalpost journalpost = mapJournalpost(arkivJournalpost, emptySet(), requestCache);
 
 		assertThat(journalpost.getDokumenter().get(0).getDokumentstatus()).isEqualTo(Dokumentstatus.KASSERT);
 	}
@@ -362,7 +363,7 @@ class ArkivJournalpostMapperTest {
 				.build();
 		RequestCache requestCache = defaultRequestCache();
 
-		Journalpost journalpost = mapJournalpost(arkivJournalpost, requestCache);
+		Journalpost journalpost = mapJournalpost(arkivJournalpost, emptySet(), requestCache);
 
 		assertThat(journalpost.getDokumenter().get(0).getDokumentstatus()).isNull();
 	}
@@ -387,7 +388,7 @@ class ArkivJournalpostMapperTest {
 		requestCache.putDecision(tilgangKeyPep6dLocalCachingVariantSladdet, AbacAnswer.deny(new UkjentEllerTekniskReason()));
 		requestCache.putDecision(tilgangKeyPep7dLocalCaching, AbacAnswer.permit());
 
-		Journalpost journalpost = mapJournalpost(arkivJournalpost, requestCache);
+		Journalpost journalpost = mapJournalpost(arkivJournalpost, emptySet(), requestCache);
 
 		assertThat(journalpost.getDokumenter().get(0).getDokumentvarianter())
 				.extracting(Dokumentvariant::getVariantformat, Dokumentvariant::isSaksbehandlerHarTilgang)
@@ -406,7 +407,7 @@ class ArkivJournalpostMapperTest {
 		requestCache.putDecision(tilgangKeyPep2dLocalCaching, AbacAnswer.deny(new TemaReason("cause_0013_ikketilgangtiltema", "saf_pep2d", "mangler_tema", Tema.PEN)));
 		requestCache.putDecision(tilgangKeyPep5LocalCaching, AbacAnswer.permit());
 
-		Journalpost journalpost = mapJournalpost(arkivJournalpost, requestCache);
+		Journalpost journalpost = mapJournalpost(arkivJournalpost, emptySet(), requestCache);
 
 		assertThat(journalpost.getTittel()).isEqualTo(SKJULT_TITTEL);
 		DokumentInfo dokumentInfo = journalpost.getDokumenter().get(0);
@@ -425,7 +426,7 @@ class ArkivJournalpostMapperTest {
 		requestCache.putDecision(tilgangKeyPep2dLocalCaching, AbacAnswer.deny(new TemaReason("cause_0013_ikketilgangtiltema", "saf_pep2d", "mangler_tema", Tema.PEN)));
 		requestCache.putDecision(tilgangKeyPep5LocalCaching, AbacAnswer.permit());
 
-		Journalpost journalpost = mapJournalpost(arkivJournalpost, requestCache);
+		Journalpost journalpost = mapJournalpost(arkivJournalpost, emptySet(), requestCache);
 
 		assertThat(journalpost.getTittel()).isEqualTo(ARKIVJOURNALPOST_INNHOLD);
 		DokumentInfo dokumentInfo = journalpost.getDokumenter().get(0);
@@ -454,7 +455,7 @@ class ArkivJournalpostMapperTest {
 		requestCache.putDecision(tilgangKeyPep6dLocalCachingVariantArkiv, AbacAnswer.permit());
 		requestCache.putDecision(tilgangKeyPep6dLocalCachingVariantSladdet, AbacAnswer.permit());
 
-		Journalpost journalpost = mapJournalpost(arkivJournalpost, requestCache);
+		Journalpost journalpost = mapJournalpost(arkivJournalpost, emptySet(), requestCache);
 
 		assertThat(journalpost.getTittel()).isEqualTo(ARKIVJOURNALPOST_INNHOLD);
 		DokumentInfo dokumentInfo = journalpost.getDokumenter().get(0);
@@ -487,7 +488,7 @@ class ArkivJournalpostMapperTest {
 		requestCache.putDecision(tilgangKeyPep6dLocalCachingVariantArkiv, AbacAnswer.permit());
 		requestCache.putDecision(tilgangKeyPep6dLocalCachingVariantSladdet, AbacAnswer.permit());
 
-		Journalpost journalpost = mapJournalpost(arkivJournalpost, requestCache);
+		Journalpost journalpost = mapJournalpost(arkivJournalpost, emptySet(), requestCache);
 
 		assertThat(journalpost.getDokumenter())
 				.hasSize(1)
@@ -517,7 +518,7 @@ class ArkivJournalpostMapperTest {
 		requestCache.putDecision(tilgangKeyPep6dLocalCachingVariantArkiv, AbacAnswer.permit());
 		requestCache.putDecision(tilgangKeyPep6dLocalCachingVariantSladdet, AbacAnswer.permit());
 
-		Journalpost journalpost = mapJournalpost(arkivJournalpost, requestCache);
+		Journalpost journalpost = mapJournalpost(arkivJournalpost, emptySet(), requestCache);
 
 		assertThat(journalpost.getDokumenter())
 				.hasSize(1)
@@ -536,7 +537,7 @@ class ArkivJournalpostMapperTest {
 				.build();
 
 		RequestCache arkivsakCacheRequestCache = createArkivsakCacheRequestCache();
-		Journalpost journalpost = mapJournalpost(arkivJournalpost, arkivsakCacheRequestCache);
+		Journalpost journalpost = mapJournalpost(arkivJournalpost, emptySet(), arkivsakCacheRequestCache);
 
 		assertThat(journalpost.getTema()).isEqualTo(Tema.STO);
 		assertThat(journalpost.getTemanavn()).isEqualTo(Tema.STO.getTemanavn());
@@ -551,7 +552,7 @@ class ArkivJournalpostMapperTest {
 				.build();
 
 		RequestCache arkivsakCacheRequestCache = createArkivsakCacheRequestCache();
-		Journalpost journalpost = mapJournalpost(journalpostDto, arkivsakCacheRequestCache);
+		Journalpost journalpost = mapJournalpost(journalpostDto, emptySet(), arkivsakCacheRequestCache);
 
 		assertThat(journalpost.getTema()).isEqualTo(Tema.AAP);
 		assertThat(journalpost.getTemanavn()).isEqualTo(Tema.AAP.getTemanavn());
@@ -566,7 +567,7 @@ class ArkivJournalpostMapperTest {
 				.build();
 
 		RequestCache arkivsakCacheRequestCache = createArkivsakCacheRequestCache();
-		Journalpost journalpost = mapJournalpost(journalpostDto, arkivsakCacheRequestCache);
+		Journalpost journalpost = mapJournalpost(journalpostDto, emptySet(), arkivsakCacheRequestCache);
 
 		assertThat(journalpost.getTema()).isEqualTo(Tema.AAP);
 		assertThat(journalpost.getTemanavn()).isEqualTo(Tema.AAP.getTemanavn());
@@ -580,7 +581,7 @@ class ArkivJournalpostMapperTest {
 				.type(type.name())
 				.build();
 
-		Journalpost journalpost = mapJournalpost(arkivJournalpost, requestCache);
+		Journalpost journalpost = mapJournalpost(arkivJournalpost, emptySet(), requestCache);
 
 		assertThat(journalpost.getDokumenter().get(0).getBrevkode()).isEqualTo(ARKIVDOKUMENTINFO_BREVKODE);
 	}
@@ -589,7 +590,7 @@ class ArkivJournalpostMapperTest {
 	void shouldMapDokumenttypeIdAsBrevkodeWhenJournalpostIsUtgaaende() {
 		ArkivJournalpost arkivJournalpost = utgaaendeArkivJournalpost(E, null, null);
 
-		Journalpost journalpost = mapJournalpost(arkivJournalpost, defaultRequestCache());
+		Journalpost journalpost = mapJournalpost(arkivJournalpost, emptySet(), defaultRequestCache());
 
 		assertThat(journalpost.getDokumenter().get(0).getBrevkode()).isEqualTo(ARKIVDOKUMENTINFO_DOKUMENTTYPE_ID);
 	}
@@ -602,7 +603,7 @@ class ArkivJournalpostMapperTest {
 						.build()))
 				.build();
 
-		Journalpost journalpost = mapJournalpost(arkivJournalpost, defaultRequestCache());
+		Journalpost journalpost = mapJournalpost(arkivJournalpost, emptySet(), defaultRequestCache());
 
 		assertThat(journalpost.getDokumenter().get(0).getBrevkode()).isEqualTo(ARKIVDOKUMENTINFO_BREVKODE);
 	}
@@ -615,7 +616,7 @@ class ArkivJournalpostMapperTest {
 				.bruker(new ArkivBruker(BRUKER_ID_PERSON, BrukerTypeCode.PERSON))
 				.build();
 
-		Journalpost journalpost = mapJournalpost(journalpostDto, new RequestCache(false));
+		Journalpost journalpost = mapJournalpost(journalpostDto, emptySet(), new RequestCache(false));
 
 		assertThat(journalpost.getBruker().getId()).isEqualTo(BRUKER_ID_PERSON);
 		assertThat(journalpost.getBruker().getType()).isEqualTo(BrukerIdType.FNR);
@@ -629,7 +630,7 @@ class ArkivJournalpostMapperTest {
 				.bruker(new ArkivBruker(BRUKER_ID_ORGANISASJON, ORGANISASJON))
 				.build();
 
-		Journalpost journalpost = mapJournalpost(arkivJournalpost, new RequestCache(false));
+		Journalpost journalpost = mapJournalpost(arkivJournalpost, emptySet(), new RequestCache(false));
 
 		assertThat(journalpost.getBruker().getId()).isEqualTo(BRUKER_ID_ORGANISASJON);
 		assertThat(journalpost.getBruker().getType()).isEqualTo(BrukerIdType.ORGNR);
@@ -643,7 +644,7 @@ class ArkivJournalpostMapperTest {
 				.bruker(new ArkivBruker(BRUKER_ID_ORGANISASJON + "   ", ORGANISASJON))
 				.build();
 
-		Journalpost journalpost = mapJournalpost(arkivJournalpost, new RequestCache(false));
+		Journalpost journalpost = mapJournalpost(arkivJournalpost, emptySet(), new RequestCache(false));
 
 		assertThat(journalpost.getBruker().getId()).isEqualTo(BRUKER_ID_ORGANISASJON);
 		assertThat(journalpost.getBruker().getType()).isEqualTo(BrukerIdType.ORGNR);
@@ -657,7 +658,7 @@ class ArkivJournalpostMapperTest {
 				.build();
 		RequestCache requestCache = createTilgangBrukerRequestCache();
 
-		Journalpost journalpost = mapJournalpost(arkivJournalpost, requestCache);
+		Journalpost journalpost = mapJournalpost(arkivJournalpost, emptySet(), requestCache);
 
 		assertThat(journalpost.getJournalstatus()).isEqualTo(FEILREGISTRERT);
 	}
@@ -670,7 +671,7 @@ class ArkivJournalpostMapperTest {
 				.status(JournalStatusCode.U.name())
 				.build();
 
-		Journalpost journalpost = mapJournalpost(arkivJournalpost, createTilgangBrukerRequestCache());
+		Journalpost journalpost = mapJournalpost(arkivJournalpost, emptySet(), createTilgangBrukerRequestCache());
 
 		assertThat(journalpost.getJournalstatus()).isEqualTo(UTGAAR);
 	}

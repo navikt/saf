@@ -73,18 +73,17 @@ class DokumentoversiktFagsakTilgangsmodellRepository {
 
 	private List<TilgangBruker> findTilgangBrukerListForGsaksakerByFagsakIdAndFagsaksystem(FagsakInput fagsakInput) {
 		try {
-			Map<String, List<String>> idLists = gsakAntiCorruptionLayer.findIdListsByFagsakIdAndFagsaksystem(fagsakInput.getFagsakId(), fagsakInput
-					.getFagsaksystem());
+			Map<String, List<String>> idLists = gsakAntiCorruptionLayer.findIdListsByFagsakIdAndFagsaksystem(fagsakInput.getFagsakId(),
+					fagsakInput.getFagsaksystem());
 			if (idLists.isEmpty()) {
 				return new ArrayList<>();
 			}
 
 			List<TilgangBruker> tilgangBrukerPerson = aktoerAntiCorruptionLayer.hentTilgangBrukerListByAktoerIdList(idLists.get(AKTOER_ID_LIST));
-			List<TilgangBruker> tilgangbrukerOrganisasjon = idLists.get(ORGNR_LIST).stream()
-					.map(orgnr -> TilgangBruker.builder().orgnummer(orgnr).build())
-					.collect(Collectors.toList());
+			Stream<TilgangBruker> tilgangbrukerOrganisasjon = idLists.get(ORGNR_LIST).stream()
+					.map(orgnr -> TilgangBruker.builder().orgnummer(orgnr).build());
 
-			return Stream.concat(tilgangBrukerPerson.stream(), tilgangbrukerOrganisasjon.stream()).collect(Collectors.toList());
+			return Stream.concat(tilgangBrukerPerson.stream(), tilgangbrukerOrganisasjon).toList();
 		} catch (Exception e) {
 			log.warn("findTilgangBrukerListForGsaksakerByFagsakIdAndFagsaksystem feilet ved oppslag. fagsakInput={}", fagsakInput, e);
 			return new ArrayList<>();
@@ -138,7 +137,7 @@ class DokumentoversiktFagsakTilgangsmodellRepository {
 								.k9AktoerIdList(k9sak)
 								.relevanteTredjeparter(bidragSak == null ? null : new ArrayList<>(bidragSak.getRelevanteTredjeparter()))
 								.build();
-					}).collect(Collectors.toList());
+					}).toList();
 		} catch (Exception e) {
 			log.warn("findTilgangSakForGsaker feilet ved for fagsakInput={}.", fagsakInput, e);
 		}

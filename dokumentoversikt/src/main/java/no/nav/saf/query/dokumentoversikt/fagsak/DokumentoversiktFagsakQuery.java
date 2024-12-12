@@ -16,6 +16,7 @@ import no.nav.saf.metrics.Monitor;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.pep.Pep;
 import no.nav.saf.tjeneste.argumenter.FagsakInput;
+import no.nav.safselvbetjening.tilgang.Ident;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -24,6 +25,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static no.nav.saf.domain.kode.Journalstatus.FEILREGISTRERT;
 import static no.nav.saf.query.dokumentoversikt.SideInfoMapper.mapFilteredSideInfo;
@@ -83,8 +86,8 @@ class DokumentoversiktFagsakQuery {
 				.toList()
 				.blockingGet();
 
-		final List<TilgangSak> tilgangSakList = dokumentoversiktFagsakTilgangsmodellRepository.findTilgangSaker(filteredTilgangBrukerList, fagsakInput, dokumentoversiktFagsakArguments
-				.getFilters().getTema(), safRequestContext);
+		final List<TilgangSak> tilgangSakList = dokumentoversiktFagsakTilgangsmodellRepository.findTilgangSaker(filteredTilgangBrukerList, fagsakInput,
+				dokumentoversiktFagsakArguments.getFilters().getTema(), safRequestContext);
 
 		final List<TilgangSak> filteredTilgangSakList = Flowable.fromIterable(tilgangSakList)
 				.parallel(10)
@@ -136,13 +139,13 @@ class DokumentoversiktFagsakQuery {
 				.toList()
 				.blockingGet();
 
-
+		Set<Ident> identer = tilgangBrukerList.stream().flatMap(TilgangBruker::getBrukersIdenterSomTilgangsIdenter).collect(Collectors.toSet());
 		List<Journalpost> visningJournalposterSortert = filteredTilgangJournalpostList.stream()
 				.map(TilgangJournalpost::getJournalpostId)
 				.sorted(Comparator.reverseOrder())
 				.map(journalposter::get)
 				.map(journalpostDto ->
-						journalpostDtoMapper.mapJournalpostDto(journalpostDto, safRequestContext.getRequestCache()))
+						journalpostDtoMapper.mapJournalpostDto(journalpostDto, identer, safRequestContext.getRequestCache()))
 				.filter(Objects::nonNull)
 				.toList();
 

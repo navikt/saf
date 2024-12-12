@@ -13,14 +13,17 @@ import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 import no.nav.saf.domain.visningsmodell.Journalpost;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.pep.Pep;
+import no.nav.safselvbetjening.tilgang.Ident;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static java.util.Collections.emptySet;
 import static no.nav.saf.util.MDCUtility.addMdcData;
 
 @Slf4j
@@ -66,16 +69,15 @@ public class TilknyttedeJournalposterQuery {
 		Map<Long, ArkivJournalpost> arkivJournalposter = journalposter.stream()
 				.collect(Collectors.toMap(ArkivJournalpost::journalpostId, arkivJournalpost -> arkivJournalpost));
 
-		Set<Arkivsak> arkivsaker = tilknyttedeJournalposterTilgangRepository.arkivsaker(journalposter, safRequestContext);
+		Map<Long, Arkivsak> arkivsaker = tilknyttedeJournalposterTilgangRepository.arkivsaker(journalposter);
 
-		Set<TilgangBruker> filteredTilgangBruker = tilknyttedeJournalposterTilgangRepository.tilgangBrukere(arkivsaker, journalposter)
-				.stream()
-				.filter(tilgangBruker -> pep1g.hasAccess(tilgangBruker, safRequestContext))
-				.collect(Collectors.toSet());
+		Map<Long, TilgangBruker> filteredTilgangBruker = tilknyttedeJournalposterTilgangRepository.getTilgangBrukerMap(arkivsaker, journalposter)
+				.filter(tilgangBruker -> pep1g.hasAccess(tilgangBruker.getValue(), safRequestContext))
+				.collect(Collectors.toMap(Entry::getKey, Entry::getValue));
 
-		Set<TilgangSak> filteredTilgangSaker = tilknyttedeJournalposterTilgangRepository.tilgangSaker(arkivsaker, safRequestContext)
+		Set<TilgangSak> filteredTilgangSaker = tilknyttedeJournalposterTilgangRepository.tilgangSaker(arkivsaker.values(), safRequestContext)
 				.stream()
-				.filter(tilgangSak -> filteredTilgangBruker.stream()
+				.filter(tilgangSak -> filteredTilgangBruker.values().stream()
 						.filter(Objects::nonNull)
 						.filter(tilgangBruker -> !tilgangBruker.isUkjent())
 						.anyMatch(tilgangBruker -> {
@@ -101,7 +103,14 @@ public class TilknyttedeJournalposterQuery {
 				.map(TilgangJournalpost::getJournalpostId)
 				.map(arkivJournalposter::get)
 				.map(arkivJournalpost ->
-						ArkivJournalpostMapper.mapJournalpost(arkivJournalpost, safRequestContext.getRequestCache()))
+				{
+					TilgangBruker tilgangBruker = filteredTilgangBruker.get(arkivJournalpost.journalpostId());
+					Set<Ident> brukerIdenter = tilgangBruker == null ? emptySet() :
+							tilgangBruker.getBrukersIdenterSomTilgangsIdenter().collect(Collectors.toSet());
+					return ArkivJournalpostMapper.mapJournalpost(arkivJournalpost,
+							brukerIdenter,
+							safRequestContext.getRequestCache());
+				})
 				.toList();
 	}
 

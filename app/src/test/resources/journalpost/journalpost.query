@@ -65,6 +65,11 @@
                 filnavn
                 filtype
                 filstoerrelse
+                brukerHarTilgang
+                brukerTilgangAvvistBegrunnelser {
+                  kode
+                  begrunnelse
+              }
             }
         }
         utsendingsinfo {

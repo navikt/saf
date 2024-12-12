@@ -25,9 +25,13 @@ import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import org.springframework.stereotype.Component;
 
+import java.util.AbstractMap.SimpleEntry;
+import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -54,7 +58,7 @@ public class TilknyttedeJournalposterTilgangRepository {
 		this.bisysAntiCorruptionLayer = bisysAntiCorruptionLayer;
 	}
 
-	Set<Arkivsak> arkivsaker(List<ArkivJournalpost> tilknyttetArkivJournalposter, SafRequestContext safRequestContext) {
+	Map<Long, Arkivsak> arkivsaker(List<ArkivJournalpost> tilknyttetArkivJournalposter) {
 		return tilknyttetArkivJournalposter.stream()
 				.filter(ArkivJournalpost::isTilknyttetSak)
 				.map(arkivJournalpost -> {
@@ -72,24 +76,26 @@ public class TilknyttedeJournalposterTilgangRepository {
 								.tema(Arkivsak.mapTema(saksrelasjon.sak().tema()))
 								.datoOpprettet(sak.opprettetTid());
 					}
-					return arkivsakBuilder.build();
+					return new SimpleEntry<>(arkivJournalpost.journalpostId(), arkivsakBuilder.build());
 				})
-				.collect(Collectors.toSet());
+				.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 	}
 
-	Set<TilgangBruker> tilgangBrukere(final Set<Arkivsak> arkivsaker, final List<ArkivJournalpost> tilknyttetJournalpostDto) {
-		return Stream.concat(sakstilknyttedeTilgangBrukere(arkivsaker), ikkeSakstilknyttedeTilgangBrukere(tilknyttetJournalpostDto)).collect(Collectors.toSet());
+	Stream<Map.Entry<Long, TilgangBruker>> getTilgangBrukerMap(Map<Long, Arkivsak> arkivsaker, List<ArkivJournalpost> journalposter) {
+		return Stream.concat(sakstilknyttedeTilgangBrukere(arkivsaker), ikkeSakstilknyttedeTilgangBrukere(journalposter));
 	}
 
-	private Stream<TilgangBruker> sakstilknyttedeTilgangBrukere(final Set<Arkivsak> arkivsaker) {
-		return arkivsaker.stream()
-				.map(this::sakstilknyttetTilgangBruker);
+	private Stream<SimpleImmutableEntry<Long, TilgangBruker>> sakstilknyttedeTilgangBrukere(Map<Long, Arkivsak> arkivsaker) {
+		return arkivsaker.entrySet().stream()
+				.map(tuple -> new SimpleImmutableEntry<>(tuple.getKey(), sakstilknyttetTilgangBruker(tuple.getValue())))
+				.filter(entry -> entry.getValue() != null);
 	}
 
-	private Stream<TilgangBruker> ikkeSakstilknyttedeTilgangBrukere(final List<ArkivJournalpost> tilknyttetJournalpostDto) {
+	private Stream<Map.Entry<Long, TilgangBruker>> ikkeSakstilknyttedeTilgangBrukere(List<ArkivJournalpost> tilknyttetJournalpostDto) {
 		return tilknyttetJournalpostDto.stream()
 				.filter(arkivJournalpost -> !arkivJournalpost.isTilknyttetSak())
-				.map(journalpost -> midlertidigTilgangBrukerPersonOrganisasjon(journalpost.bruker()));
+				.map(journalpost ->
+						new SimpleImmutableEntry<>(journalpost.journalpostId(), midlertidigTilgangBrukerPersonOrganisasjon(journalpost.bruker())));
 	}
 
 	private TilgangBruker sakstilknyttetTilgangBruker(Arkivsak arkivsak) {
@@ -140,7 +146,7 @@ public class TilknyttedeJournalposterTilgangRepository {
 		}
 	}
 
-	Set<TilgangSak> tilgangSaker(final Set<Arkivsak> arkivsaker,
+	Set<TilgangSak> tilgangSaker(final Collection<Arkivsak> arkivsaker,
 								 final SafRequestContext safRequestContext) {
 		return arkivsaker.stream()
 				.map(arkivsak -> {

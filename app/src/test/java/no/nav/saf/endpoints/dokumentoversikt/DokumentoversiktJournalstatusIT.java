@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
@@ -28,6 +29,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -104,6 +106,25 @@ class DokumentoversiktJournalstatusIT extends AbstractItest {
 		verify(postRequestedFor(urlEqualTo("/dokarkiv/finnjournalposterstatus"))
 				.withRequestBody(matchingJsonPath("$.journalstatus", containing("U"))));
 		verify(4, postRequestedFor(urlEqualTo("/abac"))); // ingen skjerming så kun pep4 sjekkes
+	}
+
+	@Test
+	void shouldFailIfUnsupportedFieldsInQuery() throws URISyntaxException {
+		abacPermit();
+
+		stubFor(post("/dokarkiv/finnjournalposterstatus")
+				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
+						.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("safintern/journalpostjournalstatus/journalposter-journalstatus-happy-page-1-of-2.json")));
+
+		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversiktWithQuery("dokumentoversiktJournalstatus/dokumentoversiktjournalstatus_utgaar_brukerHarTilgang.query");
+		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
+
+		assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+		assertEquals(0, dokumentoversikt.getJournalposter().size());
+		Map<String,String> errors = ((List<Map>)responseEntity.getBody().get("errors")).getFirst();
+		assertThat(errors).isNotNull();
+		assertThat(errors.get("message")).contains("Feltene journalposter/dokumenter/dokumentvarianter/brukerHarTilgang, journalposter/dokumenter/dokumentvarianter/brukerTilgangAvvistBegrunnelser og journalposter/brukerTilgangAvvistBegrunnelser er ikke støttet i DokumentoversiktJournalstatus-queriet");
 	}
 
 	@Test
@@ -242,14 +263,16 @@ class DokumentoversiktJournalstatusIT extends AbstractItest {
 		assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
 	}
 
-	private ResponseEntity<LinkedHashMap> callDokumentOversiktJournalstatusUtgaar() throws IOException, URISyntaxException {
-		GraphQLRequest request = new GraphQLRequest(stringFromClasspath("dokumentoversiktJournalstatus/dokumentoversiktjournalstatus_utgaar.query"), null, null);
-		RequestEntity<GraphQLRequest> requestEntity = new RequestEntity<>(request, createHeaders(), HttpMethod.POST, new URI("/graphql"));
-		return restTemplate.exchange(requestEntity, LinkedHashMap.class);
+	private ResponseEntity<LinkedHashMap> callDokumentOversiktJournalstatusUtgaar() throws URISyntaxException {
+		return callDokumentOversiktWithQuery("dokumentoversiktJournalstatus/dokumentoversiktjournalstatus_utgaar.query");
 	}
 
-	private ResponseEntity<LinkedHashMap> callDokumentOversiktJournalstatusUkjentBruker() throws IOException, URISyntaxException {
-		GraphQLRequest request = new GraphQLRequest(stringFromClasspath("dokumentoversiktJournalstatus/dokumentoversiktjournalstatus_ukjent_bruker.query"), null, null);
+	private ResponseEntity<LinkedHashMap> callDokumentOversiktJournalstatusUkjentBruker() throws URISyntaxException {
+		return callDokumentOversiktWithQuery("dokumentoversiktJournalstatus/dokumentoversiktjournalstatus_ukjent_bruker.query");
+	}
+
+	private ResponseEntity<LinkedHashMap> callDokumentOversiktWithQuery(String resourcename) throws URISyntaxException {
+		GraphQLRequest request = new GraphQLRequest(stringFromClasspath(resourcename), null, null);
 		RequestEntity<GraphQLRequest> requestEntity = new RequestEntity<>(request, createHeaders(), HttpMethod.POST, new URI("/graphql"));
 		return restTemplate.exchange(requestEntity, LinkedHashMap.class);
 	}

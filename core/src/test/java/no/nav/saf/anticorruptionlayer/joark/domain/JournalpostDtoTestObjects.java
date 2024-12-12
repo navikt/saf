@@ -163,7 +163,7 @@ public class JournalpostDtoTestObjects {
 										.filnavn(JournalpostDtoTestObjects.FILNAVN_1)
 										.filuuid(JournalpostDtoTestObjects.FILUUID_1)
 										.filtype(JournalpostDtoTestObjects.FILTYPE_1)
-												.filstorrelse("1024")
+										.filstorrelse("1024")
 										.build(),
 								VariantDto.builder()
 										.skjerming(null)

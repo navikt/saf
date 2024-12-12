@@ -13,9 +13,14 @@ import no.nav.saf.exceptions.TilgangskontrollException;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.pep.AbacAnswer;
 import no.nav.saf.tilgangskontroll.pep.Pep;
+import no.nav.safselvbetjening.tilgang.Ident;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import static java.util.Collections.emptySet;
 import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostMapper.mapJournalpost;
 import static no.nav.saf.domain.kode.Journalstatus.MOTTATT;
 import static no.nav.saf.graphql.ErrorCode.NOT_FOUND;
@@ -112,7 +117,8 @@ class JournalpostQuery {
 							pep6d.hasAccess(tilgangDokumentvariant, safRequestContext));
 				});
 			}
-			return mapJournalpost(journalpostHolder.arkivJournalpost(), safRequestContext.getRequestCache());
+			Set<Ident> brukersIdenterFraTilgangBruker = tilgangBruker == null ? emptySet() : tilgangBruker.getBrukersIdenterSomTilgangsIdenter().collect(Collectors.toSet());
+			return mapJournalpost(journalpostHolder.arkivJournalpost(), brukersIdenterFraTilgangBruker, safRequestContext.getRequestCache());
 		} catch (JournalpostIkkeFunnetException e) {
 			throw new SafFunctionalException("Fant ikke journalpost i fagarkivet. " + errLog(journalpostId, eksternReferanseId), NOT_FOUND);
 		}

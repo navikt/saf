@@ -76,5 +76,9 @@
             varslingstekst
         }
     }
+    brukerHarTilgang
+    brukerTilgangAvvistBegrunnelser {
+      kode
+    }
   }
 }

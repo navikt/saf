@@ -38,6 +38,7 @@
 		<azure-identity.version>1.14.0</azure-identity.version>
 		<context-propagation.version>1.1.1</context-propagation.version>
 		<bcprov-jdk18on.version>1.79</bcprov-jdk18on.version>
+		<safselvbetjening-innsyn-api.version>2024.12.12-10.44-d1c2487</safselvbetjening-innsyn-api.version>
 
 		<!-- Test -->
 		<spring-cloud-starter-contract-stub-runner.version>4.1.2</spring-cloud-starter-contract-stub-runner.version>
@@ -77,6 +78,12 @@
 				<groupId>no.nav.saf</groupId>
 				<artifactId>sak</artifactId>
 				<version>${project.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>no.nav.safselvbetjening</groupId>
+				<artifactId>innsyn-tilgang-api</artifactId>
+				<version>${safselvbetjening-innsyn-api.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>io.github.resilience4j</groupId>

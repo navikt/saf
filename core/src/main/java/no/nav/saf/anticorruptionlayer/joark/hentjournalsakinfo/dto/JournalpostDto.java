@@ -11,9 +11,23 @@ import no.nav.saf.anticorruptionlayer.joark.domain.kode.JournalpostTypeCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.MottaksKanalCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.SkjermingTypeCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.UtsendingsKanalCode;
+import no.nav.safselvbetjening.tilgang.Ident;
+import no.nav.safselvbetjening.tilgang.TilgangBruker;
+import no.nav.safselvbetjening.tilgang.TilgangInnsyn;
+import no.nav.safselvbetjening.tilgang.TilgangJournalpost;
+import no.nav.safselvbetjening.tilgang.TilgangJournalposttype;
+import no.nav.safselvbetjening.tilgang.TilgangJournalstatus;
+import no.nav.safselvbetjening.tilgang.TilgangMottakskanal;
+import no.nav.safselvbetjening.tilgang.TilgangSak;
+import no.nav.safselvbetjening.tilgang.TilgangSkjermingType;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Stream;
+
+import static java.util.Collections.emptyList;
+import static no.nav.saf.domain.DomainConstants.TIDSSONE_NORGE;
 
 @Data
 @NoArgsConstructor
@@ -60,5 +74,52 @@ public class JournalpostDto {
 
 	public boolean isTilknyttetSak() {
 		return saksrelasjon != null && saksrelasjon.getSakId() != null;
+	}
+
+	public TilgangJournalpost getJournalpostTilgang(TilgangSak tilgangSak) {
+		return TilgangJournalpost.builder()
+				.journalstatus(TilgangJournalstatus.from(journalstatus.name()))
+				.journalposttype(TilgangJournalposttype.from(journalposttype.name()))
+				.mottakskanal(mottakskanal == null ? TilgangMottakskanal.IKKE_SKANNING : TilgangMottakskanal.from(mottakskanal.name()))
+				.tema(fagomrade.name())
+				.avsenderMottakerId(mapAvsenderMottakerId())
+				.datoOpprettet(mapToLocalDateTime(datoOpprettet, LocalDateTime.MIN))
+				.journalfoertDato(mapToLocalDateTime(journalDato, null))
+				.skjerming(mapSkjermingType())
+				.dokumenter(dokumenter == null || dokumenter.isEmpty() ? emptyList() :
+						Stream.concat(
+								Stream.of(dokumenter.getFirst().getTilgangDokument(true)),
+								dokumenter.stream().skip(1).map(vedlegg -> vedlegg.getTilgangDokument(false))
+						).toList())
+				.tilgangBruker(mapTilgangBruker())
+				.tilgangSak(tilgangSak)
+				.innsyn(TilgangInnsyn.from(innsyn))
+				.build();
+	}
+
+	private static LocalDateTime mapToLocalDateTime(Date date, LocalDateTime defaultValue) {
+		if (date == null) {
+			return defaultValue;
+		}
+		return date.toInstant().atZone(TIDSSONE_NORGE).toLocalDateTime();
+	}
+
+	private Ident mapAvsenderMottakerId() {
+		if (avsenderMottakerId == null) {
+			return null;
+		}
+		return Ident.ofNullable(avsenderMottakerId);
+	}
+
+	private TilgangBruker mapTilgangBruker() {
+		if (bruker == null || bruker.getBrukerId() == null) {
+			return null;
+		}
+
+		return new TilgangBruker(Ident.of(bruker.getBrukerId()));
+	}
+
+	private TilgangSkjermingType mapSkjermingType() {
+		return TilgangSkjermingType.from(skjerming == null ? null : skjerming.name());
 	}
 }

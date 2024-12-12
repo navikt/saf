@@ -13,6 +13,10 @@
           tittel
         }
       }
+      brukerHarTilgang
+      brukerTilgangAvvistBegrunnelser {
+        kode
+      }
     }
   }
 }

@@ -32,13 +32,14 @@ import java.util.Objects;
 import java.util.Optional;
 
 import static java.util.Collections.emptyList;
+import static java.util.Collections.emptySet;
 import static no.nav.saf.domain.kode.Journalstatus.FEILREGISTRERT;
 import static no.nav.saf.domain.tilgangsmodell.BaseTilgangMapper.mapTilgangJournalpost;
 import static no.nav.saf.util.MDCUtility.addMdcData;
 
 @Slf4j
 @Component
-class DokumentoversiktJournalstatusQuery {
+public class DokumentoversiktJournalstatusQuery {
 
 	// Hvis nye gyldige journalstatuser legges til må PEP1G, PEP2, PEP2D og PEP3 filtrering vurderes innført
 	private static final EnumMap<Journalstatus, JournalStatusCode> GYLDIGE_JOURNALSTATUSER = new EnumMap<>(Journalstatus.class);
@@ -112,7 +113,7 @@ class DokumentoversiktJournalstatusQuery {
 				.sorted(Comparator.reverseOrder())
 				.map(arkivJournalpostCache::get)
 				.map(arkivJournalpost ->
-						ArkivJournalpostMapper.mapJournalpost(arkivJournalpost, safRequestContext.getRequestCache()))
+						ArkivJournalpostMapper.mapJournalpost(arkivJournalpost, emptySet(), safRequestContext.getRequestCache()))
 				.filter(Objects::nonNull)
 				.filter(j -> dokumentoversiktJournalstatusArguments.getFilters().getTema().contains(j.getTema()))
 				.filter(j -> filterFeilregistrerte(dokumentoversiktJournalstatusArguments, j))
