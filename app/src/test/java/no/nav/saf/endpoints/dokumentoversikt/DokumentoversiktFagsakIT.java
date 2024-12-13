@@ -174,7 +174,7 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 		assertEquals("429837417", dokumentoversikt.getJournalposter().get(0).getJournalpostId());
 		assertEquals(KANAL_REFERANSE_ID, dokumentoversikt.getJournalposter().get(0).getEksternReferanseId());
 		assertFalse(dokumentoversikt.getJournalposter().getFirst().isBrukerHarTilgang());
-		assertThat(dokumentoversikt.getJournalposter().getFirst().getBrukerTilgangAvvistBegrunnelser()).containsExactly(new BrukerTilgangAvvistBegrunnelse("annen_part", null));
+		assertThat(dokumentoversikt.getJournalposter().getFirst().getBrukerTilgangAvvistBegrunnelser()).containsExactly(new BrukerTilgangAvvistBegrunnelse("ikke_avsender_mottaker", null));
 	}
 
 	@Test
@@ -484,7 +484,7 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 		assertEquals("429837417", dokumentoversikt.getJournalposter().get(0).getJournalpostId());
 		assertThat(dokumentoversikt.getJournalposter()).hasSize(1);
 		assertFalse(dokumentoversikt.getJournalposter().get(0).isBrukerHarTilgang());
-		assertThat(dokumentoversikt.getJournalposter().getFirst().getBrukerTilgangAvvistBegrunnelser()).containsExactly(new BrukerTilgangAvvistBegrunnelse("temaer_unntatt_innsyn", null), new BrukerTilgangAvvistBegrunnelse("gdpr", null));
+		assertThat(dokumentoversikt.getJournalposter().getFirst().getBrukerTilgangAvvistBegrunnelser()).containsExactly(new BrukerTilgangAvvistBegrunnelse("temaer_unntatt_innsyn", null), new BrukerTilgangAvvistBegrunnelse("pol_gdpr", null));
 		assertSaksbehandlerHarIkkeTilgang(dokumentoversikt);
 		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter"))
 				.withRequestBody(containing("{\"gsakSakIds\":[\"135695442\"],\"psakSakIds\":[],\"fraDato\":\"0001-01-01\",\"tilDato\":null,\"inkluderJournalStatus\":[\"FL\",\"FS\",\"J\",\"E\"],\"inkluderJournalpostType\":[\"I\",\"U\",\"N\"],\"visFeilregistrerte\":false,\"alleIdenter\":[],\"foerste\":5,\"etterPeker\":null}")));
