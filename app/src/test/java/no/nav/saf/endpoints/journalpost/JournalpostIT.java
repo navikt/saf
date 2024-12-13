@@ -64,9 +64,7 @@ import static no.nav.saf.tilgangskontroll.pep.DenyReasonFactory.PEP3_DENY_REASON
 import static no.nav.saf.tilgangskontroll.pep.DenyReasonFactory.PEP4_DENY_REASON;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.OK;
@@ -165,7 +163,7 @@ class JournalpostIT extends AbstractItest {
 		assertThat(dokumentvariant.getFilstoerrelse()).isEqualTo(4721);
 
 		assertNotNull(dokumentvariant.getBrukerTilgangAvvistBegrunnelser());
-		assertThat(dokumentvariant.getBrukerTilgangAvvistBegrunnelser()).containsExactly(new BrukerTilgangAvvistBegrunnelse("skannet_dokument", "Brukeren kan ikke se dokumentet fordi dokumentet er skannet."));
+		assertThat(dokumentvariant.getBrukerTilgangAvvistBegrunnelser()).containsExactly(new BrukerTilgangAvvistBegrunnelse("skannet_dokument", "Dokumentet er skannet"));
 		assertThat(dokumentvariant.isBrukerHarTilgang()).isFalse();
 	}
 
@@ -331,7 +329,7 @@ class JournalpostIT extends AbstractItest {
 		assertThat(dokumentInfo.getTittel()).isEqualTo(expectedTittel);
 		assertThat(dokumentInfo.getDokumentvarianter().get(0).isSaksbehandlerHarTilgang()).isTrue();
 		assertThat(dokumentInfo.getLogiskeVedlegg().get(0).getTittel()).isEqualTo("Skjema");
-		assertThat(journalpost.getBrukerTilgangAvvistBegrunnelser()).containsExactly(new BrukerTilgangAvvistBegrunnelse("annen_part", "Brukeren kan ikke se dokumentet fordi dokumentet er sendt til/fra andre parter enn bruker."));
+		assertThat(journalpost.getBrukerTilgangAvvistBegrunnelser()).containsExactly(new BrukerTilgangAvvistBegrunnelse("ikke_avsender_mottaker", "Avsender / mottakers fødselsnummer er ikke lik brukerens fødselsnummer"));
 		assertThat(journalpost.isBrukerHarTilgang()).isFalse();
 	}
 
