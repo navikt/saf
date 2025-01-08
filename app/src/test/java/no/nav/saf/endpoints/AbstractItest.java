@@ -2,6 +2,7 @@ package no.nav.saf.endpoints;
 
 import lombok.SneakyThrows;
 import no.nav.saf.ApplicationConfig;
+import no.nav.saf.anticorruptionlayer.nav.NavOrgService;
 import no.nav.saf.azure.AzureProperties;
 import no.nav.saf.domain.visningsmodell.Dokumentoversikt;
 import no.nav.saf.domain.visningsmodell.Journalpost;
@@ -29,6 +30,7 @@ import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import java.util.List;
 import java.util.Map;
@@ -44,7 +46,6 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static com.github.tomakehurst.wiremock.core.Options.DYNAMIC_PORT;
 import static com.github.tomakehurst.wiremock.stubbing.Scenario.STARTED;
-import static java.net.URLEncoder.encode;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Objects.requireNonNull;
 import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostMapper.SKJULT_TITTEL;
@@ -53,6 +54,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.when;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.HttpStatus.OK;
@@ -61,8 +63,8 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @SpringBootTest(classes = {AbstractItest.TestConfig.class, ApplicationConfig.class},
 		webEnvironment = RANDOM_PORT,
-		properties = {"spring.main.allow-bean-definition-overriding=true"})
-@ActiveProfiles(value = {"itest", "wiremock"})
+		properties = {"spring.main.allow-bean-definition-overriding=true" })
+@ActiveProfiles(value = {"itest", "wiremock" })
 @EnableMockOAuth2Server
 @AutoConfigureWireMock(port = DYNAMIC_PORT)
 public abstract class AbstractItest {
@@ -109,6 +111,9 @@ public abstract class AbstractItest {
 	protected TestRestTemplate restTemplate;
 	@Autowired
 	private MockOAuth2Server server;
+	@MockitoBean
+	protected NavOrgService navOrgService;
+
 
 	protected HttpEntity<?> createHttpEntity() {
 		return new HttpEntity<>(createHeaders());
@@ -192,42 +197,20 @@ public abstract class AbstractItest {
 						.withBodyFile("azure/token_response_dummy.json")));
 	}
 
-	protected static void stubNavHrOrganisasjonJa(String organisasjonsnummer) {
-		stubNavHrOrganisasjon(organisasjonsnummer, "hr-nav-organisasjon-ja.json");
+	protected void stubNavHrOrganisasjonJa(String organisasjonsnummer) {
+		when(navOrgService.isOrganisasjonsnummerNavBedrift(organisasjonsnummer)).thenReturn(true);
 	}
 
-	protected static void stubNavHrOrganisasjonNei(String organisasjonsnummer) {
-		stubNavHrOrganisasjon(organisasjonsnummer, "hr-nav-organisasjon-nei.json");
+	protected void stubNavHrOrganisasjonNei(String organisasjonsnummer) {
+		when(navOrgService.isOrganisasjonsnummerNavBedrift(organisasjonsnummer)).thenReturn(false);
 	}
 
-	protected static void stubNavHrOrganisasjon(String organisasjonsnummer, String filename) {
-		stubFor(get("/hrnavorganisasjon/ords/dvh/dt_hr/nav_organisasjon_orgnummer?q=" +
-				encode("{\"nav_org_nr\":\"" + organisasjonsnummer + "\"}", UTF_8))
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("nav/" + filename)));
+	protected void stubNavOrgMemberOfEgenAnsatt(String navIdent) {
+		when(navOrgService.isNavIdentInEgenAnsattGroup(navIdent)).thenReturn(true);
 	}
 
-	protected static void stubMsGraphGetUser(String navIdent) {
-		stubFor(get("/msgraph/users?$count=true&$filter=onPremisesSamAccountName%20eq%20%27" + navIdent + "%27&$select=id")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("nav/msgraph-users.json")));
-	}
-
-	protected static void stubMsGraphMemberOfEgenAnsatt(String msUserId) {
-		stubMsGraphMemberOf(msUserId, "nav/msgraph-memberof-egenansatt.json");
-	}
-
-	protected static void stubMsGraphMemberOfNotEgenAnsatt(String msUserId) {
-		stubMsGraphMemberOf(msUserId, "nav/msgraph-memberof-not-egenansatt.json");
-	}
-
-	protected static void stubMsGraphMemberOf(String msUserId, String bodyFile) {
-		stubFor(get("/msgraph/users/" + msUserId + "/memberOf?$count=true&$filter=id%20eq%20%27f476f724-350b-4ff4-8e74-141cda9e824e%27&$select=id")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile(bodyFile)));
+	protected void stubNavOrgNotMemberOfEgenAnsatt(String navIdent) {
+		when(navOrgService.isNavIdentInEgenAnsattGroup(navIdent)).thenReturn(false);
 	}
 
 	protected static void stubPdl() {

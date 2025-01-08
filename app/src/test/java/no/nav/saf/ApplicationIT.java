@@ -1,5 +1,6 @@
 package no.nav.saf;
 
+import no.nav.saf.anticorruptionlayer.nav.NavOrgService;
 import no.nav.security.token.support.spring.test.EnableMockOAuth2Server;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -9,21 +10,23 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = {Application.class},
 		webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-		properties = {"spring.main.allow-bean-definition-overriding=true"})
+		properties = {"spring.main.allow-bean-definition-overriding=true" })
 @EnableMockOAuth2Server
 @ActiveProfiles("itest")
 class ApplicationIT {
 
 	@Autowired
 	private TestRestTemplate testRestTemplate;
+	@MockitoBean
+	protected NavOrgService navOrgService;
 
 	@Test
 	@DisplayName("Tester at applikasjonen starter opp")
