@@ -17,16 +17,16 @@ import java.util.Set;
 @Component
 public class NavOrgService {
 	private final MsGraphConsumer msGraphConsumer;
-	private final NavHrOrganisasjonConsumer navStatConsumer;
+	private final NavHrOrganisasjonConsumer navHrOrganisasjonConsumer;
 	private final String azureGroupEgenAnsattObjectId;
 	final Set<String> navHrOrganisasjonCache;
 
 	public NavOrgService(SafProperties safProperties,
 						 MsGraphConsumer msGraphConsumer,
-						 NavHrOrganisasjonConsumer navStatConsumer) {
+						 NavHrOrganisasjonConsumer navHrOrganisasjonConsumer) {
 		this.msGraphConsumer = msGraphConsumer;
 		this.azureGroupEgenAnsattObjectId = safProperties.getAzureGroupEgenAnsattObjectId();
-		this.navStatConsumer = navStatConsumer;
+		this.navHrOrganisasjonConsumer = navHrOrganisasjonConsumer;
 		this.navHrOrganisasjonCache = new HashSet<>(2000);
 	}
 
@@ -46,7 +46,7 @@ public class NavOrgService {
 	@Async
 	@EventListener(ContextRefreshedEvent.class)
 	public void populateCache() {
-		NavHrOrganisasjonORDSResponse response = navStatConsumer.getAllNavOrganisasjon();
+		NavHrOrganisasjonORDSResponse response = navHrOrganisasjonConsumer.getAllNavOrganisasjon();
 		response.organisasjoner().forEach(org -> navHrOrganisasjonCache.add(org.organisasjonsnummer()));
 	}
 }

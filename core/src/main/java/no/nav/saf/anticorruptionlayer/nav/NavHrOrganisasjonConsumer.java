@@ -36,7 +36,7 @@ public class NavHrOrganisasjonConsumer {
 		this.circuitBreaker = circuitBreakerRegistry.circuitBreaker(NAV_HR_ORGANISASJON_INSTANCE);
 	}
 
-	public NavHrOrganisasjonORDSResponse getAllNavOrganisasjon() {
+	NavHrOrganisasjonORDSResponse getAllNavOrganisasjon() {
 		return webClient.get()
 				.uri(uriBuilder -> uriBuilder.path("/ords/dvh/dt_hr/nav_organisasjon_orgnummer")
 						.build())
