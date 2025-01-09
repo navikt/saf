@@ -66,7 +66,7 @@ class SakerIT extends AbstractItest {
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
 						.withBodyFile("gsak/gsak-sakerBySaksId-happy-duplicates.json")));
-		stubFor(get(PENSJON_SPRINGAPI_SAK_SAMMENDRAG_URL)
+		stubFor(get(PENSJON_API_SAK_SAMMENDRAG_URL)
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
 						.withBodyFile("psak/psak-hentSakSammendragListe-happy.json")));
@@ -97,7 +97,7 @@ class SakerIT extends AbstractItest {
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("gsak/gsak-sakerBySaksId-happy-duplicates-psak.json")));
-		stubFor(get(PENSJON_SPRINGAPI_SAK_SAMMENDRAG_URL)
+		stubFor(get(PENSJON_API_SAK_SAMMENDRAG_URL)
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("psak/psak-hentSakSammendragListe-happy.json")));
@@ -122,7 +122,7 @@ class SakerIT extends AbstractItest {
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("gsak/gsak-sakerBySaksId-happy-duplicates-psak-with-generell-sak.json")));
-		stubFor(get(PENSJON_SPRINGAPI_SAK_SAMMENDRAG_URL)
+		stubFor(get(PENSJON_API_SAK_SAMMENDRAG_URL)
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("psak/psak-hentSakSammendragListe-happy.json")));
@@ -152,7 +152,7 @@ class SakerIT extends AbstractItest {
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("gsak/gsak-sakerBySaksId-happy-multiple-duplicates.json")));
-		stubFor(get(PENSJON_SPRINGAPI_SAK_SAMMENDRAG_URL)
+		stubFor(get(PENSJON_API_SAK_SAMMENDRAG_URL)
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("psak/psak-hentSakSammendragListe-happy.json")));
@@ -185,7 +185,7 @@ class SakerIT extends AbstractItest {
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
 						.withBodyFile("gsak/gsak-sakerBySaksId-happy.json")));
-		stubFor(get(PENSJON_SPRINGAPI_SAK_SAMMENDRAG_URL)
+		stubFor(get(PENSJON_API_SAK_SAMMENDRAG_URL)
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
 						.withBodyFile("psak/psak-hentSakSammendragListe-happy.json")));
@@ -229,7 +229,7 @@ class SakerIT extends AbstractItest {
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
 						.withBodyFile("gsak/gsak-sakerByFagsakIdAndFagsaksystem-FAR-happy.json")));
-		stubFor(get(PENSJON_SPRINGAPI_SAK_SAMMENDRAG_URL)
+		stubFor(get(PENSJON_API_SAK_SAMMENDRAG_URL)
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
 						.withBodyFile("psak/psak-hentSakSammendragListe-happy-empty.json")));
@@ -251,7 +251,7 @@ class SakerIT extends AbstractItest {
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
 						.withBodyFile("gsak/gsak-sakerBySaksId-happy.json")));
-		stubFor(get(PENSJON_SPRINGAPI_SAK_SAMMENDRAG_URL)
+		stubFor(get(PENSJON_API_SAK_SAMMENDRAG_URL)
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
 						.withBodyFile("psak/psak/psak-hentSakSammendragListe-happy-empty.json")));

@@ -21,7 +21,7 @@
   "HENTJOURNALSAKINFO_URL": "http://dokarkiv-q5.teamdokumenthandtering.svc.nais.local/hentjournalsakinfo",
   "SAF_ENDPOINTS_PDL_URL": "https://pdl-api-q0.dev.intern.nav.no/graphql",
   "SAF_ENDPOINTS_PDL_SCOPE": "api://dev-fss.pdl.pdl-api-q0/.default",
-  "SAF_ENDPOINTS_PENSJON_URL": "https://pensjon-pen-q5.dev.adeo.no/pen",
+  "SAF_ENDPOINTS_PENSJON_URL": "http://pensjon-pen-q5.pensjon-q5.svc.nais.local/api",
   "SAF_ENDPOINTS_PENSJON_SCOPE": "api://dev-fss.pensjon-q5.pensjon-pen-q5/.default",
   "SAF_ENDPOINTS_DOKARKIV_URL": "https://dokarkiv-q5.dev.intern.nav.no/rest/internal/safintern",
   "SAF_ENDPOINTS_DOKARKIV_SCOPE": "api://dev-fss.teamdokumenthandtering.dokarkiv-q5/.default",
