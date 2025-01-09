@@ -134,7 +134,7 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("pdl/hentPdlDataForIdent-happy.json")));
-		stubFor(get(PENSJON_SPRINGAPI_SAK_SAMMENDRAG_URL)
+		stubFor(get(PENSJON_API_SAK_SAMMENDRAG_URL)
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
 						.withBodyFile("psak/psak-hentSakSammendragListe-happy.json")));
@@ -240,7 +240,7 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("joark/finnjournalposter-empty.json")));
-		stubFor(get(PENSJON_SPRINGAPI_SAK_SAMMENDRAG_URL)
+		stubFor(get(PENSJON_API_SAK_SAMMENDRAG_URL)
 				.willReturn(aResponse().withStatus(INTERNAL_SERVER_ERROR.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
 						.withBodyFile("psak-hentSakSammendragListe-technical.json")));
@@ -264,7 +264,7 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("joark/finnjournalposter-empty.json")));
-		stubFor(get(PENSJON_SPRINGAPI_SAK_SAMMENDRAG_URL)
+		stubFor(get(PENSJON_API_SAK_SAMMENDRAG_URL)
 				.willReturn(aResponse().withStatus(BAD_REQUEST.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
 						.withBodyFile("psak-hentSakSammendragListe-technical.json")));
