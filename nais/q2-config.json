@@ -82,11 +82,6 @@
       ]
     },
     {
-      "app": "familie-integrasjoner-q1",
-      "namespace": "teamfamilie",
-      "cluster": "dev-fss"
-    },
-    {
       "app": "journalforing-frontend",
       "namespace": "isa",
       "cluster": "dev-fss"
