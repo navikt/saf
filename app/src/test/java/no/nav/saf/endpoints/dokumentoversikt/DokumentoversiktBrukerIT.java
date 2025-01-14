@@ -129,8 +129,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 	void shouldNotHentDokumentoversiktBrukerWithNavStatOrgnummerWhenBrukerNotEgenAnsattBehandler() throws IOException, URISyntaxException {
 		abacPermit();
 		stubNavHrOrganisasjonJa(ORG_NR);
-		stubMsGraphGetUser(NAV_IDENT_SAKSBEHANDLER);
-		stubMsGraphMemberOfNotEgenAnsatt(MS_ID_SAKSBEHANDLER);
+		stubNavOrgNotMemberOfEgenAnsatt(NAV_IDENT_SAKSBEHANDLER);
 
 		ResponseEntity<GraphQLResponse> responseEntity = callDokumentOversikBrukerWithOrgnr();
 		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
@@ -146,8 +145,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 	void shouldHentDokumentoversiktBrukerWithNavStatOrgnummerWhenBrukerIsEgenAnsattBehandler() throws IOException, URISyntaxException {
 		abacPermit();
 		stubNavHrOrganisasjonJa(ORG_NR);
-		stubMsGraphGetUser(NAV_IDENT_SAKSBEHANDLER);
-		stubMsGraphMemberOfEgenAnsatt(MS_ID_SAKSBEHANDLER);
+		stubNavOrgMemberOfEgenAnsatt(NAV_IDENT_SAKSBEHANDLER);
 		stubSakOrgnr();
 		stubFinnjournalposter("finnjournalposter_single_temaForNullskjerming-happy.json");
 

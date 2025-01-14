@@ -1,4 +1,11 @@
 package no.nav.saf.anticorruptionlayer.nav;
 
-record NavHrOrganisasjonORDSResponse(int count) {
+import java.util.List;
+import java.util.stream.Stream;
+
+record NavHrOrganisasjonORDSResponse(int count, List<NavHrOrganisasjon> items) {
+
+	public Stream<NavHrOrganisasjon> organisasjoner() {
+		return items.stream();
+	}
 }

@@ -4,11 +4,13 @@ import no.nav.security.token.support.spring.api.EnableJwtTokenValidation;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Import;
+import org.springframework.scheduling.annotation.EnableAsync;
 
 
 @Import(value = {ApplicationConfig.class})
 @SpringBootApplication
-@EnableJwtTokenValidation(ignore = {"org.springframework", "org.springdoc"})
+@EnableAsync
+@EnableJwtTokenValidation(ignore = {"org.springframework", "org.springdoc" })
 public class Application {
 	public static void main(String[] args) {
 		// Lettuce-spring boot interaksjon. Se https://github.com/lettuce-io/lettuce-core/issues/1767
