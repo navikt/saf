@@ -75,7 +75,11 @@
     {
       "app": "familie-integrasjoner",
       "namespace": "teamfamilie",
-      "cluster": "dev-fss"
+      "cluster": "dev-fss",
+      "roles": [
+        "tema_bar",
+        "tema_kon"
+      ]
     },
     {
       "app": "familie-integrasjoner-q1",
