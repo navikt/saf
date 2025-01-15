@@ -64,7 +64,6 @@ class HentDokumentIT extends AbstractItest {
 
 	@BeforeEach
 	public void setup() {
-		setupHappyPathRestSTS();
 		setupHappyPathAzureToken();
 	}
 

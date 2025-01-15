@@ -31,7 +31,6 @@
   "SAF_ENDPOINTS_K9SAK_SCOPE": "api://prod-fss.k9saksbehandling.k9-sak/.default",
   "SAF_ENDPOINTS_HR_NAV_URL": "https://dvh.adeo.no/",
   "SAF_REDIS_HOSTNAME": "saf-redis",
-  "RESTSECURITYTOKENSERVICE_URL": "https://security-token-service.nais.adeo.no/rest/v1/sts/token",
   "AZURE_IAC_RULES": [
     {
       "app": "familie-integrasjoner",
