@@ -1,75 +1,70 @@
 package no.nav.saf.anticorruptionlayer.k9.hentrelevanteparter;
 
-import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
-import no.nav.saf.anticorruptionlayer.sts.StsRestConsumer;
+import io.github.resilience4j.circuitbreaker.CircuitBreaker;
+import io.github.resilience4j.circuitbreaker.CircuitBreakerRegistry;
+import io.github.resilience4j.reactor.circuitbreaker.operator.CircuitBreakerOperator;
+import no.nav.saf.anticorruptionlayer.CallIdExchangeFilterFunction;
+import no.nav.saf.config.SafProperties;
 import no.nav.saf.exceptions.SafFunctionalException;
 import no.nav.saf.exceptions.SafTechnicalException;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.ResponseEntity;
-import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 import java.util.List;
+import java.util.function.Consumer;
 
+import static no.nav.saf.azure.AzureProperties.CLIENT_REGISTRATION_K9_SAK;
 import static no.nav.saf.headers.NavHeaders.NAV_CALLID;
-import static no.nav.saf.util.MDCUtility.getCallId;
-import static org.springframework.http.HttpMethod.GET;
-import static org.springframework.http.HttpStatus.BAD_REQUEST;
-import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.security.oauth2.client.web.reactive.function.client.ServerOAuth2AuthorizedClientExchangeFilterFunction.clientRegistrationId;
+
 
 @Component
 public class K9Consumer {
 	private static final String K9_INSTANCE = "k9sak";
 
-	private final String k9Url;
-	private final RestTemplate restTemplate;
-	private final StsRestConsumer stsRestConsumer;
+	private final WebClient webClient;
+	private final CircuitBreaker circuitBreaker;
 
-	public K9Consumer(RestTemplateBuilder restTemplateBuilder,
-					  ClientHttpRequestFactory clientHttpRequestFactory,
-					  @Value("${k9sak.url}") String k9Url,
-					  StsRestConsumer stsRestConsumer) {
-		this.k9Url = k9Url;
-		this.restTemplate = restTemplateBuilder
-				.requestFactory(() -> clientHttpRequestFactory)
+	public K9Consumer(SafProperties safProperties,
+					  WebClient webClient,
+					  CircuitBreakerRegistry circuitBreakerRegistry) {
+		this.webClient = webClient.mutate()
+				.baseUrl(safProperties.getEndpoints().getK9sak().getUrl())
+				.filter(new CallIdExchangeFilterFunction(NAV_CALLID))
+				.defaultHeaders(headers -> headers.setContentType(APPLICATION_JSON))
 				.build();
-		this.stsRestConsumer = stsRestConsumer;
+		this.circuitBreaker = circuitBreakerRegistry.circuitBreaker(K9_INSTANCE);
 	}
 
-
-	@CircuitBreaker(name = K9_INSTANCE)
 	public List<String> hentAktoerForSak(final String sakId) {
-		HttpHeaders headers = createHeaders();
-		ResponseEntity<List<String>> response = restTemplate.exchange(
-				k9Url + "?saksnummer=" + sakId,
-				GET,
-				new HttpEntity<>(headers),
-				new ParameterizedTypeReference<>() {}
-		);
-
-		if (OK.equals(response.getStatusCode())) {
-			return response.getBody();
-		} else if (BAD_REQUEST.equals(response.getStatusCode()) && response.getBody() != null) {
-			throw new SafFunctionalException(String.format("hentAktoerForSak feilet funksjonelt. Feilmelding: %s", response.getBody()), response.getStatusCode());
-		} else if (UNAUTHORIZED.equals(response.getStatusCode())) {
-			throw new SafTechnicalException("hentAktoerForSak feilet teknisk. Tilgang avvist.", response.getStatusCode());
-		} else {
-			throw new SafTechnicalException("hentAktoerForSak feilet med ukjent feil i K9Consumer.");
-		}
+		return webClient.get()
+				.uri(uriBuilder -> uriBuilder
+						.queryParam("saksnummer", sakId)
+						.build())
+				.attributes(clientRegistrationId(CLIENT_REGISTRATION_K9_SAK))
+				.retrieve()
+				.bodyToMono(new ParameterizedTypeReference<List<String>>() {})
+				.doOnError(handleError(sakId))
+				.transformDeferred(CircuitBreakerOperator.of(circuitBreaker))
+				.block();
 	}
 
-	private HttpHeaders createHeaders() {
-		HttpHeaders headers = new HttpHeaders();
-		headers.setContentType(APPLICATION_JSON);
-		headers.setBearerAuth(stsRestConsumer.getStsToken().getAccess_token());
-		headers.set(NAV_CALLID, getCallId());
-		return headers;
+	private Consumer<Throwable> handleError(final String sakId) {
+		return error -> {
+			if (error instanceof WebClientResponseException exception) {
+				var feilmelding = "Klarte ikke hente k9sak for sakId=%s, feilmelding=%s".formatted(sakId, exception.getResponseBodyAsString());
+				var statusCode = exception.getStatusCode();
+
+				if (statusCode.is4xxClientError() && !statusCode.isSameCodeAs(UNAUTHORIZED)) {
+					throw new SafFunctionalException(feilmelding, statusCode);
+				}
+
+				throw new SafTechnicalException(feilmelding, statusCode);
+			}
+		};
 	}
 }

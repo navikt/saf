@@ -54,6 +54,13 @@ public class SafProperties {
 		 */
 		@NotNull
 		private AzureEndpoint fpsak;
+
+		/**
+		 * Url og scope til k9sak
+		 */
+		@NotNull
+		private AzureEndpoint k9sak;
+
 	}
 
 	@Data

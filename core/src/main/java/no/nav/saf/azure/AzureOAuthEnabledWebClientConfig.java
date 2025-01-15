@@ -23,6 +23,7 @@ import java.util.List;
 import static java.time.temporal.ChronoUnit.SECONDS;
 import static no.nav.saf.azure.AzureProperties.CLIENT_REGISTRATION_DOKARKIV;
 import static no.nav.saf.azure.AzureProperties.CLIENT_REGISTRATION_FPSAK;
+import static no.nav.saf.azure.AzureProperties.CLIENT_REGISTRATION_K9_SAK;
 import static no.nav.saf.azure.AzureProperties.CLIENT_REGISTRATION_PDL;
 import static no.nav.saf.azure.AzureProperties.CLIENT_REGISTRATION_PENSJON;
 import static org.springframework.security.oauth2.core.AuthorizationGrantType.CLIENT_CREDENTIALS;
@@ -114,6 +115,14 @@ public class AzureOAuthEnabledWebClientConfig {
 						.clientAuthenticationMethod(CLIENT_SECRET_BASIC)
 						.authorizationGrantType(CLIENT_CREDENTIALS)
 						.scope(safProperties.getEndpoints().getFpsak().getScope())
+						.build(),
+				ClientRegistration.withRegistrationId(CLIENT_REGISTRATION_K9_SAK)
+						.tokenUri(azureProperties.openidConfigTokenEndpoint())
+						.clientId(azureProperties.appClientId())
+						.clientSecret(azureProperties.appClientSecret())
+						.clientAuthenticationMethod(CLIENT_SECRET_BASIC)
+						.authorizationGrantType(CLIENT_CREDENTIALS)
+						.scope(safProperties.getEndpoints().getK9sak().getScope())
 						.build()
 		);
 	}
