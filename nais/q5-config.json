@@ -85,6 +85,12 @@
       "namespace": "okonomi",
       "cluster": "dev-fss",
       "roles": ["tema_sto"]
+    },
+    {
+      "app": "rpa-ot-ortok",
+      "namespace": "team-rpa",
+      "cluster": "dev-fss",
+      "roles": ["tema_hel"]
     }
   ]
 }
