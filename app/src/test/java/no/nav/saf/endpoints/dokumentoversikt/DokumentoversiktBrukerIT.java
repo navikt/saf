@@ -54,7 +54,6 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 
 	@BeforeEach
 	public void setup() {
-		setupHappyPathRestSTS();
 		setupHappyPathAzureToken();
 	}
 

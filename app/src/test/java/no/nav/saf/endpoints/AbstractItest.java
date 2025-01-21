@@ -181,14 +181,6 @@ public abstract class AbstractItest {
 		).serialize();
 	}
 
-	protected static void setupHappyPathRestSTS() {
-		stubFor(post("/reststs")
-				.willReturn(aResponse()
-						.withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("sts/sts-token.json")));
-	}
-
 	protected static void setupHappyPathAzureToken() {
 		stubFor(post("/azure_token")
 				.willReturn(aResponse()

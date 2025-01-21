@@ -51,7 +51,6 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 	@BeforeEach
 	void setup() {
 		setupHappyPathAzureToken();
-		setupHappyPathRestSTS();
 	}
 
 	@Test
