@@ -3,6 +3,7 @@ package no.nav.saf.query.dokumentoversikt.bruker;
 import io.reactivex.rxjava3.core.Flowable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 import lombok.extern.slf4j.Slf4j;
+import no.nav.saf.anticorruptionlayer.aktoer.PdlAntiCorruptionLayer;
 import no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoMapper;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.FagomradeCode;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.dto.JournalpostDto;
@@ -56,18 +57,20 @@ class DokumentoversiktBrukerQuery {
 	private final Pep<TilgangDokumentvariant> pep6d;
 	private final Pep<TilgangSak> pep7d;
 	private final JournalpostDtoMapper journalpostDtoMapper = new JournalpostDtoMapper();
+	private final PdlAntiCorruptionLayer pdlAntiCorruptionLayer;
 
 	@Autowired
 	public DokumentoversiktBrukerQuery(DokumentoversiktBrukerTilgangsmodellRepository dokumentoversiktBrukerTilgangsmodellRepository,
 									   TilgangsmodellRepository tilgangsmodellRepository,
-									   @Autowired Pep<TilgangBruker> pep1g,
-									   @Autowired Pep<TilgangSak> pep2,
-									   @Autowired Pep<TilgangSak> pep2d,
-									   @Autowired Pep<TilgangSak> pep3,
-									   @Autowired Pep<TilgangJournalpost> pep4,
-									   @Autowired Pep<TilgangDokumentInfo> pep5,
-									   @Autowired Pep<TilgangDokumentvariant> pep6d,
-									   @Autowired Pep<TilgangSak> pep7d
+									   Pep<TilgangBruker> pep1g,
+									   Pep<TilgangSak> pep2,
+									   Pep<TilgangSak> pep2d,
+									   Pep<TilgangSak> pep3,
+									   Pep<TilgangJournalpost> pep4,
+									   Pep<TilgangDokumentInfo> pep5,
+									   Pep<TilgangDokumentvariant> pep6d,
+									   Pep<TilgangSak> pep7d,
+									   PdlAntiCorruptionLayer pdlAntiCorruptionLayer
 	) {
 		this.dokumentoversiktBrukerTilgangsmodellRepository = dokumentoversiktBrukerTilgangsmodellRepository;
 		this.tilgangsmodellRepository = tilgangsmodellRepository;
@@ -79,12 +82,13 @@ class DokumentoversiktBrukerQuery {
 		this.pep5 = pep5;
 		this.pep6d = pep6d;
 		this.pep7d = pep7d;
+		this.pdlAntiCorruptionLayer = pdlAntiCorruptionLayer;
 	}
 
 	@Monitor(value = "dok_request", extraTags = {"process", "dokumentOversikt", "requestType", "bruker"}, histogram = true)
 	public Dokumentoversikt hentDokumentoversikt(DokumentoversiktBrukerArguments dokumentoversiktBrukerArguments,
 												 SafRequestContext safRequestContext) {
-		TilgangBruker tilgangBruker = dokumentoversiktBrukerTilgangsmodellRepository.findTilgangBruker(dokumentoversiktBrukerArguments.getBrukerIdInput());
+		TilgangBruker tilgangBruker = pdlAntiCorruptionLayer.findTilgangBruker(dokumentoversiktBrukerArguments.getBrukerIdInput());
 		if (tilgangBruker == null) {
 			throw new SafFunctionalException(PERSON_IKKE_FUNNET_REASON, NOT_FOUND);
 		} else {

@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.anticorruptionlayer.aktoer.PdlAntiCorruptionLayer;
 import no.nav.saf.anticorruptionlayer.bisys.BisysAntiCorruptionLayer;
 import no.nav.saf.anticorruptionlayer.fpsak.FpsakAntiCorruptionLayer;
-import no.nav.saf.anticorruptionlayer.joark.domain.kode.SkjermingTypeCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.VariantFormatCode;
 import no.nav.saf.anticorruptionlayer.joark.safintern.journalpost.ArkivBruker;
 import no.nav.saf.anticorruptionlayer.joark.safintern.journalpost.ArkivDokumentinfo;
@@ -13,13 +12,10 @@ import no.nav.saf.anticorruptionlayer.joark.safintern.journalpost.ArkivJournalpo
 import no.nav.saf.anticorruptionlayer.joark.safintern.journalpost.ArkivSak;
 import no.nav.saf.anticorruptionlayer.joark.safintern.journalpost.ArkivSaksrelasjon;
 import no.nav.saf.anticorruptionlayer.k9.K9AntiCorruptionLayer;
-import no.nav.saf.anticorruptionlayer.pdl.PdlFunctionalException;
 import no.nav.saf.anticorruptionlayer.pdl.PersonIkkeFunnetException;
 import no.nav.saf.anticorruptionlayer.pensjonsak.PensjonSakAntiCorruptionLayer;
 import no.nav.saf.domain.Arkivsak;
 import no.nav.saf.domain.BidragSak;
-import no.nav.saf.domain.kode.Skjerming;
-import no.nav.saf.domain.kode.Tema;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.domain.tilgangsmodell.TilgangDokumentInfo;
 import no.nav.saf.domain.tilgangsmodell.TilgangDokumentvariant;
@@ -34,8 +30,6 @@ import java.util.stream.Collectors;
 
 import static java.lang.String.valueOf;
 import static no.nav.saf.anticorruptionlayer.joark.domain.ArkivsakMapper.mapArkivsak;
-import static no.nav.saf.anticorruptionlayer.joark.domain.kode.BrukerTypeCode.ORGANISASJON;
-import static no.nav.saf.anticorruptionlayer.joark.domain.kode.BrukerTypeCode.PERSON;
 import static no.nav.saf.anticorruptionlayer.joark.domain.kode.JournalStatusCode.valueOf;
 import static no.nav.saf.domain.kode.Arkivsakssystem.GSAK;
 import static no.nav.saf.domain.kode.Arkivsakssystem.PSAK;
@@ -55,7 +49,7 @@ class HentDokumentTilgangService {
 	private final BisysAntiCorruptionLayer bisysAntiCorruptionLayer;
 	private final FpsakAntiCorruptionLayer fpsakAntiCorruptionLayer;
 	private final K9AntiCorruptionLayer k9AntiCorruptionLayer;
-	private final PdlAntiCorruptionLayer pdlAntiCorruptionLayerImpl;
+	private final PdlAntiCorruptionLayer pdlAntiCorruptionLayer;
 
 	public HentDokumentTilgangService(HentDokumentAntiCorruptionLayer hentDokumentAntiCorruptionLayer,
 									  PensjonSakAntiCorruptionLayer pensjonSakAntiCorruptionLayer,
@@ -67,7 +61,7 @@ class HentDokumentTilgangService {
 		this.bisysAntiCorruptionLayer = bisysAntiCorruptionLayer;
 		this.fpsakAntiCorruptionLayer = fpsakAntiCorruptionLayer;
 		this.k9AntiCorruptionLayer = k9AntiCorruptionLayer;
-		this.pdlAntiCorruptionLayerImpl = pdlAntiCorruptionLayer;
+		this.pdlAntiCorruptionLayer = pdlAntiCorruptionLayer;
 	}
 
 	HentDokumentTilgang hentDokumentTilgang(String journalpostId, String dokumentInfoId, String variantFormat) {
@@ -102,7 +96,7 @@ class HentDokumentTilgangService {
 			ArkivBruker arkivBruker = arkivJournalpost.bruker();
 			if (isNotBlank(arkivSak.aktoerId())) {
 				try {
-					TilgangBruker tilgangBruker = pdlAntiCorruptionLayerImpl.hentTilgangBrukerByAktoerId(arkivSak.aktoerId());
+					TilgangBruker tilgangBruker = pdlAntiCorruptionLayer.hentTilgangBrukerByAktoerId(arkivSak.aktoerId());
 					if (tilgangBruker != null && tilgangBruker.isPerson() && tilgangBruker.getFoedselsnr() != null) {
 						return tilgangBruker;
 					}
@@ -201,5 +195,4 @@ class HentDokumentTilgangService {
 						.dokumentInfoId(valueOf(dokumentInfoId))
 						.build()).collect(Collectors.toList());
 	}
-
 }

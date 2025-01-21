@@ -2,6 +2,7 @@ package no.nav.saf.query.sak;
 
 import io.reactivex.rxjava3.core.Flowable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
+import no.nav.saf.anticorruptionlayer.aktoer.PdlAntiCorruptionLayer;
 import no.nav.saf.domain.Arkivsak;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
@@ -34,15 +35,17 @@ class SakerQuery {
 	private final Pep<TilgangSak> pep2;
 	private final Pep<TilgangSak> pep3;
 	private final SakBrukerTilgangsmodellRepository sakBrukerTilgangsmodellRepository;
+	private final PdlAntiCorruptionLayer aktoerAntiCorruptionLayer;
 	private final SakMapper sakMapper;
 
 	@Autowired
 	public SakerQuery(Pep<TilgangBruker> pep1g,
 					  Pep<TilgangSak> pep2,
 					  Pep<TilgangSak> pep3,
-					  SakBrukerTilgangsmodellRepository sakBrukerTilgangsmodellRepository,
+					  SakBrukerTilgangsmodellRepository sakBrukerTilgangsmodellRepository, PdlAntiCorruptionLayer aktoerAntiCorruptionLayer,
 					  SakMapper sakermapper) {
 		this.sakBrukerTilgangsmodellRepository = sakBrukerTilgangsmodellRepository;
+		this.aktoerAntiCorruptionLayer = aktoerAntiCorruptionLayer;
 		this.sakMapper = sakermapper;
 		this.pep1g = pep1g;
 		this.pep2 = pep2;
@@ -51,7 +54,7 @@ class SakerQuery {
 
 	@Monitor(value = "dok_request", extraTags = {"process", "saker", "requestType", "bruker"}, histogram = true)
 	public List<Sak> hentSaker(BrukerIdInput brukerIdInput, SafRequestContext safRequestContext) {
-		TilgangBruker tilgangBruker = sakBrukerTilgangsmodellRepository.findTilgangBruker(brukerIdInput);
+		TilgangBruker tilgangBruker = aktoerAntiCorruptionLayer.findTilgangBruker(brukerIdInput);
 		if (tilgangBruker != null) {
 			safRequestContext.getRequestCache().putTilgangBruker(tilgangBruker);
 		}
