@@ -3,18 +3,14 @@ package no.nav.saf.query.sak.repo;
 import io.reactivex.rxjava3.core.Flowable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 import lombok.extern.slf4j.Slf4j;
-import no.nav.saf.anticorruptionlayer.aktoer.PdlAntiCorruptionLayer;
 import no.nav.saf.anticorruptionlayer.bisys.BisysAntiCorruptionLayer;
 import no.nav.saf.anticorruptionlayer.gsak.GsakAntiCorruptionLayer;
 import no.nav.saf.anticorruptionlayer.pensjonsak.PensjonSakAntiCorruptionLayer;
-import no.nav.saf.cache.LokalCacheConfig;
 import no.nav.saf.domain.Arkivsak;
 import no.nav.saf.domain.BidragSak;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
-import no.nav.saf.tjeneste.argumenter.BrukerIdInput;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -27,40 +23,16 @@ import java.util.Map;
 public class SakBrukerTilgangsmodellRepository {
 
 	private final GsakAntiCorruptionLayer gsakAntiCorruptionLayer;
-	private final PdlAntiCorruptionLayer aktoerAntiCorruptionLayer;
 	private final BisysAntiCorruptionLayer bisysAntiCorruptionLayer;
 	private final PensjonSakAntiCorruptionLayer pensjonSakAntiCorruptionLayer;
 
 	@Autowired
 	public SakBrukerTilgangsmodellRepository(GsakAntiCorruptionLayer gsakAntiCorruptionLayer,
-											 PdlAntiCorruptionLayer aktoerAntiCorruptionLayer,
 											 BisysAntiCorruptionLayer bisysAntiCorruptionLayer,
 											 PensjonSakAntiCorruptionLayer pensjonSakAntiCorruptionLayer) {
 		this.gsakAntiCorruptionLayer = gsakAntiCorruptionLayer;
-		this.aktoerAntiCorruptionLayer = aktoerAntiCorruptionLayer;
 		this.bisysAntiCorruptionLayer = bisysAntiCorruptionLayer;
 		this.pensjonSakAntiCorruptionLayer = pensjonSakAntiCorruptionLayer;
-	}
-
-	@Cacheable(cacheNames = LokalCacheConfig.TILGANGSMODELL_REPO_BRUKER_CACHE)
-	public TilgangBruker findTilgangBruker(BrukerIdInput brukerIdInput) {
-		try {
-			switch (brukerIdInput.getType()) {
-				case AKTOERID:
-					return aktoerAntiCorruptionLayer.hentTilgangBrukerByAktoerId(brukerIdInput.getId());
-				case FNR:
-					return aktoerAntiCorruptionLayer.hentTilgangBrukerByFoedselsnummer(brukerIdInput.getId());
-				case ORGNR:
-					return TilgangBruker.builder()
-							.orgnummer(brukerIdInput.getId())
-							.build();
-				default:
-					return null;
-			}
-		} catch (Exception e) {
-			log.warn("findTilgangBruker feilet ved oppslag av id. type={}", brukerIdInput.getType(), e);
-		}
-		return null;
 	}
 
 	public Flowable<TilgangSak> findTilgangSaker(final TilgangBruker tilgangBruker, Map<String, Arkivsak> arkivsakMap) {
