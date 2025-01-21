@@ -49,9 +49,9 @@ public class NavOrgService {
 		NavHrOrganisasjonORDSResponse response = navHrOrganisasjonConsumer.getAllNavOrganisasjon();
 		response.organisasjoner().forEach(org -> navHrOrganisasjonCache.add(org.organisasjonsnummer()));
 		if (response.items().isEmpty()) {
-			log.error("navHrOrganisasjonCache Response from DVH ORDS was empty list");
+			log.error("navHrOrganisasjonCache svar fra DVH ORDS var tomt");
 		} else {
-			log.info("navHrOrganisasjonCache Loaded {} Nav organisations from DVH ORDS", response.items().size());
+			log.info("navHrOrganisasjonCache Lastet {} Nav-organisasjoner fra DVH ORDS", response.items().size());
 		}
 	}
 }
