@@ -114,7 +114,10 @@
     {
       "app": "jfr-generell-q2",
       "namespace": "isa",
-      "cluster": "dev-gcp"
+      "cluster": "dev-gcp",
+      "roles": [
+        "tema_kta"
+      ]
     },
     {
       "app": "trygderetten-vedlegg-q2",
