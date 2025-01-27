@@ -108,7 +108,10 @@
     {
       "app": "jfr-generell",
       "namespace": "isa",
-      "cluster": "prod-gcp"
+      "cluster": "prod-gcp",
+      "roles": [
+        "tema_kta"
+      ]
     },
     {
       "app": "gosys",
