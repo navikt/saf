@@ -670,6 +670,6 @@
       "app": "gosys-oppgavebehandling-api-q1",
       "namespace": "oppgavehandtering",
       "cluster": "dev-gcp"
-    },
+    }
   ]
 }
