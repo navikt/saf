@@ -23,11 +23,9 @@ import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.time.Duration;
 import java.util.List;
 import java.util.UUID;
 
-import static java.time.Duration.ofSeconds;
 import static no.nav.saf.util.MDCConstants.CALL_ID;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.trim;
@@ -57,7 +55,7 @@ public class GsakConsumer {
 	@Retry(name = SAK_INSTANCE)
 	@Monitor(value = "dok_consumer", extraTags = {"process", "hentSakerByAktoerId"}, histogram = true)
 	public List<GsakSakerTo> hentSakerByAktoerIder(final List<String> aktoerIder) {
-		UriComponentsBuilder uri = UriComponentsBuilder.fromHttpUrl(gsakApiUrl)
+		UriComponentsBuilder uri = UriComponentsBuilder.fromUriString(gsakApiUrl)
 				.queryParam("aktoerId", aktoerIder);
 		return hentSaker(uri.toUriString());
 	}
@@ -67,7 +65,7 @@ public class GsakConsumer {
 	@Retry(name = SAK_INSTANCE)
 	@Monitor(value = "dok_consumer", extraTags = {"process", "hentSakerByAktoerId"}, histogram = true)
 	public List<GsakSakerTo> hentSakerByAktoerId(final String aktoerId) {
-		UriComponentsBuilder uri = UriComponentsBuilder.fromHttpUrl(gsakApiUrl)
+		UriComponentsBuilder uri = UriComponentsBuilder.fromUriString(gsakApiUrl)
 				.queryParam("aktoerId", aktoerId);
 		return hentSaker(uri.toUriString());
 	}
@@ -76,7 +74,7 @@ public class GsakConsumer {
 	@Retry(name = SAK_INSTANCE)
 	@Monitor(value = "dok_consumer", extraTags = {"process", "hentSakerByAktoerId"}, histogram = true)
 	public List<GsakSakerTo> hentSakerByAktoerIder(final List<String> aktoerIder, final Tema tema) {
-		UriComponentsBuilder uri = UriComponentsBuilder.fromHttpUrl(gsakApiUrl)
+		UriComponentsBuilder uri = UriComponentsBuilder.fromUriString(gsakApiUrl)
 				.queryParam("tema", tema.toString())
 				.queryParam("aktoerId", aktoerIder);
 		return hentSaker(uri.toUriString());
@@ -86,7 +84,7 @@ public class GsakConsumer {
 	@Retry(name = SAK_INSTANCE)
 	@Monitor(value = "dok_consumer", extraTags = {"process", "hentSakerByOrgNr"}, histogram = true)
 	public List<GsakSakerTo> hentSakerByOrgNr(final String orgNr) {
-		UriComponentsBuilder uri = UriComponentsBuilder.fromHttpUrl(gsakApiUrl)
+		UriComponentsBuilder uri = UriComponentsBuilder.fromUriString(gsakApiUrl)
 				.queryParam("orgnr", orgNr);
 		return hentSaker(uri.toUriString());
 	}
@@ -95,7 +93,7 @@ public class GsakConsumer {
 	@Retry(name = SAK_INSTANCE)
 	@Monitor(value = "dok_consumer", extraTags = {"process", "hentSakerByOrgNr"}, histogram = true)
 	public List<GsakSakerTo> hentSakerByOrgNr(final String orgNr, final Tema tema) {
-		UriComponentsBuilder uri = UriComponentsBuilder.fromHttpUrl(gsakApiUrl)
+		UriComponentsBuilder uri = UriComponentsBuilder.fromUriString(gsakApiUrl)
 				.queryParam("orgnr", orgNr)
 				.queryParam("tema", tema.toString());
 		return hentSaker(uri.toUriString());
@@ -105,7 +103,7 @@ public class GsakConsumer {
 	@Retry(name = SAK_INSTANCE)
 	@Monitor(value = "dok_consumer", extraTags = {"process", "hentSakerByFagsakIdAndFagsaksystem"}, histogram = true)
 	public List<GsakSakerTo> hentSakerByFagsakIdAndFagsaksystem(final String fagsakId, final String fagsaksystem) {
-		UriComponentsBuilder uri = UriComponentsBuilder.fromHttpUrl(gsakApiUrl)
+		UriComponentsBuilder uri = UriComponentsBuilder.fromUriString(gsakApiUrl)
 				.queryParam("fagsakNr", fagsakId)
 				.queryParam("applikasjon", fagsaksystem);
 		return hentSaker(uri.toUriString());
