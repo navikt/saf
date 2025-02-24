@@ -34,7 +34,7 @@ class Pep2dImplTest extends AbstractPepTest {
 	Pep2dImplTest() {
 		super();
 		SimpleCacheManager cacheManager = new SimpleCacheManager();
-		cacheManager.setCaches(Collections.singletonList(new NoOpCache(RedisCacheConfig.TILGANG_CACHE)));
+		cacheManager.setCaches(Collections.singletonList(new NoOpCache(RedisCacheConfig.REDIS_DOKUMENT_TILGANG_CACHE)));
 		cacheManager.afterPropertiesSet();
 		this.pep2d = new Pep2dImpl(cacheManager, abacService);
 	}

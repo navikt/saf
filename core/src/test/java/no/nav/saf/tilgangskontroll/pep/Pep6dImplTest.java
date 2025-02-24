@@ -32,7 +32,7 @@ class Pep6dImplTest extends AbstractPepTest {
 	Pep6dImplTest() {
 		super();
 		SimpleCacheManager cacheManager = new SimpleCacheManager();
-		cacheManager.setCaches(Collections.singletonList(new NoOpCache(RedisCacheConfig.TILGANG_CACHE)));
+		cacheManager.setCaches(Collections.singletonList(new NoOpCache(RedisCacheConfig.REDIS_DOKUMENT_TILGANG_CACHE)));
 		cacheManager.afterPropertiesSet();
 		this.pep6d = new Pep6dImpl(cacheManager, abacService);
 	}
