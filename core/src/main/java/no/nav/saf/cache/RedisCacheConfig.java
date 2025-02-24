@@ -50,6 +50,7 @@ public class RedisCacheConfig implements CachingConfigurer {
 		return RedisCacheManager.builder(connectionFactory)
 				.withInitialCacheConfigurations(
 						Collections.singletonMap(TILGANG_CACHE, tilgangCache))
+				.enableStatistics()
 				.build();
 	}
 
