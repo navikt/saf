@@ -13,8 +13,6 @@ import org.springframework.scheduling.annotation.EnableAsync;
 @EnableJwtTokenValidation(ignore = {"org.springframework", "org.springdoc" })
 public class Application {
 	public static void main(String[] args) {
-		// Lettuce-spring boot interaksjon. Se https://github.com/lettuce-io/lettuce-core/issues/1767
-		System.setProperty("io.lettuce.core.jfr", "false");
 		SpringApplication.run(Application.class, args);
 	}
 }

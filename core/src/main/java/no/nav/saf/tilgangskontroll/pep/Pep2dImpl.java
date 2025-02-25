@@ -23,7 +23,7 @@ import org.springframework.data.redis.RedisSystemException;
 import org.springframework.data.redis.connection.PoolException;
 import org.springframework.stereotype.Component;
 
-import static no.nav.saf.cache.RedisCacheConfig.TILGANG_CACHE;
+import static no.nav.saf.cache.RedisCacheConfig.REDIS_DOKUMENT_TILGANG_CACHE;
 import static no.nav.saf.domain.DomainConstants.PEP2D;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_RESOURCE_TYPE;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_TEMA;
@@ -45,8 +45,8 @@ public class Pep2dImpl extends Pep<TilgangSak> {
 	private final AbacService abacService;
 
 	@Autowired
-	public Pep2dImpl(@Qualifier(RedisCacheConfig.MANAGER_DISTRIBUTED) CacheManager redisCacheManager, AbacService abacService) {
-		this.tilgangCache = redisCacheManager.getCache(TILGANG_CACHE);
+	public Pep2dImpl(@Qualifier(RedisCacheConfig.CACHE_MANAGER_REDIS) CacheManager redisCacheManager, AbacService abacService) {
+		this.tilgangCache = redisCacheManager.getCache(REDIS_DOKUMENT_TILGANG_CACHE);
 		this.abacService = abacService;
 	}
 
