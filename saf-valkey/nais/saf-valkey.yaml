@@ -1,0 +1,22 @@
+apiVersion: nais.io/v1alpha1
+kind: Application
+metadata:
+  name: saf-valkey
+  namespace: teamdokumenthandtering
+spec:
+  image: {{image}}
+  port: 6379
+  replicas:
+    max: 1
+    min: 1
+  resources:
+    limits:
+      memory: 64Mi
+    requests:
+      cpu: 50m
+      memory: 48Mi
+  service:
+    port: 6379
+    protocol: redis
+  envFrom:
+    - secret: saf-valkey-password

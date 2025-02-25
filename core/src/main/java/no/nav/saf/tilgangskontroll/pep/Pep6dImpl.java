@@ -4,7 +4,6 @@ import io.lettuce.core.RedisException;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.cache.KeyGeneratorDistributedCaching;
 import no.nav.saf.cache.KeyGeneratorLocalCaching;
-import no.nav.saf.cache.RedisCacheConfig;
 import no.nav.saf.domain.tilgangsmodell.TilgangDokumentvariant;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlRequest;
@@ -21,7 +20,8 @@ import org.springframework.data.redis.RedisSystemException;
 import org.springframework.data.redis.connection.PoolException;
 import org.springframework.stereotype.Component;
 
-import static no.nav.saf.cache.RedisCacheConfig.REDIS_DOKUMENT_TILGANG_CACHE;
+import static no.nav.saf.cache.RedisCacheConfig.VALKEY_CACHE_MANAGER;
+import static no.nav.saf.cache.RedisCacheConfig.VALKEY_DOKUMENT_TILGANG_CACHE;
 import static no.nav.saf.domain.DomainConstants.PEP6D;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_RESOURCE_TYPE;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_SAF_DOKUMENT_FIL;
@@ -41,8 +41,8 @@ public class Pep6dImpl extends StandardPep<TilgangDokumentvariant> {
 	private final AbacService abacService;
 
 	@Autowired
-	public Pep6dImpl(@Qualifier(RedisCacheConfig.CACHE_MANAGER_REDIS) CacheManager redisCacheManager, AbacService abacService) {
-		this.tilgangCache = redisCacheManager.getCache(REDIS_DOKUMENT_TILGANG_CACHE);
+	public Pep6dImpl(@Qualifier(VALKEY_CACHE_MANAGER) CacheManager redisCacheManager, AbacService abacService) {
+		this.tilgangCache = redisCacheManager.getCache(VALKEY_DOKUMENT_TILGANG_CACHE);
 		this.abacService = abacService;
 	}
 

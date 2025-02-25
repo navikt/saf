@@ -1,6 +1,5 @@
 package no.nav.saf.tilgangskontroll.pep;
 
-import no.nav.saf.cache.RedisCacheConfig;
 import no.nav.saf.domain.kode.Variantformat;
 import no.nav.saf.domain.tilgangsmodell.TilgangDokumentvariant;
 import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlAttribute;
@@ -14,6 +13,7 @@ import org.springframework.cache.support.SimpleCacheManager;
 
 import java.util.Collections;
 
+import static no.nav.saf.cache.RedisCacheConfig.VALKEY_DOKUMENT_TILGANG_CACHE;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_RESOURCE_TYPE;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_SAF_DOKUMENT_FIL;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_SAF_SKJERMING;
@@ -32,7 +32,7 @@ class Pep6dImplTest extends AbstractPepTest {
 	Pep6dImplTest() {
 		super();
 		SimpleCacheManager cacheManager = new SimpleCacheManager();
-		cacheManager.setCaches(Collections.singletonList(new NoOpCache(RedisCacheConfig.REDIS_DOKUMENT_TILGANG_CACHE)));
+		cacheManager.setCaches(Collections.singletonList(new NoOpCache(VALKEY_DOKUMENT_TILGANG_CACHE)));
 		cacheManager.afterPropertiesSet();
 		this.pep6d = new Pep6dImpl(cacheManager, abacService);
 	}

@@ -1,6 +1,5 @@
 package no.nav.saf.tilgangskontroll.pep;
 
-import no.nav.saf.cache.RedisCacheConfig;
 import no.nav.saf.domain.kode.Tema;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlAttribute;
@@ -16,6 +15,7 @@ import org.springframework.cache.support.SimpleCacheManager;
 
 import java.util.Collections;
 
+import static no.nav.saf.cache.RedisCacheConfig.VALKEY_DOKUMENT_TILGANG_CACHE;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_RESOURCE_TYPE;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_TEMA;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_SAF_SAK_DOKUMENT;
@@ -34,7 +34,7 @@ class Pep2dImplTest extends AbstractPepTest {
 	Pep2dImplTest() {
 		super();
 		SimpleCacheManager cacheManager = new SimpleCacheManager();
-		cacheManager.setCaches(Collections.singletonList(new NoOpCache(RedisCacheConfig.REDIS_DOKUMENT_TILGANG_CACHE)));
+		cacheManager.setCaches(Collections.singletonList(new NoOpCache(VALKEY_DOKUMENT_TILGANG_CACHE)));
 		cacheManager.afterPropertiesSet();
 		this.pep2d = new Pep2dImpl(cacheManager, abacService);
 	}

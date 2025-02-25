@@ -49,8 +49,8 @@ spec:
       value: {{SAF_ENDPOINTS_K9SAK_SCOPE}}
     - name: SAF_ENDPOINTS_HR_NAV_URL
       value: {{SAF_ENDPOINTS_HR_NAV_URL}}
-    - name: SAF_REDIS_HOSTNAME
-      value: {{ SAF_REDIS_HOSTNAME }}
+    - name: SPRING_DATA_REDIS_HOST
+      value: {{ SPRING_DATA_REDIS_HOST }}
     - name: OTEL_RESOURCE_ATTRIBUTES
       value: "deployment.environment.name={{ ENVIRONMENT }}"
   image: {{ image }}
@@ -117,3 +117,5 @@ spec:
       runtime: java
       destinations:
         - id: "elastic-apm"
+  envFrom:
+    - secret: saf-valkey-password
