@@ -1,6 +1,6 @@
 name: Build and deploy saf-valkey [prod-fss]
 on:
-  push:
+  workflow_dispatch:
 
 permissions:
   contents: read
