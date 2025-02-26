@@ -1,0 +1,30 @@
+name: Build and deploy saf-valkey [prod-fss]
+on:
+  push:
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  build:
+    name: Build and deploy saf-valkey to prod-fss
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Build and push to GAR
+        id: docker-build-push
+        uses: nais/docker-build-push@v0
+        with:
+          team: teamdokumenthandtering
+          dockerfile: saf-valkey/Dockerfile
+          image_suffix: valkey
+          pull: true
+      - name: Deploy saf-valkey to prod-fss
+        uses: nais/deploy/actions/deploy@v2
+        env:
+          CLUSTER: prod-fss
+          RESOURCE: saf-valkey/nais/saf-valkey.yaml
+          VAR: image=${{ steps.docker-build-push.outputs.image }}
+          TELEMETRY: ${{ steps.docker-build-push.outputs.telemetry }}
