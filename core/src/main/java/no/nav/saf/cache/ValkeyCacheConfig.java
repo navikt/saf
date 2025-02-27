@@ -22,18 +22,18 @@ import static org.springframework.data.redis.serializer.RedisSerializationContex
 @Configuration
 @EnableCaching
 @Slf4j
-public class RedisCacheConfig implements CachingConfigurer {
+public class ValkeyCacheConfig implements CachingConfigurer {
 	public static final String VALKEY_CACHE_MANAGER = "valkeyCacheManager";
 	public static final String VALKEY_DOKUMENT_TILGANG_CACHE = "dokument-tilgang";
 	private final Environment environment;
 
-	public RedisCacheConfig(Environment environment) {
+	public ValkeyCacheConfig(Environment environment) {
 		this.environment = environment;
 	}
 
 	@Bean
 	@Qualifier(VALKEY_CACHE_MANAGER)
-	CacheManager redisCacheManager(RedisConnectionFactory connectionFactory) {
+	CacheManager valkeyCacheManager(RedisConnectionFactory connectionFactory) {
 		return RedisCacheManager.builder(connectionFactory)
 				.withInitialCacheConfigurations(
 						singletonMap(VALKEY_DOKUMENT_TILGANG_CACHE, valkeyDokumentTilgangCacheConfiguration()))

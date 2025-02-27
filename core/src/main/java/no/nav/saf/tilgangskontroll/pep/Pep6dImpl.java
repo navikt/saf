@@ -20,8 +20,8 @@ import org.springframework.data.redis.RedisSystemException;
 import org.springframework.data.redis.connection.PoolException;
 import org.springframework.stereotype.Component;
 
-import static no.nav.saf.cache.RedisCacheConfig.VALKEY_CACHE_MANAGER;
-import static no.nav.saf.cache.RedisCacheConfig.VALKEY_DOKUMENT_TILGANG_CACHE;
+import static no.nav.saf.cache.ValkeyCacheConfig.VALKEY_CACHE_MANAGER;
+import static no.nav.saf.cache.ValkeyCacheConfig.VALKEY_DOKUMENT_TILGANG_CACHE;
 import static no.nav.saf.domain.DomainConstants.PEP6D;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_RESOURCE_TYPE;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_SAF_DOKUMENT_FIL;

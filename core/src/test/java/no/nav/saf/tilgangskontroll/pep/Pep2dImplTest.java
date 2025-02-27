@@ -15,7 +15,7 @@ import org.springframework.cache.support.SimpleCacheManager;
 
 import java.util.Collections;
 
-import static no.nav.saf.cache.RedisCacheConfig.VALKEY_DOKUMENT_TILGANG_CACHE;
+import static no.nav.saf.cache.ValkeyCacheConfig.VALKEY_DOKUMENT_TILGANG_CACHE;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_RESOURCE_TYPE;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_TEMA;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_SAF_SAK_DOKUMENT;
