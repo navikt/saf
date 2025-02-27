@@ -31,7 +31,7 @@
   "SAF_ENDPOINTS_K9SAK_URL": "http://k9-sak.k9saksbehandling.svc.nais.local/k9/sak/api/pip/aktoer-for-sak",
   "SAF_ENDPOINTS_K9SAK_SCOPE": "api://dev-fss.k9saksbehandling.k9-sak/.default",
   "SAF_ENDPOINTS_HR_NAV_URL": "https://dvh.adeo.no/",
-  "SAF_REDIS_HOSTNAME": "saf-redis-q1",
+  "SPRING_DATA_REDIS_HOST": "saf-valkey",
   "AZURE_IAC_RULES": [
     {
       "app": "esyfovarsel",

@@ -12,7 +12,6 @@ import org.springframework.validation.annotation.Validated;
 public class SafProperties {
 
 	private final Endpoints endpoints = new Endpoints();
-	private final Redis redis = new Redis();
 
 	@NotEmpty
 	private String privilegiedserviceusers;
@@ -78,11 +77,4 @@ public class SafProperties {
 		private String scope;
 	}
 
-	@Data
-	@Validated
-	public static class Redis {
-		@NotEmpty
-		private String hostname = "saf-redis";
-		private int portnumber = 6379;
-	}
 }
