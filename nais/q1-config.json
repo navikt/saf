@@ -647,6 +647,14 @@
       ]
     },
     {
+      "app": "dp-ruting",
+      "namespace": "teamdagpenger",
+      "cluster": "dev-gcp",
+      "roles": [
+        "tema_dag"
+      ]
+    },
+    {
       "app": "tiltak-vedtaksbrev",
       "namespace": "arbeidsgiver",
       "cluster": "dev-gcp",
