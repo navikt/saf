@@ -17,7 +17,6 @@ import no.nav.saf.domain.visningsmodell.Dokumentoversikt;
 import no.nav.saf.domain.visningsmodell.Journalpost;
 import no.nav.saf.domain.visningsmodell.SideInfo;
 import no.nav.saf.exceptions.UgyldigInputException;
-import no.nav.saf.metrics.Monitor;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.pep.Pep;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,7 +64,6 @@ public class DokumentoversiktJournalstatusQuery {
 		this.pep6d = pep6d;
 	}
 
-	@Monitor(value = "dok_request", extraTags = {"process", "dokumentOversikt", "requestType", "journalstatus"}, histogram = true)
 	public Dokumentoversikt hentDokumentoversikt(DokumentoversiktJournalstatusArguments dokumentoversiktJournalstatusArguments, SafRequestContext safRequestContext) {
 		JournalStatusCode journalstatus = validateAndGetJournalstatus(dokumentoversiktJournalstatusArguments.getFilters().getJournalstatuser());
 

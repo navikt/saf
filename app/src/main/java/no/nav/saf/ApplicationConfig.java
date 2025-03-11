@@ -1,11 +1,9 @@
 package no.nav.saf;
 
-import io.micrometer.core.instrument.MeterRegistry;
 import no.nav.saf.azure.AzureProperties;
 import no.nav.saf.config.SafProperties;
 import no.nav.saf.config.ServiceuserAlias;
 import no.nav.saf.config.WebProxyProperties;
-import no.nav.saf.metrics.DokMonitoringAspect;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.hc.client5.http.classic.HttpClient;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
@@ -18,7 +16,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 
@@ -30,7 +27,6 @@ import java.util.stream.Collectors;
 
 import static org.apache.hc.core5.util.Timeout.ofSeconds;
 
-@EnableAspectJAutoProxy
 @ComponentScan
 @Configuration
 @EnableAutoConfiguration(exclude = UserDetailsServiceAutoConfiguration.class)
@@ -72,7 +68,7 @@ public class ApplicationConfig {
 		connectionManager.setMaxTotal(200);
 		connectionManager.setDefaultMaxPerRoute(200);
 		connectionManager.setDefaultSocketConfig(readTimeout);
-		
+
 		return HttpClients.custom()
 				.setConnectionManager(connectionManager)
 				.build();
@@ -100,11 +96,6 @@ public class ApplicationConfig {
 		clientHttpRequestFactory.setConnectTimeout(5_000);
 
 		return clientHttpRequestFactory;
-	}
-
-	@Bean
-	DokMonitoringAspect dokMonitoringAspect(MeterRegistry meterRegistry) {
-		return new DokMonitoringAspect(meterRegistry);
 	}
 
 	@Bean

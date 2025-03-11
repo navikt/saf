@@ -10,7 +10,6 @@ import no.nav.saf.config.ServiceuserAlias;
 import no.nav.saf.exceptions.JournalpostIkkeFunnetException;
 import no.nav.saf.exceptions.SafFunctionalException;
 import no.nav.saf.exceptions.SafTechnicalException;
-import no.nav.saf.metrics.Monitor;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -51,19 +50,16 @@ public class HentJournalsakinfo {
 		this.hentjournalsakinfoUrl = hentjournalsakinfoUrl;
 	}
 
-	@Monitor(value = "dok_consumer", extraTags = {"process", "finnJournalposter"}, histogram = true)
 	public FinnJournalposterResponseTo finnJournalposter(FinnJournalposterRequestTo request) {
 		ResponseEntity<FinnJournalposterResponseTo> response = callFinnJournalposter(request);
 		return response.getBody();
 	}
 
-	@Monitor(value = "dok_consumer", extraTags = {"process", "finnJournalposterStatus"}, histogram = true)
 	public FinnJournalposterStatusResponseTo finnJournalposterStatus(FinnJournalposterStatusRequestTo request) {
 		ResponseEntity<FinnJournalposterStatusResponseTo> response = callFinnJournalposterStatus(request);
 		return response.getBody();
 	}
 
-	@Monitor(value = "dok_consumer", extraTags = {"process", "tilknyttedeJournalposter"}, histogram = true)
 	public TilknyttedeJournalposterResponse tilknyttedeJournalposter(final String dokumentInfoId, final TilknytningUriParam tilknytning) {
 		try {
 			String uri = hentjournalsakinfoUrl + "/tilknyttedejournalposter/{dokumentInfoId}/{tilknytning}";
