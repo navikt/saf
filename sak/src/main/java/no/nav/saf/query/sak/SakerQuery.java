@@ -7,7 +7,6 @@ import no.nav.saf.domain.Arkivsak;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 import no.nav.saf.domain.visningsmodell.Sak;
-import no.nav.saf.metrics.Monitor;
 import no.nav.saf.query.sak.repo.SakBrukerTilgangsmodellRepository;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.pep.Pep;
@@ -52,7 +51,6 @@ class SakerQuery {
 		this.pep3 = pep3;
 	}
 
-	@Monitor(value = "dok_request", extraTags = {"process", "saker", "requestType", "bruker"}, histogram = true)
 	public List<Sak> hentSaker(BrukerIdInput brukerIdInput, SafRequestContext safRequestContext) {
 		TilgangBruker tilgangBruker = aktoerAntiCorruptionLayer.findTilgangBruker(brukerIdInput);
 		if (tilgangBruker != null) {

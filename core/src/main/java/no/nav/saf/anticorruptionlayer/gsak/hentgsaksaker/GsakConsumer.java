@@ -7,7 +7,6 @@ import no.nav.saf.config.ServiceuserAlias;
 import no.nav.saf.domain.kode.Tema;
 import no.nav.saf.exceptions.SafFunctionalException;
 import no.nav.saf.exceptions.SafTechnicalException;
-import no.nav.saf.metrics.Monitor;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -53,7 +52,6 @@ public class GsakConsumer {
 
 	@CircuitBreaker(name = SAK_INSTANCE)
 	@Retry(name = SAK_INSTANCE)
-	@Monitor(value = "dok_consumer", extraTags = {"process", "hentSakerByAktoerId"}, histogram = true)
 	public List<GsakSakerTo> hentSakerByAktoerIder(final List<String> aktoerIder) {
 		UriComponentsBuilder uri = UriComponentsBuilder.fromUriString(gsakApiUrl)
 				.queryParam("aktoerId", aktoerIder);
@@ -63,7 +61,6 @@ public class GsakConsumer {
 
 	@CircuitBreaker(name = SAK_INSTANCE)
 	@Retry(name = SAK_INSTANCE)
-	@Monitor(value = "dok_consumer", extraTags = {"process", "hentSakerByAktoerId"}, histogram = true)
 	public List<GsakSakerTo> hentSakerByAktoerId(final String aktoerId) {
 		UriComponentsBuilder uri = UriComponentsBuilder.fromUriString(gsakApiUrl)
 				.queryParam("aktoerId", aktoerId);
@@ -72,7 +69,6 @@ public class GsakConsumer {
 
 	@CircuitBreaker(name = SAK_INSTANCE)
 	@Retry(name = SAK_INSTANCE)
-	@Monitor(value = "dok_consumer", extraTags = {"process", "hentSakerByAktoerId"}, histogram = true)
 	public List<GsakSakerTo> hentSakerByAktoerIder(final List<String> aktoerIder, final Tema tema) {
 		UriComponentsBuilder uri = UriComponentsBuilder.fromUriString(gsakApiUrl)
 				.queryParam("tema", tema.toString())
@@ -82,7 +78,6 @@ public class GsakConsumer {
 
 	@CircuitBreaker(name = SAK_INSTANCE)
 	@Retry(name = SAK_INSTANCE)
-	@Monitor(value = "dok_consumer", extraTags = {"process", "hentSakerByOrgNr"}, histogram = true)
 	public List<GsakSakerTo> hentSakerByOrgNr(final String orgNr) {
 		UriComponentsBuilder uri = UriComponentsBuilder.fromUriString(gsakApiUrl)
 				.queryParam("orgnr", orgNr);
@@ -91,7 +86,6 @@ public class GsakConsumer {
 
 	@CircuitBreaker(name = SAK_INSTANCE)
 	@Retry(name = SAK_INSTANCE)
-	@Monitor(value = "dok_consumer", extraTags = {"process", "hentSakerByOrgNr"}, histogram = true)
 	public List<GsakSakerTo> hentSakerByOrgNr(final String orgNr, final Tema tema) {
 		UriComponentsBuilder uri = UriComponentsBuilder.fromUriString(gsakApiUrl)
 				.queryParam("orgnr", orgNr)
@@ -101,7 +95,6 @@ public class GsakConsumer {
 
 	@CircuitBreaker(name = SAK_INSTANCE)
 	@Retry(name = SAK_INSTANCE)
-	@Monitor(value = "dok_consumer", extraTags = {"process", "hentSakerByFagsakIdAndFagsaksystem"}, histogram = true)
 	public List<GsakSakerTo> hentSakerByFagsakIdAndFagsaksystem(final String fagsakId, final String fagsaksystem) {
 		UriComponentsBuilder uri = UriComponentsBuilder.fromUriString(gsakApiUrl)
 				.queryParam("fagsakNr", fagsakId)
