@@ -12,7 +12,6 @@ import no.nav.saf.domain.tilgangsmodell.TilgangJournalpost;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 import no.nav.saf.domain.visningsmodell.Dokumentoversikt;
 import no.nav.saf.domain.visningsmodell.Journalpost;
-import no.nav.saf.metrics.Monitor;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.pep.Pep;
 import no.nav.saf.tjeneste.argumenter.FagsakInput;
@@ -71,7 +70,6 @@ class DokumentoversiktFagsakQuery {
 		this.pep7d = pep7d;
 	}
 
-	@Monitor(value = "dok_request", extraTags = {"process", "dokumentOversikt", "requestType", "fagsak"}, histogram = true)
 	public Dokumentoversikt hentDokumentoversikt(DokumentoversiktFagsakArguments dokumentoversiktFagsakArguments, SafRequestContext safRequestContext) {
 		final FagsakInput fagsakInput = dokumentoversiktFagsakArguments.getFagsakInput();
 		final List<TilgangBruker> tilgangBrukerList = dokumentoversiktFagsakTilgangsmodellRepository.findTilgangBrukerList(fagsakInput);

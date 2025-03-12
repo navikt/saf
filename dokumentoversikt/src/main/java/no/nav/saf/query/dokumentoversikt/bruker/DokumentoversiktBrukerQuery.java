@@ -18,7 +18,6 @@ import no.nav.saf.domain.visningsmodell.Dokumentoversikt;
 import no.nav.saf.domain.visningsmodell.Journalpost;
 import no.nav.saf.exceptions.SafFunctionalException;
 import no.nav.saf.exceptions.TilgangskontrollException;
-import no.nav.saf.metrics.Monitor;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.pep.AbacAnswer;
 import no.nav.saf.tilgangskontroll.pep.Pep;
@@ -85,7 +84,6 @@ class DokumentoversiktBrukerQuery {
 		this.pdlAntiCorruptionLayer = pdlAntiCorruptionLayer;
 	}
 
-	@Monitor(value = "dok_request", extraTags = {"process", "dokumentOversikt", "requestType", "bruker"}, histogram = true)
 	public Dokumentoversikt hentDokumentoversikt(DokumentoversiktBrukerArguments dokumentoversiktBrukerArguments,
 												 SafRequestContext safRequestContext) {
 		TilgangBruker tilgangBruker = pdlAntiCorruptionLayer.findTilgangBruker(dokumentoversiktBrukerArguments.getBrukerIdInput());

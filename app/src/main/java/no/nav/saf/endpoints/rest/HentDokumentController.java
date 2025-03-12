@@ -12,7 +12,6 @@ import no.nav.saf.exceptions.JournalpostIkkeFunnetException;
 import no.nav.saf.exceptions.UgyldigInputException;
 import no.nav.saf.hentdokument.HentDokumentDomainCoordinator;
 import no.nav.saf.metrics.AudienceCounter;
-import no.nav.saf.metrics.Monitor;
 import no.nav.saf.springdoc.SwaggerRestHentDokument;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.SafSecurityContext;
@@ -73,7 +72,6 @@ public class HentDokumentController {
 
 	@SwaggerRestHentDokument
 	@GetMapping(value = "hentdokument/{journalpostId}/{dokumentInfoId}/{variantFormat}")
-	@Monitor(value = "dok_request", extraTags = {"process", "hentDokument", "requestType", "hentDokument"}, histogram = true)
 	public ResponseEntity<byte[]> hentDokument(
 			@Parameter(name = "journalpostId", description = "Id for aktuell journalpost", required = true) @PathVariable String journalpostId,
 			@Parameter(name = "dokumentInfoId", description = "Id for aktuelt dokument", required = true) @PathVariable String dokumentInfoId,
@@ -148,8 +146,8 @@ public class HentDokumentController {
 		if (securityContext.isSystem() && !Variantformat.ORIGINAL.name().equals(variantFormat)) {
 			throw new HentdokumentTilgangskontrollException(
 					"Servicebruker forsøker å hente dokument med variantFormat=" +
-							variantFormat + ". Servicebrukere har kun tilgang til variantFormat=" + Variantformat.ORIGINAL +
-							" med mindre man har en avtale med Team Dokumentløsninger. Snakk med oss om behov.", AbacAnswer.deny(new UkjentEllerTekniskReason()));
+					variantFormat + ". Servicebrukere har kun tilgang til variantFormat=" + Variantformat.ORIGINAL +
+					" med mindre man har en avtale med Team Dokumentløsninger. Snakk med oss om behov.", AbacAnswer.deny(new UkjentEllerTekniskReason()));
 		}
 	}
 }
