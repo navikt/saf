@@ -620,6 +620,11 @@
       ]
     },
     {
+      "app": "behandlingsflyt",
+      "namespace": "aap",
+      "cluster": "prod-gcp"
+    },
+    {
       "app": "tilgang",
       "namespace": "aap",
       "cluster": "prod-gcp",
@@ -787,7 +792,9 @@
       "app": "rpa-ot-ortok",
       "namespace": "team-rpa",
       "cluster": "prod-fss",
-      "roles": ["tema_hel"]
+      "roles": [
+        "tema_hel"
+      ]
     }
   ]
 }
