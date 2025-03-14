@@ -669,10 +669,7 @@
     {
       "app": "behandlingsflyt",
       "namespace": "aap",
-      "cluster": "dev-gcp",
-      "roles": [
-        "tema_aap"
-      ]
+      "cluster": "dev-gcp"
     },
     {
       "app": "brev",
