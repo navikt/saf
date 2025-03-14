@@ -460,11 +460,6 @@
       "cluster": "prod-fss"
     },
     {
-      "app": "dokumenter",
-      "namespace": "aap",
-      "cluster": "prod-gcp"
-    },
-    {
       "app": "modiapersonoversikt-api",
       "namespace": "personoversikt",
       "cluster": "prod-fss"
@@ -618,6 +613,30 @@
     },
     {
       "app": "postmottak-backend",
+      "namespace": "aap",
+      "cluster": "prod-gcp",
+      "roles": [
+        "tema_aap"
+      ]
+    },
+    {
+      "app": "tilgang",
+      "namespace": "aap",
+      "cluster": "prod-gcp",
+      "roles": [
+        "tema_aap"
+      ]
+    },
+    {
+      "app": "brev",
+      "namespace": "aap",
+      "cluster": "prod-gcp",
+      "roles": [
+        "tema_aap"
+      ]
+    },
+    {
+      "app": "dokumentinnhenting",
       "namespace": "aap",
       "cluster": "prod-gcp",
       "roles": [
