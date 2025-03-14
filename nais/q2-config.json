@@ -757,6 +757,11 @@
       "app": "sif-innsyn-api",
       "namespace": "dusseldorf",
       "cluster": "dev-gcp"
+    },
+    {
+      "app": "saas-proxy",
+      "namespace": "teamcrm",
+      "cluster": "dev-gcp"
     }
   ]
 }
