@@ -398,6 +398,11 @@
       "cluster": "dev-gcp"
     },
     {
+      "app": "modiapersonoversikt-api",
+      "namespace": "personoversikt",
+      "cluster": "dev-gcp"
+    },
+    {
       "app": "esyfovarsel",
       "namespace": "team-esyfo",
       "cluster": "dev-gcp",
