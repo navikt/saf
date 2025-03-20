@@ -134,11 +134,6 @@
       "cluster": "dev-gcp"
     },
     {
-      "app": "salesforce",
-      "namespace": "teamcrm",
-      "cluster": "dev-external"
-    },
-    {
       "app": "kabal-api",
       "namespace": "klage",
       "cluster": "dev-gcp"
@@ -662,11 +657,6 @@
         "tema_til",
         "tema_opp"
       ]
-    },
-    {
-      "app": "saas-proxy",
-      "namespace": "teamcrm",
-      "cluster": "dev-gcp"
     },
     {
       "app": "rpa-ot-ortok",
