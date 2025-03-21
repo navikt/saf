@@ -80,6 +80,7 @@ spec:
     limits:
       memory: 2560Mi
     requests:
+      cpu: 50m
       memory: 1792Mi
   vault:
     enabled: true
