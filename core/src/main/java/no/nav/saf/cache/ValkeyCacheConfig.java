@@ -16,6 +16,8 @@ import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 
+import java.time.Duration;
+
 import static java.util.Collections.singletonMap;
 import static org.springframework.data.redis.serializer.RedisSerializationContext.SerializationPair.fromSerializer;
 
@@ -46,7 +48,8 @@ public class ValkeyCacheConfig implements CachingConfigurer {
 				.disableCachingNullValues()
 				.serializeValuesWith(fromSerializer(new Jackson2JsonRedisSerializer<>(XacmlResponse.class)))
 				// En valkey-app håndterer alle testmiljøene
-				.prefixCacheNameWith(environment.getProperty("nais.app.name", "saf") + "-");
+				.prefixCacheNameWith(environment.getProperty("nais.app.name", "saf") + "-")
+				.entryTtl(Duration.ofHours(12));
 	}
 
 	@Override
