@@ -2,6 +2,7 @@ package no.nav.saf.tilgangskontroll.pep;
 
 import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.anticorruptionlayer.nav.NavOrgService;
+import no.nav.saf.anticorruptionlayer.nav.NavUserGroupMembershipService;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlRequest;
@@ -17,7 +18,6 @@ import no.nav.saf.tilgangskontroll.pep.reasons.UkjentEllerTekniskReason;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.Collections;
 import java.util.Map;
 
 import static no.nav.saf.domain.DomainConstants.PEP1G;
@@ -47,12 +47,14 @@ public class Pep1gImpl extends StandardPep<TilgangBruker> {
 	public static final String ORGANISASJON_ER_NAV_STAT_KREVER_EGEN_ANSATT_TILGANG = "organisasjon_er_nav_stat_krever_egen_ansatt_tilgang";
 	private final AbacService abacService;
 	private final NavOrgService navOrgService;
+	private final NavUserGroupMembershipService navUserGroupMembershipService;
 
 	@Autowired
 	public Pep1gImpl(AbacService abacService,
-					 NavOrgService navOrgService) {
+					 NavOrgService navOrgService, NavUserGroupMembershipService navUserGroupMembershipService) {
 		this.abacService = abacService;
 		this.navOrgService = navOrgService;
+		this.navUserGroupMembershipService = navUserGroupMembershipService;
 	}
 
 	@Override
@@ -117,7 +119,7 @@ public class Pep1gImpl extends StandardPep<TilgangBruker> {
 		}
 		if (navOrgService.isOrganisasjonsnummerNavBedrift(organisasjonsnummer)) {
 			log.info("Pep1g organisasjonsnummer={} er en NAV Organisasjon. Undersøker om NAV ansatt har tilgang.", organisasjonsnummer);
-			if (navOrgService.isNavIdentInEgenAnsattGroup(safRequestContext.getUserId())) {
+			if (navUserGroupMembershipService.isNavIdentInEgenAnsattGroup(safRequestContext.getUserId())) {
 				return AbacAnswer.permit();
 			}
 			return deny(new OrgnrNavStatReason(

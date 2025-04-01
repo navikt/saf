@@ -6,6 +6,10 @@ import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.validation.annotation.Validated;
 
+import java.util.Objects;
+import java.util.UUID;
+import java.util.stream.Stream;
+
 @Data
 @ConfigurationProperties("saf")
 @Validated
@@ -13,11 +17,32 @@ public class SafProperties {
 
 	private final Endpoints endpoints = new Endpoints();
 
+	private final AzureGroup azureGroup = new AzureGroup();
+
 	@NotEmpty
 	private String privilegiedserviceusers;
 
-	@NotEmpty
-	private String azureGroupEgenAnsattObjectId;
+	@Data
+	public static class AzureGroup {
+		@NotEmpty
+		private UUID egenAnsattObjectId;
+		private UUID fortroligAdresseObjectId;
+		private UUID strengtFortroligAdresseObjectId;
+		private UUID joarkVedlikeholdObjectId;
+		private UUID pensjonUtvidetObjectId;
+		private UUID gosysUtvidetObjectId;
+
+		public Stream<UUID> getAllGroupUUIDsAsStream() {
+			return Stream.of(
+					egenAnsattObjectId,
+					fortroligAdresseObjectId,
+					strengtFortroligAdresseObjectId,
+					joarkVedlikeholdObjectId,
+					pensjonUtvidetObjectId,
+					gosysUtvidetObjectId
+			).filter(Objects::nonNull);
+		}
+	}
 
 	@Data
 	@Validated

@@ -19,4 +19,7 @@ public final class KeyGeneratorDistributedCaching extends AbstractKeyGeneratorCa
 				createIdentifierPair(SKJERMING, skjerming));
 	}
 
+	public static String getKeyForSaksbehandlerGroupMembership(String saksbehandlerId) {
+		return createIdentifierPair(SAKSBEHANDLER_ID, saksbehandlerId);
+	}
 }
