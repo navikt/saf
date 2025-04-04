@@ -34,7 +34,7 @@ public class MsGraphConsumer {
 				.clientId(azureProperties.appClientId())
 				.clientSecret(azureProperties.appClientSecret())
 				.build();
-		this.graphClient = new GraphServiceClient(clientSecretCredential, "https://graph.microsoft.com/.default");
+		this.graphClient = new GraphServiceClient(clientSecretCredential);
 		this.azureGroupsFilter = createAzureGroupFilter(safProperties.getAzureGroup());
 		String overrideMsGraphBaseUrl = safProperties.getEndpoints().getOverrideMsGraphServiceRoot();
 		if (isNotBlank(overrideMsGraphBaseUrl)) {
