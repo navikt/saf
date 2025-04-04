@@ -21,7 +21,7 @@ class NavOrgServiceIT extends AbstractItest {
 	NavHrOrganisasjonConsumer navHrOrganisasjonConsumer;
 
 	@Test
-	void shouldLoadNavOrgs() {
+	void shouldLoadNavOrgsOrgnrFromORDSAndCacheThemLocally() {
 		stubNavHrOrgOrds();
 
 		NavOrgService navOrgService = new NavOrgService(navHrOrganisasjonConsumer);

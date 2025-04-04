@@ -26,6 +26,7 @@ public class SafProperties {
 	public static class AzureGroup {
 		@NotEmpty
 		private UUID egenAnsattObjectId;
+		// Disse bør annoteres med @NotEmpty etterhvert som de blir tatt i bruk
 		private UUID fortroligAdresseObjectId;
 		private UUID strengtFortroligAdresseObjectId;
 		private UUID joarkVedlikeholdObjectId;

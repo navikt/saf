@@ -7,17 +7,17 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component
 public class NavUserGroupMembershipService {
-	private final MsGraphConsumer msGraphConsumer;
+	private final MsGraphEntraGroupMembershipService msGraphEntraGroupMembershipService;
 	private final SafProperties.AzureGroup azureGroups;
 
 	public NavUserGroupMembershipService(SafProperties safProperties,
-										 MsGraphConsumer msGraphConsumer
+										 MsGraphEntraGroupMembershipService msGraphEntraGroupMembershipService
 	) {
-		this.msGraphConsumer = msGraphConsumer;
+		this.msGraphEntraGroupMembershipService = msGraphEntraGroupMembershipService;
 		this.azureGroups = safProperties.getAzureGroup();
 	}
 
 	public boolean isNavIdentInEgenAnsattGroup(String navIdent) {
-		return msGraphConsumer.isUserInGroup(navIdent, azureGroups.getEgenAnsattObjectId());
+		return msGraphEntraGroupMembershipService.isUserInGroup(navIdent, azureGroups.getEgenAnsattObjectId());
 	}
 }

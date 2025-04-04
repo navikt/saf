@@ -1,6 +1,6 @@
 package no.nav.saf.integration.ords;
 
-import no.nav.saf.anticorruptionlayer.nav.MsGraphConsumer;
+import no.nav.saf.anticorruptionlayer.nav.MsGraphEntraGroupMembershipService;
 import no.nav.saf.anticorruptionlayer.nav.NavUserGroupMembershipService;
 import no.nav.saf.config.SafProperties;
 import no.nav.saf.endpoints.AbstractItest;
@@ -14,14 +14,14 @@ class NavUserGroupMembershipServiceIT extends AbstractItest {
 	@Autowired
 	SafProperties safProperties;
 	@Autowired
-	MsGraphConsumer msGraphConsumer;
+	MsGraphEntraGroupMembershipService msGraphEntraGroupMembershipService;
 
 	@Test
 	void shouldLookUpMsGraphMemberOfEgenAnsatt() {
 		stubMsGraphGetUser(NAV_IDENT_SAKSBEHANDLER);
 		stubMsGraphMemberOfSeveralGroups(MS_ID_SAKSBEHANDLER, "nav/msgraph-memberof-egenansatt.json");
 
-		NavUserGroupMembershipService navUserGroupMembershipService = new NavUserGroupMembershipService(safProperties, msGraphConsumer);
+		NavUserGroupMembershipService navUserGroupMembershipService = new NavUserGroupMembershipService(safProperties, msGraphEntraGroupMembershipService);
 
 		assertThat(navUserGroupMembershipService.isNavIdentInEgenAnsattGroup(NAV_IDENT_SAKSBEHANDLER)).isTrue();
 	}
@@ -31,7 +31,7 @@ class NavUserGroupMembershipServiceIT extends AbstractItest {
 		stubMsGraphGetUser(NAV_IDENT_SAKSBEHANDLER);
 		stubMsGraphMemberOfSeveralGroups(MS_ID_SAKSBEHANDLER, "nav/msgraph-memberof-not-egenansatt.json");
 
-		NavUserGroupMembershipService navUserGroupMembershipService = new NavUserGroupMembershipService(safProperties, msGraphConsumer);
+		NavUserGroupMembershipService navUserGroupMembershipService = new NavUserGroupMembershipService(safProperties, msGraphEntraGroupMembershipService);
 
 		assertThat(navUserGroupMembershipService.isNavIdentInEgenAnsattGroup(NAV_IDENT_SAKSBEHANDLER)).isFalse();
 	}
