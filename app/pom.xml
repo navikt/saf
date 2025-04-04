@@ -83,6 +83,11 @@
 			<artifactId>token-validation-spring-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>com.github.codemonstur</groupId>
+			<artifactId>embedded-redis</artifactId>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 
 	<build>

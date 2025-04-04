@@ -6,6 +6,7 @@ import no.nav.saf.anticorruptionlayer.nav.NavOrgService;
 import no.nav.saf.azure.AzureProperties;
 import no.nav.saf.domain.visningsmodell.Dokumentoversikt;
 import no.nav.saf.domain.visningsmodell.Journalpost;
+import no.nav.saf.endpoints.testconfig.ValkeyCacheTestConfig;
 import no.nav.saf.headers.NavHeaders;
 import no.nav.saf.integration.azure.AzureTokenConsumer;
 import no.nav.security.mock.oauth2.MockOAuth2Server;
@@ -13,6 +14,7 @@ import no.nav.security.mock.oauth2.token.DefaultOAuth2TokenCallback;
 import no.nav.security.token.support.spring.test.EnableMockOAuth2Server;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.core5.http.ContentType;
+import org.junit.jupiter.api.AfterEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -21,6 +23,7 @@ import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -39,10 +42,12 @@ import java.util.UUID;
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.containing;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
+import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static com.github.tomakehurst.wiremock.core.Options.DYNAMIC_PORT;
 import static com.github.tomakehurst.wiremock.stubbing.Scenario.STARTED;
@@ -61,10 +66,10 @@ import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
-@SpringBootTest(classes = {AbstractItest.TestConfig.class, ApplicationConfig.class},
+@SpringBootTest(classes = {AbstractItest.TestConfig.class, ValkeyCacheTestConfig.class, ApplicationConfig.class},
 		webEnvironment = RANDOM_PORT,
-		properties = {"spring.main.allow-bean-definition-overriding=true" })
-@ActiveProfiles(value = {"itest", "wiremock" })
+		properties = {"spring.main.allow-bean-definition-overriding=true"})
+@ActiveProfiles(value = {"itest", "wiremock"})
 @EnableMockOAuth2Server
 @AutoConfigureWireMock(port = DYNAMIC_PORT)
 public abstract class AbstractItest {
@@ -113,7 +118,13 @@ public abstract class AbstractItest {
 	private MockOAuth2Server server;
 	@MockitoBean
 	protected NavOrgService navOrgService;
+	@Autowired
+	protected StringRedisTemplate stringRedisTemplate;
 
+	@AfterEach
+	void resetCache() {
+		stringRedisTemplate.getConnectionFactory().getConnection().serverCommands().flushDb();
+	}
 
 	protected HttpEntity<?> createHttpEntity() {
 		return new HttpEntity<>(createHeaders());
@@ -198,11 +209,13 @@ public abstract class AbstractItest {
 	}
 
 	protected void stubNavOrgMemberOfEgenAnsatt(String navIdent) {
-		when(navOrgService.isNavIdentInEgenAnsattGroup(navIdent)).thenReturn(true);
+		stubMsGraphGetUser(navIdent);
+		stubMsGraphMemberOfSeveralGroups(MS_ID_SAKSBEHANDLER, "nav/msgraph-memberof-egenansatt.json");
 	}
 
 	protected void stubNavOrgNotMemberOfEgenAnsatt(String navIdent) {
-		when(navOrgService.isNavIdentInEgenAnsattGroup(navIdent)).thenReturn(false);
+		stubMsGraphGetUser(navIdent);
+		stubMsGraphMemberOfSeveralGroups(MS_ID_SAKSBEHANDLER, "nav/msgraph-memberof-not-egenansatt.json");
 	}
 
 	protected static void stubPdl() {
@@ -742,6 +755,24 @@ public abstract class AbstractItest {
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("abac/abac-deny.json")));
+	}
+
+	protected static void stubMsGraphGetUser(String navIdent) {
+		stubFor(get("/msgraph/users?$count=true&$filter=onPremisesSamAccountName%20eq%20%27" + navIdent + "%27&$select=id")
+				.willReturn(aResponse().withStatus(OK.value())
+						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("nav/msgraph-users.json")));
+	}
+
+	protected static void stubMsGraphMemberOfSeveralGroups(String msUserId, String bodyFile) {
+		stubFor(get(urlMatching("/msgraph/users/" + msUserId + "/memberOf\\?\\$count=false&\\$filter=.*"))
+				.willReturn(aResponse().withStatus(OK.value())
+						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile(bodyFile)));
+	}
+
+	protected void verifyMsGraphMemberOfSeveralGroupsCalled(String msUserId, int count) {
+		verify(count, getRequestedFor(urlMatching("/msgraph/users/" + msUserId + "/memberOf\\?\\$count=false&\\$filter=.*")));
 	}
 
 	protected void verifyabacDenyPep7dSkipPep2Pep3Pep4Pep5Pep6dAndHttpStatusCode(HttpStatusCode expectedHttpStatus, HttpStatusCode actualHttpStatus) {

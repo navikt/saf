@@ -9,22 +9,22 @@ import com.microsoft.kiota.ApiException;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.azure.AzureProperties;
 import no.nav.saf.config.SafProperties;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.regex.Pattern;
+import java.util.Set;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
-import static no.nav.saf.cache.LokalCacheConfig.MSGRAPH_MEMBER_CACHE;
-import static no.nav.saf.cache.LokalCacheConfig.MSGRAPH_USER_CACHE;
+import static java.util.Collections.emptySet;
 import static no.nav.saf.tilgangskontroll.SafSecurityContext.NAVIDENT_PATTERN;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 @Component
 @Slf4j
 public class MsGraphConsumer {
-	private static final Pattern UUID_PATTERN = Pattern.compile("^[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}$");
+	private final String azureGroupsFilter;
 	private final GraphServiceClient graphClient;
 
 	public MsGraphConsumer(SafProperties safProperties,
@@ -34,15 +34,15 @@ public class MsGraphConsumer {
 				.clientId(azureProperties.appClientId())
 				.clientSecret(azureProperties.appClientSecret())
 				.build();
-		this.graphClient = new GraphServiceClient(clientSecretCredential, "https://graph.microsoft.com/.default");
+		this.graphClient = new GraphServiceClient(clientSecretCredential);
+		this.azureGroupsFilter = createAzureGroupFilter(safProperties.getAzureGroup());
 		String overrideMsGraphBaseUrl = safProperties.getEndpoints().getOverrideMsGraphServiceRoot();
 		if (isNotBlank(overrideMsGraphBaseUrl)) {
 			this.graphClient.getRequestAdapter().setBaseUrl(overrideMsGraphBaseUrl);
 		}
 	}
 
-	@Cacheable(MSGRAPH_USER_CACHE)
-	public Optional<User> getUser(String navIdent) {
+	Optional<User> getUser(String navIdent) {
 		if (!NAVIDENT_PATTERN.matcher(navIdent).matches()) {
 			return Optional.empty();
 		}
@@ -66,12 +66,8 @@ public class MsGraphConsumer {
 		}
 	}
 
-	@Cacheable(value = MSGRAPH_MEMBER_CACHE, key = "#user.id")
-	public boolean isMemberOf(User user, String adGroup) {
+	boolean isMemberOf(User user, UUID adGroup) {
 		if (user == null || user.getId() == null) {
-			return false;
-		}
-		if (!UUID_PATTERN.matcher(adGroup).matches()) {
 			return false;
 		}
 
@@ -91,5 +87,36 @@ public class MsGraphConsumer {
 			log.error("Teknisk feil mot Microsoft Graph. message=" + e.getMessage(), e);
 			return false;
 		}
+	}
+
+	Set<String> getRelevantGroupsForUser(Optional<User> user) {
+		if (user.isEmpty() || user.get().getId() == null) {
+			return emptySet();
+		}
+
+		try {
+			List<DirectoryObject> res = graphClient
+					.users().byUserId(user.get().getId())
+					.memberOf()
+					.get(requestConfiguration -> {
+						requestConfiguration.headers.add("ConsistencyLevel", "eventual");
+						requestConfiguration.queryParameters.filter = azureGroupsFilter;
+						requestConfiguration.queryParameters.count = false;
+						requestConfiguration.queryParameters.select = new String[]{"id"};
+					})
+					.getValue();
+			return res.stream().map(DirectoryObject::getId).collect(Collectors.toSet());
+		} catch (ApiException e) {
+			log.error("Teknisk feil mot Microsoft Graph. message=" + e.getMessage(), e);
+			return emptySet();
+		}
+	}
+
+	private static String createAzureGroupFilter(SafProperties.AzureGroup azureGroup) {
+		return "(" + azureGroup.getAllGroupUUIDsAsStream()
+				.map(UUID::toString)
+				.map(str -> "id eq '" + str + "'")
+				.collect(Collectors.joining(" or ")) +
+				")";
 	}
 }

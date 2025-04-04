@@ -1,0 +1,15 @@
+{
+  "@odata.context": "https://graph.microsoft.com/v1.0/$metadata#groups(id)",
+  "@odata.count": 3,
+  "value": [
+    {
+      "id": "f476f724-350b-4ff4-8e74-141cda9e824e"
+    },
+    {
+      "id": "0a038705-aad3-4e91-b297-794c203c4c73"
+    },
+    {
+      "id": "37601fad-473e-437c-9f24-9531cf33d44f"
+    }
+  ]
+}
