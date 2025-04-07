@@ -29,7 +29,6 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Set;
-import java.util.function.Consumer;
 
 import static java.lang.String.format;
 import static no.nav.saf.azure.AzureProperties.CLIENT_REGISTRATION_DOKARKIV;
@@ -87,28 +86,24 @@ public class DokarkivConsumer {
 						return clientResponse.createError();
 					}
 				})
-				.doOnError(handleErrorHentDokument(dokumentInfoId, variantFormat))
+				.onErrorMap(error -> mapErrorHentDokument(error, dokumentInfoId, variantFormat))
 				.transformDeferred(CircuitBreakerOperator.of(dokarkivHentdokumentCircuitBreaker))
 				.transformDeferred(RetryOperator.of(dokarkivHentdokumentRetry))
 				.block();
 	}
 
-	private Consumer<Throwable> handleErrorHentDokument(String dokumentInfoId, String variantFormat) {
-		return error -> {
-			if (error instanceof WebClientResponseException.NotFound) {
-				throw new DokumentIkkeFunnetException(format("Dokument med dokumentInfoId=%s, variantFormat=%s ikke funnet. feilmelding=%s",
-						dokumentInfoId, variantFormat, error.getMessage()));
+	private Throwable mapErrorHentDokument(Throwable error, String dokumentInfoId, String variantFormat) {
+		if (error instanceof WebClientResponseException.NotFound) {
+			throw new DokumentIkkeFunnetException(format("Dokument med dokumentInfoId=%s, variantFormat=%s ikke funnet. feilmelding=%s",
+					dokumentInfoId, variantFormat, error.getMessage()));
+		}
+		if (error instanceof WebClientResponseException webException) {
+			if (webException.getStatusCode().is4xxClientError()) {
+				throw new SafFunctionalException(format("Henting av dokument fra dokarkiv feilet funksjonelt. dokumentInfoId=%s, variantFormat=%s, status=%s. feilmelding=%s",
+						dokumentInfoId, variantFormat, webException.getStatusCode(), error.getMessage()), error, webException.getStatusCode());
 			}
-			if (error instanceof WebClientResponseException webException) {
-				if (webException.getStatusCode().is4xxClientError()) {
-					throw new SafFunctionalException(format("Henting av dokument fra fagarkivet feilet funksjonelt. dokumentInfoId=%s, variantFormat=%s, status=%s. feilmelding=%s",
-							dokumentInfoId, variantFormat, webException.getStatusCode(), error.getMessage()), error, webException.getStatusCode());
-				} else {
-					throw new SafTechnicalException(format("Henting av dokument fra fagarkivet feilet teknisk. dokumentInfoId=%s, variantFormat=%s, status=%s. feilmelding=%s",
-							dokumentInfoId, variantFormat, webException.getStatusCode(), error.getMessage()), error, webException.getStatusCode());
-				}
-			}
-		};
+		}
+		throw new SafTechnicalException(format("Henting av dokument fra dokarkiv feilet teknisk. dokumentInfoId=%s, variantFormat=%s", dokumentInfoId, variantFormat), error);
 	}
 
 	public ArkivJournalpost journalpostById(String journalpostId, Set<String> fields) {
@@ -124,19 +119,17 @@ public class DokarkivConsumer {
 				.accept(APPLICATION_JSON)
 				.retrieve()
 				.bodyToMono(ArkivJournalpost.class)
-				.doOnError(handleErrorJournalpostById(journalpostId))
+				.onErrorMap(error -> mapErrorJournalpostById(error, journalpostId))
 				.transformDeferred(CircuitBreakerOperator.of(dokarkivMetadataCircuitBreaker))
 				.transformDeferred(RetryOperator.of(dokarkivMetadataRetry))
 				.block();
 	}
 
-	private Consumer<Throwable> handleErrorJournalpostById(String journalpostId) {
-		return error -> {
-			if (error instanceof WebClientResponseException.NotFound) {
-				throw new JournalpostIkkeFunnetException("Journalpost med journalpostId=" + journalpostId + " ikke funnet.");
-			}
-			throw new SafTechnicalException("Henting av journalpostId=" + journalpostId + " feilet med ukjent teknisk feil.", error);
-		};
+	private Throwable mapErrorJournalpostById(Throwable error, String journalpostId) {
+		if (error instanceof WebClientResponseException.NotFound) {
+			throw new JournalpostIkkeFunnetException("Journalpost med journalpostId=" + journalpostId + " ikke funnet.");
+		}
+		throw new SafTechnicalException("Henting av journalpostId=" + journalpostId + " feilet med ukjent teknisk feil.", error);
 	}
 
 	public ArkivJournalpost journalpostByEksternReferanseId(String eksternReferanseId, Set<String> fields) {
@@ -152,19 +145,17 @@ public class DokarkivConsumer {
 				.accept(APPLICATION_JSON)
 				.retrieve()
 				.bodyToMono(ArkivJournalpost.class)
-				.doOnError(handleErrorJournalpostByEksternReferanseId(eksternReferanseId))
+				.onErrorMap(error -> mapErrorJournalpostByEksternReferanseId(error, eksternReferanseId))
 				.transformDeferred(CircuitBreakerOperator.of(dokarkivMetadataCircuitBreaker))
 				.transformDeferred(RetryOperator.of(dokarkivMetadataRetry))
 				.block();
 	}
 
-	private Consumer<Throwable> handleErrorJournalpostByEksternReferanseId(String eksternReferanseId) {
-		return error -> {
-			if (error instanceof WebClientResponseException.NotFound) {
-				throw new JournalpostIkkeFunnetException("Journalpost med eksternReferanseId=" + eksternReferanseId + " ikke funnet.");
-			}
-			throw new SafTechnicalException("Henting av eksternReferanseId=" + eksternReferanseId + " feilet med ukjent teknisk feil.", error);
-		};
+	private Throwable mapErrorJournalpostByEksternReferanseId(Throwable error, String eksternReferanseId) {
+		if (error instanceof WebClientResponseException.NotFound) {
+			throw new JournalpostIkkeFunnetException("Journalpost med eksternReferanseId=" + eksternReferanseId + " ikke funnet.");
+		}
+		throw new SafTechnicalException("Henting av eksternReferanseId=" + eksternReferanseId + " feilet med ukjent teknisk feil.", error);
 	}
 
 	public ArkivJournalpost journalpostByIdAndDokumentInfoId(String journalpostId, String dokumentInfoId, Set<String> fields) {
@@ -180,28 +171,24 @@ public class DokarkivConsumer {
 				.accept(APPLICATION_JSON)
 				.retrieve()
 				.bodyToMono(ArkivJournalpost.class)
-				.doOnError(handleErrorJournalpostByIdAndDokumentInfoId(journalpostId, dokumentInfoId))
+				.onErrorMap(error -> mapErrorJournalpostByIdAndDokumentInfoId(error, journalpostId, dokumentInfoId))
 				.transformDeferred(CircuitBreakerOperator.of(dokarkivMetadataCircuitBreaker))
 				.transformDeferred(RetryOperator.of(dokarkivMetadataRetry))
 				.block();
 	}
 
-	private Consumer<Throwable> handleErrorJournalpostByIdAndDokumentInfoId(String journalpostId, String dokumentInfoId) {
-		return error -> {
-			if (error instanceof WebClientResponseException.NotFound) {
-				throw new DokumentIkkeFunnetException(format("Journalpost med journalpostId=%s, dokumentInfoId=%s ikke funnet i Joark.",
-						journalpostId, dokumentInfoId));
+	private Throwable mapErrorJournalpostByIdAndDokumentInfoId(Throwable error, String journalpostId, String dokumentInfoId) {
+		if (error instanceof WebClientResponseException.NotFound) {
+			throw new DokumentIkkeFunnetException(format("Journalpost med journalpostId=%s, dokumentInfoId=%s ikke funnet i Joark.",
+					journalpostId, dokumentInfoId));
+		}
+		if (error instanceof WebClientResponseException webException) {
+			if (webException.getStatusCode().is4xxClientError()) {
+				throw new SafFunctionalException(format("hentJournalpost feilet funksjonelt. status=%s, journalpostId=%s, dokumentInfoId=%s. Feilmelding=%s",
+						webException.getStatusCode(), journalpostId, dokumentInfoId, webException.getMessage()));
 			}
-			if (error instanceof WebClientResponseException webException) {
-				if (webException.getStatusCode().is4xxClientError()) {
-					throw new SafFunctionalException(format("hentJournalpost feilet funksjonelt. status=%s, journalpostId=%s, dokumentInfoId=%s. Feilmelding=%s",
-							webException.getStatusCode(), journalpostId, dokumentInfoId, webException.getMessage()));
-				} else {
-					throw new SafTechnicalException(format("hentJournalpost feilet teknisk. status=%s, journalpostId=%s, dokumentInfoId=%s. Feilmelding=%s",
-							webException.getStatusCode(), journalpostId, dokumentInfoId, webException.getMessage()), webException, webException.getStatusCode());
-				}
-			}
-		};
+		}
+		throw new SafTechnicalException(format("hentJournalpost feilet teknisk. journalpostId=%s, dokumentInfoId=%s", journalpostId, dokumentInfoId), error);
 	}
 
 	public PaginatedArkivJournalpost finnJournalposterStatus(JournalStatusCode journalstatus, List<Journalposttype> journalposttype, LocalDate startDato, int antallRader, String etterPeker, Set<String> fields) {
@@ -219,24 +206,19 @@ public class DokarkivConsumer {
 				.accept(APPLICATION_JSON)
 				.retrieve()
 				.bodyToMono(PaginatedArkivJournalpost.class)
-				.doOnError(handleErrorFinnJournalposterStatus(journalstatus, journalposttype))
+				.onErrorMap(error -> handleErrorFinnJournalposterStatus(error, journalstatus, journalposttype))
 				.transformDeferred(CircuitBreakerOperator.of(dokarkivMetadataCircuitBreaker))
 				.transformDeferred(RetryOperator.of(dokarkivMetadataRetry))
 				.block();
 	}
 
-	private Consumer<Throwable> handleErrorFinnJournalposterStatus(JournalStatusCode journalstatus, List<Journalposttype> journalposttyper) {
-		return error -> {
-			if (error instanceof WebClientResponseException webException) {
-				if (webException.getStatusCode().is4xxClientError()) {
-					throw new SafFunctionalException(format("finnJournalposterStatus feilet funksjonelt. status=%s, journalstatus=%s, journalposttyper=%s. Feilmelding=%s",
-							webException.getStatusCode(), journalstatus, journalposttyper, webException.getMessage()));
-				} else {
-					throw new SafTechnicalException(format("finnJournalposterStatus feilet teknisk. status=%s, journalstatus=%s, journalposttyper=%s. Feilmelding=%s",
-							webException.getStatusCode(), journalstatus, journalposttyper, webException.getMessage()), webException, webException.getStatusCode());
-				}
+	private Throwable handleErrorFinnJournalposterStatus(Throwable error, JournalStatusCode journalstatus, List<Journalposttype> journalposttyper) {
+		if (error instanceof WebClientResponseException webException) {
+			if (webException.getStatusCode().is4xxClientError()) {
+				throw new SafFunctionalException(format("finnJournalposterStatus feilet funksjonelt. status=%s, journalstatus=%s, journalposttyper=%s. Feilmelding=%s",
+						webException.getStatusCode(), journalstatus, journalposttyper, webException.getMessage()));
 			}
-		};
+		}
+		throw new SafTechnicalException(format("finnJournalposterStatus feilet teknisk. journalstatus=%s, journalposttyper=%s", journalstatus, journalposttyper), error);
 	}
-
 }
