@@ -72,6 +72,6 @@ public class DokarkivTilknyttetJournalpostConsumer {
 		if (error instanceof WebClientResponseException.NotFound) {
 			throw new JournalpostIkkeFunnetException("Fant ingen journalposter tilknyttet dokumentinfoId=" + dokumentinfoId);
 		}
-		throw new SafTechnicalException("Henting av journalposter tilknytttet dokumentinfoId=" + dokumentinfoId + " feilet med ukjent teknisk feil.", error);
+		throw new SafTechnicalException("Henting av journalposter tilknyttet dokumentinfoId=" + dokumentinfoId + " feilet med teknisk feil", error);
 	}
 }
