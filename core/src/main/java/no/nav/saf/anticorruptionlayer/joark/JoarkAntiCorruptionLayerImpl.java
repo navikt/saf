@@ -2,14 +2,11 @@ package no.nav.saf.anticorruptionlayer.joark;
 
 import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.anticorruptionlayer.joark.domain.SafToJoarkJournalstatusMapper;
-import no.nav.saf.anticorruptionlayer.joark.domain.kode.JournalStatusCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.JournalpostTypeCode;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.HentJournalsakinfo;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.dto.JournalpostDto;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.FinnJournalposterRequestTo;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark900.FinnJournalposterResponseTo;
-import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark904.FinnJournalposterStatusRequestTo;
-import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.rjoark904.FinnJournalposterStatusResponseTo;
 import no.nav.saf.anticorruptionlayer.joark.safintern.DokarkivConsumer;
 import no.nav.saf.anticorruptionlayer.joark.safintern.journalpost.ArkivJournalpost;
 import no.nav.saf.domain.kode.Arkivsakssystem;
@@ -21,7 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -65,29 +61,6 @@ class JoarkAntiCorruptionLayerImpl implements JoarkAntiCorruptionLayer {
 				.psakSakIds(tilgangSakList.stream()
 						.filter(tilgangSak -> Arkivsakssystem.PSAK.equals(tilgangSak.getArkivsaksystem()))
 						.map(TilgangSak::getArkivsaksnummer).collect(Collectors.toList()))
-				.foerste(foerste)
-				.etterPeker(etterPeker)
-				.build());
-
-		return responseTo.getTilgangJournalposter();
-	}
-
-	@Override
-	public List<JournalpostDto> finnJournalposterStatus(LocalDate fraDato,
-														List<Journalposttype> inkluderJournalposttyper,
-														Journalstatus journalstatus,
-														Integer foerste, String etterPeker) {
-
-		// tidligere validering skal sikre at dette er trygt
-		JournalStatusCode journalStatusCode = safToJoarkJournalstatusMapper.map(Collections.singletonList(journalstatus)).get(0);
-
-		FinnJournalposterStatusResponseTo responseTo = hentJournalsakinfo.finnJournalposterStatus(FinnJournalposterStatusRequestTo
-				.builder()
-				.journalposttyper(inkluderJournalposttyper.stream()
-						.map(jt -> JournalpostTypeCode.valueOf(jt.name()))
-						.collect(Collectors.toList()))
-				.journalstatus(journalStatusCode)
-				.fraDato(fraDato.toString())
 				.foerste(foerste)
 				.etterPeker(etterPeker)
 				.build());

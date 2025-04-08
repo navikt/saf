@@ -20,7 +20,6 @@ import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 import java.util.List;
-import java.util.function.Consumer;
 
 import static no.nav.saf.anticorruptionlayer.joark.safintern.DokarkivConsumer.DOKARKIV_METADATA;
 import static no.nav.saf.azure.AzureProperties.CLIENT_REGISTRATION_DOKARKIV;
@@ -63,18 +62,16 @@ public class DokarkivTilknyttetJournalpostConsumer {
 				.retrieve()
 				.bodyToMono(new ParameterizedTypeReference<List<ArkivJournalpost>>() {
 				})
-				.doOnError(handleErrorTilknyttetJournalposterDokumentinfo(dokumentInfoId))
+				.onErrorMap(error -> mapError(error, dokumentInfoId))
 				.transformDeferred(CircuitBreakerOperator.of(dokarkivMetadataCircuitBreaker))
 				.transformDeferred(RetryOperator.of(dokarkivMetadataRetry))
 				.block();
 	}
 
-	private Consumer<Throwable> handleErrorTilknyttetJournalposterDokumentinfo(String dokumentinfoId) {
-		return error -> {
-			if (error instanceof WebClientResponseException.NotFound) {
-				throw new JournalpostIkkeFunnetException("Fant ingen journalposter tilknyttet dokumentinfoId=" + dokumentinfoId);
-			}
-			throw new SafTechnicalException("Henting av journalposter tilknytttet dokumentinfoId=" + dokumentinfoId + " feilet med ukjent teknisk feil.", error);
-		};
+	private Throwable mapError(Throwable error, String dokumentinfoId) {
+		if (error instanceof WebClientResponseException.NotFound) {
+			throw new JournalpostIkkeFunnetException("Fant ingen journalposter tilknyttet dokumentinfoId=" + dokumentinfoId);
+		}
+		throw new SafTechnicalException("Henting av journalposter tilknyttet dokumentinfoId=" + dokumentinfoId + " feilet med teknisk feil", error);
 	}
 }
