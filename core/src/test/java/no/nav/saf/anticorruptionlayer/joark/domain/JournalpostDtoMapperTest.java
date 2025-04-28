@@ -23,7 +23,7 @@ import no.nav.saf.domain.visningsmodell.LogiskVedlegg;
 import no.nav.saf.domain.visningsmodell.RelevantDato;
 import no.nav.saf.domain.visningsmodell.Utsendingsinfo;
 import no.nav.saf.tilgangskontroll.RequestCache;
-import no.nav.saf.tilgangskontroll.pep.AbacAnswer;
+import no.nav.saf.tilgangskontroll.pep.PepAnswer;
 import no.nav.saf.tilgangskontroll.pep.reasons.TemaReason;
 import no.nav.saf.tilgangskontroll.pep.reasons.UkjentEllerTekniskReason;
 import org.assertj.core.api.Assertions;
@@ -234,7 +234,7 @@ class JournalpostDtoMapperTest {
 		JournalpostDto journalpostDto = JournalpostDtoTestObjects.buildJournalpostDtoInternNotatType();
 		RequestCache requestCache = defaultRequestCache();
 		String tilgangKeyPep5LocalCaching = KeyGeneratorLocalCaching.getKeyForPep5(String.valueOf(JOURNALPOST_ID), DOKUMENT_INFO_ID);
-		requestCache.putDecision(tilgangKeyPep5LocalCaching, AbacAnswer.permit());
+		requestCache.putDecision(tilgangKeyPep5LocalCaching, PepAnswer.permit());
 
 		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, emptySet(), requestCache);
 
@@ -252,7 +252,7 @@ class JournalpostDtoMapperTest {
 		JournalpostDto journalpostDto = JournalpostDtoTestObjects.buildJournalpostDtoInngaaendeType();
 		RequestCache requestCache = createTilgangBrukerRequestCache();
 		String tilgangKeyPep5LocalCaching = KeyGeneratorLocalCaching.getKeyForPep5(String.valueOf(JOURNALPOST_ID), DOKUMENT_INFO_ID);
-		requestCache.putDecision(tilgangKeyPep5LocalCaching, AbacAnswer.deny(new UkjentEllerTekniskReason()));
+		requestCache.putDecision(tilgangKeyPep5LocalCaching, PepAnswer.deny(new UkjentEllerTekniskReason()));
 
 		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, emptySet(), requestCache);
 
@@ -361,8 +361,8 @@ class JournalpostDtoMapperTest {
 
 
 		RequestCache requestCache = defaultRequestCache();
-		requestCache.putDecision(tilgangKeyPep6dLocalCachingVariantArkiv, AbacAnswer.permit());
-		requestCache.putDecision(tilgangKeyPep6dLocalCachingVariantSladdet, AbacAnswer.deny(new UkjentEllerTekniskReason()));
+		requestCache.putDecision(tilgangKeyPep6dLocalCachingVariantArkiv, PepAnswer.permit());
+		requestCache.putDecision(tilgangKeyPep6dLocalCachingVariantSladdet, PepAnswer.deny(new UkjentEllerTekniskReason()));
 
 		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, emptySet(), requestCache);
 
@@ -380,7 +380,7 @@ class JournalpostDtoMapperTest {
 		String tilgangKeyPep2dLocalCaching = KeyGeneratorLocalCaching.getKeyForPep2d(FagomradeCode.toSafTema(journalpostDto.getFagomrade()));
 
 		RequestCache requestCache = defaultRequestCache();
-		requestCache.putDecision(tilgangKeyPep2dLocalCaching, AbacAnswer.deny(new TemaReason("cause_0013_ikketilgangtiltema", "saf_pep2d", "mangler_tema", Tema.FOR)));
+		requestCache.putDecision(tilgangKeyPep2dLocalCaching, PepAnswer.deny(new TemaReason("cause_0013_ikketilgangtiltema", "saf_pep2d", "mangler_tema", Tema.FOR)));
 
 		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, emptySet(), requestCache);
 
@@ -398,8 +398,8 @@ class JournalpostDtoMapperTest {
 		RequestCache requestCache = new RequestCache(true);
 		String tilgangKeyPep2dLocalCaching = KeyGeneratorLocalCaching.getKeyForPep2d(FagomradeCode.toSafTema(journalpostDto.getFagomrade()));
 		String tilgangKeyPep5LocalCaching = KeyGeneratorLocalCaching.getKeyForPep5(String.valueOf(JOURNALPOST_ID), DOKUMENT_INFO_ID);
-		requestCache.putDecision(tilgangKeyPep2dLocalCaching, AbacAnswer.deny(new TemaReason("cause_0013_ikketilgangtiltema", "saf_pep2d", "mangler_tema", Tema.FOR)));
-		requestCache.putDecision(tilgangKeyPep5LocalCaching, AbacAnswer.permit());
+		requestCache.putDecision(tilgangKeyPep2dLocalCaching, PepAnswer.deny(new TemaReason("cause_0013_ikketilgangtiltema", "saf_pep2d", "mangler_tema", Tema.FOR)));
+		requestCache.putDecision(tilgangKeyPep5LocalCaching, PepAnswer.permit());
 
 		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, emptySet(), requestCache);
 
@@ -424,9 +424,9 @@ class JournalpostDtoMapperTest {
 						.name(), null);
 
 		RequestCache requestCache = new RequestCache(false);
-		requestCache.putDecision(tilgangKeyPep5LocalCaching, AbacAnswer.permit());
-		requestCache.putDecision(tilgangKeyPep6dLocalCachingVariantArkiv, AbacAnswer.permit());
-		requestCache.putDecision(tilgangKeyPep6dLocalCachingVariantSladdet, AbacAnswer.permit());
+		requestCache.putDecision(tilgangKeyPep5LocalCaching, PepAnswer.permit());
+		requestCache.putDecision(tilgangKeyPep6dLocalCachingVariantArkiv, PepAnswer.permit());
+		requestCache.putDecision(tilgangKeyPep6dLocalCachingVariantSladdet, PepAnswer.permit());
 
 		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, emptySet(), requestCache);
 
@@ -455,9 +455,9 @@ class JournalpostDtoMapperTest {
 						.name(), null);
 
 		RequestCache requestCache = new RequestCache(false);
-		requestCache.putDecision(tilgangKeyPep5LocalCaching, AbacAnswer.permit());
-		requestCache.putDecision(tilgangKeyPep6dLocalCachingVariantArkiv, AbacAnswer.permit());
-		requestCache.putDecision(tilgangKeyPep6dLocalCachingVariantSladdet, AbacAnswer.permit());
+		requestCache.putDecision(tilgangKeyPep5LocalCaching, PepAnswer.permit());
+		requestCache.putDecision(tilgangKeyPep6dLocalCachingVariantArkiv, PepAnswer.permit());
+		requestCache.putDecision(tilgangKeyPep6dLocalCachingVariantSladdet, PepAnswer.permit());
 
 		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, emptySet(), requestCache);
 
@@ -483,9 +483,9 @@ class JournalpostDtoMapperTest {
 						.name(), null);
 
 		RequestCache requestCache = new RequestCache(false);
-		requestCache.putDecision(tilgangKeyPep5LocalCaching, AbacAnswer.permit());
-		requestCache.putDecision(tilgangKeyPep6dLocalCachingVariantArkiv, AbacAnswer.permit());
-		requestCache.putDecision(tilgangKeyPep6dLocalCachingVariantSladdet, AbacAnswer.permit());
+		requestCache.putDecision(tilgangKeyPep5LocalCaching, PepAnswer.permit());
+		requestCache.putDecision(tilgangKeyPep6dLocalCachingVariantArkiv, PepAnswer.permit());
+		requestCache.putDecision(tilgangKeyPep6dLocalCachingVariantSladdet, PepAnswer.permit());
 
 		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, emptySet(), requestCache);
 
@@ -655,8 +655,8 @@ class JournalpostDtoMapperTest {
 		RequestCache requestCache = createArkivsakCacheRequestCache();
 		String tilgangKeyPep2dLocalCaching = KeyGeneratorLocalCaching.getKeyForPep2d(FagomradeCode.toSafTema(FAGOMRADE));
 		String tilgangKeyPep5LocalCaching = KeyGeneratorLocalCaching.getKeyForPep5(String.valueOf(JOURNALPOST_ID), DOKUMENT_INFO_ID);
-		requestCache.putDecision(tilgangKeyPep2dLocalCaching, AbacAnswer.permit());
-		requestCache.putDecision(tilgangKeyPep5LocalCaching, AbacAnswer.permit());
+		requestCache.putDecision(tilgangKeyPep2dLocalCaching, PepAnswer.permit());
+		requestCache.putDecision(tilgangKeyPep5LocalCaching, PepAnswer.permit());
 		return requestCache;
 	}
 

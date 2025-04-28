@@ -10,7 +10,7 @@ import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 import no.nav.saf.exceptions.DokumentIkkeFunnetException;
 import no.nav.saf.exceptions.HentdokumentTilgangskontrollException;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
-import no.nav.saf.tilgangskontroll.pep.AbacAnswer;
+import no.nav.saf.tilgangskontroll.pep.PepAnswer;
 import no.nav.saf.tilgangskontroll.pep.Pep;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -82,44 +82,44 @@ class HentDokumentDomainCoordinatorImpl implements HentDokumentDomainCoordinator
 	private void doTilgangskontroll(HentDokumentTilgang hentDokumentTilgang, SafRequestContext safRequestContext) {
 		TilgangSak tilgangSak = hentDokumentTilgang.tilgangSak();
 		TilgangJournalpost tilgangJournalpost = hentDokumentTilgang.tilgangJournalpost();
-		AbacAnswer pep1gResponse = pep1g.hasAccessWithAnswer(hentDokumentTilgang.tilgangBruker(), safRequestContext);
+		PepAnswer pep1gResponse = pep1g.hasAccessWithAnswer(hentDokumentTilgang.tilgangBruker(), safRequestContext);
 		if (pep1gResponse.isDeny()) {
 			throw new HentdokumentTilgangskontrollException(createPep1gDenyReason(safRequestContext, pep1gResponse), pep1gResponse);
 		}
 
-		AbacAnswer pep2Response = pep2.hasAccessWithAnswer(tilgangSak, safRequestContext);
+		PepAnswer pep2Response = pep2.hasAccessWithAnswer(tilgangSak, safRequestContext);
 		if (pep2Response.isDeny()) {
 			throw new HentdokumentTilgangskontrollException(createPep2DenyReason(safRequestContext), pep2Response);
 		}
 
-		AbacAnswer pep3Response = pep3.hasAccessWithAnswer(tilgangSak, safRequestContext);
+		PepAnswer pep3Response = pep3.hasAccessWithAnswer(tilgangSak, safRequestContext);
 		if (pep3Response.isDeny()) {
 			throw new HentdokumentTilgangskontrollException(createPep3DenyReason(safRequestContext), pep3Response);
 		}
 
 		if (tilgangJournalpost.getJournalstatus() != Journalstatus.MOTTATT) {
-			AbacAnswer pep2dResponse = pep2d.hasAccessWithAnswer(tilgangSak, safRequestContext);
+			PepAnswer pep2dResponse = pep2d.hasAccessWithAnswer(tilgangSak, safRequestContext);
 			if (pep2dResponse.isDeny()) {
 				throw new HentdokumentTilgangskontrollException(createPep2dDenyReason(safRequestContext, tilgangSak), pep2dResponse);
 			}
 		}
 
-		AbacAnswer pep4Response = pep4.hasAccessWithAnswer(tilgangJournalpost, safRequestContext);
+		PepAnswer pep4Response = pep4.hasAccessWithAnswer(tilgangJournalpost, safRequestContext);
 		if (pep4Response.isDeny()) {
 			throw new HentdokumentTilgangskontrollException(createPep4DenyReason(safRequestContext), pep4Response);
 		}
 
-		AbacAnswer pep5Response = pep5.hasAccessWithAnswer(hentDokumentTilgang.tilgangDokumentInfo(), safRequestContext);
+		PepAnswer pep5Response = pep5.hasAccessWithAnswer(hentDokumentTilgang.tilgangDokumentInfo(), safRequestContext);
 		if (pep5Response.isDeny()) {
 			throw new HentdokumentTilgangskontrollException(createPep5DenyReason(safRequestContext), pep5Response);
 		}
 
-		AbacAnswer pep6dResponse = pep6d.hasAccessWithAnswer(hentDokumentTilgang.tilgangDokumentvariant().orElse(null), safRequestContext);
+		PepAnswer pep6dResponse = pep6d.hasAccessWithAnswer(hentDokumentTilgang.tilgangDokumentvariant().orElse(null), safRequestContext);
 		if (pep6dResponse.isDeny()) {
 			throw new HentdokumentTilgangskontrollException(createPep6dDenyReason(safRequestContext), pep6dResponse);
 		}
 
-		AbacAnswer pep7dResponse = pep7d.hasAccessWithAnswer(tilgangSak, safRequestContext);
+		PepAnswer pep7dResponse = pep7d.hasAccessWithAnswer(tilgangSak, safRequestContext);
 		if (pep7dResponse.isDeny()) {
 			throw new HentdokumentTilgangskontrollException(createPep7dDenyReason(safRequestContext), pep7dResponse);
 		}

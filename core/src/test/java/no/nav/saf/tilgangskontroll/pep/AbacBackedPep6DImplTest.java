@@ -25,16 +25,16 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-class Pep6dImplTest extends AbstractPepTest {
+class AbacBackedPep6DImplTest extends AbstractAbacBackedPepTest {
 
-	private Pep6dImpl pep6d;
+	private AbacBackedPep6dImpl pep6d;
 
-	Pep6dImplTest() {
+	AbacBackedPep6DImplTest() {
 		super();
 		SimpleCacheManager cacheManager = new SimpleCacheManager();
 		cacheManager.setCaches(Collections.singletonList(new NoOpCache(VALKEY_DOKUMENT_TILGANG_CACHE)));
 		cacheManager.afterPropertiesSet();
-		this.pep6d = new Pep6dImpl(cacheManager, abacService);
+		this.pep6d = new AbacBackedPep6dImpl(cacheManager, abacService);
 	}
 
 	@Test

@@ -1,7 +1,7 @@
 package no.nav.saf.tilgangskontroll.pep;
 
-import no.nav.saf.domain.kode.Tema;
-import no.nav.saf.domain.tilgangsmodell.TilgangSak;
+import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
+import no.nav.saf.domain.tilgangsmodell.TilgangIdent;
 import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlAttribute;
 import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlRequest;
 import no.nav.saf.tilgangskontroll.abac.dto.response.Decision;
@@ -10,30 +10,35 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 
+import java.util.Collections;
+
+import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_PERSON_AKTOERID_RESOURCE;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_RESOURCE_TYPE;
-import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_TEMA;
-import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_SAF_SAK_JP_METADATA;
+import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_SAF_PERSON;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-class Pep2ImplTest extends AbstractPepTest {
+class AbacBackedPep1GImplTest extends AbstractAbacBackedPepTest {
 
 	@InjectMocks
-	private Pep2Impl pep2;
+	private AbacBackedPep1gImpl pep1g;
 
 	@Test
-	void shouldPermitWhenTemaFarAndParagraf19AccessIsPermitted() {
+	void shouldPermitWhenAktoerIdIsEvaluated() {
 		when(abacService.evaluate(any(XacmlRequest.class))).thenReturn(new XacmlResponse(Decision.PERMIT, null, null, null));
 
 		ArgumentCaptor<XacmlRequest> request = ArgumentCaptor.forClass(XacmlRequest.class);
 
-		boolean hasAccess = pep2.hasAccess(TilgangSak.builder()
-				.tema(Tema.FAR)
+		boolean hasAccess = pep1g.hasAccess(TilgangBruker.builder()
+				.aktoerId(AKTOER_ID)
+				.foedselsnr(FNR)
+				.historiskeIdenter(Collections.singletonList(TilgangIdent.builder().identifikator(FNR).build()))
 				.build(), createSafRequestContext());
 
 		verify(abacService).evaluate(request.capture());
@@ -41,55 +46,39 @@ class Pep2ImplTest extends AbstractPepTest {
 
 		assertTrue(hasAccess);
 
-		assertThat(capturedRequest.getResources(), hasItem(new XacmlAttribute(RESOURCE_FELLES_RESOURCE_TYPE, RESOURCE_SAF_SAK_JP_METADATA)));
-		assertThat(capturedRequest.getResources(), hasItem(new XacmlAttribute(RESOURCE_FELLES_TEMA, Tema.FAR.name())));
+		assertResourceType(capturedRequest);
+		assertThat(capturedRequest.getResources(), hasItem(new XacmlAttribute(RESOURCE_FELLES_PERSON_AKTOERID_RESOURCE, AKTOER_ID)));
 	}
 
 	@Test
-	void shouldDenyWhenParagraf19IsNull() {
-		when(abacService.evaluate(any(XacmlRequest.class))).thenReturn(new XacmlResponse(Decision.DENY, null, null, null));
+	void shouldPermitWhenFnrIsEvaluated() {
+		when(abacService.evaluate(any(XacmlRequest.class))).thenReturn(new XacmlResponse(Decision.PERMIT, null, null, null));
+		ArgumentCaptor<XacmlRequest> request = ArgumentCaptor.forClass(XacmlRequest.class);
 
-		boolean hasAccess = pep2.hasAccess(TilgangSak.builder()
-				.tema(Tema.FAR)
+		boolean hasAccess = pep1g.hasAccess(TilgangBruker.builder()
+				.foedselsnr(FNR)
+				.historiskeIdenter(Collections.singletonList(TilgangIdent.builder().identifikator(FNR).build()))
 				.build(), createSafRequestContext());
 
-		assertFalse(hasAccess);
+		verify(abacService).evaluate(request.capture());
+		XacmlRequest capturedRequest = request.getValue();
+		assertResourceType(capturedRequest);
+		assertEquals(FNR, capturedRequest.getResources().get(2).getValue().toString());
+		assertTrue(hasAccess);
+	}
+
+	private void assertResourceType(XacmlRequest capturedRequest) {
+		assertThat(capturedRequest.getResources(), hasItem(new XacmlAttribute(RESOURCE_FELLES_RESOURCE_TYPE, RESOURCE_SAF_PERSON)));
 	}
 
 	@Test
 	void shouldDeny() {
 		when(abacService.evaluate(any(XacmlRequest.class))).thenReturn(new XacmlResponse(Decision.DENY, null, null, null));
 
-		boolean hasAccess = pep2.hasAccess(TilgangSak.builder()
-				.tema(Tema.FAR)
-				.build(), createSafRequestContext());
-
-		assertFalse(hasAccess);
-	}
-	@Test
-	void shouldPermitWhenTemaKtaWhenEvaluateIsPermit() {
-		when(abacService.evaluate(any(XacmlRequest.class))).thenReturn(new XacmlResponse(Decision.PERMIT, null, null, null));
-
-		ArgumentCaptor<XacmlRequest> request = ArgumentCaptor.forClass(XacmlRequest.class);
-
-		boolean hasAccess = pep2.hasAccess(TilgangSak.builder()
-				.tema(Tema.KTA)
-				.build(), createSafRequestContext());
-
-		verify(abacService).evaluate(request.capture());
-		XacmlRequest capturedRequest = request.getValue();
-
-		assertTrue(hasAccess);
-
-		assertThat(capturedRequest.getResources(), hasItem(new XacmlAttribute(RESOURCE_FELLES_RESOURCE_TYPE, RESOURCE_SAF_SAK_JP_METADATA)));
-		assertThat(capturedRequest.getResources(), hasItem(new XacmlAttribute(RESOURCE_FELLES_TEMA, Tema.KTA.name())));
-	}
-	@Test
-	void shouldDenyKTAWhenEvaluateIsFalse() {
-		when(abacService.evaluate(any(XacmlRequest.class))).thenReturn(new XacmlResponse(Decision.DENY, null, null, null));
-
-		boolean hasAccess = pep2.hasAccess(TilgangSak.builder()
-				.tema(Tema.KTA)
+		boolean hasAccess = pep1g.hasAccess(TilgangBruker.builder()
+				.aktoerId(AKTOER_ID)
+				.foedselsnr(FNR)
+				.historiskeIdenter(Collections.singletonList(TilgangIdent.builder().identifikator(FNR).build()))
 				.build(), createSafRequestContext());
 
 		assertFalse(hasAccess);

@@ -24,10 +24,10 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-class Pep4ImplTest extends AbstractPepTest {
+class AbacBackedPep4ImplTest extends AbstractAbacBackedPepTest {
 
 	@InjectMocks
-	private Pep4Impl pep4;
+	private AbacBackedPep4Impl pep4;
 
 	@Test
 	void shouldPermitWhenJournalstatusNotUtgaarAndSkjermingIsNotPresent() {

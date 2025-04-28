@@ -31,12 +31,12 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-class Pep7dImplTest extends AbstractPepTest {
+class AbacBackedPep7DImplTest extends AbstractAbacBackedPepTest {
 
 	public static final String ARKIVSAKSNUMMER = "100000000";
 
 	@InjectMocks
-	private Pep7dImpl pep7d;
+	private AbacBackedPep7dImpl pep7d;
 
 	@Test
 	void shouldPermitWhenNoAktoerId() {

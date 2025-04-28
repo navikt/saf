@@ -28,8 +28,8 @@ import static no.nav.saf.domain.kode.Tema.OMS;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_PERSON_AKTOERID_RESOURCE;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_RESOURCE_TYPE;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_SAF_TREDJEPART;
-import static no.nav.saf.tilgangskontroll.pep.AbacAnswer.deny;
-import static no.nav.saf.tilgangskontroll.pep.AbacAnswer.permit;
+import static no.nav.saf.tilgangskontroll.pep.PepAnswer.deny;
+import static no.nav.saf.tilgangskontroll.pep.PepAnswer.permit;
 import static no.nav.saf.tilgangskontroll.pep.AbacDenyReasonCode.EGEN_ANSATT;
 import static no.nav.saf.tilgangskontroll.pep.AbacDenyReasonCode.FORTROLIG_ADRESSE;
 import static no.nav.saf.tilgangskontroll.pep.AbacDenyReasonCode.STRENGT_FORTROLIG_ADRESSE;
@@ -43,34 +43,34 @@ import static no.nav.saf.tilgangskontroll.pep.AbacDenyReasonCode.STRENGT_FORTROL
  */
 @Slf4j
 @Component(PEP7D)
-public class Pep7dImpl extends StandardPep<TilgangSak> {
+public class AbacBackedPep7dImpl extends StandardAbacBackedPep<TilgangSak> {
 
 	private final AbacService abacService;
 
 	@Autowired
-	public Pep7dImpl(AbacService abacService) {
+	public AbacBackedPep7dImpl(AbacService abacService) {
 		this.abacService = abacService;
 	}
 
 	private final List<Tema> relevanteTemaK9 = Arrays.asList(FRI, OMS);
 
 	@Override
-	public AbacAnswer verifyAbacPdpDecision(TilgangSak ressurs, SafRequestContext safRequestContext) {
+	public PepAnswer verifyAbacPdpDecision(TilgangSak ressurs, SafRequestContext safRequestContext) {
 
 		if (ressurs != null && ressurs.getArkivsaksystem() != null && ressurs.getArkivsaksnummer() != null) {
 			String tilgangKeyLocalCaching = KeyGeneratorLocalCaching.getKeyForPep7d(ressurs.getArkivsaksystem(), ressurs.getArkivsaksnummer());
 
 			if (FOR.equals(ressurs.getTema()) && FAGSAKSYSTEM_FORELDREPENGELOSNING.equals(ressurs.getFagsaksystem())) {
 				if (aktoerlisteErNullEllerTomForFp(ressurs)) {
-					safRequestContext.getRequestCache().putDecision(tilgangKeyLocalCaching, AbacAnswer.permit());
-					return AbacAnswer.permit();
+					safRequestContext.getRequestCache().putDecision(tilgangKeyLocalCaching, PepAnswer.permit());
+					return PepAnswer.permit();
 				}
 
 				if (safRequestContext.getRequestCache().getCachedDecision(tilgangKeyLocalCaching) == null) {
 					XacmlResponse response = getXacmlResponseFromAbac(ressurs, safRequestContext, ressurs.getFpAktoerIdList());
-					AbacAnswer abacAnswer = mapToAbacAnswer(response);
-					safRequestContext.getRequestCache().putDecision(tilgangKeyLocalCaching, abacAnswer);
-					return abacAnswer;
+					PepAnswer pepAnswer = mapToAbacAnswer(response);
+					safRequestContext.getRequestCache().putDecision(tilgangKeyLocalCaching, pepAnswer);
+					return pepAnswer;
 				}
 
 				return safRequestContext.getRequestCache().getCachedDecision(tilgangKeyLocalCaching);
@@ -78,21 +78,21 @@ public class Pep7dImpl extends StandardPep<TilgangSak> {
 
 			if (relevanteTemaK9.contains(ressurs.getTema()) && FAGSAKSYSTEM_K9.equals(ressurs.getFagsaksystem())) {
 				if (aktoerlisteErNullEllerTomForK9(ressurs)) {
-					safRequestContext.getRequestCache().putDecision(tilgangKeyLocalCaching, AbacAnswer.permit());
-					return AbacAnswer.permit();
+					safRequestContext.getRequestCache().putDecision(tilgangKeyLocalCaching, PepAnswer.permit());
+					return PepAnswer.permit();
 				}
 				if (safRequestContext.getRequestCache().getCachedDecision(tilgangKeyLocalCaching) == null) {
 					XacmlResponse response = getXacmlResponseFromAbac(ressurs, safRequestContext, ressurs.getK9AktoerIdList());
-					AbacAnswer abacAnswer = mapToAbacAnswer(response);
-					safRequestContext.getRequestCache().putDecision(tilgangKeyLocalCaching, abacAnswer);
-					return abacAnswer;
+					PepAnswer pepAnswer = mapToAbacAnswer(response);
+					safRequestContext.getRequestCache().putDecision(tilgangKeyLocalCaching, pepAnswer);
+					return pepAnswer;
 				}
 
 				return safRequestContext.getRequestCache().getCachedDecision(tilgangKeyLocalCaching);
 			}
-			safRequestContext.getRequestCache().putDecision(tilgangKeyLocalCaching, AbacAnswer.permit());
+			safRequestContext.getRequestCache().putDecision(tilgangKeyLocalCaching, PepAnswer.permit());
 		}
-		return AbacAnswer.permit();
+		return PepAnswer.permit();
 	}
 
 	private boolean aktoerlisteErNullEllerTomForFp(TilgangSak ressurs) {
@@ -124,16 +124,16 @@ public class Pep7dImpl extends StandardPep<TilgangSak> {
 	}
 
 	@Override
-	public AbacAnswer verifyAzureClientCredentialFlowAccess(TilgangSak ressurs, SafRequestContext safRequestContext) {
+	public PepAnswer verifyAzureClientCredentialFlowAccess(TilgangSak ressurs, SafRequestContext safRequestContext) {
 		if (ressurs != null && ressurs.getArkivsaksystem() != null && ressurs.getArkivsaksnummer() != null) {
 			String tilgangKeyLocalCaching = KeyGeneratorLocalCaching.getKeyForPep7d(ressurs.getArkivsaksystem(), ressurs.getArkivsaksnummer());
-			safRequestContext.getRequestCache().putDecision(tilgangKeyLocalCaching, AbacAnswer.permit());
+			safRequestContext.getRequestCache().putDecision(tilgangKeyLocalCaching, PepAnswer.permit());
 		}
 		return permit();
 	}
 
 	@Override
-	protected AbacAnswer translateToDenyReasonCode(XacmlResponse xacmlResponse) {
+	protected PepAnswer translateToDenyReasonCode(XacmlResponse xacmlResponse) {
 		var advices = xacmlResponse.getAdvicesMap();
 
 		if (EGEN_ANSATT.matchesAbacAdvice(advices)) {

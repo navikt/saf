@@ -20,10 +20,10 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-class Pep5ImplTest extends AbstractPepTest {
+class AbacBackedPep5ImplTest extends AbstractAbacBackedPepTest {
 
 	@InjectMocks
-	private Pep5Impl pep5;
+	private AbacBackedPep5Impl pep5;
 
 	@Test
 	void shouldPermitWhenSkjermingIsNotPresent() {
