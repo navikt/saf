@@ -22,7 +22,8 @@ public enum Kanal {
 	DPVT("Taushetsbelagt Post via Altinn"),
 	DPO("Digital Post Offentlig"),
 	E_POST("E-post"),
-	ALTINN_INNBOKS("Altinn Innboks");
+	ALTINN_INNBOKS("Altinn Innboks"),
+	HR_SYSTEM_API("HR-system med integrasjon mot Nav");
 
 	private final String kanalnavn;
 
