@@ -212,6 +212,7 @@ type Journalpost {
     journalpostId: String!
 
     # Beskriver innholdet i journalposten samlet, f.eks. "Ettersendelse til søknad om foreldrepenger"
+    # Hvis NAV ansatt ikke har tilgang til tema returneres tittel: "*****"
     tittel: String
 
     # Sier hvorvidt journalposten er et inngående dokument, et utgående dokument eller et notat.
@@ -290,6 +291,14 @@ type Journalpost {
     # Brukes for sporing og feilsøking på tvers av systemer.
     # Eksempler på eksternReferanseId kan være sykmeldingsId for sykmeldinger, Altinn ArchiveReference for Altinn-skjema eller SEDid for SED.
     eksternReferanseId: String
+
+    # Viser om pålogget bruker i selvbetjeningsløsningen på Nav.no kan se denne journalposten.
+    brukerHarTilgang: Boolean! @deprecated(reason: "Feltet er eksperimentelt og under utvikling. Det har ingen mening i produksjon, og skal ikke brukes uten avtale med Team Dokumentløsninger. Feltet kan plutselig endres og/eller forsvinne.")
+
+    # Begrunnelse for hvorfor pålogget bruker i selvbetjeningsløsningen eventuelt nektes tilgang til å se denne journalposten.
+    # Hvis brukerHarTilgang er false, inneholder denne en liste med en eller flere grunner til at brukeren ikke har tilgang
+    # til å se Journalposten i selvbetjeningsløsningen. Om brukerHarTilgang er true, er denne listen tom.
+    brukerTilgangAvvistBegrunnelser: [TilgangAvvistBegrunnelse!]! @deprecated(reason: "Feltet er eksperimentelt og under utvikling. Det har ingen mening i produksjon, og skal ikke brukes uten avtale med Team Dokumentløsninger. Feltet kan plutselig endres og/eller forsvinne.")
 
     # Metadata om distribusjon av utgående journalpost.
     # * Forteller hvilken adresse en utgående forsendelse er distribuert til (digital postkasse eller fysisk post)
@@ -479,6 +488,7 @@ type DokumentInfo {
     dokumentInfoId: String!
 
     # Dokumentets tittel, f.eks. *"Søknad om foreldrepenger ved fødsel"* eller *"Legeerklæring"*.
+    # Hvis NAV ansatt ikke har tilgang til tema returneres tittel: "*****"
     tittel: String
 
     # Kode som sier noe om dokumentets innhold og oppbygning.
@@ -513,6 +523,7 @@ type LogiskVedlegg {
     logiskVedleggId: String!
 
     # Tittel på det logiske vedlegget, f.eks. *"Legeerklæring"*
+    # Hvis NAV ansatt ikke har tilgang til tema returneres tittel: "*****"
     tittel: String
 }
 
@@ -545,6 +556,14 @@ type Dokumentvariant {
 
     # Uttrykker at tilgangen til metadata for dette dokumentet er begrenset, og at dataene ikke skal brukes i ordinær saksbehandling.
     skjerming: SkjermingType
+
+    # Viser om pålogget bruker i selvbetjeningsløsningen på Nav.no kan se dokumentet til denne dokumentvarianten.
+    brukerHarTilgang: Boolean! @deprecated(reason: "Feltet er eksperimentelt og under utvikling. Det har ingen mening i produksjon, og skal ikke brukes uten avtale med Team Dokumentløsninger. Feltet kan plutselig endres og/eller forsvinne.")
+
+    # Begrunnelse for hvorfor pålogget bruker i selvbetjeningsløsningen eventuelt nektes tilgang til å se dokumentet.
+    # Hvis brukerHarTilgang er false, inneholder denne en liste med en eller flere grunner til at brukeren ikke har tilgang
+    # til å se dokumentet i selvbetjeningsløsningen. Om brukerHarTilgang er true, er denne listen tom.
+    brukerTilgangAvvistBegrunnelser: [TilgangAvvistBegrunnelse!]!  @deprecated(reason: "Feltet er eksperimentelt og under utvikling. Det har ingen mening i produksjon, og skal ikke brukes uten avtale med Team Dokumentløsninger. Feltet kan plutselig endres og/eller forsvinne.")
 }
 
 # Beskriver hvorfor journalposten eller dokumentet er skjermet. Det kan komme flere verdier enn disse i fremtiden.
@@ -740,7 +759,7 @@ enum Kanal {
     # * Brukes for utgående journalposter.
     DPVT
 
-    # Brevet ser sendt til virksomhet gjennom eFormidling-kanalen DPO.
+    # Brevet er sendt til virksomhet gjennom eFormidling-kanalen DPO.
     # * Brukes for utgående journalposter.
     DPO
 
@@ -751,6 +770,10 @@ enum Kanal {
     # Forsendelsen er mottatt i en av NAVs meldingsbokser i Altinn.
     # * Brukes for inngående journalposter.
     ALTINN_INNBOKS
+
+    # Forsendelsen er sendt fra et HR-system med integrasjon mot Nav.
+    # * Brukes for inngående journalposter.
+    HR_SYSTEM_API
 
     # Forsendelsen har ingen kjent kanal.
     UKJENT
@@ -1021,4 +1044,14 @@ enum Sakstype {
 
     # Vil si at saken tilhører et fagsystem. Hvilket fagsystem saken tilhører, finnes i feltet fagsaksystem.
     FAGSAK
+}
+
+# Begrunnelse for hvorfor pålogget bruker i selvbetjeningsløsningen eventuelt nektes tilgang til å se for eksempel en journalpost
+# eller et dokument.
+type TilgangAvvistBegrunnelse {
+    # En kode som beskriver grunnen at brukeren ikke har tilgang i selvbetjeningsløsningen
+    kode: String!
+    # En menneske-vennlig tekst som forklarer grunnen beskrevet med kode over. Teksten er formulert med mål om at den skal
+    # gi mening for en saksbehandler, men ikke nødvendigvis for en sivilist.
+    begrunnelse: String!
 }
