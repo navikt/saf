@@ -771,7 +771,7 @@ enum Kanal {
     # * Brukes for inngående journalposter.
     ALTINN_INNBOKS
 
-    # Forsendelsen er mottatt i et HR-system med integrasjon mot Nav.
+    # Forsendelsen er sendt fra et HR-system med integrasjon mot Nav.
     # * Brukes for inngående journalposter.
     HR_SYSTEM_API
 
