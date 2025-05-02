@@ -791,6 +791,9 @@ enum Tema {
     # Ajourhold – grunnopplysninger
     AGR
 
+    # Aktivitetsplan med dialoger
+    AKT
+
     # Arbeidsrådgivning – psykologtester
     ARP
 
@@ -890,11 +893,17 @@ enum Tema {
     # Oppfølging
     OPP
 
+    # Innsyn
+    PAI
+
     # Pensjon
     PEN
 
     # Permittering og masseoppsigelser
     PER
+
+    # Innsyn etter personopplysningsloven
+    POI
 
     # Rehabiliteringspenger
     REH
@@ -955,6 +964,9 @@ enum Tema {
 
     # Ukjent
     UKJ
+
+    # Ungdomsprogramytelsen
+    UNG
 
     # Ventelønn
     VEN
