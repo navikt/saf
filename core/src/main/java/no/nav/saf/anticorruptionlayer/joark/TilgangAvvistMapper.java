@@ -28,6 +28,7 @@ public class TilgangAvvistMapper {
 			case DENY_REASON_NOTAT -> "Journalposten er et internt notat";
 			case DENY_REASON_SKJULT_INNSYN -> "Journalposten er skjult for bruker";
 			case DENY_REASON_SKANNET_DOKUMENT -> "Dokumentet er skannet";
+			case DENY_REASON_TEKNISK_DOKUMENT -> "Dokumentet er mottatt fra/sendt til en teknisk kanal";
 			case DENY_REASON_UGYLDIG_VARIANTFORMAT -> "Dokumentet har et variantformat som ikke vises på nav.no";
 			case DENY_REASON_KASSERT -> "Dokumentet er kassert";
 		};
