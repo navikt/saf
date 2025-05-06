@@ -558,12 +558,12 @@ type Dokumentvariant {
     skjerming: SkjermingType
 
     # Viser om pålogget bruker i selvbetjeningsløsningen på Nav.no kan se dokumentet til denne dokumentvarianten.
-    brukerHarTilgang: Boolean! @deprecated(reason: "Feltet er eksperimentelt og under utvikling. Det har ingen mening i produksjon, og skal ikke brukes uten avtale med Team Dokumentløsninger. Feltet kan plutselig endres og/eller forsvinne.")
+    brukerHarTilgang: Boolean!
 
     # Begrunnelse for hvorfor pålogget bruker i selvbetjeningsløsningen eventuelt nektes tilgang til å se dokumentet.
     # Hvis brukerHarTilgang er false, inneholder denne en liste med en eller flere grunner til at brukeren ikke har tilgang
     # til å se dokumentet i selvbetjeningsløsningen. Om brukerHarTilgang er true, er denne listen tom.
-    brukerTilgangAvvistBegrunnelser: [TilgangAvvistBegrunnelse!]!  @deprecated(reason: "Feltet er eksperimentelt og under utvikling. Det har ingen mening i produksjon, og skal ikke brukes uten avtale med Team Dokumentløsninger. Feltet kan plutselig endres og/eller forsvinne.")
+    brukerTilgangAvvistBegrunnelser: [TilgangAvvistBegrunnelse!]!
 }
 
 # Beskriver hvorfor journalposten eller dokumentet er skjermet. Det kan komme flere verdier enn disse i fremtiden.

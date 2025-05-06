@@ -20,6 +20,7 @@ import no.nav.safselvbetjening.tilgang.TilgangJournalstatus;
 import no.nav.safselvbetjening.tilgang.TilgangMottakskanal;
 import no.nav.safselvbetjening.tilgang.TilgangSak;
 import no.nav.safselvbetjening.tilgang.TilgangSkjermingType;
+import no.nav.safselvbetjening.tilgang.TilgangUtsendingskanal;
 
 import java.time.LocalDateTime;
 import java.util.Date;
@@ -80,7 +81,8 @@ public class JournalpostDto {
 		return TilgangJournalpost.builder()
 				.journalstatus(TilgangJournalstatus.from(journalstatus.name()))
 				.journalposttype(TilgangJournalposttype.from(journalposttype.name()))
-				.mottakskanal(mottakskanal == null ? TilgangMottakskanal.IKKE_SKANNING : TilgangMottakskanal.from(mottakskanal.name()))
+				.mottakskanal(mottakskanal == null ? TilgangMottakskanal.IKKE_SKANNING_IKKE_TEKNISK : TilgangMottakskanal.from(mottakskanal.name()))
+				.utsendingskanal(utsendingskanal == null ? TilgangUtsendingskanal.IKKE_TEKNISK : TilgangUtsendingskanal.from(utsendingskanal.name()))
 				.tema(fagomrade.name())
 				.avsenderMottakerId(mapAvsenderMottakerId())
 				.datoOpprettet(mapToLocalDateTime(datoOpprettet, LocalDateTime.MIN))
