@@ -38,7 +38,7 @@
 		<azure-identity.version>1.15.2</azure-identity.version>
 		<context-propagation.version>1.1.2</context-propagation.version>
 		<bcprov-jdk18on.version>1.80</bcprov-jdk18on.version>
-		<safselvbetjening-innsyn-api.version>2025.05.06-07.31-4e0270a</safselvbetjening-innsyn-api.version>
+		<safselvbetjening-innsyn-api.version>2025.05.07-13.14-262aa3b</safselvbetjening-innsyn-api.version>
 
 		<!-- Test -->
 		<spring-cloud-starter-contract-stub-runner.version>4.2.0</spring-cloud-starter-contract-stub-runner.version>
