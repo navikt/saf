@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 
 /**
- * Policy Enforcement Point for ABAC.
+ * Policy Enforcement Point
  * <p>
  * Evaluerer tilgang til en ressurs T.
  */
@@ -21,7 +21,7 @@ public abstract class Pep<T> {
 	 * @param safRequestContext Kontekst for kallet
 	 * @return Beslutning om tilgang fra saf-abac PDP
 	 */
-	abstract AbacAnswer verifyAbacPdpDecision(T ressurs, SafRequestContext safRequestContext);
+	abstract PepAnswer verifyAbacPdpDecision(T ressurs, SafRequestContext safRequestContext);
 
 	/**
 	 * Sjekker tilgang for app registration autentisert med client credential flow i Azure.
@@ -32,13 +32,13 @@ public abstract class Pep<T> {
 	 * @param safRequestContext Kontekst for kallet
 	 * @return Beslutning om tilgang fra intern ABAC PDP
 	 */
-	abstract AbacAnswer verifyAzureClientCredentialFlowAccess(T ressurs, SafRequestContext safRequestContext);
+	abstract PepAnswer verifyAzureClientCredentialFlowAccess(T ressurs, SafRequestContext safRequestContext);
 
 	public boolean hasAccess(T ressurs, SafRequestContext safRequestContext) {
 		return hasAccessWithAnswer(ressurs, safRequestContext).isPermit();
 	}
 
-	public AbacAnswer hasAccessWithAnswer(T ressurs, SafRequestContext safRequestContext) {
+	public PepAnswer hasAccessWithAnswer(T ressurs, SafRequestContext safRequestContext) {
 		if (safRequestContext.getSecurityContext().isJwtAzureClientCredentialFlow()) {
 			return verifyAzureClientCredentialFlowAccess(ressurs, safRequestContext);
 		} else {

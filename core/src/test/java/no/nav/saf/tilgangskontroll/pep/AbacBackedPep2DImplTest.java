@@ -27,16 +27,16 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-class Pep2dImplTest extends AbstractPepTest {
+class AbacBackedPep2DImplTest extends AbstractAbacBackedPepTest {
 
-	private Pep2dImpl pep2d;
+	private AbacBackedPep2dImpl pep2d;
 
-	Pep2dImplTest() {
+	AbacBackedPep2DImplTest() {
 		super();
 		SimpleCacheManager cacheManager = new SimpleCacheManager();
 		cacheManager.setCaches(Collections.singletonList(new NoOpCache(VALKEY_DOKUMENT_TILGANG_CACHE)));
 		cacheManager.afterPropertiesSet();
-		this.pep2d = new Pep2dImpl(cacheManager, abacService);
+		this.pep2d = new AbacBackedPep2dImpl(cacheManager, abacService);
 	}
 
 	@Test

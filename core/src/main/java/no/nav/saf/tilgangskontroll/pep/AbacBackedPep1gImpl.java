@@ -25,8 +25,8 @@ import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_PERSON_
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_PERSON_FNR;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_RESOURCE_TYPE;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_SAF_PERSON;
-import static no.nav.saf.tilgangskontroll.pep.AbacAnswer.deny;
-import static no.nav.saf.tilgangskontroll.pep.AbacAnswer.permit;
+import static no.nav.saf.tilgangskontroll.pep.PepAnswer.deny;
+import static no.nav.saf.tilgangskontroll.pep.PepAnswer.permit;
 import static no.nav.saf.tilgangskontroll.pep.AbacDenyReasonCode.EGEN_ANSATT;
 import static no.nav.saf.tilgangskontroll.pep.AbacDenyReasonCode.FORTROLIG_ADRESSE;
 import static no.nav.saf.tilgangskontroll.pep.AbacDenyReasonCode.GEOGRAFI;
@@ -42,7 +42,7 @@ import static no.nav.saf.tilgangskontroll.pep.AbacDenyReasonCode.STRENGT_FORTROL
  */
 @Component(PEP1G)
 @Slf4j
-public class Pep1gImpl extends StandardPep<TilgangBruker> {
+public class AbacBackedPep1gImpl extends StandardAbacBackedPep<TilgangBruker> {
 
 	public static final String ORGANISASJON_ER_NAV_STAT_KREVER_EGEN_ANSATT_TILGANG = "organisasjon_er_nav_stat_krever_egen_ansatt_tilgang";
 	private final AbacService abacService;
@@ -50,18 +50,18 @@ public class Pep1gImpl extends StandardPep<TilgangBruker> {
 	private final NavUserGroupMembershipService navUserGroupMembershipService;
 
 	@Autowired
-	public Pep1gImpl(AbacService abacService,
-					 NavOrgService navOrgService, NavUserGroupMembershipService navUserGroupMembershipService) {
+	public AbacBackedPep1gImpl(AbacService abacService,
+							   NavOrgService navOrgService, NavUserGroupMembershipService navUserGroupMembershipService) {
 		this.abacService = abacService;
 		this.navOrgService = navOrgService;
 		this.navUserGroupMembershipService = navUserGroupMembershipService;
 	}
 
 	@Override
-	public AbacAnswer verifyAbacPdpDecision(TilgangBruker ressurs, SafRequestContext safRequestContext) {
+	public PepAnswer verifyAbacPdpDecision(TilgangBruker ressurs, SafRequestContext safRequestContext) {
 		if (ressurs == null || ressurs.isUkjent()) {
 			log.info("Pep1g(kode6/7, egen-ansatt, geografi) mangler data om bruker. Tilgang gis for å kunne identifisere bruker.");
-			return AbacAnswer.permit();
+			return PepAnswer.permit();
 		} else if (ressurs.isOrganisasjon()) {
 			return verifyTilgangOrganisasjon(ressurs.getOrgnummer(), safRequestContext);
 		}
@@ -84,7 +84,7 @@ public class Pep1gImpl extends StandardPep<TilgangBruker> {
 	}
 
 	@Override
-	public AbacAnswer verifyAzureClientCredentialFlowAccess(TilgangBruker ressurs, SafRequestContext safRequestContext) {
+	public PepAnswer verifyAzureClientCredentialFlowAccess(TilgangBruker ressurs, SafRequestContext safRequestContext) {
 		if (ressurs == null) {
 			return permit();
 		} else if (ressurs.isOrganisasjon()) {
@@ -94,7 +94,7 @@ public class Pep1gImpl extends StandardPep<TilgangBruker> {
 	}
 
 	@Override
-	protected AbacAnswer translateToDenyReasonCode(XacmlResponse xacmlResponse) {
+	protected PepAnswer translateToDenyReasonCode(XacmlResponse xacmlResponse) {
 		Map<String, String> advices = xacmlResponse.getAdvicesMap();
 
 		if (EGEN_ANSATT.matchesAbacAdvice(advices)) {
@@ -113,19 +113,19 @@ public class Pep1gImpl extends StandardPep<TilgangBruker> {
 	}
 
 
-	private AbacAnswer verifyTilgangOrganisasjon(String organisasjonsnummer, SafRequestContext safRequestContext) {
+	private PepAnswer verifyTilgangOrganisasjon(String organisasjonsnummer, SafRequestContext safRequestContext) {
 		if (!safRequestContext.isUserIdNavAnsatt()) {
-			return AbacAnswer.permit();
+			return PepAnswer.permit();
 		}
 		if (navOrgService.isOrganisasjonsnummerNavBedrift(organisasjonsnummer)) {
 			log.info("Pep1g organisasjonsnummer={} er en NAV Organisasjon. Undersøker om NAV ansatt har tilgang.", organisasjonsnummer);
 			if (navUserGroupMembershipService.isNavIdentInEgenAnsattGroup(safRequestContext.getUserId())) {
-				return AbacAnswer.permit();
+				return PepAnswer.permit();
 			}
 			return deny(new OrgnrNavStatReason(
 					"", "skjermede_navansatte_og_familiemedlemmer", "behandle_skjermede_navansatte_og_familiemedlemmer_mangler_gruppetilgang"
 			));
 		}
-		return AbacAnswer.permit();
+		return PepAnswer.permit();
 	}
 }

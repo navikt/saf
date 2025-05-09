@@ -26,7 +26,7 @@ import static no.nav.saf.domain.DomainConstants.PEP6D;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_RESOURCE_TYPE;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_SAF_DOKUMENT_FIL;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_SAF_SKJERMING;
-import static no.nav.saf.tilgangskontroll.pep.AbacAnswer.permit;
+import static no.nav.saf.tilgangskontroll.pep.PepAnswer.permit;
 
 /**
  * Dekker følgende policies i saf:
@@ -35,29 +35,29 @@ import static no.nav.saf.tilgangskontroll.pep.AbacAnswer.permit;
  */
 @Slf4j
 @Component(PEP6D)
-public class Pep6dImpl extends StandardPep<TilgangDokumentvariant> {
+public class AbacBackedPep6dImpl extends StandardAbacBackedPep<TilgangDokumentvariant> {
 
 	private final Cache tilgangCache;
 	private final AbacService abacService;
 
 	@Autowired
-	public Pep6dImpl(@Qualifier(VALKEY_CACHE_MANAGER) CacheManager redisCacheManager, AbacService abacService) {
+	public AbacBackedPep6dImpl(@Qualifier(VALKEY_CACHE_MANAGER) CacheManager redisCacheManager, AbacService abacService) {
 		this.tilgangCache = redisCacheManager.getCache(VALKEY_DOKUMENT_TILGANG_CACHE);
 		this.abacService = abacService;
 	}
 
 	@Override
-	public AbacAnswer verifyAbacPdpDecision(TilgangDokumentvariant ressurs, SafRequestContext safRequestContext) {
+	public PepAnswer verifyAbacPdpDecision(TilgangDokumentvariant ressurs, SafRequestContext safRequestContext) {
 		if (ressurs == null) {
 			log.warn("Pep6d mangler tilstrekkelig datagrunnlag for å kunne gjennomføre tilgangskontroll");
-			return AbacAnswer.deny(new UkjentEllerTekniskReason());
+			return PepAnswer.deny(new UkjentEllerTekniskReason());
 		}
 
 		if (isSkjermingPresent(ressurs)) {
 			if (isVariantformatNull(ressurs)) {
 				log.warn("Pep6d mangler tilstrekkelig datagrunnlag for å kunne gjennomføre tilgangskontroll. Variantformat=null. journalpostId={} og dokumentinfoId={}",
 						ressurs.getJournalpostId(), ressurs.getDokumentInfoId());
-				return AbacAnswer.deny(new UkjentEllerTekniskReason());
+				return PepAnswer.deny(new UkjentEllerTekniskReason());
 			}
 
 			traceLogPepStarted(PEP6D, ressurs);
@@ -76,17 +76,17 @@ public class Pep6dImpl extends StandardPep<TilgangDokumentvariant> {
 					ressurs.getSkjerming().name());
 
 			try {
-				AbacAnswer response = fetchXacmlResponse(ressurs, safRequestContext, tilgangKeyDistributedCaching);
+				PepAnswer response = fetchXacmlResponse(ressurs, safRequestContext, tilgangKeyDistributedCaching);
 				if (response == null) {
 					log.warn("Pep6d mangler tilstrekkelig datagrunnlag for å kunne gjennomføre tilgangskontroll. Tomt svar fra ABAC. journalpostId={} og dokumentinfoId={}",
 							ressurs.getJournalpostId(), ressurs.getDokumentInfoId());
-					return AbacAnswer.deny(new UkjentEllerTekniskReason());
+					return PepAnswer.deny(new UkjentEllerTekniskReason());
 				}
 				safRequestContext.getRequestCache().putDecision(tilgangKeyLocalCaching, response);
 				return response;
 			} catch (RedisSystemException | RedisException | PoolException | Cache.ValueRetrievalException | RedisConnectionFailureException e) {
 				// Ting skal fremdeles snurre selv om man ikke får kontakt med redis
-				AbacAnswer response = mapToAbacAnswer(hasDokumentFilAccess(ressurs, safRequestContext));
+				PepAnswer response = mapToAbacAnswer(hasDokumentFilAccess(ressurs, safRequestContext));
 				safRequestContext.getRequestCache().putDecision(tilgangKeyLocalCaching, response);
 				return response;
 			} finally {
@@ -98,16 +98,16 @@ public class Pep6dImpl extends StandardPep<TilgangDokumentvariant> {
 					ressurs.getDokumentInfoId(),
 					isVariantformatNull(ressurs) ? null : ressurs.getVariantformat().name(),
 					null);
-			safRequestContext.getRequestCache().putDecision(tilgangKeyLocalCaching, AbacAnswer.permit());
-			return AbacAnswer.permit();
+			safRequestContext.getRequestCache().putDecision(tilgangKeyLocalCaching, PepAnswer.permit());
+			return PepAnswer.permit();
 		}
 	}
 
 	@Override
-	public AbacAnswer verifyAzureClientCredentialFlowAccess(TilgangDokumentvariant ressurs, SafRequestContext safRequestContext) {
+	public PepAnswer verifyAzureClientCredentialFlowAccess(TilgangDokumentvariant ressurs, SafRequestContext safRequestContext) {
 		if (ressurs == null) {
 			log.warn("Pep6d mangler tilstrekkelig datagrunnlag for å kunne gjennomføre tilgangskontroll. Azure ccf.");
-			return AbacAnswer.deny(new SkjermingReason(
+			return PepAnswer.deny(new SkjermingReason(
 					"dokumentvariant_mangler_data", "saf_pep6d", "dokumentvariant_er_null"
 					));
 		}
@@ -116,7 +116,7 @@ public class Pep6dImpl extends StandardPep<TilgangDokumentvariant> {
 			if (isVariantformatNull(ressurs)) {
 				log.warn("Pep6d mangler tilstrekkelig datagrunnlag for å kunne gjennomføre tilgangskontroll. Variantformat=null. journalpostId={} og dokumentinfoId={}. Azure ccf.",
 						ressurs.getJournalpostId(), ressurs.getDokumentInfoId());
-				return AbacAnswer.deny(
+				return PepAnswer.deny(
 						new SkjermingReason("dokumentvariant_mangler_variantformat", "saf_pep6d", "dokumentvariant_skjermet_og_variantformat_er_null"));
 			}
 
@@ -129,33 +129,33 @@ public class Pep6dImpl extends StandardPep<TilgangDokumentvariant> {
 
 			boolean decision = !isSkjermingPresent(ressurs);
 			traceLogPepFinished(PEP6D, ressurs);
-			AbacAnswer abacAnswer = decision ? permit() : AbacAnswer.deny(new SkjermingReason(
+			PepAnswer pepAnswer = decision ? permit() : PepAnswer.deny(new SkjermingReason(
 					"dokumentvariant_skjermet", "saf_pep6d", "dokumentvariant_skjermet"
 					));
-			safRequestContext.getRequestCache().putDecision(tilgangKeyLocalCaching, abacAnswer);
-			return abacAnswer;
+			safRequestContext.getRequestCache().putDecision(tilgangKeyLocalCaching, pepAnswer);
+			return pepAnswer;
 		} else {
 			String tilgangKeyLocalCaching = KeyGeneratorLocalCaching.getKeyForPep6d(
 					ressurs.getJournalpostId(),
 					ressurs.getDokumentInfoId(),
 					isVariantformatNull(ressurs) ? null : ressurs.getVariantformat().name(),
 					null);
-			safRequestContext.getRequestCache().putDecision(tilgangKeyLocalCaching, AbacAnswer.permit());
+			safRequestContext.getRequestCache().putDecision(tilgangKeyLocalCaching, PepAnswer.permit());
 			return permit();
 		}
 	}
 
 	@Override
-	protected AbacAnswer translateToDenyReasonCode(XacmlResponse xacmlResponse) {
-		return AbacAnswer.deny(new SkjermingReason(xacmlResponse.getAdvicesMap()));
+	protected PepAnswer translateToDenyReasonCode(XacmlResponse xacmlResponse) {
+		return PepAnswer.deny(new SkjermingReason(xacmlResponse.getAdvicesMap()));
 	}
 
-	private AbacAnswer fetchXacmlResponse(TilgangDokumentvariant ressurs, SafRequestContext safRequestContext, String tilgangKeyDistributedCaching) {
+	private PepAnswer fetchXacmlResponse(TilgangDokumentvariant ressurs, SafRequestContext safRequestContext, String tilgangKeyDistributedCaching) {
 		XacmlResponse cachedResponse = tilgangCache.get(tilgangKeyDistributedCaching, XacmlResponse.class);
 		if (cachedResponse == null) {
 			XacmlResponse abacResponse = hasDokumentFilAccess(ressurs, safRequestContext);
 			if (abacResponse == null) {
-				return AbacAnswer.deny(
+				return PepAnswer.deny(
 						new SkjermingReason("cause-0001-manglerrolle", "saf_skjerming", "rolle_NOK"));
 			}
 			if (abacResponse.isPermit()) {

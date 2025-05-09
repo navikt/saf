@@ -6,7 +6,7 @@ import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.dto.SaksrelasjonD
 import no.nav.saf.anticorruptionlayer.joark.safintern.journalpost.ArkivSaksrelasjon;
 import no.nav.saf.domain.Arkivsak;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
-import no.nav.saf.tilgangskontroll.pep.AbacAnswer;
+import no.nav.saf.tilgangskontroll.pep.PepAnswer;
 
 import java.util.Map;
 import java.util.Optional;
@@ -24,8 +24,8 @@ public class RequestCache {
 		this.isSystem = isSystem;
 	}
 
-	public void putDecision(String key, AbacAnswer abacAnswer) {
-		holder.put(key, abacAnswer);
+	public void putDecision(String key, PepAnswer pepAnswer) {
+		holder.put(key, pepAnswer);
 	}
 
 	public void putArkivsak(Arkivsak arkivsak) {
@@ -36,8 +36,8 @@ public class RequestCache {
 		holder.put(TILGANG_BRUKER, tilgangBruker);
 	}
 
-	public AbacAnswer getCachedDecision(String key) {
-		return (AbacAnswer) holder.get(key);
+	public PepAnswer getCachedDecision(String key) {
+		return (PepAnswer) holder.get(key);
 	}
 
 	public Optional<TilgangBruker> getTilgangBruker() {

@@ -19,7 +19,7 @@ import no.nav.saf.domain.visningsmodell.Journalpost;
 import no.nav.saf.exceptions.SafFunctionalException;
 import no.nav.saf.exceptions.TilgangskontrollException;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
-import no.nav.saf.tilgangskontroll.pep.AbacAnswer;
+import no.nav.saf.tilgangskontroll.pep.PepAnswer;
 import no.nav.saf.tilgangskontroll.pep.Pep;
 import no.nav.safselvbetjening.tilgang.Ident;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -93,7 +93,7 @@ class DokumentoversiktBrukerQuery {
 			safRequestContext.getRequestCache().putTilgangBruker(tilgangBruker);
 		}
 
-		AbacAnswer pep1gAnswer = this.pep1g.hasAccessWithAnswer(tilgangBruker, safRequestContext);
+		PepAnswer pep1gAnswer = this.pep1g.hasAccessWithAnswer(tilgangBruker, safRequestContext);
 		if (pep1gAnswer.isDeny()) {
 			throw new TilgangskontrollException(createPep1gDenyReasonDokumentoversikt(safRequestContext, pep1gAnswer), pep1gAnswer);
 		}

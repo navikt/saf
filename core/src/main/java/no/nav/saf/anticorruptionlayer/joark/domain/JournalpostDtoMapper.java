@@ -30,7 +30,7 @@ import no.nav.saf.domain.visningsmodell.Sak;
 import no.nav.saf.domain.visningsmodell.Tilleggsopplysning;
 import no.nav.saf.domain.visningsmodell.Utsendingsinfo;
 import no.nav.saf.tilgangskontroll.RequestCache;
-import no.nav.saf.tilgangskontroll.pep.AbacAnswer;
+import no.nav.saf.tilgangskontroll.pep.PepAnswer;
 import no.nav.safselvbetjening.tilgang.Ident;
 import no.nav.safselvbetjening.tilgang.TilgangDokument;
 import no.nav.safselvbetjening.tilgang.TilgangJournalpost;
@@ -466,8 +466,8 @@ public class JournalpostDtoMapper {
 	}
 
 	private boolean getCachedDecision(RequestCache requestCache, String tilgangKey) {
-		AbacAnswer abacAnswer = requestCache.getCachedDecision(tilgangKey);
-		return abacAnswer != null && abacAnswer.isPermit();
+		PepAnswer pepAnswer = requestCache.getCachedDecision(tilgangKey);
+		return pepAnswer != null && pepAnswer.isPermit();
 	}
 
 	private static String findFirstNonNull(String... str) {

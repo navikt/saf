@@ -28,10 +28,10 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-class Pep3ImplTest extends AbstractPepTest {
+class AbacBackedPep3ImplTest extends AbstractAbacBackedPepTest {
 
 	@InjectMocks
-	private Pep3Impl pep3;
+	private AbacBackedPep3Impl pep3;
 
 	@Test
 	void shouldPermitWhenTemaIsBidAndRelevanteTredjeparterSupplied() {

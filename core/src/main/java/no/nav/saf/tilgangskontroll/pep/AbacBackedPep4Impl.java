@@ -18,7 +18,7 @@ import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_RESOURC
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_SAF_JOURNALSTATUS;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_SAF_JOURNAL_METADATA;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_SAF_SKJERMING;
-import static no.nav.saf.tilgangskontroll.pep.AbacAnswer.permit;
+import static no.nav.saf.tilgangskontroll.pep.PepAnswer.permit;
 
 /**
  * Dekker følgende policies i saf:
@@ -27,30 +27,30 @@ import static no.nav.saf.tilgangskontroll.pep.AbacAnswer.permit;
  */
 @Slf4j
 @Component(PEP4)
-public class Pep4Impl extends StandardPep<TilgangJournalpost> {
+public class AbacBackedPep4Impl extends StandardAbacBackedPep<TilgangJournalpost> {
 
 	private final AbacService abacService;
 
 	@Autowired
-	public Pep4Impl(AbacService abacService) {
+	public AbacBackedPep4Impl(AbacService abacService) {
 		this.abacService = abacService;
 	}
 
 	@Override
-	public AbacAnswer verifyAbacPdpDecision(TilgangJournalpost ressurs, SafRequestContext safRequestContext) {
+	public PepAnswer verifyAbacPdpDecision(TilgangJournalpost ressurs, SafRequestContext safRequestContext) {
 		if (ressurs == null) {
 			log.warn("Pep4 mangler tilstrekkelig datagrunnlag for å kunne gjennomføre tilgangskontroll.");
-			return AbacAnswer.deny(new UkjentEllerTekniskReason());
+			return PepAnswer.deny(new UkjentEllerTekniskReason());
 		}
 
 		if (isJournalpoststatusUtgaar(ressurs) || isSkjermingPresent(ressurs)) {
 			return hasJournalpostAccess(safRequestContext, ressurs);
 		} else {
-			return AbacAnswer.permit();
+			return PepAnswer.permit();
 		}
 	}
 
-	private AbacAnswer hasJournalpostAccess(SafRequestContext safRequestContext, TilgangJournalpost ressurs) {
+	private PepAnswer hasJournalpostAccess(SafRequestContext safRequestContext, TilgangJournalpost ressurs) {
 		XacmlRequest request = SafXacmlRequestFactory.create(safRequestContext.getSecurityContext());
 		request.resource(RESOURCE_FELLES_RESOURCE_TYPE, RESOURCE_SAF_JOURNAL_METADATA);
 
@@ -69,13 +69,13 @@ public class Pep4Impl extends StandardPep<TilgangJournalpost> {
 	}
 
 	@Override
-	public AbacAnswer verifyAzureClientCredentialFlowAccess(TilgangJournalpost ressurs, SafRequestContext safRequestContext) {
+	public PepAnswer verifyAzureClientCredentialFlowAccess(TilgangJournalpost ressurs, SafRequestContext safRequestContext) {
 		return permit();
 	}
 
 	@Override
-	protected AbacAnswer translateToDenyReasonCode(XacmlResponse xacmlResponse) {
-		return AbacAnswer.deny(new JournalstatusReason(xacmlResponse.getAdvicesMap()));
+	protected PepAnswer translateToDenyReasonCode(XacmlResponse xacmlResponse) {
+		return PepAnswer.deny(new JournalstatusReason(xacmlResponse.getAdvicesMap()));
 	}
 
 	private boolean isJournalpoststatusUtgaar(TilgangJournalpost ressurs) {

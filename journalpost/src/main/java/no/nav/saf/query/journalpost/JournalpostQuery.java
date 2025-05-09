@@ -11,7 +11,7 @@ import no.nav.saf.exceptions.JournalpostIkkeFunnetException;
 import no.nav.saf.exceptions.SafFunctionalException;
 import no.nav.saf.exceptions.TilgangskontrollException;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
-import no.nav.saf.tilgangskontroll.pep.AbacAnswer;
+import no.nav.saf.tilgangskontroll.pep.PepAnswer;
 import no.nav.saf.tilgangskontroll.pep.Pep;
 import no.nav.safselvbetjening.tilgang.Ident;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -79,12 +79,12 @@ class JournalpostQuery {
 				safRequestContext.getRequestCache().putTilgangBruker(tilgangBruker);
 			}
 
-			AbacAnswer pep1Access = pep1g.hasAccessWithAnswer(tilgangBruker, safRequestContext);
+			PepAnswer pep1Access = pep1g.hasAccessWithAnswer(tilgangBruker, safRequestContext);
 			if (pep1Access.isDeny()) {
 				throw new TilgangskontrollException(createPep1gDenyReason(safRequestContext, pep1Access), pep1Access);
 			}
 
-			AbacAnswer pep2Access = pep2.hasAccessWithAnswer(tilgangSak, safRequestContext);
+			PepAnswer pep2Access = pep2.hasAccessWithAnswer(tilgangSak, safRequestContext);
 			if (pep2Access.isDeny()) {
 				throw new TilgangskontrollException(createPep2DenyReason(safRequestContext), pep2Access);
 			}
@@ -100,12 +100,12 @@ class JournalpostQuery {
 				}
 			}
 
-			AbacAnswer pep3Access = pep3.hasAccessWithAnswer(tilgangSak, safRequestContext);
+			PepAnswer pep3Access = pep3.hasAccessWithAnswer(tilgangSak, safRequestContext);
 			if (pep3Access.isDeny()) {
 				throw new TilgangskontrollException(createPep3DenyReason(safRequestContext), pep3Access);
 			}
 
-			AbacAnswer pep4Access = pep4.hasAccessWithAnswer(tilgangJournalpost, safRequestContext);
+			PepAnswer pep4Access = pep4.hasAccessWithAnswer(tilgangJournalpost, safRequestContext);
 			if (pep4Access.isDeny()) {
 				throw new TilgangskontrollException(createPep4DenyReason(safRequestContext), pep4Access);
 			}

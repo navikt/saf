@@ -26,8 +26,8 @@ import static no.nav.saf.domain.kode.Tema.FAR;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_PERSON_FNR;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_RESOURCE_TYPE;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_SAF_TREDJEPART;
-import static no.nav.saf.tilgangskontroll.pep.AbacAnswer.deny;
-import static no.nav.saf.tilgangskontroll.pep.AbacAnswer.permit;
+import static no.nav.saf.tilgangskontroll.pep.PepAnswer.deny;
+import static no.nav.saf.tilgangskontroll.pep.PepAnswer.permit;
 import static no.nav.saf.tilgangskontroll.pep.AbacDenyReasonCode.EGEN_ANSATT;
 import static no.nav.saf.tilgangskontroll.pep.AbacDenyReasonCode.FORTROLIG_ADRESSE;
 import static no.nav.saf.tilgangskontroll.pep.AbacDenyReasonCode.STRENGT_FORTROLIG_ADRESSE;
@@ -41,24 +41,24 @@ import static no.nav.saf.tilgangskontroll.pep.AbacDenyReasonCode.STRENGT_FORTROL
  */
 @Slf4j
 @Component(PEP3)
-public class Pep3Impl extends StandardPep<TilgangSak> {
+public class AbacBackedPep3Impl extends StandardAbacBackedPep<TilgangSak> {
 
 	private static final EnumSet<Tema> RELEVANTE_TEMA = EnumSet.of(BID, FAR);
 	private final AbacService abacService;
 
 	@Autowired
-	public Pep3Impl(AbacService abacService) {
+	public AbacBackedPep3Impl(AbacService abacService) {
 		this.abacService = abacService;
 	}
 
 	@Override
-	public AbacAnswer verifyAbacPdpDecision(TilgangSak ressurs, SafRequestContext safRequestContext) {
+	public PepAnswer verifyAbacPdpDecision(TilgangSak ressurs, SafRequestContext safRequestContext) {
 
 		if (ressurs != null && RELEVANTE_TEMA.contains(ressurs.getTema()) && FAGSAKSYSTEM_BISYS.equals(ressurs.getFagsaksystem())) {
 
 			if (ressurs.getRelevanteTredjeparter() == null || ressurs.getRelevanteTredjeparter().isEmpty()) {
 				log.info("Pep3(relevante-parter) har ingen relevante parter. Tilgang gis.");
-				return AbacAnswer.permit();
+				return PepAnswer.permit();
 			}
 
 			List<TilgangRelevantTredjepart> relevantTredjeparter = ressurs.getRelevanteTredjeparter();
@@ -74,16 +74,16 @@ public class Pep3Impl extends StandardPep<TilgangSak> {
 
 			return mapToAbacAnswer(response);
 		}
-		return AbacAnswer.permit();
+		return PepAnswer.permit();
 	}
 
 	@Override
-	public AbacAnswer verifyAzureClientCredentialFlowAccess(TilgangSak ressurs, SafRequestContext safRequestContext) {
+	public PepAnswer verifyAzureClientCredentialFlowAccess(TilgangSak ressurs, SafRequestContext safRequestContext) {
 		return permit();
 	}
 
 	@Override
-	protected AbacAnswer translateToDenyReasonCode(XacmlResponse xacmlResponse) {
+	protected PepAnswer translateToDenyReasonCode(XacmlResponse xacmlResponse) {
 		var advices = xacmlResponse.getAdvicesMap();
 
 		if (FORTROLIG_ADRESSE.matchesAbacAdvice(advices)) {

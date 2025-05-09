@@ -42,11 +42,11 @@ public final class DenyReasonFactory {
 		return isSystem ? "System" : "Saksbehandler";
 	}
 
-	public static String createPep1gDenyReasonDokumentoversikt(SafRequestContext safRequestContext, AbacAnswer abacAnswer) {
+	public static String createPep1gDenyReasonDokumentoversikt(SafRequestContext safRequestContext, PepAnswer pepAnswer) {
 		boolean isSystem = safRequestContext.getSecurityContext().isSystem();
 		String consumerType = saksbehandlerEllerSystem(isSystem);
 
-		if (abacAnswer.getAbacDenyReason().getAbacDenyReasonCode() == AbacDenyReasonCode.ORGNR_NAV_STAT) {
+		if (pepAnswer.getPepDenyReason().getAbacDenyReasonCode() == AbacDenyReasonCode.ORGNR_NAV_STAT) {
 			return DENY_PREFIX +
 				   "Dokumentoversikten er knyttet til organisasjon underlagt NAV og det krever egen ansatt behandling for oppslag på denne. " +
 				   "NAV ansatt må være medlem av gruppen 0000-GA-Egne_ansatte";
@@ -55,9 +55,9 @@ public final class DenyReasonFactory {
 			   (isSystem ? "" : PEP1G_DENY_SAKSBEHANDLER_INFO) + CONTACT_US_SUFFIX;
 	}
 
-	public static String createPep1gDenyReason(SafRequestContext safRequestContext, AbacAnswer abacAnswer) {
+	public static String createPep1gDenyReason(SafRequestContext safRequestContext, PepAnswer pepAnswer) {
 		boolean isSystem = safRequestContext.getSecurityContext().isSystem();
-		if (abacAnswer.getAbacDenyReason().getAbacDenyReasonCode() == AbacDenyReasonCode.ORGNR_NAV_STAT) {
+		if (pepAnswer.getPepDenyReason().getAbacDenyReasonCode() == AbacDenyReasonCode.ORGNR_NAV_STAT) {
 			return DENY_PREFIX +
 				   "Journalpost/dokument er knyttet til organisasjon underlagt NAV og det krever egen ansatt behandling for oppslag på denne. " +
 				   "NAV ansatt må være medlem av gruppen 0000-GA-Egne_ansatte";
