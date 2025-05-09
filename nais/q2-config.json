@@ -35,6 +35,14 @@
   "SPRING_DATA_REDIS_HOST": "saf-valkey",
   "AZURE_IAC_RULES": [
     {
+      "app": "dp-mottak",
+      "namespace": "teamdagpenger",
+      "cluster": "dev-gcp",
+      "roles": [
+        "tema_dag"
+      ]
+    },
+    {
       "app": "etterlatte-brev-api",
       "namespace": "etterlatte",
       "cluster": "dev-gcp",
