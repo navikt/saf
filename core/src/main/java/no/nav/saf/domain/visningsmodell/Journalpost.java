@@ -60,6 +60,7 @@ public class Journalpost {
 	String kanalnavn;
 	Skjerming skjerming;
 	LocalDateTime datoOpprettet;
+	LocalDateTime datoSortering;
 	@Builder.Default
 	List<RelevantDato> relevanteDatoer = new ArrayList<>();
 	String antallRetur;

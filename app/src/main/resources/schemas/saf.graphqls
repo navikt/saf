@@ -282,6 +282,9 @@ type Journalpost {
     # Datoen journalposten ble opprettet i arkivet. Datoen settes automatisk og kan ikke overskrives. Selv om hver journalpost har mange datoer (se `RelevantDato`) er datoOpprettet å anse som "fasit" på journalpostens alder.
     datoOpprettet: DateTime!
 
+    # Brukes for sortering av journalposter og for å få riktig rekkefølge på dokumenter.
+    datoSortering: DateTime!
+
     # Liste over datoer som kan være relevante for denne journalposten, f.eks. DATO_EKSPEDERT. Hvilke relevante datoer som returneres, avhenger av journalposttypen.
     relevanteDatoer: [RelevantDato]
 
