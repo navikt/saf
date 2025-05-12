@@ -8,6 +8,7 @@ import no.nav.saf.anticorruptionlayer.joark.domain.kode.JournalpostTypeCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.SkjermingTypeCode;
 import no.nav.saf.anticorruptionlayer.joark.safintern.journalpost.ArkivBruker;
 import no.nav.saf.anticorruptionlayer.joark.safintern.journalpost.ArkivJournalpost;
+import no.nav.saf.anticorruptionlayer.joark.safintern.journalpost.ArkivRelevanteDatoer;
 import no.nav.saf.anticorruptionlayer.joark.safintern.journalpost.ArkivSak;
 import no.nav.saf.anticorruptionlayer.joark.safintern.journalpost.ArkivSaksrelasjon;
 import no.nav.saf.cache.KeyGeneratorLocalCaching;
@@ -35,9 +36,14 @@ import no.nav.saf.tilgangskontroll.pep.reasons.TemaReason;
 import no.nav.saf.tilgangskontroll.pep.reasons.UkjentEllerTekniskReason;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.MethodSource;
 
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.stream.Stream;
 
 import static java.util.Collections.emptySet;
 import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostMapper.ARKIVJOURNALPOST_OVERSTYRTINNSYN_STANDARD;
@@ -92,6 +98,7 @@ import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostTestObjects.V
 import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostTestObjects.VARIANT_FORMAT_CODE_SLADDET;
 import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostTestObjects.baseArkivDokumentinfo;
 import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostTestObjects.baseArkivJournalpost;
+import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostTestObjects.datoSorteringArkivJournalpost;
 import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostTestObjects.inngaaendeArkivJournalpost;
 import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostTestObjects.inngaaendeArkivJournalpostBuilder;
 import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostTestObjects.notatArkivJournalpost;
@@ -148,6 +155,7 @@ class ArkivJournalpostMapperTest {
 		assertThat(journalpost.getKanal()).isEqualTo(SENTRAL_UTSKRIFT);
 		assertThat(journalpost.getKanalnavn()).isEqualTo(SENTRAL_UTSKRIFT.getKanalnavn());
 		assertThat(journalpost.getAntallRetur()).isEqualTo(ARKIVJOURNALPOST_ANTALL_RETUR.toString());
+		assertThat(journalpost.getDatoSortering()).isEqualTo(ARKIVJOURNALPOST_EKSPEDERT_DATO.atZoneSameInstant(TIDSSONE_NORGE).toLocalDateTime());
 		assertThat(journalpost.getRelevanteDatoer())
 				.hasSize(6)
 				.contains(new RelevantDato(ARKIVJOURNALPOST_JOURNAL_DATO, DATO_JOURNALFOERT),
@@ -674,6 +682,36 @@ class ArkivJournalpostMapperTest {
 		Journalpost journalpost = mapJournalpost(arkivJournalpost, emptySet(), createTilgangBrukerRequestCache());
 
 		assertThat(journalpost.getJournalstatus()).isEqualTo(UTGAAR);
+	}
+
+	@ParameterizedTest
+	@MethodSource("datoSorteringData")
+	void skalMappeDatoSortering(OffsetDateTime onsketDatoSortering, JournalpostTypeCode journalpostTypeCode, ArkivRelevanteDatoer jornalpostensDatoer) {
+		Journalpost journalpost = mapJournalpost(datoSorteringArkivJournalpost(journalpostTypeCode, jornalpostensDatoer), emptySet(), createTilgangBrukerRequestCache());
+		LocalDateTime datoSortering = onsketDatoSortering.atZoneSameInstant(TIDSSONE_NORGE).toLocalDateTime();
+
+		assertThat(journalpost.getDatoSortering()).isEqualTo(datoSortering);
+	}
+
+	private static Stream<Arguments> datoSorteringData() {
+		ArkivRelevanteDatoer alleDatoer = new ArkivRelevanteDatoer(ARKIVJOURNALPOST_DATO_OPPRETTET, ARKIVJOURNALPOST_JOURNAL_DATO, ARKIVJOURNALPOST_EKSPEDERT_DATO, ARKIVJOURNALPOST_MOTTAT_DATO, ARKIVJOURNALPOST_DOKUMENT_DATO, ARKIVJOURNALPOST_LEST_DATO, ARKIVJOURNALPOST_AVS_RETUR_DATO, ARKIVJOURNALPOST_SENDT_PRINT_DATO);
+		ArkivRelevanteDatoer utenForsendelseMottatt = new ArkivRelevanteDatoer(ARKIVJOURNALPOST_DATO_OPPRETTET, ARKIVJOURNALPOST_JOURNAL_DATO, ARKIVJOURNALPOST_EKSPEDERT_DATO, null, ARKIVJOURNALPOST_DOKUMENT_DATO, ARKIVJOURNALPOST_LEST_DATO, ARKIVJOURNALPOST_AVS_RETUR_DATO, ARKIVJOURNALPOST_SENDT_PRINT_DATO);
+		ArkivRelevanteDatoer utenEkspedert = new ArkivRelevanteDatoer(ARKIVJOURNALPOST_DATO_OPPRETTET, ARKIVJOURNALPOST_JOURNAL_DATO, null, ARKIVJOURNALPOST_MOTTAT_DATO, ARKIVJOURNALPOST_DOKUMENT_DATO, ARKIVJOURNALPOST_LEST_DATO, ARKIVJOURNALPOST_AVS_RETUR_DATO, ARKIVJOURNALPOST_SENDT_PRINT_DATO);
+		ArkivRelevanteDatoer utenEkspedertOgSendtPrint = new ArkivRelevanteDatoer(ARKIVJOURNALPOST_DATO_OPPRETTET, ARKIVJOURNALPOST_JOURNAL_DATO, null, ARKIVJOURNALPOST_MOTTAT_DATO, ARKIVJOURNALPOST_DOKUMENT_DATO, ARKIVJOURNALPOST_LEST_DATO, ARKIVJOURNALPOST_AVS_RETUR_DATO, null);
+		ArkivRelevanteDatoer utenEkspedertSendtPrintOgJournalfoert = new ArkivRelevanteDatoer(ARKIVJOURNALPOST_DATO_OPPRETTET, null, null, ARKIVJOURNALPOST_MOTTAT_DATO, ARKIVJOURNALPOST_DOKUMENT_DATO, ARKIVJOURNALPOST_LEST_DATO, ARKIVJOURNALPOST_AVS_RETUR_DATO, null);
+		ArkivRelevanteDatoer bareDatoOpprettet = new ArkivRelevanteDatoer(ARKIVJOURNALPOST_DATO_OPPRETTET, null, null, null, null, null, null, null);
+
+		return Stream.of(
+				Arguments.of(ARKIVJOURNALPOST_MOTTAT_DATO, JournalpostTypeCode.I, alleDatoer),
+				Arguments.of(ARKIVJOURNALPOST_DATO_OPPRETTET, JournalpostTypeCode.I, utenForsendelseMottatt),
+				Arguments.of(ARKIVJOURNALPOST_JOURNAL_DATO, JournalpostTypeCode.N, alleDatoer),
+				Arguments.of(ARKIVJOURNALPOST_DATO_OPPRETTET, JournalpostTypeCode.N, utenEkspedertSendtPrintOgJournalfoert),
+				Arguments.of(ARKIVJOURNALPOST_EKSPEDERT_DATO, JournalpostTypeCode.U, alleDatoer),
+				Arguments.of(ARKIVJOURNALPOST_SENDT_PRINT_DATO, JournalpostTypeCode.U, utenEkspedert),
+				Arguments.of(ARKIVJOURNALPOST_JOURNAL_DATO, JournalpostTypeCode.U, utenEkspedertOgSendtPrint),
+				Arguments.of(ARKIVJOURNALPOST_DOKUMENT_DATO, JournalpostTypeCode.U, utenEkspedertSendtPrintOgJournalfoert),
+				Arguments.of(ARKIVJOURNALPOST_DATO_OPPRETTET, JournalpostTypeCode.U, bareDatoOpprettet)
+		);
 	}
 
 	private RequestCache defaultRequestCache() {

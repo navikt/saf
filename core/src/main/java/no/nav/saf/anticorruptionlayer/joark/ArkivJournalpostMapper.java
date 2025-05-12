@@ -49,6 +49,7 @@ import no.nav.safselvbetjening.tilgang.TilgangSak;
 import no.nav.safselvbetjening.tilgang.UtledTilgangService;
 
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -79,6 +80,7 @@ public class ArkivJournalpostMapper {
 	public static final String ARKIVJOURNALPOST_OVERSTYRTINNSYN_STANDARD_BESKRIVELSE = "Standardreglene avgjør om dokumentet vises";
 	public static final String SKJULT_TITTEL = "*****";
 	public static final String TILKNYTTET_SOM_HOVEDDOKUMENT = "HOVEDDOKUMENT";
+	static final String TILKNYTTET_SOM_VEDLEGG = "VEDLEGG";
 
 	private static final UtledTilgangService utledTilgangService = new UtledTilgangService();
 
@@ -118,6 +120,7 @@ public class ArkivJournalpostMapper {
 				.kanalnavn(kanal == null ? null : kanal.getKanalnavn())
 				.skjerming(mapSkjerming(arkivJournalpost.skjerming()))
 				.datoOpprettet(mapDatoOpprettet(arkivJournalpost.relevanteDatoer()))
+				.datoSortering(mapDatoSortering(arkivJournalpost))
 				.relevanteDatoer(mapRelevanteDatoer(arkivJournalpost))
 				.tilleggsopplysninger(mapTilleggsopplysninger(arkivJournalpost))
 				.antallRetur(mapAntallRetur(arkivJournalpost))
@@ -312,6 +315,41 @@ public class ArkivJournalpostMapper {
 
 	private static LocalDateTime mapDatoOpprettet(ArkivRelevanteDatoer arkivRelevanteDatoer) {
 		return arkivRelevanteDatoer.opprettet() == null ? INVALID_DATE : arkivRelevanteDatoer.opprettet().atZoneSameInstant(TIDSSONE_NORGE).toLocalDateTime();
+	}
+
+	private static LocalDateTime mapDatoSortering(ArkivJournalpost arkivJournalpost) {
+		ArkivRelevanteDatoer relevanteDatoer = arkivJournalpost.relevanteDatoer();
+		OffsetDateTime valgtDato = switch (arkivJournalpost.type()) {
+			case "I" -> {
+				if (relevanteDatoer.forsendelseMottatt() != null) {
+					yield relevanteDatoer.forsendelseMottatt();
+				}
+				yield relevanteDatoer.opprettet();
+			}
+			case "N" -> {
+				if (relevanteDatoer.journalfoert() != null) {
+					yield relevanteDatoer.journalfoert();
+				}
+				yield relevanteDatoer.opprettet();
+			}
+			case "U" -> {
+				if (relevanteDatoer.ekspedert() != null) {
+					yield relevanteDatoer.ekspedert();
+				}
+				if (relevanteDatoer.sendtPrint() != null) {
+					yield relevanteDatoer.sendtPrint();
+				}
+				if (relevanteDatoer.journalfoert() != null) {
+					yield relevanteDatoer.journalfoert();
+				}
+				if (relevanteDatoer.hoveddokument() != null) {
+					yield relevanteDatoer.hoveddokument();
+				}
+				yield relevanteDatoer.opprettet();
+			}
+			default -> relevanteDatoer.opprettet();
+		};
+		return valgtDato.atZoneSameInstant(TIDSSONE_NORGE).toLocalDateTime();
 	}
 
 	private static Skjerming mapSkjerming(String skjerming) {
