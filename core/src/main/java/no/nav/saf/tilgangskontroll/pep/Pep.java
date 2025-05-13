@@ -10,18 +10,6 @@ import no.nav.saf.tilgangskontroll.SafRequestContext;
  */
 @Slf4j
 public abstract class Pep<T> {
-	/**
-	 * Kall mot abac-saf (ekstern tjeneste) som er Policy Decision Point (PDP).
-	 * Bestemmer om kall skal få tilgang til ressurs.
-	 * Implementerer:
-	 * https://confluence.adeo.no/display/BOA/saf+-+Tilgangskontroll#safTilgangskontroll-TilgangsreglerforNAV-ansatte
-	 * https://confluence.adeo.no/display/BOA/saf+-+Tilgangskontroll#safTilgangskontroll-Tilgangsreglerforservicebruker
-	 *
-	 * @param ressurs           Ressursen som skal sjekkes
-	 * @param safRequestContext Kontekst for kallet
-	 * @return Beslutning om tilgang fra saf-abac PDP
-	 */
-	abstract PepAnswer verifyAbacPdpDecision(T ressurs, SafRequestContext safRequestContext);
 
 	/**
 	 * Sjekker tilgang for app registration autentisert med client credential flow i Azure.
@@ -42,7 +30,7 @@ public abstract class Pep<T> {
 		if (safRequestContext.getSecurityContext().isJwtAzureClientCredentialFlow()) {
 			return verifyAzureClientCredentialFlowAccess(ressurs, safRequestContext);
 		} else {
-			return verifyAbacPdpDecision(ressurs, safRequestContext);
+			throw new RuntimeException("Not implemented!");
 		}
 	}
 

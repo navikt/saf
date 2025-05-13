@@ -18,8 +18,7 @@ class NavUserGroupMembershipServiceIT extends AbstractItest {
 
 	@Test
 	void shouldLookUpMsGraphMemberOfEgenAnsatt() {
-		stubMsGraphGetUser(NAV_IDENT_SAKSBEHANDLER);
-		stubMsGraphMemberOfSeveralGroups(MS_ID_SAKSBEHANDLER, "nav/msgraph-memberof-egenansatt.json");
+		stubMsGraphMemberOfEgenAnsattDefaultSaksbehandler();
 
 		NavUserGroupMembershipService navUserGroupMembershipService = new NavUserGroupMembershipService(safProperties, msGraphEntraGroupMembershipService);
 
@@ -28,8 +27,7 @@ class NavUserGroupMembershipServiceIT extends AbstractItest {
 
 	@Test
 	void shouldLookUpMsGraphMemberOfNotEgenAnsatt() {
-		stubMsGraphGetUser(NAV_IDENT_SAKSBEHANDLER);
-		stubMsGraphMemberOfSeveralGroups(MS_ID_SAKSBEHANDLER, "nav/msgraph-memberof-not-egenansatt.json");
+		stubMsGraphMemberOfNoGroupsDefaultSaksbehandler();
 
 		NavUserGroupMembershipService navUserGroupMembershipService = new NavUserGroupMembershipService(safProperties, msGraphEntraGroupMembershipService);
 

@@ -39,7 +39,7 @@ import static no.nav.saf.tilgangskontroll.pep.PepAnswer.permit;
  */
 @Slf4j
 @Component(PEP2D)
-public class AbacBackedPep2dImpl extends Pep<TilgangSak> {
+public class AbacBackedPep2dImpl extends StandardAbacBackedPep<TilgangSak> {
 
 	private final Cache tilgangCache;
 	private final AbacService abacService;
@@ -75,6 +75,11 @@ public class AbacBackedPep2dImpl extends Pep<TilgangSak> {
 		} finally {
 			traceLogPepFinished(PEP2D, ressurs);
 		}
+	}
+
+	@Override
+	protected PepAnswer translateToDenyReasonCode(XacmlResponse xacmlResponse) {
+		return null;
 	}
 
 	@Override

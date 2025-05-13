@@ -27,6 +27,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.matchingJsonPath;
+import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
@@ -36,8 +37,6 @@ import static no.nav.saf.tilgangskontroll.pep.AbacDenyReasonCode.FORTROLIG_ADRES
 import static no.nav.saf.tilgangskontroll.pep.AbacDenyReasonCode.ORGNR_NAV_STAT;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
@@ -128,7 +127,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 	void shouldNotHentDokumentoversiktBrukerWithNavStatOrgnummerWhenBrukerNotEgenAnsattBehandler() throws IOException, URISyntaxException {
 		abacPermit();
 		stubNavHrOrganisasjonJa(ORG_NR);
-		stubNavOrgNotMemberOfEgenAnsatt(NAV_IDENT_SAKSBEHANDLER);
+		stubMsGraphMemberOfNoGroupsDefaultSaksbehandler();
 
 		ResponseEntity<GraphQLResponse> responseEntity = callDokumentOversikBrukerWithOrgnr();
 		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
@@ -144,7 +143,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 	void shouldHentDokumentoversiktBrukerWithNavStatOrgnummerWhenBrukerIsEgenAnsattBehandler() throws IOException, URISyntaxException {
 		abacPermit();
 		stubNavHrOrganisasjonJa(ORG_NR);
-		stubNavOrgMemberOfEgenAnsatt(NAV_IDENT_SAKSBEHANDLER);
+		stubMsGraphMemberOfEgenAnsattDefaultSaksbehandler();
 		stubSakOrgnr();
 		stubFinnjournalposter("finnjournalposter_single_temaForNullskjerming-happy.json");
 
@@ -172,7 +171,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
 
 		assertEquals(OK, responseEntity.getStatusCode());
-		assertFalse(dokumentoversikt.getJournalposter().isEmpty());
+		assertThat(dokumentoversikt.getJournalposter()).isNotEmpty();
 	}
 
 	@Test
@@ -398,7 +397,8 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter"))
 				.withRequestBody(containing("{\"gsakSakIds\":[],\"psakSakIds\":[],\"fraDato\":\"0001-01-01\",\"tilDato\":null,\"inkluderJournalStatus\":[\"FL\",\"FS\",\"J\",\"E\"],\"inkluderJournalpostType\":[\"I\",\"U\",\"N\"],\"visFeilregistrerte\":false,\"alleIdenter\":[\"11111111111\"],\"foerste\":3,\"etterPeker\":null}")));
 		verifyEmptyJournalpostListeAndNullSideInfo(dokumentoversikt);
-		verifyabacDenyPep3ASkipPep2AndHttpStatusCode(OK, responseEntity.getStatusCode());
+		verify(3, postRequestedFor(urlEqualTo("/abac")));
+		assertEquals(OK, responseEntity.getStatusCode());
 	}
 
 	@Test
@@ -431,9 +431,9 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 		ResponseEntity<GraphQLResponse> responseEntity = callDokumentOversikBrukerWithAktoerId();
 		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
 
-		assertFalse(dokumentoversikt.getJournalposter().isEmpty());
+		assertThat(dokumentoversikt.getJournalposter()).isNotEmpty();
 		assertEquals("429837417", dokumentoversikt.getJournalposter().get(0).getJournalpostId());
-		assertTrue(dokumentoversikt.getJournalposter().get(0).getDokumenter().isEmpty());
+		assertThat(dokumentoversikt.getJournalposter().get(0).getDokumenter()).isEmpty();
 		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter"))
 				.withRequestBody(containing("{\"gsakSakIds\":[\"135695442\"],\"psakSakIds\":[],\"fraDato\":\"0001-01-01\",\"tilDato\":null,\"inkluderJournalStatus\":[\"FL\",\"FS\",\"J\",\"E\"],\"inkluderJournalpostType\":[\"I\",\"U\",\"N\"],\"visFeilregistrerte\":false,\"alleIdenter\":[\"11111111111\"],\"foerste\":3,\"etterPeker\":null}")));
 		verifyabacDenyPep5SkipPep2OrPep3AndHttpStatusCode(true, OK, responseEntity.getStatusCode());
@@ -487,8 +487,11 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 	 */
 	@Test
 	void shouldReturnFinnesNesteSideTrueWhenDocumentsAreFilteredFromPageAndNesteSideExists() throws URISyntaxException {
-		abacPermit();
-		abacDenyForAttribute("skjerming");
+		stubFor(post(urlEqualTo("/abac"))
+				.willReturn(aResponse().withStatus(OK.value())
+						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("abac/abac-permit.json")));
+		stubMsGraphMemberOfNoGroupsDefaultSaksbehandler();
 		stubPdl();
 		stubSak();
 		stubFinnjournalposter("finnjournalposter-paged-first-happy.json");

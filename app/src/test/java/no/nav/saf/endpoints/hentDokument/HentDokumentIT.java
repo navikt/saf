@@ -188,7 +188,7 @@ class HentDokumentIT extends AbstractItest {
 	void shouldNotHentDokumentWhenBrukerErOrganisasjonAndNotEgenAnsatt() {
 		abacPermit();
 		stubNavHrOrganisasjonJa(ORG_NR);
-		stubNavOrgNotMemberOfEgenAnsatt(NAV_IDENT_SAKSBEHANDLER);
+		stubMsGraphMemberOfNoGroupsDefaultSaksbehandler();
 		stubDokarkivJournalpost("journalpost-dokumentinfo-gsak-org-happy.json");
 
 		ResponseEntity<String> responseEntity = callHentDokument();
@@ -201,7 +201,7 @@ class HentDokumentIT extends AbstractItest {
 	void shouldHentDokumentWhenBrukerErOrganisasjonAndIsEgenAnsattBehandler() {
 		abacPermit();
 		stubNavHrOrganisasjonJa(ORG_NR);
-		stubNavOrgMemberOfEgenAnsatt(NAV_IDENT_SAKSBEHANDLER);
+		stubMsGraphMemberOfEgenAnsattDefaultSaksbehandler();
 		stubHappyHentDokument();
 		stubDokarkivJournalpost("journalpost-dokumentinfo-gsak-org-happy.json");
 
@@ -215,7 +215,7 @@ class HentDokumentIT extends AbstractItest {
 	void shouldHentDokumentWhenBrukerErOrganisasjonAndIsEgenAnsattBehandlerAndOrgnrWhitespace() {
 		abacPermit();
 		stubNavHrOrganisasjonJa(ORG_NR);
-		stubNavOrgMemberOfEgenAnsatt(NAV_IDENT_SAKSBEHANDLER);
+		stubMsGraphMemberOfEgenAnsattDefaultSaksbehandler();
 		stubHappyHentDokument();
 		stubDokarkivJournalpost("journalpost-dokumentinfo-gsak-org-whitespace.json");
 

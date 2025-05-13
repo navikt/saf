@@ -435,7 +435,7 @@ class JournalpostIT extends AbstractItest {
 	void shouldQueryJournalpostByJournalpostIdWhenOrgnummerOnSakAndIsNavBedriftAndIsEgenAnsattBehandler() {
 		abacPermit();
 		stubNavHrOrganisasjonJa(ORG_NR);
-		stubNavOrgMemberOfEgenAnsatt(NAV_IDENT_SAKSBEHANDLER);
+		stubMsGraphMemberOfEgenAnsattDefaultSaksbehandler();
 		stubDokarkivJournalpost("journalpost-gsak-inngaaende-orgnr.json");
 
 		GraphQLResponse graphQLResponse = journalpostQuery();
@@ -452,7 +452,7 @@ class JournalpostIT extends AbstractItest {
 	void shouldNotQueryJournalpostByJournalpostIdWhenOrgnummerOnSakAndIsNavBedriftAndIsNotEgenAnsattBehandler() {
 		abacPermit();
 		stubNavHrOrganisasjonJa(ORG_NR);
-		stubNavOrgNotMemberOfEgenAnsatt(NAV_IDENT_SAKSBEHANDLER);
+		stubMsGraphMemberOfNoGroupsDefaultSaksbehandler();
 		stubDokarkivJournalpost("journalpost-gsak-inngaaende-orgnr.json");
 
 		GraphQLResponse graphQLResponse = journalpostQuery();
@@ -496,7 +496,7 @@ class JournalpostIT extends AbstractItest {
 	void shouldQueryJournalpostByJournalpostIdWhenOrgnummerOnSakAndIsNavBedriftAndIsEgenAnsattBehandlerAndNavUserIdHeader() {
 		abacPermit();
 		stubNavHrOrganisasjonJa(ORG_NR);
-		stubNavOrgMemberOfEgenAnsatt(NAV_IDENT_SAKSBEHANDLER);
+		stubMsGraphMemberOfEgenAnsattDefaultSaksbehandler();
 		stubDokarkivJournalpost("journalpost-gsak-inngaaende-orgnr.json");
 
 		GraphQLResponse graphQLResponse = journalpostQueryNavUserId();
@@ -513,7 +513,7 @@ class JournalpostIT extends AbstractItest {
 	void shouldNotQueryJournalpostByJournalpostIdWhenOrgnummerOnSakAndIsNavBedriftAndIsNotEgenAnsattBehandlerAndNavUserIdHeader() {
 		abacPermit();
 		stubNavHrOrganisasjonJa(ORG_NR);
-		stubNavOrgNotMemberOfEgenAnsatt(NAV_IDENT_SAKSBEHANDLER);
+		stubMsGraphMemberOfNoGroupsDefaultSaksbehandler();
 		stubDokarkivJournalpost("journalpost-gsak-inngaaende-orgnr.json");
 
 		GraphQLResponse graphQLResponse = journalpostQueryNavUserId();

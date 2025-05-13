@@ -1,21 +1,17 @@
 package no.nav.saf.tilgangskontroll.pep;
 
 import lombok.extern.slf4j.Slf4j;
+import no.nav.saf.anticorruptionlayer.nav.NavUserGroupMembershipService;
 import no.nav.saf.domain.kode.Journalstatus;
 import no.nav.saf.domain.tilgangsmodell.TilgangJournalpost;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
-import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlRequest;
-import no.nav.saf.tilgangskontroll.abac.dto.response.XacmlResponse;
-import no.nav.saf.tilgangskontroll.abac.service.AbacService;
 import no.nav.saf.tilgangskontroll.pep.reasons.JournalstatusReason;
 import no.nav.saf.tilgangskontroll.pep.reasons.UkjentEllerTekniskReason;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
-import static no.nav.saf.domain.DomainConstants.ABAC_JOURNALSTATUS_UTGAAR;
+import static java.util.Collections.emptyMap;
 import static no.nav.saf.domain.DomainConstants.PEP4;
-import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_RESOURCE_TYPE;
-import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_SAF_JOURNALSTATUS;
-import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_SAF_JOURNAL_METADATA;
-import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_SAF_SKJERMING;
 import static no.nav.saf.tilgangskontroll.pep.PepAnswer.permit;
 
 /**
@@ -24,16 +20,18 @@ import static no.nav.saf.tilgangskontroll.pep.PepAnswer.permit;
  * https://confluence.adeo.no/display/ABAC/Journalpoststatus
  */
 @Slf4j
-public class AbacBackedPep4Impl extends StandardAbacBackedPep<TilgangJournalpost> {
+@Component(PEP4)
+public class MsGraphBackedPep4Impl extends StandardMsGraphBackedPep<TilgangJournalpost> {
 
-	private final AbacService abacService;
+	private final NavUserGroupMembershipService navUserGroupMembershipService;
 
-	public AbacBackedPep4Impl(AbacService abacService) {
-		this.abacService = abacService;
+	@Autowired
+	public MsGraphBackedPep4Impl(NavUserGroupMembershipService navUserGroupMembershipService) {
+		this.navUserGroupMembershipService = navUserGroupMembershipService;
 	}
 
 	@Override
-	public PepAnswer verifyAbacPdpDecision(TilgangJournalpost ressurs, SafRequestContext safRequestContext) {
+	PepAnswer verifyNavIdentGroupMembershipAccess(TilgangJournalpost ressurs, SafRequestContext safRequestContext) {
 		if (ressurs == null) {
 			log.warn("Pep4 mangler tilstrekkelig datagrunnlag for å kunne gjennomføre tilgangskontroll.");
 			return PepAnswer.deny(new UkjentEllerTekniskReason());
@@ -47,31 +45,30 @@ public class AbacBackedPep4Impl extends StandardAbacBackedPep<TilgangJournalpost
 	}
 
 	private PepAnswer hasJournalpostAccess(SafRequestContext safRequestContext, TilgangJournalpost ressurs) {
-		XacmlRequest request = SafXacmlRequestFactory.create(safRequestContext.getSecurityContext());
-		request.resource(RESOURCE_FELLES_RESOURCE_TYPE, RESOURCE_SAF_JOURNAL_METADATA);
-
+		traceLogPepStarted(PEP4, ressurs);
 		if (isJournalpoststatusUtgaar(ressurs)) {
-			request.resource(RESOURCE_SAF_JOURNALSTATUS, ABAC_JOURNALSTATUS_UTGAAR);
+			if (!navUserGroupMembershipService.isNavIdentInLeseUtgaatteDokumenterGroup(safRequestContext.getUserId())) {
+				traceLogPepFinished(PEP4, ressurs);
+				return PepAnswer.deny(new JournalstatusReason(emptyMap()));
+			}
 		}
 		if (isSkjermingPresent(ressurs)) {
-			request.resource(RESOURCE_SAF_SKJERMING, ressurs.getSkjerming().name());
+			if (!navUserGroupMembershipService.isNavIdentInJoarkVedlikeholdGroup(safRequestContext.getUserId())) {
+				traceLogPepFinished(PEP4, ressurs);
+				return PepAnswer.deny(new JournalstatusReason(emptyMap()));
+			}
+		}
+		if (!safRequestContext.isUserIdNavAnsatt()) {
+			return PepAnswer.deny(new JournalstatusReason(emptyMap()));
 		}
 
-		traceLogPepStarted(PEP4, ressurs);
-		XacmlResponse response = abacService.evaluate(request);
 		traceLogPepFinished(PEP4, ressurs);
-
-		return mapToAbacAnswer(response);
+		return permit();
 	}
 
 	@Override
 	public PepAnswer verifyAzureClientCredentialFlowAccess(TilgangJournalpost ressurs, SafRequestContext safRequestContext) {
 		return permit();
-	}
-
-	@Override
-	protected PepAnswer translateToDenyReasonCode(XacmlResponse xacmlResponse) {
-		return PepAnswer.deny(new JournalstatusReason(xacmlResponse.getAdvicesMap()));
 	}
 
 	private boolean isJournalpoststatusUtgaar(TilgangJournalpost ressurs) {

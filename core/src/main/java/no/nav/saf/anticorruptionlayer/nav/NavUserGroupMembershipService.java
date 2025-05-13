@@ -20,4 +20,12 @@ public class NavUserGroupMembershipService {
 	public boolean isNavIdentInEgenAnsattGroup(String navIdent) {
 		return msGraphEntraGroupMembershipService.isUserInGroup(navIdent, azureGroups.getEgenAnsattObjectId());
 	}
+
+	public boolean isNavIdentInJoarkVedlikeholdGroup(String navIdent) {
+		return msGraphEntraGroupMembershipService.isUserInGroup(navIdent, azureGroups.getJoarkVedlikeholdObjectId());
+	}
+
+	public boolean isNavIdentInLeseUtgaatteDokumenterGroup(String navIdent) {
+		return msGraphEntraGroupMembershipService.isUserInGroup(navIdent, azureGroups.getLeseUtgaatteDokumenterObjectId());
+	}
 }

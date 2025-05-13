@@ -17,8 +17,7 @@ class MsGraphEntraGroupMembershipServiceIT extends AbstractItest {
 
 	@Test
 	void shouldLookUpAMsGraphMemberOfEgenAnsattOnly() {
-		stubMsGraphGetUser(NAV_IDENT_SAKSBEHANDLER);
-		stubMsGraphMemberOfSeveralGroups(MS_ID_SAKSBEHANDLER, "nav/msgraph-memberof-egenansatt.json");
+		stubMsGraphMemberOfEgenAnsattDefaultSaksbehandler();
 
 		assertThat(msGraphEntraGroupMembershipService.isUserInGroup(NAV_IDENT_SAKSBEHANDLER, safProperties.getAzureGroup().getEgenAnsattObjectId())).isTrue();
 		assertThat(msGraphEntraGroupMembershipService.isUserInGroup(NAV_IDENT_SAKSBEHANDLER, safProperties.getAzureGroup().getFortroligAdresseObjectId())).isFalse();
@@ -28,8 +27,7 @@ class MsGraphEntraGroupMembershipServiceIT extends AbstractItest {
 
 	@Test
 	void shouldLookUpAndCacheMsGraphMemberOfNoGroups() {
-		stubMsGraphGetUser(NAV_IDENT_SAKSBEHANDLER);
-		stubMsGraphMemberOfSeveralGroups(MS_ID_SAKSBEHANDLER, "nav/msgraph-memberof-not-egenansatt.json");
+		stubMsGraphMemberOfNoGroupsDefaultSaksbehandler();
 
 		assertThat(msGraphEntraGroupMembershipService.isUserInGroup(NAV_IDENT_SAKSBEHANDLER, safProperties.getAzureGroup().getEgenAnsattObjectId())).isFalse();
 		assertThat(msGraphEntraGroupMembershipService.isUserInGroup(NAV_IDENT_SAKSBEHANDLER, safProperties.getAzureGroup().getFortroligAdresseObjectId())).isFalse();
