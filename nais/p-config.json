@@ -338,6 +338,11 @@
       "cluster": "prod-gcp"
     },
     {
+      "app": "pensjon-selvbetjening-saksoversikt-backend",
+      "namespace": "pensjonselvbetjening",
+      "cluster": "prod-gcp"
+    },
+    {
       "app": "arena",
       "namespace": "teamarenanais",
       "cluster": "prod-fss",
