@@ -15,6 +15,8 @@
   "NO_NAV_SECURITY_JWT_ISSUER_AZUREV2_ACCEPTED_AUDIENCE": "c7adbfbb-1b1e-41f6-9b7a-af9627c04998",
   "NO_NAV_SECURITY_JWT_ISSUER_RESTSTS_ACCEPTED_AUDIENCE": "srvpensjon,srvpselv,srvpensr,srvdokdistfordeling,srvdokproduksjon,srvarena-dokgen",
   "SAF_AZURE_GROUP_EGEN_ANSATT_OBJECT_ID": "dbe4ad45-320b-4e9a-aaa1-73cca4ee124d",
+  "SAF_AZURE_GROUP_JOARK_VEDLIKEHOLD_OBJECT_ID": "9732f7dd-550f-4aba-b64a-e1db5428604b",
+  "SAF_AZURE_GROUP_LESE_UTGAATTE_DOKUMENTER_OBJECT_ID": "690fcc33-2c4b-4aa3-98ee-7c16dca276fb",
   "SAF_PRIVILEGIEDSERVICEUSERS": "srvdokdistfordeling,srvdokdisteformidling,srvtilbakemeldings,srvomsitramme,srvmelosys,srvdolly,srvdolly_u,srvdokproduksjon",
   "BIDRAG_SAK_URL": "https://bidrag-sak.dev.adeo.no/bidrag-sak/pip/sak/",
   "HENTJOURNALSAKINFO_URL": "http://dokarkiv-q5.teamdokumenthandtering.svc.nais.local/hentjournalsakinfo",
