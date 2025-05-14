@@ -6,6 +6,7 @@ import no.nav.saf.domain.kode.Journalstatus;
 import no.nav.saf.domain.tilgangsmodell.TilgangJournalpost;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.pep.reasons.JournalstatusReason;
+import no.nav.saf.tilgangskontroll.pep.reasons.SkjermingReason;
 import no.nav.saf.tilgangskontroll.pep.reasons.UkjentEllerTekniskReason;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -49,17 +50,17 @@ public class MsGraphBackedPep4Impl extends StandardMsGraphBackedPep<TilgangJourn
 		if (isJournalpoststatusUtgaar(ressurs)) {
 			if (!navUserGroupMembershipService.isNavIdentInLeseUtgaatteDokumenterGroup(safRequestContext.getUserId())) {
 				traceLogPepFinished(PEP4, ressurs);
-				return PepAnswer.deny(new JournalstatusReason(emptyMap()));
+				return PepAnswer.deny(new JournalstatusReason());
 			}
 		}
 		if (isSkjermingPresent(ressurs)) {
 			if (!navUserGroupMembershipService.isNavIdentInJoarkVedlikeholdGroup(safRequestContext.getUserId())) {
 				traceLogPepFinished(PEP4, ressurs);
-				return PepAnswer.deny(new JournalstatusReason(emptyMap()));
+				return PepAnswer.deny(new JournalstatusReason());
 			}
 		}
 		if (!safRequestContext.isUserIdNavAnsatt()) {
-			return PepAnswer.deny(new JournalstatusReason(emptyMap()));
+			return PepAnswer.deny(new JournalstatusReason());
 		}
 
 		traceLogPepFinished(PEP4, ressurs);

@@ -79,7 +79,7 @@ public class AbacBackedPep2dImpl extends StandardAbacBackedPep<TilgangSak> {
 
 	@Override
 	protected PepAnswer translateToDenyReasonCode(XacmlResponse xacmlResponse) {
-		return null;
+		throw new UnsupportedOperationException("Translating from DenyReasonCode is not supported in PEP2");
 	}
 
 	@Override

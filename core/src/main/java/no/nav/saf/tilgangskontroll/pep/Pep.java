@@ -30,7 +30,7 @@ public abstract class Pep<T> {
 		if (safRequestContext.getSecurityContext().isJwtAzureClientCredentialFlow()) {
 			return verifyAzureClientCredentialFlowAccess(ressurs, safRequestContext);
 		} else {
-			throw new RuntimeException("Not implemented!");
+			throw new UnsupportedOperationException("Not implemented!");
 		}
 	}
 

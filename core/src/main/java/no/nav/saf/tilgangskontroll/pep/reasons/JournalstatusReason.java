@@ -4,7 +4,13 @@ import no.nav.saf.tilgangskontroll.pep.AbacDenyReasonCode;
 
 import java.util.Map;
 
+import static java.util.Collections.emptyMap;
+
 public final class JournalstatusReason extends AbacDenyReason {
+
+	public JournalstatusReason() {
+		this(emptyMap());
+	}
 
 	public JournalstatusReason(Map<String, String> advices) {
 		super(advices, AbacDenyReasonCode.JOURNALSTATUS);
