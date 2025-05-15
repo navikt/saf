@@ -435,7 +435,6 @@ class JournalpostIT extends AbstractItest {
 	void shouldQueryJournalpostByJournalpostIdWhenOrgnummerOnSakAndIsNavBedriftAndIsEgenAnsattBehandler() {
 		abacPermit();
 		stubNavHrOrganisasjonJa(ORG_NR);
-		stubMsGraphMemberOfEgenAnsattDefaultSaksbehandler();
 		stubDokarkivJournalpost("journalpost-gsak-inngaaende-orgnr.json");
 
 		GraphQLResponse graphQLResponse = journalpostQuery();
@@ -446,6 +445,7 @@ class JournalpostIT extends AbstractItest {
 
 		assertThat(journalpost.getBrukerTilgangAvvistBegrunnelser()).isNotNull().isEmpty();
 		assertThat(journalpost.isBrukerHarTilgang()).isTrue();
+		verifyMsGraphMemberOfSeveralGroupsCalled(MS_ID_SAKSBEHANDLER, 1);
 	}
 
 	@Test
@@ -496,7 +496,6 @@ class JournalpostIT extends AbstractItest {
 	void shouldQueryJournalpostByJournalpostIdWhenOrgnummerOnSakAndIsNavBedriftAndIsEgenAnsattBehandlerAndNavUserIdHeader() {
 		abacPermit();
 		stubNavHrOrganisasjonJa(ORG_NR);
-		stubMsGraphMemberOfEgenAnsattDefaultSaksbehandler();
 		stubDokarkivJournalpost("journalpost-gsak-inngaaende-orgnr.json");
 
 		GraphQLResponse graphQLResponse = journalpostQueryNavUserId();
@@ -507,6 +506,7 @@ class JournalpostIT extends AbstractItest {
 
 		assertThat(journalpost.getBrukerTilgangAvvistBegrunnelser()).isNotNull().isEmpty();
 		assertThat(journalpost.isBrukerHarTilgang()).isTrue();
+		verifyMsGraphMemberOfSeveralGroupsCalled(MS_ID_SAKSBEHANDLER, 1);
 	}
 
 	@Test

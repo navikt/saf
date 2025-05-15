@@ -41,7 +41,6 @@ import java.util.UUID;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
-import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
@@ -208,7 +207,7 @@ public abstract class AbstractItest {
 
 	protected void stubMsGraphMemberOfEgenAnsattDefaultSaksbehandler() {
 		stubMsGraphGetUser(NAV_IDENT_SAKSBEHANDLER);
-		stubMsGraphMemberOfSeveralGroups(MS_ID_SAKSBEHANDLER, "nav/msgraph-memberof-egenansatt.json");
+		stubMsGraphMemberOfSeveralGroups(MS_ID_SAKSBEHANDLER, "nav/msgraph-checkmembergroup-egenansatt.json");
 	}
 
 	protected static void stubPdl() {
@@ -479,7 +478,7 @@ public abstract class AbstractItest {
 
 	protected void abacDenyPep5SkipPep1gPep2Pep2dPep3() {
 		stubMsGraphGetUser(NAV_IDENT_SAKSBEHANDLER);
-		stubMsGraphMemberOfSeveralGroups(MS_ID_SAKSBEHANDLER, "nav/msgraph-memberof-grupper-allow-pep4.json");
+		stubMsGraphMemberOfSeveralGroups(MS_ID_SAKSBEHANDLER, "nav/msgraph-checkmembergroup-grupper-allow-pep4.json");
 		stubFor(post(urlEqualTo("/abac"))
 				.inScenario(SCENARIO_ABAC)
 				.whenScenarioStateIs(STATE_PEP5)
@@ -726,7 +725,7 @@ public abstract class AbstractItest {
 	}
 
 	protected static void stubMsGraphMemberOfSeveralGroups(String msUserId, String bodyFile) {
-		stubFor(get(urlMatching("/msgraph/users/" + msUserId + "/memberOf\\?\\$count=false&\\$filter=.*"))
+		stubFor(post(urlMatching("/msgraph/users/" + msUserId + "/checkMemberGroups"))
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile(bodyFile)));
@@ -734,16 +733,16 @@ public abstract class AbstractItest {
 
 	protected static void stubMsGraphMemberOfAllRelevantGroupsDefaultSaksbehandler() {
 		stubMsGraphGetUser(NAV_IDENT_SAKSBEHANDLER);
-		stubMsGraphMemberOfSeveralGroups(MS_ID_SAKSBEHANDLER, "nav/msgraph-memberof-alle-relevante-grupper.json");
+		stubMsGraphMemberOfSeveralGroups(MS_ID_SAKSBEHANDLER, "nav/msgraph-checkmembergroup-alle-relevante-grupper.json");
 	}
 
 	protected static void stubMsGraphMemberOfNoGroupsDefaultSaksbehandler() {
 		stubMsGraphGetUser(NAV_IDENT_SAKSBEHANDLER);
-		stubMsGraphMemberOfSeveralGroups(MS_ID_SAKSBEHANDLER, "nav/msgraph-memberof-ingen-grupper.json");
+		stubMsGraphMemberOfSeveralGroups(MS_ID_SAKSBEHANDLER, "nav/msgraph-checkmembergroup-ingen-grupper.json");
 	}
 
 	protected void verifyMsGraphMemberOfSeveralGroupsCalled(String msUserId, int count) {
-		verify(count, getRequestedFor(urlMatching("/msgraph/users/" + msUserId + "/memberOf\\?\\$count=false&\\$filter=.*")));
+		verify(count, postRequestedFor(urlMatching("/msgraph/users/" + msUserId + "/checkMemberGroups")));
 	}
 
 	protected void verifyabacDenyPep7dSkipPep2Pep3Pep4Pep5Pep6dAndHttpStatusCode(HttpStatusCode expectedHttpStatus, HttpStatusCode actualHttpStatus) {
@@ -767,6 +766,7 @@ public abstract class AbstractItest {
 		} else {
 			verify(3, postRequestedFor(urlEqualTo("/abac")));
 		}
+		verifyMsGraphMemberOfSeveralGroupsCalled(MS_ID_SAKSBEHANDLER, 1);
 		assertEquals(expectedHttpStatus, actualHttpStatus);
 	}
 
@@ -777,6 +777,7 @@ public abstract class AbstractItest {
 
 	protected void verifyabacDenyPep4SkipPep2OrPep3AndHttpStatusCode(HttpStatusCode expectedHttpStatus, HttpStatusCode actualHttpStatus) {
 		verify(3, postRequestedFor(urlEqualTo("/abac")));
+		verifyMsGraphMemberOfSeveralGroupsCalled(MS_ID_SAKSBEHANDLER, 1);
 		assertEquals(expectedHttpStatus, actualHttpStatus);
 	}
 
@@ -786,16 +787,19 @@ public abstract class AbstractItest {
 		} else {
 			verify(4, postRequestedFor(urlEqualTo("/abac")));
 		}
+		verifyMsGraphMemberOfSeveralGroupsCalled(MS_ID_SAKSBEHANDLER, 1);
 		assertEquals(expectedHttpStatus, actualHttpStatus);
 	}
 
 	protected void verifyabacDenyPep6dSkipPep2AndHttpStatusCode(HttpStatusCode expectedHttpStatus, HttpStatusCode actualHttpStatus) {
 		verify(5, postRequestedFor(urlEqualTo("/abac")));
+		verifyMsGraphMemberOfSeveralGroupsCalled(MS_ID_SAKSBEHANDLER, 1);
 		assertEquals(expectedHttpStatus, actualHttpStatus);
 	}
 
 	protected void verifyabacDenyPep6dSkipPep2Pep3AndHttpStatusCode(HttpStatusCode expectedHttpStatus, HttpStatusCode actualHttpStatus) {
 		verify(4, postRequestedFor(urlEqualTo("/abac")));
+		verifyMsGraphMemberOfSeveralGroupsCalled(MS_ID_SAKSBEHANDLER, 1);
 		assertEquals(expectedHttpStatus, actualHttpStatus);
 	}
 

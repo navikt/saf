@@ -38,7 +38,7 @@ class MsGraphEntraGroupMembershipServiceIT extends AbstractItest {
 	@Test
 	void shouldLookUpAndCacheAllRelevantGroupsForUser() {
 		stubMsGraphGetUser(NAV_IDENT_SAKSBEHANDLER);
-		stubMsGraphMemberOfSeveralGroups(MS_ID_SAKSBEHANDLER, "nav/msgraph-memberof-egenansatt-fortrolig-strengt-fortrolig.json");
+		stubMsGraphMemberOfSeveralGroups(MS_ID_SAKSBEHANDLER, "nav/msgraph-checkmembergroup-egenansatt-fortrolig-strengt-fortrolig.json");
 
 		assertThat(msGraphEntraGroupMembershipService.isUserInGroup(NAV_IDENT_SAKSBEHANDLER, safProperties.getAzureGroup().getEgenAnsattObjectId())).isTrue();
 		assertThat(msGraphEntraGroupMembershipService.isUserInGroup(NAV_IDENT_SAKSBEHANDLER, safProperties.getAzureGroup().getFortroligAdresseObjectId())).isTrue();

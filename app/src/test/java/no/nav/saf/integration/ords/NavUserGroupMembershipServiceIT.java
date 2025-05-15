@@ -23,6 +23,7 @@ class NavUserGroupMembershipServiceIT extends AbstractItest {
 		NavUserGroupMembershipService navUserGroupMembershipService = new NavUserGroupMembershipService(safProperties, msGraphEntraGroupMembershipService);
 
 		assertThat(navUserGroupMembershipService.isNavIdentInEgenAnsattGroup(NAV_IDENT_SAKSBEHANDLER)).isTrue();
+		verifyMsGraphMemberOfSeveralGroupsCalled(MS_ID_SAKSBEHANDLER, 1);
 	}
 
 	@Test
@@ -32,5 +33,6 @@ class NavUserGroupMembershipServiceIT extends AbstractItest {
 		NavUserGroupMembershipService navUserGroupMembershipService = new NavUserGroupMembershipService(safProperties, msGraphEntraGroupMembershipService);
 
 		assertThat(navUserGroupMembershipService.isNavIdentInEgenAnsattGroup(NAV_IDENT_SAKSBEHANDLER)).isFalse();
+		verifyMsGraphMemberOfSeveralGroupsCalled(MS_ID_SAKSBEHANDLER, 1);
 	}
 }

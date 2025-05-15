@@ -201,7 +201,6 @@ class HentDokumentIT extends AbstractItest {
 	void shouldHentDokumentWhenBrukerErOrganisasjonAndIsEgenAnsattBehandler() {
 		abacPermit();
 		stubNavHrOrganisasjonJa(ORG_NR);
-		stubMsGraphMemberOfEgenAnsattDefaultSaksbehandler();
 		stubHappyHentDokument();
 		stubDokarkivJournalpost("journalpost-dokumentinfo-gsak-org-happy.json");
 
@@ -209,13 +208,13 @@ class HentDokumentIT extends AbstractItest {
 
 		assertOkArkivResponse(responseEntity);
 		verify(getRequestedFor(urlEqualTo("/dokarkiv/hentdokument/" + DOKUMENT_ID + "/" + VARIANTFORMAT)));
+		verifyMsGraphMemberOfSeveralGroupsCalled(MS_ID_SAKSBEHANDLER, 1);
 	}
 
 	@Test
 	void shouldHentDokumentWhenBrukerErOrganisasjonAndIsEgenAnsattBehandlerAndOrgnrWhitespace() {
 		abacPermit();
 		stubNavHrOrganisasjonJa(ORG_NR);
-		stubMsGraphMemberOfEgenAnsattDefaultSaksbehandler();
 		stubHappyHentDokument();
 		stubDokarkivJournalpost("journalpost-dokumentinfo-gsak-org-whitespace.json");
 
@@ -223,6 +222,7 @@ class HentDokumentIT extends AbstractItest {
 
 		assertOkArkivResponse(responseEntity);
 		verify(getRequestedFor(urlEqualTo("/dokarkiv/hentdokument/" + DOKUMENT_ID + "/" + VARIANTFORMAT)));
+		verifyMsGraphMemberOfSeveralGroupsCalled(MS_ID_SAKSBEHANDLER, 1);
 	}
 
 	@Test

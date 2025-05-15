@@ -143,7 +143,6 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 	void shouldHentDokumentoversiktBrukerWithNavStatOrgnummerWhenBrukerIsEgenAnsattBehandler() throws IOException, URISyntaxException {
 		abacPermit();
 		stubNavHrOrganisasjonJa(ORG_NR);
-		stubMsGraphMemberOfEgenAnsattDefaultSaksbehandler();
 		stubSakOrgnr();
 		stubFinnjournalposter("finnjournalposter_single_temaForNullskjerming-happy.json");
 
@@ -154,6 +153,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 		assertEquals("429837417", dokumentoversikt.getJournalposter().get(0).getJournalpostId());
 		assertEquals(KANAL_REFERANSE_ID, dokumentoversikt.getJournalposter().get(0).getEksternReferanseId());
 		assertSaksbehandlerHarTilgang(dokumentoversikt);
+		verifyMsGraphMemberOfSeveralGroupsCalled(MS_ID_SAKSBEHANDLER, 1);
 	}
 
 	@Test
@@ -417,6 +417,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter"))
 				.withRequestBody(containing("{\"gsakSakIds\":[\"135695442\"],\"psakSakIds\":[],\"fraDato\":\"0001-01-01\",\"tilDato\":null,\"inkluderJournalStatus\":[\"FL\",\"FS\",\"J\",\"E\"],\"inkluderJournalpostType\":[\"I\",\"U\",\"N\"],\"visFeilregistrerte\":false,\"alleIdenter\":[\"11111111111\"],\"foerste\":3,\"etterPeker\":null}")));
 		verifyabacDenyPep4SkipPep2OrPep3AndHttpStatusCode(OK, responseEntity.getStatusCode());
+		verifyMsGraphMemberOfSeveralGroupsCalled(MS_ID_SAKSBEHANDLER, 1);
 	}
 
 	@Test

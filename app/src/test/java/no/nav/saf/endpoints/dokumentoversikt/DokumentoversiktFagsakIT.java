@@ -407,6 +407,7 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 		verifyEmptyJournalpostListeAndNullSideInfo(dokumentoversikt);
 		verify(2, postRequestedFor(urlEqualTo("/abac")));
 		assertEquals(OK, responseEntity.getStatusCode());
+		verifyMsGraphMemberOfSeveralGroupsCalled(MS_ID_SAKSBEHANDLER, 1);
 	}
 
 	@Test
