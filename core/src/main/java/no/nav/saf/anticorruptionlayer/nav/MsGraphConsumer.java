@@ -25,7 +25,7 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 @Component
 @Slf4j
 public class MsGraphConsumer {
-	private final CheckMemberGroupsPostRequestBody azureGroupsRequestBody;
+	private final List<String> azureGroupsToCheck;
 	private final GraphServiceClient graphClient;
 
 	public MsGraphConsumer(SafProperties safProperties,
@@ -36,7 +36,7 @@ public class MsGraphConsumer {
 				.clientSecret(azureProperties.appClientSecret())
 				.build();
 		this.graphClient = new GraphServiceClient(clientSecretCredential);
-		this.azureGroupsRequestBody = getAzureGroupsRequestBody(safProperties.getAzureGroup());
+		this.azureGroupsToCheck = safProperties.getAzureGroup().getAllGroupUUIDsAsStream().map(UUID::toString).toList();
 		String overrideMsGraphBaseUrl = safProperties.getEndpoints().getOverrideMsGraphServiceRoot();
 		if (isNotBlank(overrideMsGraphBaseUrl)) {
 			this.graphClient.getRequestAdapter().setBaseUrl(overrideMsGraphBaseUrl);
@@ -99,7 +99,7 @@ public class MsGraphConsumer {
 			List<String> res = graphClient
 					.users().byUserId(user.get().getId())
 					.checkMemberGroups()
-					.post(azureGroupsRequestBody, requestConfiguration -> {
+					.post(getAzureGroupsRequestBody(azureGroupsToCheck), requestConfiguration -> {
 						requestConfiguration.headers.add("ConsistencyLevel", "eventual");
 					})
 					.getValue();
@@ -110,9 +110,9 @@ public class MsGraphConsumer {
 		}
 	}
 
-	private CheckMemberGroupsPostRequestBody getAzureGroupsRequestBody(SafProperties.AzureGroup azureGroups) {
+	private CheckMemberGroupsPostRequestBody getAzureGroupsRequestBody(List<String> azureGroups) {
 		CheckMemberGroupsPostRequestBody checkMemberGroupsPostRequestBody = new CheckMemberGroupsPostRequestBody();
-		checkMemberGroupsPostRequestBody.setGroupIds(azureGroups.getAllGroupUUIDsAsStream().map(UUID::toString).toList());
+		checkMemberGroupsPostRequestBody.setGroupIds(azureGroups);
 		return checkMemberGroupsPostRequestBody;
 	}
 }
