@@ -29,7 +29,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -74,7 +74,7 @@ class DokumentoversiktJournalstatusIT extends AbstractItest {
 
 		verify(postRequestedFor(urlEqualTo("/dokarkiv/finnjournalposterstatus"))
 				.withRequestBody(matchingJsonPath("$.journalstatus", containing("UB"))));
-		verify(3, postRequestedFor(urlEqualTo("/abac"))); // kun journalpost 452929051 med skjerming sjekkes mot abac
+		verify(2, postRequestedFor(urlEqualTo("/abac"))); // kun journalpost 452929051 med skjerming sjekkes mot abac
 	}
 
 	@Test
@@ -105,7 +105,7 @@ class DokumentoversiktJournalstatusIT extends AbstractItest {
 
 		verify(postRequestedFor(urlEqualTo("/dokarkiv/finnjournalposterstatus"))
 				.withRequestBody(matchingJsonPath("$.journalstatus", containing("U"))));
-		verify(4, postRequestedFor(urlEqualTo("/abac"))); // ingen skjerming så kun pep4 sjekkes
+		verify(0, postRequestedFor(urlEqualTo("/abac"))); // ingen skjerming så kun pep4 sjekkes
 	}
 
 	@Test
@@ -197,7 +197,7 @@ class DokumentoversiktJournalstatusIT extends AbstractItest {
 
 		verify(postRequestedFor(urlEqualTo("/dokarkiv/finnjournalposterstatus"))
 				.withRequestBody(containing("{\"journalstatus\":\"U\",\"fraDato\":\"2019-01-01\",\"journalposttyper\":[\"I\",\"U\",\"N\"],\"antallRader\":5,\"etterPeker\":null}")));
-		verify(3, postRequestedFor(urlEqualTo("/abac")));
+		verify(2, postRequestedFor(urlEqualTo("/abac")));
 		assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
 	}
 
@@ -217,7 +217,7 @@ class DokumentoversiktJournalstatusIT extends AbstractItest {
 		assertFalse(dokumentoversikt.getSideInfo().isFinnesNesteSide());
 		verify(postRequestedFor(urlEqualTo("/dokarkiv/finnjournalposterstatus"))
 				.withRequestBody(containing("{\"journalstatus\":\"U\",\"fraDato\":\"2019-01-01\",\"journalposttyper\":[\"I\",\"U\",\"N\"],\"antallRader\":5,\"etterPeker\":null}")));
-		verify(1, postRequestedFor(urlEqualTo("/abac")));
+		verify(0, postRequestedFor(urlEqualTo("/abac")));
 		assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
 	}
 
@@ -233,12 +233,12 @@ class DokumentoversiktJournalstatusIT extends AbstractItest {
 		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversiktJournalstatusUtgaar();
 		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
 
-		assertEquals(1, dokumentoversikt.getJournalposter().size());
+		assertThat(dokumentoversikt.getJournalposter()).hasSize(1);
 		assertEquals("453466679", dokumentoversikt.getJournalposter().get(0).getJournalpostId());
-		assertTrue(dokumentoversikt.getJournalposter().get(0).getDokumenter().isEmpty());
+		assertThat(dokumentoversikt.getJournalposter().get(0).getDokumenter()).isEmpty();
 		verify(postRequestedFor(urlEqualTo("/dokarkiv/finnjournalposterstatus"))
 				.withRequestBody(containing("{\"journalstatus\":\"U\",\"fraDato\":\"2019-01-01\",\"journalposttyper\":[\"I\",\"U\",\"N\"],\"antallRader\":5,\"etterPeker\":null}")));
-		verify(3, postRequestedFor(urlEqualTo("/abac")));
+		verify(2, postRequestedFor(urlEqualTo("/abac")));
 		assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
 	}
 
@@ -259,7 +259,7 @@ class DokumentoversiktJournalstatusIT extends AbstractItest {
 		assertSaksbehandlerHarIkkeTilgang(dokumentoversikt);
 		verify(postRequestedFor(urlEqualTo("/dokarkiv/finnjournalposterstatus"))
 				.withRequestBody(containing("{\"journalstatus\":\"U\",\"fraDato\":\"2019-01-01\",\"journalposttyper\":[\"I\",\"U\",\"N\"],\"antallRader\":5,\"etterPeker\":null}")));
-		verify(3, postRequestedFor(urlEqualTo("/abac")));
+		verify(2, postRequestedFor(urlEqualTo("/abac")));
 		assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
 	}
 

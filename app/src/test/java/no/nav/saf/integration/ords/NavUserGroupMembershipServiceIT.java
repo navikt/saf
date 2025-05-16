@@ -18,21 +18,21 @@ class NavUserGroupMembershipServiceIT extends AbstractItest {
 
 	@Test
 	void shouldLookUpMsGraphMemberOfEgenAnsatt() {
-		stubMsGraphGetUser(NAV_IDENT_SAKSBEHANDLER);
-		stubMsGraphMemberOfSeveralGroups(MS_ID_SAKSBEHANDLER, "nav/msgraph-memberof-egenansatt.json");
+		stubMsGraphMemberOfEgenAnsattDefaultSaksbehandler();
 
 		NavUserGroupMembershipService navUserGroupMembershipService = new NavUserGroupMembershipService(safProperties, msGraphEntraGroupMembershipService);
 
 		assertThat(navUserGroupMembershipService.isNavIdentInEgenAnsattGroup(NAV_IDENT_SAKSBEHANDLER)).isTrue();
+		verifyMsGraphMemberOfSeveralGroupsCalled(MS_ID_SAKSBEHANDLER, 1);
 	}
 
 	@Test
 	void shouldLookUpMsGraphMemberOfNotEgenAnsatt() {
-		stubMsGraphGetUser(NAV_IDENT_SAKSBEHANDLER);
-		stubMsGraphMemberOfSeveralGroups(MS_ID_SAKSBEHANDLER, "nav/msgraph-memberof-not-egenansatt.json");
+		stubMsGraphMemberOfNoGroupsDefaultSaksbehandler();
 
 		NavUserGroupMembershipService navUserGroupMembershipService = new NavUserGroupMembershipService(safProperties, msGraphEntraGroupMembershipService);
 
 		assertThat(navUserGroupMembershipService.isNavIdentInEgenAnsattGroup(NAV_IDENT_SAKSBEHANDLER)).isFalse();
+		verifyMsGraphMemberOfSeveralGroupsCalled(MS_ID_SAKSBEHANDLER, 1);
 	}
 }

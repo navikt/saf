@@ -5,17 +5,18 @@ import com.azure.identity.ClientSecretCredentialBuilder;
 import com.microsoft.graph.models.DirectoryObject;
 import com.microsoft.graph.models.User;
 import com.microsoft.graph.serviceclient.GraphServiceClient;
+import com.microsoft.graph.users.item.checkmembergroups.CheckMemberGroupsPostRequestBody;
 import com.microsoft.kiota.ApiException;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.azure.AzureProperties;
 import no.nav.saf.config.SafProperties;
 import org.springframework.stereotype.Component;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import static java.util.Collections.emptySet;
 import static no.nav.saf.tilgangskontroll.SafSecurityContext.NAVIDENT_PATTERN;
@@ -24,7 +25,7 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 @Component
 @Slf4j
 public class MsGraphConsumer {
-	private final String azureGroupsFilter;
+	private final CheckMemberGroupsPostRequestBody azureGroupsRequestBody;
 	private final GraphServiceClient graphClient;
 
 	public MsGraphConsumer(SafProperties safProperties,
@@ -35,7 +36,7 @@ public class MsGraphConsumer {
 				.clientSecret(azureProperties.appClientSecret())
 				.build();
 		this.graphClient = new GraphServiceClient(clientSecretCredential);
-		this.azureGroupsFilter = createAzureGroupFilter(safProperties.getAzureGroup());
+		this.azureGroupsRequestBody = getAzureGroupsRequestBody(safProperties.getAzureGroup());
 		String overrideMsGraphBaseUrl = safProperties.getEndpoints().getOverrideMsGraphServiceRoot();
 		if (isNotBlank(overrideMsGraphBaseUrl)) {
 			this.graphClient.getRequestAdapter().setBaseUrl(overrideMsGraphBaseUrl);
@@ -95,28 +96,23 @@ public class MsGraphConsumer {
 		}
 
 		try {
-			List<DirectoryObject> res = graphClient
+			List<String> res = graphClient
 					.users().byUserId(user.get().getId())
-					.memberOf()
-					.get(requestConfiguration -> {
+					.checkMemberGroups()
+					.post(azureGroupsRequestBody, requestConfiguration -> {
 						requestConfiguration.headers.add("ConsistencyLevel", "eventual");
-						requestConfiguration.queryParameters.filter = azureGroupsFilter;
-						requestConfiguration.queryParameters.count = false;
-						requestConfiguration.queryParameters.select = new String[]{"id"};
 					})
 					.getValue();
-			return res.stream().map(DirectoryObject::getId).collect(Collectors.toSet());
+			return new HashSet<>(res);
 		} catch (ApiException e) {
 			log.error("Teknisk feil mot Microsoft Graph. message=" + e.getMessage(), e);
 			return emptySet();
 		}
 	}
 
-	private static String createAzureGroupFilter(SafProperties.AzureGroup azureGroup) {
-		return "(" + azureGroup.getAllGroupUUIDsAsStream()
-				.map(UUID::toString)
-				.map(str -> "id eq '" + str + "'")
-				.collect(Collectors.joining(" or ")) +
-				")";
+	private CheckMemberGroupsPostRequestBody getAzureGroupsRequestBody(SafProperties.AzureGroup azureGroups) {
+		CheckMemberGroupsPostRequestBody checkMemberGroupsPostRequestBody = new CheckMemberGroupsPostRequestBody();
+		checkMemberGroupsPostRequestBody.setGroupIds(azureGroups.getAllGroupUUIDsAsStream().map(UUID::toString).toList());
+		return checkMemberGroupsPostRequestBody;
 	}
 }

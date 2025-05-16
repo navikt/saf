@@ -1,11 +1,11 @@
 package no.nav.saf.tilgangskontroll.pep;
 
 import no.nav.saf.tilgangskontroll.SafRequestContext;
-import no.nav.saf.tilgangskontroll.abac.dto.response.XacmlResponse;
 
-public abstract class StandardAbacBackedPep<T> extends Pep<T> {
+public abstract class StandardMsGraphBackedPep<T> extends Pep<T> {
+
 	/**
-	 * Kall mot abac-saf (ekstern tjeneste) som er Policy Decision Point (PDP).
+	 * Sjekk NavIdent mot gruppemedlemskap i AD
 	 * Bestemmer om kall skal få tilgang til ressurs.
 	 * Implementerer:
 	 * https://confluence.adeo.no/display/BOA/saf+-+Tilgangskontroll#safTilgangskontroll-TilgangsreglerforNAV-ansatte
@@ -13,23 +13,16 @@ public abstract class StandardAbacBackedPep<T> extends Pep<T> {
 	 *
 	 * @param ressurs           Ressursen som skal sjekkes
 	 * @param safRequestContext Kontekst for kallet
-	 * @return Beslutning om tilgang fra saf-abac PDP
+	 * @return Beslutning om tilgang fra intern ABAC PDP
 	 */
-	abstract PepAnswer verifyAbacPdpDecision(T ressurs, SafRequestContext safRequestContext);
+	abstract PepAnswer verifyNavIdentGroupMembershipAccess(T ressurs, SafRequestContext safRequestContext);
 
-	@Override
 	public PepAnswer hasAccessWithAnswer(T ressurs, SafRequestContext safRequestContext) {
 		if (safRequestContext.getSecurityContext().isJwtAzureClientCredentialFlow()) {
 			return verifyAzureClientCredentialFlowAccess(ressurs, safRequestContext);
 		} else {
-			return verifyAbacPdpDecision(ressurs, safRequestContext);
+			return verifyNavIdentGroupMembershipAccess(ressurs, safRequestContext);
 		}
 	}
-
-	protected PepAnswer mapToAbacAnswer(XacmlResponse xacmlResponse) {
-		return xacmlResponse.isPermit() ? PepAnswer.permit() : translateToDenyReasonCode(xacmlResponse);
-	}
-
-	protected abstract PepAnswer translateToDenyReasonCode(XacmlResponse xacmlResponse);
 
 }
