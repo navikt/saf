@@ -116,6 +116,9 @@ spec:
           {{/if}}
     {{/each}}
   observability:
+    logging:
+      destinations:
+        - id: elastic
     autoInstrumentation:
       enabled: true
       runtime: java
