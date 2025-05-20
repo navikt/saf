@@ -28,6 +28,7 @@ import org.springframework.http.RequestEntity;
 
 import java.net.URI;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Set;
 
@@ -38,6 +39,7 @@ import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostMapper.SKJULT
 import static no.nav.saf.anticorruptionlayer.joark.JoarkAntiCorruptionLayer.SAFINTERN_FETCHPATHS_UTEN_DOKUMENTER;
 import static no.nav.saf.anticorruptionlayer.joark.domain.kode.Sakstype.FAGSAK;
 import static no.nav.saf.anticorruptionlayer.joark.domain.kode.Sakstype.GENERELL_SAK;
+import static no.nav.saf.domain.DomainConstants.TIDSSONE_NORGE;
 import static no.nav.saf.domain.kode.Datotype.DATO_DOKUMENT;
 import static no.nav.saf.domain.kode.Datotype.DATO_EKSPEDERT;
 import static no.nav.saf.domain.kode.Datotype.DATO_JOURNALFOERT;
@@ -331,6 +333,7 @@ class JournalpostIT extends AbstractItest {
 		assertThat(dokumentInfo.getLogiskeVedlegg().get(0).getTittel()).isEqualTo("Skjema");
 		assertThat(journalpost.getBrukerTilgangAvvistBegrunnelser()).containsExactly(new BrukerTilgangAvvistBegrunnelse("ikke_avsender_mottaker", "Avsender / mottakers fødselsnummer er ikke lik brukerens fødselsnummer"));
 		assertThat(journalpost.isBrukerHarTilgang()).isFalse();
+		assertThat(journalpost.getDatoSortering()).isEqualTo(OffsetDateTime.parse("2023-08-16T11:15+00:00").atZoneSameInstant(TIDSSONE_NORGE).toLocalDateTime());
 	}
 
 	@Test
@@ -432,7 +435,6 @@ class JournalpostIT extends AbstractItest {
 	void shouldQueryJournalpostByJournalpostIdWhenOrgnummerOnSakAndIsNavBedriftAndIsEgenAnsattBehandler() {
 		abacPermit();
 		stubNavHrOrganisasjonJa(ORG_NR);
-		stubNavOrgMemberOfEgenAnsatt(NAV_IDENT_SAKSBEHANDLER);
 		stubDokarkivJournalpost("journalpost-gsak-inngaaende-orgnr.json");
 
 		GraphQLResponse graphQLResponse = journalpostQuery();
@@ -443,13 +445,14 @@ class JournalpostIT extends AbstractItest {
 
 		assertThat(journalpost.getBrukerTilgangAvvistBegrunnelser()).isNotNull().isEmpty();
 		assertThat(journalpost.isBrukerHarTilgang()).isTrue();
+		verifyMsGraphMemberOfSeveralGroupsCalled(MS_ID_SAKSBEHANDLER, 1);
 	}
 
 	@Test
 	void shouldNotQueryJournalpostByJournalpostIdWhenOrgnummerOnSakAndIsNavBedriftAndIsNotEgenAnsattBehandler() {
 		abacPermit();
 		stubNavHrOrganisasjonJa(ORG_NR);
-		stubNavOrgNotMemberOfEgenAnsatt(NAV_IDENT_SAKSBEHANDLER);
+		stubMsGraphMemberOfNoGroupsDefaultSaksbehandler();
 		stubDokarkivJournalpost("journalpost-gsak-inngaaende-orgnr.json");
 
 		GraphQLResponse graphQLResponse = journalpostQuery();
@@ -493,7 +496,6 @@ class JournalpostIT extends AbstractItest {
 	void shouldQueryJournalpostByJournalpostIdWhenOrgnummerOnSakAndIsNavBedriftAndIsEgenAnsattBehandlerAndNavUserIdHeader() {
 		abacPermit();
 		stubNavHrOrganisasjonJa(ORG_NR);
-		stubNavOrgMemberOfEgenAnsatt(NAV_IDENT_SAKSBEHANDLER);
 		stubDokarkivJournalpost("journalpost-gsak-inngaaende-orgnr.json");
 
 		GraphQLResponse graphQLResponse = journalpostQueryNavUserId();
@@ -504,13 +506,14 @@ class JournalpostIT extends AbstractItest {
 
 		assertThat(journalpost.getBrukerTilgangAvvistBegrunnelser()).isNotNull().isEmpty();
 		assertThat(journalpost.isBrukerHarTilgang()).isTrue();
+		verifyMsGraphMemberOfSeveralGroupsCalled(MS_ID_SAKSBEHANDLER, 1);
 	}
 
 	@Test
 	void shouldNotQueryJournalpostByJournalpostIdWhenOrgnummerOnSakAndIsNavBedriftAndIsNotEgenAnsattBehandlerAndNavUserIdHeader() {
 		abacPermit();
 		stubNavHrOrganisasjonJa(ORG_NR);
-		stubNavOrgNotMemberOfEgenAnsatt(NAV_IDENT_SAKSBEHANDLER);
+		stubMsGraphMemberOfNoGroupsDefaultSaksbehandler();
 		stubDokarkivJournalpost("journalpost-gsak-inngaaende-orgnr.json");
 
 		GraphQLResponse graphQLResponse = journalpostQueryNavUserId();

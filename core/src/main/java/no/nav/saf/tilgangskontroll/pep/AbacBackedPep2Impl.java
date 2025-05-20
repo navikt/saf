@@ -27,7 +27,7 @@ import static no.nav.saf.tilgangskontroll.pep.PepAnswer.permit;
  */
 @Slf4j
 @Component(PEP2)
-public class AbacBackedPep2Impl extends Pep<TilgangSak> {
+public class AbacBackedPep2Impl extends StandardAbacBackedPep<TilgangSak> {
 
 	private final AbacService abacService;
 
@@ -57,6 +57,11 @@ public class AbacBackedPep2Impl extends Pep<TilgangSak> {
 		} else {
 			return PepAnswer.permit();
 		}
+	}
+
+	@Override
+	protected PepAnswer translateToDenyReasonCode(XacmlResponse xacmlResponse) {
+		return null;
 	}
 
 	@Override

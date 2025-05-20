@@ -10,18 +10,6 @@ import no.nav.saf.tilgangskontroll.SafRequestContext;
  */
 @Slf4j
 public abstract class Pep<T> {
-	/**
-	 * Kall mot abac-saf (ekstern tjeneste) som er Policy Decision Point (PDP).
-	 * Bestemmer om kall skal få tilgang til ressurs.
-	 * Implementerer:
-	 * https://confluence.adeo.no/display/BOA/saf+-+Tilgangskontroll#safTilgangskontroll-TilgangsreglerforNAV-ansatte
-	 * https://confluence.adeo.no/display/BOA/saf+-+Tilgangskontroll#safTilgangskontroll-Tilgangsreglerforservicebruker
-	 *
-	 * @param ressurs           Ressursen som skal sjekkes
-	 * @param safRequestContext Kontekst for kallet
-	 * @return Beslutning om tilgang fra saf-abac PDP
-	 */
-	abstract PepAnswer verifyAbacPdpDecision(T ressurs, SafRequestContext safRequestContext);
 
 	/**
 	 * Sjekker tilgang for app registration autentisert med client credential flow i Azure.
@@ -30,9 +18,20 @@ public abstract class Pep<T> {
 	 *
 	 * @param ressurs           Ressursen som skal sjekkes
 	 * @param safRequestContext Kontekst for kallet
-	 * @return Beslutning om tilgang fra intern ABAC PDP
+	 * @return Beslutning om tilgang fra intern PDP
 	 */
 	abstract PepAnswer verifyAzureClientCredentialFlowAccess(T ressurs, SafRequestContext safRequestContext);
+
+	/**
+	 * Sjekker tilgang for app registration autentisert med Rest-STS-token (systembrukere som ikke går via azure-flow)
+	 * NB: denne skal alltid gi samme resultat som verifyAzureClientCredentialFlowAccess for et gitt real-world system,
+	 * men bruker data fra andre kilder
+	 *
+	 * @param ressurs           Ressursen som skal sjekkes
+	 * @param safRequestContext Kontekst for kallet
+	 * @return Beslutning om tilgang fra intern ABAC PDP
+	 */
+	abstract PepAnswer verifyRestSTSCredentialFlowAccess(T ressurs, SafRequestContext safRequestContext);
 
 	public boolean hasAccess(T ressurs, SafRequestContext safRequestContext) {
 		return hasAccessWithAnswer(ressurs, safRequestContext).isPermit();
@@ -41,8 +40,11 @@ public abstract class Pep<T> {
 	public PepAnswer hasAccessWithAnswer(T ressurs, SafRequestContext safRequestContext) {
 		if (safRequestContext.getSecurityContext().isJwtAzureClientCredentialFlow()) {
 			return verifyAzureClientCredentialFlowAccess(ressurs, safRequestContext);
+		} else if (safRequestContext.isSystem()) {
+			return verifyRestSTSCredentialFlowAccess(ressurs, safRequestContext);
 		} else {
-			return verifyAbacPdpDecision(ressurs, safRequestContext);
+			// Denne må implementeres fordi det er forskjellig for Abac-backed PEP og MsGraph-backed PEP
+			throw new UnsupportedOperationException("Not implemented!");
 		}
 	}
 

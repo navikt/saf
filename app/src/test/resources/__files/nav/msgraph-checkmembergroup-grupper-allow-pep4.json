@@ -1,0 +1,8 @@
+{
+  "@odata.context": "https://graph.microsoft.com/v1.0/$metadata#Collection(Edm.String)",
+  "value": [
+      "f476f724-350b-4ff4-8e74-141cda9e824e",
+      "486b2a1a-68ef-4d8e-a924-0af12513b874",
+      "de680e13-7ddb-4631-bcf7-87ca49867b91"
+  ]
+}

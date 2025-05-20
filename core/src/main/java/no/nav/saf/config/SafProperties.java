@@ -26,19 +26,23 @@ public class SafProperties {
 	public static class AzureGroup {
 		@NotEmpty
 		private UUID egenAnsattObjectId;
+		@NotEmpty
+		private UUID joarkVedlikeholdObjectId;
+		@NotEmpty
+		private UUID leseUtgaatteDokumenterObjectId;
 		// Disse bør annoteres med @NotEmpty etterhvert som de blir tatt i bruk
 		private UUID fortroligAdresseObjectId;
 		private UUID strengtFortroligAdresseObjectId;
-		private UUID joarkVedlikeholdObjectId;
 		private UUID pensjonUtvidetObjectId;
 		private UUID gosysUtvidetObjectId;
 
 		public Stream<UUID> getAllGroupUUIDsAsStream() {
 			return Stream.of(
 					egenAnsattObjectId,
+					joarkVedlikeholdObjectId,
+					leseUtgaatteDokumenterObjectId,
 					fortroligAdresseObjectId,
 					strengtFortroligAdresseObjectId,
-					joarkVedlikeholdObjectId,
 					pensjonUtvidetObjectId,
 					gosysUtvidetObjectId
 			).filter(Objects::nonNull);

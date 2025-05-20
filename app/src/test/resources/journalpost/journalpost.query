@@ -25,6 +25,7 @@
         kanal
         kanalnavn
         datoOpprettet
+        datoSortering
         eksternReferanseId
         relevanteDatoer {
             dato

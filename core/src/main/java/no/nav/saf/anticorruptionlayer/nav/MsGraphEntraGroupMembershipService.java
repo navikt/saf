@@ -26,7 +26,7 @@ public class MsGraphEntraGroupMembershipService {
 		this.valkeyGrupperMedlemskapCacheConfiguration = valkeyGrupperMedlemskapCacheConfiguration;
 	}
 
-	public boolean isUserInGroup(String navIdent, UUID azureAdGroup) {
+	public synchronized boolean isUserInGroup(String navIdent, UUID azureAdGroup) {
 		String valkeyKeyForIdent = valkeyGrupperMedlemskapCacheConfiguration.valkeyKeyPrefix() + getKeyForSaksbehandlerGroupMembership(navIdent);
 
 		if (!stringRedisTemplate.hasKey(valkeyKeyForIdent)) {

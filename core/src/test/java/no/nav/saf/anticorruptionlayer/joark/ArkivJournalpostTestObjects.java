@@ -11,6 +11,7 @@ import no.nav.saf.anticorruptionlayer.joark.domain.kode.SkjermingTypeCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.UtsendingsKanalCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.VariantFormatCode;
 import no.nav.saf.anticorruptionlayer.joark.safintern.journalpost.ArkivAvsenderMottaker;
+import no.nav.saf.anticorruptionlayer.joark.safintern.journalpost.ArkivBruker;
 import no.nav.saf.anticorruptionlayer.joark.safintern.journalpost.ArkivDokumentinfo;
 import no.nav.saf.anticorruptionlayer.joark.safintern.journalpost.ArkivFildetaljer;
 import no.nav.saf.anticorruptionlayer.joark.safintern.journalpost.ArkivJournalpost;
@@ -25,6 +26,9 @@ import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostMapper.TILKNYTTET_SOM_HOVEDDOKUMENT;
+import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostMapper.TILKNYTTET_SOM_VEDLEGG;
 
 public class ArkivJournalpostTestObjects {
 	static final VariantFormatCode VARIANT_FORMAT_CODE_ARKIV = VariantFormatCode.ARKIV;
@@ -77,6 +81,17 @@ public class ArkivJournalpostTestObjects {
 	static final String FILTYPE_1 = "PDFA";
 	static final String FILTYPE_2 = "PDF";
 	static final String ARKIVDOKUMENTINFO_TITTEL = "NAV 10-07.34 Tilskudd ved kjøp av briller til barn";
+	static final long HOVEDDOKUMENT_DOKUMENT_INFO_ID = 41000000L;
+	static final String HOVEDDOKUMENT_BREVKODE = "NAV 10-07.53";
+	static final String HOVEDDOKUMENT_TITTEL = "Søknad om hjelpemidler";
+	static final String HOVEDDOKUMENT_FIL_UUID = "11111111-2222-3333-4444-000000000001";
+	static final String HOVEDDOKUMENT_FILTYPE = "PDF";
+	static final String HOVEDDOKUMENT_FIL_STOERRELSE = "1024";
+	static final long VEDLEGG_DOKUMENT_INFO_ID = 42000000L;
+	static final String VEDLEGG_FIL_UUID = "11111111-2222-3333-4444-000000000002";
+	static final String VEDLEGG_TITTEL = "Kvitteringsside for dokumentinnsending";
+	static final String VEDLEGG_BREVKODE = "L7";
+	static final String KATEGORI_FORVALTNINGSNOTAT = "FORVALTNINGSNOTAT";
 
 
 	static ArkivJournalpost utgaaendeArkivJournalpost(JournalStatusCode journalStatusCode, ArkivUtsendingsInfo arkivUtsendingsInfo, UtsendingsKanalCode kanalCode) {
@@ -137,6 +152,49 @@ public class ArkivJournalpostTestObjects {
 				.type(JournalpostTypeCode.N.name())
 				.saksrelasjon(new ArkivSaksrelasjon(ARKIVSAKSRELASJON_SAK_ID, FagsystemCode.PEN.name(), false,
 						new ArkivSak(null, null, null, null, null, null)))
+				.build();
+	}
+
+	static ArkivJournalpost datoSorteringArkivJournalpost(JournalpostTypeCode journalpostTypeCode, ArkivRelevanteDatoer arkivRelevanteDatoer) {
+		return baseArkivJournalpost()
+				.type(journalpostTypeCode.name())
+				.relevanteDatoer(arkivRelevanteDatoer)
+				.bruker(new ArkivBruker(BRUKER_ID_PERSON, "PERSON"))
+				.saksrelasjon(ArkivSaksrelasjon.builder()
+						.sakId(ARKIVSAKSRELASJON_SAK_ID)
+						.fagsystem(ARKIVSAKRELASJON_FAGSYSTEM.toString())
+						.feilregistrert(true)
+						.sak(new ArkivSak(ARKIVJOURNALPOST_FAGOMRAADE.name(), ARKIVSAK_AKTOERID, null, ARKIVSAK_FAGSAKNR, ARKIVSAK_APPLIKASJON, null))
+						.build())
+				.dokumenter(List.of(hoveddokumentArkivDokumentinfo(), vedleggArkivDokumentinfo()))
+				.build();
+	}
+
+	static ArkivDokumentinfo hoveddokumentArkivDokumentinfo() {
+		return ArkivDokumentinfo.builder()
+				.dokumentInfoId(HOVEDDOKUMENT_DOKUMENT_INFO_ID)
+				.tilknyttetSom(TILKNYTTET_SOM_HOVEDDOKUMENT)
+				.skjerming(SkjermingTypeCode.FEIL.name())
+				.kategori(KATEGORI_FORVALTNINGSNOTAT)
+				.kassert(false)
+				.fildetaljer(List.of(new ArkivFildetaljer(SkjermingTypeCode.FEIL.name(), VariantFormatCode.ARKIV.name(), ARKIVFILDETALJER_FILNAVN_1, HOVEDDOKUMENT_FIL_STOERRELSE, HOVEDDOKUMENT_FILTYPE, HOVEDDOKUMENT_FIL_UUID)))
+				.tittel(HOVEDDOKUMENT_TITTEL)
+				.brevkode(HOVEDDOKUMENT_BREVKODE)
+				.sensitivt(true)
+				.build();
+	}
+
+	static ArkivDokumentinfo vedleggArkivDokumentinfo() {
+		return ArkivDokumentinfo.builder()
+				.dokumentInfoId(VEDLEGG_DOKUMENT_INFO_ID)
+				.tilknyttetSom(TILKNYTTET_SOM_VEDLEGG)
+				.skjerming(SkjermingTypeCode.FEIL.name())
+				.kategori(KATEGORI_FORVALTNINGSNOTAT)
+				.kassert(false)
+				.fildetaljer(List.of(new ArkivFildetaljer(SkjermingTypeCode.FEIL.name(), VariantFormatCode.ARKIV.name(), ARKIVFILDETALJER_FILNAVN_1, HOVEDDOKUMENT_FIL_STOERRELSE, HOVEDDOKUMENT_FILTYPE, HOVEDDOKUMENT_FIL_UUID)))
+				.tittel(VEDLEGG_TITTEL)
+				.brevkode(VEDLEGG_BREVKODE)
+				.sensitivt(true)
 				.build();
 	}
 

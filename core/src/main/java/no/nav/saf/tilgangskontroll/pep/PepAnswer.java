@@ -31,7 +31,6 @@ public class PepAnswer {
 		return new PepAnswer(PERMIT, null, null);
 	}
 
-	// TODO: erstatt AbacDenyReason med en ikke-ABAC-avhengig variant
 	public static PepAnswer deny(AbacDenyReason pepDenyReason) {
 		return new PepAnswer(DENY, pepDenyReason.toString(), pepDenyReason);
 	}

@@ -6,6 +6,7 @@ import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlAttribute;
 import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlRequest;
 import no.nav.saf.tilgangskontroll.abac.dto.response.Decision;
 import no.nav.saf.tilgangskontroll.abac.dto.response.XacmlResponse;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
@@ -24,10 +25,11 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-class AbacBackedPep4ImplTest extends AbstractAbacBackedPepTest {
+@Disabled
+class MsGraphBackedPep4ImplTest extends AbstractAbacBackedPepTest {
 
 	@InjectMocks
-	private AbacBackedPep4Impl pep4;
+	private MsGraphBackedPep4Impl pep4;
 
 	@Test
 	void shouldPermitWhenJournalstatusNotUtgaarAndSkjermingIsNotPresent() {

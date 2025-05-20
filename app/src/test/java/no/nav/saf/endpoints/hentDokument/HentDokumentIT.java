@@ -188,7 +188,7 @@ class HentDokumentIT extends AbstractItest {
 	void shouldNotHentDokumentWhenBrukerErOrganisasjonAndNotEgenAnsatt() {
 		abacPermit();
 		stubNavHrOrganisasjonJa(ORG_NR);
-		stubNavOrgNotMemberOfEgenAnsatt(NAV_IDENT_SAKSBEHANDLER);
+		stubMsGraphMemberOfNoGroupsDefaultSaksbehandler();
 		stubDokarkivJournalpost("journalpost-dokumentinfo-gsak-org-happy.json");
 
 		ResponseEntity<String> responseEntity = callHentDokument();
@@ -201,7 +201,6 @@ class HentDokumentIT extends AbstractItest {
 	void shouldHentDokumentWhenBrukerErOrganisasjonAndIsEgenAnsattBehandler() {
 		abacPermit();
 		stubNavHrOrganisasjonJa(ORG_NR);
-		stubNavOrgMemberOfEgenAnsatt(NAV_IDENT_SAKSBEHANDLER);
 		stubHappyHentDokument();
 		stubDokarkivJournalpost("journalpost-dokumentinfo-gsak-org-happy.json");
 
@@ -209,13 +208,13 @@ class HentDokumentIT extends AbstractItest {
 
 		assertOkArkivResponse(responseEntity);
 		verify(getRequestedFor(urlEqualTo("/dokarkiv/hentdokument/" + DOKUMENT_ID + "/" + VARIANTFORMAT)));
+		verifyMsGraphMemberOfSeveralGroupsCalled(MS_ID_SAKSBEHANDLER, 1);
 	}
 
 	@Test
 	void shouldHentDokumentWhenBrukerErOrganisasjonAndIsEgenAnsattBehandlerAndOrgnrWhitespace() {
 		abacPermit();
 		stubNavHrOrganisasjonJa(ORG_NR);
-		stubNavOrgMemberOfEgenAnsatt(NAV_IDENT_SAKSBEHANDLER);
 		stubHappyHentDokument();
 		stubDokarkivJournalpost("journalpost-dokumentinfo-gsak-org-whitespace.json");
 
@@ -223,6 +222,7 @@ class HentDokumentIT extends AbstractItest {
 
 		assertOkArkivResponse(responseEntity);
 		verify(getRequestedFor(urlEqualTo("/dokarkiv/hentdokument/" + DOKUMENT_ID + "/" + VARIANTFORMAT)));
+		verifyMsGraphMemberOfSeveralGroupsCalled(MS_ID_SAKSBEHANDLER, 1);
 	}
 
 	@Test
