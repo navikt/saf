@@ -72,6 +72,11 @@ public class MsGraphBackedPep4Impl extends StandardMsGraphBackedPep<TilgangJourn
 		return permit();
 	}
 
+	@Override
+	PepAnswer verifyRestSTSCredentialFlowAccess(TilgangJournalpost ressurs, SafRequestContext safRequestContext) {
+		return permit();
+	}
+
 	private boolean isJournalpoststatusUtgaar(TilgangJournalpost ressurs) {
 		return Journalstatus.UTGAAR.equals(ressurs.getJournalstatus());
 	}

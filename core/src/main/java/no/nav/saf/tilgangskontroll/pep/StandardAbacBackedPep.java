@@ -18,6 +18,11 @@ public abstract class StandardAbacBackedPep<T> extends Pep<T> {
 	abstract PepAnswer verifyAbacPdpDecision(T ressurs, SafRequestContext safRequestContext);
 
 	@Override
+	PepAnswer verifyRestSTSCredentialFlowAccess(T ressurs, SafRequestContext safRequestContext) {
+		return verifyAbacPdpDecision(ressurs, safRequestContext);
+	}
+
+	@Override
 	public PepAnswer hasAccessWithAnswer(T ressurs, SafRequestContext safRequestContext) {
 		if (safRequestContext.getSecurityContext().isJwtAzureClientCredentialFlow()) {
 			return verifyAzureClientCredentialFlowAccess(ressurs, safRequestContext);

@@ -40,4 +40,13 @@ public class SafRequestContext {
 	public boolean isUserIdNavAnsatt() {
 		return securityContext.isUserIdNavAnsatt();
 	}
+
+	/**
+	 * Om token i request er i kontekst av system eller bruker.
+	 *
+	 * @return true hvis token er utsted av REST-STS eller er Azure client-credential flow, ellers false
+	 */
+	public boolean isSystem() {
+		return securityContext.isSystem();
+	}
 }
