@@ -77,6 +77,11 @@
       "cluster": "prod-gcp"
     },
     {
+      "app": "medlemskap-oppslag",
+      "namespace": "medlemskap",
+      "cluster": "prod-gcp"
+    },
+    {
       "app": "brev-administrasjon",
       "namespace": "isa",
       "cluster": "prod-gcp"
