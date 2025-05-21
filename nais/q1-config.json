@@ -52,6 +52,11 @@
       ]
     },
     {
+      "app": "medlemskap-oppslag",
+      "namespace": "medlemskap",
+      "cluster": "dev-gcp"
+    },
+    {
       "app": "melosys-q1",
       "namespace": "teammelosys",
       "cluster": "dev-fss"
