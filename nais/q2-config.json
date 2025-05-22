@@ -783,7 +783,10 @@
     {
       "app": "historisk-helt-backend",
       "namespace": "historisk",
-      "cluster": "dev-gcp"
+      "cluster": "dev-gcp",
+      "roles": [
+        "tema_hel"
+      ]
     }
     
   ]
