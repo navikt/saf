@@ -127,11 +127,10 @@ public class AbacBackedPep6dImpl extends StandardAbacBackedPep<TilgangDokumentva
 					ressurs.getVariantformat().name(),
 					ressurs.getSkjerming().name());
 
-			boolean decision = !isSkjermingPresent(ressurs);
 			traceLogPepFinished(PEP6D, ressurs);
-			PepAnswer pepAnswer = decision ? permit() : PepAnswer.deny(new SkjermingReason(
-					"dokumentvariant_skjermet", "saf_pep6d", "dokumentvariant_skjermet"
-					));
+			PepAnswer pepAnswer = PepAnswer.deny(new SkjermingReason(
+								"dokumentvariant_skjermet", "saf_pep6d", "dokumentvariant_skjermet"
+								));
 			safRequestContext.getRequestCache().putDecision(tilgangKeyLocalCaching, pepAnswer);
 			return pepAnswer;
 		} else {
