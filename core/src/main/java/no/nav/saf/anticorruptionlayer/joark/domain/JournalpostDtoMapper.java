@@ -68,7 +68,7 @@ import static org.apache.commons.lang3.StringUtils.trim;
 @Component
 public class JournalpostDtoMapper {
 	private static final AvsenderMottakerMapper avsenderMottakerMapper = new AvsenderMottakerMapper();
-	private static final UtledTilgangService utledTilgangService = new UtledTilgangService();
+	private static final UtledTilgangService utledTilgangService = new UtledTilgangService(true);
 	static final String FILTYPE_PDF = "PDF";
 	static final String FILTYPE_PDFA = "PDFA";
 
