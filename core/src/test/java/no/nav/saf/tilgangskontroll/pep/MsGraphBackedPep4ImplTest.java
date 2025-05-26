@@ -2,34 +2,43 @@ package no.nav.saf.tilgangskontroll.pep;
 
 import no.nav.saf.domain.kode.Journalstatus;
 import no.nav.saf.domain.tilgangsmodell.TilgangJournalpost;
-import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlAttribute;
+import no.nav.saf.tilgangskontroll.SafRequestContext;
+import no.nav.saf.tilgangskontroll.SafSecurityContext;
 import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlRequest;
 import no.nav.saf.tilgangskontroll.abac.dto.response.Decision;
 import no.nav.saf.tilgangskontroll.abac.dto.response.XacmlResponse;
-import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
+import org.mockito.Mockito;
 
-import static no.nav.saf.domain.DomainConstants.ABAC_JOURNALSTATUS_UTGAAR;
 import static no.nav.saf.domain.kode.Journalstatus.FERDIGSTILT;
-import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_RESOURCE_TYPE;
-import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_SAF_JOURNALSTATUS;
-import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_SAF_JOURNAL_METADATA;
-import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_SAF_SKJERMING;
-import static org.hamcrest.CoreMatchers.hasItem;
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
-@Disabled
 class MsGraphBackedPep4ImplTest extends AbstractAbacBackedPepTest {
 
-	@InjectMocks
 	private MsGraphBackedPep4Impl pep4;
+
+	@Override
+	SafRequestContext createSafRequestContext() {
+		var safSecurityContextMock = Mockito.mock(SafSecurityContext.class);
+		when(safSecurityContextMock.isJwtAzureClientCredentialFlow()).thenReturn(false);
+		var safRequestContextMock = Mockito.mock(SafRequestContext.class);
+		when(safRequestContextMock.getNavCallId()).thenReturn(NAV_CALLID);
+		when(safRequestContextMock.getUserId()).thenReturn("Z123456");
+		when(safRequestContextMock.isUserIdNavAnsatt()).thenReturn(true);
+		when(safRequestContextMock.getSecurityContext()).thenReturn(safSecurityContextMock);
+		return safRequestContextMock;
+	}
+
+	@BeforeEach
+	void setUp() {
+		super.setUp();
+		pep4 = new MsGraphBackedPep4Impl(navUserGroupMembershipService);
+	}
 
 	@Test
 	void shouldPermitWhenJournalstatusNotUtgaarAndSkjermingIsNotPresent() {
@@ -44,77 +53,55 @@ class MsGraphBackedPep4ImplTest extends AbstractAbacBackedPepTest {
 	@Test
 	void shouldPermitWhenJournalstatusUtgaarAndSaksbehandlerHasAccess() {
 		when(abacService.evaluate(any(XacmlRequest.class))).thenReturn(new XacmlResponse(Decision.PERMIT, null, null, null));
-
-		ArgumentCaptor<XacmlRequest> request = ArgumentCaptor.forClass(XacmlRequest.class);
+		when(navUserGroupMembershipService.isNavIdentInJoarkVedlikeholdGroup(anyString())).thenReturn(true);
+		when(navUserGroupMembershipService.isNavIdentInLeseUtgaatteDokumenterGroup(anyString())).thenReturn(true);
 
 		boolean hasAccess = pep4.hasAccess(TilgangJournalpost.builder()
 				.journalstatus(Journalstatus.UTGAAR)
 				.build(), createSafRequestContext());
 
-		verify(abacService).evaluate(request.capture());
-		XacmlRequest capturedRequest = request.getValue();
-
 		assertTrue(hasAccess);
-		assertThat(capturedRequest.getResources(), hasItem(new XacmlAttribute(RESOURCE_FELLES_RESOURCE_TYPE, RESOURCE_SAF_JOURNAL_METADATA)));
-		assertThat(capturedRequest.getResources(), hasItem(new XacmlAttribute(RESOURCE_SAF_JOURNALSTATUS, ABAC_JOURNALSTATUS_UTGAAR)));
 	}
 
 	@Test
 	void shouldPermitWhenSkjermingIsPresentAndSaksbehandlerHasAccess() {
 		when(abacService.evaluate(any(XacmlRequest.class))).thenReturn(new XacmlResponse(Decision.PERMIT, null, null, null));
-
-		ArgumentCaptor<XacmlRequest> request = ArgumentCaptor.forClass(XacmlRequest.class);
+		when(navUserGroupMembershipService.isNavIdentInJoarkVedlikeholdGroup(anyString())).thenReturn(true);
+		when(navUserGroupMembershipService.isNavIdentInLeseUtgaatteDokumenterGroup(anyString())).thenReturn(true);
 
 		boolean hasAccess = pep4.hasAccess(TilgangJournalpost.builder()
 				.journalstatus(Journalstatus.FERDIGSTILT)
 				.skjerming(SKJERMING_POL)
 				.build(), createSafRequestContext());
 
-		verify(abacService).evaluate(request.capture());
-		XacmlRequest capturedRequest = request.getValue();
-
 		assertTrue(hasAccess);
-		assertThat(capturedRequest.getResources(), hasItem(new XacmlAttribute(RESOURCE_FELLES_RESOURCE_TYPE, RESOURCE_SAF_JOURNAL_METADATA)));
-		assertThat(capturedRequest.getResources(), hasItem(new XacmlAttribute(RESOURCE_SAF_SKJERMING, SKJERMING_POL.name())));
 	}
 
 	@Test
 	void shouldPermitWhenJournalstatusUtgaarAndSkjermingIsPresentAndSaksbehandlerHasAccess() {
 		when(abacService.evaluate(any(XacmlRequest.class))).thenReturn(new XacmlResponse(Decision.PERMIT, null, null, null));
-
-		ArgumentCaptor<XacmlRequest> request = ArgumentCaptor.forClass(XacmlRequest.class);
+		when(navUserGroupMembershipService.isNavIdentInJoarkVedlikeholdGroup(anyString())).thenReturn(true);
+		when(navUserGroupMembershipService.isNavIdentInLeseUtgaatteDokumenterGroup(anyString())).thenReturn(true);
 
 		boolean hasAccess = pep4.hasAccess(TilgangJournalpost.builder()
 				.journalstatus(Journalstatus.UTGAAR)
 				.skjerming(SKJERMING_POL)
 				.build(), createSafRequestContext());
 
-		verify(abacService).evaluate(request.capture());
-		XacmlRequest capturedRequest = request.getValue();
-
 		assertTrue(hasAccess);
-		assertThat(capturedRequest.getResources(), hasItem(new XacmlAttribute(RESOURCE_FELLES_RESOURCE_TYPE, RESOURCE_SAF_JOURNAL_METADATA)));
-		assertThat(capturedRequest.getResources(), hasItem(new XacmlAttribute(RESOURCE_SAF_JOURNALSTATUS, ABAC_JOURNALSTATUS_UTGAAR)));
-		assertThat(capturedRequest.getResources(), hasItem(new XacmlAttribute(RESOURCE_SAF_SKJERMING, SKJERMING_POL.name())));
 	}
 
 	@Test
 	void shouldDenyWhenJournalstatusUtgaarAndSkjermingIsPresentAndSaksbehandlerHasNotAccess() {
 		when(abacService.evaluate(any(XacmlRequest.class))).thenReturn(new XacmlResponse(Decision.DENY, null, null, null));
-
-		ArgumentCaptor<XacmlRequest> request = ArgumentCaptor.forClass(XacmlRequest.class);
+		when(navUserGroupMembershipService.isNavIdentInJoarkVedlikeholdGroup(anyString())).thenReturn(false);
+		when(navUserGroupMembershipService.isNavIdentInLeseUtgaatteDokumenterGroup(anyString())).thenReturn(false);
 
 		boolean hasAccess = pep4.hasAccess(TilgangJournalpost.builder()
 				.journalstatus(Journalstatus.UTGAAR)
 				.skjerming(SKJERMING_POL)
 				.build(), createSafRequestContext());
 
-		verify(abacService).evaluate(request.capture());
-		XacmlRequest capturedRequest = request.getValue();
-
 		assertFalse(hasAccess);
-		assertThat(capturedRequest.getResources(), hasItem(new XacmlAttribute(RESOURCE_FELLES_RESOURCE_TYPE, RESOURCE_SAF_JOURNAL_METADATA)));
-		assertThat(capturedRequest.getResources(), hasItem(new XacmlAttribute(RESOURCE_SAF_JOURNALSTATUS, ABAC_JOURNALSTATUS_UTGAAR)));
-		assertThat(capturedRequest.getResources(), hasItem(new XacmlAttribute(RESOURCE_SAF_SKJERMING, SKJERMING_POL.name())));
 	}
 }

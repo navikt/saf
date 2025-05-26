@@ -445,7 +445,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 		abacDenyPep6dSkipPep2Pep4Pep5();
 		stubPdl();
 		stubSak();
-		stubFinnjournalposter("finnjournalposter_single_bidragAndSkjerming-happy.json");
+		stubFinnjournalposter("finnjournalposter_single_bidragAndSkjermingOnlyDokvariant-happy.json");
 		stubPensjonSakSammendrag("psak-hentSakSammendragListe-happy-empty.json");
 
 		ResponseEntity<GraphQLResponse> responseEntity = callDokumentOversikBrukerWithAktoerId();

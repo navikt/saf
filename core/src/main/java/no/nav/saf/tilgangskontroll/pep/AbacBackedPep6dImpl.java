@@ -34,7 +34,6 @@ import static no.nav.saf.tilgangskontroll.pep.PepAnswer.permit;
  * Lokal caching er kun relevant for dokumentoversiktene og brukes i journalpostDtoMapper.java
  */
 @Slf4j
-@Component(PEP6D)
 public class AbacBackedPep6dImpl extends StandardAbacBackedPep<TilgangDokumentvariant> {
 
 	private final Cache tilgangCache;

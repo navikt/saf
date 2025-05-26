@@ -78,7 +78,6 @@ public abstract class AbstractItest {
 	private static final String STATE_PEP2D = "state_pep2d";
 	private static final String STATE_PEP3 = "state_pep3";
 	private static final String STATE_PEP5 = "state_pep5";
-	private static final String STATE_PEP6D = "state_pep6d";
 	private static final String STATE_PEP7D = "state_pep7d";
 
 	protected static final String NAV_IDENT_SAKSBEHANDLER = "Z123456";
@@ -287,7 +286,8 @@ public abstract class AbstractItest {
 	}
 
 	protected void abacDenyPep6dSkipPep3OrPep2() {
-		stubMsGraphMemberOfAllRelevantGroupsDefaultSaksbehandler();
+		stubMsGraphGetUser(NAV_IDENT_SAKSBEHANDLER);
+		stubMsGraphMemberOfSeveralGroups(MS_ID_SAKSBEHANDLER, "nav/msgraph-checkmembergroup-ikke-joarkvedlikehold.json");
 		stubFor(post(urlEqualTo("/abac"))
 				.inScenario(SCENARIO_ABAC)
 				.whenScenarioStateIs(STARTED)
@@ -314,18 +314,12 @@ public abstract class AbstractItest {
 				.whenScenarioStateIs(STATE_PEP5)
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("abac/abac-permit.json"))
-				.willSetStateTo(STATE_PEP6D));
-		stubFor(post(urlEqualTo("/abac"))
-				.inScenario(SCENARIO_ABAC)
-				.whenScenarioStateIs(STATE_PEP6D)
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("abac/abac-deny.json")));
+						.withBodyFile("abac/abac-permit.json")));
 	}
 
 	protected void abacDenyPep6dSkipPep2Pep4Pep5() {
-		stubMsGraphMemberOfAllRelevantGroupsDefaultSaksbehandler();
+		stubMsGraphGetUser(NAV_IDENT_SAKSBEHANDLER);
+		stubMsGraphMemberOfSeveralGroups(MS_ID_SAKSBEHANDLER, "nav/msgraph-checkmembergroup-egenansatt-fortrolig-strengt-fortrolig.json");
 		stubFor(post(urlEqualTo("/abac"))
 				.inScenario(SCENARIO_ABAC)
 				.whenScenarioStateIs(STARTED)
@@ -345,17 +339,12 @@ public abstract class AbstractItest {
 				.whenScenarioStateIs(STATE_PEP2D)
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("abac/abac-permit.json"))
-				.willSetStateTo(STATE_PEP6D));
-		stubFor(post(urlEqualTo("/abac"))
-				.inScenario(SCENARIO_ABAC)
-				.whenScenarioStateIs(STATE_PEP6D)
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("abac/abac-deny.json")));
+						.withBodyFile("abac/abac-permit.json")));
 	}
 
 	protected void abacDenyPep6dSkipPep2Pep3Pep4Pep5() {
+		stubMsGraphGetUser(NAV_IDENT_SAKSBEHANDLER);
+		stubMsGraphMemberOfSeveralGroups(MS_ID_SAKSBEHANDLER, "nav/msgraph-checkmembergroup-egenansatt-fortrolig-strengt-fortrolig.json");
 		stubFor(post(urlEqualTo("/abac"))
 				.inScenario(SCENARIO_ABAC)
 				.whenScenarioStateIs(STARTED)
@@ -368,15 +357,7 @@ public abstract class AbstractItest {
 				.whenScenarioStateIs(STATE_PEP2D)
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("abac/abac-permit.json"))
-				.willSetStateTo(STATE_PEP6D));
-		stubFor(post(urlEqualTo("/abac"))
-				.inScenario(SCENARIO_ABAC)
-				.whenScenarioStateIs(STATE_PEP6D)
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("abac/abac-deny.json"))
-				.willSetStateTo(STATE_PERMIT));
+						.withBodyFile("abac/abac-permit.json")));
 		stubFor(post(urlEqualTo("/abac"))
 				.inScenario(SCENARIO_ABAC)
 				.whenScenarioStateIs(STATE_PERMIT)
@@ -762,7 +743,7 @@ public abstract class AbstractItest {
 
 	protected void verifyabacDenyPep2dAndHttpStatusCode(boolean isDokumentoversikt, HttpStatusCode expectedHttpStatus, HttpStatusCode actualHttpStatus) {
 		if (isDokumentoversikt) {
-			verify(5, postRequestedFor(urlEqualTo("/abac")));
+			verify(4, postRequestedFor(urlEqualTo("/abac")));
 		} else {
 			verify(3, postRequestedFor(urlEqualTo("/abac")));
 		}
@@ -783,22 +764,22 @@ public abstract class AbstractItest {
 
 	protected void verifyabacDenyPep5SkipPep2OrPep3AndHttpStatusCode(boolean isDokumentoversikt, HttpStatusCode expectedHttpStatus, HttpStatusCode actualHttpStatus) {
 		if (isDokumentoversikt) {
-			verify(5, postRequestedFor(urlEqualTo("/abac")));
-		} else {
 			verify(4, postRequestedFor(urlEqualTo("/abac")));
+		} else {
+			verify(3, postRequestedFor(urlEqualTo("/abac")));
 		}
 		verifyMsGraphMemberOfSeveralGroupsCalled(MS_ID_SAKSBEHANDLER, 1);
 		assertEquals(expectedHttpStatus, actualHttpStatus);
 	}
 
 	protected void verifyabacDenyPep6dSkipPep2AndHttpStatusCode(HttpStatusCode expectedHttpStatus, HttpStatusCode actualHttpStatus) {
-		verify(5, postRequestedFor(urlEqualTo("/abac")));
+		verify(4, postRequestedFor(urlEqualTo("/abac")));
 		verifyMsGraphMemberOfSeveralGroupsCalled(MS_ID_SAKSBEHANDLER, 1);
 		assertEquals(expectedHttpStatus, actualHttpStatus);
 	}
 
 	protected void verifyabacDenyPep6dSkipPep2Pep3AndHttpStatusCode(HttpStatusCode expectedHttpStatus, HttpStatusCode actualHttpStatus) {
-		verify(4, postRequestedFor(urlEqualTo("/abac")));
+		verify(3, postRequestedFor(urlEqualTo("/abac")));
 		verifyMsGraphMemberOfSeveralGroupsCalled(MS_ID_SAKSBEHANDLER, 1);
 		assertEquals(expectedHttpStatus, actualHttpStatus);
 	}

@@ -74,7 +74,7 @@ class DokumentoversiktJournalstatusIT extends AbstractItest {
 
 		verify(postRequestedFor(urlEqualTo("/dokarkiv/finnjournalposterstatus"))
 				.withRequestBody(matchingJsonPath("$.journalstatus", containing("UB"))));
-		verify(2, postRequestedFor(urlEqualTo("/abac"))); // kun journalpost 452929051 med skjerming sjekkes mot abac
+		verify(1, postRequestedFor(urlEqualTo("/abac"))); // kun journalpost 452929051 med skjerming sjekkes mot abac
 	}
 
 	@Test
@@ -197,7 +197,7 @@ class DokumentoversiktJournalstatusIT extends AbstractItest {
 
 		verify(postRequestedFor(urlEqualTo("/dokarkiv/finnjournalposterstatus"))
 				.withRequestBody(containing("{\"journalstatus\":\"U\",\"fraDato\":\"2019-01-01\",\"journalposttyper\":[\"I\",\"U\",\"N\"],\"antallRader\":5,\"etterPeker\":null}")));
-		verify(2, postRequestedFor(urlEqualTo("/abac")));
+		verify(1, postRequestedFor(urlEqualTo("/abac")));
 		assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
 	}
 
@@ -238,7 +238,7 @@ class DokumentoversiktJournalstatusIT extends AbstractItest {
 		assertThat(dokumentoversikt.getJournalposter().get(0).getDokumenter()).isEmpty();
 		verify(postRequestedFor(urlEqualTo("/dokarkiv/finnjournalposterstatus"))
 				.withRequestBody(containing("{\"journalstatus\":\"U\",\"fraDato\":\"2019-01-01\",\"journalposttyper\":[\"I\",\"U\",\"N\"],\"antallRader\":5,\"etterPeker\":null}")));
-		verify(2, postRequestedFor(urlEqualTo("/abac")));
+		verify(1, postRequestedFor(urlEqualTo("/abac")));
 		assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
 	}
 
@@ -249,17 +249,17 @@ class DokumentoversiktJournalstatusIT extends AbstractItest {
 		stubFor(post("/dokarkiv/finnjournalposterstatus")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("safintern/journalpostjournalstatus/journalposter-journalstatus-single-utgaar.json")));
+						.withBodyFile("safintern/journalpostjournalstatus/journalposter-journalstatus-single-utgaar-skjermet-dokumentvariant.json")));
 
 		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversiktJournalstatusUtgaar();
 		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
 
-		assertEquals(1, dokumentoversikt.getJournalposter().size());
+		assertThat(dokumentoversikt.getJournalposter()).hasSize(1);
 		assertEquals("453466679", dokumentoversikt.getJournalposter().get(0).getJournalpostId());
 		assertSaksbehandlerHarIkkeTilgang(dokumentoversikt);
 		verify(postRequestedFor(urlEqualTo("/dokarkiv/finnjournalposterstatus"))
 				.withRequestBody(containing("{\"journalstatus\":\"U\",\"fraDato\":\"2019-01-01\",\"journalposttyper\":[\"I\",\"U\",\"N\"],\"antallRader\":5,\"etterPeker\":null}")));
-		verify(2, postRequestedFor(urlEqualTo("/abac")));
+		verify(0, postRequestedFor(urlEqualTo("/abac")));
 		assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
 	}
 

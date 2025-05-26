@@ -6,6 +6,7 @@ import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlAttribute;
 import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlRequest;
 import no.nav.saf.tilgangskontroll.abac.dto.response.Decision;
 import no.nav.saf.tilgangskontroll.abac.dto.response.XacmlResponse;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
@@ -31,8 +32,9 @@ class AbacBackedPep2DImplTest extends AbstractAbacBackedPepTest {
 
 	private AbacBackedPep2dImpl pep2d;
 
-	AbacBackedPep2DImplTest() {
-		super();
+	@BeforeEach
+	void setUp() {
+		super.setUp();
 		SimpleCacheManager cacheManager = new SimpleCacheManager();
 		cacheManager.setCaches(Collections.singletonList(new NoOpCache(VALKEY_DOKUMENT_TILGANG_CACHE)));
 		cacheManager.afterPropertiesSet();
