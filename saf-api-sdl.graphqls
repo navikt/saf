@@ -758,6 +758,10 @@ enum Kanal {
     # Forsendelsen inneholder en komplett chatdialog (inngående og utgående meldinger) mellom en bruker og en veileder i NAV.
     NAV_NO_CHAT
 
+    # Presentert direkte på nav.no for innlogget bruker
+    NAV_NO_UTEN_VARSLING
+
+
     # Brevet er sendt til virksomhet som Taushetsbelagt Post via Altinn.
     # * Brukes for utgående journalposter.
     DPVT
