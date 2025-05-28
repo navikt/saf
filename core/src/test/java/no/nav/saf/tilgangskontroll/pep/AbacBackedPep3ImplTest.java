@@ -7,6 +7,7 @@ import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlAttribute;
 import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlRequest;
 import no.nav.saf.tilgangskontroll.abac.dto.response.Decision;
 import no.nav.saf.tilgangskontroll.abac.dto.response.XacmlResponse;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
@@ -32,6 +33,12 @@ class AbacBackedPep3ImplTest extends AbstractAbacBackedPepTest {
 
 	@InjectMocks
 	private AbacBackedPep3Impl pep3;
+
+	@BeforeEach
+	void setUp() {
+		super.setUp();
+		pep3 = new AbacBackedPep3Impl(abacService);
+	}
 
 	@Test
 	void shouldPermitWhenTemaIsBidAndRelevanteTredjeparterSupplied() {

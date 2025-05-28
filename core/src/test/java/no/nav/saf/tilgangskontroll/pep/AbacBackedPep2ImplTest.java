@@ -6,6 +6,7 @@ import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlAttribute;
 import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlRequest;
 import no.nav.saf.tilgangskontroll.abac.dto.response.Decision;
 import no.nav.saf.tilgangskontroll.abac.dto.response.XacmlResponse;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
@@ -23,8 +24,13 @@ import static org.mockito.Mockito.when;
 
 class AbacBackedPep2ImplTest extends AbstractAbacBackedPepTest {
 
-	@InjectMocks
 	private AbacBackedPep2Impl pep2;
+
+	@BeforeEach
+	void setUp() {
+		super.setUp();
+		pep2 = new AbacBackedPep2Impl(abacService);
+	}
 
 	@Test
 	void shouldPermitWhenTemaFarAndParagraf19AccessIsPermitted() {

@@ -473,7 +473,7 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 		stubFor(post("/hentjournalsakinfo/finnjournalposter")
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("joark/finnjournalposter_single_bidragAndSkjerming-happy.json")));
+						.withBodyFile("joark/finnjournalposter_single_bidragAndSkjermingOnlyDokvariant-happy.json")));
 		stubFor(post("/pdl")
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
@@ -485,8 +485,9 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 		assertEquals("429837417", dokumentoversikt.getJournalposter().get(0).getJournalpostId());
 		assertThat(dokumentoversikt.getJournalposter()).hasSize(1);
 		assertFalse(dokumentoversikt.getJournalposter().get(0).isBrukerHarTilgang());
-		assertThat(dokumentoversikt.getJournalposter().getFirst().getBrukerTilgangAvvistBegrunnelser()).containsExactly(new BrukerTilgangAvvistBegrunnelse("temaer_unntatt_innsyn", null), new BrukerTilgangAvvistBegrunnelse("pol_gdpr", null));
+		assertThat(dokumentoversikt.getJournalposter().getFirst().getBrukerTilgangAvvistBegrunnelser()).containsExactly(new BrukerTilgangAvvistBegrunnelse("temaer_unntatt_innsyn", null));
 		assertSaksbehandlerHarIkkeTilgang(dokumentoversikt);
+
 		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter"))
 				.withRequestBody(containing("{\"gsakSakIds\":[\"135695442\"],\"psakSakIds\":[],\"fraDato\":\"0001-01-01\",\"tilDato\":null,\"inkluderJournalStatus\":[\"FL\",\"FS\",\"J\",\"E\"],\"inkluderJournalpostType\":[\"I\",\"U\",\"N\"],\"visFeilregistrerte\":false,\"alleIdenter\":[],\"foerste\":5,\"etterPeker\":null}")));
 		verifyabacDenyPep6dSkipPep2AndHttpStatusCode(OK, responseEntity.getStatusCode());

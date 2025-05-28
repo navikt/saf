@@ -1,14 +1,18 @@
 package no.nav.saf.tilgangskontroll.pep;
 
+import no.nav.saf.anticorruptionlayer.nav.NavOrgService;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.domain.tilgangsmodell.TilgangIdent;
 import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlAttribute;
 import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlRequest;
 import no.nav.saf.tilgangskontroll.abac.dto.response.Decision;
 import no.nav.saf.tilgangskontroll.abac.dto.response.XacmlResponse;
+import no.nav.saf.tilgangskontroll.abac.service.AbacService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
 
 import java.util.Collections;
 
@@ -26,8 +30,16 @@ import static org.mockito.Mockito.when;
 
 class AbacBackedPep1GImplTest extends AbstractAbacBackedPepTest {
 
-	@InjectMocks
+	@Mock
+	NavOrgService navOrgService;
+
 	private AbacBackedPep1gImpl pep1g;
+
+	@BeforeEach
+	void setUp() {
+		super.setUp();
+		pep1g = new AbacBackedPep1gImpl(abacService, navOrgService, navUserGroupMembershipService);
+	}
 
 	@Test
 	void shouldPermitWhenAktoerIdIsEvaluated() {
