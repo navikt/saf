@@ -41,7 +41,7 @@
 		<safselvbetjening-innsyn-api.version>2025.05.07-13.14-262aa3b</safselvbetjening-innsyn-api.version>
 
 		<!-- Test -->
-		<spring-cloud-starter-contract-stub-runner.version>4.2.0</spring-cloud-starter-contract-stub-runner.version>
+		<spring-cloud-starter-contract-stub-runner.version>4.3.0</spring-cloud-starter-contract-stub-runner.version>
 		<embedded-redis.version>1.4.2</embedded-redis.version>
 
 		<!-- Plugins -->
