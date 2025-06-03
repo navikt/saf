@@ -566,6 +566,14 @@
         "tema_oms",
         "tema_fri"
       ]
+    },    
+    {
+      "app": "ung-sak",
+      "namespace": "k9saksbehandling",
+      "cluster": "prod-gcp",
+      "roles": [
+        "tema_ung"
+      ]
     },
     {
       "app": "dokarkiv",
