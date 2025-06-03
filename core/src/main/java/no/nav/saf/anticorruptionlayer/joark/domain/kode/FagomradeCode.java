@@ -262,7 +262,23 @@ public enum FagomradeCode {
 	/**
 	 * Klage lønnsgaranti
 	 */
-	KLL;
+	KLL,
+	/**
+	 * Aktivitetsplan med dialoger
+	 */
+	AKT,
+	/**
+	 * Ungdomsprogramytelsen
+	 */
+	UNG,
+	/**
+	 * Innsyn
+	 */
+	PAI,
+	/**
+	 * Innsyn etter personopplysningsloven
+	 */
+	POI;
 
 	public static Tema toSafTema(FagomradeCode joarkFagomradeCode) {
 		return joarkFagomradeCode == null ? Tema.UKJ : Tema.valueOf(joarkFagomradeCode.name());
