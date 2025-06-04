@@ -7,7 +7,8 @@ import no.nav.saf.domain.kode.Tema;
 
 import java.time.LocalDateTime;
 
-import static no.nav.saf.domain.DomainConstants.SAK_STATUS_AAPEN;
+import static no.nav.saf.domain.DomainConstants.SAK_STATUS_AAPEN_GSAK;
+import static no.nav.saf.domain.kode.Arkivsakssystem.PSAK;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 @Value
@@ -40,7 +41,7 @@ public class Arkivsak {
 	}
 
 	public boolean isAvsluttet() {
-		return sakStatus != null && !SAK_STATUS_AAPEN.equalsIgnoreCase(sakStatus);
+		return !(PSAK == arkivsaksystem || sakStatus == null || SAK_STATUS_AAPEN_GSAK.equalsIgnoreCase(sakStatus));
 	}
 
 	public static Tema mapTema(String temaString) {

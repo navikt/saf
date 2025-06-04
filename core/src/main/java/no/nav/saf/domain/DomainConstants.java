@@ -16,7 +16,7 @@ public final class DomainConstants {
 	public static final String FAGSAKSYSTEM_FORELDREPENGELOSNING = "FS36";
 	public static final String FAGSAKSYSTEM_K9 = "K9";
 
-	public static final String SAK_STATUS_AAPEN = "AAPEN";
+	public static final String SAK_STATUS_AAPEN_GSAK = "AAPEN";
 
 	public static final ZoneId TIDSSONE_NORGE = ZoneId.of("Europe/Oslo");
 

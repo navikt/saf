@@ -440,7 +440,7 @@ public class JournalpostDtoMapper {
 					getDecisionFromPep8d(journalpost.getSak(), requestCache);
 		} else {
 			if (journalpost.getTema() == Tema.UKJ) {
-				// Når tema=UKJ skal saksbehandler ha tilgang. Kun Pep6d skal bestemme saksbehandlerHarTilgang.
+				// Når tema=UKJ og sak er åpen skal saksbehandler ha tilgang. Kun Pep6d og Pep8d skal bestemme saksbehandlerHarTilgang.
 				// https://jira.adeo.no/browse/MMA-3992
 				return getDecisionFromPep6d(journalpost.getJournalpostId(), dokumentInfoDto.getDokumentInfoId(), variantDto, requestCache) &&
 						getDecisionFromPep8d(journalpost.getSak(), requestCache);
