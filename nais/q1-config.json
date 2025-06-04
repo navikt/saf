@@ -413,8 +413,7 @@
       "namespace": "k9saksbehandling",
       "cluster": "dev-gcp",
       "roles": [
-        "tema_oms",
-        "tema_fri"
+        "tema_ung"
       ]
     },
     {
