@@ -698,6 +698,15 @@ public abstract class AbstractItest {
 						.withBodyFile("abac/abac-deny.json")));
 	}
 
+	protected static void denyPep8d() {
+		stubMsGraphGetUser(NAV_IDENT_SAKSBEHANDLER);
+		stubMsGraphMemberOfSeveralGroups(MS_ID_SAKSBEHANDLER, "nav/msgraph-checkmembergroup-ikke-joark-historisk.json");
+		stubFor(post(urlEqualTo("/abac"))
+				.willReturn(aResponse().withStatus(OK.value())
+						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("abac/abac-permit.json")));
+	}
+
 	protected static void stubMsGraphGetUser(String navIdent) {
 		stubFor(get("/msgraph/users?$count=true&$filter=onPremisesSamAccountName%20eq%20%27" + navIdent + "%27&$select=id")
 				.willReturn(aResponse().withStatus(OK.value())

@@ -572,6 +572,23 @@ class JournalpostIT extends AbstractItest {
 	}
 
 	@Test
+	void shouldReturnSaksbehandlerTilgangFalseAndSkjultTittelWhenDenyOnPep8d() {
+		denyPep8d();
+		stubDokarkivJournalpost("journalpost-gsak-inngaaende-avsluttet-sak.json");
+		stubPdl("hentPdlDataForIdent-inngaaendeBrevBruker-happy.json");
+
+		Journalpost journalpost = parseJournalpost(journalpostQuery());
+		assertThat(journalpost.getTittel()).isEqualTo(SKJULT_TITTEL);
+		DokumentInfo dokumentInfo = journalpost.getDokumenter().get(0);
+		assertThat(dokumentInfo.getTittel()).isEqualTo(SKJULT_TITTEL);
+		assertThat(dokumentInfo.getDokumentvarianter().get(0).isSaksbehandlerHarTilgang()).isFalse();
+		assertThat(dokumentInfo.getLogiskeVedlegg().get(0).getTittel()).isEqualTo(SKJULT_TITTEL);
+
+		assertThat(journalpost.getBrukerTilgangAvvistBegrunnelser()).isNotNull().isEmpty();
+		assertThat(journalpost.isBrukerHarTilgang()).isTrue();
+	}
+
+	@Test
 	void shouldReturnNullJournalpostWhenDenyOnPep3() {
 		abacDenyPep3SkipPep2();
 		stubDokarkivJournalpost("journalpost-gsak-inngaaende-tema-bid.json");

@@ -32,6 +32,7 @@ import no.nav.saf.domain.visningsmodell.Tilleggsopplysning;
 import no.nav.saf.domain.visningsmodell.Utsendingsinfo;
 import no.nav.saf.tilgangskontroll.RequestCache;
 import no.nav.saf.tilgangskontroll.pep.PepAnswer;
+import no.nav.saf.tilgangskontroll.pep.reasons.AvsluttetSakReason;
 import no.nav.saf.tilgangskontroll.pep.reasons.TemaReason;
 import no.nav.saf.tilgangskontroll.pep.reasons.UkjentEllerTekniskReason;
 import org.junit.jupiter.api.Test;
@@ -388,6 +389,7 @@ class ArkivJournalpostMapperTest {
 				String.valueOf(ARKIVJOURNALPOST_JOURNALPOST_ID), String.valueOf(ARKIVDOKUMENTINFO_DOKUMENT_INFO_ID), VARIANT_FORMAT_CODE_SLADDET.getSafVariantformat()
 						.name(), SKJERMING_TYPE_CODE_POL.getSafSkjerming().name());
 		String tilgangKeyPep7dLocalCaching = KeyGeneratorLocalCaching.getKeyForPep7d(FagsystemCode.toSafArkivsaksystem(arkivJournalpost.saksrelasjon().fagsystem()), arkivJournalpost.saksrelasjon().sakId().toString());
+		String tilgangKeyPep8dLocalCaching = KeyGeneratorLocalCaching.getKeyForPep8d(Arkivsakssystem.PSAK, String.valueOf(ARKIVSAKSRELASJON_SAK_ID));
 
 		RequestCache requestCache = createTilgangBrukerRequestCachePSAK();
 		requestCache.putDecision(tilgangKeyPep2dLocalCaching, PepAnswer.permit());
@@ -395,6 +397,7 @@ class ArkivJournalpostMapperTest {
 		requestCache.putDecision(tilgangKeyPep6dLocalCachingVariantArkiv, PepAnswer.permit());
 		requestCache.putDecision(tilgangKeyPep6dLocalCachingVariantSladdet, PepAnswer.deny(new UkjentEllerTekniskReason()));
 		requestCache.putDecision(tilgangKeyPep7dLocalCaching, PepAnswer.permit());
+		requestCache.putDecision(tilgangKeyPep8dLocalCaching, PepAnswer.permit());
 
 		Journalpost journalpost = mapJournalpost(arkivJournalpost, emptySet(), requestCache);
 
@@ -414,6 +417,27 @@ class ArkivJournalpostMapperTest {
 		String tilgangKeyPep5LocalCaching = KeyGeneratorLocalCaching.getKeyForPep5(String.valueOf(ARKIVJOURNALPOST_JOURNALPOST_ID), String.valueOf(ARKIVDOKUMENTINFO_DOKUMENT_INFO_ID));
 		requestCache.putDecision(tilgangKeyPep2dLocalCaching, PepAnswer.deny(new TemaReason("cause_0013_ikketilgangtiltema", "saf_pep2d", "mangler_tema", Tema.PEN)));
 		requestCache.putDecision(tilgangKeyPep5LocalCaching, PepAnswer.permit());
+
+		Journalpost journalpost = mapJournalpost(arkivJournalpost, emptySet(), requestCache);
+
+		assertThat(journalpost.getTittel()).isEqualTo(SKJULT_TITTEL);
+		DokumentInfo dokumentInfo = journalpost.getDokumenter().get(0);
+		assertThat(dokumentInfo.getTittel()).isEqualTo(SKJULT_TITTEL);
+		LogiskVedlegg logiskVedlegg = dokumentInfo.getLogiskeVedlegg().get(0);
+		assertThat(logiskVedlegg.getTittel()).isEqualTo(SKJULT_TITTEL);
+	}
+
+	@Test
+	void shouldMapSkjultTittelWhenPep8dDeny() {
+		ArkivJournalpost arkivJournalpost = pensjonSakArkivJournalpost();
+
+		RequestCache requestCache = createTilgangBrukerRequestCachePSAK();
+		String tilgangKeyPep2dLocalCaching = KeyGeneratorLocalCaching.getKeyForPep2d(Tema.PEN);
+		String tilgangKeyPep5LocalCaching = KeyGeneratorLocalCaching.getKeyForPep5(String.valueOf(ARKIVJOURNALPOST_JOURNALPOST_ID), String.valueOf(ARKIVDOKUMENTINFO_DOKUMENT_INFO_ID));
+		String tilgangKeyPep8dLocalCaching = KeyGeneratorLocalCaching.getKeyForPep8d(Arkivsakssystem.PSAK, String.valueOf(ARKIVSAKSRELASJON_SAK_ID));
+		requestCache.putDecision(tilgangKeyPep2dLocalCaching, PepAnswer.permit());
+		requestCache.putDecision(tilgangKeyPep5LocalCaching, PepAnswer.permit());
+		requestCache.putDecision(tilgangKeyPep8dLocalCaching, PepAnswer.deny(new AvsluttetSakReason()));
 
 		Journalpost journalpost = mapJournalpost(arkivJournalpost, emptySet(), requestCache);
 
@@ -510,7 +534,7 @@ class ArkivJournalpostMapperTest {
 		ArkivJournalpost arkivJournalpost = inngaaendeArkivJournalpostBuilder()
 				.fagomraade(FagomradeCode.UKJ.name())
 				.saksrelasjon(new ArkivSaksrelasjon(ARKIVSAKSRELASJON_SAK_ID, ARKIVSAKRELASJON_FAGSYSTEM.name(), false,
-						new ArkivSak(null, ARKIVSAK_AKTOERID, null, ARKIVSAK_FAGSAKNR, ARKIVSAK_APPLIKASJON, ARKIVSAK_OPPRETTET_TIDSPUNKT)))
+						new ArkivSak(null, ARKIVSAK_AKTOERID, null, ARKIVSAK_FAGSAKNR, ARKIVSAK_APPLIKASJON, null, ARKIVSAK_OPPRETTET_TIDSPUNKT)))
 				.build();
 
 		String tilgangKeyPep5LocalCaching = KeyGeneratorLocalCaching.getKeyForPep5(String.valueOf(ARKIVJOURNALPOST_JOURNALPOST_ID), String.valueOf(ARKIVDOKUMENTINFO_DOKUMENT_INFO_ID));
@@ -520,11 +544,13 @@ class ArkivJournalpostMapperTest {
 		String tilgangKeyPep6dLocalCachingVariantSladdet = KeyGeneratorLocalCaching.getKeyForPep6d(
 				String.valueOf(ARKIVJOURNALPOST_JOURNALPOST_ID), String.valueOf(ARKIVDOKUMENTINFO_DOKUMENT_INFO_ID), VARIANT_FORMAT_CODE_SLADDET.getSafVariantformat()
 						.name(), null);
+		String tilgangKeyPep8dLocalCaching = KeyGeneratorLocalCaching.getKeyForPep8d(Arkivsakssystem.GSAK, String.valueOf(ARKIVSAKSRELASJON_SAK_ID));
 
 		RequestCache requestCache = new RequestCache(false);
 		requestCache.putDecision(tilgangKeyPep5LocalCaching, PepAnswer.permit());
 		requestCache.putDecision(tilgangKeyPep6dLocalCachingVariantArkiv, PepAnswer.permit());
 		requestCache.putDecision(tilgangKeyPep6dLocalCachingVariantSladdet, PepAnswer.permit());
+		requestCache.putDecision(tilgangKeyPep8dLocalCaching, PepAnswer.permit());
 
 		Journalpost journalpost = mapJournalpost(arkivJournalpost, emptySet(), requestCache);
 
@@ -540,7 +566,7 @@ class ArkivJournalpostMapperTest {
 		ArkivJournalpost arkivJournalpost = baseArkivJournalpost()
 				.type(JournalpostTypeCode.I.name())
 				.saksrelasjon(new ArkivSaksrelasjon(ARKIVSAKSRELASJON_SAK_ID, ARKIVSAKRELASJON_FAGSYSTEM.name(), false,
-						new ArkivSak(FagomradeCode.STO.name(), ARKIVSAK_AKTOERID, null, ARKIVSAK_FAGSAKNR, ARKIVSAK_APPLIKASJON, ARKIVSAK_OPPRETTET_TIDSPUNKT)))
+						new ArkivSak(FagomradeCode.STO.name(), ARKIVSAK_AKTOERID, null, ARKIVSAK_FAGSAKNR, ARKIVSAK_APPLIKASJON, null, ARKIVSAK_OPPRETTET_TIDSPUNKT)))
 				.fagomraade(FagomradeCode.AAP.name())
 				.build();
 
@@ -662,7 +688,7 @@ class ArkivJournalpostMapperTest {
 	void shouldMapJournalstatusFeilregistrertWhenJournalfoertAndIsFeilregistrert() {
 		ArkivJournalpost arkivJournalpost = utgaaendeArkivJournalpostBuilder(JournalStatusCode.J, null, null)
 				.saksrelasjon(new ArkivSaksrelasjon(ARKIVSAKSRELASJON_SAK_ID, ARKIVSAKRELASJON_FAGSYSTEM.name(), true,
-						new ArkivSak(ARKIVJOURNALPOST_FAGOMRAADE.name(), ARKIVSAK_AKTOERID, null, ARKIVSAK_FAGSAKNR, ARKIVSAK_APPLIKASJON, ARKIVSAK_OPPRETTET_TIDSPUNKT)))
+						new ArkivSak(ARKIVJOURNALPOST_FAGOMRAADE.name(), ARKIVSAK_AKTOERID, null, ARKIVSAK_FAGSAKNR, ARKIVSAK_APPLIKASJON, null, ARKIVSAK_OPPRETTET_TIDSPUNKT)))
 				.build();
 		RequestCache requestCache = createTilgangBrukerRequestCache();
 
@@ -675,7 +701,7 @@ class ArkivJournalpostMapperTest {
 	void shouldMapJournalstatusUtgaarWhenUtgaarAndIsFeilregistrert() {
 		ArkivJournalpost arkivJournalpost = utgaaendeArkivJournalpostBuilder(JournalStatusCode.J, null, null)
 				.saksrelasjon(new ArkivSaksrelasjon(ARKIVSAKSRELASJON_SAK_ID, ARKIVSAKRELASJON_FAGSYSTEM.name(), true,
-						new ArkivSak(ARKIVJOURNALPOST_FAGOMRAADE.name(), ARKIVSAK_AKTOERID, null, ARKIVSAK_FAGSAKNR, ARKIVSAK_APPLIKASJON, ARKIVSAK_OPPRETTET_TIDSPUNKT)))
+						new ArkivSak(ARKIVJOURNALPOST_FAGOMRAADE.name(), ARKIVSAK_AKTOERID, null, ARKIVSAK_FAGSAKNR, ARKIVSAK_APPLIKASJON, null, ARKIVSAK_OPPRETTET_TIDSPUNKT)))
 				.status(JournalStatusCode.U.name())
 				.build();
 
@@ -718,8 +744,10 @@ class ArkivJournalpostMapperTest {
 		RequestCache requestCache = createArkivsakCacheRequestCache();
 		String tilgangKeyPep2dLocalCaching = KeyGeneratorLocalCaching.getKeyForPep2d(FagomradeCode.toSafTema(ARKIVJOURNALPOST_FAGOMRAADE));
 		String tilgangKeyPep5LocalCaching = KeyGeneratorLocalCaching.getKeyForPep5(String.valueOf(ARKIVJOURNALPOST_JOURNALPOST_ID), String.valueOf(ARKIVDOKUMENTINFO_DOKUMENT_INFO_ID));
+		String tilgangKeyPep8LocalCaching = KeyGeneratorLocalCaching.getKeyForPep8d(Arkivsakssystem.GSAK, String.valueOf(ARKIVSAKSRELASJON_SAK_ID));
 		requestCache.putDecision(tilgangKeyPep2dLocalCaching, PepAnswer.permit());
 		requestCache.putDecision(tilgangKeyPep5LocalCaching, PepAnswer.permit());
+		requestCache.putDecision(tilgangKeyPep8LocalCaching, PepAnswer.permit());
 		return requestCache;
 	}
 

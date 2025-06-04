@@ -73,6 +73,7 @@ public class TilknyttedeJournalposterTilgangRepository {
 								.fagsakId(sak.fagsakNr())
 								.orgnummer(sak.orgNr())
 								.aktoerId(sak.aktoerId())
+								.sakStatus(sak.sakStatus())
 								.tema(Arkivsak.mapTema(saksrelasjon.sak().tema()))
 								.datoOpprettet(sak.opprettetTid());
 					}
@@ -171,6 +172,7 @@ public class TilknyttedeJournalposterTilgangRepository {
 				.arkivsaksnummer(arkivsak.getArkivsaksnummer())
 				.arkivsaksystem(arkivsak.getArkivsaksystem())
 				.fagsaksystem(arkivsak.getFagsaksystem())
+				.avsluttet(arkivsak.isAvsluttet())
 				.tema(arkivsak.getTema())
 				.relevanteTredjeparter(bidragSak == null ? null : new ArrayList<>(bidragSak.getRelevanteTredjeparter()))
 				.build();
@@ -189,6 +191,7 @@ public class TilknyttedeJournalposterTilgangRepository {
 							.arkivsaksnummer(psakArkivsak.getArkivsaksnummer())
 							.arkivsaksystem(psakArkivsak.getArkivsaksystem())
 							.fagsaksystem(psakArkivsak.getFagsaksystem())
+							.avsluttet(psakArkivsak.isAvsluttet())
 							.tema(psakArkivsak.getTema())
 							.relevanteTredjeparter(new ArrayList<>())
 							.build();

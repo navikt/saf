@@ -60,6 +60,7 @@ public class PensjonSakAntiCorruptionLayerImpl implements PensjonSakAntiCorrupti
 								.arkivsaksystem(Arkivsakssystem.PSAK)
 								.fagsakId(sakSammendrag.sakId())
 								.fagsaksystem(PSAK_FAGSYSTEM)
+								.sakStatus(sakSammendrag.saksstatus())
 								.tema(mapToTema(sakSammendrag.arkivtema()))
 								.datoOpprettet(getDatoOpprettet(sakSammendrag))
 								.build())

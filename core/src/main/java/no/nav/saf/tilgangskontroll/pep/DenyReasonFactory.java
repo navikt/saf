@@ -33,6 +33,8 @@ public final class DenyReasonFactory {
 			" har ikke tilgang til ressurs som er skjermet, begrenset eller logisk kassert.";
 	public static final String PEP7D_DENY_REASON =
 			" har ikke tilgang til ressurs der relevante parter på sak har kode 6/7 (strengt fortrolig/fortrolig adressesperre).";
+	public static final String PEP8_DENY_REASON =
+			" har ikke tilgang til ressurs som er tilknyttet en avsluttet sak.";
 
 	private DenyReasonFactory() {
 		// noop
@@ -96,5 +98,9 @@ public final class DenyReasonFactory {
 
 	public static String createPep7dDenyReason(SafRequestContext safRequestContext) {
 		return DENY_PREFIX + saksbehandlerEllerSystem(safRequestContext.getSecurityContext().isSystem()) + PEP7D_DENY_REASON;
+	}
+
+	public static String createPep8DenyReason(SafRequestContext safRequestContext) {
+		return DENY_PREFIX + saksbehandlerEllerSystem(safRequestContext.getSecurityContext().isSystem()) + PEP8_DENY_REASON;
 	}
 }

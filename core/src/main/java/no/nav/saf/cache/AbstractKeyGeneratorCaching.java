@@ -15,6 +15,7 @@ abstract class AbstractKeyGeneratorCaching {
 	static final String DOKUMENTINFO_ID = "dokumentInfoId";
 	static final String VARIANTFORMAT = "variantFormat";
 	static final String SKJERMING = "skjerming";
+	static final String AVSLUTTET = "avsluttet";
 
 	static final String ARKIVSAKSSYSTEM = "arkivsakssystem";
 	static final String ARKIVSAKSNUMMER = "arkivsaksnummer";

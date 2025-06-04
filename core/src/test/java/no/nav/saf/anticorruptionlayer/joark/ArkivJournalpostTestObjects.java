@@ -102,7 +102,7 @@ public class ArkivJournalpostTestObjects {
 		return baseArkivJournalpost()
 				.type(JournalpostTypeCode.U.name())
 				.saksrelasjon(new ArkivSaksrelasjon(ARKIVSAKSRELASJON_SAK_ID, ARKIVSAKRELASJON_FAGSYSTEM.name(), false,
-						new ArkivSak(ARKIVJOURNALPOST_FAGOMRAADE.name(), ARKIVSAK_AKTOERID, null, ARKIVSAK_FAGSAKNR, ARKIVSAK_APPLIKASJON, ARKIVSAK_OPPRETTET_TIDSPUNKT)))
+						new ArkivSak(ARKIVJOURNALPOST_FAGOMRAADE.name(), ARKIVSAK_AKTOERID, null, ARKIVSAK_FAGSAKNR, ARKIVSAK_APPLIKASJON, null, ARKIVSAK_OPPRETTET_TIDSPUNKT)))
 				.status(journalStatusCode.name())
 				.relevanteDatoer(ArkivRelevanteDatoer.builder()
 						.opprettet(ARKIVJOURNALPOST_DATO_OPPRETTET)
@@ -126,7 +126,7 @@ public class ArkivJournalpostTestObjects {
 		return baseArkivJournalpost()
 				.type(JournalpostTypeCode.I.name())
 				.saksrelasjon(new ArkivSaksrelasjon(ARKIVSAKSRELASJON_SAK_ID, ARKIVSAKRELASJON_FAGSYSTEM.name(), false,
-						new ArkivSak(ARKIVJOURNALPOST_FAGOMRAADE.name(), ARKIVSAK_AKTOERID, null, ARKIVSAK_FAGSAKNR, ARKIVSAK_APPLIKASJON, ARKIVSAK_OPPRETTET_TIDSPUNKT)))
+						new ArkivSak(ARKIVJOURNALPOST_FAGOMRAADE.name(), ARKIVSAK_AKTOERID, null, ARKIVSAK_FAGSAKNR, ARKIVSAK_APPLIKASJON, null, ARKIVSAK_OPPRETTET_TIDSPUNKT)))
 				.relevanteDatoer(ArkivRelevanteDatoer.builder()
 						.opprettet(ARKIVJOURNALPOST_DATO_OPPRETTET)
 						.forsendelseMottatt(ARKIVJOURNALPOST_MOTTAT_DATO)
@@ -139,7 +139,7 @@ public class ArkivJournalpostTestObjects {
 		return baseArkivJournalpost()
 				.type(JournalpostTypeCode.N.name())
 				.saksrelasjon(new ArkivSaksrelasjon(ARKIVSAKSRELASJON_SAK_ID, ARKIVSAKRELASJON_FAGSYSTEM.name(), false,
-						new ArkivSak(ARKIVJOURNALPOST_FAGOMRAADE.name(), ARKIVSAK_AKTOERID, null, ARKIVSAK_FAGSAKNR, ARKIVSAK_APPLIKASJON, ARKIVSAK_OPPRETTET_TIDSPUNKT)))
+						new ArkivSak(ARKIVJOURNALPOST_FAGOMRAADE.name(), ARKIVSAK_AKTOERID, null, ARKIVSAK_FAGSAKNR, ARKIVSAK_APPLIKASJON, null, ARKIVSAK_OPPRETTET_TIDSPUNKT)))
 				.relevanteDatoer(ArkivRelevanteDatoer.builder()
 						.opprettet(ARKIVJOURNALPOST_DATO_OPPRETTET)
 						.journalfoert(ARKIVJOURNALPOST_JOURNAL_DATO)
@@ -151,7 +151,7 @@ public class ArkivJournalpostTestObjects {
 		return baseArkivJournalpost()
 				.type(JournalpostTypeCode.N.name())
 				.saksrelasjon(new ArkivSaksrelasjon(ARKIVSAKSRELASJON_SAK_ID, FagsystemCode.PEN.name(), false,
-						new ArkivSak(null, null, null, null, null, null)))
+						new ArkivSak(null, null, null, null, null,  null, null)))
 				.build();
 	}
 
@@ -164,7 +164,7 @@ public class ArkivJournalpostTestObjects {
 						.sakId(ARKIVSAKSRELASJON_SAK_ID)
 						.fagsystem(ARKIVSAKRELASJON_FAGSYSTEM.toString())
 						.feilregistrert(true)
-						.sak(new ArkivSak(ARKIVJOURNALPOST_FAGOMRAADE.name(), ARKIVSAK_AKTOERID, null, ARKIVSAK_FAGSAKNR, ARKIVSAK_APPLIKASJON, null))
+						.sak(new ArkivSak(ARKIVJOURNALPOST_FAGOMRAADE.name(), ARKIVSAK_AKTOERID, null, ARKIVSAK_FAGSAKNR, ARKIVSAK_APPLIKASJON, null, null))
 						.build())
 				.dokumenter(List.of(hoveddokumentArkivDokumentinfo(), vedleggArkivDokumentinfo()))
 				.build();

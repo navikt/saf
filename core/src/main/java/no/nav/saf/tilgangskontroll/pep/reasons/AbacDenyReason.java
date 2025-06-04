@@ -10,7 +10,7 @@ import java.util.Map;
 @AllArgsConstructor
 public abstract sealed class AbacDenyReason permits EgenAnsattReason, EgenAnsattPartReason, FortroligAdresseReason, FortroligAdressePartReason,
 		GeografiReason, JournalstatusReason, OrgnrNavStatReason, SkjermingReason, StrengtFortroligAdresseReason, StrengtFortroligAdresseUtlandReason,
-		StrengtFortroligAdressePartReason, StrengtFortroligAdresseUtlandPartReason, TemaReason, UkjentEllerTekniskReason {
+		StrengtFortroligAdressePartReason, StrengtFortroligAdresseUtlandPartReason, TemaReason, AvsluttetSakReason, UkjentEllerTekniskReason {
 
 	protected static final String MAA_HA_EGEN_ANSATT = " Arbeidet må i stedet utføres av en medarbeider med egen-ansatt-tilgang.";
 	protected static final String MAA_HA_FORTROLIG_TILGANG = " Arbeidet må i stedet utføres av en medarbeider med tilgang til brukere med fortrolig adresse.";

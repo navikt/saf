@@ -18,6 +18,7 @@ public class TilgangSak {
 	@NonNull
 	Tema tema;
 	String fagsaksystem;
+	boolean avsluttet;
 
 	List<TilgangRelevantTredjepart> relevanteTredjeparter; // Bisys
 

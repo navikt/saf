@@ -14,7 +14,6 @@ import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.pep.PepAnswer;
 import no.nav.saf.tilgangskontroll.pep.Pep;
 import no.nav.safselvbetjening.tilgang.Ident;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Set;
@@ -43,17 +42,19 @@ class JournalpostQuery {
 	private final Pep<TilgangDokumentInfo> pep5;
 	private final Pep<TilgangDokumentvariant> pep6d;
 	private final Pep<TilgangSak> pep7d;
+	private final Pep<TilgangSak> pep8d;
 
 	public JournalpostQuery(
 			JournalpostService journalpostService,
-			@Autowired Pep<TilgangBruker> pep1g,
-			@Autowired Pep<TilgangSak> pep2,
-			@Autowired Pep<TilgangSak> pep2d,
-			@Autowired Pep<TilgangSak> pep3,
-			@Autowired Pep<TilgangJournalpost> pep4,
-			@Autowired Pep<TilgangDokumentInfo> pep5,
-			@Autowired Pep<TilgangDokumentvariant> pep6d,
-			@Autowired Pep<TilgangSak> pep7d) {
+			Pep<TilgangBruker> pep1g,
+			Pep<TilgangSak> pep2,
+			Pep<TilgangSak> pep2d,
+			Pep<TilgangSak> pep3,
+			Pep<TilgangJournalpost> pep4,
+			Pep<TilgangDokumentInfo> pep5,
+			Pep<TilgangDokumentvariant> pep6d,
+			Pep<TilgangSak> pep7d,
+			Pep<TilgangSak> pep8d) {
 		this.journalpostService = journalpostService;
 		this.pep1g = pep1g;
 		this.pep2 = pep2;
@@ -63,6 +64,7 @@ class JournalpostQuery {
 		this.pep5 = pep5;
 		this.pep6d = pep6d;
 		this.pep7d = pep7d;
+		this.pep8d = pep8d;
 	}
 
 	public Journalpost hentJournalpost(final String journalpostId, String eksternReferanseId,
@@ -99,6 +101,8 @@ class JournalpostQuery {
 					pep2d.hasAccess(tilgangSak, safRequestContext);
 				}
 			}
+			// kjør pep8d slik at resultat er cachet for mapping av tittel i journalpost og eventuelle dokumenter
+			pep8d.hasAccess(tilgangSak, safRequestContext);
 
 			PepAnswer pep3Access = pep3.hasAccessWithAnswer(tilgangSak, safRequestContext);
 			if (pep3Access.isDeny()) {

@@ -28,4 +28,8 @@ public class NavUserGroupMembershipService {
 	public boolean isNavIdentInLeseUtgaatteDokumenterGroup(String navIdent) {
 		return msGraphEntraGroupMembershipService.isUserInGroup(navIdent, azureGroups.getLeseUtgaatteDokumenterObjectId());
 	}
+
+	public boolean isNavIdentInJoarkHistoriskGroup(String navIdent) {
+		return msGraphEntraGroupMembershipService.isUserInGroup(navIdent, azureGroups.getJoarkHistoriskObjectId());
+	}
 }

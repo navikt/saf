@@ -39,6 +39,7 @@ public class TilknyttedeJournalposterQuery {
 	private final Pep<TilgangDokumentInfo> pep5;
 	private final Pep<TilgangDokumentvariant> pep6d;
 	private final Pep<TilgangSak> pep7d;
+	private final Pep<TilgangSak> pep8d;
 
 	public TilknyttedeJournalposterQuery(
 			TilknyttedeJournalposterTilgangRepository tilknyttedeJournalposterTilgangRepository,
@@ -50,7 +51,8 @@ public class TilknyttedeJournalposterQuery {
 			Pep<TilgangJournalpost> pep4,
 			Pep<TilgangDokumentInfo> pep5,
 			Pep<TilgangDokumentvariant> pep6d,
-			Pep<TilgangSak> pep7d) {
+			Pep<TilgangSak> pep7d,
+			Pep<TilgangSak> pep8d) {
 		this.tilknyttedeJournalposterTilgangRepository = tilknyttedeJournalposterTilgangRepository;
 		this.dokarkivTilknyttetJournalpostConsumer = dokarkivTilknyttetJournalpostConsumer;
 		this.pep1g = pep1g;
@@ -61,6 +63,7 @@ public class TilknyttedeJournalposterQuery {
 		this.pep5 = pep5;
 		this.pep6d = pep6d;
 		this.pep7d = pep7d;
+		this.pep8d = pep8d;
 	}
 
 	public List<Journalpost> hentTilknyttedeJournalposter(String dokumentInfoId, SafRequestContext safRequestContext) {
@@ -91,6 +94,7 @@ public class TilknyttedeJournalposterQuery {
 				.peek(tilgangSak -> pep2d.hasAccess(tilgangSak, safRequestContext))
 				.filter(tilgangSak -> pep3.hasAccess(tilgangSak, safRequestContext))
 				.peek(tilgangSak -> pep7d.hasAccess(tilgangSak, safRequestContext))
+				.peek(tilgangSak -> pep8d.hasAccess(tilgangSak, safRequestContext))
 				.collect(Collectors.toSet());
 
 		return tilknyttedeJournalposterTilgangRepository.tilgangJournalposter(filteredTilgangSaker, journalposter)

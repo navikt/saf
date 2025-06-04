@@ -59,6 +59,7 @@ public class SakBrukerTilgangsmodellRepository {
 								.aktoerId(arkivsak.getAktoerId())
 								.orgnummer(arkivsak.getOrgnummer())
 								.tema(arkivsak.getTema())
+								.avsluttet(arkivsak.isAvsluttet())
 								.arkivsaksnummer(arkivsak.getArkivsaksnummer())
 								.arkivsaksystem(arkivsak.getArkivsaksystem())
 								.fagsaksystem(arkivsak.getFagsaksystem())

@@ -24,6 +24,7 @@ import no.nav.saf.domain.visningsmodell.RelevantDato;
 import no.nav.saf.domain.visningsmodell.Utsendingsinfo;
 import no.nav.saf.tilgangskontroll.RequestCache;
 import no.nav.saf.tilgangskontroll.pep.PepAnswer;
+import no.nav.saf.tilgangskontroll.pep.reasons.AvsluttetSakReason;
 import no.nav.saf.tilgangskontroll.pep.reasons.TemaReason;
 import no.nav.saf.tilgangskontroll.pep.reasons.UkjentEllerTekniskReason;
 import org.assertj.core.api.Assertions;
@@ -359,7 +360,6 @@ class JournalpostDtoMapperTest {
 				String.valueOf(JOURNALPOST_ID), DOKUMENT_INFO_ID, VARIANT_FORMAT_CODE_SLADDET.getSafVariantformat()
 						.name(), SKJERMING_TYPE_CODE_POL.getSafSkjerming().name());
 
-
 		RequestCache requestCache = defaultRequestCache();
 		requestCache.putDecision(tilgangKeyPep6dLocalCachingVariantArkiv, PepAnswer.permit());
 		requestCache.putDecision(tilgangKeyPep6dLocalCachingVariantSladdet, PepAnswer.deny(new UkjentEllerTekniskReason()));
@@ -381,6 +381,24 @@ class JournalpostDtoMapperTest {
 
 		RequestCache requestCache = defaultRequestCache();
 		requestCache.putDecision(tilgangKeyPep2dLocalCaching, PepAnswer.deny(new TemaReason("cause_0013_ikketilgangtiltema", "saf_pep2d", "mangler_tema", Tema.FOR)));
+
+		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, emptySet(), requestCache);
+
+		Assertions.assertThat(journalpost.getTittel()).isEqualTo(SKJULT_TITTEL);
+		DokumentInfo dokumentInfo = journalpost.getDokumenter().get(0);
+		Assertions.assertThat(dokumentInfo.getTittel()).isEqualTo(SKJULT_TITTEL);
+		LogiskVedlegg logiskVedlegg = dokumentInfo.getLogiskeVedlegg().get(0);
+		Assertions.assertThat(logiskVedlegg.getTittel()).isEqualTo(SKJULT_TITTEL);
+	}
+
+	@Test
+	void shouldMapSkjultTittelWhenPep8dDeny() {
+		JournalpostDto journalpostDto = JournalpostDtoTestObjects.buildJournalpostDtoInternNotatType();
+
+		String tilgangKeyPep8dLocalCaching = KeyGeneratorLocalCaching.getKeyForPep8d(Arkivsakssystem.GSAK, SAKS_ID);
+
+		RequestCache requestCache = defaultRequestCache();
+		requestCache.putDecision(tilgangKeyPep8dLocalCaching, PepAnswer.deny(new AvsluttetSakReason()));
 
 		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, emptySet(), requestCache);
 
@@ -422,11 +440,13 @@ class JournalpostDtoMapperTest {
 		String tilgangKeyPep6dLocalCachingVariantSladdet = KeyGeneratorLocalCaching.getKeyForPep6d(
 				String.valueOf(JOURNALPOST_ID), DOKUMENT_INFO_ID, VARIANT_FORMAT_CODE_SLADDET.getSafVariantformat()
 						.name(), null);
+		String tilgangKeyPep8dLocalCaching = KeyGeneratorLocalCaching.getKeyForPep8d(null, null);
 
 		RequestCache requestCache = new RequestCache(false);
 		requestCache.putDecision(tilgangKeyPep5LocalCaching, PepAnswer.permit());
 		requestCache.putDecision(tilgangKeyPep6dLocalCachingVariantArkiv, PepAnswer.permit());
 		requestCache.putDecision(tilgangKeyPep6dLocalCachingVariantSladdet, PepAnswer.permit());
+		requestCache.putDecision(tilgangKeyPep8dLocalCaching, PepAnswer.permit());
 
 		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, emptySet(), requestCache);
 
@@ -501,7 +521,7 @@ class JournalpostDtoMapperTest {
 		JournalpostDto journalpostDto = JournalpostDtoTestObjects.baseJournalpostDto()
 				.journalposttype(JournalpostTypeCode.I)
 				.saksrelasjon(new SaksrelasjonDto(SAKS_ID, false, FAKSYSTEM_CODE, null,
-						null, null, null, null, null, null))
+						null, null, null, null, null, null, null))
 				.fagomrade(FagomradeCode.AAP).build();
 
 		RequestCache arkivsakCacheRequestCache = createArkivsakCacheRequestCache();
@@ -530,7 +550,7 @@ class JournalpostDtoMapperTest {
 		JournalpostDto journalpostDto = JournalpostDtoTestObjects.baseJournalpostDto()
 				.journalposttype(JournalpostTypeCode.I)
 				.saksrelasjon(new SaksrelasjonDto(null, false, FAKSYSTEM_CODE, null, null,
-						null, null, null, null, null))
+						null, null, null, null, null, null))
 				.fagomrade(FagomradeCode.AAP).build();
 
 		RequestCache arkivsakCacheRequestCache = createArkivsakCacheRequestCache();
@@ -655,8 +675,10 @@ class JournalpostDtoMapperTest {
 		RequestCache requestCache = createArkivsakCacheRequestCache();
 		String tilgangKeyPep2dLocalCaching = KeyGeneratorLocalCaching.getKeyForPep2d(FagomradeCode.toSafTema(FAGOMRADE));
 		String tilgangKeyPep5LocalCaching = KeyGeneratorLocalCaching.getKeyForPep5(String.valueOf(JOURNALPOST_ID), DOKUMENT_INFO_ID);
+		String tilgangKeyPep8dLocalCaching = KeyGeneratorLocalCaching.getKeyForPep8d(Arkivsakssystem.GSAK, SAKS_ID);
 		requestCache.putDecision(tilgangKeyPep2dLocalCaching, PepAnswer.permit());
 		requestCache.putDecision(tilgangKeyPep5LocalCaching, PepAnswer.permit());
+		requestCache.putDecision(tilgangKeyPep8dLocalCaching, PepAnswer.permit());
 		return requestCache;
 	}
 

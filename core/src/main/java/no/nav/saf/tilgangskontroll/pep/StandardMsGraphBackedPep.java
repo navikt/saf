@@ -2,6 +2,8 @@ package no.nav.saf.tilgangskontroll.pep;
 
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 
+import static no.nav.saf.tilgangskontroll.pep.PepAnswer.permit;
+
 public abstract class StandardMsGraphBackedPep<T> extends Pep<T> {
 
 	/**
@@ -25,6 +27,18 @@ public abstract class StandardMsGraphBackedPep<T> extends Pep<T> {
 		} else {
 			return verifyNavIdentGroupMembershipAccess(ressurs, safRequestContext);
 		}
+	}
+
+	PepAnswer verifyAzureClientCredentialFlowAccess(T ressurs, SafRequestContext safRequestContext) {
+		return verifyAccessForSystemUser(ressurs, safRequestContext);
+	}
+
+	PepAnswer verifyRestSTSCredentialFlowAccess(T ressurs, SafRequestContext safRequestContext) {
+		return verifyAccessForSystemUser(ressurs, safRequestContext);
+	}
+
+	protected PepAnswer verifyAccessForSystemUser(T ressurs, SafRequestContext safRequestContext) {
+		return permit();
 	}
 
 }

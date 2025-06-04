@@ -7,6 +7,7 @@ import no.nav.saf.domain.kode.Tema;
 
 import java.time.LocalDateTime;
 
+import static no.nav.saf.domain.DomainConstants.SAK_STATUS_AAPEN;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 @Value
@@ -19,6 +20,7 @@ public class Arkivsak {
 	String fagsakId;
 	String fagsaksystem;
 	Tema tema;
+	String sakStatus;
 	LocalDateTime datoOpprettet;
 
 	public String getKey() {
@@ -35,6 +37,10 @@ public class Arkivsak {
 
 	public boolean isBrukerOrganisasjon() {
 		return isNotBlank(orgnummer);
+	}
+
+	public boolean isAvsluttet() {
+		return sakStatus != null && !SAK_STATUS_AAPEN.equalsIgnoreCase(sakStatus);
 	}
 
 	public static Tema mapTema(String temaString) {

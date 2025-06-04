@@ -29,8 +29,15 @@ public class SafProperties {
 		@NotEmpty
 		private UUID joarkVedlikeholdObjectId;
 		@NotEmpty
+		private UUID joarkHistoriskObjectId;
+		@NotEmpty
 		private UUID leseUtgaatteDokumenterObjectId;
-		// Disse bør annoteres med @NotEmpty etterhvert som de blir tatt i bruk
+
+		// Disse skal annoteres med @NotEmpty etterhvert som de blir tatt i bruk.
+		// De må også legges inn i getAllGroupUUIDsAsStream under.
+		//
+		// NB: Kallet som gjøres mot msgraph støtter maks 20 objectIds - om vi
+		// kommer over det antallet i streamen må vi implementere en for for paginering
 		private UUID fortroligAdresseObjectId;
 		private UUID strengtFortroligAdresseObjectId;
 		private UUID pensjonUtvidetObjectId;
@@ -40,11 +47,8 @@ public class SafProperties {
 			return Stream.of(
 					egenAnsattObjectId,
 					joarkVedlikeholdObjectId,
-					leseUtgaatteDokumenterObjectId,
-					fortroligAdresseObjectId,
-					strengtFortroligAdresseObjectId,
-					pensjonUtvidetObjectId,
-					gosysUtvidetObjectId
+					joarkHistoriskObjectId,
+					leseUtgaatteDokumenterObjectId
 			).filter(Objects::nonNull);
 		}
 	}

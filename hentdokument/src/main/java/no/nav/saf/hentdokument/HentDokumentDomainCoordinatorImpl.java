@@ -24,6 +24,7 @@ import static no.nav.saf.tilgangskontroll.pep.DenyReasonFactory.createPep4DenyRe
 import static no.nav.saf.tilgangskontroll.pep.DenyReasonFactory.createPep5DenyReason;
 import static no.nav.saf.tilgangskontroll.pep.DenyReasonFactory.createPep6dDenyReason;
 import static no.nav.saf.tilgangskontroll.pep.DenyReasonFactory.createPep7dDenyReason;
+import static no.nav.saf.tilgangskontroll.pep.DenyReasonFactory.createPep8DenyReason;
 
 @Component
 class HentDokumentDomainCoordinatorImpl implements HentDokumentDomainCoordinator {
@@ -38,6 +39,7 @@ class HentDokumentDomainCoordinatorImpl implements HentDokumentDomainCoordinator
 	private final Pep<TilgangDokumentInfo> pep5;
 	private final Pep<TilgangDokumentvariant> pep6d;
 	private final Pep<TilgangSak> pep7d;
+	private final Pep<TilgangSak> pep8d;
 	private final HentDokumentSporbarhetslogger hentDokumentSporbarhetslogger;
 
 	@Autowired
@@ -50,7 +52,8 @@ class HentDokumentDomainCoordinatorImpl implements HentDokumentDomainCoordinator
 											 Pep<TilgangJournalpost> pep4,
 											 Pep<TilgangDokumentInfo> pep5,
 											 Pep<TilgangDokumentvariant> pep6d,
-											 Pep<TilgangSak> pep7d) {
+											 Pep<TilgangSak> pep7d,
+											 Pep<TilgangSak> pep8d) {
 		this.hentDokumentAntiCorruptionLayer = hentDokumentAntiCorruptionLayer;
 		this.hentDokumentTilgangService = hentDokumentTilgangService;
 		this.pep1g = pep1g;
@@ -61,6 +64,7 @@ class HentDokumentDomainCoordinatorImpl implements HentDokumentDomainCoordinator
 		this.pep5 = pep5;
 		this.pep6d = pep6d;
 		this.pep7d = pep7d;
+		this.pep8d = pep8d;
 		this.hentDokumentSporbarhetslogger = new HentDokumentSporbarhetslogger();
 	}
 
@@ -122,6 +126,11 @@ class HentDokumentDomainCoordinatorImpl implements HentDokumentDomainCoordinator
 		PepAnswer pep7dResponse = pep7d.hasAccessWithAnswer(tilgangSak, safRequestContext);
 		if (pep7dResponse.isDeny()) {
 			throw new HentdokumentTilgangskontrollException(createPep7dDenyReason(safRequestContext), pep7dResponse);
+		}
+
+		PepAnswer pep8Response = pep8d.hasAccessWithAnswer(tilgangSak, safRequestContext);
+		if (pep8Response.isDeny()) {
+			throw new HentdokumentTilgangskontrollException(createPep8DenyReason(safRequestContext), pep8Response);
 		}
 	}
 }

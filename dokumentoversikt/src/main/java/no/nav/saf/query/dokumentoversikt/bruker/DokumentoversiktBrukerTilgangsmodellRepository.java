@@ -82,6 +82,7 @@ class DokumentoversiktBrukerTilgangsmodellRepository {
 								.arkivsaksnummer(arkivsak.getArkivsaksnummer())
 								.arkivsaksystem(arkivsak.getArkivsaksystem())
 								.fagsaksystem(arkivsak.getFagsaksystem())
+								.avsluttet(arkivsak.isAvsluttet())
 								.relevanteTredjeparter(bidragSak == null ? null : new ArrayList<>(bidragSak.getRelevanteTredjeparter()))
 								.fpAktoerIdList(fpsak)
 								.k9AktoerIdList(k9sak)

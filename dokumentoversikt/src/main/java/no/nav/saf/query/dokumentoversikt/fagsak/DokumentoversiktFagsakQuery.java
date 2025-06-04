@@ -45,19 +45,21 @@ class DokumentoversiktFagsakQuery {
 	private final Pep<TilgangDokumentInfo> pep5;
 	private final Pep<TilgangDokumentvariant> pep6d;
 	private final Pep<TilgangSak> pep7d;
+	private final Pep<TilgangSak> pep8d;
 
 	@Autowired
 	public DokumentoversiktFagsakQuery(
 			DokumentoversiktFagsakTilgangsmodellRepository dokumentoversiktFagsakTilgangsmodellRepository,
 			TilgangsmodellRepository tilgangsmodellRepository,
-			@Autowired Pep<TilgangBruker> pep1g,
-			@Autowired Pep<TilgangSak> pep2,
-			@Autowired Pep<TilgangSak> pep2d,
-			@Autowired Pep<TilgangSak> pep3,
-			@Autowired Pep<TilgangJournalpost> pep4,
-			@Autowired Pep<TilgangDokumentInfo> pep5,
-			@Autowired Pep<TilgangDokumentvariant> pep6d,
-			@Autowired Pep<TilgangSak> pep7d) {
+			Pep<TilgangBruker> pep1g,
+			Pep<TilgangSak> pep2,
+			Pep<TilgangSak> pep2d,
+			Pep<TilgangSak> pep3,
+			Pep<TilgangJournalpost> pep4,
+			Pep<TilgangDokumentInfo> pep5,
+			Pep<TilgangDokumentvariant> pep6d,
+			Pep<TilgangSak> pep7d,
+			Pep<TilgangSak> pep8d) {
 		this.dokumentoversiktFagsakTilgangsmodellRepository = dokumentoversiktFagsakTilgangsmodellRepository;
 		this.tilgangsmodellRepository = tilgangsmodellRepository;
 		this.pep1g = pep1g;
@@ -68,6 +70,7 @@ class DokumentoversiktFagsakQuery {
 		this.pep5 = pep5;
 		this.pep6d = pep6d;
 		this.pep7d = pep7d;
+		this.pep8d = pep8d;
 	}
 
 	public Dokumentoversikt hentDokumentoversikt(DokumentoversiktFagsakArguments dokumentoversiktFagsakArguments, SafRequestContext safRequestContext) {
@@ -95,6 +98,7 @@ class DokumentoversiktFagsakQuery {
 				.doOnNext(ts -> pep2d.hasAccess(ts, safRequestContext))
 				.filter(ts -> pep3.hasAccess(ts, safRequestContext))
 				.doOnNext(ts -> pep7d.hasAccess(ts, safRequestContext))
+				.doOnNext(ts -> pep8d.hasAccess(ts, safRequestContext))
 				.sequential()
 				.toList()
 				.blockingGet();

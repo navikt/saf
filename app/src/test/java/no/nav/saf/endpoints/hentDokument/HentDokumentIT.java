@@ -467,6 +467,58 @@ class HentDokumentIT extends AbstractItest {
 	}
 
 	@Test
+	void shouldGetForbiddenFromPep8d() {
+		denyPep8d();
+		stubHappyBisysSak();
+		stubPdl();
+		stubDokarkivJournalpost("journalpost-dokumentinfo-gsak-avsluttet-sak.json");
+
+		ResponseEntity<String> responseEntity = callHentDokument();
+
+		verify(postRequestedFor(urlEqualTo("/pdl")));
+		assertEquals(FORBIDDEN, responseEntity.getStatusCode());
+		assertThat(responseEntity.getBody()).contains("Saksbehandler har ikke tilgang til ressurs som er tilknyttet en avsluttet sak");
+	}
+
+	@Test
+	void shouldHentDokumentWhenHappyAndInJoarkHistoriskAvsluttetSak() {
+		abacPermit();
+		stubHappyHentDokument();
+		stubDokarkivJournalpost("journalpost-dokumentinfo-gsak-avsluttet-sak.json");
+		stubPdl();
+
+		ListAppender<ILoggingEvent> listAppender = initialiseLogAppender();
+
+		ResponseEntity<String> responseEntity = callHentDokument();
+
+		assertOkArkivResponse(responseEntity);
+		verify(getRequestedFor(urlEqualTo("/dokarkiv/hentdokument/" + DOKUMENT_ID + "/" + VARIANTFORMAT)));
+		verify(postRequestedFor(urlEqualTo("/pdl")));
+
+		List<String> auditLog = listAppender.list.stream().map(ILoggingEvent::getMessage).toList();
+		assertThat(auditLog).hasSize(1);
+
+		String cefLogLine = auditLog.getFirst();
+		assertThat(cefLogLine).startsWith("CEF:0|joark|saf_hentdokument|1.0|audit:access|Saksbehandler hentet dokument som gjelder bruker|INFO|");
+		assertThat(cefLogLine).contains(
+				"duid=" + USER_FNR_FROM_PDL,
+				"suid=" + NAV_IDENT_SAKSBEHANDLER,
+				"cs3=ARKIV",
+				"cs3Label=variantformat",
+				"cs5=Journalposttittel – med mellomrom? It's more likely than you think",
+				"cs5Label=tittel",
+				"cs6=HJE",
+				"cs6Label=tema",
+				"flexString1=" + JOURNALPOST_ID,
+				"flexString1Label=journalpostId",
+				"flexString2=" + DOKUMENT_ID,
+				"flexString2Label=dokumentInfoId",
+				"act=hentdokument_saksbehandler",
+				"sproc=",
+				"end=");
+	}
+
+	@Test
 	void shouldGetForbiddenFromPep3() {
 		abacDenyPep3SkipPep2dAndPep2();
 		stubHappyBisysSak();

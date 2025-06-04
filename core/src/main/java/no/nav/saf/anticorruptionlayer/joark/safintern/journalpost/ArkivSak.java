@@ -8,6 +8,7 @@ public record ArkivSak(
 		String orgNr,
 		String fagsakNr,
 		String applikasjon,
+		String sakStatus,
 		LocalDateTime opprettetTid
 ) {
 }
