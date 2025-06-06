@@ -8,6 +8,7 @@ import no.nav.saf.anticorruptionlayer.joark.safintern.journalpost.ArkivJournalpo
 import no.nav.saf.anticorruptionlayer.joark.safintern.journalpost.ArkivSak;
 import no.nav.saf.anticorruptionlayer.joark.safintern.journalpost.ArkivSaksrelasjon;
 import no.nav.saf.domain.Arkivsak;
+import no.nav.saf.domain.kode.Arkivsakssystem;
 import org.springframework.stereotype.Component;
 
 import static java.lang.String.valueOf;
@@ -35,12 +36,13 @@ public class ArkivsakMapper {
 		}
 
 		SaksrelasjonDto saksrelasjonDto = journalpostDto.getSaksrelasjon();
+		Arkivsakssystem arkivsaksystem = FagsystemCode.toSafArkivsaksystem(saksrelasjonDto.getFagsystem());
 		return Arkivsak.builder()
 				.arkivsaksnummer(saksrelasjonDto.getSakId())
-				.arkivsaksystem(FagsystemCode.toSafArkivsaksystem(saksrelasjonDto.getFagsystem()))
+				.arkivsaksystem(arkivsaksystem)
 				.fagsakId(saksrelasjonDto.getFagsakNr())
 				.fagsaksystem(saksrelasjonDto.getApplikasjon())
-				.sakStatus(saksrelasjonDto.getSakStatus())
+				.avsluttet(arkivsaksystem != PSAK && Arkivsak.sakStatusIsAvsluttet(saksrelasjonDto.getSakStatus()))
 				.aktoerId(aktoerId)
 				.orgnummer(orgnummer)
 				.tema(FagomradeCode.toSafTema(journalpostDto.getFagomrade()))
@@ -55,7 +57,7 @@ public class ArkivsakMapper {
 				.arkivsaksystem(arkivSaksrelasjon.isPensjonsak() ? PSAK : GSAK)
 				.fagsakId(arkivSak.fagsakNr())
 				.fagsaksystem(arkivSak.applikasjon())
-				.sakStatus(arkivSak.sakStatus())
+				.avsluttet(!arkivSaksrelasjon.isPensjonsak() && Arkivsak.sakStatusIsAvsluttet(arkivSak.sakStatus()))
 				.orgnummer(trim(arkivSak.orgNr()))
 				.aktoerId(arkivSak.aktoerId())
 				.tema(Arkivsak.mapTema(arkivSak.tema()))

@@ -21,7 +21,7 @@ public class Arkivsak {
 	String fagsakId;
 	String fagsaksystem;
 	Tema tema;
-	String sakStatus;
+	boolean avsluttet;
 	LocalDateTime datoOpprettet;
 
 	public String getKey() {
@@ -40,8 +40,8 @@ public class Arkivsak {
 		return isNotBlank(orgnummer);
 	}
 
-	public boolean isAvsluttet() {
-		return !(PSAK == arkivsaksystem || sakStatus == null || SAK_STATUS_AAPEN_GSAK.equalsIgnoreCase(sakStatus));
+	public static boolean sakStatusIsAvsluttet(String sakStatus) {
+		return !(sakStatus == null || SAK_STATUS_AAPEN_GSAK.equalsIgnoreCase(sakStatus));
 	}
 
 	public static Tema mapTema(String temaString) {
