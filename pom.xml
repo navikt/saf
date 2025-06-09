@@ -37,7 +37,7 @@
 		<microsoft-graph.version>6.39.0</microsoft-graph.version>
 		<azure-identity.version>1.16.0</azure-identity.version>
 		<context-propagation.version>1.1.2</context-propagation.version>
-		<bcprov-jdk18on.version>1.80</bcprov-jdk18on.version>
+		<bcprov-jdk18on.version>1.81</bcprov-jdk18on.version>
 		<safselvbetjening-innsyn-api.version>2025.05.07-13.14-262aa3b</safselvbetjening-innsyn-api.version>
 
 		<!-- Test -->
