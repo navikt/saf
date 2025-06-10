@@ -19,6 +19,6 @@ public final class AvsluttetSakReason extends AbacDenyReason {
 	@Override
 	public String getHumanReadableDenyReason() {
 		return "Du har ikke tilgang til journalpost / dokument fordi den er tilknyttet en avsluttet sak." +
-				" Arbeidet må i stedet utføres av en medarbeider med tilgang til å håndtere avsluttede saker.";
+				" Arbeidet må i stedet utføres av en medarbeider med tilgang til historiske saker.";
 	}
 }
