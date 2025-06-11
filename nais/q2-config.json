@@ -787,7 +787,12 @@
       "roles": [
         "tema_hel"
       ]
+    },
+    {
+      "app": "rpa-nos-robot1",
+      "namespace": "team-rpa",
+      "cluster": "dev-fss",
+      "roles": ["tema_sto"]
     }
-    
   ]
 }
