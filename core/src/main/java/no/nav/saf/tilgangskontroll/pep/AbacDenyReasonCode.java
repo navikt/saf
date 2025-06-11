@@ -16,6 +16,7 @@ public enum AbacDenyReasonCode {
 	STRENGT_FORTROLIG_ADRESSE_PART("deny_strengt_fortrolig_adresse_part"),
 	STRENGT_FORTROLIG_ADRESSE_UTLAND_PART("deny_strengt_fortrolig_adresse_utland_part"),
 	TEMA("deny_tema"),
+	AVSLUTTET_SAK("deny_avsluttet_sak"),
 	UKJENT("ukjent");
 
 	private static final String ABAC_ADVICE_UNDEFINED = "null:null";

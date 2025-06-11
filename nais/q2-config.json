@@ -19,6 +19,7 @@
   "NO_NAV_SECURITY_JWT_ISSUER_RESTSTS_ACCEPTED_AUDIENCE": "srvdokdistdpi,srvdokdistdpi-2,srvpensjon,srvpselv,srvdagpenger-joark,srvdp-graphql,srvjfr-enhancer,srvinfotrygd-joark,srvjfr-infotrygd,srvjfr-arena,srvjfr-manuell-opp,srvjfr-filter,srvsyfosmpapirmottak,srveux-app,srvdokdisteformidl,srvdokdistfordeling,srvmelosys,srvmelosys-eessi,srvfamilie-ks-opps,srvmedlemskap,srvpensr,srvcoronapenger,srvjfr-automatisk,srvskjermingsbrev,srvpermref-journalf,srvdolly,srvsupstonad,srvarena-dokgen,srvregpapirsm,srv-digihotProxy,srvklage-saksbeh,srvbdarkiv,srvccmarkivogdist,srvbdarkivering,srvinnsending-api,srvspberegning,srvdokproduksjon",
   "SAF_AZURE_GROUP_EGEN_ANSATT_OBJECT_ID": "dbe4ad45-320b-4e9a-aaa1-73cca4ee124d",
   "SAF_AZURE_GROUP_JOARK_VEDLIKEHOLD_OBJECT_ID": "9732f7dd-550f-4aba-b64a-e1db5428604b",
+  "SAF_AZURE_GROUP_JOARK_HISTORISK_OBJECT_ID": "f92e7578-b530-4e0f-87e6-f5f82fa84168",
   "SAF_AZURE_GROUP_LESE_UTGAATTE_DOKUMENTER_OBJECT_ID": "690fcc33-2c4b-4aa3-98ee-7c16dca276fb",
   "SAF_PRIVILEGIEDSERVICEUSERS": "srvdokdistfordeling,srvdokdisteformidling,srvtilbakemeldings,srvomsitramme,srvmelosys,srvdolly,srvdolly_u,srvdokproduksjon",
   "BIDRAG_SAK_URL": "https://bidrag-sak.dev.adeo.no/bidrag-sak/pip/sak/",

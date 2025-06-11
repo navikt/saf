@@ -6,12 +6,10 @@ import no.nav.saf.domain.kode.Journalstatus;
 import no.nav.saf.domain.tilgangsmodell.TilgangJournalpost;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.pep.reasons.JournalstatusReason;
-import no.nav.saf.tilgangskontroll.pep.reasons.SkjermingReason;
 import no.nav.saf.tilgangskontroll.pep.reasons.UkjentEllerTekniskReason;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import static java.util.Collections.emptyMap;
 import static no.nav.saf.domain.DomainConstants.PEP4;
 import static no.nav.saf.tilgangskontroll.pep.PepAnswer.permit;
 
@@ -64,16 +62,6 @@ public class MsGraphBackedPep4Impl extends StandardMsGraphBackedPep<TilgangJourn
 		}
 
 		traceLogPepFinished(PEP4, ressurs);
-		return permit();
-	}
-
-	@Override
-	public PepAnswer verifyAzureClientCredentialFlowAccess(TilgangJournalpost ressurs, SafRequestContext safRequestContext) {
-		return permit();
-	}
-
-	@Override
-	PepAnswer verifyRestSTSCredentialFlowAccess(TilgangJournalpost ressurs, SafRequestContext safRequestContext) {
 		return permit();
 	}
 

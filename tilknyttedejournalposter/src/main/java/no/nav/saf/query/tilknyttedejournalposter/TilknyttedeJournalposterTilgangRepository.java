@@ -14,6 +14,7 @@ import no.nav.saf.anticorruptionlayer.pdl.PersonIkkeFunnetException;
 import no.nav.saf.anticorruptionlayer.pensjonsak.PensjonSakAntiCorruptionLayer;
 import no.nav.saf.domain.Arkivsak;
 import no.nav.saf.domain.BidragSak;
+import no.nav.saf.domain.kode.Arkivsakssystem;
 import no.nav.saf.domain.kode.Skjerming;
 import no.nav.saf.domain.kode.Tema;
 import no.nav.saf.domain.tilgangsmodell.IdentType;
@@ -64,15 +65,17 @@ public class TilknyttedeJournalposterTilgangRepository {
 				.map(arkivJournalpost -> {
 					ArkivSaksrelasjon saksrelasjon = arkivJournalpost.saksrelasjon();
 					ArkivSak sak = saksrelasjon.sak();
+					Arkivsakssystem arkivsaksystem = FagsystemCode.toSafArkivsaksystem(saksrelasjon.fagsystem());
 					Arkivsak.ArkivsakBuilder arkivsakBuilder = Arkivsak.builder()
 							.arkivsaksnummer(String.valueOf(saksrelasjon.sakId()))
-							.arkivsaksystem(FagsystemCode.toSafArkivsaksystem(saksrelasjon.fagsystem()));
+							.arkivsaksystem(arkivsaksystem);
 
 					if (sak != null) {
 						arkivsakBuilder.fagsaksystem(sak.applikasjon())
 								.fagsakId(sak.fagsakNr())
 								.orgnummer(sak.orgNr())
 								.aktoerId(sak.aktoerId())
+								.avsluttet(arkivsaksystem != PSAK && Arkivsak.sakStatusIsAvsluttet(sak.sakStatus()))
 								.tema(Arkivsak.mapTema(saksrelasjon.sak().tema()))
 								.datoOpprettet(sak.opprettetTid());
 					}
@@ -171,6 +174,7 @@ public class TilknyttedeJournalposterTilgangRepository {
 				.arkivsaksnummer(arkivsak.getArkivsaksnummer())
 				.arkivsaksystem(arkivsak.getArkivsaksystem())
 				.fagsaksystem(arkivsak.getFagsaksystem())
+				.avsluttet(arkivsak.isAvsluttet())
 				.tema(arkivsak.getTema())
 				.relevanteTredjeparter(bidragSak == null ? null : new ArrayList<>(bidragSak.getRelevanteTredjeparter()))
 				.build();
@@ -189,6 +193,7 @@ public class TilknyttedeJournalposterTilgangRepository {
 							.arkivsaksnummer(psakArkivsak.getArkivsaksnummer())
 							.arkivsaksystem(psakArkivsak.getArkivsaksystem())
 							.fagsaksystem(psakArkivsak.getFagsaksystem())
+							.avsluttet(psakArkivsak.isAvsluttet())
 							.tema(psakArkivsak.getTema())
 							.relevanteTredjeparter(new ArrayList<>())
 							.build();

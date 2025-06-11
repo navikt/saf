@@ -39,4 +39,12 @@ public final class KeyGeneratorLocalCaching extends AbstractKeyGeneratorCaching 
 				createIdentifierPair(ARKIVSAKSNUMMER, arkivsaksnummer)
 		);
 	}
+
+	public static String getKeyForPep8d(Arkivsakssystem arkivsaksystem, String arkivsaksnummer) {
+		return createIdentifierPair(RESSURS, RESSURS_SAK_DOKUMENT) + createUniqueIdentifier(
+				createIdentifierPair(ARKIVSAKSSYSTEM, arkivsaksystem != null ? arkivsaksystem.name() : null),
+				createIdentifierPair(ARKIVSAKSNUMMER, arkivsaksnummer),
+				AVSLUTTET
+		);
+	}
 }

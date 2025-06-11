@@ -11,14 +11,15 @@ import java.time.OffsetDateTime;
 @Value
 @Builder
 public class GsakSakerTo {
-	private final Integer id;
-	private final String tema;
-	private final String applikasjon;
-	private final String aktoerId;
-	private final String orgnr;
-	private final String fagsakNr;
-	private final String opprettetAv;
-	private final OffsetDateTime opprettetTidspunkt;
+	Integer id;
+	String tema;
+	String applikasjon;
+	String aktoerId;
+	String orgnr;
+	String fagsakNr;
+	String opprettetAv;
+	String sakStatus;
+	OffsetDateTime opprettetTidspunkt;
 
 	@JsonPOJOBuilder(withPrefix = "")
 	public static class GsakSakerToBuilder {

@@ -20,8 +20,8 @@ class MsGraphEntraGroupMembershipServiceIT extends AbstractItest {
 		stubMsGraphMemberOfEgenAnsattDefaultSaksbehandler();
 
 		assertThat(msGraphEntraGroupMembershipService.isUserInGroup(NAV_IDENT_SAKSBEHANDLER, safProperties.getAzureGroup().getEgenAnsattObjectId())).isTrue();
-		assertThat(msGraphEntraGroupMembershipService.isUserInGroup(NAV_IDENT_SAKSBEHANDLER, safProperties.getAzureGroup().getFortroligAdresseObjectId())).isFalse();
-		assertThat(msGraphEntraGroupMembershipService.isUserInGroup(NAV_IDENT_SAKSBEHANDLER, safProperties.getAzureGroup().getStrengtFortroligAdresseObjectId())).isFalse();
+		assertThat(msGraphEntraGroupMembershipService.isUserInGroup(NAV_IDENT_SAKSBEHANDLER, safProperties.getAzureGroup().getJoarkVedlikeholdObjectId())).isFalse();
+		assertThat(msGraphEntraGroupMembershipService.isUserInGroup(NAV_IDENT_SAKSBEHANDLER, safProperties.getAzureGroup().getJoarkHistoriskObjectId())).isFalse();
 		verifyMsGraphMemberOfSeveralGroupsCalled(MS_ID_SAKSBEHANDLER, 1);
 	}
 
@@ -30,19 +30,19 @@ class MsGraphEntraGroupMembershipServiceIT extends AbstractItest {
 		stubMsGraphMemberOfNoGroupsDefaultSaksbehandler();
 
 		assertThat(msGraphEntraGroupMembershipService.isUserInGroup(NAV_IDENT_SAKSBEHANDLER, safProperties.getAzureGroup().getEgenAnsattObjectId())).isFalse();
-		assertThat(msGraphEntraGroupMembershipService.isUserInGroup(NAV_IDENT_SAKSBEHANDLER, safProperties.getAzureGroup().getFortroligAdresseObjectId())).isFalse();
-		assertThat(msGraphEntraGroupMembershipService.isUserInGroup(NAV_IDENT_SAKSBEHANDLER, safProperties.getAzureGroup().getStrengtFortroligAdresseObjectId())).isFalse();
+		assertThat(msGraphEntraGroupMembershipService.isUserInGroup(NAV_IDENT_SAKSBEHANDLER, safProperties.getAzureGroup().getJoarkVedlikeholdObjectId())).isFalse();
+		assertThat(msGraphEntraGroupMembershipService.isUserInGroup(NAV_IDENT_SAKSBEHANDLER, safProperties.getAzureGroup().getJoarkHistoriskObjectId())).isFalse();
 		verifyMsGraphMemberOfSeveralGroupsCalled(MS_ID_SAKSBEHANDLER, 1);
 	}
 
 	@Test
 	void shouldLookUpAndCacheAllRelevantGroupsForUser() {
-		stubMsGraphGetUser(NAV_IDENT_SAKSBEHANDLER);
-		stubMsGraphMemberOfSeveralGroups(MS_ID_SAKSBEHANDLER, "nav/msgraph-checkmembergroup-egenansatt-fortrolig-strengt-fortrolig.json");
+		stubMsGraphMemberOfAllRelevantGroupsDefaultSaksbehandler();
 
 		assertThat(msGraphEntraGroupMembershipService.isUserInGroup(NAV_IDENT_SAKSBEHANDLER, safProperties.getAzureGroup().getEgenAnsattObjectId())).isTrue();
-		assertThat(msGraphEntraGroupMembershipService.isUserInGroup(NAV_IDENT_SAKSBEHANDLER, safProperties.getAzureGroup().getFortroligAdresseObjectId())).isTrue();
-		assertThat(msGraphEntraGroupMembershipService.isUserInGroup(NAV_IDENT_SAKSBEHANDLER, safProperties.getAzureGroup().getStrengtFortroligAdresseObjectId())).isTrue();
+		assertThat(msGraphEntraGroupMembershipService.isUserInGroup(NAV_IDENT_SAKSBEHANDLER, safProperties.getAzureGroup().getJoarkVedlikeholdObjectId())).isTrue();
+		assertThat(msGraphEntraGroupMembershipService.isUserInGroup(NAV_IDENT_SAKSBEHANDLER, safProperties.getAzureGroup().getJoarkHistoriskObjectId())).isTrue();
+		assertThat(msGraphEntraGroupMembershipService.isUserInGroup(NAV_IDENT_SAKSBEHANDLER, safProperties.getAzureGroup().getLeseUtgaatteDokumenterObjectId())).isTrue();
 		verifyMsGraphMemberOfSeveralGroupsCalled(MS_ID_SAKSBEHANDLER, 1);
 	}
 }

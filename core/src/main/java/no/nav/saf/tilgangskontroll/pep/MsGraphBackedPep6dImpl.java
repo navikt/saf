@@ -76,16 +76,7 @@ public class MsGraphBackedPep6dImpl extends StandardMsGraphBackedPep<TilgangDoku
 	}
 
 	@Override
-	public PepAnswer verifyAzureClientCredentialFlowAccess(TilgangDokumentvariant ressurs, SafRequestContext safRequestContext) {
-		return verifyAccessForSystemUser(ressurs, safRequestContext);
-	}
-
-	@Override
-	PepAnswer verifyRestSTSCredentialFlowAccess(TilgangDokumentvariant ressurs, SafRequestContext safRequestContext) {
-		return verifyAccessForSystemUser(ressurs, safRequestContext);
-	}
-
-	private PepAnswer verifyAccessForSystemUser(TilgangDokumentvariant ressurs, SafRequestContext safRequestContext) {
+	protected PepAnswer verifyAccessForSystemUser(TilgangDokumentvariant ressurs, SafRequestContext safRequestContext) {
 		if (ressurs == null) {
 			log.warn("Pep6d mangler tilstrekkelig datagrunnlag for å kunne gjennomføre tilgangskontroll. Azure ccf.");
 			return PepAnswer.deny(new SkjermingReason(

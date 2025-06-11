@@ -20,5 +20,6 @@ public class SaksrelasjonDto {
 	private final String applikasjon;
 	private final String orgnr;
 	private final String opprettetAv;
+	private final String sakStatus;
 	private final OffsetDateTime opprettetTidspunkt;
 }

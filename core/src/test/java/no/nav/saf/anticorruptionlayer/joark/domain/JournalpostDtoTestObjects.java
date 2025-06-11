@@ -78,7 +78,7 @@ public class JournalpostDtoTestObjects {
 		return baseJournalpostDto()
 				.journalposttype(JournalpostTypeCode.U)
 				.saksrelasjon(new SaksrelasjonDto(SAKS_ID, false, FAKSYSTEM_CODE, null, null,
-						null, null, null, null, null))
+						null, null, null, null, null, null))
 				.journalstatus(journalStatusCode)
 				.journalDato(JOURNAL_DATO)
 				.dokumentDato(DOKUMENT_DATO)
@@ -96,7 +96,7 @@ public class JournalpostDtoTestObjects {
 		return baseJournalpostDto()
 				.journalposttype(JournalpostTypeCode.I)
 				.saksrelasjon(new SaksrelasjonDto(SAKS_ID, false, FAKSYSTEM_CODE, null, null,
-						null, null, null, null, null))
+						null, null, null, null, null, null))
 				.mottattDato(MOTTAT_DATO)
 				.journalDato(JOURNAL_DATO)
 				.build();
@@ -106,7 +106,7 @@ public class JournalpostDtoTestObjects {
 		return baseJournalpostDto()
 				.journalposttype(JournalpostTypeCode.N)
 				.saksrelasjon(new SaksrelasjonDto(SAKS_ID, false, FAKSYSTEM_CODE, null, null,
-						null, null, null, null, null))
+						null, null, null, null, null, null))
 				.journalDato(JOURNAL_DATO)
 				.build();
 	}
@@ -115,7 +115,7 @@ public class JournalpostDtoTestObjects {
 		return baseJournalpostDto()
 				.journalposttype(JournalpostTypeCode.N)
 				.saksrelasjon(new SaksrelasjonDto(SAKS_ID, false, FagsystemCode.PEN, null, null,
-						null, null, null, null, null))
+						null, null, null, null, null, null))
 				.build();
 	}
 

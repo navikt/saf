@@ -55,6 +55,7 @@ class DokumentoversiktBrukerQuery {
 	private final Pep<TilgangDokumentInfo> pep5;
 	private final Pep<TilgangDokumentvariant> pep6d;
 	private final Pep<TilgangSak> pep7d;
+	private final Pep<TilgangSak> pep8d;
 	private final JournalpostDtoMapper journalpostDtoMapper = new JournalpostDtoMapper();
 	private final PdlAntiCorruptionLayer pdlAntiCorruptionLayer;
 
@@ -69,6 +70,7 @@ class DokumentoversiktBrukerQuery {
 									   Pep<TilgangDokumentInfo> pep5,
 									   Pep<TilgangDokumentvariant> pep6d,
 									   Pep<TilgangSak> pep7d,
+									   Pep<TilgangSak> pep8d,
 									   PdlAntiCorruptionLayer pdlAntiCorruptionLayer
 	) {
 		this.dokumentoversiktBrukerTilgangsmodellRepository = dokumentoversiktBrukerTilgangsmodellRepository;
@@ -81,6 +83,7 @@ class DokumentoversiktBrukerQuery {
 		this.pep5 = pep5;
 		this.pep6d = pep6d;
 		this.pep7d = pep7d;
+		this.pep8d = pep8d;
 		this.pdlAntiCorruptionLayer = pdlAntiCorruptionLayer;
 	}
 
@@ -98,7 +101,7 @@ class DokumentoversiktBrukerQuery {
 			throw new TilgangskontrollException(createPep1gDenyReasonDokumentoversikt(safRequestContext, pep1gAnswer), pep1gAnswer);
 		}
 
-		//  Resultat fra pep2d caches lokalt og brukes i JournalpostDtoMapper.java. Med bakgrunn i resultat fra pep2d, pep6d og pep7d settes feltet saksbehandlerHarTilgang=true/false.
+		//  Resultat fra pep2d caches lokalt og brukes i JournalpostDtoMapper.java. Med bakgrunn i resultat fra pep2d, pep6d, pep7d og pep8d settes feltet saksbehandlerHarTilgang=true/false.
 		final Flowable<TilgangSak> tilgangSakFlow = dokumentoversiktBrukerTilgangsmodellRepository.findTilgangSaker(tilgangBruker, dokumentoversiktBrukerArguments
 				.getFilters().getTema(), safRequestContext);
 		List<TilgangSak> filteredTilgangSakList = tilgangSakFlow
@@ -110,6 +113,7 @@ class DokumentoversiktBrukerQuery {
 				.doOnNext(ts -> pep2d.hasAccess(ts, safRequestContext))
 				.filter(ts -> pep3.hasAccess(ts, safRequestContext))
 				.doOnNext(ts -> pep7d.hasAccess(ts, safRequestContext))
+				.doOnNext(ts -> pep8d.hasAccess(ts, safRequestContext))
 				.sequential()
 				.toList().blockingGet();
 
@@ -202,6 +206,7 @@ class DokumentoversiktBrukerQuery {
 	private TilgangSak mapToTilgangSak(JournalpostDto journalpostDto) {
 		return TilgangSak.builder()
 				.tema(FagomradeCode.toSafTema(journalpostDto.getFagomrade()))
+				.avsluttet(false)
 				.relevanteTredjeparter(new ArrayList<>())
 				.build();
 	}

@@ -66,6 +66,7 @@ import static no.nav.saf.cache.KeyGeneratorLocalCaching.getKeyForPep2d;
 import static no.nav.saf.cache.KeyGeneratorLocalCaching.getKeyForPep5;
 import static no.nav.saf.cache.KeyGeneratorLocalCaching.getKeyForPep6d;
 import static no.nav.saf.cache.KeyGeneratorLocalCaching.getKeyForPep7d;
+import static no.nav.saf.cache.KeyGeneratorLocalCaching.getKeyForPep8d;
 import static no.nav.saf.domain.DomainConstants.TIDSSONE_NORGE;
 import static no.nav.saf.domain.kode.Journalstatus.MOTTATT;
 import static no.nav.saf.domain.visningsmodell.RelevantDato.INVALID_DATE;
@@ -99,7 +100,7 @@ public class ArkivJournalpostMapper {
 
 		Journalpost journalpost = Journalpost.builder()
 				.journalpostId(journalpostId)
-				.tittel(mapTittel(arkivJournalpost.innhold(), tema, journalstatus, requestCache))
+				.tittel(mapTittel(arkivJournalpost.innhold(), tema, journalstatus, sak, requestCache))
 				.journalposttype(mapToJournalpostType(arkivJournalpost.type()))
 				.journalstatus(journalstatus)
 				.tema(tema)
@@ -136,8 +137,9 @@ public class ArkivJournalpostMapper {
 		return journalpost;
 	}
 
-	private static String mapTittel(String originalTittel, Tema tema, Journalstatus journalstatus, RequestCache requestCache) {
-		if (requestCache.isSystem() || journalstatus == MOTTATT || getDecisionFromPep2d(tema, requestCache)) {
+	private static String mapTittel(String originalTittel, Tema tema, Journalstatus journalstatus, Sak sak, RequestCache requestCache) {
+		if (requestCache.isSystem() || journalstatus == MOTTATT || ( getDecisionFromPep2d(tema, requestCache) &&
+				(sak == null || getDecisionFromPep8d(sak, requestCache)))) {
 			return originalTittel;
 		}
 		return SKJULT_TITTEL;
@@ -471,7 +473,7 @@ public class ArkivJournalpostMapper {
 				.filter(dokumentinfo -> shouldMapDokumentInfo(arkivJournalpost.journalpostId().toString(), dokumentinfo.dokumentInfoId().toString(), requestCache))
 				.map(dokumentinfo -> DokumentInfo.builder()
 						.dokumentInfoId(dokumentinfo.dokumentInfoId().toString())
-						.tittel(mapTittel(dokumentinfo.tittel(), journalpost.getTema(), journalpost.getJournalstatus(), requestCache))
+						.tittel(mapTittel(dokumentinfo.tittel(), journalpost.getTema(), journalpost.getJournalstatus(), journalpost.getSak(), requestCache))
 						.brevkode(mapBrevkode(arkivJournalpost, dokumentinfo))
 						.dokumentstatus(mapDokumentstatus(dokumentinfo))
 						.datoFerdigstilt(mapDokumentFerdigstilt(dokumentinfo))
@@ -481,7 +483,7 @@ public class ArkivJournalpostMapper {
 								.map(fildetaljer -> mapDokumentvariant(tilgangJournalpost, journalpost, brukerIdenter, requestCache, dokumentinfo, fildetaljer))
 								.filter(Objects::nonNull)
 								.collect(Collectors.toList()))
-						.logiskeVedlegg(mapLogiskeVedlegg(dokumentinfo, journalpost.getTema(), journalpost.getJournalstatus(), requestCache))
+						.logiskeVedlegg(mapLogiskeVedlegg(dokumentinfo, journalpost.getTema(), journalpost.getJournalstatus(), journalpost.getSak(), requestCache))
 						.build()).toList();
 	}
 
@@ -505,9 +507,9 @@ public class ArkivJournalpostMapper {
 				.build();
 	}
 
-	private static List<LogiskVedlegg> mapLogiskeVedlegg(ArkivDokumentinfo dokumentinfo, Tema tema, Journalstatus journalstatus, RequestCache requestCache) {
+	private static List<LogiskVedlegg> mapLogiskeVedlegg(ArkivDokumentinfo dokumentinfo, Tema tema, Journalstatus journalstatus, Sak sak, RequestCache requestCache) {
 		return dokumentinfo.logiskVedlegg().stream()
-				.map(logiskVedlegg -> new LogiskVedlegg(logiskVedlegg.vedleggId().toString(), mapTittel(logiskVedlegg.tittel(), tema, journalstatus, requestCache)))
+				.map(logiskVedlegg -> new LogiskVedlegg(logiskVedlegg.vedleggId().toString(), mapTittel(logiskVedlegg.tittel(), tema, journalstatus, sak, requestCache)))
 				.collect(Collectors.toList());
 	}
 
@@ -555,18 +557,27 @@ public class ArkivJournalpostMapper {
 
 
 	private static boolean determineSaksbehandlerTilgang(Journalpost journalpost, ArkivDokumentinfo arkivDokumentinfo, ArkivFildetaljer arkivFildetaljer, RequestCache requestCache) {
-		if (journalpost.getJournalstatus() == MOTTATT || journalpost.getSak() == null) {
+		if (journalpost.getSak() == null) {
 			// Midlertidige journalposter skal ikke ha tilgangskontroll på tema. Her skal saksbehandler ha tilgang uansett.
 			// https://jira.adeo.no/browse/MMA-2494
 			return getDecisionFromPep6d(journalpost.getJournalpostId(), String.valueOf(arkivDokumentinfo.dokumentInfoId()), arkivFildetaljer, requestCache);
-		} else if (journalpost.getTema() == Tema.UKJ) {
-			// Når tema=UKJ skal saksbehandler ha tilgang. Kun Pep6d skal bestemme saksbehandlerHarTilgang.
-			// https://jira.adeo.no/browse/MMA-3992
-			return getDecisionFromPep6d(journalpost.getJournalpostId(), String.valueOf(arkivDokumentinfo.dokumentInfoId()), arkivFildetaljer, requestCache);
+		} else if (journalpost.getJournalstatus() == MOTTATT) {
+			// Midlertidige journalposter skal ikke ha tilgangskontroll på tema. Her skal saksbehandler ha tilgang uansett.
+			// https://jira.adeo.no/browse/MMA-2494
+			return getDecisionFromPep6d(journalpost.getJournalpostId(), String.valueOf(arkivDokumentinfo.dokumentInfoId()), arkivFildetaljer, requestCache) &&
+					getDecisionFromPep8d(journalpost.getSak(), requestCache);
 		} else {
-			return getDecisionFromPep2d(journalpost.getTema(), requestCache) &&
-					getDecisionFromPep6d(journalpost.getJournalpostId(), String.valueOf(arkivDokumentinfo.dokumentInfoId()), arkivFildetaljer, requestCache) &&
-					getDecisionFromPep7d(journalpost.getSak().getArkivsaksystem(), journalpost.getSak().getArkivsaksnummer(), requestCache);
+			if (journalpost.getTema() == Tema.UKJ) {
+				// Når tema=UKJ og sak er åpen skal saksbehandler ha tilgang. Kun Pep6d og Pep8d skal bestemme saksbehandlerHarTilgang.
+				// https://jira.adeo.no/browse/MMA-3992
+				return getDecisionFromPep6d(journalpost.getJournalpostId(), String.valueOf(arkivDokumentinfo.dokumentInfoId()), arkivFildetaljer, requestCache) &&
+						getDecisionFromPep8d(journalpost.getSak(), requestCache);
+			} else {
+				return getDecisionFromPep2d(journalpost.getTema(), requestCache) &&
+						getDecisionFromPep6d(journalpost.getJournalpostId(), String.valueOf(arkivDokumentinfo.dokumentInfoId()), arkivFildetaljer, requestCache) &&
+						getDecisionFromPep7d(journalpost.getSak().getArkivsaksystem(), journalpost.getSak().getArkivsaksnummer(), requestCache) &&
+						getDecisionFromPep8d(journalpost.getSak(), requestCache);
+			}
 		}
 	}
 
@@ -587,6 +598,10 @@ public class ArkivJournalpostMapper {
 		return getCachedDecision(requestCache, tilgangKeyPep7dLocalCaching);
 	}
 
+	private static boolean getDecisionFromPep8d(Sak sak, RequestCache requestCache) {
+		String tilgangKeyPep8dLocalCaching = getKeyForPep8d(sak.getArkivsaksystem(), sak.getArkivsaksnummer());
+		return getCachedDecision(requestCache, tilgangKeyPep8dLocalCaching);
+	}
 
 	private static boolean shouldMapDokumentInfo(String journalpostId, String dokumentInfoId, RequestCache requestCache) {
 		String tilgangKeyPep5LocalCaching = getKeyForPep5(journalpostId, dokumentInfoId);

@@ -133,6 +133,7 @@ class DokumentoversiktFagsakTilgangsmodellRepository {
 								.arkivsaksystem(arkivsak.getArkivsaksystem())
 								.fagsaksystem(arkivsak.getFagsaksystem())
 								.tema(arkivsak.getTema())
+								.avsluttet(arkivsak.isAvsluttet())
 								.fpAktoerIdList(fpsak)
 								.k9AktoerIdList(k9sak)
 								.relevanteTredjeparter(bidragSak == null ? null : new ArrayList<>(bidragSak.getRelevanteTredjeparter()))
@@ -173,6 +174,7 @@ class DokumentoversiktFagsakTilgangsmodellRepository {
 								.aktoerId(arkivsak.getAktoerId())
 								.arkivsaksnummer(arkivsak.getArkivsaksnummer())
 								.arkivsaksystem(arkivsak.getArkivsaksystem())
+								.avsluttet(arkivsak.isAvsluttet())
 								.tema(arkivsak.getTema())
 								.relevanteTredjeparter(new ArrayList<>())
 								.build();

@@ -43,6 +43,7 @@ public class BaseTilgangMapper {
 	public static TilgangSak mapTilgangSakUtenSakstilknytning(ArkivJournalpost arkivJournalpost) {
 		return TilgangSak.builder()
 				.tema(Tema.valueOf(arkivJournalpost.fagomraade()))
+				.avsluttet(false)
 				.build();
 	}
 
