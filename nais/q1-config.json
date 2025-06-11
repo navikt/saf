@@ -675,6 +675,12 @@
       "app": "gosys-oppgavebehandling-api-q1",
       "namespace": "oppgavehandtering",
       "cluster": "dev-gcp"
+    },
+    {
+      "app": "rpa-nos-robot1",
+      "namespace": "team-rpa",
+      "cluster": "dev-fss",
+      "roles": ["tema_sto"]
     }
   ]
 }
