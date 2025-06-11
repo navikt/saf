@@ -307,13 +307,6 @@ public abstract class AbstractItest {
 				.whenScenarioStateIs(STATE_PEP2D)
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("abac/abac-permit.json"))
-				.willSetStateTo(STATE_PEP5));
-		stubFor(post(urlEqualTo("/abac"))
-				.inScenario(SCENARIO_ABAC)
-				.whenScenarioStateIs(STATE_PEP5)
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("abac/abac-permit.json")));
 	}
 
@@ -367,7 +360,8 @@ public abstract class AbstractItest {
 	}
 
 	protected void abacDenyPep5SkipPep2OrPep3() {
-		stubMsGraphMemberOfAllRelevantGroupsDefaultSaksbehandler();
+		stubMsGraphGetUser(NAV_IDENT_SAKSBEHANDLER);
+		stubMsGraphMemberOfSeveralGroups(MS_ID_SAKSBEHANDLER, "nav/msgraph-checkmembergroup-ikke-joarkvedlikehold.json");
 		stubFor(post(urlEqualTo("/abac"))
 				.inScenario(SCENARIO_ABAC)
 				.whenScenarioStateIs(STARTED)
@@ -387,17 +381,12 @@ public abstract class AbstractItest {
 				.whenScenarioStateIs(STATE_PEP2D)
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("abac/abac-permit.json"))
-				.willSetStateTo(STATE_PEP5));
-		stubFor(post(urlEqualTo("/abac"))
-				.inScenario(SCENARIO_ABAC)
-				.whenScenarioStateIs(STATE_PEP5)
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("abac/abac-deny.json")));
+						.withBodyFile("abac/abac-permit.json")));
 	}
 
 	protected void abacDenyPep5SkipPep4() {
+		stubMsGraphGetUser(NAV_IDENT_SAKSBEHANDLER);
+		stubMsGraphMemberOfSeveralGroups(MS_ID_SAKSBEHANDLER, "nav/msgraph-checkmembergroup-ikke-joarkvedlikehold.json");
 		stubFor(post(urlEqualTo("/abac"))
 				.inScenario(SCENARIO_ABAC)
 				.whenScenarioStateIs(STARTED)
@@ -417,17 +406,12 @@ public abstract class AbstractItest {
 				.whenScenarioStateIs(STATE_PEP2D)
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("abac/abac-permit.json"))
-				.willSetStateTo(STATE_PEP5));
-		stubFor(post(urlEqualTo("/abac"))
-				.inScenario(SCENARIO_ABAC)
-				.whenScenarioStateIs(STATE_PEP5)
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("abac/abac-deny.json")));
+						.withBodyFile("abac/abac-permit.json")));
 	}
 
 	protected void abacDenyPep5SkipPep2Pep3Pep4() {
+		stubMsGraphGetUser(NAV_IDENT_SAKSBEHANDLER);
+		stubMsGraphMemberOfSeveralGroups(MS_ID_SAKSBEHANDLER, "nav/msgraph-checkmembergroup-ikke-joarkvedlikehold.json");
 		stubFor(post(urlEqualTo("/abac"))
 				.inScenario(SCENARIO_ABAC)
 				.whenScenarioStateIs(STARTED)
@@ -441,13 +425,6 @@ public abstract class AbstractItest {
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("abac/abac-permit.json"))
-				.willSetStateTo(STATE_PEP5));
-		stubFor(post(urlEqualTo("/abac"))
-				.inScenario(SCENARIO_ABAC)
-				.whenScenarioStateIs(STATE_PEP5)
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("abac/abac-deny.json"))
 				.willSetStateTo(STATE_PERMIT));
 		stubFor(post(urlEqualTo("/abac"))
 				.inScenario(SCENARIO_ABAC)
@@ -459,17 +436,9 @@ public abstract class AbstractItest {
 
 	protected void abacDenyPep5SkipPep1gPep2Pep2dPep3() {
 		stubMsGraphGetUser(NAV_IDENT_SAKSBEHANDLER);
-		stubMsGraphMemberOfSeveralGroups(MS_ID_SAKSBEHANDLER, "nav/msgraph-checkmembergroup-grupper-allow-pep4.json");
+		stubMsGraphMemberOfSeveralGroups(MS_ID_SAKSBEHANDLER, "nav/msgraph-checkmembergroup-ikke-joarkvedlikehold.json");
 		stubFor(post(urlEqualTo("/abac"))
 				.inScenario(SCENARIO_ABAC)
-				.whenScenarioStateIs(STATE_PEP5)
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("abac/abac-deny.json"))
-				.willSetStateTo(STATE_PERMIT));
-		stubFor(post(urlEqualTo("/abac"))
-				.inScenario(SCENARIO_ABAC)
-				.whenScenarioStateIs(STATE_PERMIT)
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("abac/abac-permit.json")));
@@ -752,7 +721,7 @@ public abstract class AbstractItest {
 
 	protected void verifyabacDenyPep2dAndHttpStatusCode(boolean isDokumentoversikt, HttpStatusCode expectedHttpStatus, HttpStatusCode actualHttpStatus) {
 		if (isDokumentoversikt) {
-			verify(4, postRequestedFor(urlEqualTo("/abac")));
+			verify(3, postRequestedFor(urlEqualTo("/abac")));
 		} else {
 			verify(3, postRequestedFor(urlEqualTo("/abac")));
 		}
@@ -773,7 +742,7 @@ public abstract class AbstractItest {
 
 	protected void verifyabacDenyPep5SkipPep2OrPep3AndHttpStatusCode(boolean isDokumentoversikt, HttpStatusCode expectedHttpStatus, HttpStatusCode actualHttpStatus) {
 		if (isDokumentoversikt) {
-			verify(4, postRequestedFor(urlEqualTo("/abac")));
+			verify(3, postRequestedFor(urlEqualTo("/abac")));
 		} else {
 			verify(3, postRequestedFor(urlEqualTo("/abac")));
 		}
@@ -782,13 +751,13 @@ public abstract class AbstractItest {
 	}
 
 	protected void verifyabacDenyPep6dSkipPep2AndHttpStatusCode(HttpStatusCode expectedHttpStatus, HttpStatusCode actualHttpStatus) {
-		verify(4, postRequestedFor(urlEqualTo("/abac")));
+		verify(3, postRequestedFor(urlEqualTo("/abac")));
 		verifyMsGraphMemberOfSeveralGroupsCalled(MS_ID_SAKSBEHANDLER, 1);
 		assertEquals(expectedHttpStatus, actualHttpStatus);
 	}
 
 	protected void verifyabacDenyPep6dSkipPep2Pep3AndHttpStatusCode(HttpStatusCode expectedHttpStatus, HttpStatusCode actualHttpStatus) {
-		verify(3, postRequestedFor(urlEqualTo("/abac")));
+		verify(2, postRequestedFor(urlEqualTo("/abac")));
 		verifyMsGraphMemberOfSeveralGroupsCalled(MS_ID_SAKSBEHANDLER, 1);
 		assertEquals(expectedHttpStatus, actualHttpStatus);
 	}

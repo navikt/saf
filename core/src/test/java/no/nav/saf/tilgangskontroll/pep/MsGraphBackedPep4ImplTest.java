@@ -52,7 +52,6 @@ class MsGraphBackedPep4ImplTest extends AbstractAbacBackedPepTest {
 
 	@Test
 	void shouldPermitWhenJournalstatusUtgaarAndSaksbehandlerHasAccess() {
-		when(abacService.evaluate(any(XacmlRequest.class))).thenReturn(new XacmlResponse(Decision.PERMIT, null, null, null));
 		when(navUserGroupMembershipService.isNavIdentInJoarkVedlikeholdGroup(anyString())).thenReturn(true);
 		when(navUserGroupMembershipService.isNavIdentInLeseUtgaatteDokumenterGroup(anyString())).thenReturn(true);
 
@@ -65,7 +64,6 @@ class MsGraphBackedPep4ImplTest extends AbstractAbacBackedPepTest {
 
 	@Test
 	void shouldPermitWhenSkjermingIsPresentAndSaksbehandlerHasAccess() {
-		when(abacService.evaluate(any(XacmlRequest.class))).thenReturn(new XacmlResponse(Decision.PERMIT, null, null, null));
 		when(navUserGroupMembershipService.isNavIdentInJoarkVedlikeholdGroup(anyString())).thenReturn(true);
 		when(navUserGroupMembershipService.isNavIdentInLeseUtgaatteDokumenterGroup(anyString())).thenReturn(true);
 
@@ -79,7 +77,6 @@ class MsGraphBackedPep4ImplTest extends AbstractAbacBackedPepTest {
 
 	@Test
 	void shouldPermitWhenJournalstatusUtgaarAndSkjermingIsPresentAndSaksbehandlerHasAccess() {
-		when(abacService.evaluate(any(XacmlRequest.class))).thenReturn(new XacmlResponse(Decision.PERMIT, null, null, null));
 		when(navUserGroupMembershipService.isNavIdentInJoarkVedlikeholdGroup(anyString())).thenReturn(true);
 		when(navUserGroupMembershipService.isNavIdentInLeseUtgaatteDokumenterGroup(anyString())).thenReturn(true);
 
@@ -93,7 +90,6 @@ class MsGraphBackedPep4ImplTest extends AbstractAbacBackedPepTest {
 
 	@Test
 	void shouldDenyWhenJournalstatusUtgaarAndSkjermingIsPresentAndSaksbehandlerHasNotAccess() {
-		when(abacService.evaluate(any(XacmlRequest.class))).thenReturn(new XacmlResponse(Decision.DENY, null, null, null));
 		when(navUserGroupMembershipService.isNavIdentInJoarkVedlikeholdGroup(anyString())).thenReturn(false);
 		when(navUserGroupMembershipService.isNavIdentInLeseUtgaatteDokumenterGroup(anyString())).thenReturn(false);
 

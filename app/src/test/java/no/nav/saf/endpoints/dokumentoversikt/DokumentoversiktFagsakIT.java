@@ -445,7 +445,7 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 		stubFor(post("/hentjournalsakinfo/finnjournalposter")
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("joark/finnjournalposter_single_bidragAndSkjerming-happy.json")));
+						.withBodyFile("joark/finnjournalposter_single_bidragAndSkjermingOnlyDokument-happy.json")));
 		stubFor(post("/pdl")
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)

@@ -1,6 +1,7 @@
 package no.nav.saf.tilgangskontroll.pep;
 
 import lombok.extern.slf4j.Slf4j;
+import no.nav.saf.anticorruptionlayer.nav.NavUserGroupMembershipService;
 import no.nav.saf.cache.KeyGeneratorLocalCaching;
 import no.nav.saf.domain.tilgangsmodell.TilgangDokumentInfo;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
@@ -25,17 +26,16 @@ import static no.nav.saf.tilgangskontroll.pep.PepAnswer.permit;
  */
 @Slf4j
 @Component(PEP5)
-public class AbacBackedPep5Impl extends StandardAbacBackedPep<TilgangDokumentInfo> {
+public class MsGraphBackedPep5Impl extends StandardMsGraphBackedPep<TilgangDokumentInfo> {
 
-	private final AbacService abacService;
+	private final NavUserGroupMembershipService navUserGroupMembershipService;
 
-	@Autowired
-	public AbacBackedPep5Impl(AbacService abacService) {
-		this.abacService = abacService;
+	public MsGraphBackedPep5Impl(NavUserGroupMembershipService navUserGroupMembershipService) {
+		this.navUserGroupMembershipService = navUserGroupMembershipService;
 	}
 
 	@Override
-	public PepAnswer verifyAbacPdpDecision(TilgangDokumentInfo ressurs, SafRequestContext safRequestContext) {
+	PepAnswer verifyNavIdentGroupMembershipAccess(TilgangDokumentInfo ressurs, SafRequestContext safRequestContext) {
 		if (ressurs == null) {
 			log.warn("Pep5 mangler tilstrekkelig datagrunnlag for å kunne gjennomføre tilgangskontroll");
 			return PepAnswer.deny(new UkjentEllerTekniskReason());
@@ -43,8 +43,12 @@ public class AbacBackedPep5Impl extends StandardAbacBackedPep<TilgangDokumentInf
 
 		String tilgangKeyLocalCaching = KeyGeneratorLocalCaching.getKeyForPep5(ressurs.getJournalpostId(), ressurs.getDokumentInfoId());
 		if (isSkjermingPresent(ressurs)) {
-			XacmlResponse response = hasDokumentAccess(ressurs, safRequestContext);
-			PepAnswer pepAnswer = mapToAbacAnswer(response);
+
+			boolean decision = navUserGroupMembershipService.isNavIdentInJoarkVedlikeholdGroup(safRequestContext.getUserId());
+			PepAnswer pepAnswer = decision ? permit() : PepAnswer.deny(new SkjermingReason(
+					"dokument_info_skjermet", "saf_pep5", "dokument_info_skjermet"
+			));
+
 			safRequestContext.getRequestCache().putDecision(tilgangKeyLocalCaching, pepAnswer);
 			return pepAnswer;
 		} else {
@@ -54,7 +58,7 @@ public class AbacBackedPep5Impl extends StandardAbacBackedPep<TilgangDokumentInf
 	}
 
 	@Override
-	public PepAnswer verifyAzureClientCredentialFlowAccess(TilgangDokumentInfo ressurs, SafRequestContext safRequestContext) {
+	public PepAnswer verifyAccessForSystemUser(TilgangDokumentInfo ressurs, SafRequestContext safRequestContext) {
 		if (ressurs == null) {
 			log.warn("Pep5 mangler tilstrekkelig datagrunnlag for å kunne gjennomføre tilgangskontroll. Azure ccf.");
 			return PepAnswer.deny(new UkjentEllerTekniskReason(
@@ -68,23 +72,6 @@ public class AbacBackedPep5Impl extends StandardAbacBackedPep<TilgangDokumentInf
 		));
 		safRequestContext.getRequestCache().putDecision(tilgangKeyLocalCaching, pepAnswer);
 		return pepAnswer;
-	}
-
-	@Override
-	protected PepAnswer translateToDenyReasonCode(XacmlResponse xacmlResponse) {
-		return PepAnswer.deny(new SkjermingReason(xacmlResponse.getAdvicesMap()));
-	}
-
-	private XacmlResponse hasDokumentAccess(TilgangDokumentInfo ressurs, SafRequestContext safRequestContext) {
-		XacmlRequest request = SafXacmlRequestFactory.create(safRequestContext.getSecurityContext());
-		request.resource(RESOURCE_FELLES_RESOURCE_TYPE, RESOURCE_SAF_DOKUMENT_METADATA);
-		request.resource(RESOURCE_SAF_SKJERMING, ressurs.getSkjerming().name());
-
-		traceLogPepStarted(PEP5, ressurs);
-		XacmlResponse response = abacService.evaluate(request);
-		traceLogPepFinished(PEP5, ressurs);
-
-		return response;
 	}
 
 	private boolean isSkjermingPresent(TilgangDokumentInfo ressurs) {

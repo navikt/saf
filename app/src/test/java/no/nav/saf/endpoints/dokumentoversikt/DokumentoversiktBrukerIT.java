@@ -425,7 +425,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 		abacDenyPep5SkipPep2OrPep3();
 		stubPdl();
 		stubSak("gsak-sakerBySaksId-happy.json");
-		stubFinnjournalposter("finnjournalposter_single_bidragAndSkjerming-happy.json");
+		stubFinnjournalposter("finnjournalposter_single_bidragAndSkjermingOnlyDokument-happy.json");
 		stubPensjonSakSammendrag("psak-hentSakSammendragListe-happy-empty.json");
 		stubBidrag();
 
