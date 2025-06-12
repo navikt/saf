@@ -820,7 +820,7 @@
     {
       "app": "rpa-nos-robot1",
       "namespace": "team-rpa",
-      "cluster": "dev-fss",
+      "cluster": "prod-fss",
       "roles": ["tema_sto"]
     }
   ]
