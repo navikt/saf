@@ -18,64 +18,56 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-class AbacBackedPep5ImplTest extends AbstractAbacBackedPepTest {
+class MsGraphBackedPep5ImplTest extends AbstractAbacBackedPepTest {
 
 	@InjectMocks
-	private AbacBackedPep5Impl pep5;
+	private MsGraphBackedPep5Impl pep5;
 
 	@BeforeEach
 	void setUp() {
 		super.setUp();
-		pep5 = new AbacBackedPep5Impl(abacService);
+		pep5 = new MsGraphBackedPep5Impl(navUserGroupMembershipService);
 	}
 
 	@Test
 	void shouldPermitWhenSkjermingIsNotPresent() {
+		when(navUserGroupMembershipService.isNavIdentInJoarkVedlikeholdGroup(anyString())).thenReturn(false);
 
 		boolean hasAccess = pep5.hasAccess(TilgangDokumentInfo.builder()
 				.skjerming(null)
 				.build(), createSafRequestContext());
 
+		verify(navUserGroupMembershipService, times(0)).isNavIdentInJoarkVedlikeholdGroup(anyString());
 		assertTrue(hasAccess);
 	}
 
 	@Test
 	void shouldPermitWhenSkjermingIsPresentAndSaksbehandlerHasAccess() {
-		when(abacService.evaluate(any(XacmlRequest.class))).thenReturn(new XacmlResponse(Decision.PERMIT, null, null, null));
-
-		ArgumentCaptor<XacmlRequest> request = ArgumentCaptor.forClass(XacmlRequest.class);
+		when(navUserGroupMembershipService.isNavIdentInJoarkVedlikeholdGroup(anyString())).thenReturn(true);
 
 		boolean hasAccess = pep5.hasAccess(TilgangDokumentInfo.builder()
 				.skjerming(SKJERMING_POL)
 				.build(), createSafRequestContext());
 
-		verify(abacService).evaluate(request.capture());
-		XacmlRequest capturedRequest = request.getValue();
-
 		assertTrue(hasAccess);
-		assertThat(capturedRequest.getResources(), hasItem(new XacmlAttribute(RESOURCE_FELLES_RESOURCE_TYPE, RESOURCE_SAF_DOKUMENT_METADATA)));
-		assertThat(capturedRequest.getResources(), hasItem(new XacmlAttribute(RESOURCE_SAF_SKJERMING, SKJERMING_POL.name())));
+		verify(navUserGroupMembershipService, times(1)).isNavIdentInJoarkVedlikeholdGroup(anyString());
 	}
 
 	@Test
 	void shouldDenyWhenSkjermingIsPresentAndSaksbehandlerHasNotAccess() {
-		when(abacService.evaluate(any(XacmlRequest.class))).thenReturn(new XacmlResponse(Decision.DENY, null, null, null));
-
-		ArgumentCaptor<XacmlRequest> request = ArgumentCaptor.forClass(XacmlRequest.class);
+		when(navUserGroupMembershipService.isNavIdentInJoarkVedlikeholdGroup(anyString())).thenReturn(false);
 
 		boolean hasAccess = pep5.hasAccess(TilgangDokumentInfo.builder()
 				.skjerming(SKJERMING_POL)
 				.build(), createSafRequestContext());
 
-		verify(abacService).evaluate(request.capture());
-		XacmlRequest capturedRequest = request.getValue();
-
 		assertFalse(hasAccess);
-		assertThat(capturedRequest.getResources(), hasItem(new XacmlAttribute(RESOURCE_FELLES_RESOURCE_TYPE, RESOURCE_SAF_DOKUMENT_METADATA)));
-		assertThat(capturedRequest.getResources(), hasItem(new XacmlAttribute(RESOURCE_SAF_SKJERMING, SKJERMING_POL.name())));
+		verify(navUserGroupMembershipService, times(1)).isNavIdentInJoarkVedlikeholdGroup(anyString());
 	}
 
 }

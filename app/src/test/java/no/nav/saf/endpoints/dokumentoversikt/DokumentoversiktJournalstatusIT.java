@@ -74,7 +74,7 @@ class DokumentoversiktJournalstatusIT extends AbstractItest {
 
 		verify(postRequestedFor(urlEqualTo("/dokarkiv/finnjournalposterstatus"))
 				.withRequestBody(matchingJsonPath("$.journalstatus", containing("UB"))));
-		verify(1, postRequestedFor(urlEqualTo("/abac"))); // kun journalpost 452929051 med skjerming sjekkes mot abac
+		verify(0, postRequestedFor(urlEqualTo("/abac"))); // kun journalpost 452929051 med skjerming sjekkes mot abac
 	}
 
 	@Test
@@ -197,7 +197,7 @@ class DokumentoversiktJournalstatusIT extends AbstractItest {
 
 		verify(postRequestedFor(urlEqualTo("/dokarkiv/finnjournalposterstatus"))
 				.withRequestBody(containing("{\"journalstatus\":\"U\",\"fraDato\":\"2019-01-01\",\"journalposttyper\":[\"I\",\"U\",\"N\"],\"antallRader\":5,\"etterPeker\":null}")));
-		verify(1, postRequestedFor(urlEqualTo("/abac")));
+		verify(0, postRequestedFor(urlEqualTo("/abac")));
 		assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
 	}
 
@@ -238,7 +238,7 @@ class DokumentoversiktJournalstatusIT extends AbstractItest {
 		assertThat(dokumentoversikt.getJournalposter().get(0).getDokumenter()).isEmpty();
 		verify(postRequestedFor(urlEqualTo("/dokarkiv/finnjournalposterstatus"))
 				.withRequestBody(containing("{\"journalstatus\":\"U\",\"fraDato\":\"2019-01-01\",\"journalposttyper\":[\"I\",\"U\",\"N\"],\"antallRader\":5,\"etterPeker\":null}")));
-		verify(1, postRequestedFor(urlEqualTo("/abac")));
+		verify(0, postRequestedFor(urlEqualTo("/abac")));
 		assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
 	}
 
