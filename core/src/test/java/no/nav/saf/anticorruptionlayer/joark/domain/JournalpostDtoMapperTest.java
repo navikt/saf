@@ -703,6 +703,7 @@ class JournalpostDtoMapperTest {
 
 		assertEquals(LocalDateTime.from(DATO_OPPRETTET.toInstant()
 				.atZone(TIDSSONE_NORGE)), LocalDateTime.from(journalpost.getDatoOpprettet()));
+		assertThat(journalpost.getDatoSortering(), is(notNullValue()));
 		assertEquals(1, journalpost.getDokumenter().size());
 		assertThat(journalpost.getTilleggsopplysninger(), hasSize(1));
 		assertThat(journalpost.getTilleggsopplysninger().get(0).getNokkel(), is(TILLEGGSOPPLYSNING_NOKKEL));
