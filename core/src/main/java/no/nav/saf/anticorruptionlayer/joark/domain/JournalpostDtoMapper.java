@@ -40,6 +40,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -109,9 +110,8 @@ public class JournalpostDtoMapper {
 				.kanalnavn(kanal == null ? null : kanal.getKanalnavn())
 				.skjerming(journalpostDto.getSkjerming() == null ? null : journalpostDto.getSkjerming()
 						.getSafSkjerming())
-				.datoOpprettet(journalpostDto.getDatoOpprettet() == null ? INVALID_DATE : LocalDateTime.from(journalpostDto.getDatoOpprettet()
-						.toInstant()
-						.atZone(TIDSSONE_NORGE)))
+				.datoOpprettet(journalpostDto.getDatoOpprettet() == null ? INVALID_DATE : toLocalDateTime(journalpostDto.getDatoOpprettet()))
+				.datoSortering(mapDatoSortering(journalpostDto))
 				.relevanteDatoer(mapRelevanteDatoer(journalpostDto))
 				.tilleggsopplysninger(mapTilleggsopplysninger(journalpostDto))
 				.antallRetur(mapAntallRetur(journalpostDto))
@@ -130,10 +130,7 @@ public class JournalpostDtoMapper {
 						.tittel(mapTittel(dokumentInfoDto.getTittel(), tema, journalstatus, sak, requestCache))
 						.brevkode(mapBrevkode(journalpostDto, dokumentInfoDto))
 						.dokumentstatus(mapDokumentstatus(dokumentInfoDto))
-						.datoFerdigstilt(dokumentInfoDto.getDatoFerdigstilt() == null ? null :
-								LocalDateTime.from(dokumentInfoDto.getDatoFerdigstilt()
-										.toInstant()
-										.atZone(TIDSSONE_NORGE)))
+						.datoFerdigstilt(toLocalDateTime(dokumentInfoDto.getDatoFerdigstilt()))
 						.originalJournalpostId(dokumentInfoDto.getOrigJournalpostId() == null ? null : dokumentInfoDto.getOrigJournalpostId()
 								.toString())
 						.skjerming(dokumentInfoDto.getSkjerming() == null ? null : dokumentInfoDto.getSkjerming()
@@ -163,6 +160,45 @@ public class JournalpostDtoMapper {
 						.build()).toList();
 		journalpost.getDokumenter().addAll(dokumenter);
 		return journalpost;
+	}
+
+	private static LocalDateTime mapDatoSortering(JournalpostDto journalpostDto) {
+		return switch (journalpostDto.getJournalposttype()) {
+			case JournalpostTypeCode.I -> {
+				if (journalpostDto.getMottattDato() != null) {
+					yield toLocalDateTime(journalpostDto.getMottattDato());
+				}
+				yield toLocalDateTime(journalpostDto.getDatoOpprettet());
+			}
+			case JournalpostTypeCode.N -> {
+				if (journalpostDto.getJournalDato() != null) {
+					yield toLocalDateTime(journalpostDto.getJournalDato());
+				}
+				yield toLocalDateTime(journalpostDto.getDatoOpprettet());
+			}
+			case JournalpostTypeCode.U -> {
+				if (journalpostDto.getEkspedertDato() != null) {
+					yield toLocalDateTime(journalpostDto.getEkspedertDato());
+				}
+				if (journalpostDto.getSendtPrintDato() != null) {
+					yield toLocalDateTime(journalpostDto.getSendtPrintDato());
+				}
+				if (journalpostDto.getJournalDato() != null) {
+					yield toLocalDateTime(journalpostDto.getJournalDato());
+				}
+				if (journalpostDto.getDokumentDato() != null) {
+					yield toLocalDateTime(journalpostDto.getDokumentDato());
+				}
+				yield toLocalDateTime(journalpostDto.getDatoOpprettet());
+			}
+		};
+	}
+
+	private static LocalDateTime toLocalDateTime(Date from) {
+		if (from == null) {
+			return null;
+		}
+		return LocalDateTime.from(from.toInstant().atZone(TIDSSONE_NORGE));
 	}
 
 	private String mapTittel(String originalTittel, Tema tema, Journalstatus journalstatus, Sak sak, RequestCache requestCache) {
@@ -306,7 +342,7 @@ public class JournalpostDtoMapper {
 	private Journalstatus mapJournalstatus(JournalpostDto journalpostDto) {
 		SaksrelasjonDto saksrelasjon = journalpostDto.getSaksrelasjon();
 		if (saksrelasjon != null && saksrelasjon.getFeilregistrert() != null && saksrelasjon.getFeilregistrert()
-				&& !Journalstatus.UTGAAR.equals(journalpostDto.getJournalstatus().toSafJournalstatus())) {
+			&& !Journalstatus.UTGAAR.equals(journalpostDto.getJournalstatus().toSafJournalstatus())) {
 			return Journalstatus.FEILREGISTRERT;
 		} else {
 			return journalpostDto.getJournalstatus().toSafJournalstatus();
@@ -437,18 +473,18 @@ public class JournalpostDtoMapper {
 			// Midlertidige journalposter skal ikke ha tilgangskontroll på tema. Her skal saksbehandler ha tilgang uansett.
 			// https://jira.adeo.no/browse/MMA-2494
 			return getDecisionFromPep6d(journalpost.getJournalpostId(), dokumentInfoDto.getDokumentInfoId(), variantDto, requestCache) &&
-					getDecisionFromPep8d(journalpost.getSak(), requestCache);
+				   getDecisionFromPep8d(journalpost.getSak(), requestCache);
 		} else {
 			if (journalpost.getTema() == Tema.UKJ) {
 				// Når tema=UKJ og sak er åpen skal saksbehandler ha tilgang. Kun Pep6d og Pep8d skal bestemme saksbehandlerHarTilgang.
 				// https://jira.adeo.no/browse/MMA-3992
 				return getDecisionFromPep6d(journalpost.getJournalpostId(), dokumentInfoDto.getDokumentInfoId(), variantDto, requestCache) &&
-						getDecisionFromPep8d(journalpost.getSak(), requestCache);
+					   getDecisionFromPep8d(journalpost.getSak(), requestCache);
 			} else {
 				return getDecisionFromPep2d(journalpost.getTema(), requestCache) &&
-						getDecisionFromPep6d(journalpost.getJournalpostId(), dokumentInfoDto.getDokumentInfoId(), variantDto, requestCache) &&
-						getDecisionFromPep7d(journalpost.getSak().getArkivsaksystem(), journalpost.getSak().getArkivsaksnummer(), requestCache) &&
-						getDecisionFromPep8d(journalpost.getSak(), requestCache);
+					   getDecisionFromPep6d(journalpost.getJournalpostId(), dokumentInfoDto.getDokumentInfoId(), variantDto, requestCache) &&
+					   getDecisionFromPep7d(journalpost.getSak().getArkivsaksystem(), journalpost.getSak().getArkivsaksnummer(), requestCache) &&
+					   getDecisionFromPep8d(journalpost.getSak(), requestCache);
 			}
 		}
 	}
