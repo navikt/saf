@@ -51,6 +51,7 @@ import no.nav.safselvbetjening.tilgang.UtledTilgangService;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -471,6 +472,7 @@ public class ArkivJournalpostMapper {
 		}
 		return arkivJournalpost.dokumenter().stream()
 				.filter(dokumentinfo -> shouldMapDokumentInfo(arkivJournalpost.journalpostId().toString(), dokumentinfo.dokumentInfoId().toString(), requestCache))
+				.sorted(sortDokumentInfoByTilknyttetSomRekkefoelgeDokumentInfoId())
 				.map(dokumentinfo -> DokumentInfo.builder()
 						.dokumentInfoId(dokumentinfo.dokumentInfoId().toString())
 						.tittel(mapTittel(dokumentinfo.tittel(), journalpost.getTema(), journalpost.getJournalstatus(), journalpost.getSak(), requestCache))
@@ -485,6 +487,33 @@ public class ArkivJournalpostMapper {
 								.collect(Collectors.toList()))
 						.logiskeVedlegg(mapLogiskeVedlegg(dokumentinfo, journalpost.getTema(), journalpost.getJournalstatus(), journalpost.getSak(), requestCache))
 						.build()).toList();
+	}
+
+	private static Comparator<? super ArkivDokumentinfo> sortDokumentInfoByTilknyttetSomRekkefoelgeDokumentInfoId() {
+		return (o1, o2) -> {
+			if (Objects.equals(o1.tilknyttetSom(), o2.tilknyttetSom())) {
+				if (!Objects.equals(o1.rekkefoelge(), o2.rekkefoelge())) {
+					if (o1.rekkefoelge() == null) {
+						return 1;
+					} else if (o2.rekkefoelge() == null) {
+						return -1;
+					} else {
+						return o1.rekkefoelge().compareTo(o2.rekkefoelge());
+					}
+				} else {
+					if (o1.dokumentInfoId() == null && o2.dokumentInfoId() == null) {
+						return 1;
+					} else if (o1.dokumentInfoId() == null) {
+						return -1;
+					} else if (o2.dokumentInfoId() == null) {
+						return 1;
+					}
+					return o1.dokumentInfoId().compareTo(o2.dokumentInfoId());
+				}
+			} else {
+				return o1.tilknyttetSom().compareTo(o2.tilknyttetSom());
+			}
+		};
 	}
 
 	private static Dokumentvariant mapDokumentvariant(TilgangJournalpost tilgangJournalpost, Journalpost journalpost, Set<Ident> brukerIdenter, RequestCache requestCache, ArkivDokumentinfo dokumentinfo, ArkivFildetaljer fildetaljer) {

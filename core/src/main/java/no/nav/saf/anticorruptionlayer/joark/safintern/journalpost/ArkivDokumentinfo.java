@@ -26,6 +26,7 @@ public record ArkivDokumentinfo(
 		String status,
 		String tilknyttetSom,
 		String tittel,
+		Integer rekkefoelge,
 		List<ArkivFildetaljer> fildetaljer
 ) {
 

@@ -40,6 +40,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -124,6 +125,7 @@ public class JournalpostDtoMapper {
 				.build();
 		List<DokumentInfo> dokumenter = journalpostDto.getDokumenter().stream()
 				.filter(dokumentInfoDto -> shouldMapDokumentInfo(journalpostId, dokumentInfoDto.getDokumentInfoId(), requestCache))
+				.sorted(sortDokumentInfoByTilknyttetSomRekkefoelgeDokumentInfoId())
 				.map(dokumentInfoDto -> DokumentInfo.builder()
 						.parent(journalpost)
 						.dokumentInfoId(dokumentInfoDto.getDokumentInfoId())
@@ -160,6 +162,33 @@ public class JournalpostDtoMapper {
 						.build()).toList();
 		journalpost.getDokumenter().addAll(dokumenter);
 		return journalpost;
+	}
+
+	private Comparator<? super DokumentInfoDto> sortDokumentInfoByTilknyttetSomRekkefoelgeDokumentInfoId() {
+		return (o1, o2) -> {
+			if (Objects.equals(o1.getTilknyttetSom(), o2.getTilknyttetSom())) {
+				if (!Objects.equals(o1.getRekkefoelge(), o2.getRekkefoelge())) {
+					if (o1.getRekkefoelge() == null) {
+						return 1;
+					} else if (o2.getRekkefoelge() == null) {
+						return -1;
+					} else {
+						return o1.getRekkefoelge().compareTo(o2.getRekkefoelge());
+					}
+				} else {
+					if (o1.getDokumentInfoId() == null && o2.getDokumentInfoId() == null) {
+						return 1;
+					} else if (o1.getDokumentInfoId() == null) {
+						return -1;
+					} else if (o2.getDokumentInfoId() == null) {
+						return 1;
+					}
+					return o1.getDokumentInfoId().compareTo(o2.getDokumentInfoId());
+				}
+			} else {
+				return o1.getTilknyttetSom().compareTo(o2.getTilknyttetSom());
+			}
+		};
 	}
 
 	private static LocalDateTime mapDatoSortering(JournalpostDto journalpostDto) {
