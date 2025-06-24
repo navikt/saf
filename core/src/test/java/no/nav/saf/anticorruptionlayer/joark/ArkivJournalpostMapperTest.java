@@ -7,6 +7,7 @@ import no.nav.saf.anticorruptionlayer.joark.domain.kode.JournalStatusCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.JournalpostTypeCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.SkjermingTypeCode;
 import no.nav.saf.anticorruptionlayer.joark.safintern.journalpost.ArkivBruker;
+import no.nav.saf.anticorruptionlayer.joark.safintern.journalpost.ArkivDokumentinfo;
 import no.nav.saf.anticorruptionlayer.joark.safintern.journalpost.ArkivJournalpost;
 import no.nav.saf.anticorruptionlayer.joark.safintern.journalpost.ArkivRelevanteDatoer;
 import no.nav.saf.anticorruptionlayer.joark.safintern.journalpost.ArkivSak;
@@ -50,7 +51,9 @@ import static java.util.Collections.emptySet;
 import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostMapper.ARKIVJOURNALPOST_OVERSTYRTINNSYN_STANDARD;
 import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostMapper.FILTYPE_PDF;
 import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostMapper.SKJULT_TITTEL;
+import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostMapper.TILKNYTTET_SOM_VEDLEGG;
 import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostMapper.mapJournalpost;
+import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostMapper.sortDokumentInfoByTilknyttetSomRekkefoelgeDokumentInfoId;
 import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostTestObjects.ARKIVDOKUMENTINFO_BREVKODE;
 import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostTestObjects.ARKIVDOKUMENTINFO_DOKUMENTTYPE_ID;
 import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostTestObjects.ARKIVDOKUMENTINFO_DOKUMENT_INFO_ID;
@@ -90,6 +93,7 @@ import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostTestObjects.A
 import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostTestObjects.BRUKER_ID_ORGANISASJON;
 import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostTestObjects.BRUKER_ID_PERSON;
 import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostTestObjects.FNR;
+import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostTestObjects.HOVEDDOKUMENT_DOKUMENT_INFO_ID;
 import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostTestObjects.LOGISK_VEDLEGG_ID;
 import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostTestObjects.LOGISK_VEDLEGG_TITTEL;
 import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostTestObjects.SKJERMING_TYPE_CODE_POL;
@@ -100,6 +104,7 @@ import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostTestObjects.V
 import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostTestObjects.baseArkivDokumentinfo;
 import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostTestObjects.baseArkivJournalpost;
 import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostTestObjects.datoSorteringArkivJournalpost;
+import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostTestObjects.hoveddokumentArkivDokumentinfo;
 import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostTestObjects.inngaaendeArkivJournalpost;
 import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostTestObjects.inngaaendeArkivJournalpostBuilder;
 import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostTestObjects.notatArkivJournalpost;
@@ -708,6 +713,28 @@ class ArkivJournalpostMapperTest {
 		Journalpost journalpost = mapJournalpost(arkivJournalpost, emptySet(), createTilgangBrukerRequestCache());
 
 		assertThat(journalpost.getJournalstatus()).isEqualTo(UTGAAR);
+	}
+
+	@Test
+	void skalSortereArkivDokumentInfosKorrekt() {
+		/*
+		  DokumentInfos skal sorteres som følger
+		  - Hoveddokument først. TilknyttetSom = null behandles som vedlegg for robusthet
+		  - Deretter alle med rekkefølge satt, i stigende rekkefølge
+		  - Deretter sortert på dokumentInfoId i stigende rekkefølge
+		 */
+
+		List<Long> sortedDokumentInfoIds = Stream.of(
+						hoveddokumentArkivDokumentinfo(),
+						baseArkivDokumentinfo().dokumentInfoId(5L).tilknyttetSom(TILKNYTTET_SOM_VEDLEGG).rekkefoelge(null).build(),
+						baseArkivDokumentinfo().dokumentInfoId(4L).tilknyttetSom(TILKNYTTET_SOM_VEDLEGG).rekkefoelge(1).build(),
+						baseArkivDokumentinfo().dokumentInfoId(3L).tilknyttetSom(TILKNYTTET_SOM_VEDLEGG).rekkefoelge(2).build(),
+						baseArkivDokumentinfo().dokumentInfoId(2L).tilknyttetSom(TILKNYTTET_SOM_VEDLEGG).rekkefoelge(null).build(),
+						baseArkivDokumentinfo().dokumentInfoId(1L).tilknyttetSom(null).rekkefoelge(null).build()
+				).sorted(sortDokumentInfoByTilknyttetSomRekkefoelgeDokumentInfoId())
+				.map(ArkivDokumentinfo::dokumentInfoId)
+				.toList();
+		assertThat(sortedDokumentInfoIds).containsExactly(HOVEDDOKUMENT_DOKUMENT_INFO_ID, 4L, 3L, 1L, 2L, 5L);
 	}
 
 	@ParameterizedTest

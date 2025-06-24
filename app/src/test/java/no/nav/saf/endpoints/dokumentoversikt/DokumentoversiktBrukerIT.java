@@ -81,6 +81,36 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 	}
 
 	@Test
+	void shouldHentDokumentoversiktBrukerWithAktoerIDAndHavDokumentInfosInCorrectOrder() throws IOException, URISyntaxException {
+		abacPermit();
+		stubPdl();
+		stubSak();
+		// Merk: i filen under kommer vedleggene i feil rekkefølge "fra dokarkiv" for å teste at saf sorterer dem riktig.
+		// i realiteten kommer de alltid i rekkefølge fra dokarkiv, men *kan komme* i uorden internt i saf
+		stubFinnjournalposter("finnjournalposter-happy-mangevedlegg.json");
+		stubPensjonSakSammendrag();
+
+		ResponseEntity<GraphQLResponse> responseEntity = callDokumentOversikBrukerWithAktoerId();
+		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
+		assertEquals(OK, responseEntity.getStatusCode());
+		assertEquals("429837417", dokumentoversikt.getJournalposter().getFirst().getJournalpostId());
+		assertEquals("441828515", dokumentoversikt.getJournalposter().getFirst().getDokumenter().get(0).getDokumentInfoId());
+		assertEquals("441828513", dokumentoversikt.getJournalposter().getFirst().getDokumenter().get(1).getDokumentInfoId());
+		assertEquals("441828512", dokumentoversikt.getJournalposter().getFirst().getDokumenter().get(2).getDokumentInfoId());
+		assertEquals("441828511", dokumentoversikt.getJournalposter().getFirst().getDokumenter().get(3).getDokumentInfoId());
+		assertEquals("429837329", dokumentoversikt.getJournalposter().get(1).getJournalpostId());
+		assertEquals("429812815", dokumentoversikt.getJournalposter().get(2).getJournalpostId());
+		assertEquals(KANAL_REFERANSE_ID, dokumentoversikt.getJournalposter().get(0).getEksternReferanseId());
+		assertEquals(KANAL_REFERANSE_ID, dokumentoversikt.getJournalposter().get(1).getEksternReferanseId());
+		assertEquals(KANAL_REFERANSE_ID, dokumentoversikt.getJournalposter().get(2).getEksternReferanseId());
+		assertSaksbehandlerHarTilgang(dokumentoversikt);
+		verify(postRequestedFor(urlEqualTo("/pdl")).withRequestBody(matchingJsonPath("$.variables.ident", equalTo(AKTOER_ID))));
+		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter"))
+				.withRequestBody(containing("{\"gsakSakIds\":[\"135695442\"],\"psakSakIds\":[\"21998969\"],\"fraDato\":\"0001-01-01\",\"tilDato\":null,\"inkluderJournalStatus\":[\"FL\",\"FS\",\"J\",\"E\"],\"inkluderJournalpostType\":[\"I\",\"U\",\"N\"],\"visFeilregistrerte\":false,\"alleIdenter\":[\"11111111111\"],\"foerste\":3,\"etterPeker\":null}")));
+		verify(getRequestedFor(urlEqualTo(PENSJON_API_SAK_SAMMENDRAG_URL)).withHeader("fnr", new EqualToPattern(FNR)));
+	}
+
+	@Test
 	void shouldHentDokumentoversiktBrukerWithFNR() throws IOException, URISyntaxException {
 		abacPermit();
 		stubPdl();

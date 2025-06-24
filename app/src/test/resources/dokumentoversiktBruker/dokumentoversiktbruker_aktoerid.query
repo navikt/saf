@@ -5,6 +5,7 @@
       eksternReferanseId
       tittel
       dokumenter {
+        dokumentInfoId
         tittel
         dokumentvarianter {
           saksbehandlerHarTilgang

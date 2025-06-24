@@ -82,7 +82,7 @@ public class ArkivJournalpostMapper {
 	public static final String ARKIVJOURNALPOST_OVERSTYRTINNSYN_STANDARD_BESKRIVELSE = "Standardreglene avgjør om dokumentet vises";
 	public static final String SKJULT_TITTEL = "*****";
 	public static final String TILKNYTTET_SOM_HOVEDDOKUMENT = "HOVEDDOKUMENT";
-	static final String TILKNYTTET_SOM_VEDLEGG = "VEDLEGG";
+	public static final String TILKNYTTET_SOM_VEDLEGG = "VEDLEGG";
 
 	private static final UtledTilgangService utledTilgangService = new UtledTilgangService(true);
 
@@ -489,29 +489,29 @@ public class ArkivJournalpostMapper {
 						.build()).toList();
 	}
 
-	private static Comparator<? super ArkivDokumentinfo> sortDokumentInfoByTilknyttetSomRekkefoelgeDokumentInfoId() {
+	static Comparator<? super ArkivDokumentinfo> sortDokumentInfoByTilknyttetSomRekkefoelgeDokumentInfoId() {
 		return (o1, o2) -> {
-			if (Objects.equals(o1.tilknyttetSom(), o2.tilknyttetSom())) {
-				if (!Objects.equals(o1.rekkefoelge(), o2.rekkefoelge())) {
-					if (o1.rekkefoelge() == null) {
-						return 1;
-					} else if (o2.rekkefoelge() == null) {
-						return -1;
-					} else {
-						return o1.rekkefoelge().compareTo(o2.rekkefoelge());
-					}
+			if (TILKNYTTET_SOM_HOVEDDOKUMENT.equalsIgnoreCase(o1.tilknyttetSom())) {
+				return -1;
+			} else if (TILKNYTTET_SOM_HOVEDDOKUMENT.equalsIgnoreCase(o2.tilknyttetSom())) {
+				return 1;
+			} else if (!Objects.equals(o1.rekkefoelge(), o2.rekkefoelge())) {
+				if (o1.rekkefoelge() == null) {
+					return 1;
+				} else if (o2.rekkefoelge() == null) {
+					return -1;
 				} else {
-					if (o1.dokumentInfoId() == null && o2.dokumentInfoId() == null) {
-						return 1;
-					} else if (o1.dokumentInfoId() == null) {
-						return -1;
-					} else if (o2.dokumentInfoId() == null) {
-						return 1;
-					}
-					return o1.dokumentInfoId().compareTo(o2.dokumentInfoId());
+					return o1.rekkefoelge().compareTo(o2.rekkefoelge());
 				}
 			} else {
-				return o1.tilknyttetSom().compareTo(o2.tilknyttetSom());
+				if (o1.dokumentInfoId() == null && o2.dokumentInfoId() == null) {
+					return 0;
+				} else if (o1.dokumentInfoId() == null) {
+					return -1;
+				} else if (o2.dokumentInfoId() == null) {
+					return 1;
+				}
+				return o1.dokumentInfoId().compareTo(o2.dokumentInfoId());
 			}
 		};
 	}

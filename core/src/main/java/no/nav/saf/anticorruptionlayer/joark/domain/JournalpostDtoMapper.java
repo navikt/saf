@@ -53,6 +53,7 @@ import static java.util.Objects.nonNull;
 import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostMapper.ARKIVJOURNALPOST_OVERSTYRTINNSYN_STANDARD;
 import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostMapper.ARKIVJOURNALPOST_OVERSTYRTINNSYN_STANDARD_BESKRIVELSE;
 import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostMapper.SKJULT_TITTEL;
+import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostMapper.TILKNYTTET_SOM_HOVEDDOKUMENT;
 import static no.nav.saf.anticorruptionlayer.joark.TilgangAvvistMapper.mapbrukerTilgangAvvistBegrunnelser;
 import static no.nav.saf.anticorruptionlayer.joark.domain.kode.JournalpostTypeCode.U;
 import static no.nav.saf.cache.KeyGeneratorLocalCaching.getKeyForPep2d;
@@ -164,29 +165,29 @@ public class JournalpostDtoMapper {
 		return journalpost;
 	}
 
-	private Comparator<? super DokumentInfoDto> sortDokumentInfoByTilknyttetSomRekkefoelgeDokumentInfoId() {
+	static Comparator<? super DokumentInfoDto> sortDokumentInfoByTilknyttetSomRekkefoelgeDokumentInfoId() {
 		return (o1, o2) -> {
-			if (Objects.equals(o1.getTilknyttetSom(), o2.getTilknyttetSom())) {
-				if (!Objects.equals(o1.getRekkefoelge(), o2.getRekkefoelge())) {
-					if (o1.getRekkefoelge() == null) {
-						return 1;
-					} else if (o2.getRekkefoelge() == null) {
-						return -1;
-					} else {
-						return o1.getRekkefoelge().compareTo(o2.getRekkefoelge());
-					}
+			if (TILKNYTTET_SOM_HOVEDDOKUMENT.equalsIgnoreCase(o1.getTilknyttetSom())) {
+				return -1;
+			} else if (TILKNYTTET_SOM_HOVEDDOKUMENT.equalsIgnoreCase(o2.getTilknyttetSom())) {
+				return 1;
+			} else if (!Objects.equals(o1.getRekkefoelge(), o2.getRekkefoelge())) {
+				if (o1.getRekkefoelge() == null) {
+					return 1;
+				} else if (o2.getRekkefoelge() == null) {
+					return -1;
 				} else {
-					if (o1.getDokumentInfoId() == null && o2.getDokumentInfoId() == null) {
-						return 1;
-					} else if (o1.getDokumentInfoId() == null) {
-						return -1;
-					} else if (o2.getDokumentInfoId() == null) {
-						return 1;
-					}
-					return o1.getDokumentInfoId().compareTo(o2.getDokumentInfoId());
+					return o1.getRekkefoelge().compareTo(o2.getRekkefoelge());
 				}
 			} else {
-				return o1.getTilknyttetSom().compareTo(o2.getTilknyttetSom());
+				if (o1.getDokumentInfoId() == null && o2.getDokumentInfoId() == null) {
+					return 0;
+				} else if (o1.getDokumentInfoId() == null) {
+					return -1;
+				} else if (o2.getDokumentInfoId() == null) {
+					return 1;
+				}
+				return o1.getDokumentInfoId().compareTo(o2.getDokumentInfoId());
 			}
 		};
 	}
