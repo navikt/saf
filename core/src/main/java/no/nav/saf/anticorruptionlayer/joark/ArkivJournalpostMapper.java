@@ -51,6 +51,7 @@ import no.nav.safselvbetjening.tilgang.UtledTilgangService;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -81,7 +82,7 @@ public class ArkivJournalpostMapper {
 	public static final String ARKIVJOURNALPOST_OVERSTYRTINNSYN_STANDARD_BESKRIVELSE = "Standardreglene avgjør om dokumentet vises";
 	public static final String SKJULT_TITTEL = "*****";
 	public static final String TILKNYTTET_SOM_HOVEDDOKUMENT = "HOVEDDOKUMENT";
-	static final String TILKNYTTET_SOM_VEDLEGG = "VEDLEGG";
+	public static final String TILKNYTTET_SOM_VEDLEGG = "VEDLEGG";
 
 	private static final UtledTilgangService utledTilgangService = new UtledTilgangService(true);
 
@@ -471,6 +472,7 @@ public class ArkivJournalpostMapper {
 		}
 		return arkivJournalpost.dokumenter().stream()
 				.filter(dokumentinfo -> shouldMapDokumentInfo(arkivJournalpost.journalpostId().toString(), dokumentinfo.dokumentInfoId().toString(), requestCache))
+				.sorted(sortDokumentInfoByTilknyttetSomRekkefoelgeDokumentInfoId())
 				.map(dokumentinfo -> DokumentInfo.builder()
 						.dokumentInfoId(dokumentinfo.dokumentInfoId().toString())
 						.tittel(mapTittel(dokumentinfo.tittel(), journalpost.getTema(), journalpost.getJournalstatus(), journalpost.getSak(), requestCache))
@@ -485,6 +487,33 @@ public class ArkivJournalpostMapper {
 								.collect(Collectors.toList()))
 						.logiskeVedlegg(mapLogiskeVedlegg(dokumentinfo, journalpost.getTema(), journalpost.getJournalstatus(), journalpost.getSak(), requestCache))
 						.build()).toList();
+	}
+
+	static Comparator<? super ArkivDokumentinfo> sortDokumentInfoByTilknyttetSomRekkefoelgeDokumentInfoId() {
+		return (o1, o2) -> {
+			if (TILKNYTTET_SOM_HOVEDDOKUMENT.equalsIgnoreCase(o1.tilknyttetSom())) {
+				return -1;
+			} else if (TILKNYTTET_SOM_HOVEDDOKUMENT.equalsIgnoreCase(o2.tilknyttetSom())) {
+				return 1;
+			} else if (!Objects.equals(o1.rekkefoelge(), o2.rekkefoelge())) {
+				if (o1.rekkefoelge() == null) {
+					return 1;
+				} else if (o2.rekkefoelge() == null) {
+					return -1;
+				} else {
+					return o1.rekkefoelge().compareTo(o2.rekkefoelge());
+				}
+			} else {
+				if (o1.dokumentInfoId() == null && o2.dokumentInfoId() == null) {
+					return 0;
+				} else if (o1.dokumentInfoId() == null) {
+					return -1;
+				} else if (o2.dokumentInfoId() == null) {
+					return 1;
+				}
+				return o1.dokumentInfoId().compareTo(o2.dokumentInfoId());
+			}
+		};
 	}
 
 	private static Dokumentvariant mapDokumentvariant(TilgangJournalpost tilgangJournalpost, Journalpost journalpost, Set<Ident> brukerIdenter, RequestCache requestCache, ArkivDokumentinfo dokumentinfo, ArkivFildetaljer fildetaljer) {

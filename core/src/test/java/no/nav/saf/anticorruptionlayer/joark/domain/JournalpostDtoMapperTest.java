@@ -5,6 +5,7 @@ import no.nav.saf.anticorruptionlayer.joark.domain.kode.JournalStatusCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.JournalpostTypeCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.SkjermingTypeCode;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.dto.BrukerDto;
+import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.dto.DokumentInfoDto;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.dto.JournalpostDto;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.dto.SaksrelasjonDto;
 import no.nav.saf.cache.KeyGeneratorLocalCaching;
@@ -31,9 +32,14 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Stream;
 
 import static java.util.Collections.emptySet;
 import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostMapper.SKJULT_TITTEL;
+import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostMapper.TILKNYTTET_SOM_HOVEDDOKUMENT;
+import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostMapper.TILKNYTTET_SOM_VEDLEGG;
+import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoMapper.sortDokumentInfoByTilknyttetSomRekkefoelgeDokumentInfoId;
 import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoMapper.FILTYPE_PDF;
 import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.AKTOER_ID;
 import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.ANTALL_RETUR;
@@ -74,6 +80,7 @@ import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObje
 import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.TILLEGGSOPPLYSNING_VERDI;
 import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.VARIANT_FORMAT_CODE_ARKIV;
 import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.VARIANT_FORMAT_CODE_SLADDET;
+import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.baseDokumentInfoDto;
 import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.buildJournalpostDtoUtgaaendeType;
 import static no.nav.saf.anticorruptionlayer.joark.domain.UtsendingsInfoDtoTestObjects.DIGITALPOSTKASSE_ADRESSE;
 import static no.nav.saf.anticorruptionlayer.joark.domain.UtsendingsInfoDtoTestObjects.EPOST_VEDTAK_FORVENTET_ADRESSE;
@@ -669,6 +676,30 @@ class JournalpostDtoMapperTest {
 		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, emptySet(), requestCache);
 
 		assertEquals(UTGAAR, journalpost.getJournalstatus());
+	}
+
+
+	@Test
+	void skalSortereDokumentInfoDTOsKorrekt() {
+		/*
+		  DokumentInfos skal sorteres som følger
+		  - Hoveddokument først. TilknyttetSom = null behandles som vedlegg for robusthet
+		  - Deretter alle med rekkefølge satt, i stigende rekkefølge
+		  - Deretter sortert på dokumentInfoId i stigende rekkefølge
+		 */
+
+		List<Integer> sortedDokumentInfoIds = Stream.of(
+						baseDokumentInfoDto().dokumentInfoId("6").tilknyttetSom(TILKNYTTET_SOM_HOVEDDOKUMENT).rekkefoelge(null).build(),
+						baseDokumentInfoDto().dokumentInfoId("5").tilknyttetSom(TILKNYTTET_SOM_VEDLEGG).rekkefoelge(null).build(),
+						baseDokumentInfoDto().dokumentInfoId("4").tilknyttetSom(TILKNYTTET_SOM_VEDLEGG).rekkefoelge(1).build(),
+						baseDokumentInfoDto().dokumentInfoId("3").tilknyttetSom(TILKNYTTET_SOM_VEDLEGG).rekkefoelge(2).build(),
+						baseDokumentInfoDto().dokumentInfoId("2").tilknyttetSom(TILKNYTTET_SOM_VEDLEGG).rekkefoelge(null).build(),
+						baseDokumentInfoDto().dokumentInfoId("1").tilknyttetSom(null).rekkefoelge(null).build()
+				).sorted(sortDokumentInfoByTilknyttetSomRekkefoelgeDokumentInfoId())
+				.map(DokumentInfoDto::getDokumentInfoId)
+				.map(Integer::valueOf)
+				.toList();
+		Assertions.assertThat(sortedDokumentInfoIds).containsExactly(6, 4, 3, 1, 2, 5);
 	}
 
 	private RequestCache defaultRequestCache() {

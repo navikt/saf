@@ -146,34 +146,36 @@ public class JournalpostDtoTestObjects {
 
 
 	private static List<DokumentInfoDto> buildDokumenter() {
-		return Collections.singletonList(
-				DokumentInfoDto.builder()
-						.dokumentInfoId(JournalpostDtoTestObjects.DOKUMENT_INFO_ID)
-						.tittel(DOKUMENTINFO_TITTEL)
-						.brevkode(JournalpostDtoTestObjects.BREVKODE)
-						.dokumenttypeId(JournalpostDtoTestObjects.DOKUMENTTYPE_ID)
-						.dokumentstatus(DokumentStatusCode.FERDIGSTILT)
-						.datoFerdigstilt(JournalpostDtoTestObjects.DATO_FERDIGSTILT)
-						.origJournalpostId(JournalpostDtoTestObjects.JOURNALPOST_ID)
-						.skjerming(JournalpostDtoTestObjects.SKJERMING_TYPE_CODE_POL)
-						.logiske(logiskeVedlegg())
-						.varianter(Arrays.asList(VariantDto.builder()
-										.skjerming(JournalpostDtoTestObjects.SKJERMING_TYPE_CODE_POL)
-										.variantf(JournalpostDtoTestObjects.VARIANT_FORMAT_CODE_ARKIV)
-										.filnavn(JournalpostDtoTestObjects.FILNAVN_1)
-										.filuuid(JournalpostDtoTestObjects.FILUUID_1)
-										.filtype(JournalpostDtoTestObjects.FILTYPE_1)
-										.filstorrelse("1024")
-										.build(),
-								VariantDto.builder()
-										.skjerming(null)
-										.variantf(JournalpostDtoTestObjects.VARIANT_FORMAT_CODE_SLADDET)
-										.filnavn(JournalpostDtoTestObjects.FILNAVN_2)
-										.filuuid(JournalpostDtoTestObjects.FILUUID_2)
-										.filtype(JournalpostDtoTestObjects.FILTYPE_2)
-										.filstorrelse("2056")
-										.build()))
-						.build());
+		return Collections.singletonList(baseDokumentInfoDto().build());
+	}
+
+	static DokumentInfoDto.DokumentInfoDtoBuilder baseDokumentInfoDto() {
+		return DokumentInfoDto.builder()
+				.dokumentInfoId(JournalpostDtoTestObjects.DOKUMENT_INFO_ID)
+				.tittel(DOKUMENTINFO_TITTEL)
+				.brevkode(JournalpostDtoTestObjects.BREVKODE)
+				.dokumenttypeId(JournalpostDtoTestObjects.DOKUMENTTYPE_ID)
+				.dokumentstatus(DokumentStatusCode.FERDIGSTILT)
+				.datoFerdigstilt(JournalpostDtoTestObjects.DATO_FERDIGSTILT)
+				.origJournalpostId(JournalpostDtoTestObjects.JOURNALPOST_ID)
+				.skjerming(JournalpostDtoTestObjects.SKJERMING_TYPE_CODE_POL)
+				.logiske(logiskeVedlegg())
+				.varianter(Arrays.asList(VariantDto.builder()
+								.skjerming(JournalpostDtoTestObjects.SKJERMING_TYPE_CODE_POL)
+								.variantf(JournalpostDtoTestObjects.VARIANT_FORMAT_CODE_ARKIV)
+								.filnavn(JournalpostDtoTestObjects.FILNAVN_1)
+								.filuuid(JournalpostDtoTestObjects.FILUUID_1)
+								.filtype(JournalpostDtoTestObjects.FILTYPE_1)
+								.filstorrelse("1024")
+								.build(),
+						VariantDto.builder()
+								.skjerming(null)
+								.variantf(JournalpostDtoTestObjects.VARIANT_FORMAT_CODE_SLADDET)
+								.filnavn(JournalpostDtoTestObjects.FILNAVN_2)
+								.filuuid(JournalpostDtoTestObjects.FILUUID_2)
+								.filtype(JournalpostDtoTestObjects.FILTYPE_2)
+								.filstorrelse("2056")
+								.build()));
 	}
 
 	private static List<LogiskVedleggDto> logiskeVedlegg() {

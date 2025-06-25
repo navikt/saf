@@ -20,6 +20,7 @@ import java.util.List;
 @Builder
 public class DokumentInfoDto {
 	private String dokumentInfoId;
+	private String tilknyttetSom;
 	private DokumentStatusCode dokumentstatus;
 	private Date datoFerdigstilt;
 	private String brevkode;
@@ -28,6 +29,7 @@ public class DokumentInfoDto {
 	private SkjermingTypeCode skjerming;
 	private List<VariantDto> varianter;
 	private Long origJournalpostId;
+	private Integer rekkefoelge;
 	private List<LogiskVedleggDto> logiske;
 	private Boolean kassert;
 	private String kategori;
