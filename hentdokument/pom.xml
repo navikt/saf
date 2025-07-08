@@ -17,9 +17,16 @@
 			<groupId>no.nav.saf</groupId>
 			<artifactId>core</artifactId>
 		</dependency>
+
 		<dependency>
 			<groupId>no.nav.common</groupId>
 			<artifactId>audit-log</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>com.papertrailapp</groupId>
+					<artifactId>logback-syslog4j</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 	</dependencies>
 
