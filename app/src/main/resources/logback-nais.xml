@@ -21,7 +21,7 @@
 		<destination>audit.nais:6514</destination>
 		<writeBufferSize>128000</writeBufferSize>
 		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
-				<pattern>${HOSTNAME} saf_audit_hentdokument: %m%n%xEx</pattern>
+			<pattern>${HOSTNAME} saf_audit_hentdokument: %m%n</pattern>
 		</encoder>
 	</appender>
 
