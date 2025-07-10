@@ -90,6 +90,11 @@ public class SafProperties {
 		@NotNull
 		private AzureEndpoint k9sak;
 
+		/**
+		 * Url og scope til Tilgangsmaskinen
+		 */
+		@NotNull
+		private AzureEndpoint tilgangsmaskinen;
 	}
 
 	@Data

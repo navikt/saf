@@ -40,7 +40,7 @@ import static no.nav.saf.tilgangskontroll.pep.AbacDenyReasonCode.STRENGT_FORTROL
  * https://confluence.adeo.no/display/ABAC/FP2%3A+Behandling+Kode+7+Brukere
  * https://confluence.adeo.no/display/ABAC/FP3%3A+Egen+ansatt
  */
-@Component(PEP1G)
+@Component
 @Slf4j
 public class AbacBackedPep1gImpl extends StandardAbacBackedPep<TilgangBruker> {
 
