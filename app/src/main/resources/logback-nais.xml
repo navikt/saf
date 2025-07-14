@@ -17,17 +17,12 @@
 		</encoder>
 	</appender>
 
-	<appender name="hentdokument_sporbarhetslogg" class="com.papertrailapp.logback.Syslog4jAppender">
-		<layout class="ch.qos.logback.classic.PatternLayout">
-			<pattern>%m%n%xEx</pattern>
-		</layout>
-
-		<syslogConfig class="org.productivity.java.syslog4j.impl.net.tcp.TCPNetSyslogConfig">
-			<host>audit.nais</host>
-			<port>6514</port>
-			<ident>saf_audit_hentdokument</ident>
-			<maxMessageLength>128000</maxMessageLength>
-		</syslogConfig>
+	<appender name="hentdokument_sporbarhetslogg" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
+		<destination>audit.nais:6514</destination>
+		<writeBufferSize>128000</writeBufferSize>
+		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+			<pattern>${HOSTNAME} saf_audit_hentdokument: %m%n</pattern>
+		</encoder>
 	</appender>
 
 	<logger level="INFO" name="hentdokument_sporbarhetslogg" additivity="false">
