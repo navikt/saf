@@ -1,5 +1,6 @@
 package no.nav.saf.tilgangskontroll.pep;
 
+import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.tilgangskontroll.pep.reasons.UkjentEllerTekniskReason;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -10,6 +11,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
+@Slf4j
 class MultiPep1gTest {
 
 	@Mock
@@ -66,6 +68,17 @@ class MultiPep1gTest {
 
 		when(abacImplementation.hasAccessWithAnswer(any(), any())).thenReturn(DENY);
 		when(tilgangsmaskinenImplementation.hasAccessWithAnswer(any(), any())).thenReturn(DENY);
+
+		var answer = multiPep1g.hasAccessWithAnswer(null, null);
+		assertThat(answer).isEqualTo(DENY);
+	}
+
+	@Test
+	void shouldGracefullyHandleExceptionsFromTilgangsmaskinen() {
+		multiPep1g = new MultiPep1g(abacImplementation, tilgangsmaskinenImplementation, false);
+
+		when(abacImplementation.hasAccessWithAnswer(any(), any())).thenReturn(DENY);
+		when(tilgangsmaskinenImplementation.hasAccessWithAnswer(any(), any())).thenThrow(new RuntimeException("Oh no Tilgangsmaskinen exploded!"));
 
 		var answer = multiPep1g.hasAccessWithAnswer(null, null);
 		assertThat(answer).isEqualTo(DENY);

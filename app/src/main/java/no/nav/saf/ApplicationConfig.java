@@ -18,6 +18,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.web.client.RestClient;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -25,6 +26,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static no.nav.saf.headers.NavHeaders.NAV_CALLID;
+import static no.nav.saf.util.MDCUtility.getCallId;
 import static org.apache.hc.core5.util.Timeout.ofSeconds;
 
 @ComponentScan
@@ -51,6 +54,17 @@ public class ApplicationConfig {
 
 		return HttpClients.custom()
 				.setConnectionManager(connectionManager)
+				.build();
+	}
+
+	@Bean
+	RestClient restClient(ClientHttpRequestFactory clientHttpRequestFactory) {
+		return RestClient.builder()
+				.requestFactory(clientHttpRequestFactory)
+				.requestInterceptor((request, body, execution) -> {
+					request.getHeaders().add(NAV_CALLID, getCallId());
+					return execution.execute(request, body);
+				})
 				.build();
 	}
 

@@ -3,8 +3,14 @@ package no.nav.saf.tilgangskontroll.pep;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
+import no.nav.saf.tilgangskontroll.pep.reasons.UkjentEllerTekniskReason;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+import java.util.function.BiFunction;
 
 import static no.nav.saf.domain.DomainConstants.PEP1G;
 
@@ -12,6 +18,7 @@ import static no.nav.saf.domain.DomainConstants.PEP1G;
 @Component(PEP1G)
 public class MultiPep1g extends Pep<TilgangBruker> {
 
+	private static final long OPPSLAG_TIMEOUT_MILLIS = 1000;
 	private final AbacBackedPep1gImpl abacBackedPep;
 	private final TilgangsmaskinenBackedPep1gImpl tilgangsmaskinenBackedPep;
 	private final boolean prioritizeTilgangsmaskinenAnswer;
@@ -25,13 +32,58 @@ public class MultiPep1g extends Pep<TilgangBruker> {
 
 	@Override
 	public PepAnswer hasAccessWithAnswer(TilgangBruker ressurs, SafRequestContext safRequestContext) {
-		var abacAnswer = abacBackedPep.hasAccessWithAnswer(ressurs, safRequestContext);
-		var tilgangsmaskinenAnswer = tilgangsmaskinenBackedPep.hasAccessWithAnswer(ressurs, safRequestContext);
 
-		return analyzeLogAndChoosePepAnswer(abacAnswer, tilgangsmaskinenAnswer);
+		PepAnswer oppslagAbac = CompletableFuture.supplyAsync(() ->
+						abacBackedPep.hasAccessWithAnswer(ressurs, safRequestContext))
+				.orTimeout(OPPSLAG_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS)
+				.handle(handleExceptionInOppslag("abac-saf"))
+				.join();
+
+		PepAnswer oppslagTilgangsmaskinen = CompletableFuture.supplyAsync(() ->
+						tilgangsmaskinenBackedPep.hasAccessWithAnswer(ressurs, safRequestContext))
+				.orTimeout(OPPSLAG_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS)
+				.handle(handleExceptionInOppslag("tilgangsmaskinen"))
+				.join();
+
+		return analyzeLogAndChoosePepAnswer(oppslagAbac, oppslagTilgangsmaskinen);
+	}
+
+	private static BiFunction<PepAnswer, Throwable, PepAnswer> handleExceptionInOppslag(String name) {
+		return (pepanswer, error) -> {
+			if (error != null) {
+				if (error instanceof TimeoutException) {
+					log.error("PEP1g: Oppslag mot {} feilet med timeout (tok over {} millisekunder)", name, OPPSLAG_TIMEOUT_MILLIS);
+				} else {
+					log.error("PEP1g: Oppslag mot {} feilet uventet", name, error);
+				}
+				return null;
+			}
+			return pepanswer;
+		};
 	}
 
 	private PepAnswer analyzeLogAndChoosePepAnswer(PepAnswer abacAnswer, PepAnswer tilgangsmaskinenAnswer) {
+		if (tilgangsmaskinenAnswer == null) {
+			if (prioritizeTilgangsmaskinenAnswer) {
+				log.error("PEP1g: oppslag mot tilgangsmaskinen feilet, og multipep1g er satt til å prioritere svar fra tilgangsmaskinen. Returnerer deny");
+				return PepAnswer.deny(new UkjentEllerTekniskReason());
+			} else {
+				log.warn("PEP1g: oppslag mot tilgangsmaskinen feilet, men multipep1g er satt til å prioritere svar fra abac. Returnerer abac={}",
+						abacAnswer.isPermit() ? "PERMIT" : abacAnswer.getPepDenyReason().getAbacDenyReasonCode());
+				return abacAnswer;
+			}
+		}
+		if (abacAnswer == null) {
+			if (prioritizeTilgangsmaskinenAnswer) {
+				log.warn("PEP1g: oppslag mot abac feilet, men multipep1g er satt til å prioritere svar fra tilgangsmaskinen. Returnerer tilgangsmaskinen={}",
+						tilgangsmaskinenAnswer.isPermit() ? "PERMIT" : tilgangsmaskinenAnswer.getPepDenyReason().getAbacDenyReasonCode());
+				return tilgangsmaskinenAnswer;
+			} else {
+				log.error("PEP1g: oppslag mot abac feilet, og multipep1g er satt til å prioritere svar fra abac. Returnerer deny");
+				return PepAnswer.deny(new UkjentEllerTekniskReason());
+			}
+		}
+
 		if (abacAnswer.isPermit() && tilgangsmaskinenAnswer.isPermit()) {
 			log.debug("PEP1g: abac og tilgangsmaskinen er enige om permit");
 			return PepAnswer.permit();
