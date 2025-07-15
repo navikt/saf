@@ -35,7 +35,7 @@
   "SAF_ENDPOINTS_K9SAK_URL": "http://k9-sak.k9saksbehandling.svc.nais.local/k9/sak/api/pip/aktoer-for-sak",
   "SAF_ENDPOINTS_K9SAK_SCOPE": "api://dev-fss.k9saksbehandling.k9-sak/.default",
   "SAF_ENDPOINTS_HR_NAV_URL": "https://dvh.adeo.no/",
-  "SAF_ENDPOINTS_TILGANGSMASKINEN_URL": "https://tilgangsmaskin.dev.intern.nav.no/",
+  "SAF_ENDPOINTS_TILGANGSMASKINEN_URL": "https://tilgangsmaskin.intern.dev.nav.no",
   "SAF_ENDPOINTS_TILGANGSMASKINEN_SCOPE": "api://dev-gcp.tilgangsmaskin.populasjonstilgangskontroll/.default",
   "SAF_PEP1G_PRIORITIZE_TILGANGSMASKINEN": "false",
   "SPRING_DATA_REDIS_HOST": "saf-valkey",
