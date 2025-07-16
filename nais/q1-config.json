@@ -669,8 +669,10 @@
       "app": "rpa-ot-ortok",
       "namespace": "team-rpa",
       "cluster": "dev-fss",
-      "roles": ["tema_hel"]
-    }, 
+      "roles": [
+        "tema_hel"
+      ]
+    },
     {
       "app": "gosys-oppgavebehandling-api-q1",
       "namespace": "oppgavehandtering",
@@ -680,7 +682,17 @@
       "app": "rpa-nos-robot1",
       "namespace": "team-rpa",
       "cluster": "dev-fss",
-      "roles": ["tema_sto"]
+      "roles": [
+        "tema_sto"
+      ]
+    },
+    {
+      "app": "dokdistfordeling-q1",
+      "namespace": "teamdokumenthandtering",
+      "cluster": "dev-fss",
+      "roles": [
+        "tema_alle"
+      ]
     }
   ]
 }
