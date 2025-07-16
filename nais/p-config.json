@@ -570,7 +570,7 @@
         "tema_oms",
         "tema_fri"
       ]
-    },    
+    },
     {
       "app": "ung-sak",
       "namespace": "k9saksbehandling",
@@ -824,7 +824,17 @@
       "app": "rpa-nos-robot1",
       "namespace": "team-rpa",
       "cluster": "prod-fss",
-      "roles": ["tema_sto"]
+      "roles": [
+        "tema_sto"
+      ]
+    },
+    {
+      "app": "dokdistfordeling",
+      "namespace": "teamdokumenthandtering",
+      "cluster": "prod-fss",
+      "roles": [
+        "tema_alle"
+      ]
     }
   ]
 }

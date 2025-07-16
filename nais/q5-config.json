@@ -35,19 +35,23 @@
   "SAF_ENDPOINTS_TILGANGSMASKINEN_SCOPE": "api://dev-gcp.tilgangsmaskin.populasjonstilgangskontroll/.default",
   "SAF_PEP1G_PRIORITIZE_TILGANGSMASKINEN": "false",
   "SAF_ENDPOINTS_HR_NAV_URL": "https://dvh.adeo.no/",
-  "SPRING_DATA_REDIS_HOST":  "saf-valkey",
+  "SPRING_DATA_REDIS_HOST": "saf-valkey",
   "AZURE_IAC_RULES": [
     {
       "app": "dokarkiv-q5",
       "namespace": "teamdokumenthandtering",
       "cluster": "dev-fss",
-      "roles": ["tema_alle"]
+      "roles": [
+        "tema_alle"
+      ]
     },
     {
       "app": "dokprod-q5",
       "namespace": "teamdokumenthandtering",
       "cluster": "dev-fss",
-      "roles": ["tema_alle"]
+      "roles": [
+        "tema_alle"
+      ]
     },
     {
       "app": "pensjon-pen-q5",
@@ -72,25 +76,50 @@
       "app": "ezbrev-backend-q4",
       "namespace": "teamdokumenthandtering",
       "cluster": "dev-fss",
-      "roles": ["tema_alle"]
+      "roles": [
+        "tema_alle"
+      ]
     },
     {
       "app": "testnav-saf-proxy-trygdeetaten",
       "namespace": "dolly",
       "cluster": "dev-fss",
-      "roles": ["tema_alle"]
+      "roles": [
+        "tema_alle"
+      ]
     },
     {
       "app": "arena",
       "namespace": "teamarenanais",
       "cluster": "dev-fss",
-      "roles": ["tema_aap", "tema_dag", "tema_fei", "tema_ind", "tema_opp", "tema_sym", "tema_til", "tema_tso", "tema_tsr", "tema_saa"]
+      "roles": [
+        "tema_aap",
+        "tema_dag",
+        "tema_fei",
+        "tema_ind",
+        "tema_opp",
+        "tema_sym",
+        "tema_til",
+        "tema_tso",
+        "tema_tsr",
+        "tema_saa"
+      ]
     },
     {
       "app": "okonomiportal",
       "namespace": "okonomi",
       "cluster": "dev-fss",
-      "roles": ["tema_sto"]
+      "roles": [
+        "tema_sto"
+      ]
+    },
+    {
+      "app": "dokdistfordeling-q5",
+      "namespace": "teamdokumenthandtering",
+      "cluster": "dev-fss",
+      "roles": [
+        "tema_alle"
+      ]
     }
   ]
 }
