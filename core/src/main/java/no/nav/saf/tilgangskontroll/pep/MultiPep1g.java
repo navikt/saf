@@ -33,19 +33,17 @@ public class MultiPep1g extends Pep<TilgangBruker> {
 	@Override
 	public PepAnswer hasAccessWithAnswer(TilgangBruker ressurs, SafRequestContext safRequestContext) {
 
-		PepAnswer oppslagAbac = CompletableFuture.supplyAsync(() ->
+		CompletableFuture<PepAnswer> abacSaf = CompletableFuture.supplyAsync(() ->
 						abacBackedPep.hasAccessWithAnswer(ressurs, safRequestContext))
 				.orTimeout(OPPSLAG_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS)
-				.handle(handleExceptionInOppslag("abac-saf"))
-				.join();
+				.handle(handleExceptionInOppslag("abac-saf"));
 
-		PepAnswer oppslagTilgangsmaskinen = CompletableFuture.supplyAsync(() ->
+		CompletableFuture<PepAnswer> tilgangsmaskinen = CompletableFuture.supplyAsync(() ->
 						tilgangsmaskinenBackedPep.hasAccessWithAnswer(ressurs, safRequestContext))
 				.orTimeout(OPPSLAG_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS)
-				.handle(handleExceptionInOppslag("tilgangsmaskinen"))
-				.join();
+				.handle(handleExceptionInOppslag("tilgangsmaskinen"));
 
-		return analyzeLogAndChoosePepAnswer(oppslagAbac, oppslagTilgangsmaskinen);
+		return analyzeLogAndChoosePepAnswer(abacSaf.join(), tilgangsmaskinen.join());
 	}
 
 	private static BiFunction<PepAnswer, Throwable, PepAnswer> handleExceptionInOppslag(String name) {

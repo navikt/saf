@@ -25,13 +25,13 @@ import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_PERSON_
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_PERSON_FNR;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_RESOURCE_TYPE;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_SAF_PERSON;
-import static no.nav.saf.tilgangskontroll.pep.PepAnswer.deny;
-import static no.nav.saf.tilgangskontroll.pep.PepAnswer.permit;
 import static no.nav.saf.tilgangskontroll.pep.AbacDenyReasonCode.EGEN_ANSATT;
 import static no.nav.saf.tilgangskontroll.pep.AbacDenyReasonCode.FORTROLIG_ADRESSE;
 import static no.nav.saf.tilgangskontroll.pep.AbacDenyReasonCode.GEOGRAFI;
 import static no.nav.saf.tilgangskontroll.pep.AbacDenyReasonCode.STRENGT_FORTROLIG_ADRESSE;
 import static no.nav.saf.tilgangskontroll.pep.AbacDenyReasonCode.STRENGT_FORTROLIG_ADRESSE_UTLAND;
+import static no.nav.saf.tilgangskontroll.pep.PepAnswer.deny;
+import static no.nav.saf.tilgangskontroll.pep.PepAnswer.permit;
 
 /**
  * Dekker følgende policies i saf:
@@ -51,7 +51,8 @@ public class AbacBackedPep1gImpl extends StandardAbacBackedPep<TilgangBruker> {
 
 	@Autowired
 	public AbacBackedPep1gImpl(AbacService abacService,
-							   NavOrgService navOrgService, NavUserGroupMembershipService navUserGroupMembershipService) {
+							   NavOrgService navOrgService,
+							   NavUserGroupMembershipService navUserGroupMembershipService) {
 		this.abacService = abacService;
 		this.navOrgService = navOrgService;
 		this.navUserGroupMembershipService = navUserGroupMembershipService;
@@ -65,7 +66,6 @@ public class AbacBackedPep1gImpl extends StandardAbacBackedPep<TilgangBruker> {
 		} else if (ressurs.isOrganisasjon()) {
 			return verifyTilgangOrganisasjon(ressurs.getOrgnummer(), safRequestContext);
 		}
-
 		XacmlRequest request = SafXacmlRequestFactory.create(safRequestContext.getSecurityContext());
 		request.resource(RESOURCE_FELLES_RESOURCE_TYPE, RESOURCE_SAF_PERSON);
 

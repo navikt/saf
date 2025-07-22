@@ -1,6 +1,7 @@
 package no.nav.saf;
 
 import no.nav.saf.azure.AzureProperties;
+import no.nav.saf.config.NaisProperties;
 import no.nav.saf.config.SafProperties;
 import no.nav.saf.config.ServiceuserAlias;
 import no.nav.saf.config.WebProxyProperties;
@@ -33,7 +34,13 @@ import static org.apache.hc.core5.util.Timeout.ofSeconds;
 @ComponentScan
 @Configuration
 @EnableAutoConfiguration(exclude = UserDetailsServiceAutoConfiguration.class)
-@EnableConfigurationProperties(value = {SafProperties.class, ServiceuserAlias.class, AzureProperties.class, WebProxyProperties.class})
+@EnableConfigurationProperties(value = {
+		SafProperties.class,
+		ServiceuserAlias.class,
+		AzureProperties.class,
+		NaisProperties.class,
+		WebProxyProperties.class
+})
 public class ApplicationConfig {
 	@Bean
 	ClientHttpRequestFactory clientHttpRequestFactory(HttpClient httpClient) {

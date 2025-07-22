@@ -5,7 +5,7 @@ import no.nav.saf.anticorruptionlayer.nav.NavOrgService;
 import no.nav.saf.anticorruptionlayer.nav.NavUserGroupMembershipService;
 import no.nav.saf.anticorruptionlayer.nav.TilgangsmaskinenConsumer;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
-import no.nav.saf.integration.azure.NaisTexasConsumer;
+import no.nav.saf.integration.token.NaisTexasConsumer;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.pep.reasons.OrgnrNavStatReason;
 import org.springframework.stereotype.Component;
@@ -23,7 +23,10 @@ public class TilgangsmaskinenBackedPep1gImpl extends StandardTilgangsmaskinenBac
 	private final NavUserGroupMembershipService navUserGroupMembershipService;
 	private final NaisTexasConsumer naisTexasConsumer;
 
-	public TilgangsmaskinenBackedPep1gImpl(NaisTexasConsumer naisTexasConsumer, TilgangsmaskinenConsumer tilgangsmaskinenConsumer, NavOrgService navOrgService, NavUserGroupMembershipService navUserGroupMembershipService) {
+	public TilgangsmaskinenBackedPep1gImpl(NaisTexasConsumer naisTexasConsumer,
+										   TilgangsmaskinenConsumer tilgangsmaskinenConsumer,
+										   NavOrgService navOrgService,
+										   NavUserGroupMembershipService navUserGroupMembershipService) {
 		this.tilgangsmaskinenConsumer = tilgangsmaskinenConsumer;
 		this.navOrgService = navOrgService;
 		this.navUserGroupMembershipService = navUserGroupMembershipService;

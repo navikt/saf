@@ -6,7 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.config.SafProperties;
 import no.nav.saf.exceptions.SafFunctionalException;
 import no.nav.saf.exceptions.SafTechnicalException;
-import no.nav.saf.integration.azure.OboToken;
+import no.nav.saf.integration.token.OboToken;
 import no.nav.saf.tilgangskontroll.pep.PepAnswer;
 import no.nav.saf.tilgangskontroll.pep.reasons.EgenAnsattReason;
 import no.nav.saf.tilgangskontroll.pep.reasons.FortroligAdresseReason;
