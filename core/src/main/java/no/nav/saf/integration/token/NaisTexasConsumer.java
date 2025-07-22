@@ -21,6 +21,7 @@ import org.springframework.web.client.RestClient;
 import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
 import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
 
 @Slf4j
 @Service
@@ -55,6 +56,7 @@ public class NaisTexasConsumer {
 
 		TokenResponse tokenResponse = restClient
 				.post()
+				.accept(APPLICATION_JSON)
 				.contentType(APPLICATION_FORM_URLENCODED)
 				.body(formData)
 				.retrieve()
