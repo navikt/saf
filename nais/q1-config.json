@@ -305,7 +305,8 @@
       "namespace": "bidrag",
       "cluster": "dev-fss",
       "roles": [
-        "tema_far"
+        "tema_far",
+        "tema_bid"
       ]
     },
     {
@@ -313,7 +314,8 @@
       "namespace": "bidrag",
       "cluster": "dev-fss",
       "roles": [
-        "tema_far"
+        "tema_far",
+        "tema_bid"
       ]
     },
     {
