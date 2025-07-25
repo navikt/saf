@@ -359,15 +359,6 @@
       ]
     },
     {
-      "app": "bidrag-dokument-arkiv-feature",
-      "namespace": "bidrag",
-      "cluster": "dev-fss",
-      "roles": [
-        "tema_far",
-        "tema_bid"
-      ]
-    },
-    {
       "app": "notat-administrasjon-q2",
       "namespace": "isa",
       "cluster": "dev-gcp"

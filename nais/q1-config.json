@@ -301,15 +301,6 @@
       "cluster": "dev-gcp"
     },
     {
-      "app": "bidrag-dokument-arkiv",
-      "namespace": "bidrag",
-      "cluster": "dev-fss",
-      "roles": [
-        "tema_far",
-        "tema_bid"
-      ]
-    },
-    {
       "app": "bidrag-dokument-arkiv-feature",
       "namespace": "bidrag",
       "cluster": "dev-fss",
