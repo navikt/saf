@@ -263,7 +263,8 @@
       "namespace": "bidrag",
       "cluster": "prod-fss",
       "roles": [
-        "tema_far"
+        "tema_far",
+        "tema_bid"
       ]
     },
     {
