@@ -21,12 +21,15 @@ public class MultiPep1g extends Pep<TilgangBruker> {
 	private static final long OPPSLAG_TIMEOUT_MILLIS = 1000;
 	private final AbacBackedPep1gImpl abacBackedPep;
 	private final TilgangsmaskinenBackedPep1gImpl tilgangsmaskinenBackedPep;
+	private final boolean featureToggleUseCheckTilgangsmaskinen;
 	private final boolean prioritizeTilgangsmaskinenAnswer;
 
 	public MultiPep1g(AbacBackedPep1gImpl abacBackedPep, TilgangsmaskinenBackedPep1gImpl tilgangsmaskinenBackedPep,
+					  @Value("${saf.pep1g.feature_toggle_tilgangsmaskinen}") boolean featureToggleUseCheckTilgangsmaskinen,
 					  @Value("${saf.pep1g.prioritize_tilgangsmaskinen}") boolean prioritizeTilgangsmaskinenAnswer) {
 		this.abacBackedPep = abacBackedPep;
 		this.tilgangsmaskinenBackedPep = tilgangsmaskinenBackedPep;
+		this.featureToggleUseCheckTilgangsmaskinen = featureToggleUseCheckTilgangsmaskinen;
 		this.prioritizeTilgangsmaskinenAnswer = prioritizeTilgangsmaskinenAnswer;
 	}
 
@@ -38,12 +41,16 @@ public class MultiPep1g extends Pep<TilgangBruker> {
 				.orTimeout(OPPSLAG_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS)
 				.handle(handleExceptionInOppslag("abac-saf"));
 
-		CompletableFuture<PepAnswer> tilgangsmaskinen = CompletableFuture.supplyAsync(() ->
-						tilgangsmaskinenBackedPep.hasAccessWithAnswer(ressurs, safRequestContext))
-				.orTimeout(OPPSLAG_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS)
-				.handle(handleExceptionInOppslag("tilgangsmaskinen"));
+		if (featureToggleUseCheckTilgangsmaskinen) {
+			CompletableFuture<PepAnswer> tilgangsmaskinen = CompletableFuture.supplyAsync(() ->
+							tilgangsmaskinenBackedPep.hasAccessWithAnswer(ressurs, safRequestContext))
+					.orTimeout(OPPSLAG_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS)
+					.handle(handleExceptionInOppslag("tilgangsmaskinen"));
 
-		return analyzeLogAndChoosePepAnswer(abacSaf.join(), tilgangsmaskinen.join());
+			return analyzeLogAndChoosePepAnswer(abacSaf.join(), tilgangsmaskinen.join());
+		} else {
+			return abacSaf.join();
+		}
 	}
 
 	private static BiFunction<PepAnswer, Throwable, PepAnswer> handleExceptionInOppslag(String name) {

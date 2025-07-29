@@ -31,7 +31,7 @@ class MultiPep1gTest {
 
 	@Test
 	void shouldPrioritizeTilgangsmaskinenWhenPrioritizieTilgangsmaskinenIsTrue() {
-		multiPep1g = new MultiPep1g(abacImplementation, tilgangsmaskinenImplementation, true);
+		multiPep1g = new MultiPep1g(abacImplementation, tilgangsmaskinenImplementation, true, true);
 
 		when(abacImplementation.hasAccessWithAnswer(any(), any())).thenReturn(DENY);
 		when(tilgangsmaskinenImplementation.hasAccessWithAnswer(any(), any())).thenReturn(PERMIT);
@@ -42,7 +42,7 @@ class MultiPep1gTest {
 
 	@Test
 	void shouldPrioritizeAbacWhenPrioritizieTilgangsmaskinenIsFalse() {
-		multiPep1g = new MultiPep1g(abacImplementation, tilgangsmaskinenImplementation, false);
+		multiPep1g = new MultiPep1g(abacImplementation, tilgangsmaskinenImplementation, true, false);
 
 		when(abacImplementation.hasAccessWithAnswer(any(), any())).thenReturn(PERMIT);
 		when(tilgangsmaskinenImplementation.hasAccessWithAnswer(any(), any())).thenReturn(DENY);
@@ -53,7 +53,7 @@ class MultiPep1gTest {
 
 	@Test
 	void shouldPermitWhenBothPermit() {
-		multiPep1g = new MultiPep1g(abacImplementation, tilgangsmaskinenImplementation, true);
+		multiPep1g = new MultiPep1g(abacImplementation, tilgangsmaskinenImplementation, true, true);
 
 		when(abacImplementation.hasAccessWithAnswer(any(), any())).thenReturn(PERMIT);
 		when(tilgangsmaskinenImplementation.hasAccessWithAnswer(any(), any())).thenReturn(PERMIT);
@@ -64,7 +64,7 @@ class MultiPep1gTest {
 
 	@Test
 	void shouldDenyWhenBothDeny() {
-		multiPep1g = new MultiPep1g(abacImplementation, tilgangsmaskinenImplementation, true);
+		multiPep1g = new MultiPep1g(abacImplementation, tilgangsmaskinenImplementation, true, true);
 
 		when(abacImplementation.hasAccessWithAnswer(any(), any())).thenReturn(DENY);
 		when(tilgangsmaskinenImplementation.hasAccessWithAnswer(any(), any())).thenReturn(DENY);
@@ -75,7 +75,7 @@ class MultiPep1gTest {
 
 	@Test
 	void shouldGracefullyHandleExceptionsFromTilgangsmaskinen() {
-		multiPep1g = new MultiPep1g(abacImplementation, tilgangsmaskinenImplementation, false);
+		multiPep1g = new MultiPep1g(abacImplementation, tilgangsmaskinenImplementation, true, false);
 
 		when(abacImplementation.hasAccessWithAnswer(any(), any())).thenReturn(DENY);
 		when(tilgangsmaskinenImplementation.hasAccessWithAnswer(any(), any())).thenThrow(new RuntimeException("Oh no Tilgangsmaskinen exploded!"));
