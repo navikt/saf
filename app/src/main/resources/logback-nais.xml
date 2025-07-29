@@ -36,4 +36,8 @@
 	<logger name="no.nav.saf" level="INFO" additivity="false">
 		<appender-ref ref="applikasjonslogg"/>
 	</logger>
+
+	<logger name="no.nav.saf.tilgangskontroll.pep" level="DEBUG" additivity="false">
+		<appender-ref ref="applikasjonslogg"/>
+	</logger>
 </included>
