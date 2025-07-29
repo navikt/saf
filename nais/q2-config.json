@@ -357,15 +357,8 @@
       "namespace": "bidrag",
       "cluster": "dev-fss",
       "roles": [
-        "tema_far"
-      ]
-    },
-    {
-      "app": "bidrag-dokument-arkiv-feature",
-      "namespace": "bidrag",
-      "cluster": "dev-fss",
-      "roles": [
-        "tema_far"
+        "tema_far",
+        "tema_bid"
       ]
     },
     {
