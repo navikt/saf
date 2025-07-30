@@ -93,7 +93,8 @@
       "cluster": "dev-fss",
       "roles": [
         "tema_bar",
-        "tema_kon"
+        "tema_kon",
+        "tema_enf"
       ]
     },
     {
