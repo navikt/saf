@@ -6,7 +6,6 @@ import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.config.SafProperties;
 import no.nav.saf.exceptions.SafFunctionalException;
 import no.nav.saf.exceptions.SafTechnicalException;
-import no.nav.saf.integration.token.OboToken;
 import no.nav.saf.tilgangskontroll.pep.PepAnswer;
 import no.nav.saf.tilgangskontroll.pep.reasons.EgenAnsattReason;
 import no.nav.saf.tilgangskontroll.pep.reasons.FortroligAdresseReason;
@@ -14,6 +13,7 @@ import no.nav.saf.tilgangskontroll.pep.reasons.GeografiReason;
 import no.nav.saf.tilgangskontroll.pep.reasons.StrengtFortroligAdresseReason;
 import no.nav.saf.tilgangskontroll.pep.reasons.StrengtFortroligAdresseUtlandReason;
 import no.nav.saf.tilgangskontroll.pep.reasons.UkjentEllerTekniskReason;
+import no.nav.security.token.support.core.jwt.JwtToken;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
@@ -21,6 +21,8 @@ import org.springframework.web.client.RestClient;
 import java.io.IOException;
 import java.util.Map;
 
+import static no.nav.saf.integration.token.NaisTexasAndCallIdRequestInterceptor.TARGET_SCOPE;
+import static no.nav.saf.integration.token.NaisTexasAndCallIdRequestInterceptor.TOKEN_TO_EXCHANGE;
 import static no.nav.saf.tilgangskontroll.pep.PepAnswer.deny;
 
 @Slf4j
@@ -30,20 +32,25 @@ public class TilgangsmaskinenConsumer {
 	private static final String TILGANGSMASKINEN_INSTANCE = "tilgangsmaskinen";
 
 	private final RestClient restClient;
+	private final SafProperties safProperties;
 
 	public TilgangsmaskinenConsumer(RestClient restClient, SafProperties safProperties) {
 		this.restClient = restClient.mutate()
 				.baseUrl(safProperties.getEndpoints().getTilgangsmaskinen().getUrl())
 				.build();
+		this.safProperties = safProperties;
 	}
 
 	@Retry(name = TILGANGSMASKINEN_INSTANCE)
 	@CircuitBreaker(name = TILGANGSMASKINEN_INSTANCE)
-	public PepAnswer navIdentHasAccess(String identifikator, OboToken navIdentOboToken) {
+	public PepAnswer navIdentHasAccess(String identifikator, JwtToken entraIdToken) {
 		try {
 			return restClient.post()
 					.uri(uriBuilder -> uriBuilder.path("/api/v1/komplett").build())
-					.header("Authorization", "Bearer " + navIdentOboToken.token())
+					.attributes(attributes -> {
+						attributes.put(TARGET_SCOPE, safProperties.getEndpoints().getTilgangsmaskinen().getScope());
+						attributes.put(TOKEN_TO_EXCHANGE, entraIdToken.getEncodedToken());
+					})
 					.body(identifikator)
 					.exchange((request, response) -> handleResponseFromTilgangsmaskinen(response));
 		} catch (Exception e) {

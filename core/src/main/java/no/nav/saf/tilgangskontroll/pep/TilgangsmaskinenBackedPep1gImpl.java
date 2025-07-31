@@ -41,8 +41,8 @@ public class TilgangsmaskinenBackedPep1gImpl extends StandardTilgangsmaskinenBac
 		} else if (ressurs.isOrganisasjon()) {
 			return verifyTilgangOrganisasjon(ressurs.getOrgnummer(), safRequestContext);
 		} else {
-			var oboToken = naisTexasConsumer.exchangeForTilgangsmaskinenOboToken(safRequestContext.getSecurityContext().getJwtToken());
-			return tilgangsmaskinenConsumer.navIdentHasAccess(firstNonNull(ressurs.getAktoerId(), ressurs.getFoedselsnr()), oboToken);
+			return tilgangsmaskinenConsumer.navIdentHasAccess(firstNonNull(ressurs.getAktoerId(), ressurs.getFoedselsnr()),
+					safRequestContext.getSecurityContext().getJwtToken());
 		}
 	}
 

@@ -5,6 +5,8 @@ import no.nav.saf.config.NaisProperties;
 import no.nav.saf.config.SafProperties;
 import no.nav.saf.config.ServiceuserAlias;
 import no.nav.saf.config.WebProxyProperties;
+import no.nav.saf.integration.token.NaisTexasAndCallIdRequestInterceptor;
+import no.nav.saf.integration.token.NaisTexasConsumer;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.hc.client5.http.classic.HttpClient;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
@@ -65,13 +67,10 @@ public class ApplicationConfig {
 	}
 
 	@Bean
-	RestClient restClient(ClientHttpRequestFactory clientHttpRequestFactory) {
+	RestClient restClient(ClientHttpRequestFactory clientHttpRequestFactory, NaisTexasConsumer naisTexasConsumer) {
 		return RestClient.builder()
 				.requestFactory(clientHttpRequestFactory)
-				.requestInterceptor((request, body, execution) -> {
-					request.getHeaders().add(NAV_CALLID, getCallId());
-					return execution.execute(request, body);
-				})
+				.requestInterceptor(new NaisTexasAndCallIdRequestInterceptor(naisTexasConsumer))
 				.build();
 	}
 

@@ -51,7 +51,7 @@ class TilgangsmaskinenBackedPep1gImplTest extends AbstractAbacBackedPepTest {
 	void setUp() {
 		super.setUp();
 		pep1g = new TilgangsmaskinenBackedPep1gImpl(naisTexasConsumer, tilgangsmaskinenConsumer, navOrgService, navUserGroupMembershipService);
-		when(naisTexasConsumer.exchangeForTilgangsmaskinenOboToken(any())).thenReturn(new OboToken("Yeeehaaaw!"));
+		when(naisTexasConsumer.exchangeForTilgangsmaskinenOboToken(any(), any())).thenReturn("Yeeehaaaw!");
 	}
 
 	@Test
