@@ -93,19 +93,24 @@ public class MultiPep1g extends Pep<TilgangBruker> {
 			log.debug("PEP1g: abac og tilgangsmaskinen er enige om permit");
 			return PepAnswer.permit();
 		}
+
+		PepAnswer finalAnswer = prioritizeTilgangsmaskinenAnswer ? tilgangsmaskinenAnswer : abacAnswer;
 		if (abacAnswer.isPermit()) {
-			log.warn("PEP1g: abac og tilgangsmaskinen er uenige: abac=PERMIT tilgangsmaskinen={}", tilgangsmaskinenAnswer.getPepDenyReason().getAbacDenyReasonCode());
+			log.warn("PEP1g: abac og tilgangsmaskinen er uenige: abac=PERMIT tilgangsmaskinen={}. Multipep1g er satt til å prioritere {} og returnerer {}",
+					tilgangsmaskinenAnswer.getPepDenyReason().getAbacDenyReasonCode(), prioritizeTilgangsmaskinenAnswer ? "tilgangsmaskinen" : "abac", finalAnswer.getDecision());
 		} else if (tilgangsmaskinenAnswer.isPermit()) {
-			log.warn("PEP1g: abac og tilgangsmaskinen er uenige: abac={} tilgangsmaskinen=PERMIT", abacAnswer.getPepDenyReason().getAbacDenyReasonCode());
+			log.warn("PEP1g: abac og tilgangsmaskinen er uenige: abac={} tilgangsmaskinen=PERMIT. Multipep1g er satt til å prioritere {} og returnerer {}",
+					abacAnswer.getPepDenyReason().getAbacDenyReasonCode(), prioritizeTilgangsmaskinenAnswer ? "tilgangsmaskinen" : "abac", finalAnswer.getDecision());
 		} else {
 			if (abacAnswer.getPepDenyReason().getAbacDenyReasonCode() == tilgangsmaskinenAnswer.getPepDenyReason().getAbacDenyReasonCode()) {
 				log.debug("PEP1g: abac og tilgangsmaskinen er enige om deny");
 			} else {
-				log.info("PEP1g: abac og tilgangsmaskinen er enige om deny, men uenige om hvorfor: abac={} tilgangsmaskinen={}",
-						abacAnswer.getPepDenyReason().getAbacDenyReasonCode(), tilgangsmaskinenAnswer.getPepDenyReason().getAbacDenyReasonCode());
+				log.info("PEP1g: abac og tilgangsmaskinen er enige om deny, men uenige om hvorfor: abac={} tilgangsmaskinen={}. Multipep1g er satt til å prioritere {} og returnerer DENY: {}",
+						abacAnswer.getPepDenyReason().getAbacDenyReasonCode(), tilgangsmaskinenAnswer.getPepDenyReason().getAbacDenyReasonCode(),
+						prioritizeTilgangsmaskinenAnswer ? "tilgangsmaskinen" : "abac", finalAnswer.getPepDenyReason().getAbacDenyReasonCode());
 			}
 		}
-		return prioritizeTilgangsmaskinenAnswer ? tilgangsmaskinenAnswer : abacAnswer;
+		return finalAnswer;
 	}
 
 	@Override
