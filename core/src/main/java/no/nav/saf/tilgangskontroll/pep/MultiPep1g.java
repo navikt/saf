@@ -57,7 +57,7 @@ public class MultiPep1g extends Pep<TilgangBruker> {
 		return (pepanswer, error) -> {
 			if (error != null) {
 				if (error instanceof TimeoutException) {
-					log.error("PEP1g: Oppslag mot {} feilet med timeout (tok over {} millisekunder)", name, OPPSLAG_TIMEOUT_MILLIS);
+					log.warn("PEP1g: Oppslag mot {} feilet med timeout (tok over {} millisekunder)", name, OPPSLAG_TIMEOUT_MILLIS);
 				} else {
 					log.error("PEP1g: Oppslag mot {} feilet uventet", name, error);
 				}
