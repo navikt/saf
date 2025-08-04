@@ -60,6 +60,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
+import static org.springframework.http.HttpStatus.FORBIDDEN;
+import static org.springframework.http.HttpStatus.NO_CONTENT;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -277,15 +279,35 @@ public abstract class AbstractItest {
 				.withBodyFile("bidrag/" + filename)));
 	}
 
+	private static void stubTexasExchangeOboToken() {
+		stubFor(post("/texas").willReturn(aResponse().withStatus(OK.value())
+				.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+				.withBodyFile("texas/" + "texas_happy.json")));
+	}
+
+	protected static void stubTilgangsmaskinenPermit() {
+		stubTexasExchangeOboToken();
+		stubFor(post("/tilgangsmaskinen/api/v1/komplett").willReturn(aResponse().withStatus(NO_CONTENT.value())));
+	}
+
+	protected static void stubTilgangsmaskinenDeny() {
+		stubTexasExchangeOboToken();
+		stubFor(post("/tilgangsmaskinen/api/v1/komplett").willReturn(aResponse().withStatus(FORBIDDEN.value())
+				.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+				.withBodyFile("tilgangsmaskinen/" + "tilgangsmaskinen_deny_fortrolig.json")));
+	}
+
 	protected static void abacPermit() {
 		stubFor(post(urlEqualTo("/abac"))
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("abac/abac-permit.json")));
 		stubMsGraphMemberOfAllRelevantGroupsDefaultSaksbehandler();
+		stubTilgangsmaskinenPermit();
 	}
 
 	protected void abacDenyPep6dSkipPep3OrPep2() {
+		stubTilgangsmaskinenPermit();
 		stubMsGraphGetUser(NAV_IDENT_SAKSBEHANDLER);
 		stubMsGraphMemberOfSeveralGroups(MS_ID_SAKSBEHANDLER, "nav/msgraph-checkmembergroup-ikke-joarkvedlikehold.json");
 		stubFor(post(urlEqualTo("/abac"))
@@ -311,6 +333,7 @@ public abstract class AbstractItest {
 	}
 
 	protected void abacDenyPep6dSkipPep2Pep4Pep5() {
+		stubTilgangsmaskinenPermit();
 		stubMsGraphGetUser(NAV_IDENT_SAKSBEHANDLER);
 		stubMsGraphMemberOfSeveralGroups(MS_ID_SAKSBEHANDLER, "nav/msgraph-checkmembergroup-egenansatt-fortrolig-strengt-fortrolig.json");
 		stubFor(post(urlEqualTo("/abac"))
@@ -336,6 +359,7 @@ public abstract class AbstractItest {
 	}
 
 	protected void abacDenyPep6dSkipPep2Pep3Pep4Pep5() {
+		stubTilgangsmaskinenPermit();
 		stubMsGraphGetUser(NAV_IDENT_SAKSBEHANDLER);
 		stubMsGraphMemberOfSeveralGroups(MS_ID_SAKSBEHANDLER, "nav/msgraph-checkmembergroup-egenansatt-fortrolig-strengt-fortrolig.json");
 		stubFor(post(urlEqualTo("/abac"))
@@ -360,6 +384,7 @@ public abstract class AbstractItest {
 	}
 
 	protected void abacDenyPep5SkipPep2OrPep3() {
+		stubTilgangsmaskinenPermit();
 		stubMsGraphGetUser(NAV_IDENT_SAKSBEHANDLER);
 		stubMsGraphMemberOfSeveralGroups(MS_ID_SAKSBEHANDLER, "nav/msgraph-checkmembergroup-ikke-joarkvedlikehold.json");
 		stubFor(post(urlEqualTo("/abac"))
@@ -385,6 +410,7 @@ public abstract class AbstractItest {
 	}
 
 	protected void abacDenyPep5SkipPep4() {
+		stubTilgangsmaskinenPermit();
 		stubMsGraphGetUser(NAV_IDENT_SAKSBEHANDLER);
 		stubMsGraphMemberOfSeveralGroups(MS_ID_SAKSBEHANDLER, "nav/msgraph-checkmembergroup-ikke-joarkvedlikehold.json");
 		stubFor(post(urlEqualTo("/abac"))
@@ -410,6 +436,7 @@ public abstract class AbstractItest {
 	}
 
 	protected void abacDenyPep5SkipPep2Pep3Pep4() {
+		stubTilgangsmaskinenPermit();
 		stubMsGraphGetUser(NAV_IDENT_SAKSBEHANDLER);
 		stubMsGraphMemberOfSeveralGroups(MS_ID_SAKSBEHANDLER, "nav/msgraph-checkmembergroup-ikke-joarkvedlikehold.json");
 		stubFor(post(urlEqualTo("/abac"))
@@ -435,6 +462,7 @@ public abstract class AbstractItest {
 	}
 
 	protected void abacDenyPep5SkipPep1gPep2Pep2dPep3() {
+		stubTilgangsmaskinenPermit();
 		stubMsGraphGetUser(NAV_IDENT_SAKSBEHANDLER);
 		stubMsGraphMemberOfSeveralGroups(MS_ID_SAKSBEHANDLER, "nav/msgraph-checkmembergroup-ikke-joarkvedlikehold.json");
 		stubFor(post(urlEqualTo("/abac"))
@@ -445,6 +473,7 @@ public abstract class AbstractItest {
 	}
 
 	protected void abacDenyPep4SkipPep1gPep2Pep2dPep3() {
+		stubTilgangsmaskinenPermit();
 		stubMsGraphMemberOfNoGroupsDefaultSaksbehandler();
 		stubFor(post(urlEqualTo("/abac"))
 				.inScenario(SCENARIO_ABAC)
@@ -462,6 +491,7 @@ public abstract class AbstractItest {
 	}
 
 	protected void abacDenyPep4SkipPep2Pep3() {
+		stubTilgangsmaskinenPermit();
 		stubMsGraphMemberOfNoGroupsDefaultSaksbehandler();
 		stubFor(post(urlEqualTo("/abac"))
 				.inScenario(SCENARIO_ABAC)
@@ -479,6 +509,7 @@ public abstract class AbstractItest {
 	}
 
 	protected void abacDenyPep4SkipPep2OrPep3() {
+		stubTilgangsmaskinenPermit();
 		stubMsGraphMemberOfNoGroupsDefaultSaksbehandler();
 		stubFor(post(urlEqualTo("/abac"))
 				.inScenario(SCENARIO_ABAC)
@@ -510,6 +541,7 @@ public abstract class AbstractItest {
 	}
 
 	protected void abacDenyPep3SkipPep2() {
+		stubTilgangsmaskinenPermit();
 		stubMsGraphMemberOfNoGroupsDefaultSaksbehandler();
 		stubFor(post(urlEqualTo("/abac"))
 				.inScenario(SCENARIO_ABAC)
@@ -535,6 +567,7 @@ public abstract class AbstractItest {
 	}
 
 	protected void abacDenyPep3SkipPep2dAndPep2() {
+		stubTilgangsmaskinenPermit();
 		stubFor(post(urlEqualTo("/abac"))
 				.inScenario(SCENARIO_ABAC)
 				.whenScenarioStateIs(STARTED)
@@ -552,6 +585,7 @@ public abstract class AbstractItest {
 	}
 
 	protected void abacDenyPep2d() {
+		stubTilgangsmaskinenPermit();
 		stubFor(post(urlEqualTo("/abac"))
 				.inScenario(SCENARIO_ABAC)
 				.whenScenarioStateIs(STARTED)
@@ -582,6 +616,7 @@ public abstract class AbstractItest {
 	}
 
 	protected void abacDenyPep2dSkipPep2() {
+		stubTilgangsmaskinenPermit();
 		stubMsGraphMemberOfAllRelevantGroupsDefaultSaksbehandler();
 		stubFor(post(urlEqualTo("/abac"))
 				.inScenario(SCENARIO_ABAC)
@@ -606,6 +641,7 @@ public abstract class AbstractItest {
 	}
 
 	protected void abacDenyPep2() {
+		stubTilgangsmaskinenPermit();
 		stubFor(post(urlEqualTo("/abac"))
 				.inScenario(SCENARIO_ABAC)
 				.whenScenarioStateIs(STARTED)
@@ -622,6 +658,7 @@ public abstract class AbstractItest {
 	}
 
 	protected void abacDenyPep2MidlertidigJournalpost() {
+		stubTilgangsmaskinenPermit();
 		stubFor(post(urlEqualTo("/abac"))
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
@@ -629,6 +666,7 @@ public abstract class AbstractItest {
 	}
 
 	protected void abacDenyPep1g() {
+		stubTilgangsmaskinenDeny();
 		stubFor(post(urlEqualTo("/abac"))
 				.inScenario(SCENARIO_ABAC)
 				.whenScenarioStateIs(STARTED)
@@ -645,6 +683,7 @@ public abstract class AbstractItest {
 	}
 
 	protected void abacDenyPep7dSkipPep2Pep3Pep4Pep5Pep6d() {
+		stubTilgangsmaskinenPermit();
 		stubFor(post(urlEqualTo("/abac"))
 				.inScenario(SCENARIO_ABAC)
 				.whenScenarioStateIs(STARTED)
@@ -668,6 +707,7 @@ public abstract class AbstractItest {
 	}
 
 	protected static void denyPep8d() {
+		stubTilgangsmaskinenPermit();
 		stubMsGraphGetUser(NAV_IDENT_SAKSBEHANDLER);
 		stubMsGraphMemberOfSeveralGroups(MS_ID_SAKSBEHANDLER, "nav/msgraph-checkmembergroup-ikke-joark-historisk.json");
 		stubFor(post(urlEqualTo("/abac"))

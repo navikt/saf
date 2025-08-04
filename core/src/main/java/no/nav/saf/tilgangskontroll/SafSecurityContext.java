@@ -112,6 +112,10 @@ public class SafSecurityContext {
 		return jwtIssuedByAzure;
 	}
 
+	public JwtToken getJwtToken() {
+		return jwtToken;
+	}
+
 	/**
 	 * Om token er i kontekst av system eller bruker.
 	 *

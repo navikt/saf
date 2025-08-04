@@ -1,9 +1,12 @@
 package no.nav.saf;
 
 import no.nav.saf.azure.AzureProperties;
+import no.nav.saf.config.NaisProperties;
 import no.nav.saf.config.SafProperties;
 import no.nav.saf.config.ServiceuserAlias;
 import no.nav.saf.config.WebProxyProperties;
+import no.nav.saf.integration.token.NaisTexasAndCallIdRequestInterceptor;
+import no.nav.saf.integration.token.NaisTexasConsumer;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.hc.client5.http.classic.HttpClient;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
@@ -18,6 +21,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.web.client.RestClient;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -25,12 +29,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static no.nav.saf.headers.NavHeaders.NAV_CALLID;
+import static no.nav.saf.util.MDCUtility.getCallId;
 import static org.apache.hc.core5.util.Timeout.ofSeconds;
 
 @ComponentScan
 @Configuration
 @EnableAutoConfiguration(exclude = UserDetailsServiceAutoConfiguration.class)
-@EnableConfigurationProperties(value = {SafProperties.class, ServiceuserAlias.class, AzureProperties.class, WebProxyProperties.class})
+@EnableConfigurationProperties(value = {
+		SafProperties.class,
+		ServiceuserAlias.class,
+		AzureProperties.class,
+		NaisProperties.class,
+		WebProxyProperties.class
+})
 public class ApplicationConfig {
 	@Bean
 	ClientHttpRequestFactory clientHttpRequestFactory(HttpClient httpClient) {
@@ -51,6 +63,14 @@ public class ApplicationConfig {
 
 		return HttpClients.custom()
 				.setConnectionManager(connectionManager)
+				.build();
+	}
+
+	@Bean
+	RestClient restClient(ClientHttpRequestFactory clientHttpRequestFactory, NaisTexasConsumer naisTexasConsumer) {
+		return RestClient.builder()
+				.requestFactory(clientHttpRequestFactory)
+				.requestInterceptor(new NaisTexasAndCallIdRequestInterceptor(naisTexasConsumer))
 				.build();
 	}
 

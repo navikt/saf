@@ -518,10 +518,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 	 */
 	@Test
 	void shouldReturnFinnesNesteSideTrueWhenDocumentsAreFilteredFromPageAndNesteSideExists() throws URISyntaxException {
-		stubFor(post(urlEqualTo("/abac"))
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("abac/abac-permit.json")));
+		abacPermit();
 		stubMsGraphMemberOfNoGroupsDefaultSaksbehandler();
 		stubPdl();
 		stubSak();
