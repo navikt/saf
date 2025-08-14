@@ -828,7 +828,7 @@
       "namespace": "team-rpa",
       "cluster": "prod-fss",
       "roles": [
-        "tema_sto"
+        "tema_alle"
       ]
     },
     {
