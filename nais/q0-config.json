@@ -11,7 +11,8 @@
   "INGRESSES": [
     "https://saf-q0.nais.preprod.local",
     "https://saf-q0.dev.adeo.no",
-    "https://saf-q0.dev.intern.nav.no"
+    "https://saf-q0.dev.intern.nav.no",
+    "https://saf-q0.intern.dev.nav.no"
   ],
   "SRVSAF": "/serviceuser/data/dev/srvsaf",
   "NO_NAV_SECURITY_JWT_ISSUER_RESTSTS_ACCEPTED_AUDIENCE": "srvpensjon,srvpselv,srvdp-graphql,srvinfotrygd-joark,srvjfr-manuell-opp,srvsyfosmpapirmottak,srveux-app,srvdokdisteformidl,srvdokdistfordeling,srvmelosys,srvfamilie-ks-opps,srvmedlemskap,srvpensr,srvpermref-journalf,srvdolly,srvregpapirsm,srvdp-proxy,srvklage-saksbeh,srvmeldekortservice,srvspberegning,srvdokproduksjon,srvdokumentfordeling",
