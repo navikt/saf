@@ -12,8 +12,10 @@
     "https://saf-q2.nais.preprod.local",
     "https://saf-q2.dev.adeo.no",
     "https://saf-q2.dev.intern.nav.no",
-    "https://saf-q2.dev-fss-pub.nais.io",
-    "https://saf.dev.intern.nav.no"
+    "https://saf.dev.intern.nav.no",
+    "https://saf-q2.intern.dev.nav.no",
+    "https://saf.intern.dev.nav.no",
+    "https://saf-q2.dev-fss-pub.nais.io"
   ],
   "SRVSAF": "/serviceuser/data/dev/srvsaf",
   "NO_NAV_SECURITY_JWT_ISSUER_RESTSTS_ACCEPTED_AUDIENCE": "srvdokdistdpi,srvdokdistdpi-2,srvpensjon,srvpselv,srvdagpenger-joark,srvdp-graphql,srvjfr-enhancer,srvinfotrygd-joark,srvjfr-infotrygd,srvjfr-arena,srvjfr-manuell-opp,srvjfr-filter,srvsyfosmpapirmottak,srveux-app,srvdokdisteformidl,srvdokdistfordeling,srvmelosys,srvmelosys-eessi,srvfamilie-ks-opps,srvmedlemskap,srvpensr,srvcoronapenger,srvjfr-automatisk,srvskjermingsbrev,srvpermref-journalf,srvdolly,srvsupstonad,srvarena-dokgen,srvregpapirsm,srv-digihotProxy,srvklage-saksbeh,srvbdarkiv,srvccmarkivogdist,srvbdarkivering,srvinnsending-api,srvspberegning,srvdokproduksjon",
