@@ -285,6 +285,12 @@ public abstract class AbstractItest {
 				.withBodyFile("texas/" + "texas_happy.json")));
 	}
 
+	public static void stubTexasToken() {
+		stubFor(post("/texas").willReturn(aResponse().withStatus(OK.value())
+				.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+				.withBodyFile("texas/" + "texas_happy.json")));
+	}
+
 	protected static void stubTilgangsmaskinenPermit() {
 		stubTexasExchangeOboToken();
 		stubFor(post("/tilgangsmaskinen/api/v1/komplett").willReturn(aResponse().withStatus(NO_CONTENT.value())));

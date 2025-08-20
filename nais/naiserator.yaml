@@ -53,6 +53,10 @@ spec:
       value: {{SAF_ENDPOINTS_FPSAK_URL}}
     - name: SAF_ENDPOINTS_FPSAK_SCOPE
       value: {{SAF_ENDPOINTS_FPSAK_SCOPE}}
+    - name: SAF_ENDPOINTS_GSAK_URL
+      value: {{SAF_ENDPOINTS_GSAK_URL}}
+    - name: SAF_ENDPOINTS_GSAK_SCOPE
+      value: {{SAF_ENDPOINTS_GSAK_SCOPE}}
     - name: SAF_ENDPOINTS_K9SAK_URL
       value: {{SAF_ENDPOINTS_K9SAK_URL}}
     - name: SAF_ENDPOINTS_K9SAK_SCOPE
@@ -70,8 +74,8 @@ spec:
   image: {{ image }}
   ingresses:
     {{#each INGRESSES}}
-    - {{ this }}
-    {{/each}}
+       - {{ this }}
+           {{/each}}
   liveness:
     path: /actuator/health/liveness
     port: 8080
@@ -114,16 +118,16 @@ spec:
     inbound:
       rules:
     {{#each AZURE_IAC_RULES}}
-        - application: {{app}}
-          namespace: {{namespace}}
-          cluster: {{cluster}}
-          {{#if roles}}
-          permissions:
-            roles:
-              {{#each roles}}
-              - "{{this}}"
-              {{/each}}
-          {{/if}}
+       - application: {{app}}
+    namespace: {{namespace}}
+    cluster: {{cluster}}
+    {{#if roles}}
+      permissions:
+        roles:
+          {{#each roles}}
+             - "{{this}}"
+                 {{/each}}
+        {{/if}}
     {{/each}}
   observability:
     logging:

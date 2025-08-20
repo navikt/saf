@@ -52,6 +52,7 @@ class SakerIT extends AbstractItest {
 	@BeforeEach
 	void setup() {
 		setupHappyPathAzureToken();
+		stubTexasToken();
 	}
 
 	@Test

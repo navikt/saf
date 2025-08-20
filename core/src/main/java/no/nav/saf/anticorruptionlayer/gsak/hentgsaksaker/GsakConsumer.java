@@ -1,134 +1,145 @@
 package no.nav.saf.anticorruptionlayer.gsak.hentgsaksaker;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.retry.annotation.Retry;
 import lombok.extern.slf4j.Slf4j;
-import no.nav.saf.config.ServiceuserAlias;
+import no.nav.saf.config.SafProperties;
 import no.nav.saf.domain.kode.Tema;
 import no.nav.saf.exceptions.SafFunctionalException;
 import no.nav.saf.exceptions.SafTechnicalException;
-import org.slf4j.MDC;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
-import org.springframework.http.client.ClientHttpRequestFactory;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ProblemDetail;
+import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.HttpServerErrorException;
-import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponentsBuilder;
+import org.springframework.web.client.RestClient;
 
+import java.io.IOException;
 import java.util.List;
-import java.util.UUID;
 
-import static no.nav.saf.util.MDCConstants.CALL_ID;
-import static org.apache.commons.lang3.StringUtils.isBlank;
-import static org.apache.commons.lang3.StringUtils.trim;
+import static java.lang.String.format;
+import static no.nav.saf.integration.token.NaisTexasAndCallIdRequestInterceptor.TARGET_SCOPE;
+import static no.nav.saf.util.MDCUtility.getCallId;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
 
 @Slf4j
 @Component
 public class GsakConsumer {
 	private static final String SAK_INSTANCE = "sak";
 
-	private static final String HEADER_CORRELATION_ID = "X-Correlation-ID";
+	public static final String HEADER_CORRELATION_ID = "X-Correlation-ID";
 
-	private final RestTemplate restTemplate;
-	private final String gsakApiUrl;
+	private final RestClient restClient;
+	private final ObjectMapper objectMapper;
+	private final SafProperties.AzureEndpoint gsakEndpoint;
 
-	public GsakConsumer(RestTemplateBuilder restTemplateBuilder,
-						ClientHttpRequestFactory clientHttpRequestFactory,
-						@Value("${sak.saker.url}") String gsakApiUrl,
-						ServiceuserAlias serviceuserAlias) {
-		this.gsakApiUrl = gsakApiUrl;
-		this.restTemplate = restTemplateBuilder
-				.requestFactory(() -> clientHttpRequestFactory)
-				.basicAuthentication(serviceuserAlias.getUsername(), serviceuserAlias.getPassword())
+	public GsakConsumer(RestClient restClient,
+						SafProperties safProperties,
+						ObjectMapper objectMapper) {
+		this.gsakEndpoint = safProperties.getEndpoints().getGsak();
+		this.restClient = restClient.mutate()
+				.baseUrl(safProperties.getEndpoints().getGsak().getUrl())
+				.defaultHeaders(httpHeaders -> {
+					httpHeaders.setContentType(APPLICATION_JSON);
+					httpHeaders.set(HEADER_CORRELATION_ID, getCallId());
+				})
 				.build();
+		this.objectMapper = objectMapper;
 	}
 
 	@CircuitBreaker(name = SAK_INSTANCE)
 	@Retry(name = SAK_INSTANCE)
 	public List<GsakSakerTo> hentSakerByAktoerIder(final List<String> aktoerIder) {
-		UriComponentsBuilder uri = UriComponentsBuilder.fromUriString(gsakApiUrl)
-				.queryParam("aktoerId", aktoerIder);
-		return hentSaker(uri.toUriString());
+		return restClient.get()
+				.uri(uriBuilder -> uriBuilder
+						.queryParam("aktoerId", aktoerIder).build())
+				.attribute(TARGET_SCOPE, gsakEndpoint.getScope())
+				.retrieve()
+				.onStatus(HttpStatusCode::isError, (req, res) -> handleError(res))
+				.body(new ParameterizedTypeReference<List<GsakSakerTo>>() {
+				});
 	}
-
 
 	@CircuitBreaker(name = SAK_INSTANCE)
 	@Retry(name = SAK_INSTANCE)
 	public List<GsakSakerTo> hentSakerByAktoerId(final String aktoerId) {
-		UriComponentsBuilder uri = UriComponentsBuilder.fromUriString(gsakApiUrl)
-				.queryParam("aktoerId", aktoerId);
-		return hentSaker(uri.toUriString());
+		log.info("Henter saker for aktoerId: {}", aktoerId);
+		return restClient.get()
+				.uri(uriBuilder -> uriBuilder
+						.queryParam("aktoerId", aktoerId)
+						.build())
+				.attribute(TARGET_SCOPE, gsakEndpoint.getScope())
+				.retrieve()
+				.onStatus(HttpStatusCode::isError, (req, res) -> handleError(res))
+				.body(new ParameterizedTypeReference<List<GsakSakerTo>>() {
+				});
 	}
 
 	@CircuitBreaker(name = SAK_INSTANCE)
 	@Retry(name = SAK_INSTANCE)
 	public List<GsakSakerTo> hentSakerByAktoerIder(final List<String> aktoerIder, final Tema tema) {
-		UriComponentsBuilder uri = UriComponentsBuilder.fromUriString(gsakApiUrl)
-				.queryParam("tema", tema.toString())
-				.queryParam("aktoerId", aktoerIder);
-		return hentSaker(uri.toUriString());
+		return restClient.get()
+				.uri(uriBuilder -> uriBuilder
+						.queryParam("tema", tema.toString())
+						.queryParam("aktoerId", aktoerIder)
+						.build())
+				.attribute(TARGET_SCOPE, gsakEndpoint.getScope())
+				.retrieve()
+				.onStatus(HttpStatusCode::isError, (req, res) -> handleError(res))
+				.body(new ParameterizedTypeReference<List<GsakSakerTo>>() {
+				});
 	}
 
 	@CircuitBreaker(name = SAK_INSTANCE)
 	@Retry(name = SAK_INSTANCE)
 	public List<GsakSakerTo> hentSakerByOrgNr(final String orgNr) {
-		UriComponentsBuilder uri = UriComponentsBuilder.fromUriString(gsakApiUrl)
-				.queryParam("orgnr", orgNr);
-		return hentSaker(uri.toUriString());
+		return restClient.get()
+				.uri(uriBuilder -> uriBuilder
+						.queryParam("orgnr", orgNr)
+						.build())
+				.attribute(TARGET_SCOPE, gsakEndpoint.getScope())
+				.retrieve()
+				.onStatus(HttpStatusCode::isError, (req, res) -> handleError(res))
+				.body(new ParameterizedTypeReference<>() {
+				});
 	}
 
 	@CircuitBreaker(name = SAK_INSTANCE)
 	@Retry(name = SAK_INSTANCE)
 	public List<GsakSakerTo> hentSakerByOrgNr(final String orgNr, final Tema tema) {
-		UriComponentsBuilder uri = UriComponentsBuilder.fromUriString(gsakApiUrl)
-				.queryParam("orgnr", orgNr)
-				.queryParam("tema", tema.toString());
-		return hentSaker(uri.toUriString());
+		return restClient.get()
+				.uri(uriBuilder -> uriBuilder
+						.queryParam("orgnr", orgNr)
+						.queryParam("tema", tema)
+						.build())
+				.attribute(TARGET_SCOPE, gsakEndpoint.getScope())
+				.retrieve()
+				.onStatus(HttpStatusCode::isError, (req, res) -> handleError(res))
+				.body(new ParameterizedTypeReference<>() {
+				});
 	}
 
-	@CircuitBreaker(name = SAK_INSTANCE)
-	@Retry(name = SAK_INSTANCE)
 	public List<GsakSakerTo> hentSakerByFagsakIdAndFagsaksystem(final String fagsakId, final String fagsaksystem) {
-		UriComponentsBuilder uri = UriComponentsBuilder.fromUriString(gsakApiUrl)
-				.queryParam("fagsakNr", fagsakId)
-				.queryParam("applikasjon", fagsaksystem);
-		return hentSaker(uri.toUriString());
+		return restClient.get()
+				.uri(uriBuilder -> uriBuilder
+						.queryParam("fagsakNr", fagsakId)
+						.queryParam("applikasjon", fagsaksystem)
+						.build())
+				.attribute(TARGET_SCOPE, gsakEndpoint.getScope())
+				.retrieve()
+				.onStatus(HttpStatusCode::isError, (req, res) -> handleError(res))
+				.body(new ParameterizedTypeReference<>() {
+				});
 	}
 
-	private List<GsakSakerTo> hentSaker(final String uri) {
-		if (log.isDebugEnabled()) {
-			log.debug("Henter gsaker uri={}", uri);
+	private void handleError(ClientHttpResponse response) throws IOException {
+		ProblemDetail problemDetail = objectMapper.readValue(response.getBody(), ProblemDetail.class);
+		if (response.getStatusCode().is4xxClientError()) {
+			throw new SafTechnicalException(format("getGsaksaker feilet teknisk med statusKode=%s. Feilmelding=%s",
+					response.getStatusCode(), problemDetail.getDetail()));
 		}
-		try {
-			HttpHeaders headers = new HttpHeaders();
-			headers.set(HEADER_CORRELATION_ID, getOrGenerateCorrelationId());
-			ResponseEntity<List<GsakSakerTo>> response = restTemplate.exchange(uri, HttpMethod.GET, new HttpEntity<>(headers), new ParameterizedTypeReference<List<GsakSakerTo>>() {
-			});
-			if (log.isDebugEnabled()) {
-				log.debug("Hentet ferdig gsaker uri={}", uri);
-			}
-			return response.getBody();
-		} catch (HttpServerErrorException e) {
-			throw new SafTechnicalException(String.format("getGsaksaker feilet teknisk med statusKode=%s. Feilmelding=%s", e
-					.getStatusCode(), e.getMessage()), e, e.getStatusCode());
-		} catch (HttpClientErrorException e) {
-			throw new SafFunctionalException(String.format("getGsaksaker feilet funksjonelt med statusKode=%s. Feilmelding=%s", e
-					.getStatusCode(), e.getMessage()), e, e.getStatusCode());
-		}
-	}
-
-	private String getOrGenerateCorrelationId() {
-		String callId = trim(MDC.get(CALL_ID));
-		if (isBlank(callId)) {
-			return UUID.randomUUID().toString();
-		}
-		return callId;
+		throw new SafFunctionalException(format("getGsaksaker feilet funksjonelt med statusKode=%s. Feilmelding=%s",
+				problemDetail.getStatus(), problemDetail.getDetail()));
 	}
 }
