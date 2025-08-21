@@ -67,7 +67,7 @@ public class ApplicationConfig {
 	}
 
 	@Bean
-	RestClient restClient(ClientHttpRequestFactory clientHttpRequestFactory, NaisTexasConsumer naisTexasConsumer) {
+	RestClient texasRestClient(ClientHttpRequestFactory clientHttpRequestFactory, NaisTexasConsumer naisTexasConsumer) {
 		return RestClient.builder()
 				.requestFactory(clientHttpRequestFactory)
 				.requestInterceptor(new NaisTexasAndCallIdRequestInterceptor(naisTexasConsumer))

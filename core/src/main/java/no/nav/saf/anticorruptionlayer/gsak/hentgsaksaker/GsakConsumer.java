@@ -19,7 +19,9 @@ import java.io.IOException;
 import java.util.List;
 
 import static java.lang.String.format;
+import static no.nav.saf.headers.NavHeaders.X_CORRELATION_ID;
 import static no.nav.saf.integration.token.NaisTexasAndCallIdRequestInterceptor.TARGET_SCOPE;
+import static no.nav.saf.util.MDCUtility.getCallId;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
@@ -28,15 +30,15 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 public class GsakConsumer {
 	private static final String SAK_INSTANCE = "sak";
 
-	private final RestClient restClient;
+	private final RestClient texasRestClient;
 	private final ObjectMapper objectMapper;
-	private final SafProperties.AzureEndpoint gsakEndpoint;
+	private final String gsakScope;
 
-	public GsakConsumer(RestClient restClient,
+	public GsakConsumer(RestClient texasRestClient,
 						SafProperties safProperties,
 						ObjectMapper objectMapper) {
-		this.gsakEndpoint = safProperties.getEndpoints().getGsak();
-		this.restClient = restClient.mutate()
+		this.gsakScope = safProperties.getEndpoints().getGsak().getScope();
+		this.texasRestClient = texasRestClient.mutate()
 				.baseUrl(safProperties.getEndpoints().getGsak().getUrl())
 				.defaultHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 				.build();
@@ -46,10 +48,11 @@ public class GsakConsumer {
 	@CircuitBreaker(name = SAK_INSTANCE)
 	@Retry(name = SAK_INSTANCE)
 	public List<GsakSakerTo> hentSakerByAktoerIder(final List<String> aktoerIder) {
-		return restClient.get()
+		return texasRestClient.get()
 				.uri(uriBuilder -> uriBuilder
 						.queryParam("aktoerId", aktoerIder).build())
-				.attribute(TARGET_SCOPE, gsakEndpoint.getScope())
+				.header(X_CORRELATION_ID, getCallId())
+				.attribute(TARGET_SCOPE, gsakScope)
 				.retrieve()
 				.onStatus(HttpStatusCode::isError, (req, res) -> handleError(res))
 				.body(new ParameterizedTypeReference<>() {
@@ -60,11 +63,12 @@ public class GsakConsumer {
 	@Retry(name = SAK_INSTANCE)
 	public List<GsakSakerTo> hentSakerByAktoerId(final String aktoerId) {
 		log.info("Henter saker for aktoerId: {}", aktoerId);
-		return restClient.get()
+		return texasRestClient.get()
 				.uri(uriBuilder -> uriBuilder
 						.queryParam("aktoerId", aktoerId)
 						.build())
-				.attribute(TARGET_SCOPE, gsakEndpoint.getScope())
+				.header(X_CORRELATION_ID, getCallId())
+				.attribute(TARGET_SCOPE, gsakScope)
 				.retrieve()
 				.onStatus(HttpStatusCode::isError, (req, res) -> handleError(res))
 				.body(new ParameterizedTypeReference<>() {
@@ -74,12 +78,13 @@ public class GsakConsumer {
 	@CircuitBreaker(name = SAK_INSTANCE)
 	@Retry(name = SAK_INSTANCE)
 	public List<GsakSakerTo> hentSakerByAktoerIder(final List<String> aktoerIder, final Tema tema) {
-		return restClient.get()
+		return texasRestClient.get()
 				.uri(uriBuilder -> uriBuilder
 						.queryParam("tema", tema.toString())
 						.queryParam("aktoerId", aktoerIder)
 						.build())
-				.attribute(TARGET_SCOPE, gsakEndpoint.getScope())
+				.header(X_CORRELATION_ID, getCallId())
+				.attribute(TARGET_SCOPE, gsakScope)
 				.retrieve()
 				.onStatus(HttpStatusCode::isError, (req, res) -> handleError(res))
 				.body(new ParameterizedTypeReference<>() {
@@ -89,11 +94,12 @@ public class GsakConsumer {
 	@CircuitBreaker(name = SAK_INSTANCE)
 	@Retry(name = SAK_INSTANCE)
 	public List<GsakSakerTo> hentSakerByOrgNr(final String orgNr) {
-		return restClient.get()
+		return texasRestClient.get()
 				.uri(uriBuilder -> uriBuilder
 						.queryParam("orgnr", orgNr)
 						.build())
-				.attribute(TARGET_SCOPE, gsakEndpoint.getScope())
+				.header(X_CORRELATION_ID, getCallId())
+				.attribute(TARGET_SCOPE, gsakScope)
 				.retrieve()
 				.onStatus(HttpStatusCode::isError, (req, res) -> handleError(res))
 				.body(new ParameterizedTypeReference<>() {
@@ -103,12 +109,13 @@ public class GsakConsumer {
 	@CircuitBreaker(name = SAK_INSTANCE)
 	@Retry(name = SAK_INSTANCE)
 	public List<GsakSakerTo> hentSakerByOrgNr(final String orgNr, final Tema tema) {
-		return restClient.get()
+		return texasRestClient.get()
 				.uri(uriBuilder -> uriBuilder
 						.queryParam("orgnr", orgNr)
 						.queryParam("tema", tema)
 						.build())
-				.attribute(TARGET_SCOPE, gsakEndpoint.getScope())
+				.header(X_CORRELATION_ID, getCallId())
+				.attribute(TARGET_SCOPE, gsakScope)
 				.retrieve()
 				.onStatus(HttpStatusCode::isError, (req, res) -> handleError(res))
 				.body(new ParameterizedTypeReference<>() {
@@ -118,12 +125,13 @@ public class GsakConsumer {
 	@CircuitBreaker(name = SAK_INSTANCE)
 	@Retry(name = SAK_INSTANCE)
 	public List<GsakSakerTo> hentSakerByFagsakIdAndFagsaksystem(final String fagsakId, final String fagsaksystem) {
-		return restClient.get()
+		return texasRestClient.get()
 				.uri(uriBuilder -> uriBuilder
 						.queryParam("fagsakNr", fagsakId)
 						.queryParam("applikasjon", fagsaksystem)
 						.build())
-				.attribute(TARGET_SCOPE, gsakEndpoint.getScope())
+				.header(X_CORRELATION_ID, getCallId())
+				.attribute(TARGET_SCOPE, gsakScope)
 				.retrieve()
 				.onStatus(HttpStatusCode::isError, (req, res) -> handleError(res))
 				.body(new ParameterizedTypeReference<>() {

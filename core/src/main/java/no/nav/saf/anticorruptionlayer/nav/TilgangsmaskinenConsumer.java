@@ -31,11 +31,11 @@ public class TilgangsmaskinenConsumer {
 
 	private static final String TILGANGSMASKINEN_INSTANCE = "tilgangsmaskinen";
 
-	private final RestClient restClient;
+	private final RestClient texasRestClient;
 	private final SafProperties safProperties;
 
-	public TilgangsmaskinenConsumer(RestClient restClient, SafProperties safProperties) {
-		this.restClient = restClient.mutate()
+	public TilgangsmaskinenConsumer(RestClient texasRestClient, SafProperties safProperties) {
+		this.texasRestClient = texasRestClient.mutate()
 				.baseUrl(safProperties.getEndpoints().getTilgangsmaskinen().getUrl())
 				.build();
 		this.safProperties = safProperties;
@@ -45,7 +45,7 @@ public class TilgangsmaskinenConsumer {
 	@CircuitBreaker(name = TILGANGSMASKINEN_INSTANCE)
 	public PepAnswer navIdentHasAccess(String identifikator, JwtToken entraIdToken) {
 		try {
-			return restClient.post()
+			return texasRestClient.post()
 					.uri(uriBuilder -> uriBuilder.path("/api/v1/komplett").build())
 					.attributes(attributes -> {
 						attributes.put(TARGET_SCOPE, safProperties.getEndpoints().getTilgangsmaskinen().getScope());
