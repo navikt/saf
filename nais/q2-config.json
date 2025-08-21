@@ -143,6 +143,11 @@
       "cluster": "dev-gcp"
     },
     {
+      "app": "fagarkiv-administrasjon-q2",
+      "namespace": "isa",
+      "cluster": "dev-gcp"
+    },
+    {
       "app": "salesforce",
       "namespace": "teamcrm",
       "cluster": "dev-external"
