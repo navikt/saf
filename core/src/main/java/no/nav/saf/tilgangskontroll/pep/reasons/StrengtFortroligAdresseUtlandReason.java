@@ -9,6 +9,10 @@ public final class StrengtFortroligAdresseUtlandReason extends AbacDenyReason {
 		super(advices, AbacDenyReasonCode.STRENGT_FORTROLIG_ADRESSE_UTLAND);
 	}
 
+	public StrengtFortroligAdresseUtlandReason(String rawTilgangsmaskinenDenyReason, String rawTilgangmaskinenBegrunnelse) {
+		super(AbacDenyReasonCode.STRENGT_FORTROLIG_ADRESSE_UTLAND, rawTilgangsmaskinenDenyReason, rawTilgangmaskinenBegrunnelse);
+	}
+
 	public String getHumanReadableDenyReason() {
 		return "Du har ikke tilgang til brukeren fordi han / hun har strengt fortrolig adresse utland." + VIKAFOSSEN;
 	}

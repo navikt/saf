@@ -5,6 +5,7 @@ import java.util.Map;
 public enum AbacDenyReasonCode {
 	EGEN_ANSATT("deny_egen_ansatt", "skjermede_navansatte_og_familiemedlemmer", "behandle_skjermede_navansatte_og_familiemedlemmer_mangler_gruppetilgang"),
 	EGEN_ANSATT_PART("deny_egen_ansatt_part"),
+	HABILITET("deny_habilitet"),
 	FORTROLIG_ADRESSE("deny_fortrolig_adresse", "adressebeskyttelse_fortrolig_adresse", "fortrolig_adresse_nok"),
 	FORTROLIG_ADRESSE_PART("deny_fortrolig_adresse_part"),
 	GEOGRAFI("deny_geografi", "fp4_geografi", "ingen_tilgang_enhet"),
@@ -15,6 +16,7 @@ public enum AbacDenyReasonCode {
 	STRENGT_FORTROLIG_ADRESSE_UTLAND("deny_strengt_fortrolig_adresse_utland", "adressebeskyttelse_strengt_fortrolig_adresse_utland", "strengt_fortrolig_adresse_utland_nok"),
 	STRENGT_FORTROLIG_ADRESSE_PART("deny_strengt_fortrolig_adresse_part"),
 	STRENGT_FORTROLIG_ADRESSE_UTLAND_PART("deny_strengt_fortrolig_adresse_utland_part"),
+	PERSON_UTLAND("deny_person_utland"),
 	TEMA("deny_tema"),
 	AVSLUTTET_SAK("deny_avsluttet_sak"),
 	UKJENT("ukjent");
