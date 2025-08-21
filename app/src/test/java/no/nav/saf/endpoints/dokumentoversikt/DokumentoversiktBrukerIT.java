@@ -54,6 +54,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 	@BeforeEach
 	public void setup() {
 		setupHappyPathAzureToken();
+		stubTexasToken();
 	}
 
 	@Test

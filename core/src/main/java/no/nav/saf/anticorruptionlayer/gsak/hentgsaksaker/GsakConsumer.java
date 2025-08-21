@@ -20,15 +20,13 @@ import java.util.List;
 
 import static java.lang.String.format;
 import static no.nav.saf.integration.token.NaisTexasAndCallIdRequestInterceptor.TARGET_SCOPE;
-import static no.nav.saf.util.MDCUtility.getCallId;
-import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @Slf4j
 @Component
 public class GsakConsumer {
 	private static final String SAK_INSTANCE = "sak";
-
-	public static final String HEADER_CORRELATION_ID = "X-Correlation-ID";
 
 	private final RestClient restClient;
 	private final ObjectMapper objectMapper;
@@ -40,10 +38,7 @@ public class GsakConsumer {
 		this.gsakEndpoint = safProperties.getEndpoints().getGsak();
 		this.restClient = restClient.mutate()
 				.baseUrl(safProperties.getEndpoints().getGsak().getUrl())
-				.defaultHeaders(httpHeaders -> {
-					httpHeaders.setContentType(APPLICATION_JSON);
-					httpHeaders.set(HEADER_CORRELATION_ID, getCallId());
-				})
+				.defaultHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 				.build();
 		this.objectMapper = objectMapper;
 	}
@@ -57,7 +52,7 @@ public class GsakConsumer {
 				.attribute(TARGET_SCOPE, gsakEndpoint.getScope())
 				.retrieve()
 				.onStatus(HttpStatusCode::isError, (req, res) -> handleError(res))
-				.body(new ParameterizedTypeReference<List<GsakSakerTo>>() {
+				.body(new ParameterizedTypeReference<>() {
 				});
 	}
 
@@ -72,7 +67,7 @@ public class GsakConsumer {
 				.attribute(TARGET_SCOPE, gsakEndpoint.getScope())
 				.retrieve()
 				.onStatus(HttpStatusCode::isError, (req, res) -> handleError(res))
-				.body(new ParameterizedTypeReference<List<GsakSakerTo>>() {
+				.body(new ParameterizedTypeReference<>() {
 				});
 	}
 
@@ -87,7 +82,7 @@ public class GsakConsumer {
 				.attribute(TARGET_SCOPE, gsakEndpoint.getScope())
 				.retrieve()
 				.onStatus(HttpStatusCode::isError, (req, res) -> handleError(res))
-				.body(new ParameterizedTypeReference<List<GsakSakerTo>>() {
+				.body(new ParameterizedTypeReference<>() {
 				});
 	}
 
@@ -120,6 +115,8 @@ public class GsakConsumer {
 				});
 	}
 
+	@CircuitBreaker(name = SAK_INSTANCE)
+	@Retry(name = SAK_INSTANCE)
 	public List<GsakSakerTo> hentSakerByFagsakIdAndFagsaksystem(final String fagsakId, final String fagsaksystem) {
 		return restClient.get()
 				.uri(uriBuilder -> uriBuilder

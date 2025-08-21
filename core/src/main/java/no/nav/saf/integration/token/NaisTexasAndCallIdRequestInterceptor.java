@@ -27,7 +27,7 @@ public class NaisTexasAndCallIdRequestInterceptor implements ClientHttpRequestIn
 		Map<String, Object> attributes = request.getAttributes();
 		if (attributes.containsKey(TARGET_SCOPE)) {
 			String targetScope = (String) attributes.get(TARGET_SCOPE);
-			if (attributes.containsKey(TOKEN_TO_EXCHANGE) && attributes.get(TOKEN_TO_EXCHANGE) != null) {
+			if (attributes.containsKey(TOKEN_TO_EXCHANGE)) {
 				String accessToken = (String) attributes.get(TOKEN_TO_EXCHANGE);
 				request.getHeaders().setBearerAuth(naisTexasConsumer.exchangeForTilgangsmaskinenOboToken(accessToken, targetScope));
 			} else {

@@ -50,6 +50,7 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 	@BeforeEach
 	void setup() {
 		setupHappyPathAzureToken();
+		stubTexasToken();
 	}
 
 	@Test

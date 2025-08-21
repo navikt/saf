@@ -286,7 +286,7 @@ public abstract class AbstractItest {
 	}
 
 	public static void stubTexasToken() {
-		stubFor(post("/texas").willReturn(aResponse().withStatus(OK.value())
+		stubFor(post("/nais/token").willReturn(aResponse().withStatus(OK.value())
 				.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 				.withBodyFile("texas/" + "texas_happy.json")));
 	}

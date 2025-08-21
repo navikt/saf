@@ -4,8 +4,6 @@ import no.nav.saf.anticorruptionlayer.nav.NavOrgService;
 import no.nav.saf.anticorruptionlayer.nav.TilgangsmaskinenConsumer;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.domain.tilgangsmodell.TilgangIdent;
-import no.nav.saf.integration.token.NaisTexasConsumer;
-import no.nav.saf.integration.token.OboToken;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.SafSecurityContext;
 import no.nav.saf.tilgangskontroll.pep.reasons.UkjentEllerTekniskReason;
@@ -29,8 +27,6 @@ class TilgangsmaskinenBackedPep1gImplTest extends AbstractAbacBackedPepTest {
 	@Mock
 	NavOrgService navOrgService;
 	@Mock
-	NaisTexasConsumer naisTexasConsumer;
-	@Mock
 	TilgangsmaskinenConsumer tilgangsmaskinenConsumer;
 
 	private TilgangsmaskinenBackedPep1gImpl pep1g;
@@ -50,8 +46,7 @@ class TilgangsmaskinenBackedPep1gImplTest extends AbstractAbacBackedPepTest {
 	@BeforeEach
 	void setUp() {
 		super.setUp();
-		pep1g = new TilgangsmaskinenBackedPep1gImpl(naisTexasConsumer, tilgangsmaskinenConsumer, navOrgService, navUserGroupMembershipService);
-		when(naisTexasConsumer.exchangeForTilgangsmaskinenOboToken(any(), any())).thenReturn("Yeeehaaaw!");
+		pep1g = new TilgangsmaskinenBackedPep1gImpl(tilgangsmaskinenConsumer, navOrgService, navUserGroupMembershipService);
 	}
 
 	@Test

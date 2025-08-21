@@ -13,4 +13,7 @@ public class NaisProperties {
 	// https://doc.nais.io/auth/reference/#texas
 	@NotEmpty
 	private String tokenExchangeEndpoint;
+
+	@NotEmpty
+	private String tokenEndpoint;
 }
