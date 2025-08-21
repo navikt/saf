@@ -4,7 +4,7 @@ import no.nav.saf.tilgangskontroll.pep.AbacDenyReasonCode;
 
 public final class OrgnrNavStatReason extends AbacDenyReason {
 	public OrgnrNavStatReason(String cause, String policy, String rule) {
-		super(cause, policy, rule, AbacDenyReasonCode.ORGNR_NAV_STAT);
+		super(cause, policy, rule, AbacDenyReasonCode.ORGNR_NAV_STAT, null, null);
 	}
 
 	public String getHumanReadableDenyReason() {

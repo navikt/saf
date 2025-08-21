@@ -10,6 +10,10 @@ public final class GeografiReason extends AbacDenyReason {
 		super(advices, AbacDenyReasonCode.GEOGRAFI);
 	}
 
+	public GeografiReason(String rawTilgangsmaskinenDenyReason, String rawTilgangmaskinenBegrunnelse) {
+		super(AbacDenyReasonCode.GEOGRAFI, rawTilgangsmaskinenDenyReason, rawTilgangmaskinenBegrunnelse);
+	}
+
 	public String getHumanReadableDenyReason() {
 		return "Du har ikke tilgang til brukeren fordi han / hun er folkeregistrert i et geografisk område du ikke har tilgang til." + MAA_HA_GEOGRAFI;
 	}

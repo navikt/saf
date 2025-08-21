@@ -9,7 +9,7 @@ public final class TemaReason extends AbacDenyReason {
 	private final Tema tema;
 
 	public TemaReason(String cause, String policy, String rule, Tema tema) {
-		super(cause, policy, rule, AbacDenyReasonCode.TEMA);
+		super(cause, policy, rule, AbacDenyReasonCode.TEMA, null, null);
 		this.tema = tema;
 	}
 

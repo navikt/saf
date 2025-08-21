@@ -18,7 +18,7 @@ import static no.nav.saf.domain.DomainConstants.PEP1G;
 @Component(PEP1G)
 public class MultiPep1g extends Pep<TilgangBruker> {
 
-	private static final long OPPSLAG_TIMEOUT_MILLIS = 1000;
+	private static final long OPPSLAG_TIMEOUT_MILLIS = 2000;
 	private final AbacBackedPep1gImpl abacBackedPep;
 	private final TilgangsmaskinenBackedPep1gImpl tilgangsmaskinenBackedPep;
 	private final boolean featureToggleUseCheckTilgangsmaskinen;
@@ -81,7 +81,8 @@ public class MultiPep1g extends Pep<TilgangBruker> {
 		if (abacAnswer == null) {
 			if (prioritizeTilgangsmaskinenAnswer) {
 				log.warn("PEP1g: oppslag mot abac feilet, men multipep1g er satt til å prioritere svar fra tilgangsmaskinen. Returnerer tilgangsmaskinen={}",
-						tilgangsmaskinenAnswer.isPermit() ? "PERMIT" : tilgangsmaskinenAnswer.getPepDenyReason().getAbacDenyReasonCode());
+						tilgangsmaskinenAnswer.isPermit() ? "PERMIT" :
+								tilgangsmaskinenAnswer.getPepDenyReason().getRawTilgangsmaskinenDenyReason() + "(mappet til " + tilgangsmaskinenAnswer.getPepDenyReason().getAbacDenyReasonCode() + ")");
 				return tilgangsmaskinenAnswer;
 			} else {
 				log.error("PEP1g: oppslag mot abac feilet, og multipep1g er satt til å prioritere svar fra abac. Returnerer deny");
@@ -97,7 +98,8 @@ public class MultiPep1g extends Pep<TilgangBruker> {
 		PepAnswer finalAnswer = prioritizeTilgangsmaskinenAnswer ? tilgangsmaskinenAnswer : abacAnswer;
 		if (abacAnswer.isPermit()) {
 			log.warn("PEP1g: abac og tilgangsmaskinen er uenige: abac=PERMIT tilgangsmaskinen={}. Multipep1g er satt til å prioritere {} og returnerer {}",
-					tilgangsmaskinenAnswer.getPepDenyReason().getAbacDenyReasonCode(), prioritizeTilgangsmaskinenAnswer ? "tilgangsmaskinen" : "abac", finalAnswer.getDecision());
+					tilgangsmaskinenAnswer.getPepDenyReason().getRawTilgangsmaskinenDenyReason() + "(mappet til " + tilgangsmaskinenAnswer.getPepDenyReason().getAbacDenyReasonCode() + ")",
+					prioritizeTilgangsmaskinenAnswer ? "tilgangsmaskinen" : "abac", finalAnswer.getDecision());
 		} else if (tilgangsmaskinenAnswer.isPermit()) {
 			log.warn("PEP1g: abac og tilgangsmaskinen er uenige: abac={} tilgangsmaskinen=PERMIT. Multipep1g er satt til å prioritere {} og returnerer {}",
 					abacAnswer.getPepDenyReason().getAbacDenyReasonCode(), prioritizeTilgangsmaskinenAnswer ? "tilgangsmaskinen" : "abac", finalAnswer.getDecision());
@@ -106,7 +108,8 @@ public class MultiPep1g extends Pep<TilgangBruker> {
 				log.debug("PEP1g: abac og tilgangsmaskinen er enige om deny");
 			} else {
 				log.info("PEP1g: abac og tilgangsmaskinen er enige om deny, men uenige om hvorfor: abac={} tilgangsmaskinen={}. Multipep1g er satt til å prioritere {} og returnerer DENY: {}",
-						abacAnswer.getPepDenyReason().getAbacDenyReasonCode(), tilgangsmaskinenAnswer.getPepDenyReason().getAbacDenyReasonCode(),
+						abacAnswer.getPepDenyReason().getAbacDenyReasonCode(),
+						tilgangsmaskinenAnswer.getPepDenyReason().getRawTilgangsmaskinenDenyReason() + "(mappet til " + tilgangsmaskinenAnswer.getPepDenyReason().getAbacDenyReasonCode() + ")",
 						prioritizeTilgangsmaskinenAnswer ? "tilgangsmaskinen" : "abac", finalAnswer.getPepDenyReason().getAbacDenyReasonCode());
 			}
 		}

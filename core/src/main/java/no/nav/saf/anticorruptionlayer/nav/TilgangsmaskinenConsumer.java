@@ -10,6 +10,8 @@ import no.nav.saf.tilgangskontroll.pep.PepAnswer;
 import no.nav.saf.tilgangskontroll.pep.reasons.EgenAnsattReason;
 import no.nav.saf.tilgangskontroll.pep.reasons.FortroligAdresseReason;
 import no.nav.saf.tilgangskontroll.pep.reasons.GeografiReason;
+import no.nav.saf.tilgangskontroll.pep.reasons.HabilitetReason;
+import no.nav.saf.tilgangskontroll.pep.reasons.PersonUtlandReason;
 import no.nav.saf.tilgangskontroll.pep.reasons.StrengtFortroligAdresseReason;
 import no.nav.saf.tilgangskontroll.pep.reasons.StrengtFortroligAdresseUtlandReason;
 import no.nav.saf.tilgangskontroll.pep.reasons.UkjentEllerTekniskReason;
@@ -19,7 +21,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 
 import java.io.IOException;
-import java.util.Map;
 
 import static no.nav.saf.integration.token.NaisTexasAndCallIdRequestInterceptor.TARGET_SCOPE;
 import static no.nav.saf.integration.token.NaisTexasAndCallIdRequestInterceptor.TOKEN_TO_EXCHANGE;
@@ -83,18 +84,25 @@ public class TilgangsmaskinenConsumer {
 			return PepAnswer.permit();
 		}
 
-		var advices = Map.of("cause", tilgangsmaskinenDenyAnswer.title(), "deny_policy", tilgangsmaskinenDenyAnswer.begrunnelse());
 		return switch (tilgangsmaskinenDenyAnswer.title()) {
-			case "AVVIST_HABILITET" -> deny(new EgenAnsattReason(advices)); // informasjon om deg selv / familie
-			case "AVVIST_SKJERMING" -> deny(new EgenAnsattReason(advices)); // informasjon om andre nav ansatte
-			case "AVVIST_GEOGRAFISK" -> deny(new GeografiReason(advices));
-			case "AVVIST_FORTROLIG_ADRESSE" -> deny(new FortroligAdresseReason(advices));
-			case "AVVIST_STRENGT_FORTROLIG_ADRESSE" -> deny(new StrengtFortroligAdresseReason(advices));
-			case "AVVIST_STRENGT_FORTROLIG_UTLAND" -> deny(new StrengtFortroligAdresseUtlandReason(advices));
+			case "AVVIST_HABILITET" ->
+					deny(new HabilitetReason(tilgangsmaskinenDenyAnswer.title(), tilgangsmaskinenDenyAnswer.begrunnelse())); // informasjon om deg selv / familie
+			case "AVVIST_SKJERMING" ->
+					deny(new EgenAnsattReason(tilgangsmaskinenDenyAnswer.title(), tilgangsmaskinenDenyAnswer.begrunnelse())); // informasjon om andre nav ansatte
+			case "AVVIST_GEOGRAFISK" ->
+					deny(new GeografiReason(tilgangsmaskinenDenyAnswer.title(), tilgangsmaskinenDenyAnswer.begrunnelse()));
+			case "AVVIST_FORTROLIG_ADRESSE" ->
+					deny(new FortroligAdresseReason(tilgangsmaskinenDenyAnswer.title(), tilgangsmaskinenDenyAnswer.begrunnelse()));
+			case "AVVIST_STRENGT_FORTROLIG_ADRESSE" ->
+					deny(new StrengtFortroligAdresseReason(tilgangsmaskinenDenyAnswer.title(), tilgangsmaskinenDenyAnswer.begrunnelse()));
+			case "AVVIST_STRENGT_FORTROLIG_UTLAND" ->
+					deny(new StrengtFortroligAdresseUtlandReason(tilgangsmaskinenDenyAnswer.title(), tilgangsmaskinenDenyAnswer.begrunnelse()));
+			case "AVVIST_PERSON_UTLAND" ->
+					deny(new PersonUtlandReason(tilgangsmaskinenDenyAnswer.title(), tilgangsmaskinenDenyAnswer.begrunnelse()));
 
 			default -> {
 				log.warn("pep1g kunne ikke matche tilgangsmaskinen-response til DenyReason. title/avvisningskode={}", tilgangsmaskinenDenyAnswer.title());
-				yield deny(new UkjentEllerTekniskReason());
+				yield deny(new UkjentEllerTekniskReason(tilgangsmaskinenDenyAnswer.title(), tilgangsmaskinenDenyAnswer.begrunnelse()));
 			}
 		};
 	}
