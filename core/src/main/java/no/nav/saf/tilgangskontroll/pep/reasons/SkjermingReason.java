@@ -6,7 +6,7 @@ import java.util.Map;
 
 public final class SkjermingReason extends AbacDenyReason {
 	public SkjermingReason(String cause, String policy, String rule) {
-		super(cause, policy, rule, AbacDenyReasonCode.SKJERMING);
+		super(cause, policy, rule, AbacDenyReasonCode.SKJERMING, null, null);
 	}
 
 	public SkjermingReason(Map<String, String> advices) {
