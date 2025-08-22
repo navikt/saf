@@ -356,6 +356,11 @@
       "namespace": "pensjonselvbetjening",
       "cluster": "prod-gcp"
     },
+	{
+      "app": "uforetrygd-backend",
+      "namespace": "pensjonselvbetjening",
+      "cluster": "prod-gcp"
+    },
     {
       "app": "arena",
       "namespace": "teamarenanais",
