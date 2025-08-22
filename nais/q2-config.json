@@ -361,6 +361,11 @@
       "namespace": "pensjonselvbetjening",
       "cluster": "dev-gcp"
     },
+	{
+      "app": "uforetrygd-backend",
+      "namespace": "pensjonselvbetjening",
+      "cluster": "dev-gcp"
+	},
     {
       "app": "bidrag-dokument-arkiv",
       "namespace": "bidrag",
