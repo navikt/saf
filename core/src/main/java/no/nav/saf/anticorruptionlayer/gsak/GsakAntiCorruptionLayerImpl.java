@@ -1,7 +1,7 @@
 package no.nav.saf.anticorruptionlayer.gsak;
 
 import lombok.extern.slf4j.Slf4j;
-import no.nav.saf.anticorruptionlayer.gsak.hentgsaksaker.GsakConsumer;
+import no.nav.saf.anticorruptionlayer.gsak.hentgsaksaker.SakConsumer;
 import no.nav.saf.anticorruptionlayer.gsak.hentgsaksaker.GsakSakerTo;
 import no.nav.saf.domain.Arkivsak;
 import no.nav.saf.domain.kode.Arkivsakssystem;
@@ -22,11 +22,12 @@ import static no.nav.saf.domain.DomainConstants.TIDSSONE_NORGE;
 @Slf4j
 @Component
 class GsakAntiCorruptionLayerImpl implements GsakAntiCorruptionLayer {
-	private final GsakConsumer gsakConsumer;
+
+	private final SakConsumer sakConsumer;
 
 	@Autowired
-	public GsakAntiCorruptionLayerImpl(GsakConsumer gsakConsumer) {
-		this.gsakConsumer = gsakConsumer;
+	public GsakAntiCorruptionLayerImpl(SakConsumer sakConsumer) {
+		this.sakConsumer = sakConsumer;
 	}
 
 	@Override
@@ -37,9 +38,9 @@ class GsakAntiCorruptionLayerImpl implements GsakAntiCorruptionLayer {
 			}
 			List<GsakSakerTo> gsakSakerToFiltered = new ArrayList<>();
 			if (tema.size() == 1) {
-				gsakSakerToFiltered.addAll(gsakConsumer.hentSakerByAktoerIder(aktoerIder, tema.get(0)));
+				gsakSakerToFiltered.addAll(sakConsumer.hentSakerByAktoerIder(aktoerIder, tema.get(0)));
 			} else {
-				List<GsakSakerTo> gsakSakerTo = gsakConsumer.hentSakerByAktoerIder(aktoerIder);
+				List<GsakSakerTo> gsakSakerTo = sakConsumer.hentSakerByAktoerIder(aktoerIder);
 				gsakSakerToFiltered.addAll(
 						gsakSakerTo.stream()
 								.filter(gsak -> tema.contains(mapTema(gsak.getTema())))
@@ -61,9 +62,9 @@ class GsakAntiCorruptionLayerImpl implements GsakAntiCorruptionLayer {
 			if (orgnr == null || tema.isEmpty()) {
 				return new ArrayList<>();
 			} else if (tema.size() == 1) {
-				gsakSakerToFiltered = gsakConsumer.hentSakerByOrgNr(orgnr, tema.get(0));
+				gsakSakerToFiltered = sakConsumer.hentSakerByOrgNr(orgnr, tema.get(0));
 			} else {
-				List<GsakSakerTo> gsakSakerTo = gsakConsumer.hentSakerByOrgNr(orgnr);
+				List<GsakSakerTo> gsakSakerTo = sakConsumer.hentSakerByOrgNr(orgnr);
 				gsakSakerToFiltered =
 						gsakSakerTo.stream()
 								.filter(gsak -> tema.contains(mapTema(gsak.getTema())))
@@ -83,7 +84,7 @@ class GsakAntiCorruptionLayerImpl implements GsakAntiCorruptionLayer {
 				return new ArrayList<>();
 			}
 
-			return mapToArkivsak(gsakConsumer.hentSakerByAktoerId(aktoerId));
+			return mapToArkivsak(sakConsumer.hentSakerByAktoerId(aktoerId));
 		} catch (Exception e) {
 			log.warn("Klarte ikke hente gsaker for aktoerId", e);
 			return new ArrayList<>();
@@ -97,7 +98,7 @@ class GsakAntiCorruptionLayerImpl implements GsakAntiCorruptionLayer {
 				return new ArrayList<>();
 			}
 
-			return mapToArkivsak(gsakConsumer.hentSakerByOrgNr(orgnr));
+			return mapToArkivsak(sakConsumer.hentSakerByOrgNr(orgnr));
 
 		} catch (Exception e) {
 			log.warn("Klarte ikke hente gsaker for orgnr={}", orgnr, e);
@@ -112,7 +113,7 @@ class GsakAntiCorruptionLayerImpl implements GsakAntiCorruptionLayer {
 			if (tema.isEmpty()) {
 				return new ArrayList<>();
 			} else {
-				List<GsakSakerTo> gsakSakerTo = gsakConsumer.hentSakerByFagsakIdAndFagsaksystem(fagsakId, fagsaksystem);
+				List<GsakSakerTo> gsakSakerTo = sakConsumer.hentSakerByFagsakIdAndFagsaksystem(fagsakId, fagsaksystem);
 				gsakSakerToFiltered =
 						gsakSakerTo.stream()
 								.filter(gsak -> tema.contains(mapTema(gsak.getTema())))
@@ -143,7 +144,7 @@ class GsakAntiCorruptionLayerImpl implements GsakAntiCorruptionLayer {
 
 	@Override
 	public Map<String, List<String>> findIdListsByFagsakIdAndFagsaksystem(final String fagsakId, final String fagsaksystem) {
-		List<GsakSakerTo> gsakSakerToList = gsakConsumer.hentSakerByFagsakIdAndFagsaksystem(fagsakId, fagsaksystem);
+		List<GsakSakerTo> gsakSakerToList = sakConsumer.hentSakerByFagsakIdAndFagsaksystem(fagsakId, fagsaksystem);
 
 		if (gsakSakerToList == null || gsakSakerToList.isEmpty()) {
 			return new HashMap<>();

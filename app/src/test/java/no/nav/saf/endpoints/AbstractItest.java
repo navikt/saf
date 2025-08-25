@@ -227,14 +227,14 @@ public abstract class AbstractItest {
 	}
 
 	protected static void stubSak(String filename) {
-		stubFor(get("/gsak?aktoerId=" + AKTOER_ID)
+		stubFor(get("/sak?aktoerId=" + AKTOER_ID)
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType())
 						.withBodyFile("gsak/" + filename)));
 	}
 
 	protected static void stubSakOrgnr() {
-		stubFor(get("/gsak?orgnr=" + ORG_NR)
+		stubFor(get("/sak?orgnr=" + ORG_NR)
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType())
 						.withBodyFile("gsak/gsak-sakerBySaksId_not_bid-happy.json")));
@@ -282,13 +282,13 @@ public abstract class AbstractItest {
 	private static void stubTexasExchangeOboToken() {
 		stubFor(post("/texas").willReturn(aResponse().withStatus(OK.value())
 				.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-				.withBodyFile("texas/" + "texas_happy.json")));
+				.withBodyFile("texas/texas_happy.json")));
 	}
 
 	public static void stubTexasToken() {
 		stubFor(post("/nais/token").willReturn(aResponse().withStatus(OK.value())
 				.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-				.withBodyFile("texas/" + "texas_happy.json")));
+				.withBodyFile("texas/texas_happy.json")));
 	}
 
 	protected static void stubTilgangsmaskinenPermit() {

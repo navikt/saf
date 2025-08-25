@@ -53,10 +53,10 @@ spec:
       value: {{SAF_ENDPOINTS_FPSAK_URL}}
     - name: SAF_ENDPOINTS_FPSAK_SCOPE
       value: {{SAF_ENDPOINTS_FPSAK_SCOPE}}
-    - name: SAF_ENDPOINTS_GSAK_URL
-      value: {{SAF_ENDPOINTS_GSAK_URL}}
-    - name: SAF_ENDPOINTS_GSAK_SCOPE
-      value: {{SAF_ENDPOINTS_GSAK_SCOPE}}
+    - name: SAF_ENDPOINTS_SAK_URL
+      value: {{SAF_ENDPOINTS_SAK_URL}}
+    - name: SAF_ENDPOINTS_SAK_SCOPE
+      value: {{SAF_ENDPOINTS_SAK_SCOPE}}
     - name: SAF_ENDPOINTS_K9SAK_URL
       value: {{SAF_ENDPOINTS_K9SAK_URL}}
     - name: SAF_ENDPOINTS_K9SAK_SCOPE

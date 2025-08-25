@@ -62,7 +62,7 @@ class SakerIT extends AbstractItest {
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("pdl/hentPdlDataForIdent-happy.json")));
-		stubFor(get("/gsak?aktoerId=" + AKTOER_ID)
+		stubFor(get("/sak?aktoerId=" + AKTOER_ID)
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
 						.withBodyFile("gsak/gsak-sakerBySaksId-happy-duplicates.json")));
@@ -93,7 +93,7 @@ class SakerIT extends AbstractItest {
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("pdl/hentPdlDataForIdent-happy.json")));
-		stubFor(get("/gsak?aktoerId=" + AKTOER_ID)
+		stubFor(get("/sak?aktoerId=" + AKTOER_ID)
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("gsak/gsak-sakerBySaksId-happy-duplicates-psak.json")));
@@ -118,7 +118,7 @@ class SakerIT extends AbstractItest {
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("pdl/hentPdlDataForIdent-happy.json")));
-		stubFor(get("/gsak?aktoerId=" + AKTOER_ID)
+		stubFor(get("/sak?aktoerId=" + AKTOER_ID)
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("gsak/gsak-sakerBySaksId-happy-duplicates-psak-with-generell-sak.json")));
@@ -148,7 +148,7 @@ class SakerIT extends AbstractItest {
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("pdl/hentPdlDataForIdent-happy.json")));
-		stubFor(get("/gsak?aktoerId=" + AKTOER_ID)
+		stubFor(get("/sak?aktoerId=" + AKTOER_ID)
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("gsak/gsak-sakerBySaksId-happy-multiple-duplicates.json")));
@@ -181,7 +181,7 @@ class SakerIT extends AbstractItest {
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("pdl/hentPdlDataForIdent-happy.json")));
-		stubFor(get("/gsak?aktoerId=" + AKTOER_ID)
+		stubFor(get("/sak?aktoerId=" + AKTOER_ID)
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
 						.withBodyFile("gsak/gsak-sakerBySaksId-happy.json")));
@@ -225,7 +225,7 @@ class SakerIT extends AbstractItest {
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("pdl/hentPdlDataForIdent-happy.json")));
-		stubFor(get("/gsak?aktoerId=" + AKTOER_ID)
+		stubFor(get("/sak?aktoerId=" + AKTOER_ID)
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
 						.withBodyFile("gsak/gsak-sakerByFagsakIdAndFagsaksystem-FAR-happy.json")));
@@ -247,7 +247,7 @@ class SakerIT extends AbstractItest {
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("pdl/hentPdlDataForIdent-happy.json")));
-		stubFor(get("/gsak?aktoerId=" + AKTOER_ID)
+		stubFor(get("/sak?aktoerId=" + AKTOER_ID)
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
 						.withBodyFile("gsak/gsak-sakerBySaksId-happy.json")));

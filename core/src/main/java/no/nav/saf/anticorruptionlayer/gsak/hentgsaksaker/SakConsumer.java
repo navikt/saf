@@ -27,19 +27,19 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @Slf4j
 @Component
-public class GsakConsumer {
+public class SakConsumer {
 	private static final String SAK_INSTANCE = "sak";
 
 	private final RestClient texasRestClient;
 	private final ObjectMapper objectMapper;
 	private final String gsakScope;
 
-	public GsakConsumer(RestClient texasRestClient,
-						SafProperties safProperties,
-						ObjectMapper objectMapper) {
-		this.gsakScope = safProperties.getEndpoints().getGsak().getScope();
+	public SakConsumer(RestClient texasRestClient,
+					   SafProperties safProperties,
+					   ObjectMapper objectMapper) {
+		this.gsakScope = safProperties.getEndpoints().getSak().getScope();
 		this.texasRestClient = texasRestClient.mutate()
-				.baseUrl(safProperties.getEndpoints().getGsak().getUrl())
+				.baseUrl(safProperties.getEndpoints().getSak().getUrl())
 				.defaultHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 				.build();
 		this.objectMapper = objectMapper;
