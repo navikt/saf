@@ -49,7 +49,7 @@ class SakAntiCorruptionLayerImpl implements SakAntiCorruptionLayer {
 
 			return mapToArkivsak(sakSakerToFiltered);
 		} catch (Exception e) {
-			log.warn("Klarte ikke hente gsaker for aktoerId", e);
+			log.warn("Klarte ikke hente saker for aktoerId", e);
 			return new ArrayList<>();
 		}
 	}
@@ -72,7 +72,7 @@ class SakAntiCorruptionLayerImpl implements SakAntiCorruptionLayer {
 			}
 			return mapToArkivsak(sakSakerToFiltered);
 		} catch (Exception e) {
-			log.warn("Klarte ikke hente gsaker for orgnr={}", orgnr, e);
+			log.warn("Klarte ikke hente saker for orgnr={}", orgnr, e);
 			return new ArrayList<>();
 		}
 	}
@@ -86,7 +86,7 @@ class SakAntiCorruptionLayerImpl implements SakAntiCorruptionLayer {
 
 			return mapToArkivsak(sakConsumer.hentSakerByAktoerId(aktoerId));
 		} catch (Exception e) {
-			log.warn("Klarte ikke hente gsaker for aktoerId", e);
+			log.warn("Klarte ikke hente saker for aktoerId", e);
 			return new ArrayList<>();
 		}
 	}
@@ -101,7 +101,7 @@ class SakAntiCorruptionLayerImpl implements SakAntiCorruptionLayer {
 			return mapToArkivsak(sakConsumer.hentSakerByOrgNr(orgnr));
 
 		} catch (Exception e) {
-			log.warn("Klarte ikke hente gsaker for orgnr={}", orgnr, e);
+			log.warn("Klarte ikke hente saker for orgnr={}", orgnr, e);
 			return new ArrayList<>();
 		}
 	}
@@ -121,7 +121,7 @@ class SakAntiCorruptionLayerImpl implements SakAntiCorruptionLayer {
 			}
 			return mapToArkivsak(sakSakerToFiltered);
 		} catch (Exception e) {
-			log.warn("Klarte ikke hente gsaker for fagsakId={}, fagsaksystem={}", fagsakId, fagsaksystem, e);
+			log.warn("Klarte ikke hente saker for fagsakId={}, fagsaksystem={}", fagsakId, fagsaksystem, e);
 			return new ArrayList<>();
 		}
 	}

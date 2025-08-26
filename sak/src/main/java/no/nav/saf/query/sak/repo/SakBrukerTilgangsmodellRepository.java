@@ -40,17 +40,17 @@ public class SakBrukerTilgangsmodellRepository {
 			if (tilgangBruker == null) {
 				return Flowable.empty();
 			}
-			Flowable<List<Arkivsak>> gsakerFromOrgnr = Flowable.fromCallable(() ->
+			Flowable<List<Arkivsak>> sakerFromOrgnr = Flowable.fromCallable(() ->
 							sakAntiCorruptionLayer.findArkivsakerByOrgnr(tilgangBruker.getOrgnummer()))
 					.subscribeOn(Schedulers.io());
-			Flowable<List<Arkivsak>> gsakerFromAktoerId = Flowable.fromCallable(() ->
+			Flowable<List<Arkivsak>> sakerFromAktoerId = Flowable.fromCallable(() ->
 							sakAntiCorruptionLayer.findArkivsakerByAktoerId(tilgangBruker.getAktoerId()))
 					.subscribeOn(Schedulers.io());
 			Flowable<List<Arkivsak>> psaker = Flowable.fromCallable(() ->
 							pensjonSakAntiCorruptionLayer.findArkivsaker(tilgangBruker))
 					.subscribeOn(Schedulers.io());
 
-			return Flowable.merge(Arrays.asList(gsakerFromOrgnr, gsakerFromAktoerId, psaker), 3)
+			return Flowable.merge(Arrays.asList(sakerFromOrgnr, sakerFromAktoerId, psaker), 3)
 					.flatMapIterable(items -> items)
 					.map(arkivsak -> {
 						arkivsakMap.put(arkivsak.getKey(), arkivsak);

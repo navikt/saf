@@ -55,10 +55,10 @@ class DokumentoversiktBrukerTilgangsmodellRepository {
 			if (tilgangBruker == null) {
 				return Flowable.empty();
 			}
-			Flowable<List<Arkivsak>> gsakerFromOrgnr = Flowable.fromCallable(() ->
+			Flowable<List<Arkivsak>> sakerFromOrgnr = Flowable.fromCallable(() ->
 							sakAntiCorruptionLayer.findArkivsakerByOrgnr(tilgangBruker.getOrgnummer(), tema))
 					.subscribeOn(Schedulers.io());
-			Flowable<List<Arkivsak>> gsakerFromAktoerId = Flowable.fromCallable(() ->
+			Flowable<List<Arkivsak>> sakerFromAktoerId = Flowable.fromCallable(() ->
 							sakAntiCorruptionLayer.findArkivsakerByAktoerId(tilgangBruker.getAlleAktoerIds(), tema))
 					.subscribeOn(Schedulers.io());
 			Flowable<List<Arkivsak>> psaker = Flowable.fromCallable(() -> {
@@ -68,7 +68,7 @@ class DokumentoversiktBrukerTilgangsmodellRepository {
 					return new ArrayList<Arkivsak>();
 				}
 			}).subscribeOn(Schedulers.io());
-			return Flowable.merge(Arrays.asList(gsakerFromOrgnr, gsakerFromAktoerId, psaker), 3)
+			return Flowable.merge(Arrays.asList(sakerFromOrgnr, sakerFromAktoerId, psaker), 3)
 					.flatMapIterable(items -> items)
 					.map(arkivsak -> {
 						final BidragSak bidragSak = bisysAntiCorruptionLayer.hentBidragSakByArkivsak(arkivsak);
