@@ -55,10 +55,10 @@ import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 class TilknyttedeJournalposterIT extends AbstractItest {
-	private final String JOURNALPOST_ID = "400000000";
-	private final String DOKUMENT_INFO_ID = "500000000";
-	private final String SAK_ID = "100000000";
-	private final String BIDRAG_SAK_ID = "abc123";
+	private static final String JOURNALPOST_ID = "400000000";
+	private static final String DOKUMENT_INFO_ID = "500000000";
+	private static final String SAK_ID = "100000000";
+	private static final String BIDRAG_SAK_ID = "abc123";
 
 	private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper().registerModule(new JavaTimeModule());
 
@@ -361,7 +361,7 @@ class TilknyttedeJournalposterIT extends AbstractItest {
 		assertThat(tilknyttedeJournalposter.getFirst().getBruker().getType(), is(FNR));
 	}
 
-	private ResponseEntity<LinkedHashMap> tilknyttedeJournalposterGjenbrukQuery() throws IOException, URISyntaxException {
+	private ResponseEntity<LinkedHashMap> tilknyttedeJournalposterGjenbrukQuery() throws URISyntaxException {
 		GraphQLRequest request = new GraphQLRequest(stringFromClasspath("tilknyttedejournalposter/tilknyttedejournalpostergjenbruk.query"), null, null);
 		RequestEntity<GraphQLRequest> requestEntity = new RequestEntity<>(request, createHeaders(), HttpMethod.POST, new URI("/graphql"));
 		return restTemplate.exchange(requestEntity, LinkedHashMap.class);

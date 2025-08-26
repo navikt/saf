@@ -44,7 +44,7 @@ class SakAntiCorruptionLayerImpl implements SakAntiCorruptionLayer {
 				sakSakerToFiltered.addAll(
 						sakSakerTo.stream()
 								.filter(gsak -> tema.contains(mapTema(gsak.getTema())))
-								.collect(Collectors.toList()));
+								.toList());
 			}
 
 			return mapToArkivsak(sakSakerToFiltered);
@@ -152,7 +152,7 @@ class SakAntiCorruptionLayerImpl implements SakAntiCorruptionLayer {
 
 		List<String> aktoerIdList = new ArrayList<>();
 		List<String> orgnrList = new ArrayList<>();
-		sakSakerToList.stream().forEach(sakSakerTo -> {
+		sakSakerToList.forEach(sakSakerTo -> {
 			if (sakSakerTo.getAktoerId() != null) {
 				aktoerIdList.add(sakSakerTo.getAktoerId());
 			} else if (sakSakerTo.getOrgnr() != null) {

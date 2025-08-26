@@ -12,7 +12,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 
-import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.LinkedHashMap;
@@ -53,7 +52,7 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 	}
 
 	@Test
-	void shouldHentDokumentoversiktFagsakWithFagsakIdGSAK() throws IOException, URISyntaxException {
+	void shouldHentDokumentoversiktFagsakWithFagsakIdGSAK() throws URISyntaxException {
 		abacPermit();
 
 		stubSakMedFagSak("sak/sak-sakerByFagsakIdAndFagsaksystem-happy.json");
@@ -76,7 +75,7 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 	}
 
 	@Test
-	void shouldHentDokumentoversiktFagsakWithFagsakIdGSAKAndManyVedleggs() throws IOException, URISyntaxException {
+	void shouldHentDokumentoversiktFagsakWithFagsakIdGSAKAndManyVedleggs() throws URISyntaxException {
 		abacPermit();
 
 		stubSakMedFagSak("sak/sak-sakerByFagsakIdAndFagsaksystem-happy.json");
@@ -105,7 +104,7 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 	}
 
 	@Test
-	void shouldHentDokumentoversiktFagsakWhenGsakFagsakAndHistoriskFagsakAktoerId() throws IOException, URISyntaxException {
+	void shouldHentDokumentoversiktFagsakWhenGsakFagsakAndHistoriskFagsakAktoerId() throws URISyntaxException {
 		abacPermit();
 
 		stubSakMedFagSak("sak/sak-sakerByFagsakIdAndFagsaksystem-happy.json");
@@ -130,7 +129,7 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 	}
 
 	@Test
-	void shouldHentDokumentoversiktFagsakWithFagsakIdPSAK() throws IOException, URISyntaxException {
+	void shouldHentDokumentoversiktFagsakWithFagsakIdPSAK() throws URISyntaxException {
 		abacPermit();
 
 		setupHappyPathAzureToken();
@@ -155,7 +154,7 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 	}
 
 	@Test
-	void shouldHentDokumentoversiktFagsakWithFagsakIDSladdet() throws IOException, URISyntaxException {
+	void shouldHentDokumentoversiktFagsakWithFagsakIDSladdet() throws URISyntaxException {
 		abacPermit();
 
 		stubSakMedFagSak("sak/sak-sakerByFagsakIdAndFagsaksystem-happy.json");
@@ -172,7 +171,7 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 	}
 
 	@Test
-	void hentSakerTechnicalFail() throws IOException, URISyntaxException {
+	void hentSakerTechnicalFail() throws URISyntaxException {
 		abacDenyPep1g();
 		stubFor(get("/sak?fagsakNr=ARENA-1&applikasjon=AO01")
 				.willReturn(aResponse().withStatus(INTERNAL_SERVER_ERROR.value())));
@@ -185,7 +184,7 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 	}
 
 	@Test
-	void hentSakerFunctionalFail() throws IOException, URISyntaxException {
+	void hentSakerFunctionalFail() throws URISyntaxException {
 		abacDenyPep1g();
 		stubFor(get(SAK_API_PATH_MED_QUERY_PARA_FAGSAK_NR)
 				.willReturn(aResponse().withStatus(BAD_REQUEST.value())));
@@ -199,7 +198,7 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 
 
 	@Test
-	void shouldHentDokumentoversiktFagsakAktoerTechnicalFail() throws IOException, URISyntaxException {
+	void shouldHentDokumentoversiktFagsakAktoerTechnicalFail() throws URISyntaxException {
 		abacPermit();
 
 		stubPensjonBrukerForSak();
@@ -214,7 +213,7 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 	}
 
 	@Test
-	void shouldHentDokumentoversikHentSakSammendragListeTechnicalFail() throws IOException, URISyntaxException {
+	void shouldHentDokumentoversikHentSakSammendragListeTechnicalFail() throws URISyntaxException {
 		abacPermit();
 
 		stubPensjonBrukerForSak();
@@ -232,7 +231,7 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 	}
 
 	@Test
-	void shouldHentDokumentoversikHentSakSammendragListeFunctionalFail() throws IOException, URISyntaxException {
+	void shouldHentDokumentoversikHentSakSammendragListeFunctionalFail() throws URISyntaxException {
 		abacPermit();
 
 		stubPensjonBrukerForSak();
@@ -250,7 +249,7 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 	}
 
 	@Test
-	void shouldReturnEmptyResponseWhenFinnJournalposterEmptyResponse() throws IOException, URISyntaxException {
+	void shouldReturnEmptyResponseWhenFinnJournalposterEmptyResponse() throws URISyntaxException {
 		abacPermit();
 
 		stubSakMedFagSak("sak/sak-sakerByFagsakIdAndFagsaksystem-happy.json");
@@ -268,7 +267,7 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 	}
 
 	@Test
-	void shouldGetUnauthorizedFromPep1g() throws IOException, URISyntaxException {
+	void shouldGetUnauthorizedFromPep1g() throws URISyntaxException {
 		abacDenyPep1g();
 
 		stubSakMedFagSak("sak/sak-sakerByFagsakIdAndFagsaksystem-happy.json");
@@ -285,7 +284,7 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 	}
 
 	@Test
-	void shouldGetUnauthorizedFromPep2() throws IOException, URISyntaxException {
+	void shouldGetUnauthorizedFromPep2() throws URISyntaxException {
 		abacDenyPep2();
 		stubSakMedFagSak("sak/sak-sakerByFagsakIdAndFagsaksystem-FAR-happy.json");
 		stubFinnjournalposter("finnjournalposter-empty.json");
@@ -301,7 +300,7 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 	}
 
 	@Test
-	void shouldGetUnauthorizedFromPep2d() throws IOException, URISyntaxException {
+	void shouldGetUnauthorizedFromPep2d() throws URISyntaxException {
 		abacDenyPep2dSkipPep2();
 		stubSakMedFagSak("sak/sak-sakerByFagsakIdAndFagsaksystem-happy.json");
 		stubFinnjournalposter("finnjournalposter-dokumentoversiktfagsak-happy.json");
@@ -318,7 +317,7 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 	}
 
 	@Test
-	void shouldGetUnauthorizedFromPep3() throws IOException, URISyntaxException {
+	void shouldGetUnauthorizedFromPep3() throws URISyntaxException {
 		abacDenyPep3SkipPep2();
 		stubSakMedFagSak("sak/sak-sakerBySaksId-happy.json");
 		stubFinnjournalposter("finnjournalposter_single_bidragAndSkjerming-happy.json");
@@ -341,7 +340,7 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 	}
 
 	@Test
-	void shouldGetUnauthorizedFromPep4() throws IOException, URISyntaxException {
+	void shouldGetUnauthorizedFromPep4() throws URISyntaxException {
 		abacDenyPep4SkipPep2OrPep3();
 		stubSakMedFagSak("sak/sak-sakerByFagsakIdAndFagsaksystem-FAR-happy.json");
 		stubFinnjournalposter("finnjournalposter_single_bidragAndSkjerming-happy.json");
@@ -357,7 +356,7 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 	}
 
 	@Test
-	void shouldGetUnauthorizedFromPep5() throws IOException, URISyntaxException {
+	void shouldGetUnauthorizedFromPep5() throws URISyntaxException {
 		abacDenyPep5SkipPep2OrPep3();
 		stubSakMedFagSak("sak/sak-sakerByFagsakIdAndFagsaksystem-FAR-happy.json");
 		stubFinnjournalposter("finnjournalposter_single_bidragAndSkjermingOnlyDokument-happy.json");
@@ -375,7 +374,7 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 	}
 
 	@Test
-	void shouldGetUnauthorizedFromPep6d() throws IOException, URISyntaxException {
+	void shouldGetUnauthorizedFromPep6d() throws URISyntaxException {
 		abacDenyPep6dSkipPep3OrPep2();
 
 		stubSakMedFagSak("sak/sak-sakerByFagsakIdAndFagsaksystem-FAR-happy.json");
@@ -396,13 +395,13 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 		verifyabacDenyPep6dSkipPep2AndHttpStatusCode(OK, responseEntity.getStatusCode());
 	}
 
-	private ResponseEntity<LinkedHashMap> callDokumentOversikFagsakPsak() throws IOException, URISyntaxException {
+	private ResponseEntity<LinkedHashMap> callDokumentOversikFagsakPsak() throws URISyntaxException {
 		GraphQLRequest request = new GraphQLRequest(stringFromClasspath("dokumentoversiktFagsak/dokumentoversiktfagsak_psak.query"), null, null);
 		RequestEntity<GraphQLRequest> requestEntity = new RequestEntity<>(request, createHeaders(), HttpMethod.POST, new URI("/graphql"));
 		return restTemplate.exchange(requestEntity, LinkedHashMap.class);
 	}
 
-	private ResponseEntity<LinkedHashMap> callDokumentOversikFagsakGsak() throws IOException, URISyntaxException {
+	private ResponseEntity<LinkedHashMap> callDokumentOversikFagsakGsak() throws URISyntaxException {
 		GraphQLRequest request = new GraphQLRequest(stringFromClasspath("dokumentoversiktFagsak/dokumentoversiktfagsak_gsak.query"), null, null);
 		RequestEntity<GraphQLRequest> requestEntity = new RequestEntity<>(request, createHeaders(), HttpMethod.POST, new URI("/graphql"));
 		return restTemplate.exchange(requestEntity, LinkedHashMap.class);

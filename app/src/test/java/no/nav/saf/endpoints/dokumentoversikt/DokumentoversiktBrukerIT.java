@@ -27,7 +27,6 @@ import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.matchingJsonPath;
-import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
@@ -112,7 +111,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 	}
 
 	@Test
-	void shouldHentDokumentoversiktBrukerWithFNR() throws IOException, URISyntaxException {
+	void shouldHentDokumentoversiktBrukerWithFNR() throws URISyntaxException {
 		abacPermit();
 		stubPdl();
 		stubSakMedAktoerId();
@@ -137,7 +136,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 	}
 
 	@Test
-	void shouldHentDokumentoversiktBrukerWithOrgNr() throws IOException, URISyntaxException {
+	void shouldHentDokumentoversiktBrukerWithOrgNr() throws URISyntaxException {
 		abacPermit();
 		stubNavHrOrganisasjonNei(ORG_NR);
 		stubSakOrgnr();
@@ -155,7 +154,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 	}
 
 	@Test
-	void shouldNotHentDokumentoversiktBrukerWithNavStatOrgnummerWhenBrukerNotEgenAnsattBehandler() throws IOException, URISyntaxException {
+	void shouldNotHentDokumentoversiktBrukerWithNavStatOrgnummerWhenBrukerNotEgenAnsattBehandler() throws URISyntaxException {
 		abacPermit();
 		stubNavHrOrganisasjonJa(ORG_NR);
 		stubMsGraphMemberOfNoGroupsDefaultSaksbehandler();
@@ -171,7 +170,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 	}
 
 	@Test
-	void shouldHentDokumentoversiktBrukerWithNavStatOrgnummerWhenBrukerIsEgenAnsattBehandler() throws IOException, URISyntaxException {
+	void shouldHentDokumentoversiktBrukerWithNavStatOrgnummerWhenBrukerIsEgenAnsattBehandler() throws URISyntaxException {
 		abacPermit();
 		stubNavHrOrganisasjonJa(ORG_NR);
 		stubSakOrgnr();
@@ -188,7 +187,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 	}
 
 	@Test
-	void shouldHentDokumentoversiktBrukerWithFraDato() throws IOException, URISyntaxException {
+	void shouldHentDokumentoversiktBrukerWithFraDato() throws URISyntaxException {
 		abacPermit();
 		stubPdl();
 		stubSakMedAktoerId();
@@ -206,7 +205,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 	}
 
 	@Test
-	void shouldHentDokumentoversiktBrukerWithAktoerIDMidlertidig() throws IOException, URISyntaxException {
+	void shouldHentDokumentoversiktBrukerWithAktoerIDMidlertidig() throws URISyntaxException {
 		abacPermit();
 		stubPdl();
 		stubSakMedAktoerId("sak-sakerBySaksId-empty.json");
@@ -379,7 +378,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 	}
 
 	@Test
-	void shouldGetUnauthorizedFromPep2WhenIngenSakstilknytning() throws IOException, URISyntaxException {
+	void shouldGetUnauthorizedFromPep2WhenIngenSakstilknytning() throws URISyntaxException {
 		abacDenyPep2();
 		stubPdl();
 		stubSakMedAktoerId("sak-sakerBySaksId-empty.json");
@@ -544,25 +543,25 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 		return restTemplate.exchange(requestEntity, GraphQLResponse.class);
 	}
 
-	private ResponseEntity<GraphQLResponse> callDokumentOversikBrukerWithAktoerId() throws IOException, URISyntaxException {
+	private ResponseEntity<GraphQLResponse> callDokumentOversikBrukerWithAktoerId() throws URISyntaxException {
 		GraphQLRequest request = new GraphQLRequest(stringFromClasspath("dokumentoversiktBruker/dokumentoversiktbruker_aktoerid.query"), null, null);
 		RequestEntity<GraphQLRequest> requestEntity = new RequestEntity<>(request, createHeaders(), HttpMethod.POST, new URI("/graphql"));
 		return restTemplate.exchange(requestEntity, GraphQLResponse.class);
 	}
 
-	private ResponseEntity<GraphQLResponse> callDokumentOversikBrukerWithAktoerIdInkluderMidlertidige() throws IOException, URISyntaxException {
+	private ResponseEntity<GraphQLResponse> callDokumentOversikBrukerWithAktoerIdInkluderMidlertidige() throws URISyntaxException {
 		GraphQLRequest request = new GraphQLRequest(stringFromClasspath("dokumentoversiktBruker/dokumentoversiktbruker_aktoerid_midlertidig.query"), null, null);
 		RequestEntity<GraphQLRequest> requestEntity = new RequestEntity<>(request, createHeaders(), HttpMethod.POST, new URI("/graphql"));
 		return restTemplate.exchange(requestEntity, GraphQLResponse.class);
 	}
 
-	private ResponseEntity<GraphQLResponse> callDokumentOversikBrukerWithFnr() throws IOException, URISyntaxException {
+	private ResponseEntity<GraphQLResponse> callDokumentOversikBrukerWithFnr() throws URISyntaxException {
 		GraphQLRequest request = new GraphQLRequest(stringFromClasspath("dokumentoversiktBruker/dokumentoversiktbruker_fnr.query"), null, null);
 		RequestEntity<GraphQLRequest> requestEntity = new RequestEntity<>(request, createHeaders(), HttpMethod.POST, new URI("/graphql"));
 		return restTemplate.exchange(requestEntity, GraphQLResponse.class);
 	}
 
-	private ResponseEntity<GraphQLResponse> callDokumentOversikBrukerWithOrgnr() throws IOException, URISyntaxException {
+	private ResponseEntity<GraphQLResponse> callDokumentOversikBrukerWithOrgnr() throws URISyntaxException {
 		GraphQLRequest request = new GraphQLRequest(stringFromClasspath("dokumentoversiktBruker/dokumentoversiktbruker_orgnr.query"), null, null);
 		RequestEntity<GraphQLRequest> requestEntity = new RequestEntity<>(request, createHeaders(), HttpMethod.POST, new URI("/graphql"));
 		return restTemplate.exchange(requestEntity, GraphQLResponse.class);
@@ -573,7 +572,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 		return objectMapper.convertValue(responseEntityData, Dokumentoversikt.class);
 	}
 
-	private ResponseEntity<GraphQLResponse> callDokumentOversikBrukerWithFraDato(Map<String, Object> variables) throws IOException, URISyntaxException {
+	private ResponseEntity<GraphQLResponse> callDokumentOversikBrukerWithFraDato(Map<String, Object> variables) throws URISyntaxException {
 		GraphQLRequest request = new GraphQLRequest(stringFromClasspath("dokumentoversiktBruker/dokumentoversiktbruker_literals.query"), null, variables);
 		RequestEntity<GraphQLRequest> requestEntity = new RequestEntity<>(request, createHeaders(), HttpMethod.POST, new URI("/graphql"));
 		return restTemplate.exchange(requestEntity, GraphQLResponse.class);
