@@ -32,12 +32,12 @@ public class SakConsumer {
 
 	private final RestClient texasRestClient;
 	private final ObjectMapper objectMapper;
-	private final String gsakScope;
+	private final String sakScope;
 
 	public SakConsumer(RestClient texasRestClient,
 					   SafProperties safProperties,
 					   ObjectMapper objectMapper) {
-		this.gsakScope = safProperties.getEndpoints().getSak().getScope();
+		this.sakScope = safProperties.getEndpoints().getSak().getScope();
 		this.texasRestClient = texasRestClient.mutate()
 				.baseUrl(safProperties.getEndpoints().getSak().getUrl())
 				.defaultHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
@@ -52,9 +52,9 @@ public class SakConsumer {
 				.uri(uriBuilder -> uriBuilder
 						.queryParam("aktoerId", aktoerIder).build())
 				.header(X_CORRELATION_ID, getCallId())
-				.attribute(TARGET_SCOPE, gsakScope)
+				.attribute(TARGET_SCOPE, sakScope)
 				.retrieve()
-				.onStatus(HttpStatusCode::isError, (req, res) -> handleError(res))
+				.onStatus(HttpStatusCode::isError, (req, res) -> handleError(res, "hentSakerByAktoerIder"))
 				.body(new ParameterizedTypeReference<>() {
 				});
 	}
@@ -68,9 +68,9 @@ public class SakConsumer {
 						.queryParam("aktoerId", aktoerId)
 						.build())
 				.header(X_CORRELATION_ID, getCallId())
-				.attribute(TARGET_SCOPE, gsakScope)
+				.attribute(TARGET_SCOPE, sakScope)
 				.retrieve()
-				.onStatus(HttpStatusCode::isError, (req, res) -> handleError(res))
+				.onStatus(HttpStatusCode::isError, (req, res) -> handleError(res, "hentSakerByAktoerId"))
 				.body(new ParameterizedTypeReference<>() {
 				});
 	}
@@ -84,9 +84,9 @@ public class SakConsumer {
 						.queryParam("aktoerId", aktoerIder)
 						.build())
 				.header(X_CORRELATION_ID, getCallId())
-				.attribute(TARGET_SCOPE, gsakScope)
+				.attribute(TARGET_SCOPE, sakScope)
 				.retrieve()
-				.onStatus(HttpStatusCode::isError, (req, res) -> handleError(res))
+				.onStatus(HttpStatusCode::isError, (req, res) -> handleError(res, "hentSakerByAktoerIder"))
 				.body(new ParameterizedTypeReference<>() {
 				});
 	}
@@ -99,9 +99,9 @@ public class SakConsumer {
 						.queryParam("orgnr", orgNr)
 						.build())
 				.header(X_CORRELATION_ID, getCallId())
-				.attribute(TARGET_SCOPE, gsakScope)
+				.attribute(TARGET_SCOPE, sakScope)
 				.retrieve()
-				.onStatus(HttpStatusCode::isError, (req, res) -> handleError(res))
+				.onStatus(HttpStatusCode::isError, (req, res) -> handleError(res, "hentSakerByOrgNr"))
 				.body(new ParameterizedTypeReference<>() {
 				});
 	}
@@ -115,9 +115,9 @@ public class SakConsumer {
 						.queryParam("tema", tema)
 						.build())
 				.header(X_CORRELATION_ID, getCallId())
-				.attribute(TARGET_SCOPE, gsakScope)
+				.attribute(TARGET_SCOPE, sakScope)
 				.retrieve()
-				.onStatus(HttpStatusCode::isError, (req, res) -> handleError(res))
+				.onStatus(HttpStatusCode::isError, (req, res) -> handleError(res, "hentSakerByOrgNr"))
 				.body(new ParameterizedTypeReference<>() {
 				});
 	}
@@ -131,20 +131,20 @@ public class SakConsumer {
 						.queryParam("applikasjon", fagsaksystem)
 						.build())
 				.header(X_CORRELATION_ID, getCallId())
-				.attribute(TARGET_SCOPE, gsakScope)
+				.attribute(TARGET_SCOPE, sakScope)
 				.retrieve()
-				.onStatus(HttpStatusCode::isError, (req, res) -> handleError(res))
+				.onStatus(HttpStatusCode::isError, (req, res) -> handleError(res, "hentSakerByFagsakIdAndFagsaksystem"))
 				.body(new ParameterizedTypeReference<>() {
 				});
 	}
 
-	private void handleError(ClientHttpResponse response) throws IOException {
+	private void handleError(ClientHttpResponse response, String tjeneste) throws IOException {
 		ProblemDetail problemDetail = objectMapper.readValue(response.getBody(), ProblemDetail.class);
 		if (response.getStatusCode().is4xxClientError()) {
-			throw new SafFunctionalException(format("getSaksaker feilet teknisk med statusKode=%s. Feilmelding=%s",
-					response.getStatusCode(), problemDetail.getDetail()));
+			throw new SafFunctionalException(format("%s feilet funksjonelt med statusKode=%s. Feilmelding=%s",
+					tjeneste, response.getStatusCode(), problemDetail.getDetail()));
 		}
-		throw new SafTechnicalException(format("getSaksaker feilet funksjonelt med statusKode=%s. Feilmelding=%s",
-				problemDetail.getStatus(), problemDetail.getDetail()));
+		throw new SafTechnicalException(format("%s feilet teknisk med statusKode=%s. Feilmelding=%s",
+				tjeneste, problemDetail.getStatus(), problemDetail.getDetail()));
 	}
 }

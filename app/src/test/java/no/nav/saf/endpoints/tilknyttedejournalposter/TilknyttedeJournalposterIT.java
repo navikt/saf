@@ -266,10 +266,10 @@ class TilknyttedeJournalposterIT extends AbstractItest {
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("safintern/tilknyttetjournalpost/tilknyttedejournalposter-bid-happy.json")));
-		stubFor(get("/gsak/" + SAK_ID)
+		stubFor(get("/sak/" + SAK_ID)
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("sak/gsak-sakBySaksId-happy.json")));
+						.withBodyFile("sak/sak-sakBySaksId-happy.json")));
 		stubFor(get("/bidrag/" + BIDRAG_SAK_ID)
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
@@ -314,7 +314,7 @@ class TilknyttedeJournalposterIT extends AbstractItest {
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("safintern/tilknyttetjournalpost/tilknyttedejournalposter-skjerming-variant-pol-happy.json")));
-		stubFor(get("/gsak/" + SAK_ID)
+		stubFor(get("/sak/" + SAK_ID)
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("sak/sak-sakBySaksId_not_bid-happy.json")));

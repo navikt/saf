@@ -21,8 +21,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.get;
-import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME;
 import static no.nav.saf.anticorruptionlayer.joark.domain.kode.Sakstype.FAGSAK;
 import static no.nav.saf.anticorruptionlayer.joark.domain.kode.Sakstype.GENERELL_SAK;
@@ -63,10 +61,10 @@ class SakerIT extends AbstractItest {
 			assertThat(OK, is(responseEntity.getStatusCode()));
 			assertThat(saker.size(), is(2));
 			if (saker.get(0).getArkivsaksystem() == GSAK) {
-				assertGsak(saker.get(0));
+				assertSak(saker.get(0));
 				assertPsak(saker.get(1));
 			} else {
-				assertGsak(saker.get(1));
+				assertSak(saker.get(1));
 				assertPsak(saker.get(0));
 			}
 		});
@@ -146,10 +144,10 @@ class SakerIT extends AbstractItest {
 			assertThat(OK, is(responseEntity.getStatusCode()));
 			assertThat(saker.size(), is(2));
 			if (saker.get(0).getArkivsaksystem() == GSAK) {
-				assertGsak(saker.get(0));
+				assertSak(saker.get(0));
 				assertPsak(saker.get(1));
 			} else {
-				assertGsak(saker.get(1));
+				assertSak(saker.get(1));
 				assertPsak(saker.get(0));
 			}
 		});
@@ -192,14 +190,14 @@ class SakerIT extends AbstractItest {
 		verifyabacDenyPep3SkipPep2AndPep2dAndHttpStatusCode(OK, responseEntity.getStatusCode());
 	}
 
-	private void assertGsak(Sak gsak) {
-		assertThat(gsak.getArkivsaksnummer(), is("135695442"));
-		assertThat(gsak.getArkivsaksystem(), is(GSAK));
-		assertThat(gsak.getDatoOpprettet(), is(LocalDateTime.parse("2018-07-17T13:49:01", ISO_LOCAL_DATE_TIME)));
-		assertThat(gsak.getFagsaksystem(), is("BISYS"));
-		assertThat(gsak.getFagsakId(), is("654321"));
-		assertThat(gsak.getSakstype(), is(FAGSAK));
-		assertThat(gsak.getTema(), is(BID));
+	private void assertSak(Sak sak) {
+		assertThat(sak.getArkivsaksnummer(), is("135695442"));
+		assertThat(sak.getArkivsaksystem(), is(GSAK));
+		assertThat(sak.getDatoOpprettet(), is(LocalDateTime.parse("2018-07-17T13:49:01", ISO_LOCAL_DATE_TIME)));
+		assertThat(sak.getFagsaksystem(), is("BISYS"));
+		assertThat(sak.getFagsakId(), is("654321"));
+		assertThat(sak.getSakstype(), is(FAGSAK));
+		assertThat(sak.getTema(), is(BID));
 	}
 
 	private void assertPsak(Sak psak) {
