@@ -1,4 +1,4 @@
-package no.nav.saf.anticorruptionlayer.gsak;
+package no.nav.saf.anticorruptionlayer.sak;
 
 import no.nav.saf.domain.Arkivsak;
 import no.nav.saf.domain.kode.Tema;
@@ -6,7 +6,7 @@ import no.nav.saf.domain.kode.Tema;
 import java.util.List;
 import java.util.Map;
 
-public interface GsakAntiCorruptionLayer {
+public interface SakAntiCorruptionLayer {
 
 	List<Arkivsak> findArkivsakerByAktoerId(List<String> aktoerIder, List<Tema> tema);
 

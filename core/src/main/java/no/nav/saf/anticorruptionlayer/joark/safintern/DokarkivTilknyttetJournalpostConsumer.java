@@ -12,7 +12,7 @@ import no.nav.saf.anticorruptionlayer.joark.safintern.journalpost.ArkivJournalpo
 import no.nav.saf.config.SafProperties;
 import no.nav.saf.exceptions.JournalpostIkkeFunnetException;
 import no.nav.saf.exceptions.SafTechnicalException;
-import org.springframework.boot.autoconfigure.codec.CodecProperties;
+import org.springframework.boot.autoconfigure.http.codec.HttpCodecsProperties;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.ExchangeStrategies;
@@ -35,7 +35,7 @@ public class DokarkivTilknyttetJournalpostConsumer {
 	private final Retry dokarkivMetadataRetry;
 
 	public DokarkivTilknyttetJournalpostConsumer(SafProperties safProperties,
-												 CodecProperties codecProperties,
+												 HttpCodecsProperties httpCodecsProperties,
 												 WebClient webClient,
 												 CircuitBreakerRegistry circuitBreakerRegistry,
 												 RetryRegistry retryRegistry) {
@@ -45,7 +45,7 @@ public class DokarkivTilknyttetJournalpostConsumer {
 				.exchangeStrategies(ExchangeStrategies.builder()
 						.codecs(clientCodecConfigurer ->
 								clientCodecConfigurer.defaultCodecs()
-										.maxInMemorySize((int) codecProperties.getMaxInMemorySize().toBytes())
+										.maxInMemorySize((int) httpCodecsProperties.getMaxInMemorySize().toBytes())
 						)
 						.build())
 				.build();

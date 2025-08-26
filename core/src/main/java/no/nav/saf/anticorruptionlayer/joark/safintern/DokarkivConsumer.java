@@ -19,7 +19,7 @@ import no.nav.saf.exceptions.DokumentIkkeFunnetException;
 import no.nav.saf.exceptions.JournalpostIkkeFunnetException;
 import no.nav.saf.exceptions.SafFunctionalException;
 import no.nav.saf.exceptions.SafTechnicalException;
-import org.springframework.boot.autoconfigure.codec.CodecProperties;
+import org.springframework.boot.autoconfigure.http.codec.HttpCodecsProperties;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.ExchangeStrategies;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -51,7 +51,7 @@ public class DokarkivConsumer {
 	private final Retry dokarkivMetadataRetry;
 
 	public DokarkivConsumer(final SafProperties safProperties,
-							final CodecProperties codecProperties,
+							final HttpCodecsProperties httpCodecsProperties,
 							final WebClient webClient,
 							final CircuitBreakerRegistry circuitBreakerRegistry,
 							final RetryRegistry retryRegistry) {
@@ -61,7 +61,7 @@ public class DokarkivConsumer {
 				.exchangeStrategies(ExchangeStrategies.builder()
 						.codecs(clientCodecConfigurer ->
 								clientCodecConfigurer.defaultCodecs()
-										.maxInMemorySize((int) codecProperties.getMaxInMemorySize().toBytes())
+										.maxInMemorySize((int) httpCodecsProperties.getMaxInMemorySize().toBytes())
 						)
 						.build())
 				.build();

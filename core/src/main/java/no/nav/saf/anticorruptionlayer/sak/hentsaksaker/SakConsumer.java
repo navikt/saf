@@ -1,4 +1,4 @@
-package no.nav.saf.anticorruptionlayer.gsak.hentgsaksaker;
+package no.nav.saf.anticorruptionlayer.sak.hentsaksaker;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
@@ -47,7 +47,7 @@ public class SakConsumer {
 
 	@CircuitBreaker(name = SAK_INSTANCE)
 	@Retry(name = SAK_INSTANCE)
-	public List<GsakSakerTo> hentSakerByAktoerIder(final List<String> aktoerIder) {
+	public List<SakSakerTo> hentSakerByAktoerIder(final List<String> aktoerIder) {
 		return texasRestClient.get()
 				.uri(uriBuilder -> uriBuilder
 						.queryParam("aktoerId", aktoerIder).build())
@@ -61,7 +61,7 @@ public class SakConsumer {
 
 	@CircuitBreaker(name = SAK_INSTANCE)
 	@Retry(name = SAK_INSTANCE)
-	public List<GsakSakerTo> hentSakerByAktoerId(final String aktoerId) {
+	public List<SakSakerTo> hentSakerByAktoerId(final String aktoerId) {
 		log.info("Henter saker for aktoerId: {}", aktoerId);
 		return texasRestClient.get()
 				.uri(uriBuilder -> uriBuilder
@@ -77,7 +77,7 @@ public class SakConsumer {
 
 	@CircuitBreaker(name = SAK_INSTANCE)
 	@Retry(name = SAK_INSTANCE)
-	public List<GsakSakerTo> hentSakerByAktoerIder(final List<String> aktoerIder, final Tema tema) {
+	public List<SakSakerTo> hentSakerByAktoerIder(final List<String> aktoerIder, final Tema tema) {
 		return texasRestClient.get()
 				.uri(uriBuilder -> uriBuilder
 						.queryParam("tema", tema.toString())
@@ -93,7 +93,7 @@ public class SakConsumer {
 
 	@CircuitBreaker(name = SAK_INSTANCE)
 	@Retry(name = SAK_INSTANCE)
-	public List<GsakSakerTo> hentSakerByOrgNr(final String orgNr) {
+	public List<SakSakerTo> hentSakerByOrgNr(final String orgNr) {
 		return texasRestClient.get()
 				.uri(uriBuilder -> uriBuilder
 						.queryParam("orgnr", orgNr)
@@ -108,7 +108,7 @@ public class SakConsumer {
 
 	@CircuitBreaker(name = SAK_INSTANCE)
 	@Retry(name = SAK_INSTANCE)
-	public List<GsakSakerTo> hentSakerByOrgNr(final String orgNr, final Tema tema) {
+	public List<SakSakerTo> hentSakerByOrgNr(final String orgNr, final Tema tema) {
 		return texasRestClient.get()
 				.uri(uriBuilder -> uriBuilder
 						.queryParam("orgnr", orgNr)
@@ -124,7 +124,7 @@ public class SakConsumer {
 
 	@CircuitBreaker(name = SAK_INSTANCE)
 	@Retry(name = SAK_INSTANCE)
-	public List<GsakSakerTo> hentSakerByFagsakIdAndFagsaksystem(final String fagsakId, final String fagsaksystem) {
+	public List<SakSakerTo> hentSakerByFagsakIdAndFagsaksystem(final String fagsakId, final String fagsaksystem) {
 		return texasRestClient.get()
 				.uri(uriBuilder -> uriBuilder
 						.queryParam("fagsakNr", fagsakId)
@@ -141,10 +141,10 @@ public class SakConsumer {
 	private void handleError(ClientHttpResponse response) throws IOException {
 		ProblemDetail problemDetail = objectMapper.readValue(response.getBody(), ProblemDetail.class);
 		if (response.getStatusCode().is4xxClientError()) {
-			throw new SafTechnicalException(format("getGsaksaker feilet teknisk med statusKode=%s. Feilmelding=%s",
+			throw new SafFunctionalException(format("getSaksaker feilet teknisk med statusKode=%s. Feilmelding=%s",
 					response.getStatusCode(), problemDetail.getDetail()));
 		}
-		throw new SafFunctionalException(format("getGsaksaker feilet funksjonelt med statusKode=%s. Feilmelding=%s",
+		throw new SafTechnicalException(format("getSaksaker feilet funksjonelt med statusKode=%s. Feilmelding=%s",
 				problemDetail.getStatus(), problemDetail.getDetail()));
 	}
 }

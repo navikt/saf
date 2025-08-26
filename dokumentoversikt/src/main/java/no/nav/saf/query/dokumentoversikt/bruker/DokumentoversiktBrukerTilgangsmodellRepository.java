@@ -5,7 +5,7 @@ import io.reactivex.rxjava3.schedulers.Schedulers;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.anticorruptionlayer.bisys.BisysAntiCorruptionLayer;
 import no.nav.saf.anticorruptionlayer.fpsak.FpsakAntiCorruptionLayer;
-import no.nav.saf.anticorruptionlayer.gsak.GsakAntiCorruptionLayer;
+import no.nav.saf.anticorruptionlayer.sak.SakAntiCorruptionLayer;
 import no.nav.saf.anticorruptionlayer.k9.K9AntiCorruptionLayer;
 import no.nav.saf.anticorruptionlayer.pensjonsak.PensjonSakAntiCorruptionLayer;
 import no.nav.saf.domain.Arkivsak;
@@ -29,7 +29,7 @@ import java.util.Set;
 class DokumentoversiktBrukerTilgangsmodellRepository {
 	private static final Set<Tema> TEMA_PENSJON = EnumSet.of(Tema.PEN, Tema.UFO);
 
-	private final GsakAntiCorruptionLayer gsakAntiCorruptionLayer;
+	private final SakAntiCorruptionLayer sakAntiCorruptionLayer;
 	private final PensjonSakAntiCorruptionLayer pensjonSakAntiCorruptionLayer;
 	private final BisysAntiCorruptionLayer bisysAntiCorruptionLayer;
 	private final FpsakAntiCorruptionLayer fpsakAntiCorruptionLayer;
@@ -37,13 +37,13 @@ class DokumentoversiktBrukerTilgangsmodellRepository {
 
 	@Autowired
 	public DokumentoversiktBrukerTilgangsmodellRepository(
-			GsakAntiCorruptionLayer gsakAntiCorruptionLayer,
+			SakAntiCorruptionLayer sakAntiCorruptionLayer,
 			PensjonSakAntiCorruptionLayer pensjonSakAntiCorruptionLayer,
 			BisysAntiCorruptionLayer bisysAntiCorruptionLayer,
 			FpsakAntiCorruptionLayer fpsakAntiCorruptionLayer,
 			K9AntiCorruptionLayer k9AntiCorruptionLayer
 	) {
-		this.gsakAntiCorruptionLayer = gsakAntiCorruptionLayer;
+		this.sakAntiCorruptionLayer = sakAntiCorruptionLayer;
 		this.pensjonSakAntiCorruptionLayer = pensjonSakAntiCorruptionLayer;
 		this.bisysAntiCorruptionLayer = bisysAntiCorruptionLayer;
 		this.fpsakAntiCorruptionLayer = fpsakAntiCorruptionLayer;
@@ -56,10 +56,10 @@ class DokumentoversiktBrukerTilgangsmodellRepository {
 				return Flowable.empty();
 			}
 			Flowable<List<Arkivsak>> gsakerFromOrgnr = Flowable.fromCallable(() ->
-							gsakAntiCorruptionLayer.findArkivsakerByOrgnr(tilgangBruker.getOrgnummer(), tema))
+							sakAntiCorruptionLayer.findArkivsakerByOrgnr(tilgangBruker.getOrgnummer(), tema))
 					.subscribeOn(Schedulers.io());
 			Flowable<List<Arkivsak>> gsakerFromAktoerId = Flowable.fromCallable(() ->
-							gsakAntiCorruptionLayer.findArkivsakerByAktoerId(tilgangBruker.getAlleAktoerIds(), tema))
+							sakAntiCorruptionLayer.findArkivsakerByAktoerId(tilgangBruker.getAlleAktoerIds(), tema))
 					.subscribeOn(Schedulers.io());
 			Flowable<List<Arkivsak>> psaker = Flowable.fromCallable(() -> {
 				if (!Collections.disjoint(tema, TEMA_PENSJON)) {

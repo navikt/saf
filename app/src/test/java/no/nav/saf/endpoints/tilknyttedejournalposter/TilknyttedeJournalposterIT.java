@@ -57,7 +57,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 class TilknyttedeJournalposterIT extends AbstractItest {
 	private final String JOURNALPOST_ID = "400000000";
 	private final String DOKUMENT_INFO_ID = "500000000";
-	private final String GSAK_ID = "100000000";
+	private final String SAK_ID = "100000000";
 	private final String BIDRAG_SAK_ID = "abc123";
 
 	private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper().registerModule(new JavaTimeModule());
@@ -266,10 +266,10 @@ class TilknyttedeJournalposterIT extends AbstractItest {
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("safintern/tilknyttetjournalpost/tilknyttedejournalposter-bid-happy.json")));
-		stubFor(get("/gsak/" + GSAK_ID)
+		stubFor(get("/gsak/" + SAK_ID)
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("gsak/gsak-sakBySaksId-happy.json")));
+						.withBodyFile("sak/gsak-sakBySaksId-happy.json")));
 		stubFor(get("/bidrag/" + BIDRAG_SAK_ID)
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
@@ -314,10 +314,10 @@ class TilknyttedeJournalposterIT extends AbstractItest {
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("safintern/tilknyttetjournalpost/tilknyttedejournalposter-skjerming-variant-pol-happy.json")));
-		stubFor(get("/gsak/" + GSAK_ID)
+		stubFor(get("/gsak/" + SAK_ID)
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("gsak/gsak-sakBySaksId_not_bid-happy.json")));
+						.withBodyFile("sak/sak-sakBySaksId_not_bid-happy.json")));
 		stubPdl();
 
 		List<Journalpost> tilknyttedeJournalposter = parseJournalpost(tilknyttedeJournalposterGjenbrukQuery());

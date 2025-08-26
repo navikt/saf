@@ -10,7 +10,7 @@ import java.util.List;
 @Data
 @Builder
 public class FinnJournalposterRequestTo {
-	private final List<String> gsakSakIds;
+	private final List<String> sakSakIds;
 	private final List<String> psakSakIds;
 	private final String fraDato;
 	private final String tilDato;

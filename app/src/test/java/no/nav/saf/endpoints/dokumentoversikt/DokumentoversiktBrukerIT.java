@@ -61,7 +61,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 	void shouldHentDokumentoversiktBrukerWithAktoerID() throws IOException, URISyntaxException {
 		abacPermit();
 		stubPdl();
-		stubSak();
+		stubSakMedAktoerId();
 		stubFinnjournalposter();
 		stubPensjonSakSammendrag();
 
@@ -77,7 +77,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 		assertSaksbehandlerHarTilgang(dokumentoversikt);
 		verify(postRequestedFor(urlEqualTo("/pdl")).withRequestBody(matchingJsonPath("$.variables.ident", equalTo(AKTOER_ID))));
 		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter"))
-				.withRequestBody(containing("{\"gsakSakIds\":[\"135695442\"],\"psakSakIds\":[\"21998969\"],\"fraDato\":\"0001-01-01\",\"tilDato\":null,\"inkluderJournalStatus\":[\"FL\",\"FS\",\"J\",\"E\"],\"inkluderJournalpostType\":[\"I\",\"U\",\"N\"],\"visFeilregistrerte\":false,\"alleIdenter\":[\"11111111111\"],\"foerste\":3,\"etterPeker\":null}")));
+				.withRequestBody(containing("{\"sakSakIds\":[\"135695442\"],\"psakSakIds\":[\"21998969\"],\"fraDato\":\"0001-01-01\",\"tilDato\":null,\"inkluderJournalStatus\":[\"FL\",\"FS\",\"J\",\"E\"],\"inkluderJournalpostType\":[\"I\",\"U\",\"N\"],\"visFeilregistrerte\":false,\"alleIdenter\":[\"11111111111\"],\"foerste\":3,\"etterPeker\":null}")));
 		verify(getRequestedFor(urlEqualTo(PENSJON_API_SAK_SAMMENDRAG_URL)).withHeader("fnr", new EqualToPattern(FNR)));
 	}
 
@@ -85,7 +85,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 	void shouldHentDokumentoversiktBrukerWithAktoerIDAndHavDokumentInfosInCorrectOrder() throws IOException, URISyntaxException {
 		abacPermit();
 		stubPdl();
-		stubSak();
+		stubSakMedAktoerId();
 		// Merk: i filen under kommer vedleggene i feil rekkefølge "fra dokarkiv" for å teste at saf sorterer dem riktig.
 		// i realiteten kommer de alltid i rekkefølge fra dokarkiv, men *kan komme* i uorden internt i saf
 		stubFinnjournalposter("finnjournalposter-happy-mangevedlegg.json");
@@ -107,7 +107,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 		assertSaksbehandlerHarTilgang(dokumentoversikt);
 		verify(postRequestedFor(urlEqualTo("/pdl")).withRequestBody(matchingJsonPath("$.variables.ident", equalTo(AKTOER_ID))));
 		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter"))
-				.withRequestBody(containing("{\"gsakSakIds\":[\"135695442\"],\"psakSakIds\":[\"21998969\"],\"fraDato\":\"0001-01-01\",\"tilDato\":null,\"inkluderJournalStatus\":[\"FL\",\"FS\",\"J\",\"E\"],\"inkluderJournalpostType\":[\"I\",\"U\",\"N\"],\"visFeilregistrerte\":false,\"alleIdenter\":[\"11111111111\"],\"foerste\":3,\"etterPeker\":null}")));
+				.withRequestBody(containing("{\"sakSakIds\":[\"135695442\"],\"psakSakIds\":[\"21998969\"],\"fraDato\":\"0001-01-01\",\"tilDato\":null,\"inkluderJournalStatus\":[\"FL\",\"FS\",\"J\",\"E\"],\"inkluderJournalpostType\":[\"I\",\"U\",\"N\"],\"visFeilregistrerte\":false,\"alleIdenter\":[\"11111111111\"],\"foerste\":3,\"etterPeker\":null}")));
 		verify(getRequestedFor(urlEqualTo(PENSJON_API_SAK_SAMMENDRAG_URL)).withHeader("fnr", new EqualToPattern(FNR)));
 	}
 
@@ -115,7 +115,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 	void shouldHentDokumentoversiktBrukerWithFNR() throws IOException, URISyntaxException {
 		abacPermit();
 		stubPdl();
-		stubSak();
+		stubSakMedAktoerId();
 		stubFinnjournalposter();
 		stubPensjonSakSammendrag();
 
@@ -132,7 +132,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 		assertSaksbehandlerHarTilgang(dokumentoversikt);
 		verify(postRequestedFor(urlEqualTo("/pdl")).withRequestBody(matchingJsonPath("$.variables.ident", equalTo(FNR))));
 		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter"))
-				.withRequestBody(containing("{\"gsakSakIds\":[\"135695442\"],\"psakSakIds\":[\"21998969\"],\"fraDato\":\"0001-01-01\",\"tilDato\":null,\"inkluderJournalStatus\":[\"FL\",\"FS\",\"J\",\"E\"],\"inkluderJournalpostType\":[\"I\",\"U\",\"N\"],\"visFeilregistrerte\":false,\"alleIdenter\":[\"11111111111\"],\"foerste\":3,\"etterPeker\":null}")));
+				.withRequestBody(containing("{\"sakSakIds\":[\"135695442\"],\"psakSakIds\":[\"21998969\"],\"fraDato\":\"0001-01-01\",\"tilDato\":null,\"inkluderJournalStatus\":[\"FL\",\"FS\",\"J\",\"E\"],\"inkluderJournalpostType\":[\"I\",\"U\",\"N\"],\"visFeilregistrerte\":false,\"alleIdenter\":[\"11111111111\"],\"foerste\":3,\"etterPeker\":null}")));
 		verify(getRequestedFor(urlEqualTo(PENSJON_API_SAK_SAMMENDRAG_URL)).withHeader("fnr", new EqualToPattern(FNR)));
 	}
 
@@ -150,7 +150,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 		assertEquals("429837417", dokumentoversikt.getJournalposter().get(0).getJournalpostId());
 		assertEquals(KANAL_REFERANSE_ID, dokumentoversikt.getJournalposter().get(0).getEksternReferanseId());
 		assertSaksbehandlerHarTilgang(dokumentoversikt);
-		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter")).withRequestBody(matchingJsonPath("$.gsakSakIds", containing("135695442"))));
+		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter")).withRequestBody(matchingJsonPath("$.sakSakIds", containing("135695442"))));
 		verify(0, getRequestedFor(urlEqualTo(PENSJON_API_SAK_SAMMENDRAG_URL)));
 	}
 
@@ -191,7 +191,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 	void shouldHentDokumentoversiktBrukerWithFraDato() throws IOException, URISyntaxException {
 		abacPermit();
 		stubPdl();
-		stubSak();
+		stubSakMedAktoerId();
 		stubFinnjournalposter();
 
 		Map<String, Object> variables = new HashMap<>();
@@ -209,7 +209,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 	void shouldHentDokumentoversiktBrukerWithAktoerIDMidlertidig() throws IOException, URISyntaxException {
 		abacPermit();
 		stubPdl();
-		stubSak("gsak-sakerBySaksId-empty.json");
+		stubSakMedAktoerId("sak-sakerBySaksId-empty.json");
 		stubFinnjournalposter("finnjournalposter-midlertidig-happy.json");
 		stubPensjonSakSammendrag("psak-hentSakSammendragListe-happy-empty.json");
 
@@ -227,7 +227,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 		verify(2, postRequestedFor(urlEqualTo("/abac")));
 		verify(postRequestedFor(urlEqualTo("/pdl")).withRequestBody(matchingJsonPath("$.variables.ident", equalTo(AKTOER_ID))));
 		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter"))
-				.withRequestBody(containing("{\"gsakSakIds\":[],\"psakSakIds\":[],\"fraDato\":\"0001-01-01\",\"tilDato\":null,\"inkluderJournalStatus\":[\"FL\",\"FS\",\"J\",\"E\"],\"inkluderJournalpostType\":[\"I\",\"U\",\"N\"],\"visFeilregistrerte\":false,\"alleIdenter\":[\"11111111111\"],\"foerste\":3,\"etterPeker\":null}")));
+				.withRequestBody(containing("{\"sakSakIds\":[],\"psakSakIds\":[],\"fraDato\":\"0001-01-01\",\"tilDato\":null,\"inkluderJournalStatus\":[\"FL\",\"FS\",\"J\",\"E\"],\"inkluderJournalpostType\":[\"I\",\"U\",\"N\"],\"visFeilregistrerte\":false,\"alleIdenter\":[\"11111111111\"],\"foerste\":3,\"etterPeker\":null}")));
 		verify(getRequestedFor(urlEqualTo(PENSJON_API_SAK_SAMMENDRAG_URL)).withHeader("fnr", new EqualToPattern(FNR)));
 	}
 
@@ -235,7 +235,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 	void shouldHentDokumentoversiktBrukerWithAktoerIDSladdet() throws IOException, URISyntaxException {
 		abacPermit();
 		stubPdl();
-		stubSak();
+		stubSakMedAktoerId();
 		stubFinnjournalposter("finnjournalposter_single_sladdet-happy.json");
 		stubPensjonSakSammendrag();
 
@@ -248,7 +248,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 		verify(getRequestedFor(urlEqualTo(PENSJON_API_SAK_SAMMENDRAG_URL)).withHeader("fnr", new EqualToPattern(FNR)));
 		verify(postRequestedFor(urlEqualTo("/pdl")).withRequestBody(matchingJsonPath("$.variables.ident", equalTo(AKTOER_ID))));
 		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter"))
-				.withRequestBody(containing("{\"gsakSakIds\":[\"135695442\"],\"psakSakIds\":[\"21998969\"],\"fraDato\":\"0001-01-01\",\"tilDato\":null,\"inkluderJournalStatus\":[\"FL\",\"FS\",\"J\",\"E\"],\"inkluderJournalpostType\":[\"I\",\"U\",\"N\"],\"visFeilregistrerte\":false,\"alleIdenter\":[\"11111111111\"],\"foerste\":3,\"etterPeker\":null}")));
+				.withRequestBody(containing("{\"sakSakIds\":[\"135695442\"],\"psakSakIds\":[\"21998969\"],\"fraDato\":\"0001-01-01\",\"tilDato\":null,\"inkluderJournalStatus\":[\"FL\",\"FS\",\"J\",\"E\"],\"inkluderJournalpostType\":[\"I\",\"U\",\"N\"],\"visFeilregistrerte\":false,\"alleIdenter\":[\"11111111111\"],\"foerste\":3,\"etterPeker\":null}")));
 	}
 
 	@Test
@@ -283,7 +283,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 	void HentSakerByAktoerIdGsakTechnicalFail() throws IOException, URISyntaxException {
 		abacPermit();
 		stubPdl();
-		stubFor(get("/gsak?aktoerId=" + AKTOER_ID)
+		stubFor(get(SAK_API_PATH_MED_QUERY_PARA_AKTOER_ID)
 				.willReturn(aResponse().withStatus(INTERNAL_SERVER_ERROR.value())));
 		stubFinnjournalposter("finnjournalposter-empty.json");
 		stubPensjonSakSammendrag();
@@ -302,7 +302,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 	void HentSakerByAktoerIdGsakFunctionalFail() throws IOException, URISyntaxException {
 		abacPermit();
 		stubPdl();
-		stubFor(get("/gsak?aktoerId=" + AKTOER_ID)
+		stubFor(get(SAK_API_PATH_MED_QUERY_PARA_AKTOER_ID)
 				.willReturn(aResponse().withStatus(NOT_FOUND.value())));
 		stubFinnjournalposter("finnjournalposter-empty.json");
 		stubPensjonSakSammendrag();
@@ -324,7 +324,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 	void bidragConsumerTechnicalError() throws IOException, URISyntaxException {
 		abacPermit();
 		stubPdl();
-		stubSak("gsak-sakerBySaksId-happy.json");
+		stubSakMedAktoerId("sak-sakerBySaksId-happy.json");
 		stubFinnjournalposter("finnjournalposter-empty.json");
 		stubPensjonSakSammendrag("psak-hentSakSammendragListe-happy-empty.json");
 		stubFor(get("/bidrag/654321").willReturn(aResponse()
@@ -337,7 +337,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 		assertEquals(OK, responseEntity.getStatusCode());
 		verifyEmptyJournalpostListeAndNullSideInfo(dokumentoversikt);
 		verify(postRequestedFor(urlEqualTo("/pdl")).withRequestBody(matchingJsonPath("$.variables.ident", equalTo(AKTOER_ID))));
-		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter")).withRequestBody(containing("{\"gsakSakIds\":[\"135695442\"],\"psakSakIds\":[]")));
+		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter")).withRequestBody(containing("{\"sakSakIds\":[\"135695442\"],\"psakSakIds\":[]")));
 		verify(getRequestedFor(urlEqualTo(PENSJON_API_SAK_SAMMENDRAG_URL)).withHeader("fnr", new EqualToPattern(FNR)));
 		verify(getRequestedFor(urlEqualTo("/bidrag/654321")));
 	}
@@ -346,7 +346,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 	void shouldGetUnauthorizedFromPep1g() throws IOException, URISyntaxException {
 		abacDenyPep1g();
 		stubPdl();
-		stubSak("gsak-sakerBySaksId-happy.json");
+		stubSakMedAktoerId("sak-sakerBySaksId-happy.json");
 		stubFinnjournalposter();
 		stubPensjonSakSammendrag();
 		stubBidrag();
@@ -365,7 +365,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 	void shouldGetUnauthorizedFromPep2() throws IOException, URISyntaxException {
 		abacDenyPep2();
 		stubPdl();
-		stubSak("gsak-sakerByFagsakIdAndFagsaksystem-FAR-happy.json");
+		stubSakMedAktoerId("sak-sakerByFagsakIdAndFagsaksystem-FAR-happy.json");
 		stubFinnjournalposter("finnjournalposter-empty.json");
 		stubPensjonSakSammendrag("psak-hentSakSammendragListe-happy-empty.json");
 
@@ -373,7 +373,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
 
 		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter"))
-				.withRequestBody(containing("{\"gsakSakIds\":[],\"psakSakIds\":[],\"fraDato\":\"0001-01-01\",\"tilDato\":null,\"inkluderJournalStatus\":[\"FL\",\"FS\",\"J\",\"E\"],\"inkluderJournalpostType\":[\"I\",\"U\",\"N\"],\"visFeilregistrerte\":false,\"alleIdenter\":[\"11111111111\"],\"foerste\":3,\"etterPeker\":null}")));
+				.withRequestBody(containing("{\"sakSakIds\":[],\"psakSakIds\":[],\"fraDato\":\"0001-01-01\",\"tilDato\":null,\"inkluderJournalStatus\":[\"FL\",\"FS\",\"J\",\"E\"],\"inkluderJournalpostType\":[\"I\",\"U\",\"N\"],\"visFeilregistrerte\":false,\"alleIdenter\":[\"11111111111\"],\"foerste\":3,\"etterPeker\":null}")));
 		verifyEmptyJournalpostListeAndNullSideInfo(dokumentoversikt);
 		verifyabacDenyPep2AndHttpStatusCode(OK, responseEntity.getStatusCode());
 	}
@@ -382,7 +382,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 	void shouldGetUnauthorizedFromPep2WhenIngenSakstilknytning() throws IOException, URISyntaxException {
 		abacDenyPep2();
 		stubPdl();
-		stubSak("gsak-sakerBySaksId-empty.json");
+		stubSakMedAktoerId("sak-sakerBySaksId-empty.json");
 		stubFinnjournalposter("finnjournalposter-far-kta.json");
 		stubPensjonSakSammendrag("psak-hentSakSammendragListe-happy-empty.json");
 
@@ -397,7 +397,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 	void shouldReturnSaksbehandlerHarTilgangFalseAndSkjultTittelWhenDenyPep2d() throws IOException, URISyntaxException {
 		abacDenyPep2dSkipPep2();
 		stubPdl();
-		stubSak("gsak-sakerBySaksId-happy.json");
+		stubSakMedAktoerId("sak-sakerBySaksId-happy.json");
 		stubFinnjournalposter("finnjournalposter_single_bidragAndSkjerming-happy.json");
 		stubPensjonSakSammendrag("psak-hentSakSammendragListe-happy-empty.json");
 		stubBidrag("bidragsak-happy.json");
@@ -409,7 +409,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 		assertSaksbehandlerHarIkkeTilgang(dokumentoversikt);
 		assertSkjultTittel(dokumentoversikt);
 		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter"))
-				.withRequestBody(containing("{\"gsakSakIds\":[\"135695442\"],\"psakSakIds\":[],\"fraDato\":\"0001-01-01\",\"tilDato\":null,\"inkluderJournalStatus\":[\"FL\",\"FS\",\"J\",\"E\"],\"inkluderJournalpostType\":[\"I\",\"U\",\"N\"],\"visFeilregistrerte\":false,\"alleIdenter\":[\"11111111111\"],\"foerste\":3,\"etterPeker\":null}")));
+				.withRequestBody(containing("{\"sakSakIds\":[\"135695442\"],\"psakSakIds\":[],\"fraDato\":\"0001-01-01\",\"tilDato\":null,\"inkluderJournalStatus\":[\"FL\",\"FS\",\"J\",\"E\"],\"inkluderJournalpostType\":[\"I\",\"U\",\"N\"],\"visFeilregistrerte\":false,\"alleIdenter\":[\"11111111111\"],\"foerste\":3,\"etterPeker\":null}")));
 		verifyabacDenyPep2dAndHttpStatusCode(true, OK, responseEntity.getStatusCode());
 	}
 
@@ -417,7 +417,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 	void shouldGetUnauthorizedFromPep3() throws IOException, URISyntaxException {
 		abacDenyPep3SkipPep2();
 		stubPdl();
-		stubSak("gsak-sakerBySaksId-happy.json");
+		stubSakMedAktoerId("sak-sakerBySaksId-happy.json");
 		stubFinnjournalposter("finnjournalposter-empty.json");
 		stubPensjonSakSammendrag("psak-hentSakSammendragListe-happy-empty.json");
 		stubBidrag();
@@ -426,7 +426,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
 
 		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter"))
-				.withRequestBody(containing("{\"gsakSakIds\":[],\"psakSakIds\":[],\"fraDato\":\"0001-01-01\",\"tilDato\":null,\"inkluderJournalStatus\":[\"FL\",\"FS\",\"J\",\"E\"],\"inkluderJournalpostType\":[\"I\",\"U\",\"N\"],\"visFeilregistrerte\":false,\"alleIdenter\":[\"11111111111\"],\"foerste\":3,\"etterPeker\":null}")));
+				.withRequestBody(containing("{\"sakSakIds\":[],\"psakSakIds\":[],\"fraDato\":\"0001-01-01\",\"tilDato\":null,\"inkluderJournalStatus\":[\"FL\",\"FS\",\"J\",\"E\"],\"inkluderJournalpostType\":[\"I\",\"U\",\"N\"],\"visFeilregistrerte\":false,\"alleIdenter\":[\"11111111111\"],\"foerste\":3,\"etterPeker\":null}")));
 		verifyEmptyJournalpostListeAndNullSideInfo(dokumentoversikt);
 		verify(3, postRequestedFor(urlEqualTo("/abac")));
 		assertEquals(OK, responseEntity.getStatusCode());
@@ -436,7 +436,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 	void shouldGetUnauthorizedFromPep4() throws IOException, URISyntaxException {
 		abacDenyPep4SkipPep2OrPep3();
 		stubPdl();
-		stubSak("gsak-sakerBySaksId-happy.json");
+		stubSakMedAktoerId("sak-sakerBySaksId-happy.json");
 		stubFinnjournalposter("finnjournalposter_single_bidragAndSkjerming-happy.json");
 		stubPensjonSakSammendrag("psak-hentSakSammendragListe-happy-empty.json");
 		stubBidrag();
@@ -446,7 +446,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 
 		verifyEmptyJournalpostListeAndNullSideInfo(dokumentoversikt);
 		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter"))
-				.withRequestBody(containing("{\"gsakSakIds\":[\"135695442\"],\"psakSakIds\":[],\"fraDato\":\"0001-01-01\",\"tilDato\":null,\"inkluderJournalStatus\":[\"FL\",\"FS\",\"J\",\"E\"],\"inkluderJournalpostType\":[\"I\",\"U\",\"N\"],\"visFeilregistrerte\":false,\"alleIdenter\":[\"11111111111\"],\"foerste\":3,\"etterPeker\":null}")));
+				.withRequestBody(containing("{\"sakSakIds\":[\"135695442\"],\"psakSakIds\":[],\"fraDato\":\"0001-01-01\",\"tilDato\":null,\"inkluderJournalStatus\":[\"FL\",\"FS\",\"J\",\"E\"],\"inkluderJournalpostType\":[\"I\",\"U\",\"N\"],\"visFeilregistrerte\":false,\"alleIdenter\":[\"11111111111\"],\"foerste\":3,\"etterPeker\":null}")));
 		verifyabacDenyPep4SkipPep2OrPep3AndHttpStatusCode(OK, responseEntity.getStatusCode());
 		verifyMsGraphMemberOfSeveralGroupsCalled(MS_ID_SAKSBEHANDLER, 1);
 	}
@@ -455,7 +455,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 	void shouldGetUnauthorizedFromPep5() throws IOException, URISyntaxException {
 		abacDenyPep5SkipPep2OrPep3();
 		stubPdl();
-		stubSak("gsak-sakerBySaksId-happy.json");
+		stubSakMedAktoerId("sak-sakerBySaksId-happy.json");
 		stubFinnjournalposter("finnjournalposter_single_bidragAndSkjermingOnlyDokument-happy.json");
 		stubPensjonSakSammendrag("psak-hentSakSammendragListe-happy-empty.json");
 		stubBidrag();
@@ -467,7 +467,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 		assertEquals("429837417", dokumentoversikt.getJournalposter().get(0).getJournalpostId());
 		assertThat(dokumentoversikt.getJournalposter().get(0).getDokumenter()).isEmpty();
 		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter"))
-				.withRequestBody(containing("{\"gsakSakIds\":[\"135695442\"],\"psakSakIds\":[],\"fraDato\":\"0001-01-01\",\"tilDato\":null,\"inkluderJournalStatus\":[\"FL\",\"FS\",\"J\",\"E\"],\"inkluderJournalpostType\":[\"I\",\"U\",\"N\"],\"visFeilregistrerte\":false,\"alleIdenter\":[\"11111111111\"],\"foerste\":3,\"etterPeker\":null}")));
+				.withRequestBody(containing("{\"sakSakIds\":[\"135695442\"],\"psakSakIds\":[],\"fraDato\":\"0001-01-01\",\"tilDato\":null,\"inkluderJournalStatus\":[\"FL\",\"FS\",\"J\",\"E\"],\"inkluderJournalpostType\":[\"I\",\"U\",\"N\"],\"visFeilregistrerte\":false,\"alleIdenter\":[\"11111111111\"],\"foerste\":3,\"etterPeker\":null}")));
 		verifyabacDenyPep5SkipPep2OrPep3AndHttpStatusCode(true, OK, responseEntity.getStatusCode());
 	}
 
@@ -475,7 +475,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 	void shouldGetUnauthorizedFromPep6d() throws IOException, URISyntaxException {
 		abacDenyPep6dSkipPep2Pep4Pep5();
 		stubPdl();
-		stubSak();
+		stubSakMedAktoerId();
 		stubFinnjournalposter("finnjournalposter_single_bidragAndSkjermingOnlyDokvariant-happy.json");
 		stubPensjonSakSammendrag("psak-hentSakSammendragListe-happy-empty.json");
 
@@ -485,7 +485,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 		assertEquals("429837417", dokumentoversikt.getJournalposter().get(0).getJournalpostId());
 		assertSaksbehandlerHarIkkeTilgang(dokumentoversikt);
 		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter"))
-				.withRequestBody(containing("{\"gsakSakIds\":[\"135695442\"],\"psakSakIds\":[],\"fraDato\":\"0001-01-01\",\"tilDato\":null,\"inkluderJournalStatus\":[\"FL\",\"FS\",\"J\",\"E\"],\"inkluderJournalpostType\":[\"I\",\"U\",\"N\"],\"visFeilregistrerte\":false,\"alleIdenter\":[\"11111111111\"],\"foerste\":3,\"etterPeker\":null}")));
+				.withRequestBody(containing("{\"sakSakIds\":[\"135695442\"],\"psakSakIds\":[],\"fraDato\":\"0001-01-01\",\"tilDato\":null,\"inkluderJournalStatus\":[\"FL\",\"FS\",\"J\",\"E\"],\"inkluderJournalpostType\":[\"I\",\"U\",\"N\"],\"visFeilregistrerte\":false,\"alleIdenter\":[\"11111111111\"],\"foerste\":3,\"etterPeker\":null}")));
 		verifyabacDenyPep6dSkipPep2Pep3AndHttpStatusCode(OK, responseEntity.getStatusCode());
 	}
 
@@ -494,7 +494,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 		String SAK_ID = "123456";
 		abacDenyPep7dSkipPep2Pep3Pep4Pep5Pep6d();
 		stubPdl();
-		stubSak("gsak-sakerBySaksId_oms-happy.json");
+		stubSakMedAktoerId("sak-sakerBySaksId_oms-happy.json");
 		stubFinnjournalposter("finnjournalposter_single_temaK9Nullskjerming-happy.json");
 		stubFor(get("/k9sak?saksnummer=" + SAK_ID).willReturn(aResponse()
 				.withStatus(OK.value())
@@ -507,7 +507,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 		assertEquals("429837417", dokumentoversikt.getJournalposter().get(0).getJournalpostId());
 		assertSaksbehandlerHarIkkeTilgang(dokumentoversikt);
 		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter"))
-				.withRequestBody(containing("{\"gsakSakIds\":[\"135695442\"],\"psakSakIds\":[],\"fraDato\":\"0001-01-01\",\"tilDato\":null,\"inkluderJournalStatus\":[\"FL\",\"FS\",\"J\",\"E\"],\"inkluderJournalpostType\":[\"I\",\"U\",\"N\"],\"visFeilregistrerte\":false,\"alleIdenter\":[\"11111111111\"],\"foerste\":3,\"etterPeker\":null}")));
+				.withRequestBody(containing("{\"sakSakIds\":[\"135695442\"],\"psakSakIds\":[],\"fraDato\":\"0001-01-01\",\"tilDato\":null,\"inkluderJournalStatus\":[\"FL\",\"FS\",\"J\",\"E\"],\"inkluderJournalpostType\":[\"I\",\"U\",\"N\"],\"visFeilregistrerte\":false,\"alleIdenter\":[\"11111111111\"],\"foerste\":3,\"etterPeker\":null}")));
 		verifyabacDenyPep7dSkipPep2Pep3Pep4Pep5Pep6dAndHttpStatusCode(OK, responseEntity.getStatusCode());
 	}
 
@@ -522,7 +522,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 		abacPermit();
 		stubMsGraphMemberOfNoGroupsDefaultSaksbehandler();
 		stubPdl();
-		stubSak();
+		stubSakMedAktoerId();
 		stubFinnjournalposter("finnjournalposter-paged-first-happy.json");
 		stubPensjonSakSammendrag("psak-hentSakSammendragListe-happy-empty.json");
 
