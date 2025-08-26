@@ -55,7 +55,7 @@ class JoarkAntiCorruptionLayerImpl implements JoarkAntiCorruptionLayer {
 				.visFeilregistrerte(inkluderJournalstatuses.contains(Journalstatus.FEILREGISTRERT))
 				.fraDato(fraDato.toString())
 				.tilDato(tilDato == null ? null : tilDato.toString())
-				.sakSakIds(tilgangSakList.stream()
+				.gsakSakIds(tilgangSakList.stream()
 						.filter(tilgangSak -> Arkivsakssystem.GSAK.equals(tilgangSak.getArkivsaksystem()))
 						.map(TilgangSak::getArkivsaksnummer).collect(Collectors.toList()))
 				.psakSakIds(tilgangSakList.stream()
