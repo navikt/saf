@@ -30,15 +30,15 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 public class SakConsumer {
 	private static final String SAK_INSTANCE = "sak";
 
-	private final RestClient texasRestClient;
+	private final RestClient texasAuthorizedRestClient;
 	private final ObjectMapper objectMapper;
 	private final String sakScope;
 
-	public SakConsumer(RestClient texasRestClient,
+	public SakConsumer(RestClient texasAuthorizedRestClient,
 					   SafProperties safProperties,
 					   ObjectMapper objectMapper) {
 		this.sakScope = safProperties.getEndpoints().getSak().getScope();
-		this.texasRestClient = texasRestClient.mutate()
+		this.texasAuthorizedRestClient = texasAuthorizedRestClient.mutate()
 				.baseUrl(safProperties.getEndpoints().getSak().getUrl())
 				.defaultHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 				.build();
@@ -48,7 +48,7 @@ public class SakConsumer {
 	@CircuitBreaker(name = SAK_INSTANCE)
 	@Retry(name = SAK_INSTANCE)
 	public List<SakSakerTo> hentSakerByAktoerIder(final List<String> aktoerIder) {
-		return texasRestClient.get()
+		return texasAuthorizedRestClient.get()
 				.uri(uriBuilder -> uriBuilder
 						.queryParam("aktoerId", aktoerIder).build())
 				.header(X_CORRELATION_ID, getCallId())
@@ -63,7 +63,7 @@ public class SakConsumer {
 	@Retry(name = SAK_INSTANCE)
 	public List<SakSakerTo> hentSakerByAktoerId(final String aktoerId) {
 		log.info("Henter saker for aktoerId: {}", aktoerId);
-		return texasRestClient.get()
+		return texasAuthorizedRestClient.get()
 				.uri(uriBuilder -> uriBuilder
 						.queryParam("aktoerId", aktoerId)
 						.build())
@@ -78,7 +78,7 @@ public class SakConsumer {
 	@CircuitBreaker(name = SAK_INSTANCE)
 	@Retry(name = SAK_INSTANCE)
 	public List<SakSakerTo> hentSakerByAktoerIder(final List<String> aktoerIder, final Tema tema) {
-		return texasRestClient.get()
+		return texasAuthorizedRestClient.get()
 				.uri(uriBuilder -> uriBuilder
 						.queryParam("tema", tema.toString())
 						.queryParam("aktoerId", aktoerIder)
@@ -94,7 +94,7 @@ public class SakConsumer {
 	@CircuitBreaker(name = SAK_INSTANCE)
 	@Retry(name = SAK_INSTANCE)
 	public List<SakSakerTo> hentSakerByOrgNr(final String orgNr) {
-		return texasRestClient.get()
+		return texasAuthorizedRestClient.get()
 				.uri(uriBuilder -> uriBuilder
 						.queryParam("orgnr", orgNr)
 						.build())
@@ -109,7 +109,7 @@ public class SakConsumer {
 	@CircuitBreaker(name = SAK_INSTANCE)
 	@Retry(name = SAK_INSTANCE)
 	public List<SakSakerTo> hentSakerByOrgNr(final String orgNr, final Tema tema) {
-		return texasRestClient.get()
+		return texasAuthorizedRestClient.get()
 				.uri(uriBuilder -> uriBuilder
 						.queryParam("orgnr", orgNr)
 						.queryParam("tema", tema)
@@ -125,7 +125,7 @@ public class SakConsumer {
 	@CircuitBreaker(name = SAK_INSTANCE)
 	@Retry(name = SAK_INSTANCE)
 	public List<SakSakerTo> hentSakerByFagsakIdAndFagsaksystem(final String fagsakId, final String fagsaksystem) {
-		return texasRestClient.get()
+		return texasAuthorizedRestClient.get()
 				.uri(uriBuilder -> uriBuilder
 						.queryParam("fagsakNr", fagsakId)
 						.queryParam("applikasjon", fagsaksystem)

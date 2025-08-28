@@ -52,14 +52,14 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 	}
 
 	@Test
-	void shouldHentDokumentoversiktFagsakWithFagsakIdGSAK() throws URISyntaxException {
+	void shouldHentDokumentoversiktFagsakWithFagsakIdSak() throws URISyntaxException {
 		abacPermit();
 
 		stubSakMedFagSak("sak/sak-sakerByFagsakIdAndFagsaksystem-happy.json");
 		stubFinnjournalposter("finnjournalposter-happy.json");
 		stubPdl();
 
-		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikFagsakGsak();
+		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikFagsakSak();
 		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
 
 		assertEquals(OK, responseEntity.getStatusCode());
@@ -84,7 +84,7 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 		stubFinnjournalposter("finnjournalposter-happy-mangevedlegg.json");
 		stubPdl();
 
-		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikFagsakGsak();
+		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikFagsakSak();
 		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
 
 		assertEquals(OK, responseEntity.getStatusCode());
@@ -115,7 +115,7 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 						.withBodyFile("joark/finnjournalposter-happy.json")));
 		stubPdl();
 
-		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikFagsakGsak();
+		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikFagsakSak();
 		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
 
 		assertEquals(OK, responseEntity.getStatusCode());
@@ -160,7 +160,7 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 		stubSakMedFagSak("sak/sak-sakerByFagsakIdAndFagsaksystem-happy.json");
 		stubFinnjournalposter("finnjournalposter_single_sladdet-happy.json");
 
-		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikFagsakGsak();
+		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikFagsakSak();
 		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
 
 		assertEquals(OK, responseEntity.getStatusCode());
@@ -173,10 +173,10 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 	@Test
 	void hentSakerTechnicalFail() throws URISyntaxException {
 		abacDenyPep1g();
-		stubFor(get("/sak?fagsakNr=ARENA-1&applikasjon=AO01")
+		stubFor(get(SAK_API_PATH_MED_QUERY_PARA_FAGSAK_NR)
 				.willReturn(aResponse().withStatus(INTERNAL_SERVER_ERROR.value())));
 
-		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikFagsakGsak();
+		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikFagsakSak();
 		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
 
 		assertEquals(OK, responseEntity.getStatusCode());
@@ -189,7 +189,7 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 		stubFor(get(SAK_API_PATH_MED_QUERY_PARA_FAGSAK_NR)
 				.willReturn(aResponse().withStatus(BAD_REQUEST.value())));
 
-		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikFagsakGsak();
+		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikFagsakSak();
 		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
 
 		assertEquals(OK, responseEntity.getStatusCode());
@@ -205,7 +205,7 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 		stubSakMedFagSak("sak/sak-sakerByFagsakIdAndFagsaksystem-happy.json");
 		stubFinnjournalposter("finnjournalposter-empty.json");
 
-		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikFagsakGsak();
+		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikFagsakSak();
 		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
 
 		assertEquals(OK, responseEntity.getStatusCode());
@@ -213,7 +213,7 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 	}
 
 	@Test
-	void shouldHentDokumentoversikHentSakSammendragListeTechnicalFail() throws URISyntaxException {
+	void shouldHentDokumentoversiktHentSakSammendragListeTechnicalFail() throws URISyntaxException {
 		abacPermit();
 
 		stubPensjonBrukerForSak();
@@ -231,7 +231,7 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 	}
 
 	@Test
-	void shouldHentDokumentoversikHentSakSammendragListeFunctionalFail() throws URISyntaxException {
+	void shouldHentDokumentoversiktHentSakSammendragListeFunctionalFail() throws URISyntaxException {
 		abacPermit();
 
 		stubPensjonBrukerForSak();
@@ -256,7 +256,7 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 		stubFinnjournalposter("finnjournalposter-empty.json");
 		stubPdl();
 
-		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikFagsakGsak();
+		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikFagsakSak();
 		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
 
 		assertEquals(OK, responseEntity.getStatusCode());
@@ -274,7 +274,7 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 		stubFinnjournalposter("finnjournalposter-happy.json");
 		stubPdl();
 
-		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikFagsakGsak();
+		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikFagsakSak();
 		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
 
 		assertEquals(4, dokumentoversikt.getJournalposter().size());
@@ -290,7 +290,7 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 		stubFinnjournalposter("finnjournalposter-empty.json");
 		stubPdl();
 
-		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikFagsakGsak();
+		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikFagsakSak();
 		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
 
 		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter"))
@@ -306,7 +306,7 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 		stubFinnjournalposter("finnjournalposter-dokumentoversiktfagsak-happy.json");
 		stubPdl();
 
-		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikFagsakGsak();
+		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikFagsakSak();
 		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
 
 		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter"))
@@ -328,7 +328,7 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 				.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 				.withBodyFile("bidrag/bidragsak-happy.json")));
 
-		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikFagsakGsak();
+		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikFagsakSak();
 		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
 
 		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter"))
@@ -346,7 +346,7 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 		stubFinnjournalposter("finnjournalposter_single_bidragAndSkjerming-happy.json");
 		stubPdl();
 
-		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikFagsakGsak();
+		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikFagsakSak();
 		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
 
 		verifyEmptyJournalpostListeAndNullSideInfo(dokumentoversikt);
@@ -362,7 +362,7 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 		stubFinnjournalposter("finnjournalposter_single_bidragAndSkjermingOnlyDokument-happy.json");
 		stubPdl();
 
-		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikFagsakGsak();
+		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikFagsakSak();
 		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
 
 		assertThat(dokumentoversikt.getJournalposter()).isNotEmpty();
@@ -381,7 +381,7 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 		stubFinnjournalposter("finnjournalposter_single_bidragAndSkjermingOnlyDokvariant-happy.json");
 		stubPdl();
 
-		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikFagsakGsak();
+		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikFagsakSak();
 		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
 
 		assertEquals("429837417", dokumentoversikt.getJournalposter().get(0).getJournalpostId());
@@ -401,7 +401,7 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 		return restTemplate.exchange(requestEntity, LinkedHashMap.class);
 	}
 
-	private ResponseEntity<LinkedHashMap> callDokumentOversikFagsakGsak() throws URISyntaxException {
+	private ResponseEntity<LinkedHashMap> callDokumentOversikFagsakSak() throws URISyntaxException {
 		GraphQLRequest request = new GraphQLRequest(stringFromClasspath("dokumentoversiktFagsak/dokumentoversiktfagsak_gsak.query"), null, null);
 		RequestEntity<GraphQLRequest> requestEntity = new RequestEntity<>(request, createHeaders(), HttpMethod.POST, new URI("/graphql"));
 		return restTemplate.exchange(requestEntity, LinkedHashMap.class);
