@@ -79,7 +79,6 @@ public abstract class AbstractItest {
 	private static final String STATE_PEP2 = "state_pep2";
 	private static final String STATE_PEP2D = "state_pep2d";
 	private static final String STATE_PEP3 = "state_pep3";
-	private static final String STATE_PEP5 = "state_pep5";
 	private static final String STATE_PEP7D = "state_pep7d";
 
 	protected static final String NAV_IDENT_SAKSBEHANDLER = "Z123456";
@@ -88,6 +87,9 @@ public abstract class AbstractItest {
 	protected static final String AKTOER_ID = "1912374211459";
 	protected static final String PENSJON_API_SAK_SAMMENDRAG_URL = "/pensjon/api/sak/sammendrag";
 	protected static final String PENSJON_API_PIP_HENT_BRUKER_OG_ENHETSTILGANGER_FOR_SAK_V1_URL = "/pensjon/api/pip/hentBrukerOgEnhetstilgangerForSak/v1";
+	protected static final String SAK_API_PATH_MED_QUERY_PARA_AKTOER_ID = "/sak?aktoerId=" + AKTOER_ID;
+	protected static final String SAK_API_PATH_MED_QUERY_PARA_FAGSAK_NR = "/sak?fagsakNr=ARENA-1&applikasjon=AO01";
+
 
 	@Configuration
 	public static class TestConfig {
@@ -222,22 +224,29 @@ public abstract class AbstractItest {
 						.withBodyFile("pdl/" + filename)));
 	}
 
-	protected static void stubSak() {
-		stubSak("gsak-sakerBySaksId_not_bid-happy.json");
+	protected static void stubSakMedAktoerId() {
+		stubSakMedAktoerId("sak-sakerBySaksId_not_bid-happy.json");
 	}
 
-	protected static void stubSak(String filename) {
-		stubFor(get("/gsak?aktoerId=" + AKTOER_ID)
+	protected static void stubSakMedAktoerId(String filename) {
+		stubFor(get(SAK_API_PATH_MED_QUERY_PARA_AKTOER_ID)
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType())
-						.withBodyFile("gsak/" + filename)));
+						.withBodyFile("sak/" + filename)));
+	}
+
+	protected void stubSakMedFagSak(String filenavn) {
+		stubFor(get(SAK_API_PATH_MED_QUERY_PARA_FAGSAK_NR)
+				.willReturn(aResponse().withStatus(OK.value())
+						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile(filenavn)));
 	}
 
 	protected static void stubSakOrgnr() {
-		stubFor(get("/gsak?orgnr=" + ORG_NR)
+		stubFor(get("/sak?orgnr=" + ORG_NR)
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType())
-						.withBodyFile("gsak/gsak-sakerBySaksId_not_bid-happy.json")));
+						.withBodyFile("sak/sak-sakerBySaksId_not_bid-happy.json")));
 	}
 
 	protected static void stubFinnjournalposter() {
@@ -282,7 +291,13 @@ public abstract class AbstractItest {
 	private static void stubTexasExchangeOboToken() {
 		stubFor(post("/texas").willReturn(aResponse().withStatus(OK.value())
 				.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-				.withBodyFile("texas/" + "texas_happy.json")));
+				.withBodyFile("texas/texas_happy.json")));
+	}
+
+	public static void stubTexasToken() {
+		stubFor(post("/nais/token").willReturn(aResponse().withStatus(OK.value())
+				.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+				.withBodyFile("texas/texas_happy.json")));
 	}
 
 	protected static void stubTilgangsmaskinenPermit() {

@@ -29,8 +29,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static no.nav.saf.headers.NavHeaders.NAV_CALLID;
-import static no.nav.saf.util.MDCUtility.getCallId;
 import static org.apache.hc.core5.util.Timeout.ofSeconds;
 
 @ComponentScan
@@ -67,7 +65,7 @@ public class ApplicationConfig {
 	}
 
 	@Bean
-	RestClient restClient(ClientHttpRequestFactory clientHttpRequestFactory, NaisTexasConsumer naisTexasConsumer) {
+	RestClient texasAuthorizedRestClient(ClientHttpRequestFactory clientHttpRequestFactory, NaisTexasConsumer naisTexasConsumer) {
 		return RestClient.builder()
 				.requestFactory(clientHttpRequestFactory)
 				.requestInterceptor(new NaisTexasAndCallIdRequestInterceptor(naisTexasConsumer))

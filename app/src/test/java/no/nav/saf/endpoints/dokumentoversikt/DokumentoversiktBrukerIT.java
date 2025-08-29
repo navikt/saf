@@ -27,7 +27,6 @@ import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.matchingJsonPath;
-import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
@@ -54,13 +53,14 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 	@BeforeEach
 	public void setup() {
 		setupHappyPathAzureToken();
+		stubTexasToken();
 	}
 
 	@Test
 	void shouldHentDokumentoversiktBrukerWithAktoerID() throws IOException, URISyntaxException {
 		abacPermit();
 		stubPdl();
-		stubSak();
+		stubSakMedAktoerId();
 		stubFinnjournalposter();
 		stubPensjonSakSammendrag();
 
@@ -84,7 +84,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 	void shouldHentDokumentoversiktBrukerWithAktoerIDAndHavDokumentInfosInCorrectOrder() throws IOException, URISyntaxException {
 		abacPermit();
 		stubPdl();
-		stubSak();
+		stubSakMedAktoerId();
 		// Merk: i filen under kommer vedleggene i feil rekkefølge "fra dokarkiv" for å teste at saf sorterer dem riktig.
 		// i realiteten kommer de alltid i rekkefølge fra dokarkiv, men *kan komme* i uorden internt i saf
 		stubFinnjournalposter("finnjournalposter-happy-mangevedlegg.json");
@@ -111,10 +111,10 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 	}
 
 	@Test
-	void shouldHentDokumentoversiktBrukerWithFNR() throws IOException, URISyntaxException {
+	void shouldHentDokumentoversiktBrukerWithFNR() throws URISyntaxException {
 		abacPermit();
 		stubPdl();
-		stubSak();
+		stubSakMedAktoerId();
 		stubFinnjournalposter();
 		stubPensjonSakSammendrag();
 
@@ -136,7 +136,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 	}
 
 	@Test
-	void shouldHentDokumentoversiktBrukerWithOrgNr() throws IOException, URISyntaxException {
+	void shouldHentDokumentoversiktBrukerWithOrgNr() throws URISyntaxException {
 		abacPermit();
 		stubNavHrOrganisasjonNei(ORG_NR);
 		stubSakOrgnr();
@@ -154,7 +154,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 	}
 
 	@Test
-	void shouldNotHentDokumentoversiktBrukerWithNavStatOrgnummerWhenBrukerNotEgenAnsattBehandler() throws IOException, URISyntaxException {
+	void shouldNotHentDokumentoversiktBrukerWithNavStatOrgnummerWhenBrukerNotEgenAnsattBehandler() throws URISyntaxException {
 		abacPermit();
 		stubNavHrOrganisasjonJa(ORG_NR);
 		stubMsGraphMemberOfNoGroupsDefaultSaksbehandler();
@@ -170,7 +170,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 	}
 
 	@Test
-	void shouldHentDokumentoversiktBrukerWithNavStatOrgnummerWhenBrukerIsEgenAnsattBehandler() throws IOException, URISyntaxException {
+	void shouldHentDokumentoversiktBrukerWithNavStatOrgnummerWhenBrukerIsEgenAnsattBehandler() throws URISyntaxException {
 		abacPermit();
 		stubNavHrOrganisasjonJa(ORG_NR);
 		stubSakOrgnr();
@@ -187,10 +187,10 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 	}
 
 	@Test
-	void shouldHentDokumentoversiktBrukerWithFraDato() throws IOException, URISyntaxException {
+	void shouldHentDokumentoversiktBrukerWithFraDato() throws URISyntaxException {
 		abacPermit();
 		stubPdl();
-		stubSak();
+		stubSakMedAktoerId();
 		stubFinnjournalposter();
 
 		Map<String, Object> variables = new HashMap<>();
@@ -205,10 +205,10 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 	}
 
 	@Test
-	void shouldHentDokumentoversiktBrukerWithAktoerIDMidlertidig() throws IOException, URISyntaxException {
+	void shouldHentDokumentoversiktBrukerWithAktoerIDMidlertidig() throws URISyntaxException {
 		abacPermit();
 		stubPdl();
-		stubSak("gsak-sakerBySaksId-empty.json");
+		stubSakMedAktoerId("sak-sakerBySaksId-empty.json");
 		stubFinnjournalposter("finnjournalposter-midlertidig-happy.json");
 		stubPensjonSakSammendrag("psak-hentSakSammendragListe-happy-empty.json");
 
@@ -234,7 +234,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 	void shouldHentDokumentoversiktBrukerWithAktoerIDSladdet() throws IOException, URISyntaxException {
 		abacPermit();
 		stubPdl();
-		stubSak();
+		stubSakMedAktoerId();
 		stubFinnjournalposter("finnjournalposter_single_sladdet-happy.json");
 		stubPensjonSakSammendrag();
 
@@ -282,7 +282,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 	void HentSakerByAktoerIdGsakTechnicalFail() throws IOException, URISyntaxException {
 		abacPermit();
 		stubPdl();
-		stubFor(get("/gsak?aktoerId=" + AKTOER_ID)
+		stubFor(get(SAK_API_PATH_MED_QUERY_PARA_AKTOER_ID)
 				.willReturn(aResponse().withStatus(INTERNAL_SERVER_ERROR.value())));
 		stubFinnjournalposter("finnjournalposter-empty.json");
 		stubPensjonSakSammendrag();
@@ -301,7 +301,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 	void HentSakerByAktoerIdGsakFunctionalFail() throws IOException, URISyntaxException {
 		abacPermit();
 		stubPdl();
-		stubFor(get("/gsak?aktoerId=" + AKTOER_ID)
+		stubFor(get(SAK_API_PATH_MED_QUERY_PARA_AKTOER_ID)
 				.willReturn(aResponse().withStatus(NOT_FOUND.value())));
 		stubFinnjournalposter("finnjournalposter-empty.json");
 		stubPensjonSakSammendrag();
@@ -323,7 +323,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 	void bidragConsumerTechnicalError() throws IOException, URISyntaxException {
 		abacPermit();
 		stubPdl();
-		stubSak("gsak-sakerBySaksId-happy.json");
+		stubSakMedAktoerId("sak-sakerBySaksId-happy.json");
 		stubFinnjournalposter("finnjournalposter-empty.json");
 		stubPensjonSakSammendrag("psak-hentSakSammendragListe-happy-empty.json");
 		stubFor(get("/bidrag/654321").willReturn(aResponse()
@@ -345,7 +345,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 	void shouldGetUnauthorizedFromPep1g() throws IOException, URISyntaxException {
 		abacDenyPep1g();
 		stubPdl();
-		stubSak("gsak-sakerBySaksId-happy.json");
+		stubSakMedAktoerId("sak-sakerBySaksId-happy.json");
 		stubFinnjournalposter();
 		stubPensjonSakSammendrag();
 		stubBidrag();
@@ -364,7 +364,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 	void shouldGetUnauthorizedFromPep2() throws IOException, URISyntaxException {
 		abacDenyPep2();
 		stubPdl();
-		stubSak("gsak-sakerByFagsakIdAndFagsaksystem-FAR-happy.json");
+		stubSakMedAktoerId("sak-sakerByFagsakIdAndFagsaksystem-FAR-happy.json");
 		stubFinnjournalposter("finnjournalposter-empty.json");
 		stubPensjonSakSammendrag("psak-hentSakSammendragListe-happy-empty.json");
 
@@ -378,10 +378,10 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 	}
 
 	@Test
-	void shouldGetUnauthorizedFromPep2WhenIngenSakstilknytning() throws IOException, URISyntaxException {
+	void shouldGetUnauthorizedFromPep2WhenIngenSakstilknytning() throws URISyntaxException {
 		abacDenyPep2();
 		stubPdl();
-		stubSak("gsak-sakerBySaksId-empty.json");
+		stubSakMedAktoerId("sak-sakerBySaksId-empty.json");
 		stubFinnjournalposter("finnjournalposter-far-kta.json");
 		stubPensjonSakSammendrag("psak-hentSakSammendragListe-happy-empty.json");
 
@@ -396,7 +396,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 	void shouldReturnSaksbehandlerHarTilgangFalseAndSkjultTittelWhenDenyPep2d() throws IOException, URISyntaxException {
 		abacDenyPep2dSkipPep2();
 		stubPdl();
-		stubSak("gsak-sakerBySaksId-happy.json");
+		stubSakMedAktoerId("sak-sakerBySaksId-happy.json");
 		stubFinnjournalposter("finnjournalposter_single_bidragAndSkjerming-happy.json");
 		stubPensjonSakSammendrag("psak-hentSakSammendragListe-happy-empty.json");
 		stubBidrag("bidragsak-happy.json");
@@ -416,7 +416,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 	void shouldGetUnauthorizedFromPep3() throws IOException, URISyntaxException {
 		abacDenyPep3SkipPep2();
 		stubPdl();
-		stubSak("gsak-sakerBySaksId-happy.json");
+		stubSakMedAktoerId("sak-sakerBySaksId-happy.json");
 		stubFinnjournalposter("finnjournalposter-empty.json");
 		stubPensjonSakSammendrag("psak-hentSakSammendragListe-happy-empty.json");
 		stubBidrag();
@@ -435,7 +435,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 	void shouldGetUnauthorizedFromPep4() throws IOException, URISyntaxException {
 		abacDenyPep4SkipPep2OrPep3();
 		stubPdl();
-		stubSak("gsak-sakerBySaksId-happy.json");
+		stubSakMedAktoerId("sak-sakerBySaksId-happy.json");
 		stubFinnjournalposter("finnjournalposter_single_bidragAndSkjerming-happy.json");
 		stubPensjonSakSammendrag("psak-hentSakSammendragListe-happy-empty.json");
 		stubBidrag();
@@ -454,7 +454,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 	void shouldGetUnauthorizedFromPep5() throws IOException, URISyntaxException {
 		abacDenyPep5SkipPep2OrPep3();
 		stubPdl();
-		stubSak("gsak-sakerBySaksId-happy.json");
+		stubSakMedAktoerId("sak-sakerBySaksId-happy.json");
 		stubFinnjournalposter("finnjournalposter_single_bidragAndSkjermingOnlyDokument-happy.json");
 		stubPensjonSakSammendrag("psak-hentSakSammendragListe-happy-empty.json");
 		stubBidrag();
@@ -474,7 +474,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 	void shouldGetUnauthorizedFromPep6d() throws IOException, URISyntaxException {
 		abacDenyPep6dSkipPep2Pep4Pep5();
 		stubPdl();
-		stubSak();
+		stubSakMedAktoerId();
 		stubFinnjournalposter("finnjournalposter_single_bidragAndSkjermingOnlyDokvariant-happy.json");
 		stubPensjonSakSammendrag("psak-hentSakSammendragListe-happy-empty.json");
 
@@ -493,7 +493,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 		String SAK_ID = "123456";
 		abacDenyPep7dSkipPep2Pep3Pep4Pep5Pep6d();
 		stubPdl();
-		stubSak("gsak-sakerBySaksId_oms-happy.json");
+		stubSakMedAktoerId("sak-sakerBySaksId_oms-happy.json");
 		stubFinnjournalposter("finnjournalposter_single_temaK9Nullskjerming-happy.json");
 		stubFor(get("/k9sak?saksnummer=" + SAK_ID).willReturn(aResponse()
 				.withStatus(OK.value())
@@ -521,7 +521,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 		abacPermit();
 		stubMsGraphMemberOfNoGroupsDefaultSaksbehandler();
 		stubPdl();
-		stubSak();
+		stubSakMedAktoerId();
 		stubFinnjournalposter("finnjournalposter-paged-first-happy.json");
 		stubPensjonSakSammendrag("psak-hentSakSammendragListe-happy-empty.json");
 
@@ -543,25 +543,25 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 		return restTemplate.exchange(requestEntity, GraphQLResponse.class);
 	}
 
-	private ResponseEntity<GraphQLResponse> callDokumentOversikBrukerWithAktoerId() throws IOException, URISyntaxException {
+	private ResponseEntity<GraphQLResponse> callDokumentOversikBrukerWithAktoerId() throws URISyntaxException {
 		GraphQLRequest request = new GraphQLRequest(stringFromClasspath("dokumentoversiktBruker/dokumentoversiktbruker_aktoerid.query"), null, null);
 		RequestEntity<GraphQLRequest> requestEntity = new RequestEntity<>(request, createHeaders(), HttpMethod.POST, new URI("/graphql"));
 		return restTemplate.exchange(requestEntity, GraphQLResponse.class);
 	}
 
-	private ResponseEntity<GraphQLResponse> callDokumentOversikBrukerWithAktoerIdInkluderMidlertidige() throws IOException, URISyntaxException {
+	private ResponseEntity<GraphQLResponse> callDokumentOversikBrukerWithAktoerIdInkluderMidlertidige() throws URISyntaxException {
 		GraphQLRequest request = new GraphQLRequest(stringFromClasspath("dokumentoversiktBruker/dokumentoversiktbruker_aktoerid_midlertidig.query"), null, null);
 		RequestEntity<GraphQLRequest> requestEntity = new RequestEntity<>(request, createHeaders(), HttpMethod.POST, new URI("/graphql"));
 		return restTemplate.exchange(requestEntity, GraphQLResponse.class);
 	}
 
-	private ResponseEntity<GraphQLResponse> callDokumentOversikBrukerWithFnr() throws IOException, URISyntaxException {
+	private ResponseEntity<GraphQLResponse> callDokumentOversikBrukerWithFnr() throws URISyntaxException {
 		GraphQLRequest request = new GraphQLRequest(stringFromClasspath("dokumentoversiktBruker/dokumentoversiktbruker_fnr.query"), null, null);
 		RequestEntity<GraphQLRequest> requestEntity = new RequestEntity<>(request, createHeaders(), HttpMethod.POST, new URI("/graphql"));
 		return restTemplate.exchange(requestEntity, GraphQLResponse.class);
 	}
 
-	private ResponseEntity<GraphQLResponse> callDokumentOversikBrukerWithOrgnr() throws IOException, URISyntaxException {
+	private ResponseEntity<GraphQLResponse> callDokumentOversikBrukerWithOrgnr() throws URISyntaxException {
 		GraphQLRequest request = new GraphQLRequest(stringFromClasspath("dokumentoversiktBruker/dokumentoversiktbruker_orgnr.query"), null, null);
 		RequestEntity<GraphQLRequest> requestEntity = new RequestEntity<>(request, createHeaders(), HttpMethod.POST, new URI("/graphql"));
 		return restTemplate.exchange(requestEntity, GraphQLResponse.class);
@@ -572,7 +572,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 		return objectMapper.convertValue(responseEntityData, Dokumentoversikt.class);
 	}
 
-	private ResponseEntity<GraphQLResponse> callDokumentOversikBrukerWithFraDato(Map<String, Object> variables) throws IOException, URISyntaxException {
+	private ResponseEntity<GraphQLResponse> callDokumentOversikBrukerWithFraDato(Map<String, Object> variables) throws URISyntaxException {
 		GraphQLRequest request = new GraphQLRequest(stringFromClasspath("dokumentoversiktBruker/dokumentoversiktbruker_literals.query"), null, variables);
 		RequestEntity<GraphQLRequest> requestEntity = new RequestEntity<>(request, createHeaders(), HttpMethod.POST, new URI("/graphql"));
 		return restTemplate.exchange(requestEntity, GraphQLResponse.class);

@@ -87,7 +87,7 @@ class JournalpostIT extends AbstractItest {
 	void shouldQueryInngaaendeJournalpostByJournalpostIdWhenAllAccessPermit() {
 		abacPermit();
 		stubPdl("hentPdlDataForIdent-inngaaendeBrevBruker-happy.json");
-		stubDokarkivJournalpost("journalpost-gsak-inngaaende-happy.json");
+		stubDokarkivJournalpost("journalpost-sak-inngaaende-happy.json");
 
 		GraphQLResponse graphQLResponse = journalpostQuery();
 		Journalpost journalpost = parseJournalpost(graphQLResponse);
@@ -172,7 +172,7 @@ class JournalpostIT extends AbstractItest {
 	@Test
 	void shouldQueryUtgaaendeJournalpostByJournalpostIdWhenAllAccessPermit() {
 		abacPermit();
-		stubDokarkivJournalpost("journalpost-gsak-utgaaende-happy.json");
+		stubDokarkivJournalpost("journalpost-sak-utgaaende-happy.json");
 		stubPdl();
 
 		Journalpost journalpost = parseJournalpost(journalpostQuery());
@@ -183,7 +183,7 @@ class JournalpostIT extends AbstractItest {
 	@Test
 	void shouldQueryUtgaaendeJournalpostByEksternReferanseIdWhenAllAccessPermit() {
 		abacPermit();
-		stubDokarkivJournalpostEksternReferanseId("journalpost-gsak-utgaaende-happy.json");
+		stubDokarkivJournalpostEksternReferanseId("journalpost-sak-utgaaende-happy.json");
 		stubPdl();
 
 		Journalpost journalpost = parseJournalpost(journalpostQuery("journalpost_eksternreferanse_id.query"));
@@ -270,7 +270,7 @@ class JournalpostIT extends AbstractItest {
 	@Test
 	void shouldQueryJournalpostByJournalpostIdWhenJournalpostIdOgEksternReferanseIdAreGiven() {
 		abacPermit();
-		stubDokarkivJournalpost("journalpost-gsak-inngaaende-happy.json");
+		stubDokarkivJournalpost("journalpost-sak-inngaaende-happy.json");
 		stubPdl("hentPdlDataForIdent-inngaaendeBrevBruker-happy.json");
 
 		Journalpost journalpost = parseJournalpost(journalpostQuery("journalpost_with_journalpostid_eksternreferanseid.query"));
@@ -291,7 +291,7 @@ class JournalpostIT extends AbstractItest {
 	@Test
 	void shouldQueryJournalpostWhenGenerellSakAndNoBruker() {
 		abacPermit();
-		stubDokarkivJournalpost("journalpost-gsak-inngaaende-generell-sak.json");
+		stubDokarkivJournalpost("journalpost-sak-inngaaende-generell-sak.json");
 		stubPdl("hentPdlDataForIdent-inngaaendeBrevBruker-happy.json");
 
 		Journalpost journalpost = parseJournalpost(journalpostQuery());
@@ -311,7 +311,7 @@ class JournalpostIT extends AbstractItest {
 	@Test
 	void shouldQueryJournalpostWhenMidlertidig() {
 		abacPermit();
-		stubDokarkivJournalpost("journalpost-gsak-inngaaende-midlertidig.json");
+		stubDokarkivJournalpost("journalpost-sak-inngaaende-midlertidig.json");
 		stubPdl("hentPdlDataForIdent-inngaaendeBrevBruker-happy.json");
 
 		GraphQLResponse graphQLResponse = journalpostQuery();
@@ -363,7 +363,7 @@ class JournalpostIT extends AbstractItest {
 	@Test
 	void shouldQueryJournalpostAndNotFetchDokumenterWhenDokumenterIsNotInQuery() {
 		abacPermit();
-		stubDokarkivJournalpost("journalpost-gsak-inngaaende-ingen-dokumenter.json", SAFINTERN_FETCHPATHS_UTEN_DOKUMENTER);
+		stubDokarkivJournalpost("journalpost-sak-inngaaende-ingen-dokumenter.json", SAFINTERN_FETCHPATHS_UTEN_DOKUMENTER);
 		stubPdl("hentPdlDataForIdent-inngaaendeBrevBruker-happy.json");
 
 		Journalpost journalpost = parseJournalpost(journalpostQuery("journalpost_ingen_dokumenter.query"));
@@ -375,7 +375,7 @@ class JournalpostIT extends AbstractItest {
 	@Test
 	void shouldQueryJournalpostAndIgnoreUkjentVariantformat() {
 		abacPermit();
-		stubDokarkivJournalpost("journalpost-gsak-inngaaende-ukjent-variant.json");
+		stubDokarkivJournalpost("journalpost-sak-inngaaende-ukjent-variant.json");
 		stubPdl("hentPdlDataForIdent-inngaaendeBrevBruker-happy.json");
 
 		Journalpost journalpost = parseJournalpost(journalpostQuery());
@@ -390,7 +390,7 @@ class JournalpostIT extends AbstractItest {
 	void shouldQueryJournalpostByJournalpostIdWhenOrgnummerOnSakAndNotNavBedrift() {
 		abacPermit();
 		stubNavHrOrganisasjonNei(ORG_NR);
-		stubDokarkivJournalpost("journalpost-gsak-inngaaende-orgnr.json");
+		stubDokarkivJournalpost("journalpost-sak-inngaaende-orgnr.json");
 
 		GraphQLResponse graphQLResponse = journalpostQuery();
 		Journalpost journalpost = parseJournalpost(graphQLResponse);
@@ -406,7 +406,7 @@ class JournalpostIT extends AbstractItest {
 	void shouldQueryJournalpostByJournalpostIdWhenOrgnummerOnSakAndNavBedriftUnknownResponse() {
 		abacPermit();
 		stubNavHrOrganisasjonNei(ORG_NR);
-		stubDokarkivJournalpost("journalpost-gsak-inngaaende-orgnr.json");
+		stubDokarkivJournalpost("journalpost-sak-inngaaende-orgnr.json");
 
 		GraphQLResponse graphQLResponse = journalpostQuery();
 		Journalpost journalpost = parseJournalpost(graphQLResponse);
@@ -419,7 +419,7 @@ class JournalpostIT extends AbstractItest {
 	void shouldQueryJournalpostByJournalpostIdWhenOrgnummerOnSakAndNavBedriftEmptyResponse() {
 		abacPermit();
 		stubNavHrOrganisasjonNei(ORG_NR);
-		stubDokarkivJournalpost("journalpost-gsak-inngaaende-orgnr.json");
+		stubDokarkivJournalpost("journalpost-sak-inngaaende-orgnr.json");
 
 		GraphQLResponse graphQLResponse = journalpostQuery();
 		Journalpost journalpost = parseJournalpost(graphQLResponse);
@@ -435,7 +435,7 @@ class JournalpostIT extends AbstractItest {
 	void shouldQueryJournalpostByJournalpostIdWhenOrgnummerOnSakAndIsNavBedriftAndIsEgenAnsattBehandler() {
 		abacPermit();
 		stubNavHrOrganisasjonJa(ORG_NR);
-		stubDokarkivJournalpost("journalpost-gsak-inngaaende-orgnr.json");
+		stubDokarkivJournalpost("journalpost-sak-inngaaende-orgnr.json");
 
 		GraphQLResponse graphQLResponse = journalpostQuery();
 		Journalpost journalpost = parseJournalpost(graphQLResponse);
@@ -453,7 +453,7 @@ class JournalpostIT extends AbstractItest {
 		abacPermit();
 		stubNavHrOrganisasjonJa(ORG_NR);
 		stubMsGraphMemberOfNoGroupsDefaultSaksbehandler();
-		stubDokarkivJournalpost("journalpost-gsak-inngaaende-orgnr.json");
+		stubDokarkivJournalpost("journalpost-sak-inngaaende-orgnr.json");
 
 		GraphQLResponse graphQLResponse = journalpostQuery();
 		assertErrorWithCodeAndReason(graphQLResponse, FORBIDDEN, ORGNR_NAV_STAT);
@@ -464,7 +464,7 @@ class JournalpostIT extends AbstractItest {
 	void shouldQueryJournalpostByJournalpostIdWhenOrgnummerOnSakAndClientCredential() {
 		abacPermit();
 		stubNavHrOrganisasjonNei(ORG_NR);
-		stubDokarkivJournalpost("journalpost-gsak-inngaaende-orgnr.json");
+		stubDokarkivJournalpost("journalpost-sak-inngaaende-orgnr.json");
 
 		GraphQLResponse graphQLResponse = journalpostQuery("journalpost.query", createHeadersClientCredential());
 		Journalpost journalpost = parseJournalpost(graphQLResponse);
@@ -480,7 +480,7 @@ class JournalpostIT extends AbstractItest {
 	void shouldQueryJournalpostByJournalpostIdWhenOrgnummerOnSakAndNotNavBedriftAndNavUserIdHeader() {
 		abacPermit();
 		stubNavHrOrganisasjonNei(ORG_NR);
-		stubDokarkivJournalpost("journalpost-gsak-inngaaende-orgnr.json");
+		stubDokarkivJournalpost("journalpost-sak-inngaaende-orgnr.json");
 
 		GraphQLResponse graphQLResponse = journalpostQueryNavUserId();
 		Journalpost journalpost = parseJournalpost(graphQLResponse);
@@ -496,7 +496,7 @@ class JournalpostIT extends AbstractItest {
 	void shouldQueryJournalpostByJournalpostIdWhenOrgnummerOnSakAndIsNavBedriftAndIsEgenAnsattBehandlerAndNavUserIdHeader() {
 		abacPermit();
 		stubNavHrOrganisasjonJa(ORG_NR);
-		stubDokarkivJournalpost("journalpost-gsak-inngaaende-orgnr.json");
+		stubDokarkivJournalpost("journalpost-sak-inngaaende-orgnr.json");
 
 		GraphQLResponse graphQLResponse = journalpostQueryNavUserId();
 		Journalpost journalpost = parseJournalpost(graphQLResponse);
@@ -514,7 +514,7 @@ class JournalpostIT extends AbstractItest {
 		abacPermit();
 		stubNavHrOrganisasjonJa(ORG_NR);
 		stubMsGraphMemberOfNoGroupsDefaultSaksbehandler();
-		stubDokarkivJournalpost("journalpost-gsak-inngaaende-orgnr.json");
+		stubDokarkivJournalpost("journalpost-sak-inngaaende-orgnr.json");
 
 		GraphQLResponse graphQLResponse = journalpostQueryNavUserId();
 		assertErrorWithCodeAndReason(graphQLResponse, FORBIDDEN, ORGNR_NAV_STAT);
@@ -524,7 +524,7 @@ class JournalpostIT extends AbstractItest {
 	@Test
 	void shouldReturnNullJournalpostWhenDenyOnPep1g() {
 		abacDenyPep1g();
-		stubDokarkivJournalpost("journalpost-gsak-inngaaende-happy.json");
+		stubDokarkivJournalpost("journalpost-sak-inngaaende-happy.json");
 		stubPdl("hentPdlDataForIdent-inngaaendeBrevBruker-happy.json");
 
 		GraphQLResponse graphQLResponse = journalpostQuery();
@@ -536,7 +536,7 @@ class JournalpostIT extends AbstractItest {
 	void shouldReturnNullJournalpostWhenDenyOnPep2() {
 		abacDenyPep2();
 		stubBidrag();
-		stubDokarkivJournalpost("journalpost-gsak-inngaaende-tema-far.json");
+		stubDokarkivJournalpost("journalpost-sak-inngaaende-tema-far.json");
 		stubPdl("hentPdlDataForIdent-inngaaendeBrevBruker-happy.json");
 
 		GraphQLResponse graphQLResponse = journalpostQuery();
@@ -547,7 +547,7 @@ class JournalpostIT extends AbstractItest {
 	@Test
 	void shouldReturnNullJournalpostWhenDenyOnPep2AndMidlertidigJournalpost() {
 		abacDenyPep2MidlertidigJournalpost();
-		stubDokarkivJournalpost("journalpost-gsak-inngaaende-midlertidig-tema-far.json");
+		stubDokarkivJournalpost("journalpost-sak-inngaaende-midlertidig-tema-far.json");
 
 		GraphQLResponse graphQLResponse = journalpostQuery();
 		assertErrorWithCodeAndReason(graphQLResponse, FORBIDDEN, TEMA);
@@ -557,7 +557,7 @@ class JournalpostIT extends AbstractItest {
 	@Test
 	void shouldReturnSaksbehandlerTilgangFalseAndSkjultTittelWhenDenyOnPep2d() {
 		abacDenyPep2dSkipPep2();
-		stubDokarkivJournalpost("journalpost-gsak-inngaaende-happy.json");
+		stubDokarkivJournalpost("journalpost-sak-inngaaende-happy.json");
 		stubPdl("hentPdlDataForIdent-inngaaendeBrevBruker-happy.json");
 
 		Journalpost journalpost = parseJournalpost(journalpostQuery());
@@ -574,7 +574,7 @@ class JournalpostIT extends AbstractItest {
 	@Test
 	void shouldReturnSaksbehandlerTilgangFalseAndSkjultTittelWhenDenyOnPep8d() {
 		denyPep8d();
-		stubDokarkivJournalpost("journalpost-gsak-inngaaende-avsluttet-sak.json");
+		stubDokarkivJournalpost("journalpost-sak-inngaaende-avsluttet-sak.json");
 		stubPdl("hentPdlDataForIdent-inngaaendeBrevBruker-happy.json");
 
 		Journalpost journalpost = parseJournalpost(journalpostQuery());
@@ -591,7 +591,7 @@ class JournalpostIT extends AbstractItest {
 	@Test
 	void shouldReturnNullJournalpostWhenDenyOnPep3() {
 		abacDenyPep3SkipPep2();
-		stubDokarkivJournalpost("journalpost-gsak-inngaaende-tema-bid.json");
+		stubDokarkivJournalpost("journalpost-sak-inngaaende-tema-bid.json");
 		stubPdl("hentPdlDataForIdent-inngaaendeBrevBruker-happy.json");
 		stubBidrag();
 
@@ -603,7 +603,7 @@ class JournalpostIT extends AbstractItest {
 	@Test
 	void shouldReturnNullJournalpostWhenDenyOnPep4() {
 		abacDenyPep4SkipPep2Pep3();
-		stubDokarkivJournalpost("journalpost-gsak-inngaaende-skjerming.json");
+		stubDokarkivJournalpost("journalpost-sak-inngaaende-skjerming.json");
 		stubPdl("hentPdlDataForIdent-inngaaendeBrevBruker-happy.json");
 
 		GraphQLResponse graphQLResponse = journalpostQuery();
@@ -614,7 +614,7 @@ class JournalpostIT extends AbstractItest {
 	@Test
 	void shouldReturnJournalpostWithOneFilteredDokumentInfoWhenDenyOnPep5() {
 		abacDenyPep5SkipPep2Pep3Pep4();
-		stubDokarkivJournalpost("journalpost-gsak-inngaaende-dokumentinfo-skjerming.json");
+		stubDokarkivJournalpost("journalpost-sak-inngaaende-dokumentinfo-skjerming.json");
 		stubPdl("hentPdlDataForIdent-inngaaendeBrevBruker-happy.json");
 
 		Journalpost journalpost = parseJournalpost(journalpostQuery());
@@ -627,7 +627,7 @@ class JournalpostIT extends AbstractItest {
 	@Test
 	void shouldReturnSaksbehandlerTilgangFalseOnVariantWithDenyOnPep6d() {
 		abacDenyPep6dSkipPep2Pep3Pep4Pep5();
-		stubDokarkivJournalpost("journalpost-gsak-inngaaende-fildetaljer-skjerming.json");
+		stubDokarkivJournalpost("journalpost-sak-inngaaende-fildetaljer-skjerming.json");
 		stubPdl("hentPdlDataForIdent-inngaaendeBrevBruker-happy.json");
 
 		Journalpost journalpost = parseJournalpost(journalpostQuery());
@@ -661,7 +661,7 @@ class JournalpostIT extends AbstractItest {
 	@Test
 	void shouldReturnErrorCodeServerErrorWhenSaksrelasjonMetadataMismatch() {
 		abacPermit();
-		stubDokarkivJournalpost("journalpost-gsak-inngaaende-faktisk-pen.json");
+		stubDokarkivJournalpost("journalpost-sak-inngaaende-faktisk-pen.json");
 		GraphQLResponse graphQLResponse = journalpostQuery();
 
 		assertErrorWithCode(graphQLResponse, SERVER_ERROR);

@@ -21,16 +21,13 @@ public class TilgangsmaskinenBackedPep1gImpl extends StandardTilgangsmaskinenBac
 	private final TilgangsmaskinenConsumer tilgangsmaskinenConsumer;
 	private final NavOrgService navOrgService;
 	private final NavUserGroupMembershipService navUserGroupMembershipService;
-	private final NaisTexasConsumer naisTexasConsumer;
 
-	public TilgangsmaskinenBackedPep1gImpl(NaisTexasConsumer naisTexasConsumer,
-										   TilgangsmaskinenConsumer tilgangsmaskinenConsumer,
+	public TilgangsmaskinenBackedPep1gImpl(TilgangsmaskinenConsumer tilgangsmaskinenConsumer,
 										   NavOrgService navOrgService,
 										   NavUserGroupMembershipService navUserGroupMembershipService) {
 		this.tilgangsmaskinenConsumer = tilgangsmaskinenConsumer;
 		this.navOrgService = navOrgService;
 		this.navUserGroupMembershipService = navUserGroupMembershipService;
-		this.naisTexasConsumer = naisTexasConsumer;
 	}
 
 	@Override

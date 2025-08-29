@@ -27,13 +27,14 @@ public class NaisTexasConsumer {
 	private static final Pattern TARGET_PATTERN = Pattern.compile("api://[^.]+\\.[^.]+\\.[^.]+/\\.default");
 
 	private final RestClient restClient;
+	private final NaisProperties naisProperties;
 
 	public NaisTexasConsumer(NaisProperties naisProperties,
 							 ClientHttpRequestFactory clientHttpRequestFactory,
 							 RestClient.Builder restClientBuilder) {
+		this.naisProperties = naisProperties;
 		this.restClient = restClientBuilder
 				.requestFactory(clientHttpRequestFactory)
-				.baseUrl(naisProperties.getTokenExchangeEndpoint())
 				.build();
 	}
 
@@ -54,6 +55,7 @@ public class NaisTexasConsumer {
 		try {
 			TokenResponse tokenResponse = restClient
 					.post()
+					.uri(naisProperties.getTokenExchangeEndpoint())
 					.accept(APPLICATION_JSON)
 					.contentType(APPLICATION_FORM_URLENCODED)
 					.body(formData)
@@ -82,7 +84,8 @@ public class NaisTexasConsumer {
 		formData.add("identity_provider", "azuread");
 		formData.add("target", targetScope);
 		return requireNonNull(restClient.post()
-				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.uri(naisProperties.getTokenEndpoint())
+				.contentType(APPLICATION_FORM_URLENCODED)
 				.body(formData)
 				.retrieve()
 				.body(TokenResponse.class))

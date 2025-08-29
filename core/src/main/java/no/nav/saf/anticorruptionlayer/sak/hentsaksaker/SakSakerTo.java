@@ -1,4 +1,4 @@
-package no.nav.saf.anticorruptionlayer.gsak.hentgsaksaker;
+package no.nav.saf.anticorruptionlayer.sak.hentsaksaker;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
@@ -7,10 +7,10 @@ import lombok.Value;
 
 import java.time.OffsetDateTime;
 
-@JsonDeserialize(builder = GsakSakerTo.GsakSakerToBuilder.class)
+@JsonDeserialize(builder = SakSakerTo.SakSakerToBuilder.class)
 @Value
 @Builder
-public class GsakSakerTo {
+public class SakSakerTo {
 	Integer id;
 	String tema;
 	String applikasjon;
@@ -22,7 +22,7 @@ public class GsakSakerTo {
 	OffsetDateTime opprettetTidspunkt;
 
 	@JsonPOJOBuilder(withPrefix = "")
-	public static class GsakSakerToBuilder {
+	public static class SakSakerToBuilder {
 
 	}
 }

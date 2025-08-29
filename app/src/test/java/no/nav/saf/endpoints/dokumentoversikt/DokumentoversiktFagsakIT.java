@@ -12,7 +12,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 
-import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.LinkedHashMap;
@@ -41,35 +40,26 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 class DokumentoversiktFagsakIT extends AbstractItest {
 
-	private static final String FAGSAK_ID = "ARENA-1";
-	private static final String FAGSAK_SYSTEM = "AO01";
 	private static final String KANAL_REFERANSE_ID = "KANAL REFERANSE ID";
+
 
 	private final ObjectMapper objectMapper = new ObjectMapper();
 
 	@BeforeEach
 	void setup() {
 		setupHappyPathAzureToken();
+		stubTexasToken();
 	}
 
 	@Test
-	void shouldHentDokumentoversiktFagsakWithFagsakIdGSAK() throws IOException, URISyntaxException {
+	void shouldHentDokumentoversiktFagsakWithFagsakIdSak() throws URISyntaxException {
 		abacPermit();
 
-		stubFor(get("/gsak?fagsakNr=" + FAGSAK_ID + "&applikasjon=" + FAGSAK_SYSTEM)
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("gsak/gsak-sakerByFagsakIdAndFagsaksystem-happy.json")));
-		stubFor(post("/hentjournalsakinfo/finnjournalposter")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("joark/finnjournalposter-happy.json")));
-		stubFor(post("/pdl")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("pdl/hentPdlDataForIdent-happy.json")));
+		stubSakMedFagSak("sak/sak-sakerByFagsakIdAndFagsaksystem-happy.json");
+		stubFinnjournalposter("finnjournalposter-happy.json");
+		stubPdl();
 
-		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikFagsakGsak();
+		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikFagsakSak();
 		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
 
 		assertEquals(OK, responseEntity.getStatusCode());
@@ -85,25 +75,16 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 	}
 
 	@Test
-	void shouldHentDokumentoversiktFagsakWithFagsakIdGSAKAndManyVedleggs() throws IOException, URISyntaxException {
+	void shouldHentDokumentoversiktFagsakWithFagsakIdGSAKAndManyVedleggs() throws URISyntaxException {
 		abacPermit();
 
-		stubFor(get("/gsak?fagsakNr=" + FAGSAK_ID + "&applikasjon=" + FAGSAK_SYSTEM)
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("gsak/gsak-sakerByFagsakIdAndFagsaksystem-happy.json")));
+		stubSakMedFagSak("sak/sak-sakerByFagsakIdAndFagsaksystem-happy.json");
 		// Merk: i filen under kommer vedleggene i feil rekkefølge "fra dokarkiv" for å teste at saf sorterer dem riktig.
 		// i realiteten kommer de alltid i rekkefølge fra dokarkiv, men *kan komme* i uorden internt i saf
-		stubFor(post("/hentjournalsakinfo/finnjournalposter")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("joark/finnjournalposter-happy-mangevedlegg.json")));
-		stubFor(post("/pdl")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("pdl/hentPdlDataForIdent-happy.json")));
+		stubFinnjournalposter("finnjournalposter-happy-mangevedlegg.json");
+		stubPdl();
 
-		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikFagsakGsak();
+		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikFagsakSak();
 		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
 
 		assertEquals(OK, responseEntity.getStatusCode());
@@ -123,24 +104,18 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 	}
 
 	@Test
-	void shouldHentDokumentoversiktFagsakWhenGsakFagsakAndHistoriskFagsakAktoerId() throws IOException, URISyntaxException {
+	void shouldHentDokumentoversiktFagsakWhenGsakFagsakAndHistoriskFagsakAktoerId() throws URISyntaxException {
 		abacPermit();
 
-		stubFor(get("/gsak?fagsakNr=" + FAGSAK_ID + "&applikasjon=" + FAGSAK_SYSTEM)
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("gsak/gsak-sakerByFagsakIdAndFagsaksystem-happy.json")));
+		stubSakMedFagSak("sak/sak-sakerByFagsakIdAndFagsaksystem-happy.json");
 		stubFor(post("/hentjournalsakinfo/finnjournalposter")
 				.withRequestBody(matchingJsonPath("$.gsakSakIds", containing("119185782")))
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("joark/finnjournalposter-happy.json")));
-		stubFor(post("/pdl")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("pdl/pdl-fagsak-aktoerid-historisk.json")));
+		stubPdl();
 
-		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikFagsakGsak();
+		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikFagsakSak();
 		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
 
 		assertEquals(OK, responseEntity.getStatusCode());
@@ -154,26 +129,14 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 	}
 
 	@Test
-	void shouldHentDokumentoversiktFagsakWithFagsakIdPSAK() throws IOException, URISyntaxException {
+	void shouldHentDokumentoversiktFagsakWithFagsakIdPSAK() throws URISyntaxException {
 		abacPermit();
 
 		setupHappyPathAzureToken();
-		stubFor(get(PENSJON_API_PIP_HENT_BRUKER_OG_ENHETSTILGANGER_FOR_SAK_V1_URL)
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("psak/psak-hentBrukerForSak-happy.json")));
-		stubFor(post("/hentjournalsakinfo/finnjournalposter")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("joark/finnjournalposter-happy.json")));
-		stubFor(post("/pdl")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("pdl/hentPdlDataForIdent-happy.json")));
-		stubFor(get(PENSJON_API_SAK_SAMMENDRAG_URL)
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
-						.withBodyFile("psak/psak-hentSakSammendragListe-happy.json")));
+		stubPensjonBrukerForSak();
+		stubFinnjournalposter("finnjournalposter-happy.json");
+		stubPdl();
+		stubPensjonSakSammendrag("psak-hentSakSammendragListe-happy.json");
 
 		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikFagsakPsak();
 		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
@@ -191,19 +154,13 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 	}
 
 	@Test
-	void shouldHentDokumentoversiktFagsakWithFagsakIDSladdet() throws IOException, URISyntaxException {
+	void shouldHentDokumentoversiktFagsakWithFagsakIDSladdet() throws URISyntaxException {
 		abacPermit();
 
-		stubFor(get("/gsak?fagsakNr=" + FAGSAK_ID + "&applikasjon=" + FAGSAK_SYSTEM)
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("gsak/gsak-sakerByFagsakIdAndFagsaksystem-happy.json")));
-		stubFor(post("/hentjournalsakinfo/finnjournalposter")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
-						.withBodyFile("joark/finnjournalposter_single_sladdet-happy.json")));
+		stubSakMedFagSak("sak/sak-sakerByFagsakIdAndFagsaksystem-happy.json");
+		stubFinnjournalposter("finnjournalposter_single_sladdet-happy.json");
 
-		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikFagsakGsak();
+		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikFagsakSak();
 		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
 
 		assertEquals(OK, responseEntity.getStatusCode());
@@ -214,12 +171,12 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 	}
 
 	@Test
-	void hentSakerTechnicalFail() throws IOException, URISyntaxException {
+	void hentSakerTechnicalFail() throws URISyntaxException {
 		abacDenyPep1g();
-		stubFor(get("/gsak?fagsakNr=ARENA-1&applikasjon=AO01")
+		stubFor(get(SAK_API_PATH_MED_QUERY_PARA_FAGSAK_NR)
 				.willReturn(aResponse().withStatus(INTERNAL_SERVER_ERROR.value())));
 
-		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikFagsakGsak();
+		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikFagsakSak();
 		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
 
 		assertEquals(OK, responseEntity.getStatusCode());
@@ -227,12 +184,12 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 	}
 
 	@Test
-	void hentSakerFunctionalFail() throws IOException, URISyntaxException {
+	void hentSakerFunctionalFail() throws URISyntaxException {
 		abacDenyPep1g();
-		stubFor(get("/gsak?fagsakNr=ARENA-1&applikasjon=AO01")
+		stubFor(get(SAK_API_PATH_MED_QUERY_PARA_FAGSAK_NR)
 				.willReturn(aResponse().withStatus(BAD_REQUEST.value())));
 
-		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikFagsakGsak();
+		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikFagsakSak();
 		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
 
 		assertEquals(OK, responseEntity.getStatusCode());
@@ -241,23 +198,14 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 
 
 	@Test
-	void shouldHentDokumentoversiktFagsakAktoerTechnicalFail() throws IOException, URISyntaxException {
+	void shouldHentDokumentoversiktFagsakAktoerTechnicalFail() throws URISyntaxException {
 		abacPermit();
 
-		stubFor(get(PENSJON_API_PIP_HENT_BRUKER_OG_ENHETSTILGANGER_FOR_SAK_V1_URL)
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("psak/psak-hentBrukerForSak-happy.json")));
-		stubFor(get("/gsak?fagsakNr=" + FAGSAK_ID + "&applikasjon=" + FAGSAK_SYSTEM)
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("gsak/gsak-sakerByFagsakIdAndFagsaksystem-happy.json")));
-		stubFor(post("/hentjournalsakinfo/finnjournalposter")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("joark/finnjournalposter-empty.json")));
+		stubPensjonBrukerForSak();
+		stubSakMedFagSak("sak/sak-sakerByFagsakIdAndFagsaksystem-happy.json");
+		stubFinnjournalposter("finnjournalposter-empty.json");
 
-		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikFagsakGsak();
+		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikFagsakSak();
 		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
 
 		assertEquals(OK, responseEntity.getStatusCode());
@@ -265,17 +213,11 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 	}
 
 	@Test
-	void shouldHentDokumentoversikHentSakSammendragListeTechnicalFail() throws IOException, URISyntaxException {
+	void shouldHentDokumentoversiktHentSakSammendragListeTechnicalFail() throws URISyntaxException {
 		abacPermit();
 
-		stubFor(get(PENSJON_API_PIP_HENT_BRUKER_OG_ENHETSTILGANGER_FOR_SAK_V1_URL)
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("psak/psak-hentBrukerForSak-happy.json")));
-		stubFor(post("/hentjournalsakinfo/finnjournalposter")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("joark/finnjournalposter-empty.json")));
+		stubPensjonBrukerForSak();
+		stubFinnjournalposter("finnjournalposter-empty.json");
 		stubFor(get(PENSJON_API_SAK_SAMMENDRAG_URL)
 				.willReturn(aResponse().withStatus(INTERNAL_SERVER_ERROR.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
@@ -289,17 +231,11 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 	}
 
 	@Test
-	void shouldHentDokumentoversikHentSakSammendragListeFunctionalFail() throws IOException, URISyntaxException {
+	void shouldHentDokumentoversiktHentSakSammendragListeFunctionalFail() throws URISyntaxException {
 		abacPermit();
 
-		stubFor(get(PENSJON_API_PIP_HENT_BRUKER_OG_ENHETSTILGANGER_FOR_SAK_V1_URL)
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("psak/psak-hentBrukerForSak-happy.json")));
-		stubFor(post("/hentjournalsakinfo/finnjournalposter")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("joark/finnjournalposter-empty.json")));
+		stubPensjonBrukerForSak();
+		stubFinnjournalposter("finnjournalposter-empty.json");
 		stubFor(get(PENSJON_API_SAK_SAMMENDRAG_URL)
 				.willReturn(aResponse().withStatus(BAD_REQUEST.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
@@ -313,23 +249,14 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 	}
 
 	@Test
-	void shouldReturnEmptyResponseWhenFinnJournalposterEmptyResponse() throws IOException, URISyntaxException {
+	void shouldReturnEmptyResponseWhenFinnJournalposterEmptyResponse() throws URISyntaxException {
 		abacPermit();
 
-		stubFor(get("/gsak?fagsakNr=" + FAGSAK_ID + "&applikasjon=" + FAGSAK_SYSTEM)
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("gsak/gsak-sakerByFagsakIdAndFagsaksystem-happy.json")));
-		stubFor(post("/hentjournalsakinfo/finnjournalposter")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("joark/finnjournalposter-empty.json")));
-		stubFor(post("/pdl")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("pdl/hentPdlDataForIdent-happy.json")));
+		stubSakMedFagSak("sak/sak-sakerByFagsakIdAndFagsaksystem-happy.json");
+		stubFinnjournalposter("finnjournalposter-empty.json");
+		stubPdl();
 
-		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikFagsakGsak();
+		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikFagsakSak();
 		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
 
 		assertEquals(OK, responseEntity.getStatusCode());
@@ -340,23 +267,14 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 	}
 
 	@Test
-	void shouldGetUnauthorizedFromPep1g() throws IOException, URISyntaxException {
+	void shouldGetUnauthorizedFromPep1g() throws URISyntaxException {
 		abacDenyPep1g();
 
-		stubFor(get("/gsak?fagsakNr=" + FAGSAK_ID + "&applikasjon=" + FAGSAK_SYSTEM)
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("gsak/gsak-sakerByFagsakIdAndFagsaksystem-happy.json")));
-		stubFor(post("/hentjournalsakinfo/finnjournalposter")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("joark/finnjournalposter-happy.json")));
-		stubFor(post("/pdl")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("pdl/hentPdlDataForIdent-happy.json")));
+		stubSakMedFagSak("sak/sak-sakerByFagsakIdAndFagsaksystem-happy.json");
+		stubFinnjournalposter("finnjournalposter-happy.json");
+		stubPdl();
 
-		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikFagsakGsak();
+		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikFagsakSak();
 		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
 
 		assertEquals(4, dokumentoversikt.getJournalposter().size());
@@ -366,22 +284,13 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 	}
 
 	@Test
-	void shouldGetUnauthorizedFromPep2() throws IOException, URISyntaxException {
+	void shouldGetUnauthorizedFromPep2() throws URISyntaxException {
 		abacDenyPep2();
-		stubFor(get("/gsak?fagsakNr=" + FAGSAK_ID + "&applikasjon=" + FAGSAK_SYSTEM)
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("gsak/gsak-sakerByFagsakIdAndFagsaksystem-FAR-happy.json")));
-		stubFor(post("/hentjournalsakinfo/finnjournalposter")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("joark/finnjournalposter-empty.json")));
-		stubFor(post("/pdl")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("pdl/hentPdlDataForIdent-happy.json")));
+		stubSakMedFagSak("sak/sak-sakerByFagsakIdAndFagsaksystem-FAR-happy.json");
+		stubFinnjournalposter("finnjournalposter-empty.json");
+		stubPdl();
 
-		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikFagsakGsak();
+		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikFagsakSak();
 		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
 
 		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter"))
@@ -391,22 +300,13 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 	}
 
 	@Test
-	void shouldGetUnauthorizedFromPep2d() throws IOException, URISyntaxException {
+	void shouldGetUnauthorizedFromPep2d() throws URISyntaxException {
 		abacDenyPep2dSkipPep2();
-		stubFor(get("/gsak?fagsakNr=" + FAGSAK_ID + "&applikasjon=" + FAGSAK_SYSTEM)
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("gsak/gsak-sakerByFagsakIdAndFagsaksystem-happy.json")));
-		stubFor(post("/hentjournalsakinfo/finnjournalposter")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("joark/finnjournalposter-dokumentoversiktfagsak-happy.json")));
-		stubFor(post("/pdl")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("pdl/hentPdlDataForIdent-happy.json")));
+		stubSakMedFagSak("sak/sak-sakerByFagsakIdAndFagsaksystem-happy.json");
+		stubFinnjournalposter("finnjournalposter-dokumentoversiktfagsak-happy.json");
+		stubPdl();
 
-		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikFagsakGsak();
+		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikFagsakSak();
 		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
 
 		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter"))
@@ -417,27 +317,18 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 	}
 
 	@Test
-	void shouldGetUnauthorizedFromPep3() throws IOException, URISyntaxException {
+	void shouldGetUnauthorizedFromPep3() throws URISyntaxException {
 		abacDenyPep3SkipPep2();
-		stubFor(get("/gsak?fagsakNr=" + FAGSAK_ID + "&applikasjon=" + FAGSAK_SYSTEM)
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("gsak/gsak-sakerBySaksId-happy.json")));
-		stubFor(post("/hentjournalsakinfo/finnjournalposter")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("joark/finnjournalposter_single_bidragAndSkjerming-happy.json")));
+		stubSakMedFagSak("sak/sak-sakerBySaksId-happy.json");
+		stubFinnjournalposter("finnjournalposter_single_bidragAndSkjerming-happy.json");
 		stubPensjonSakSammendrag("psak-hentSakSammendragListe-happy-empty.json");
-		stubFor(post("/pdl")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("pdl/hentPdlDataForIdent-happy.json")));
+		stubPdl();
 		stubFor(get("/bidrag/201545004").willReturn(aResponse()
 				.withStatus(OK.value())
 				.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 				.withBodyFile("bidrag/bidragsak-happy.json")));
 
-		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikFagsakGsak();
+		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikFagsakSak();
 		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
 
 		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter"))
@@ -449,22 +340,13 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 	}
 
 	@Test
-	void shouldGetUnauthorizedFromPep4() throws IOException, URISyntaxException {
+	void shouldGetUnauthorizedFromPep4() throws URISyntaxException {
 		abacDenyPep4SkipPep2OrPep3();
-		stubFor(get("/gsak?fagsakNr=" + FAGSAK_ID + "&applikasjon=" + FAGSAK_SYSTEM)
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("gsak/gsak-sakerByFagsakIdAndFagsaksystem-FAR-happy.json")));
-		stubFor(post("/hentjournalsakinfo/finnjournalposter")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("joark/finnjournalposter_single_bidragAndSkjerming-happy.json")));
-		stubFor(post("/pdl")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("pdl/hentPdlDataForIdent-happy.json")));
+		stubSakMedFagSak("sak/sak-sakerByFagsakIdAndFagsaksystem-FAR-happy.json");
+		stubFinnjournalposter("finnjournalposter_single_bidragAndSkjerming-happy.json");
+		stubPdl();
 
-		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikFagsakGsak();
+		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikFagsakSak();
 		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
 
 		verifyEmptyJournalpostListeAndNullSideInfo(dokumentoversikt);
@@ -474,22 +356,13 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 	}
 
 	@Test
-	void shouldGetUnauthorizedFromPep5() throws IOException, URISyntaxException {
+	void shouldGetUnauthorizedFromPep5() throws URISyntaxException {
 		abacDenyPep5SkipPep2OrPep3();
-		stubFor(get("/gsak?fagsakNr=" + FAGSAK_ID + "&applikasjon=" + FAGSAK_SYSTEM)
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("gsak/gsak-sakerByFagsakIdAndFagsaksystem-FAR-happy.json")));
-		stubFor(post("/hentjournalsakinfo/finnjournalposter")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("joark/finnjournalposter_single_bidragAndSkjermingOnlyDokument-happy.json")));
-		stubFor(post("/pdl")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("pdl/hentPdlDataForIdent-happy.json")));
+		stubSakMedFagSak("sak/sak-sakerByFagsakIdAndFagsaksystem-FAR-happy.json");
+		stubFinnjournalposter("finnjournalposter_single_bidragAndSkjermingOnlyDokument-happy.json");
+		stubPdl();
 
-		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikFagsakGsak();
+		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikFagsakSak();
 		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
 
 		assertThat(dokumentoversikt.getJournalposter()).isNotEmpty();
@@ -501,23 +374,14 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 	}
 
 	@Test
-	void shouldGetUnauthorizedFromPep6d() throws IOException, URISyntaxException {
+	void shouldGetUnauthorizedFromPep6d() throws URISyntaxException {
 		abacDenyPep6dSkipPep3OrPep2();
 
-		stubFor(get("/gsak?fagsakNr=" + FAGSAK_ID + "&applikasjon=" + FAGSAK_SYSTEM)
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("gsak/gsak-sakerByFagsakIdAndFagsaksystem-FAR-happy.json")));
-		stubFor(post("/hentjournalsakinfo/finnjournalposter")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("joark/finnjournalposter_single_bidragAndSkjermingOnlyDokvariant-happy.json")));
-		stubFor(post("/pdl")
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("pdl/hentPdlDataForIdent-happy.json")));
+		stubSakMedFagSak("sak/sak-sakerByFagsakIdAndFagsaksystem-FAR-happy.json");
+		stubFinnjournalposter("finnjournalposter_single_bidragAndSkjermingOnlyDokvariant-happy.json");
+		stubPdl();
 
-		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikFagsakGsak();
+		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikFagsakSak();
 		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
 
 		assertEquals("429837417", dokumentoversikt.getJournalposter().get(0).getJournalpostId());
@@ -531,13 +395,13 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 		verifyabacDenyPep6dSkipPep2AndHttpStatusCode(OK, responseEntity.getStatusCode());
 	}
 
-	private ResponseEntity<LinkedHashMap> callDokumentOversikFagsakPsak() throws IOException, URISyntaxException {
+	private ResponseEntity<LinkedHashMap> callDokumentOversikFagsakPsak() throws URISyntaxException {
 		GraphQLRequest request = new GraphQLRequest(stringFromClasspath("dokumentoversiktFagsak/dokumentoversiktfagsak_psak.query"), null, null);
 		RequestEntity<GraphQLRequest> requestEntity = new RequestEntity<>(request, createHeaders(), HttpMethod.POST, new URI("/graphql"));
 		return restTemplate.exchange(requestEntity, LinkedHashMap.class);
 	}
 
-	private ResponseEntity<LinkedHashMap> callDokumentOversikFagsakGsak() throws IOException, URISyntaxException {
+	private ResponseEntity<LinkedHashMap> callDokumentOversikFagsakSak() throws URISyntaxException {
 		GraphQLRequest request = new GraphQLRequest(stringFromClasspath("dokumentoversiktFagsak/dokumentoversiktfagsak_gsak.query"), null, null);
 		RequestEntity<GraphQLRequest> requestEntity = new RequestEntity<>(request, createHeaders(), HttpMethod.POST, new URI("/graphql"));
 		return restTemplate.exchange(requestEntity, LinkedHashMap.class);

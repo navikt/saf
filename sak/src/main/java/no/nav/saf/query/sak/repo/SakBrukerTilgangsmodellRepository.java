@@ -4,7 +4,7 @@ import io.reactivex.rxjava3.core.Flowable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.anticorruptionlayer.bisys.BisysAntiCorruptionLayer;
-import no.nav.saf.anticorruptionlayer.gsak.GsakAntiCorruptionLayer;
+import no.nav.saf.anticorruptionlayer.sak.SakAntiCorruptionLayer;
 import no.nav.saf.anticorruptionlayer.pensjonsak.PensjonSakAntiCorruptionLayer;
 import no.nav.saf.domain.Arkivsak;
 import no.nav.saf.domain.BidragSak;
@@ -22,15 +22,15 @@ import java.util.Map;
 @Slf4j
 public class SakBrukerTilgangsmodellRepository {
 
-	private final GsakAntiCorruptionLayer gsakAntiCorruptionLayer;
+	private final SakAntiCorruptionLayer sakAntiCorruptionLayer;
 	private final BisysAntiCorruptionLayer bisysAntiCorruptionLayer;
 	private final PensjonSakAntiCorruptionLayer pensjonSakAntiCorruptionLayer;
 
 	@Autowired
-	public SakBrukerTilgangsmodellRepository(GsakAntiCorruptionLayer gsakAntiCorruptionLayer,
+	public SakBrukerTilgangsmodellRepository(SakAntiCorruptionLayer sakAntiCorruptionLayer,
 											 BisysAntiCorruptionLayer bisysAntiCorruptionLayer,
 											 PensjonSakAntiCorruptionLayer pensjonSakAntiCorruptionLayer) {
-		this.gsakAntiCorruptionLayer = gsakAntiCorruptionLayer;
+		this.sakAntiCorruptionLayer = sakAntiCorruptionLayer;
 		this.bisysAntiCorruptionLayer = bisysAntiCorruptionLayer;
 		this.pensjonSakAntiCorruptionLayer = pensjonSakAntiCorruptionLayer;
 	}
@@ -40,17 +40,17 @@ public class SakBrukerTilgangsmodellRepository {
 			if (tilgangBruker == null) {
 				return Flowable.empty();
 			}
-			Flowable<List<Arkivsak>> gsakerFromOrgnr = Flowable.fromCallable(() ->
-							gsakAntiCorruptionLayer.findArkivsakerByOrgnr(tilgangBruker.getOrgnummer()))
+			Flowable<List<Arkivsak>> sakerFromOrgnr = Flowable.fromCallable(() ->
+							sakAntiCorruptionLayer.findArkivsakerByOrgnr(tilgangBruker.getOrgnummer()))
 					.subscribeOn(Schedulers.io());
-			Flowable<List<Arkivsak>> gsakerFromAktoerId = Flowable.fromCallable(() ->
-							gsakAntiCorruptionLayer.findArkivsakerByAktoerId(tilgangBruker.getAktoerId()))
+			Flowable<List<Arkivsak>> sakerFromAktoerId = Flowable.fromCallable(() ->
+							sakAntiCorruptionLayer.findArkivsakerByAktoerId(tilgangBruker.getAktoerId()))
 					.subscribeOn(Schedulers.io());
 			Flowable<List<Arkivsak>> psaker = Flowable.fromCallable(() ->
 							pensjonSakAntiCorruptionLayer.findArkivsaker(tilgangBruker))
 					.subscribeOn(Schedulers.io());
 
-			return Flowable.merge(Arrays.asList(gsakerFromOrgnr, gsakerFromAktoerId, psaker), 3)
+			return Flowable.merge(Arrays.asList(sakerFromOrgnr, sakerFromAktoerId, psaker), 3)
 					.flatMapIterable(items -> items)
 					.map(arkivsak -> {
 						arkivsakMap.put(arkivsak.getKey(), arkivsak);
