@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.pep.reasons.UkjentEllerTekniskReason;
+import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -36,14 +37,19 @@ public class MultiPep1g extends Pep<TilgangBruker> {
 	@Override
 	public PepAnswer hasAccessWithAnswer(TilgangBruker ressurs, SafRequestContext safRequestContext) {
 
-		CompletableFuture<PepAnswer> abacSaf = CompletableFuture.supplyAsync(() ->
-						abacBackedPep.hasAccessWithAnswer(ressurs, safRequestContext))
+		var currentMdcContextMap = MDC.getCopyOfContextMap();
+		CompletableFuture<PepAnswer> abacSaf = CompletableFuture.supplyAsync(() -> {
+					MDC.setContextMap(currentMdcContextMap);
+					return abacBackedPep.hasAccessWithAnswer(ressurs, safRequestContext);
+				})
 				.orTimeout(OPPSLAG_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS)
 				.handle(handleExceptionInOppslag("abac-saf"));
 
 		if (featureToggleUseCheckTilgangsmaskinen) {
-			CompletableFuture<PepAnswer> tilgangsmaskinen = CompletableFuture.supplyAsync(() ->
-							tilgangsmaskinenBackedPep.hasAccessWithAnswer(ressurs, safRequestContext))
+			CompletableFuture<PepAnswer> tilgangsmaskinen = CompletableFuture.supplyAsync(() -> {
+						MDC.setContextMap(currentMdcContextMap);
+						return tilgangsmaskinenBackedPep.hasAccessWithAnswer(ressurs, safRequestContext);
+					})
 					.orTimeout(OPPSLAG_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS)
 					.handle(handleExceptionInOppslag("tilgangsmaskinen"));
 
