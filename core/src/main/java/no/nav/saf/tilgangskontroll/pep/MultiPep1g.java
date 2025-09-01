@@ -8,6 +8,7 @@ import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -43,7 +44,7 @@ public class MultiPep1g extends Pep<TilgangBruker> {
 					return abacBackedPep.hasAccessWithAnswer(ressurs, safRequestContext);
 				})
 				.orTimeout(OPPSLAG_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS)
-				.handle(handleExceptionInOppslag("abac-saf"));
+				.handle(handleExceptionInOppslag("abac-saf", currentMdcContextMap));
 
 		if (featureToggleUseCheckTilgangsmaskinen) {
 			CompletableFuture<PepAnswer> tilgangsmaskinen = CompletableFuture.supplyAsync(() -> {
@@ -51,7 +52,7 @@ public class MultiPep1g extends Pep<TilgangBruker> {
 						return tilgangsmaskinenBackedPep.hasAccessWithAnswer(ressurs, safRequestContext);
 					})
 					.orTimeout(OPPSLAG_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS)
-					.handle(handleExceptionInOppslag("tilgangsmaskinen"));
+					.handle(handleExceptionInOppslag("tilgangsmaskinen", currentMdcContextMap));
 
 			return analyzeLogAndChoosePepAnswer(abacSaf.join(), tilgangsmaskinen.join());
 		} else {
@@ -59,9 +60,10 @@ public class MultiPep1g extends Pep<TilgangBruker> {
 		}
 	}
 
-	private static BiFunction<PepAnswer, Throwable, PepAnswer> handleExceptionInOppslag(String name) {
+	private static BiFunction<PepAnswer, Throwable, PepAnswer> handleExceptionInOppslag(String name, Map<String, String> mdcContextMap) {
 		return (pepanswer, error) -> {
 			if (error != null) {
+				MDC.setContextMap(mdcContextMap);
 				if (error instanceof TimeoutException) {
 					log.warn("PEP1g: Oppslag mot {} feilet med timeout (tok over {} millisekunder)", name, OPPSLAG_TIMEOUT_MILLIS);
 				} else {
