@@ -852,6 +852,11 @@
       "roles": [
         "tema_alle"
       ]
-    }
+    },
+	{
+      "app": "tiltakspenger-journalposthendelser",
+      "namespace": "tpts",
+      "cluster": "prod-gcp"
+    },
   ]
 }
