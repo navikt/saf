@@ -84,7 +84,7 @@ public class ArkivJournalpostMapper {
 	public static final String TILKNYTTET_SOM_HOVEDDOKUMENT = "HOVEDDOKUMENT";
 	public static final String TILKNYTTET_SOM_VEDLEGG = "VEDLEGG";
 
-	private static final UtledTilgangService utledTilgangService = new UtledTilgangService(true);
+	private static final UtledTilgangService utledTilgangService = new UtledTilgangService();
 
 	public static Journalpost mapJournalpost(ArkivJournalpost arkivJournalpost, Set<Ident> brukerIdenter, RequestCache requestCache) {
 		if (arkivJournalpost == null) {
