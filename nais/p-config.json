@@ -858,5 +858,13 @@
       "namespace": "tpts",
       "cluster": "prod-gcp"
     },
+    {
+      "app": "historisk-helt-backend",
+      "namespace": "historisk",
+      "cluster": "prod-gcp",
+      "roles": [
+        "tema_hel"
+      ]
+    }
   ]
 }
