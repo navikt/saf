@@ -853,12 +853,17 @@
         "tema_alle"
       ]
     },
-	{
+	  {
       "app": "tiltakspenger-journalposthendelser",
       "namespace": "tpts",
       "cluster": "prod-gcp"
     },
-	{
+    {
+      "app": "historisk-helt-backend",
+      "namespace": "historisk",
+      "cluster": "prod-gcp"
+    },
+    {
       "app": "rpa-medlemskap-og-avgift",
       "namespace": "team-rpa",
       "cluster": "prod-fss"
