@@ -34,14 +34,17 @@ import java.util.Arrays;
 import java.util.Map;
 
 import static java.lang.String.format;
+import static no.nav.saf.domain.kode.Variantformat.ARKIV;
 import static no.nav.saf.endpoints.HeaderUtils.createNavCallid;
 import static no.nav.saf.headers.NavHeaders.NAV_CALLID;
 import static no.nav.saf.headers.NavHeaders.NAV_USER_ID;
 import static no.nav.saf.headers.NavHeaders.X_CORRELATION_ID;
 import static no.nav.saf.util.LogSanitizer.removeUnsafeChars;
+import static no.nav.saf.util.MDCConstants.CONSUMER_ID;
 import static no.nav.saf.util.MDCConstants.DOKUMENT_INFO_ID;
 import static no.nav.saf.util.MDCConstants.JOURNALPOST_ID;
 import static no.nav.saf.util.MDCUtility.addMdcData;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNumeric;
 
 /**
@@ -97,7 +100,14 @@ public class HentDokumentController {
 
 			validateServiceUserAccess(safRequestContext, variantFormat);
 			HentDokument response = hentDokumentDomainCoordinator.hentDokument(journalpostId, dokumentInfoId, variantFormat, safRequestContext);
-			log.info("hentDokument hentet dokument. journalpostId={}, dokumentInfoId={}, variantFormat={}", journalpostId, dokumentInfoId, variantFormat);
+
+			//ekstra logging for MMA-7862. Fjernes når oppryddingen er ferdig
+			if (ARKIV.name().equals(variantFormat)) {
+				log.info("hentDokument hentet dokument med variantFormat=ARKIV {} Nav-User-Id header fra system={}. journalpostId={}, dokumentInfoId={}",
+						isBlank(navUserId) ? "uten" : "med", MDC.get(CONSUMER_ID), journalpostId, dokumentInfoId);
+			} else {
+				log.info("hentDokument hentet dokument. journalpostId={}, dokumentInfoId={}, variantFormat={}", journalpostId, dokumentInfoId, variantFormat);
+			}
 
 			return ResponseEntity.ok()
 					.contentType(response.getMediaType())
@@ -146,8 +156,8 @@ public class HentDokumentController {
 		if (securityContext.isSystem() && !Variantformat.ORIGINAL.name().equals(variantFormat)) {
 			throw new HentdokumentTilgangskontrollException(
 					"Servicebruker forsøker å hente dokument med variantFormat=" +
-					variantFormat + ". Servicebrukere har kun tilgang til variantFormat=" + Variantformat.ORIGINAL +
-					" med mindre man har en avtale med Team Dokumentløsninger. Snakk med oss om behov.", PepAnswer.deny(new UkjentEllerTekniskReason()));
+							variantFormat + ". Servicebrukere har kun tilgang til variantFormat=" + Variantformat.ORIGINAL +
+							" med mindre man har en avtale med Team Dokumentløsninger. Snakk med oss om behov.", PepAnswer.deny(new UkjentEllerTekniskReason()));
 		}
 	}
 }
