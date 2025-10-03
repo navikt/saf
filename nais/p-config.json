@@ -99,6 +99,11 @@
       "cluster": "prod-gcp"
     },
     {
+      "app": "fagarkiv-administrasjon",
+      "namespace": "isa",
+      "cluster": "prod-gcp"
+    },
+    {
       "app": "jfr-infotrygd",
       "namespace": "isa",
       "cluster": "prod-fss"
