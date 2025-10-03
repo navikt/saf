@@ -45,10 +45,7 @@
     {
       "app": "esyfovarsel",
       "namespace": "team-esyfo",
-      "cluster": "dev-gcp",
-      "roles": [
-        "tema_opp"
-      ]
+      "cluster": "dev-gcp"
     },
     {
       "app": "esyfovarsel",
@@ -76,31 +73,17 @@
     {
       "app": "etterlatte-brev-api",
       "namespace": "etterlatte",
-      "cluster": "dev-gcp",
-      "roles": [
-        "tema_pen",
-        "tema_eyb",
-        "tema_eyo"
-      ]
+      "cluster": "dev-gcp"
     },
     {
       "app": "etterlatte-hendelser-joark",
       "namespace": "etterlatte",
-      "cluster": "dev-gcp",
-      "roles": [
-        "tema_pen",
-        "tema_eyb",
-        "tema_eyo"
-      ]
+      "cluster": "dev-gcp"
     },
     {
       "app": "k9-punsj",
       "namespace": "k9saksbehandling",
-      "cluster": "dev-fss",
-      "roles": [
-        "tema_oms",
-        "tema_fri"
-      ]
+      "cluster": "dev-fss"
     },
     {
       "app": "journalforing-frontend",
@@ -160,10 +143,7 @@
     {
       "app": "kabal-document",
       "namespace": "klage",
-      "cluster": "dev-gcp",
-      "roles": [
-        "tema_alle"
-      ]
+      "cluster": "dev-gcp"
     },
     {
       "app": "klage-dittnav-api",
@@ -178,26 +158,17 @@
     {
       "app": "isdialogmote",
       "namespace": "teamsykefravr",
-      "cluster": "dev-gcp",
-      "roles": [
-        "tema_opp"
-      ]
+      "cluster": "dev-gcp"
     },
     {
       "app": "tiltakspenger-saksbehandling-api",
       "namespace": "tpts",
-      "cluster": "dev-gcp",
-      "roles": [
-        "tema_ind"
-      ]
+      "cluster": "dev-gcp"
     },
     {
       "app": "yrkesskade-melding-api",
       "namespace": "yrkesskade",
-      "cluster": "dev-gcp",
-      "roles": [
-        "tema_yrk"
-      ]
+      "cluster": "dev-gcp"
     },
     {
       "app": "yrkesskade-melding-mottak",
@@ -210,26 +181,17 @@
     {
       "app": "yrkesskade-saksbehandling-backend",
       "namespace": "yrkesskade",
-      "cluster": "dev-gcp",
-      "roles": [
-        "tema_yrk"
-      ]
+      "cluster": "dev-gcp"
     },
     {
       "app": "yrkesskade-uttrekk",
       "namespace": "yrkesskade",
-      "cluster": "dev-gcp",
-      "roles": [
-        "tema_yrk"
-      ]
+      "cluster": "dev-gcp"
     },
     {
       "app": "yrkesskade-brevutsending",
       "namespace": "yrkesskade",
-      "cluster": "dev-gcp",
-      "roles": [
-        "tema_yrk"
-      ]
+      "cluster": "dev-gcp"
     },
     {
       "app": "pdl-web",
@@ -309,11 +271,7 @@
     {
       "app": "bidrag-dokument-arkiv-feature",
       "namespace": "bidrag",
-      "cluster": "dev-fss",
-      "roles": [
-        "tema_far",
-        "tema_bid"
-      ]
+      "cluster": "dev-fss"
     },
     {
       "app": "dokdistdpv-q1",
@@ -366,18 +324,12 @@
     {
       "app": "esyfovarsel",
       "namespace": "team-esyfo",
-      "cluster": "dev-gcp",
-      "roles": [
-        "tema_opp"
-      ]
+      "cluster": "dev-gcp"
     },
     {
       "app": "esyfovarsel",
       "namespace": "team-esyfo",
-      "cluster": "dev-fss",
-      "roles": [
-        "tema_opp"
-      ]
+      "cluster": "dev-fss"
     },
     {
       "app": "melosys-q1",
@@ -402,11 +354,7 @@
     {
       "app": "k9-sak",
       "namespace": "k9saksbehandling",
-      "cluster": "dev-fss",
-      "roles": [
-        "tema_oms",
-        "tema_fri"
-      ]
+      "cluster": "dev-fss"
     },
     {
       "app": "ung-sak",
@@ -419,38 +367,22 @@
     {
       "app": "k9-fordel",
       "namespace": "k9saksbehandling",
-      "cluster": "dev-fss",
-      "roles": [
-        "tema_oms",
-        "tema_fri"
-      ]
+      "cluster": "dev-fss"
     },
     {
       "app": "k9-klage",
       "namespace": "k9saksbehandling",
-      "cluster": "dev-fss",
-      "roles": [
-        "tema_oms",
-        "tema_fri"
-      ]
+      "cluster": "dev-fss"
     },
     {
       "app": "k9-tilbake",
       "namespace": "k9saksbehandling",
-      "cluster": "dev-fss",
-      "roles": [
-        "tema_oms",
-        "tema_fri"
-      ]
+      "cluster": "dev-fss"
     },
     {
       "app": "k9-formidling",
       "namespace": "k9saksbehandling",
-      "cluster": "dev-fss",
-      "roles": [
-        "tema_oms",
-        "tema_fri"
-      ]
+      "cluster": "dev-fss"
     },
     {
       "app": "dokarkiv-q1",
@@ -501,11 +433,7 @@
     {
       "app": "pensjon-pen-q1",
       "namespace": "pensjon-q1",
-      "cluster": "dev-fss",
-      "roles": [
-        "tema_pen",
-        "tema_ufo"
-      ]
+      "cluster": "dev-fss"
     },
     {
       "app": "azure-token-generator",
@@ -525,10 +453,7 @@
     {
       "app": "routing",
       "namespace": "aap",
-      "cluster": "dev-gcp",
-      "roles": [
-        "tema_aap"
-      ]
+      "cluster": "dev-gcp"
     },
     {
       "app": "spberegning",
@@ -573,18 +498,12 @@
     {
       "app": "dp-behov-distribuering",
       "namespace": "teamdagpenger",
-      "cluster": "dev-gcp",
-      "roles": [
-        "tema_dag"
-      ]
+      "cluster": "dev-gcp"
     },
     {
       "app": "dp-saksbehandling-frontend",
       "namespace": "teamdagpenger",
-      "cluster": "dev-gcp",
-      "roles": [
-        "tema_dag"
-      ]
+      "cluster": "dev-gcp"
     },
     {
       "app": "ezbrev-backend-q4",
@@ -602,10 +521,7 @@
     {
       "app": "tilleggsstonader-integrasjoner",
       "namespace": "tilleggsstonader",
-      "cluster": "dev-gcp",
-      "roles": [
-        "tema_tso"
-      ]
+      "cluster": "dev-gcp"
     },
     {
       "app": "okonomiportal",
@@ -618,18 +534,12 @@
     {
       "app": "spinosaurus",
       "namespace": "helsearbeidsgiver",
-      "cluster": "dev-gcp",
-      "roles": [
-        "tema_syk"
-      ]
+      "cluster": "dev-gcp"
     },
     {
       "app": "rpa-saf-tiltakspenger",
       "namespace": "team-rpa",
-      "cluster": "dev-fss",
-      "roles": [
-        "tema_ind"
-      ]
+      "cluster": "dev-fss"
     },
     {
       "app": "dokumentfordeling",
@@ -650,19 +560,12 @@
     {
       "app": "dp-ruting",
       "namespace": "teamdagpenger",
-      "cluster": "dev-gcp",
-      "roles": [
-        "tema_dag"
-      ]
+      "cluster": "dev-gcp"
     },
     {
       "app": "tiltak-vedtaksbrev",
       "namespace": "arbeidsgiver",
-      "cluster": "dev-gcp",
-      "roles": [
-        "tema_til",
-        "tema_opp"
-      ]
+      "cluster": "dev-gcp"
     },
     {
       "app": "rpa-ot-ortok",
@@ -680,10 +583,7 @@
     {
       "app": "rpa-nos-robot",
       "namespace": "team-rpa",
-      "cluster": "dev-fss",
-      "roles": [
-        "tema_sto"
-      ]
+      "cluster": "dev-fss"
     },
     {
       "app": "dokdistfordeling-q1",

@@ -82,11 +82,7 @@
     {
       "app": "pensjon-pen-q0",
       "namespace": "pensjon-q0",
-      "cluster": "dev-fss",
-      "roles": [
-        "tema_pen",
-        "tema_ufo"
-      ]
+      "cluster": "dev-fss"
     },
     {
       "app": "modiapersonoversikt-api-q0",
