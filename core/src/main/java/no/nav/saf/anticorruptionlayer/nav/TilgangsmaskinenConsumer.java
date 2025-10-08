@@ -23,7 +23,6 @@ import org.springframework.web.client.RestClient;
 import java.io.IOException;
 
 import static no.nav.saf.integration.token.NaisTexasAndCallIdRequestInterceptor.TARGET_SCOPE;
-import static no.nav.saf.integration.token.NaisTexasAndCallIdRequestInterceptor.TOKEN_TO_EXCHANGE;
 import static no.nav.saf.tilgangskontroll.pep.PepAnswer.deny;
 
 @Slf4j
@@ -47,10 +46,9 @@ public class TilgangsmaskinenConsumer {
 	public PepAnswer navIdentHasAccess(String identifikator, JwtToken entraIdToken) {
 		try {
 			return texasAuthorizedRestClient.post()
-					.uri(uriBuilder -> uriBuilder.path("/api/v1/komplett").build())
+					.uri(uriBuilder -> uriBuilder.path("/api/v1/ccf/komplett/" + entraIdToken.getSubject()).build())
 					.attributes(attributes -> {
 						attributes.put(TARGET_SCOPE, safProperties.getEndpoints().getTilgangsmaskinen().getScope());
-						attributes.put(TOKEN_TO_EXCHANGE, entraIdToken.getEncodedToken());
 					})
 					.body(identifikator)
 					.exchange((request, response) -> handleResponseFromTilgangsmaskinen(response));

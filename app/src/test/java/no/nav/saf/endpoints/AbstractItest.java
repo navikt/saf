@@ -289,7 +289,7 @@ public abstract class AbstractItest {
 	}
 
 	private static void stubTexasExchangeOboToken() {
-		stubFor(post("/texas").willReturn(aResponse().withStatus(OK.value())
+		stubFor(post("/nais/token/exchange").willReturn(aResponse().withStatus(OK.value())
 				.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 				.withBodyFile("texas/texas_happy.json")));
 	}
@@ -301,13 +301,13 @@ public abstract class AbstractItest {
 	}
 
 	protected static void stubTilgangsmaskinenPermit() {
-		stubTexasExchangeOboToken();
-		stubFor(post("/tilgangsmaskinen/api/v1/komplett").willReturn(aResponse().withStatus(NO_CONTENT.value())));
+		stubTexasToken();
+		stubFor(post(urlMatching("/tilgangsmaskinen/api/v1/ccf/komplett/.*")).willReturn(aResponse().withStatus(NO_CONTENT.value())));
 	}
 
 	protected static void stubTilgangsmaskinenDeny() {
-		stubTexasExchangeOboToken();
-		stubFor(post("/tilgangsmaskinen/api/v1/komplett").willReturn(aResponse().withStatus(FORBIDDEN.value())
+		stubTexasToken();
+		stubFor(post(urlMatching("/tilgangsmaskinen/api/v1/ccf/komplett/.*")).willReturn(aResponse().withStatus(FORBIDDEN.value())
 				.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 				.withBodyFile("tilgangsmaskinen/" + "tilgangsmaskinen_deny_fortrolig.json")));
 	}
