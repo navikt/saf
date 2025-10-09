@@ -6,7 +6,6 @@ import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.config.NaisProperties;
 import no.nav.saf.exceptions.SafTechnicalException;
 import no.nav.saf.integration.azure.TokenResponse;
-import org.springframework.http.MediaType;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
@@ -45,7 +44,7 @@ public class NaisTexasConsumer {
 	 */
 	@Retry(name = NAIS_TEXAS_INSTANCE)
 	@CircuitBreaker(name = NAIS_TEXAS_INSTANCE)
-	public String exchangeForTilgangsmaskinenOboToken(String accessToken, String targetScope) {
+	public String exchangeForOboToken(String accessToken, String targetScope) {
 
 		MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
 		formData.add("identity_provider", "azuread");
