@@ -152,6 +152,13 @@ public abstract class AbstractItest {
 		return headers;
 	}
 
+	protected HttpHeaders createHeadersClientCredentialWithoutRoles() {
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(APPLICATION_JSON);
+		headers.setBearerAuth(getClientCredentialTokenWithoutRoles());
+		return headers;
+	}
+
 	private String getOnBehalfOfToken() {
 		return jwt(NAV_IDENT_SAKSBEHANDLER,
 				Map.of(
@@ -171,6 +178,17 @@ public abstract class AbstractItest {
 						"sub", oidSubEqual,
 						"azp_name", "dev-itest:isa:gosys",
 						"roles", List.of("tema_hje")
+				)
+		);
+	}
+
+	private String getClientCredentialTokenWithoutRoles() {
+		String oidSubEqual = UUID.randomUUID().toString();
+		return jwt("dev-itest:isa:gosys",
+				Map.of(
+						"oid", oidSubEqual,
+						"sub", oidSubEqual,
+						"azp_name", "dev-itest:isa:gosys"
 				)
 		);
 	}

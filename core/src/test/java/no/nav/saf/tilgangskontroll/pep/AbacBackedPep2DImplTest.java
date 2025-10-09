@@ -16,6 +16,7 @@ import org.springframework.cache.support.SimpleCacheManager;
 
 import java.util.Collections;
 
+import static no.nav.saf.anticorruptionlayer.joark.domain.kode.VariantFormatCode.ORIGINAL;
 import static no.nav.saf.cache.ValkeyCacheConfig.VALKEY_DOKUMENT_TILGANG_CACHE;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_RESOURCE_TYPE;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_TEMA;
@@ -39,6 +40,17 @@ class AbacBackedPep2DImplTest extends AbstractAbacBackedPepTest {
 		cacheManager.setCaches(Collections.singletonList(new NoOpCache(VALKEY_DOKUMENT_TILGANG_CACHE)));
 		cacheManager.afterPropertiesSet();
 		this.pep2d = new AbacBackedPep2dImpl(cacheManager, abacService);
+	}
+
+	@Test
+	void shouldPermitWhenSystemAndVariantformatOriginal(){
+
+		boolean hasAccess = pep2d.hasAccess(TilgangSak.builder()
+				.aktoerId(AKTOER_ID)
+				.tema(TEMA_BID)
+				.build(), createSafRequestContextSystem(ORIGINAL));
+
+		assertTrue(hasAccess);
 	}
 
 	@Test

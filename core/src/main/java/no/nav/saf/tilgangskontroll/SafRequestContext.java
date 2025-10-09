@@ -2,9 +2,12 @@ package no.nav.saf.tilgangskontroll;
 
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import no.nav.saf.anticorruptionlayer.joark.domain.kode.VariantFormatCode;
 import no.nav.security.token.support.core.context.TokenValidationContext;
 
 import java.util.Map;
+
+import static no.nav.saf.anticorruptionlayer.joark.domain.kode.VariantFormatCode.ORIGINAL;
 
 /**
  * Holder kontekst om kall inn til saf.
@@ -16,11 +19,24 @@ public class SafRequestContext {
 	private final String navCallId;
 	private final SafSecurityContext securityContext;
 	private final RequestCache requestCache;
+	private final boolean originalDokument;
+
+	public SafRequestContext(String navCallId, String navUserId, TokenValidationContext tokenValidationContext, Map<String, Boolean> privilegiedServiceusers, VariantFormatCode requestVariantFormat) {
+		this.navCallId = navCallId;
+		this.securityContext = new SafSecurityContext(tokenValidationContext, privilegiedServiceusers, navUserId);
+		this.requestCache = new RequestCache(securityContext.isSystem());
+		this.originalDokument = requestVariantFormat == ORIGINAL;
+	}
 
 	public SafRequestContext(String navCallId, String navUserId, TokenValidationContext tokenValidationContext, Map<String, Boolean> privilegiedServiceusers) {
 		this.navCallId = navCallId;
 		this.securityContext = new SafSecurityContext(tokenValidationContext, privilegiedServiceusers, navUserId);
 		this.requestCache = new RequestCache(securityContext.isSystem());
+		this.originalDokument = false;
+	}
+
+	public boolean isSystemAndVariantformatOriginal() {
+		return securityContext.isSystem() && originalDokument;
 	}
 
 	/**

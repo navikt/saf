@@ -58,6 +58,7 @@ class HentDokumentIT extends AbstractItest {
 	private static final String DOKUMENT_ID = "500000000";
 	private static final VariantFormatCode VARIANTFORMAT = ARKIV;
 	private static final VariantFormatCode SLADDET_VARIANTFORMAT = SLADDET;
+	private static final VariantFormatCode ORIGINAL_VARIANTFORMAT = ORIGINAL;
 	private static final byte[] TEST_FILE_BYTES = "TestThis".getBytes();
 	private static final String USER_FNR_FROM_T_BRUKER = "12345678910";
 	private static final String USER_FNR_FROM_PDL = "11111111111";
@@ -291,6 +292,34 @@ class HentDokumentIT extends AbstractItest {
 		verify(postRequestedFor(urlEqualTo("/pdl")));
 		assertOkSladdetResponse(responseEntity);
 		verify(getRequestedFor(urlEqualTo("/dokarkiv/hentdokument/" + DOKUMENT_ID + "/" + SLADDET_VARIANTFORMAT)));
+	}
+
+	@Test
+	void shouldHentOriginalDokumentWhenCallerIsSystemWithoutRoles() {
+		stubPdl();
+		stubFor(get("/dokarkiv/hentdokument/" + DOKUMENT_ID + "/" + ORIGINAL_VARIANTFORMAT)
+				.willReturn(aResponse().withStatus(OK.value())
+						.withHeader(CONTENT_TYPE, APPLICATION_PDF_VALUE)
+						.withBody(TEST_FILE_BYTES)));
+		stubDokarkivJournalpost("journalpost-dokumentinfo-sak-happy.json");
+
+		ResponseEntity<String> responseEntity = callHentDokument(new HttpEntity<>(createHeadersClientCredentialWithoutRoles()), ORIGINAL);
+		assertOkOriginalResponse(responseEntity);
+
+		verify(postRequestedFor(urlEqualTo("/pdl")));
+		verify(getRequestedFor(urlEqualTo("/dokarkiv/hentdokument/" + DOKUMENT_ID + "/" + ORIGINAL_VARIANTFORMAT)));
+	}
+
+	@Test
+	void shouldNotHentArkivDokumentWhenCallerIsSystemWithoutTemaRole() {
+		stubPdl();
+		stubDokarkivJournalpost("journalpost-dokumentinfo-sak-happy.json");
+
+		ResponseEntity<String> responseEntity = callHentDokument(new HttpEntity<>(createHeadersClientCredentialWithoutRoles()), ARKIV);
+		assertEquals(FORBIDDEN, responseEntity.getStatusCode());
+		assertThat(responseEntity.getBody()).contains("System har ikke tilgang til tema ressursen tilhører");
+
+		verify(postRequestedFor(urlEqualTo("/pdl")));
 	}
 
 	@Test
@@ -796,6 +825,11 @@ class HentDokumentIT extends AbstractItest {
 		assertOkResponse(responseEntity);
 	}
 
+	private void assertOkOriginalResponse(ResponseEntity<String> responseEntity) {
+		assertEquals(DOKUMENT_ID + "_" + ORIGINAL_VARIANTFORMAT + ".pdf", responseEntity.getHeaders().getContentDisposition().getFilename());
+		assertOkResponse(responseEntity);
+	}
+
 	private void assertOkResponse(ResponseEntity<String> responseEntity) {
 		assertEquals(OK, responseEntity.getStatusCode());
 		assertEquals(APPLICATION_PDF, responseEntity.getHeaders().getContentType());
@@ -825,6 +859,11 @@ class HentDokumentIT extends AbstractItest {
 
 	private ResponseEntity<String> callHentDokument(HttpEntity<?> httpEntity) {
 		String uri = "/rest/hentdokument/" + JOURNALPOST_ID + "/" + DOKUMENT_ID + "/" + VARIANTFORMAT;
+		return this.restTemplate.exchange(uri, HttpMethod.GET, httpEntity, String.class);
+	}
+
+	private ResponseEntity<String> callHentDokument(HttpEntity<?> httpEntity, VariantFormatCode variantFormatCode) {
+		String uri = "/rest/hentdokument/" + JOURNALPOST_ID + "/" + DOKUMENT_ID + "/" + variantFormatCode;
 		return this.restTemplate.exchange(uri, HttpMethod.GET, httpEntity, String.class);
 	}
 
