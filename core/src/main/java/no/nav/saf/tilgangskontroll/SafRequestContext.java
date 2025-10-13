@@ -21,11 +21,11 @@ public class SafRequestContext {
 	private final RequestCache requestCache;
 	private final boolean originalDokument;
 
-	public SafRequestContext(String navCallId, String navUserId, TokenValidationContext tokenValidationContext, Map<String, Boolean> privilegiedServiceusers, VariantFormatCode requestVariantFormat) {
+	public SafRequestContext(String navCallId, String navUserId, TokenValidationContext tokenValidationContext, Map<String, Boolean> privilegiedServiceusers, String requestVariantFormat) {
 		this.navCallId = navCallId;
 		this.securityContext = new SafSecurityContext(tokenValidationContext, privilegiedServiceusers, navUserId);
 		this.requestCache = new RequestCache(securityContext.isSystem());
-		this.originalDokument = requestVariantFormat == ORIGINAL;
+		this.originalDokument = ORIGINAL.name().equals(requestVariantFormat);
 	}
 
 	public SafRequestContext(String navCallId, String navUserId, TokenValidationContext tokenValidationContext, Map<String, Boolean> privilegiedServiceusers) {

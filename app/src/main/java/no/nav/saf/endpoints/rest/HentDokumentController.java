@@ -88,7 +88,7 @@ public class HentDokumentController {
 				navUserId,
 				tokenValidationContextHolder.getTokenValidationContext(),
 				privilegiedServiceusers,
-				VariantFormatCode.valueOf(variantFormat)
+				variantFormat
 		);
 		addMdcData(safRequestContext);
 		log.info("hentDokument har mottatt kall. journalpostId={}, dokumentInfoId={}, variantFormat={}", journalpostId, dokumentInfoId, variantFormat);
