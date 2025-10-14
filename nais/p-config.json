@@ -232,7 +232,11 @@
     {
       "app": "bidrag-dokument-arkiv",
       "namespace": "bidrag",
-      "cluster": "prod-fss"
+      "cluster": "prod-fss",
+      "roles": [
+        "tema_far",
+        "tema_bid"
+      ]
     },
     {
       "app": "eux-neessi",
