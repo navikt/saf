@@ -191,7 +191,10 @@
     {
       "app": "veilarbvedtaksstotte",
       "namespace": "obo",
-      "cluster": "prod-gcp"
+      "cluster": "prod-gcp",
+      "roles": [
+        "tema_opp"
+      ]
     },
     {
       "app": "yrkesskade-melding-api",
