@@ -87,7 +87,8 @@ public class HentDokumentController {
 		final SafRequestContext safRequestContext = new SafRequestContext(createNavCallid(navCallid, xCorrelationId),
 				navUserId,
 				tokenValidationContextHolder.getTokenValidationContext(),
-				privilegiedServiceusers
+				privilegiedServiceusers,
+				variantFormat
 		);
 		addMdcData(safRequestContext);
 		log.info("hentDokument har mottatt kall. journalpostId={}, dokumentInfoId={}, variantFormat={}", journalpostId, dokumentInfoId, variantFormat);

@@ -152,6 +152,13 @@ public abstract class AbstractItest {
 		return headers;
 	}
 
+	protected HttpHeaders createHeadersClientCredentialWithoutRoles() {
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(APPLICATION_JSON);
+		headers.setBearerAuth(getClientCredentialTokenWithoutRoles());
+		return headers;
+	}
+
 	private String getOnBehalfOfToken() {
 		return jwt(NAV_IDENT_SAKSBEHANDLER,
 				Map.of(
@@ -171,6 +178,17 @@ public abstract class AbstractItest {
 						"sub", oidSubEqual,
 						"azp_name", "dev-itest:isa:gosys",
 						"roles", List.of("tema_hje")
+				)
+		);
+	}
+
+	private String getClientCredentialTokenWithoutRoles() {
+		String oidSubEqual = UUID.randomUUID().toString();
+		return jwt("dev-itest:isa:gosys",
+				Map.of(
+						"oid", oidSubEqual,
+						"sub", oidSubEqual,
+						"azp_name", "dev-itest:isa:gosys"
 				)
 		);
 	}
@@ -289,7 +307,7 @@ public abstract class AbstractItest {
 	}
 
 	private static void stubTexasExchangeOboToken() {
-		stubFor(post("/texas").willReturn(aResponse().withStatus(OK.value())
+		stubFor(post("/nais/token/exchange").willReturn(aResponse().withStatus(OK.value())
 				.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 				.withBodyFile("texas/texas_happy.json")));
 	}
@@ -301,13 +319,13 @@ public abstract class AbstractItest {
 	}
 
 	protected static void stubTilgangsmaskinenPermit() {
-		stubTexasExchangeOboToken();
-		stubFor(post("/tilgangsmaskinen/api/v1/komplett").willReturn(aResponse().withStatus(NO_CONTENT.value())));
+		stubTexasToken();
+		stubFor(post(urlMatching("/tilgangsmaskinen/api/v1/ccf/komplett/.*")).willReturn(aResponse().withStatus(NO_CONTENT.value())));
 	}
 
 	protected static void stubTilgangsmaskinenDeny() {
-		stubTexasExchangeOboToken();
-		stubFor(post("/tilgangsmaskinen/api/v1/komplett").willReturn(aResponse().withStatus(FORBIDDEN.value())
+		stubTexasToken();
+		stubFor(post(urlMatching("/tilgangsmaskinen/api/v1/ccf/komplett/.*")).willReturn(aResponse().withStatus(FORBIDDEN.value())
 				.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 				.withBodyFile("tilgangsmaskinen/" + "tilgangsmaskinen_deny_fortrolig.json")));
 	}
