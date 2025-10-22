@@ -324,6 +324,11 @@
       "cluster": "prod-gcp"
     },
     {
+      "app": "din-uforetrygd-backend",
+      "namespace": "ufore",
+      "cluster": "prod-gcp"
+    },
+    {
       "app": "arena",
       "namespace": "teamarenanais",
       "cluster": "prod-fss",
