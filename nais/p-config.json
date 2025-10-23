@@ -101,11 +101,6 @@
       "cluster": "prod-fss"
     },
     {
-      "app": "jfr-generell",
-      "namespace": "isa",
-      "cluster": "prod-fss"
-    },
-    {
       "app": "jfr-infotrygd",
       "namespace": "isa",
       "cluster": "prod-gcp"
