@@ -37,7 +37,7 @@
   "SAF_ENDPOINTS_TILGANGSMASKINEN_URL": "https://tilgangsmaskin.intern.nav.no",
   "SAF_ENDPOINTS_TILGANGSMASKINEN_SCOPE": "api://prod-gcp.tilgangsmaskin.populasjonstilgangskontroll/.default",
   "SAF_PEP1G_FEATURE_TOGGLE_TILGANGSMASKINEN": "true",
-  "SAF_PEP1G_PRIORITIZE_TILGANGSMASKINEN": "true",
+  "SAF_PEP1G_PRIORITIZE_TILGANGSMASKINEN": "false",
   "SPRING_DATA_REDIS_HOST": "saf-valkey",
   "AZURE_IAC_RULES": [
     {
