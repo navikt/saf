@@ -1,6 +1,7 @@
 {
   "APP_NAME": "saf-q5",
   "ENVIRONMENT": "q5",
+  "SECRETS": "saf-q5",
   "MIN_REPLICAS": 1,
   "MAX_REPLICAS": 2,
   "ABAC_PDP_ENDPOINT_URL": "http://abac-saf.teamdokumenthandtering.svc.nais.local/application/asm-pdp/authorize",
@@ -33,11 +34,9 @@
   "SAF_ENDPOINTS_SAK_SCOPE": "api://dev-fss.teamdokumenthandtering.sak-q5/.default",
   "SAF_ENDPOINTS_K9SAK_URL": "http://k9-sak.k9saksbehandling.svc.nais.local/k9/sak/api/pip/aktoer-for-sak",
   "SAF_ENDPOINTS_K9SAK_SCOPE": "api://dev-fss.k9saksbehandling.k9-sak/.default",
+  "SAF_ENDPOINTS_HR_NAV_URL": "https://dvh.adeo.no/",
   "SAF_ENDPOINTS_TILGANGSMASKINEN_URL": "https://tilgangsmaskin.intern.dev.nav.no",
   "SAF_ENDPOINTS_TILGANGSMASKINEN_SCOPE": "api://dev-gcp.tilgangsmaskin.populasjonstilgangskontroll/.default",
-  "SAF_PEP1G_FEATURE_TOGGLE_TILGANGSMASKINEN": "true",
-  "SAF_PEP1G_PRIORITIZE_TILGANGSMASKINEN": "true",
-  "SAF_ENDPOINTS_HR_NAV_URL": "https://dvh.adeo.no/",
   "SPRING_DATA_REDIS_HOST": "saf-valkey",
   "AZURE_IAC_RULES": [
     {

@@ -1,6 +1,7 @@
 {
   "APP_NAME": "saf-q1",
   "ENVIRONMENT": "q1",
+  "SECRETS": "saf-q1",
   "MIN_REPLICAS": 1,
   "MAX_REPLICAS": 2,
   "ABAC_PDP_ENDPOINT_URL": "http://abac-saf.teamdokumenthandtering.svc.nais.local/application/asm-pdp/authorize",
@@ -38,8 +39,6 @@
   "SAF_ENDPOINTS_HR_NAV_URL": "https://dvh.adeo.no/",
   "SAF_ENDPOINTS_TILGANGSMASKINEN_URL": "https://tilgangsmaskin.intern.dev.nav.no",
   "SAF_ENDPOINTS_TILGANGSMASKINEN_SCOPE": "api://dev-gcp.tilgangsmaskin.populasjonstilgangskontroll/.default",
-  "SAF_PEP1G_FEATURE_TOGGLE_TILGANGSMASKINEN": "true",
-  "SAF_PEP1G_PRIORITIZE_TILGANGSMASKINEN": "true",
   "SPRING_DATA_REDIS_HOST": "saf-valkey",
   "AZURE_IAC_RULES": [
     {
