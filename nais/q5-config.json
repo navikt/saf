@@ -12,7 +12,6 @@
     "https://saf-q5.dev.intern.nav.no",
     "https://saf-q5.intern.dev.nav.no"
   ],
-  "SRVSAF": "/serviceuser/data/dev/srvsaf",
   "NO_NAV_SECURITY_JWT_ISSUER_AZUREV2_ACCEPTED_AUDIENCE": "c7adbfbb-1b1e-41f6-9b7a-af9627c04998",
   "NO_NAV_SECURITY_JWT_ISSUER_RESTSTS_ACCEPTED_AUDIENCE": "srvpensjon,srvpselv,srvpensr,srvdokdistfordeling,srvdokproduksjon,srvarena-dokgen",
   "SAF_AZURE_GROUP_EGEN_ANSATT_OBJECT_ID": "dbe4ad45-320b-4e9a-aaa1-73cca4ee124d",

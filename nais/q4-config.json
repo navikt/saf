@@ -14,7 +14,6 @@
     "https://saf-q4.dev.intern.nav.no",
     "https://saf-q4.intern.dev.nav.no"
   ],
-  "SRVSAF": "/serviceuser/data/dev/srvsaf",
   "NO_NAV_SECURITY_JWT_ISSUER_RESTSTS_ACCEPTED_AUDIENCE": "srvpensjon,srvpselv,srvdagpenger-joark,srvdp-graphql,srvinfotrygd-joark,srvjfr-manuell-opp,srvjfr-filter,srvsyfosmpapirmottak,srveux-app,srvdokdisteformidl,srvdokdistfordeling,srvmelosys,srvfamilie-ks-opps,srvmedlemskap,srvpensr,srvcoronapenger,srvjfr-automatisk,srvpermref-journalf,srvdolly,srvregpapirsm,srvdokproduksjon",
   "SAF_AZURE_GROUP_EGEN_ANSATT_OBJECT_ID": "dbe4ad45-320b-4e9a-aaa1-73cca4ee124d",
   "SAF_AZURE_GROUP_JOARK_VEDLIKEHOLD_OBJECT_ID": "9732f7dd-550f-4aba-b64a-e1db5428604b",

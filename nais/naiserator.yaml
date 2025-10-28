@@ -6,6 +6,9 @@ metadata:
   labels:
     team: teamdokumenthandtering
 spec:
+  envFrom:
+    - secret: {{SECRETS}}
+    - secret: saf-valkey-password
   env:
     - name: ABAC_PDP_ENDPOINT_URL
       value: {{ ABAC_PDP_ENDPOINT_URL }}
@@ -96,11 +99,6 @@ spec:
     requests:
       cpu: 50m
       memory: 1792Mi
-  vault:
-    enabled: true
-    paths:
-      - kvPath: {{ SRVSAF }}
-        mountPath: "/secrets/serviceuser/srvsaf"
   webproxy: true
   azure:
     application:
@@ -135,6 +133,3 @@ spec:
       runtime: java
       destinations:
         - id: "elastic-apm"
-  envFrom:
-    - secret: {{SECRETS}}
-    - secret: saf-valkey-password
