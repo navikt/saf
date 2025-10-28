@@ -15,7 +15,6 @@
     "https://saf-q1.intern.dev.nav.no",
     "https://saf.dev-fss-pub.nais.io"
   ],
-  "SRVSAF": "/serviceuser/data/dev/srvsaf",
   "NO_NAV_SECURITY_JWT_ISSUER_RESTSTS_ACCEPTED_AUDIENCE": "srvdokdistdpi,srvdokdistdpi-2,srvpensjon,srvpselv,srvdp-graphql,srvinfotrygd-joark,srvjfr-enhancer,srvjfr-infotrygd,srvjfr-arena,srvjfr-manuell-opp,srvjfr-filter,srvsyfosmpapirmottak,srveux-app,srvdokdisteformidl,srvdokdistfordeling,srvmelosys,srvmelosys-eessi,srvfamilie-ks-opps,srvmedlemskap,srvpensr,srvjfr-automatisk,srvk9formidling,srvk9sak,srvk9klage,srvdp-oppslag-henven,srvskjermingsbrev,srvpermref-journalf,srvomsitramme,srvdp-filter-permit,srvklage-dittnav,srv-sif-innsyn-mtk,srvdolly,srvsupstonad,srvarena-dokgen,srvregpapirsm,srv-digihotProxy,srvk9-fordel,srvtiltakrefusjon,srvdp-proxy,srvklage-saksbeh,srv-oms-proxy,srvccmarkivogdist,srvmeldekortservice,srvisproxy,srvhenvendelseapi,srvbdarkiv,srvbdarkivering,srvinnsending-api,srvspberegning,srvdokproduksjon,srvdokumentfordeling",
   "SAF_AZURE_GROUP_EGEN_ANSATT_OBJECT_ID": "dbe4ad45-320b-4e9a-aaa1-73cca4ee124d",
   "SAF_AZURE_GROUP_JOARK_VEDLIKEHOLD_OBJECT_ID": "9732f7dd-550f-4aba-b64a-e1db5428604b",
