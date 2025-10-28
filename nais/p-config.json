@@ -717,6 +717,11 @@
       "app": "rpa-medlemskap-og-avgift",
       "namespace": "team-rpa",
       "cluster": "prod-fss"
+    },
+    {
+      "app": "rpa-nfp-robot",
+      "namespace": "team-rpa",
+      "cluster": "prod-fss"
     }
   ]
 }
