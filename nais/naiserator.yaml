@@ -10,6 +10,12 @@ spec:
     - secret: {{SECRETS}}
     - secret: saf-valkey-password
   env:
+    - name: JAVA_TRUSTSTORE_OPTIONS
+      value: "-Djavax.net.ssl.trustStore=$(NAV_TRUSTSTORE_PATH)
+              -Djavax.net.ssl.trustStorePassword=$(NAV_TRUSTSTORE_PASSWORD)"
+    - name: JDK_JAVA_OPTIONS
+      value: "-XX:MaxRAMPercentage=75
+              $(JAVA_PROXY_OPTIONS) $(JAVA_TRUSTSTORE_OPTIONS)"
     - name: ABAC_PDP_ENDPOINT_URL
       value: {{ ABAC_PDP_ENDPOINT_URL }}
     - name: SAK_SAKER_URL
