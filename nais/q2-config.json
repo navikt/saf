@@ -201,7 +201,17 @@
         "tema_til",
         "tema_tso",
         "tema_tsr",
-        "tema_saa"
+        "tema_saa",
+        "dokument_tema_aap",
+        "dokument_tema_dag",
+        "dokument_tema_fei",
+        "dokument_tema_ind",
+        "dokument_tema_opp",
+        "dokument_tema_sym",
+        "dokument_tema_til",
+        "dokument_tema_tso",
+        "dokument_tema_tsr",
+        "dokument_tema_saa"
       ]
     },
     {
@@ -209,7 +219,8 @@
       "namespace": "obo",
       "cluster": "dev-gcp",
       "roles": [
-        "tema_opp"
+        "tema_opp",
+        "dokument_tema_opp"
       ]
     },
     {
@@ -328,7 +339,7 @@
       "cluster": "dev-fss",
       "roles": [
         "tema_far",
-        "tema_bid"
+        "journal_tema_far"
       ]
     },
     {
@@ -361,7 +372,9 @@
       "namespace": "teamdokumenthandtering",
       "cluster": "dev-fss",
       "roles": [
-        "tema_far"
+        "tema_far",
+        "dokument_tema_far",
+        "journal_tema_far"
       ]
     },
     {
@@ -401,7 +414,10 @@
       "roles": [
         "tema_med",
         "tema_ufm",
-        "tema_try"
+        "tema_try",
+        "dokument_tema_med",
+        "dokument_tema_ufm",
+        "dokument_tema_try"
       ]
     },
     {
@@ -411,7 +427,10 @@
       "roles": [
         "tema_med",
         "tema_ufm",
-        "tema_try"
+        "tema_try",
+        "dokument_tema_med",
+        "dokument_tema_ufm",
+        "dokument_tema_try"
       ]
     },
     {
@@ -601,7 +620,8 @@
       "namespace": "aap",
       "cluster": "dev-gcp",
       "roles": [
-        "tema_aap"
+        "tema_aap",
+        "dokument_tema_aap"
       ]
     },
     {
@@ -624,7 +644,8 @@
       "namespace": "teamserviceklage",
       "cluster": "dev-gcp",
       "roles": [
-        "tema_ser"
+        "tema_ser",
+        "dokument_tema_ser"
       ]
     },
     {
@@ -648,7 +669,9 @@
       "cluster": "dev-fss",
       "roles": [
         "tema_ktr",
-        "tema_kta"
+        "tema_kta",
+        "dokument_tema_ktr",
+        "dokument_tema_kta"
       ]
     },
     {

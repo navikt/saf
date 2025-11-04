@@ -46,14 +46,6 @@
       "cluster": "dev-gcp"
     },
     {
-      "app": "esyfovarsel",
-      "namespace": "team-esyfo",
-      "cluster": "dev-fss",
-      "roles": [
-        "tema_opp"
-      ]
-    },
-    {
       "app": "medlemskap-oppslag",
       "namespace": "medlemskap",
       "cluster": "dev-gcp"
@@ -173,7 +165,8 @@
       "namespace": "yrkesskade",
       "cluster": "dev-gcp",
       "roles": [
-        "tema_yrk"
+        "tema_yrk",
+        "dokument_tema_yrk"
       ]
     },
     {
@@ -215,7 +208,17 @@
         "tema_til",
         "tema_tso",
         "tema_tsr",
-        "tema_saa"
+        "tema_saa",
+        "dokument_tema_aap",
+        "dokument_tema_dag",
+        "dokument_tema_fei",
+        "dokument_tema_ind",
+        "dokument_tema_opp",
+        "dokument_tema_sym",
+        "dokument_tema_til",
+        "dokument_tema_tso",
+        "dokument_tema_tsr",
+        "dokument_tema_saa"
       ]
     },
     {
@@ -223,7 +226,8 @@
       "namespace": "obo",
       "cluster": "dev-gcp",
       "roles": [
-        "tema_opp"
+        "tema_opp",
+        "dokument_tema_opp"
       ]
     },
     {
@@ -291,7 +295,9 @@
       "namespace": "teamdokumenthandtering",
       "cluster": "dev-fss",
       "roles": [
-        "tema_far"
+        "tema_far",
+        "dokument_tema_far",
+        "journal_tema_far"
       ]
     },
     {
@@ -358,9 +364,6 @@
       "app": "ung-sak",
       "namespace": "k9saksbehandling",
       "cluster": "dev-gcp",
-      "roles": [
-        "tema_ung"
-      ]
     },
     {
       "app": "k9-fordel",
@@ -481,17 +484,14 @@
       "namespace": "teamserviceklage",
       "cluster": "dev-gcp",
       "roles": [
-        "tema_ser"
+        "tema_ser",
+        "dokument_tema_ser"
       ]
     },
     {
       "app": "rpa-medlemskap-og-avgift",
       "namespace": "team-rpa",
       "cluster": "dev-fss",
-      "roles": [
-        "tema_ind",
-        "tema_til"
-      ]
     },
     {
       "app": "dp-behov-distribuering",
@@ -526,7 +526,8 @@
       "namespace": "okonomi",
       "cluster": "dev-fss",
       "roles": [
-        "tema_sto"
+        "tema_sto",
+        "dokument_tema_sto"
       ]
     },
     {
@@ -542,18 +543,12 @@
     {
       "app": "dokumentfordeling",
       "namespace": "arbeidsgiver",
-      "cluster": "dev-fss",
-      "roles": [
-        "tema_til"
-      ]
+      "cluster": "dev-fss"
     },
     {
       "app": "dp-mottak",
       "namespace": "teamdagpenger",
-      "cluster": "dev-gcp",
-      "roles": [
-        "tema_dag"
-      ]
+      "cluster": "dev-gcp"
     },
     {
       "app": "dp-ruting",
@@ -570,7 +565,8 @@
       "namespace": "team-rpa",
       "cluster": "dev-fss",
       "roles": [
-        "tema_hel"
+        "tema_hel",
+        "dokument_tema_hel"
       ]
     },
     {

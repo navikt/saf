@@ -99,7 +99,17 @@
         "tema_til",
         "tema_tso",
         "tema_tsr",
-        "tema_saa"
+        "tema_saa",
+        "dokument_tema_aap",
+        "dokument_tema_dag",
+        "dokument_tema_fei",
+        "dokument_tema_ind",
+        "dokument_tema_opp",
+        "dokument_tema_sym",
+        "dokument_tema_til",
+        "dokument_tema_tso",
+        "dokument_tema_tsr",
+        "dokument_tema_saa"
       ]
     },
     {
@@ -107,7 +117,8 @@
       "namespace": "okonomi",
       "cluster": "dev-fss",
       "roles": [
-        "tema_sto"
+        "tema_sto",
+        "dokument_tema_sto"
       ]
     },
     {

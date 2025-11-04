@@ -9,6 +9,7 @@ import no.nav.saf.exceptions.AuthorizationException;
 import no.nav.security.token.support.core.context.TokenValidationContext;
 import no.nav.security.token.support.core.jwt.JwtToken;
 import no.nav.security.token.support.core.jwt.JwtTokenClaims;
+import org.slf4j.MDC;
 
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -18,6 +19,7 @@ import java.util.UUID;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import static no.nav.saf.util.MDCConstants.CONSUMER_ID;
 import static no.nav.saf.util.MDCUtility.addMdcData;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
@@ -50,6 +52,8 @@ public class SafSecurityContext {
 	static final String NAVIDENT_REGEX = "^[a-zA-Z]\\d{6}$";
 	public static final Pattern NAVIDENT_PATTERN = Pattern.compile(NAVIDENT_REGEX);
 	public static final String AZURE_ROLE_ALLE_TEMA = "tema_alle";
+	private static final String JOURNAL_TEMA_ROLE = "journal_tema_";
+	private static final String DOKUMENT_TEMA_ROLE = "dokument_tema_";
 
 	private final TokenValidationContext tokenValidationContext;
 	private final JwtToken jwtToken;
@@ -157,6 +161,33 @@ public class SafSecurityContext {
 			return true;
 		}
 		return tema != null && containsAzureRole("tema_" + tema.name().toLowerCase());
+	}
+
+	public boolean hasJournalTilgangAzureRolle(Tema tema) {
+		boolean hasTemaAzureRole = hasTemaAzureRole(tema);
+		boolean hasjournalTilgangRole = hasAzureRoleOrAlleTemaRole(JOURNAL_TEMA_ROLE, tema);
+		if(hasTemaAzureRole && ! hasjournalTilgangRole){
+			log.info("System={} har den gamle tema-rolen, men mangler den nye journal_tema rolen.", MDC.get(CONSUMER_ID));
+		}
+		//Gå over til å bruke bare hasJournalTilgangRole når alle har fått riktige roller i miljø.
+		return hasTemaAzureRole || hasjournalTilgangRole;
+	}
+
+	public boolean hasDokumentTilgangAzureRole(Tema tema) {
+		boolean hasTemaAzureRole = hasTemaAzureRole(tema);
+		boolean hasDokumentTilgangRole = hasAzureRoleOrAlleTemaRole(DOKUMENT_TEMA_ROLE, tema);
+		if(hasTemaAzureRole && ! hasDokumentTilgangRole){
+			log.info("System={} har den gamle tema-rolen, men mangler den nye dokument_tema rolen.", MDC.get(CONSUMER_ID));
+		}
+		//Gå over til å bruke bare hasDokumentTilgangRole når alle har fått riktige roller i miljø.
+		return hasTemaAzureRole || hasDokumentTilgangRole;
+	}
+
+	private boolean hasAzureRoleOrAlleTemaRole(String role, Tema tema){
+		if (containsAzureRole(AZURE_ROLE_ALLE_TEMA)) {
+			return true;
+		}
+		return tema != null && containsAzureRole(role + tema.name().toLowerCase());
 	}
 
 	private boolean containsAzureRole(String role) {
