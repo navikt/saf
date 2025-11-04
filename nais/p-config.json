@@ -721,6 +721,14 @@
       "app": "rpa-nfp-robot",
       "namespace": "team-rpa",
       "cluster": "prod-fss"
+    },
+    {
+      "app": "opphold-dataminimering-jobb",
+      "namespace": "team-rocket",
+      "cluster" : "prod-gcp",
+      "roles": [
+        "tema_alle"
+      ]
     }
   ]
 }
