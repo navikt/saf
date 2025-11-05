@@ -74,14 +74,14 @@ public class AbacBackedPep2Impl extends StandardAbacBackedPep<TilgangSak> {
 		}
 		Tema tema = ressurs.getTema();
 		if (isFarskap(ressurs)) {
-			return safRequestContext.getSecurityContext().hasTemaAzureRole(tema) ?
+			return safRequestContext.getSecurityContext().hasJournalTilgangEntraRole(tema) ?
 					permit() : PepAnswer.deny(new TemaReason(
-					"cause_0013_ikketilgangtiltema", "saf_farskap", "tematilgang_nok", FAR
+					"cause_0013_ikketilgangtilJournaltema", "saf_farskap", "tematilgang_nok", FAR
 			));
 		} else if (isKontrollAnmeldelse(ressurs)) {
-			return safRequestContext.getSecurityContext().hasTemaAzureRole(tema) ?
+			return safRequestContext.getSecurityContext().hasJournalTilgangEntraRole(tema) ?
 					permit() : PepAnswer.deny(new TemaReason(
-					"cause_0013_ikketilgangtiltema", "saf_kontrollanmeldelse", "tematilgang_nok", KTA
+					"cause_0013_ikketilgangtilJournaltema", "saf_kontrollanmeldelse", "tematilgang_nok", KTA
 			));
 		} else {
 			return permit();

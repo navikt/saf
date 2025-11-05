@@ -177,7 +177,7 @@ public abstract class AbstractItest {
 						"oid", oidSubEqual,
 						"sub", oidSubEqual,
 						"azp_name", "dev-itest:isa:gosys",
-						"roles", List.of("tema_hje")
+						"roles", List.of("dokument_tema_hje")
 				)
 		);
 	}

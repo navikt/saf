@@ -13,6 +13,7 @@ import no.nav.saf.tilgangskontroll.abac.service.AbacService;
 import no.nav.saf.tilgangskontroll.pep.reasons.GeografiReason;
 import no.nav.saf.tilgangskontroll.pep.reasons.TemaReason;
 import no.nav.saf.tilgangskontroll.pep.reasons.UkjentEllerTekniskReason;
+import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.Cache;
@@ -29,6 +30,7 @@ import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_RESOURC
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_TEMA;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_SAF_SAK_DOKUMENT;
 import static no.nav.saf.tilgangskontroll.pep.PepAnswer.permit;
+import static no.nav.saf.util.MDCConstants.CONSUMER_ID;
 
 /**
  * Dekker følgende policies i saf:
@@ -91,11 +93,12 @@ public class AbacBackedPep2dImpl extends StandardAbacBackedPep<TilgangSak> {
 		traceLogPepStarted(PEP2D, ressurs);
 		Tema tema = ressurs.getTema();
 		String tilgangKeyLocalCaching = KeyGeneratorLocalCaching.getKeyForPep2d(tema);
-		boolean decision = safRequestContext.isSystemAndVariantformatOriginal() || safRequestContext.getSecurityContext().hasTemaAzureRole(tema);
+		boolean decision = safRequestContext.isSystemAndVariantformatOriginal() || safRequestContext.getSecurityContext().hasDokumentTilgangEntraRole(tema);
 		PepAnswer pepAnswer = decision ? permit() : PepAnswer.deny(new TemaReason(
-				"cause_0013_ikketilgangtiltema", "saf_pep2d", "mangler_tema", tema));
+				"cause_0013_ikketilgangtilDokumenttema", "saf_pep2d", "mangler_tema", tema));
 		safRequestContext.getRequestCache().putDecision(tilgangKeyLocalCaching, pepAnswer);
 		traceLogPepFinished(PEP2D, ressurs);
+		log.info("System={} henter dokument med tema={}", MDC.get(CONSUMER_ID), tema);
 		return pepAnswer;
 	}
 

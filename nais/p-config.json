@@ -96,7 +96,29 @@
     {
       "app": "jfr-arena",
       "namespace": "isa",
-      "cluster": "prod-fss"
+      "cluster": "prod-fss",
+      "roles": [
+        "tema_aap",
+        "tema_dag",
+        "tema_fei",
+        "tema_ind",
+        "tema_opp",
+        "tema_sym",
+        "tema_til",
+        "tema_tso",
+        "tema_tsr",
+        "tema_saa",
+        "dokument_tema_aap",
+        "dokument_tema_dag",
+        "dokument_tema_fei",
+        "dokument_tema_ind",
+        "dokument_tema_opp",
+        "dokument_tema_sym",
+        "dokument_tema_til",
+        "dokument_tema_tso",
+        "dokument_tema_tsr",
+        "dokument_tema_saa"
+      ]
     },
     {
       "app": "jfr-infotrygd",
@@ -113,7 +135,8 @@
       "namespace": "isa",
       "cluster": "prod-gcp",
       "roles": [
-        "tema_kta"
+        "tema_kta",
+        "journal_tema_kta"
       ]
     },
     {
@@ -181,7 +204,8 @@
       "namespace": "pto",
       "cluster": "prod-fss",
       "roles": [
-        "tema_opp"
+        "tema_opp",
+        "dokument_tema_opp"
       ]
     },
     {
@@ -189,7 +213,8 @@
       "namespace": "obo",
       "cluster": "prod-gcp",
       "roles": [
-        "tema_opp"
+        "tema_opp",
+        "dokument_tema_opp"
       ]
     },
     {
@@ -202,7 +227,8 @@
       "namespace": "yrkesskade",
       "cluster": "prod-gcp",
       "roles": [
-        "tema_yrk"
+        "tema_yrk",
+        "dokument_tema_yrk"
       ]
     },
     {
@@ -231,7 +257,10 @@
       "cluster": "prod-fss",
       "roles": [
         "tema_far",
-        "tema_bid"
+        "tema_bid",
+        "dokument_tema_bid",
+        "journal_tema_far",
+        "dokument_tema_far"
       ]
     },
     {
@@ -338,7 +367,17 @@
         "tema_til",
         "tema_tso",
         "tema_tsr",
-        "tema_saa"
+        "tema_saa",
+        "dokument_tema_aap",
+        "dokument_tema_dag",
+        "dokument_tema_fei",
+        "dokument_tema_ind",
+        "dokument_tema_opp",
+        "dokument_tema_sym",
+        "dokument_tema_til",
+        "dokument_tema_tso",
+        "dokument_tema_tsr",
+        "dokument_tema_saa"
       ]
     },
     {
@@ -351,7 +390,9 @@
       "namespace": "teamdokumenthandtering",
       "cluster": "prod-fss",
       "roles": [
-        "tema_far"
+        "tema_far",
+        "dokument_tema_far",
+        "journal_tema_far"
       ]
     },
     {
@@ -456,7 +497,10 @@
       "roles": [
         "tema_med",
         "tema_ufm",
-        "tema_try"
+        "tema_try",
+        "dokument_tema_med",
+        "dokument_tema_ufm",
+        "dokument_tema_try"
       ]
     },
     {
@@ -565,7 +609,8 @@
       "namespace": "aap",
       "cluster": "prod-gcp",
       "roles": [
-        "tema_aap"
+        "tema_aap",
+        "dokument_tema_aap"
       ]
     },
     {
@@ -573,7 +618,8 @@
       "namespace": "teamserviceklage",
       "cluster": "prod-gcp",
       "roles": [
-        "tema_ser"
+        "tema_ser",
+        "dokument_tema_ser"
       ]
     },
     {
@@ -616,7 +662,8 @@
       "namespace": "okonomi",
       "cluster": "prod-fss",
       "roles": [
-        "tema_sto"
+        "tema_sto",
+        "dokument_tema_sto"
       ]
     },
     {
@@ -670,7 +717,9 @@
       "cluster": "prod-fss",
       "roles": [
         "tema_ktr",
-        "tema_kta"
+        "tema_kta",
+        "dokument_tema_ktr",
+        "dokument_tema_kta"
       ]
     },
     {
@@ -678,7 +727,8 @@
       "namespace": "team-rpa",
       "cluster": "prod-fss",
       "roles": [
-        "tema_hel"
+        "tema_hel",
+        "dokument_tema_hel"
       ]
     },
     {

@@ -9,6 +9,7 @@ import no.nav.saf.exceptions.AuthorizationException;
 import no.nav.security.token.support.core.context.TokenValidationContext;
 import no.nav.security.token.support.core.jwt.JwtToken;
 import no.nav.security.token.support.core.jwt.JwtTokenClaims;
+import org.slf4j.MDC;
 
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -18,6 +19,7 @@ import java.util.UUID;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import static no.nav.saf.util.MDCConstants.CONSUMER_ID;
 import static no.nav.saf.util.MDCUtility.addMdcData;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
@@ -50,6 +52,8 @@ public class SafSecurityContext {
 	static final String NAVIDENT_REGEX = "^[a-zA-Z]\\d{6}$";
 	public static final Pattern NAVIDENT_PATTERN = Pattern.compile(NAVIDENT_REGEX);
 	public static final String AZURE_ROLE_ALLE_TEMA = "tema_alle";
+	private static final String JOURNAL_TEMA_ROLE = "journal_tema_";
+	private static final String DOKUMENT_TEMA_ROLE = "dokument_tema_";
 
 	private final TokenValidationContext tokenValidationContext;
 	private final JwtToken jwtToken;
@@ -144,22 +148,58 @@ public class SafSecurityContext {
 	}
 
 	/**
-	 * Sjekker om konsument har tilgang til tema gjennom rollen "tema_{tema}" i roles claim på token. (Azure)
-	 * Tema rollen gir tilgang til metadata (kun relevant for tema FAR) og dokumenter.
-	 * tema_alle rollen gir tilgang til alle tema.
+	 * Sjekker om konsument har tilgang til journal-tema gjennom rolen "journal_tema_{tema}" i roles claim på token. (Azure)
+	 * Tema rolen gir tilgang til metadata (kun relevant for tema KTA og FAR)
+	 * tema_alle rolen gir tilgang til alle tema.
 	 * Se nais/naiserator.yaml azureator config
 	 *
 	 * @param tema Temakode. Eksempel "FOR"
-	 * @return true hvis tema rollen finnes. Ellers false
+	 * @return true hvis tema rolen finnes. Ellers false
 	 */
-	public boolean hasTemaAzureRole(Tema tema) {
-		if (containsAzureRole(AZURE_ROLE_ALLE_TEMA)) {
-			return true;
+	public boolean hasJournalTilgangEntraRole(Tema tema) {
+		boolean hasTemaAzureRole = hasTemaEntraRoleOrAlleTemaRole(tema);
+		boolean hasjournalTilgangRole = hasEntraRoleOrAlleTemaRole(JOURNAL_TEMA_ROLE, tema);
+		if(hasTemaAzureRole && ! hasjournalTilgangRole){
+			log.info("System={} har den gamle tema-rolen, men mangler den nye journal_tema rolen.", MDC.get(CONSUMER_ID));
 		}
-		return tema != null && containsAzureRole("tema_" + tema.name().toLowerCase());
+		//Gå over til å bruke bare hasJournalTilgangRole når alle har fått riktige roles i miljø.
+		return hasTemaAzureRole || hasjournalTilgangRole;
 	}
 
-	private boolean containsAzureRole(String role) {
+	/**
+	 * Sjekker om konsument har tilgang til dokument-tema gjennom rolen "dokument_tema_{tema}" i roles claim på token. (Azure)
+	 * Tema rolen gir tilgang til dokumenter.
+	 * tema_alle rolen gir tilgang til alle tema.
+	 * Se nais/naiserator.yaml azureator config
+	 *
+	 * @param tema Temakode. Eksempel "FOR"
+	 * @return true hvis tema rolen finnes. Ellers false
+	 */
+	public boolean hasDokumentTilgangEntraRole(Tema tema) {
+		boolean hasTemaAzureRole = hasTemaEntraRoleOrAlleTemaRole(tema);
+		boolean hasDokumentTilgangRole = hasEntraRoleOrAlleTemaRole(DOKUMENT_TEMA_ROLE, tema);
+		if(hasTemaAzureRole && ! hasDokumentTilgangRole){
+			log.info("System={} har den gamle tema-rolen, men mangler den nye dokument_tema rolen.", MDC.get(CONSUMER_ID));
+		}
+		//Gå over til å bruke bare hasDokumentTilgangRole når alle har fått riktige roles i miljø.
+		return hasTemaAzureRole || hasDokumentTilgangRole;
+	}
+
+	private boolean hasTemaEntraRoleOrAlleTemaRole(Tema tema) {
+		if (containsEntraRole(AZURE_ROLE_ALLE_TEMA)) {
+			return true;
+		}
+		return tema != null && containsEntraRole("tema_" + tema.name().toLowerCase());
+	}
+
+	private boolean hasEntraRoleOrAlleTemaRole(String role, Tema tema){
+		if (containsEntraRole(AZURE_ROLE_ALLE_TEMA)) {
+			return true;
+		}
+		return tema != null && containsEntraRole(role + tema.name().toLowerCase());
+	}
+
+	private boolean containsEntraRole(String role) {
 		return jwtAzureRoles.contains(role);
 	}
 
