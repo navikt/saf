@@ -98,7 +98,6 @@ public class AbacBackedPep2dImpl extends StandardAbacBackedPep<TilgangSak> {
 				"cause_0013_ikketilgangtilDokumenttema", "saf_pep2d", "mangler_tema", tema));
 		safRequestContext.getRequestCache().putDecision(tilgangKeyLocalCaching, pepAnswer);
 		traceLogPepFinished(PEP2D, ressurs);
-		log.info("System={} henter dokument med tema={}", MDC.get(CONSUMER_ID), tema);
 		return pepAnswer;
 	}
 

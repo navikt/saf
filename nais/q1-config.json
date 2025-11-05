@@ -165,7 +165,6 @@
       "namespace": "yrkesskade",
       "cluster": "dev-gcp",
       "roles": [
-        "tema_yrk",
         "dokument_tema_yrk"
       ]
     },
@@ -199,16 +198,6 @@
       "namespace": "teamarenanais",
       "cluster": "dev-fss",
       "roles": [
-        "tema_aap",
-        "tema_dag",
-        "tema_fei",
-        "tema_ind",
-        "tema_opp",
-        "tema_sym",
-        "tema_til",
-        "tema_tso",
-        "tema_tsr",
-        "tema_saa",
         "dokument_tema_aap",
         "dokument_tema_dag",
         "dokument_tema_fei",
@@ -226,7 +215,6 @@
       "namespace": "obo",
       "cluster": "dev-gcp",
       "roles": [
-        "tema_opp",
         "dokument_tema_opp"
       ]
     },
@@ -295,7 +283,6 @@
       "namespace": "teamdokumenthandtering",
       "cluster": "dev-fss",
       "roles": [
-        "tema_far",
         "dokument_tema_far",
         "journal_tema_far"
       ]
@@ -484,7 +471,6 @@
       "namespace": "teamserviceklage",
       "cluster": "dev-gcp",
       "roles": [
-        "tema_ser",
         "dokument_tema_ser"
       ]
     },
@@ -526,7 +512,6 @@
       "namespace": "okonomi",
       "cluster": "dev-fss",
       "roles": [
-        "tema_sto",
         "dokument_tema_sto"
       ]
     },
@@ -565,7 +550,6 @@
       "namespace": "team-rpa",
       "cluster": "dev-fss",
       "roles": [
-        "tema_hel",
         "dokument_tema_hel"
       ]
     },

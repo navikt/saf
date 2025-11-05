@@ -90,16 +90,6 @@
       "namespace": "teamarenanais",
       "cluster": "dev-fss",
       "roles": [
-        "tema_aap",
-        "tema_dag",
-        "tema_fei",
-        "tema_ind",
-        "tema_opp",
-        "tema_sym",
-        "tema_til",
-        "tema_tso",
-        "tema_tsr",
-        "tema_saa",
         "dokument_tema_aap",
         "dokument_tema_dag",
         "dokument_tema_fei",
@@ -117,7 +107,6 @@
       "namespace": "okonomi",
       "cluster": "dev-fss",
       "roles": [
-        "tema_sto",
         "dokument_tema_sto"
       ]
     },

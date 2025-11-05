@@ -192,16 +192,6 @@
       "namespace": "teamarenanais",
       "cluster": "dev-fss",
       "roles": [
-        "tema_aap",
-        "tema_dag",
-        "tema_fei",
-        "tema_ind",
-        "tema_opp",
-        "tema_sym",
-        "tema_til",
-        "tema_tso",
-        "tema_tsr",
-        "tema_saa",
         "dokument_tema_aap",
         "dokument_tema_dag",
         "dokument_tema_fei",
@@ -219,7 +209,6 @@
       "namespace": "obo",
       "cluster": "dev-gcp",
       "roles": [
-        "tema_opp",
         "dokument_tema_opp"
       ]
     },
@@ -338,7 +327,6 @@
       "namespace": "bidrag",
       "cluster": "dev-fss",
       "roles": [
-        "tema_far",
         "journal_tema_far"
       ]
     },
@@ -372,7 +360,6 @@
       "namespace": "teamdokumenthandtering",
       "cluster": "dev-fss",
       "roles": [
-        "tema_far",
         "dokument_tema_far",
         "journal_tema_far"
       ]
@@ -412,9 +399,6 @@
       "namespace": "teammelosys",
       "cluster": "dev-fss",
       "roles": [
-        "tema_med",
-        "tema_ufm",
-        "tema_try",
         "dokument_tema_med",
         "dokument_tema_ufm",
         "dokument_tema_try"
@@ -425,9 +409,6 @@
       "namespace": "teammelosys",
       "cluster": "dev-fss",
       "roles": [
-        "tema_med",
-        "tema_ufm",
-        "tema_try",
         "dokument_tema_med",
         "dokument_tema_ufm",
         "dokument_tema_try"
@@ -620,7 +601,6 @@
       "namespace": "aap",
       "cluster": "dev-gcp",
       "roles": [
-        "tema_aap",
         "dokument_tema_aap"
       ]
     },
@@ -644,7 +624,6 @@
       "namespace": "teamserviceklage",
       "cluster": "dev-gcp",
       "roles": [
-        "tema_ser",
         "dokument_tema_ser"
       ]
     },
@@ -668,8 +647,6 @@
       "namespace": "dsopkontroll",
       "cluster": "dev-fss",
       "roles": [
-        "tema_ktr",
-        "tema_kta",
         "dokument_tema_ktr",
         "dokument_tema_kta"
       ]
