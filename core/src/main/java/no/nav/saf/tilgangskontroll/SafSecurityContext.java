@@ -196,7 +196,7 @@ public class SafSecurityContext {
 		if (containsEntraRole(AZURE_ROLE_ALLE_TEMA)) {
 			return true;
 		}
-		return tema != null && containsEntraRole(role.toLowerCase() + tema.name().toLowerCase());
+		return tema != null && containsEntraRole(role + tema.name().toLowerCase());
 	}
 
 	private boolean containsEntraRole(String role) {
