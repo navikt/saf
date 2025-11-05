@@ -166,7 +166,7 @@
       "cluster": "dev-gcp",
       "roles": [
         "tema_yrk",
-        "dokument_tema_yrk"
+        "dokument_tema_YRK"
       ]
     },
     {
@@ -209,16 +209,16 @@
         "tema_tso",
         "tema_tsr",
         "tema_saa",
-        "dokument_tema_aap",
-        "dokument_tema_dag",
-        "dokument_tema_fei",
-        "dokument_tema_ind",
-        "dokument_tema_opp",
-        "dokument_tema_sym",
-        "dokument_tema_til",
-        "dokument_tema_tso",
-        "dokument_tema_tsr",
-        "dokument_tema_saa"
+        "dokument_tema_AAP",
+        "dokument_tema_DAG",
+        "dokument_tema_FEI",
+        "dokument_tema_IND",
+        "dokument_tema_OPP",
+        "dokument_tema_SYM",
+        "dokument_tema_TIL",
+        "dokument_tema_TSO",
+        "dokument_tema_TSR",
+        "dokument_tema_SAA"
       ]
     },
     {
@@ -227,7 +227,7 @@
       "cluster": "dev-gcp",
       "roles": [
         "tema_opp",
-        "dokument_tema_opp"
+        "dokument_tema_OPP"
       ]
     },
     {
@@ -296,8 +296,8 @@
       "cluster": "dev-fss",
       "roles": [
         "tema_far",
-        "dokument_tema_far",
-        "journal_tema_far"
+        "dokument_tema_FAR",
+        "journal_tema_FAR"
       ]
     },
     {
@@ -485,13 +485,13 @@
       "cluster": "dev-gcp",
       "roles": [
         "tema_ser",
-        "dokument_tema_ser"
+        "dokument_tema_SER"
       ]
     },
     {
       "app": "rpa-medlemskap-og-avgift",
       "namespace": "team-rpa",
-      "cluster": "dev-fss",
+      "cluster": "dev-fss"
     },
     {
       "app": "dp-behov-distribuering",
@@ -527,7 +527,7 @@
       "cluster": "dev-fss",
       "roles": [
         "tema_sto",
-        "dokument_tema_sto"
+        "dokument_tema_STO"
       ]
     },
     {
@@ -566,7 +566,7 @@
       "cluster": "dev-fss",
       "roles": [
         "tema_hel",
-        "dokument_tema_hel"
+        "dokument_tema_HEL"
       ]
     },
     {

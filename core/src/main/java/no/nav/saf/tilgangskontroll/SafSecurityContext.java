@@ -148,49 +148,58 @@ public class SafSecurityContext {
 	}
 
 	/**
-	 * Sjekker om konsument har tilgang til tema gjennom rollen "tema_{tema}" i roles claim på token. (Azure)
-	 * Tema rollen gir tilgang til metadata (kun relevant for tema FAR) og dokumenter.
-	 * tema_alle rollen gir tilgang til alle tema.
+	 * Sjekker om konsument har tilgang til journal-tema gjennom rolen "journal_tema_{tema}" i roles claim på token. (Azure)
+	 * Tema rolen gir tilgang til metadata (kun relevant for tema KTA og FAR)
+	 * tema_alle rolen gir tilgang til alle tema.
 	 * Se nais/naiserator.yaml azureator config
 	 *
 	 * @param tema Temakode. Eksempel "FOR"
-	 * @return true hvis tema rollen finnes. Ellers false
+	 * @return true hvis tema rolen finnes. Ellers false
 	 */
-	public boolean hasTemaAzureRole(Tema tema) {
-		if (containsAzureRole(AZURE_ROLE_ALLE_TEMA)) {
-			return true;
-		}
-		return tema != null && containsAzureRole("tema_" + tema.name().toLowerCase());
-	}
-
-	public boolean hasJournalTilgangAzureRolle(Tema tema) {
-		boolean hasTemaAzureRole = hasTemaAzureRole(tema);
-		boolean hasjournalTilgangRole = hasAzureRoleOrAlleTemaRole(JOURNAL_TEMA_ROLE, tema);
+	public boolean hasJournalTilgangEntraRole(Tema tema) {
+		boolean hasTemaAzureRole = hasTemaEntraRoleOrAlleTemaRole(tema);
+		boolean hasjournalTilgangRole = hasEntraRoleOrAlleTemaRole(JOURNAL_TEMA_ROLE, tema);
 		if(hasTemaAzureRole && ! hasjournalTilgangRole){
 			log.info("System={} har den gamle tema-rolen, men mangler den nye journal_tema rolen.", MDC.get(CONSUMER_ID));
 		}
-		//Gå over til å bruke bare hasJournalTilgangRole når alle har fått riktige roller i miljø.
+		//Gå over til å bruke bare hasJournalTilgangRole når alle har fått riktige roles i miljø.
 		return hasTemaAzureRole || hasjournalTilgangRole;
 	}
 
-	public boolean hasDokumentTilgangAzureRole(Tema tema) {
-		boolean hasTemaAzureRole = hasTemaAzureRole(tema);
-		boolean hasDokumentTilgangRole = hasAzureRoleOrAlleTemaRole(DOKUMENT_TEMA_ROLE, tema);
+	/**
+	 * Sjekker om konsument har tilgang til dokument-tema gjennom rolen "dokument_tema_{tema}" i roles claim på token. (Azure)
+	 * Tema rolen gir tilgang til dokumenter.
+	 * tema_alle rolen gir tilgang til alle tema.
+	 * Se nais/naiserator.yaml azureator config
+	 *
+	 * @param tema Temakode. Eksempel "FOR"
+	 * @return true hvis tema rolen finnes. Ellers false
+	 */
+	public boolean hasDokumentTilgangEntraRole(Tema tema) {
+		boolean hasTemaAzureRole = hasTemaEntraRoleOrAlleTemaRole(tema);
+		boolean hasDokumentTilgangRole = hasEntraRoleOrAlleTemaRole(DOKUMENT_TEMA_ROLE, tema);
 		if(hasTemaAzureRole && ! hasDokumentTilgangRole){
 			log.info("System={} har den gamle tema-rolen, men mangler den nye dokument_tema rolen.", MDC.get(CONSUMER_ID));
 		}
-		//Gå over til å bruke bare hasDokumentTilgangRole når alle har fått riktige roller i miljø.
+		//Gå over til å bruke bare hasDokumentTilgangRole når alle har fått riktige roles i miljø.
 		return hasTemaAzureRole || hasDokumentTilgangRole;
 	}
 
-	private boolean hasAzureRoleOrAlleTemaRole(String role, Tema tema){
-		if (containsAzureRole(AZURE_ROLE_ALLE_TEMA)) {
+	private boolean hasTemaEntraRoleOrAlleTemaRole(Tema tema) {
+		if (containsEntraRole(AZURE_ROLE_ALLE_TEMA)) {
 			return true;
 		}
-		return tema != null && containsAzureRole(role + tema.name().toLowerCase());
+		return tema != null && containsEntraRole("tema_" + tema.name().toLowerCase());
 	}
 
-	private boolean containsAzureRole(String role) {
+	private boolean hasEntraRoleOrAlleTemaRole(String role, Tema tema){
+		if (containsEntraRole(AZURE_ROLE_ALLE_TEMA)) {
+			return true;
+		}
+		return tema != null && containsEntraRole(role.toLowerCase() + tema.name().toLowerCase());
+	}
+
+	private boolean containsEntraRole(String role) {
 		return jwtAzureRoles.contains(role);
 	}
 

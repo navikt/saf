@@ -93,7 +93,7 @@ public class AbacBackedPep2dImpl extends StandardAbacBackedPep<TilgangSak> {
 		traceLogPepStarted(PEP2D, ressurs);
 		Tema tema = ressurs.getTema();
 		String tilgangKeyLocalCaching = KeyGeneratorLocalCaching.getKeyForPep2d(tema);
-		boolean decision = safRequestContext.isSystemAndVariantformatOriginal() || safRequestContext.getSecurityContext().hasDokumentTilgangAzureRole(tema);
+		boolean decision = safRequestContext.isSystemAndVariantformatOriginal() || safRequestContext.getSecurityContext().hasDokumentTilgangEntraRole(tema);
 		PepAnswer pepAnswer = decision ? permit() : PepAnswer.deny(new TemaReason(
 				"cause_0013_ikketilgangtilDokumenttema", "saf_pep2d", "mangler_tema", tema));
 		safRequestContext.getRequestCache().putDecision(tilgangKeyLocalCaching, pepAnswer);
