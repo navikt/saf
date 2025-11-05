@@ -590,6 +590,11 @@
       "roles": [
         "tema_alle"
       ]
+    },
+    {
+      "app": "opphold-dataminimering-jobb-q1",
+      "namespace": "team-rocket",
+      "cluster" : "dev-gcp"
     }
   ]
 }
