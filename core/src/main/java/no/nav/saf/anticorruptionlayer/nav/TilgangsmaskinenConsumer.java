@@ -16,14 +16,18 @@ import no.nav.saf.tilgangskontroll.pep.reasons.PersonUtlandReason;
 import no.nav.saf.tilgangskontroll.pep.reasons.StrengtFortroligAdresseReason;
 import no.nav.saf.tilgangskontroll.pep.reasons.StrengtFortroligAdresseUtlandReason;
 import no.nav.saf.tilgangskontroll.pep.reasons.UkjentEllerTekniskReason;
+import org.springframework.boot.http.client.ClientHttpRequestFactoryBuilder;
+import org.springframework.boot.http.client.ClientHttpRequestFactorySettings;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 
 import java.io.IOException;
+import java.time.Duration;
 
 import static no.nav.saf.integration.token.NaisTexasAndCallIdRequestInterceptor.TARGET_SCOPE;
 import static no.nav.saf.tilgangskontroll.pep.PepAnswer.deny;
+import static org.springframework.boot.http.client.ClientHttpRequestFactorySettings.defaults;
 
 @Slf4j
 @Component
@@ -31,11 +35,16 @@ public class TilgangsmaskinenConsumer {
 
 	private static final String TILGANGSMASKINEN_INSTANCE = "tilgangsmaskinen";
 
+	public static final Duration READ_TIMEOUT = Duration.ofSeconds(2);
 	private final RestClient texasAuthorizedRestClient;
 	private final SafProperties safProperties;
 
 	public TilgangsmaskinenConsumer(RestClient texasAuthorizedRestClient, SafProperties safProperties) {
+		ClientHttpRequestFactorySettings settings = defaults()
+				.withConnectTimeout(Duration.ofSeconds(3))
+				.withReadTimeout(READ_TIMEOUT);
 		this.texasAuthorizedRestClient = texasAuthorizedRestClient.mutate()
+				.requestFactory(ClientHttpRequestFactoryBuilder.jdk().build(settings))
 				.baseUrl(safProperties.getEndpoints().getTilgangsmaskinen().getUrl())
 				.build();
 		this.safProperties = safProperties;
@@ -48,9 +57,8 @@ public class TilgangsmaskinenConsumer {
 			if (safRequestContext.isUserIdNavAnsatt()) {
 				return texasAuthorizedRestClient.post()
 						.uri(uriBuilder -> uriBuilder.path("/api/v1/ccf/komplett/" + safRequestContext.getUserId()).build())
-						.attributes(attributes -> {
-							attributes.put(TARGET_SCOPE, safProperties.getEndpoints().getTilgangsmaskinen().getScope());
-						})
+						.attributes(attributes ->
+								attributes.put(TARGET_SCOPE, safProperties.getEndpoints().getTilgangsmaskinen().getScope()))
 						.body(identifikator)
 						.exchange((request, response) -> handleResponseFromTilgangsmaskinen(response));
 			} else {
@@ -71,10 +79,10 @@ public class TilgangsmaskinenConsumer {
 				return PepAnswer.permit();
 			} else if (response.getStatusCode().is4xxClientError() && !HttpStatus.NOT_FOUND.equals(response.getStatusCode())) {
 				throw new SafFunctionalException("Kall mot tilgangsmaskinen feilet med status " +
-						response.getStatusCode() + " " + response.getStatusText(), response.getStatusCode());
+												 response.getStatusCode() + " " + response.getStatusText(), response.getStatusCode());
 			} else {
 				throw new SafTechnicalException("kall mot tilgangsmaskinen fikk uventet status " +
-						response.getStatusCode() + " " + response.getStatusText(), response.getStatusCode());
+												response.getStatusCode() + " " + response.getStatusText(), response.getStatusCode());
 			}
 		}
 	}
