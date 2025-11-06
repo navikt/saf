@@ -9,7 +9,6 @@ import no.nav.saf.exceptions.AuthorizationException;
 import no.nav.security.token.support.core.context.TokenValidationContext;
 import no.nav.security.token.support.core.jwt.JwtToken;
 import no.nav.security.token.support.core.jwt.JwtTokenClaims;
-import org.slf4j.MDC;
 
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -19,7 +18,6 @@ import java.util.UUID;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import static no.nav.saf.util.MDCConstants.CONSUMER_ID;
 import static no.nav.saf.util.MDCUtility.addMdcData;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
@@ -157,13 +155,7 @@ public class SafSecurityContext {
 	 * @return true hvis tema rolen finnes. Ellers false
 	 */
 	public boolean hasJournalTilgangEntraRole(Tema tema) {
-		boolean hasTemaAzureRole = hasTemaEntraRoleOrAlleTemaRole(tema);
-		boolean hasjournalTilgangRole = hasEntraRoleOrAlleTemaRole(JOURNAL_TEMA_ROLE, tema);
-		if(hasTemaAzureRole && ! hasjournalTilgangRole){
-			log.info("System={} har den gamle tema-rolen, men mangler den nye journal_tema rolen.", MDC.get(CONSUMER_ID));
-		}
-		//Gå over til å bruke bare hasJournalTilgangRole når alle har fått riktige roles i miljø.
-		return hasTemaAzureRole || hasjournalTilgangRole;
+		return  hasEntraRoleOrAlleTemaRole(JOURNAL_TEMA_ROLE, tema);
 	}
 
 	/**
@@ -176,20 +168,7 @@ public class SafSecurityContext {
 	 * @return true hvis tema rolen finnes. Ellers false
 	 */
 	public boolean hasDokumentTilgangEntraRole(Tema tema) {
-		boolean hasTemaAzureRole = hasTemaEntraRoleOrAlleTemaRole(tema);
-		boolean hasDokumentTilgangRole = hasEntraRoleOrAlleTemaRole(DOKUMENT_TEMA_ROLE, tema);
-		if(hasTemaAzureRole && ! hasDokumentTilgangRole){
-			log.info("System={} har den gamle tema-rolen, men mangler den nye dokument_tema rolen.", MDC.get(CONSUMER_ID));
-		}
-		//Gå over til å bruke bare hasDokumentTilgangRole når alle har fått riktige roles i miljø.
-		return hasTemaAzureRole || hasDokumentTilgangRole;
-	}
-
-	private boolean hasTemaEntraRoleOrAlleTemaRole(Tema tema) {
-		if (containsEntraRole(AZURE_ROLE_ALLE_TEMA)) {
-			return true;
-		}
-		return tema != null && containsEntraRole("tema_" + tema.name().toLowerCase());
+		return hasEntraRoleOrAlleTemaRole(DOKUMENT_TEMA_ROLE, tema);
 	}
 
 	private boolean hasEntraRoleOrAlleTemaRole(String role, Tema tema){

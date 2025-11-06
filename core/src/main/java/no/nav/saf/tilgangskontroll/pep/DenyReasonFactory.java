@@ -19,7 +19,7 @@ public final class DenyReasonFactory {
 			" har ikke tilgang til tema ressursen tilhører eller på grunn av Forvaltningsloven § 19.";
 
 	private static final String PEP2D_DENY_SYSTEM_INFO = "System har ikke tilgang til tema ressursen tilhører. " +
-														 "\"tema_%s\" må ligge i feltet \"roles\" i Azure IAC-konfigurasjonen for konsumenten i saf sin nais-konfigurasjon.";
+														 "\"dokument_tema_%s\" må ligge i feltet \"roles\" i Azure IAC-konfigurasjonen for konsumenten i saf sin nais-konfigurasjon.";
 	private static final String PEP2D_DENY_SAKSBEHANDLER_INFO = "Saksbehandler har ikke tilgang til tema ressursen tilhører eller geografisk område. " +
 																"Saksbehandler må ha tilgang til Enhet som brukeren er tilknyttet, med Fagområde=%s i AXSYS.";
 
