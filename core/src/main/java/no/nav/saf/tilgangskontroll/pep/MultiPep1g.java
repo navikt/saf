@@ -1,5 +1,6 @@
 package no.nav.saf.tilgangskontroll.pep;
 
+import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
@@ -8,19 +9,23 @@ import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.net.http.HttpTimeoutException;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.CompletionException;
 import java.util.concurrent.TimeoutException;
 import java.util.function.BiFunction;
 
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static no.nav.saf.anticorruptionlayer.nav.TilgangsmaskinenConsumer.READ_TIMEOUT;
 import static no.nav.saf.domain.DomainConstants.PEP1G;
+import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCause;
 
 @Slf4j
 @Component(PEP1G)
 public class MultiPep1g extends Pep<TilgangBruker> {
 
-	private static final long OPPSLAG_TIMEOUT_MILLIS = 2000;
+	private static final long OPPSLAG_TIMEOUT_SEKUNDER = 3;
 	private final AbacBackedPep1gImpl abacBackedPep;
 	private final TilgangsmaskinenBackedPep1gImpl tilgangsmaskinenBackedPep;
 	private final boolean featureToggleUseCheckTilgangsmaskinen;
@@ -43,7 +48,7 @@ public class MultiPep1g extends Pep<TilgangBruker> {
 					MDC.setContextMap(currentMdcContextMap);
 					return abacBackedPep.hasAccessWithAnswer(ressurs, safRequestContext);
 				})
-				.orTimeout(OPPSLAG_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS)
+				.orTimeout(OPPSLAG_TIMEOUT_SEKUNDER, SECONDS)
 				.handle(handleExceptionInOppslag("abac-saf", currentMdcContextMap));
 
 		if (featureToggleUseCheckTilgangsmaskinen) {
@@ -51,7 +56,7 @@ public class MultiPep1g extends Pep<TilgangBruker> {
 						MDC.setContextMap(currentMdcContextMap);
 						return tilgangsmaskinenBackedPep.hasAccessWithAnswer(ressurs, safRequestContext);
 					})
-					.orTimeout(OPPSLAG_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS)
+					.orTimeout(OPPSLAG_TIMEOUT_SEKUNDER, SECONDS)
 					.handle(handleExceptionInOppslag("tilgangsmaskinen", currentMdcContextMap));
 
 			return analyzeLogAndChoosePepAnswer(abacSaf.join(), tilgangsmaskinen.join());
@@ -64,8 +69,12 @@ public class MultiPep1g extends Pep<TilgangBruker> {
 		return (pepanswer, error) -> {
 			if (error != null) {
 				MDC.setContextMap(mdcContextMap);
-				if (error instanceof TimeoutException) {
-					log.warn("PEP1g: Oppslag mot {} feilet med timeout (tok over {} millisekunder)", name, OPPSLAG_TIMEOUT_MILLIS);
+				if(error instanceof CompletionException && getRootCause(error) instanceof CallNotPermittedException) {
+					log.error("PEP1g: Oppslag mot {} ble ikke utført. Circuitbreaker er åpen på grunn av timeout eller høy feilrate", name, error.getCause());
+				} else if(error instanceof CompletionException && getRootCause(error) instanceof HttpTimeoutException) {
+					log.warn("PEP1g: Oppslag mot {} feilet med timeout (tok over {} sekunder)", name, READ_TIMEOUT.getSeconds());
+				} else if (error instanceof TimeoutException) {
+					log.warn("PEP1g: Oppslag mot {} feilet med timeout (tok over {} sekunder)", name, OPPSLAG_TIMEOUT_SEKUNDER);
 				} else {
 					log.error("PEP1g: Oppslag mot {} feilet uventet", name, error);
 				}
