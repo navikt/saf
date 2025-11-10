@@ -242,9 +242,7 @@
       "namespace": "bidrag",
       "cluster": "prod-fss",
       "roles": [
-        "dokument_tema_bid",
-        "journal_tema_far",
-        "dokument_tema_far"
+        "journal_tema_far"
       ]
     },
     {
@@ -691,10 +689,7 @@
     {
       "app": "rpa-ot-ortok",
       "namespace": "team-rpa",
-      "cluster": "prod-fss",
-      "roles": [
-        "dokument_tema_hel"
-      ]
+      "cluster": "prod-fss"
     },
     {
       "app": "rpa-nos-robot",
