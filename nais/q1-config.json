@@ -548,10 +548,7 @@
     {
       "app": "rpa-ot-ortok",
       "namespace": "team-rpa",
-      "cluster": "dev-fss",
-      "roles": [
-        "dokument_tema_hel"
-      ]
+      "cluster": "dev-fss"
     },
     {
       "app": "gosys-oppgavebehandling-api-q1",
