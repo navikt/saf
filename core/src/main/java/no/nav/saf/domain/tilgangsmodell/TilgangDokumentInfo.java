@@ -13,13 +13,13 @@ public class TilgangDokumentInfo {
 	/**
 	 * Attributter brukt for tilgangskontroll
 	 **/
-	private final Skjerming skjerming;
-	private final List<TilgangDokumentvariant> tilgangDokumentvarianter;
+	Skjerming skjerming;
+	List<TilgangDokumentvariant> tilgangDokumentvarianter;
 
 	/**
 	 * Attributter brukt for å lage en unik id ifm. caching av tilgangskontrollresultat.
 	 * Kun relevant for tilgangsmodellen til dokumentoversiktene
 	 **/
-	private final String journalpostId;
-	private final String dokumentInfoId;
+	String journalpostId;
+	String dokumentInfoId;
 }

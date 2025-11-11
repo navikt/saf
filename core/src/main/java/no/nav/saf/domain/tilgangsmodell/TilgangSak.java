@@ -12,9 +12,10 @@ import java.util.List;
 @Builder
 public class TilgangSak {
 	// Kjerneattributter brukt for tilgangskontroll
-	String aktoerId;
 	String foedselsnummer;
+	String aktoerId;
 	String orgnummer;
+
 	@NonNull
 	Tema tema;
 	String fagsaksystem;

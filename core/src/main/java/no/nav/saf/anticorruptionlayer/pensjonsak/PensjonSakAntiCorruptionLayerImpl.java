@@ -33,7 +33,7 @@ public class PensjonSakAntiCorruptionLayerImpl implements PensjonSakAntiCorrupti
 
 	@Override
 	public List<Arkivsak> findArkivsaker(final TilgangBruker tilgangBruker, final List<Tema> tema) {
-		if (tilgangBruker == null || tilgangBruker.getFoedselsnr() == null || tema.isEmpty()) {
+		if (tilgangBruker == null || tilgangBruker.getFoedselsnummer() == null || tema.isEmpty()) {
 			return emptyList();
 		} else {
 			Predicate<SakSammendrag> selectForTema = sakSammendrag -> tema.contains(mapToTema(sakSammendrag.arkivtema()));
@@ -48,10 +48,10 @@ public class PensjonSakAntiCorruptionLayerImpl implements PensjonSakAntiCorrupti
 
 	private List<Arkivsak> findArkivsaker(TilgangBruker tilgangBruker, Predicate<SakSammendrag> sakSammendragSelector) {
 		try {
-			if (tilgangBruker.getFoedselsnr() == null) {
+			if (tilgangBruker.getFoedselsnummer() == null) {
 				return emptyList();
 			} else {
-				return pensjonSakRestConsumer.hentSakSammendragListe(tilgangBruker.getFoedselsnr())
+				return pensjonSakRestConsumer.hentSakSammendragListe(tilgangBruker.getFoedselsnummer())
 						.stream()
 						.filter(sakSammendragSelector)
 						.map(sakSammendrag -> Arkivsak.builder()

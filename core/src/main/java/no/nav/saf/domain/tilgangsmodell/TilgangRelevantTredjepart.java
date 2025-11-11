@@ -4,5 +4,5 @@ import lombok.Value;
 
 @Value
 public class TilgangRelevantTredjepart {
-	private final TilgangIdent ident;
+	TilgangIdent ident;
 }

@@ -268,7 +268,7 @@ public class ArkivJournalpostMapper {
 				.map(tilgangBruker -> {
 					if (tilgangBruker.isPerson()) {
 						if (tilgangBruker.getAktoerId() == null) {
-							return new Bruker(tilgangBruker.getFoedselsnr(), BrukerIdType.FNR);
+							return new Bruker(tilgangBruker.getFoedselsnummer(), BrukerIdType.FNR);
 						} else {
 							return new Bruker(tilgangBruker.getAktoerId(), BrukerIdType.AKTOERID);
 						}

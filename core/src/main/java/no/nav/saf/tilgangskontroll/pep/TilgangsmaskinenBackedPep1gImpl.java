@@ -5,7 +5,6 @@ import no.nav.saf.anticorruptionlayer.nav.NavOrgService;
 import no.nav.saf.anticorruptionlayer.nav.NavUserGroupMembershipService;
 import no.nav.saf.anticorruptionlayer.nav.TilgangsmaskinenConsumer;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
-import no.nav.saf.integration.token.NaisTexasConsumer;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.pep.reasons.OrgnrNavStatReason;
 import org.springframework.stereotype.Component;
@@ -16,7 +15,7 @@ import static org.apache.commons.lang3.ObjectUtils.firstNonNull;
 
 @Slf4j
 @Component
-public class TilgangsmaskinenBackedPep1gImpl extends StandardTilgangsmaskinenBackedPep {
+public class TilgangsmaskinenBackedPep1gImpl extends StandardTilgangsmaskinenBackedPep<TilgangBruker> {
 
 	private final TilgangsmaskinenConsumer tilgangsmaskinenConsumer;
 	private final NavOrgService navOrgService;
@@ -38,7 +37,7 @@ public class TilgangsmaskinenBackedPep1gImpl extends StandardTilgangsmaskinenBac
 		} else if (ressurs.isOrganisasjon()) {
 			return verifyTilgangOrganisasjon(ressurs.getOrgnummer(), safRequestContext);
 		} else {
-			return tilgangsmaskinenConsumer.navIdentHasAccess(firstNonNull(ressurs.getAktoerId(), ressurs.getFoedselsnr()), safRequestContext);
+			return tilgangsmaskinenConsumer.navIdentHasAccess(firstNonNull(ressurs.getAktoerId(), ressurs.getFoedselsnummer()), safRequestContext);
 		}
 	}
 

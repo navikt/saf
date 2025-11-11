@@ -12,14 +12,14 @@ public class TilgangDokumentvariant {
 	/**
 	 * Attributter brukt for tilgangskontroll
 	 **/
-	private final Variantformat variantformat;
-	private final Skjerming skjerming;
+	Variantformat variantformat;
+	Skjerming skjerming;
 
 	/**
 	 * Attributter brukt for å lage en unik id ifm. caching av tilgangskontrollresultat.
 	 * Kun relevant for tilgangsmodellen til dokumentoversiktene
 	 **/
-	private final String journalpostId;
-	private final String dokumentInfoId;
+	String journalpostId;
+	String dokumentInfoId;
 
 }

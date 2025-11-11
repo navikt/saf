@@ -6,6 +6,6 @@ import lombok.Value;
 @Value
 @Builder
 public class TilgangIdent {
-	private final String identifikator;
-	private final IdentType identType;
+	String identifikator;
+	IdentType identType;
 }
