@@ -27,7 +27,7 @@ public class BaseTilgangMapper {
 		}
 		return switch (bruker.type()) {
 			case PERSON -> TilgangBruker.builder()
-					.foedselsnr(bruker.id())
+					.foedselsnummer(bruker.id())
 					.build();
 			case ORGANISASJON -> TilgangBruker.builder()
 					.orgnummer(trim(bruker.id()))

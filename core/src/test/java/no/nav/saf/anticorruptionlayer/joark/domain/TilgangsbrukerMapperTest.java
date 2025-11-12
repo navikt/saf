@@ -25,7 +25,7 @@ class TilgangsbrukerMapperTest {
 		TilgangBruker tilgangBruker = TilgangsbrukerMapper.map(responseTo);
 
 		assertThat(tilgangBruker.getAktoerId()).isEqualTo(AKTOERID);
-		assertThat(tilgangBruker.getFoedselsnr()).isEqualTo(FOLKEREGISTERIDENT);
+		assertThat(tilgangBruker.getFoedselsnummer()).isEqualTo(FOLKEREGISTERIDENT);
 		assertThat(tilgangBruker.getHistoriskeIdenter()).isEmpty();
 		assertThat(tilgangBruker.getAlleIdenter()).contains(FOLKEREGISTERIDENT);
 		assertThat(tilgangBruker.getAlleAktoerIds()).hasSize(1).contains(AKTOERID);
@@ -41,7 +41,7 @@ class TilgangsbrukerMapperTest {
 		TilgangBruker tilgangBruker = TilgangsbrukerMapper.map(baseResponse);
 
 		assertThat(tilgangBruker.getAktoerId()).isEqualTo(AKTOERID);
-		assertThat(tilgangBruker.getFoedselsnr()).isEqualTo(FOLKEREGISTERIDENT);
+		assertThat(tilgangBruker.getFoedselsnummer()).isEqualTo(FOLKEREGISTERIDENT);
 		assertThat(tilgangBruker.getHistoriskeIdenter()).hasSize(2);
 		assertThat(tilgangBruker.getAlleIdenter()).contains(FOLKEREGISTERIDENT, HISTORISK_FOLKEREGISTERIDENT);
 		assertThat(tilgangBruker.getAlleAktoerIds()).hasSize(2).contains(AKTOERID, HISTORISK_AKTOERID);
@@ -52,7 +52,7 @@ class TilgangsbrukerMapperTest {
 		List<PdlResponse.PdlIdent> response = List.of(createIdent(NP_ID, PdlResponse.PdlGruppe.NPID, false));
 		TilgangBruker tilgangBruker = TilgangsbrukerMapper.map(response);
 
-		assertThat(tilgangBruker.getFoedselsnr()).isEqualTo(NP_ID);
+		assertThat(tilgangBruker.getFoedselsnummer()).isEqualTo(NP_ID);
 		assertThat(tilgangBruker.getAlleIdenter()).hasSize(1).contains(NP_ID);
 	}
 
@@ -62,7 +62,7 @@ class TilgangsbrukerMapperTest {
 		response.add(createIdent(NP_ID, PdlResponse.PdlGruppe.NPID, false));
 		TilgangBruker tilgangBruker = TilgangsbrukerMapper.map(response);
 
-		assertThat(tilgangBruker.getFoedselsnr()).isEqualTo(FOLKEREGISTERIDENT);
+		assertThat(tilgangBruker.getFoedselsnummer()).isEqualTo(FOLKEREGISTERIDENT);
 		assertThat(tilgangBruker.getAlleIdenter()).hasSize(1).contains(FOLKEREGISTERIDENT);
 	}
 

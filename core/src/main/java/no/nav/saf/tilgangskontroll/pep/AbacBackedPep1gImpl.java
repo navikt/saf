@@ -71,8 +71,8 @@ public class AbacBackedPep1gImpl extends StandardAbacBackedPep<TilgangBruker> {
 
 		if (ressurs.getAktoerId() != null) {
 			request.resource(RESOURCE_FELLES_PERSON_AKTOERID_RESOURCE, ressurs.getAktoerId());
-		} else if (ressurs.getFoedselsnr() != null) {
-			request.resource(RESOURCE_FELLES_PERSON_FNR, ressurs.getFoedselsnr());
+		} else if (ressurs.getFoedselsnummer() != null) {
+			request.resource(RESOURCE_FELLES_PERSON_FNR, ressurs.getFoedselsnummer());
 		} else {
 			log.error("Pep1g kunne ikke validere bruker fordi bruker ikke er en person. Denne tilstanden indikerer en teknisk feil.");
 			return deny(new UkjentEllerTekniskReason());

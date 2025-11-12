@@ -39,8 +39,8 @@ import static java.util.Collections.emptySet;
 import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostMapper.SKJULT_TITTEL;
 import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostMapper.TILKNYTTET_SOM_HOVEDDOKUMENT;
 import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostMapper.TILKNYTTET_SOM_VEDLEGG;
-import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoMapper.sortDokumentInfoByTilknyttetSomRekkefoelgeDokumentInfoId;
 import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoMapper.FILTYPE_PDF;
+import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoMapper.sortDokumentInfoByTilknyttetSomRekkefoelgeDokumentInfoId;
 import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.AKTOER_ID;
 import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.ANTALL_RETUR;
 import static no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoTestObjects.AVSENDER_MOTTAKER_ID;
@@ -796,7 +796,7 @@ class JournalpostDtoMapperTest {
 		RequestCache requestCache = new RequestCache(false);
 		requestCache.putTilgangBruker(
 				TilgangBruker.builder()
-						.foedselsnr(JournalpostDtoTestObjects.FNR)
+						.foedselsnummer(JournalpostDtoTestObjects.FNR)
 						.aktoerId(AKTOER_ID)
 						.build()
 		);

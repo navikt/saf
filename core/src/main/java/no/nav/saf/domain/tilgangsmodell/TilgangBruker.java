@@ -1,9 +1,6 @@
 package no.nav.saf.domain.tilgangsmodell;
 
-import lombok.AccessLevel;
 import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
 import lombok.Value;
 import no.nav.safselvbetjening.tilgang.Ident;
 
@@ -18,22 +15,21 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 @Value
 @Builder(toBuilder = true)
 public class TilgangBruker {
-	private final String foedselsnr;
-	private final String aktoerId;
-	private final String orgnummer;
+	// Kjerneattributter brukt for tilgangskontroll
+	String foedselsnummer;
+	String aktoerId;
+	String orgnummer;
+
 	@Builder.Default
-	private final List<TilgangIdent> historiskeIdenter = new ArrayList<>();
-	@Getter(AccessLevel.NONE)
-	@Setter(AccessLevel.NONE)
-	private List<String> alleIdenter;
+	List<TilgangIdent> historiskeIdenter = new ArrayList<>();
 
 	public List<String> getAlleIdenter() {
 		List<String> tmpAlleIdenter = historiskeIdenter.stream()
 				.filter(ident -> IdentType.FOLKEREGISTERIDENT.equals(ident.getIdentType()))
 				.map(TilgangIdent::getIdentifikator)
 				.collect(Collectors.toList());
-		if (foedselsnr != null) {
-			tmpAlleIdenter.add(foedselsnr);
+		if (foedselsnummer != null) {
+			tmpAlleIdenter.add(foedselsnummer);
 		}
 		if (orgnummer != null) {
 			tmpAlleIdenter.add(orgnummer);
@@ -42,7 +38,7 @@ public class TilgangBruker {
 	}
 
 	public boolean isPerson() {
-		return isNotBlank(foedselsnr) || isNotBlank(aktoerId);
+		return isNotBlank(foedselsnummer) || isNotBlank(aktoerId);
 	}
 
 	public boolean isOrganisasjon() {

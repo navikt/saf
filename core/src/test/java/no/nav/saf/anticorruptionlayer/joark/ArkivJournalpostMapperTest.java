@@ -865,7 +865,7 @@ class ArkivJournalpostMapperTest {
 		RequestCache requestCache = new RequestCache(false);
 		requestCache.putTilgangBruker(
 				TilgangBruker.builder()
-						.foedselsnr(FNR)
+						.foedselsnummer(FNR)
 						.aktoerId(ARKIVSAK_AKTOERID)
 						.build()
 		);

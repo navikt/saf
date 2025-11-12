@@ -55,7 +55,7 @@ class TilgangsmaskinenBackedPep1gImplTest extends AbstractAbacBackedPepTest {
 
 		boolean hasAccess = pep1g.hasAccess(TilgangBruker.builder()
 				.aktoerId(AKTOER_ID)
-				.foedselsnr(FNR)
+				.foedselsnummer(FNR)
 				.historiskeIdenter(Collections.singletonList(TilgangIdent.builder().identifikator(FNR).build()))
 				.build(), createSafRequestContext());
 
@@ -71,7 +71,7 @@ class TilgangsmaskinenBackedPep1gImplTest extends AbstractAbacBackedPepTest {
 		when(tilgangsmaskinenConsumer.navIdentHasAccess(any(), any())).thenReturn(PepAnswer.permit());
 
 		boolean hasAccess = pep1g.hasAccess(TilgangBruker.builder()
-				.foedselsnr(FNR)
+				.foedselsnummer(FNR)
 				.historiskeIdenter(Collections.singletonList(TilgangIdent.builder().identifikator(FNR).build()))
 				.build(), createSafRequestContext());
 
@@ -135,7 +135,7 @@ class TilgangsmaskinenBackedPep1gImplTest extends AbstractAbacBackedPepTest {
 
 		boolean hasAccess = pep1g.hasAccess(TilgangBruker.builder()
 				.aktoerId(AKTOER_ID)
-				.foedselsnr(FNR)
+				.foedselsnummer(FNR)
 				.historiskeIdenter(Collections.singletonList(TilgangIdent.builder().identifikator(FNR).build()))
 				.build(), createSafRequestContext());
 

@@ -118,7 +118,7 @@ public class JournalpostService {
 					TilgangBruker.builder()
 					.aktoerId(arkivSak.aktoerId())
 					.orgnummer(arkivSak.aktoerId() == null ? trim(arkivSak.orgNr()) : null)
-					.foedselsnr(tilgangBrukerMedFnr.getFoedselsnr())
+					.foedselsnummer(tilgangBrukerMedFnr.getFoedselsnummer())
 					// trenger brukers fnr for at dette skal bli riktig i tilgangssjekken på dokumentnivå
 					.build();
 		}

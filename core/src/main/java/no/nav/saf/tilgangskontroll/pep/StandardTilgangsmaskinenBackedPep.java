@@ -1,11 +1,10 @@
 package no.nav.saf.tilgangskontroll.pep;
 
-import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 
 import static no.nav.saf.tilgangskontroll.pep.PepAnswer.permit;
 
-public abstract class StandardTilgangsmaskinenBackedPep extends Pep<TilgangBruker> {
+public abstract class StandardTilgangsmaskinenBackedPep<T> extends Pep<T> {
 
 	/**
 	 * Sjekk NavIdent mot Tilgangsmaskinen for å se om de har tilgang til en gitt bruker
@@ -18,9 +17,9 @@ public abstract class StandardTilgangsmaskinenBackedPep extends Pep<TilgangBruke
 	 * @param safRequestContext Kontekst for kallet
 	 * @return Beslutning om tilgang fra intern ABAC PDP
 	 */
-	abstract PepAnswer verifyNavIdentAccessToUser(TilgangBruker ressurs, SafRequestContext safRequestContext);
+	abstract PepAnswer verifyNavIdentAccessToUser(T ressurs, SafRequestContext safRequestContext);
 
-	public PepAnswer hasAccessWithAnswer(TilgangBruker ressurs, SafRequestContext safRequestContext) {
+	public PepAnswer hasAccessWithAnswer(T ressurs, SafRequestContext safRequestContext) {
 		if (safRequestContext.getSecurityContext().isJwtAzureClientCredentialFlow()) {
 			return verifyAzureClientCredentialFlowAccess(ressurs, safRequestContext);
 		} else if (safRequestContext.isSystem()) {
@@ -30,15 +29,15 @@ public abstract class StandardTilgangsmaskinenBackedPep extends Pep<TilgangBruke
 		}
 	}
 
-	PepAnswer verifyAzureClientCredentialFlowAccess(TilgangBruker ressurs, SafRequestContext safRequestContext) {
+	PepAnswer verifyAzureClientCredentialFlowAccess(T ressurs, SafRequestContext safRequestContext) {
 		return verifyAccessForSystemUser(ressurs, safRequestContext);
 	}
 
-	PepAnswer verifyRestSTSCredentialFlowAccess(TilgangBruker ressurs, SafRequestContext safRequestContext) {
+	PepAnswer verifyRestSTSCredentialFlowAccess(T ressurs, SafRequestContext safRequestContext) {
 		return verifyAccessForSystemUser(ressurs, safRequestContext);
 	}
 
-	protected PepAnswer verifyAccessForSystemUser(TilgangBruker ressurs, SafRequestContext safRequestContext) {
+	protected PepAnswer verifyAccessForSystemUser(T ressurs, SafRequestContext safRequestContext) {
 		return permit();
 	}
 

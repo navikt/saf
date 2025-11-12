@@ -7,11 +7,9 @@ import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlAttribute;
 import no.nav.saf.tilgangskontroll.abac.dto.request.XacmlRequest;
 import no.nav.saf.tilgangskontroll.abac.dto.response.Decision;
 import no.nav.saf.tilgangskontroll.abac.dto.response.XacmlResponse;
-import no.nav.saf.tilgangskontroll.abac.service.AbacService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 
 import java.util.Collections;
@@ -49,7 +47,7 @@ class AbacBackedPep1GImplTest extends AbstractAbacBackedPepTest {
 
 		boolean hasAccess = pep1g.hasAccess(TilgangBruker.builder()
 				.aktoerId(AKTOER_ID)
-				.foedselsnr(FNR)
+				.foedselsnummer(FNR)
 				.historiskeIdenter(Collections.singletonList(TilgangIdent.builder().identifikator(FNR).build()))
 				.build(), createSafRequestContext());
 
@@ -68,7 +66,7 @@ class AbacBackedPep1GImplTest extends AbstractAbacBackedPepTest {
 		ArgumentCaptor<XacmlRequest> request = ArgumentCaptor.forClass(XacmlRequest.class);
 
 		boolean hasAccess = pep1g.hasAccess(TilgangBruker.builder()
-				.foedselsnr(FNR)
+				.foedselsnummer(FNR)
 				.historiskeIdenter(Collections.singletonList(TilgangIdent.builder().identifikator(FNR).build()))
 				.build(), createSafRequestContext());
 
@@ -89,7 +87,7 @@ class AbacBackedPep1GImplTest extends AbstractAbacBackedPepTest {
 
 		boolean hasAccess = pep1g.hasAccess(TilgangBruker.builder()
 				.aktoerId(AKTOER_ID)
-				.foedselsnr(FNR)
+				.foedselsnummer(FNR)
 				.historiskeIdenter(Collections.singletonList(TilgangIdent.builder().identifikator(FNR).build()))
 				.build(), createSafRequestContext());
 

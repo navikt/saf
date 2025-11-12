@@ -10,7 +10,9 @@ import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 
-import static no.nav.saf.anticorruptionlayer.pdl.PdlResponse.PdlGruppe.*;
+import static no.nav.saf.anticorruptionlayer.pdl.PdlResponse.PdlGruppe.AKTORID;
+import static no.nav.saf.anticorruptionlayer.pdl.PdlResponse.PdlGruppe.FOLKEREGISTERIDENT;
+import static no.nav.saf.anticorruptionlayer.pdl.PdlResponse.PdlGruppe.NPID;
 
 @Slf4j
 public class TilgangsbrukerMapper {
@@ -51,7 +53,7 @@ public class TilgangsbrukerMapper {
 		}
 
 		return TilgangBruker.builder()
-				.foedselsnr(foedselsnummer)
+				.foedselsnummer(foedselsnummer)
 				.aktoerId(aktoerId)
 				.historiskeIdenter(tilgangsIdentList)
 				.build();

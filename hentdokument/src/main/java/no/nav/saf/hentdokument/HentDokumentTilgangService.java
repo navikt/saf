@@ -88,7 +88,7 @@ class HentDokumentTilgangService {
 				return mapTilgangBrukerUtenTilknyttetSak(arkivJournalpost);
 			} else {
 				return TilgangBruker.builder()
-						.foedselsnr(fnr)
+						.foedselsnummer(fnr)
 						.build();
 			}
 		} else {
@@ -97,7 +97,7 @@ class HentDokumentTilgangService {
 			if (isNotBlank(arkivSak.aktoerId())) {
 				try {
 					TilgangBruker tilgangBruker = pdlAntiCorruptionLayer.hentTilgangBrukerByAktoerId(arkivSak.aktoerId());
-					if (tilgangBruker != null && tilgangBruker.isPerson() && tilgangBruker.getFoedselsnr() != null) {
+					if (tilgangBruker != null && tilgangBruker.isPerson() && tilgangBruker.getFoedselsnummer() != null) {
 						return tilgangBruker;
 					}
 				} catch (PersonIkkeFunnetException e) {
@@ -107,7 +107,7 @@ class HentDokumentTilgangService {
 			return TilgangBruker.builder()
 					.aktoerId(arkivSak.aktoerId())
 					.orgnummer(trim(arkivSak.orgNr()))
-					.foedselsnr(arkivBruker != null && arkivBruker.isPerson() ? arkivBruker.id() : null)
+					.foedselsnummer(arkivBruker != null && arkivBruker.isPerson() ? arkivBruker.id() : null)
 					.build();
 		}
 	}

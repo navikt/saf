@@ -69,8 +69,8 @@ class HentDokumentSporbarhetslogger {
 
 	private String getBrukerId(TilgangBruker tilgangBruker) {
 		if (tilgangBruker != null) {
-			if (tilgangBruker.isPerson() && tilgangBruker.getFoedselsnr() != null) {
-				return tilgangBruker.getFoedselsnr();
+			if (tilgangBruker.isPerson() && tilgangBruker.getFoedselsnummer() != null) {
+				return tilgangBruker.getFoedselsnummer();
 			} else if (tilgangBruker.isOrganisasjon()) {
 				return tilgangBruker.getOrgnummer();
 			}
