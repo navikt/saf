@@ -455,6 +455,11 @@
       "cluster": "dev-gcp"
     },
     {
+      "app": "fpmottak",
+      "namespace": "teamforeldrepenger",
+      "cluster": "dev-gcp"
+    },
+    {
       "app": "k9-sak",
       "namespace": "k9saksbehandling",
       "cluster": "dev-fss"
