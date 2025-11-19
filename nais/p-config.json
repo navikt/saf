@@ -427,6 +427,11 @@
       "cluster": "prod-gcp"
     },
     {
+      "app": "fpmottak",
+      "namespace": "teamforeldrepenger",
+      "cluster": "prod-gcp"
+    },
+    {
       "app": "joarkadmin",
       "namespace": "teamdokumenthandtering",
       "cluster": "prod-fss"
