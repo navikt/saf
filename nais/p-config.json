@@ -89,6 +89,11 @@
       "cluster": "prod-gcp"
     },
     {
+      "app": "opprett-oppgave-frontend",
+      "namespace": "isa",
+      "cluster": "prod-gcp"
+    },
+    {
       "app": "jfr-infotrygd",
       "namespace": "isa",
       "cluster": "prod-fss"
