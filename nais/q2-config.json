@@ -118,6 +118,11 @@
       "cluster": "dev-gcp"
     },
     {
+      "app": "opprett-oppgave-frontend-q2",
+      "namespace": "isa",
+      "cluster": "dev-gcp"
+    },
+    {
       "app": "salesforce",
       "namespace": "teamcrm",
       "cluster": "dev-external"
