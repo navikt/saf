@@ -26,12 +26,12 @@ import static no.nav.saf.domain.kode.Tema.FAR;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_PERSON_FNR;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_FELLES_RESOURCE_TYPE;
 import static no.nav.saf.tilgangskontroll.SafAttributter.RESOURCE_SAF_TREDJEPART;
-import static no.nav.saf.tilgangskontroll.pep.PepAnswer.deny;
-import static no.nav.saf.tilgangskontroll.pep.PepAnswer.permit;
 import static no.nav.saf.tilgangskontroll.pep.AbacDenyReasonCode.EGEN_ANSATT;
 import static no.nav.saf.tilgangskontroll.pep.AbacDenyReasonCode.FORTROLIG_ADRESSE;
 import static no.nav.saf.tilgangskontroll.pep.AbacDenyReasonCode.STRENGT_FORTROLIG_ADRESSE;
 import static no.nav.saf.tilgangskontroll.pep.AbacDenyReasonCode.STRENGT_FORTROLIG_ADRESSE_UTLAND;
+import static no.nav.saf.tilgangskontroll.pep.PepAnswer.deny;
+import static no.nav.saf.tilgangskontroll.pep.PepAnswer.permit;
 
 /**
  * Dekker følgende policies i saf:
@@ -40,7 +40,7 @@ import static no.nav.saf.tilgangskontroll.pep.AbacDenyReasonCode.STRENGT_FORTROL
  * https://confluence.adeo.no/display/ABAC/FP2%3A+Behandling+Kode+7+Brukere
  */
 @Slf4j
-@Component(PEP3)
+@Component
 public class AbacBackedPep3Impl extends StandardAbacBackedPep<TilgangSak> {
 
 	private static final EnumSet<Tema> RELEVANTE_TEMA = EnumSet.of(BID, FAR);

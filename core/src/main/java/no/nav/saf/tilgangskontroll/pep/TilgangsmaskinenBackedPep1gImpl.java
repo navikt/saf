@@ -3,12 +3,13 @@ package no.nav.saf.tilgangskontroll.pep;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.anticorruptionlayer.nav.NavOrgService;
 import no.nav.saf.anticorruptionlayer.nav.NavUserGroupMembershipService;
-import no.nav.saf.anticorruptionlayer.nav.TilgangsmaskinenConsumer;
+import no.nav.saf.anticorruptionlayer.nav.tilgangsmaskinen.TilgangsmaskinenConsumer;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.pep.reasons.OrgnrNavStatReason;
 import org.springframework.stereotype.Component;
 
+import static no.nav.saf.domain.DomainConstants.PEP1G;
 import static no.nav.saf.tilgangskontroll.pep.PepAnswer.deny;
 import static no.nav.saf.tilgangskontroll.pep.PepAnswer.permit;
 import static org.apache.commons.lang3.ObjectUtils.firstNonNull;
@@ -37,7 +38,7 @@ public class TilgangsmaskinenBackedPep1gImpl extends StandardTilgangsmaskinenBac
 		} else if (ressurs.isOrganisasjon()) {
 			return verifyTilgangOrganisasjon(ressurs.getOrgnummer(), safRequestContext);
 		} else {
-			return tilgangsmaskinenConsumer.navIdentHasAccess(firstNonNull(ressurs.getAktoerId(), ressurs.getFoedselsnummer()), safRequestContext);
+			return tilgangsmaskinenConsumer.navIdentHasAccess(firstNonNull(ressurs.getAktoerId(), ressurs.getFoedselsnummer()), safRequestContext, PEP1G);
 		}
 	}
 
