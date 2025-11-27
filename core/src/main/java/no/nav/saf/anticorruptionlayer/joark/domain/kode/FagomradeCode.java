@@ -278,7 +278,15 @@ public enum FagomradeCode {
 	/**
 	 * Innsyn etter personopplysningsloven
 	 */
-	POI;
+	POI,
+	/**
+	 * Barnebortføring
+	 */
+	BBF,
+	/**
+	 * Oljepionerene
+	 */
+	OLJ;
 
 	public static Tema toSafTema(FagomradeCode joarkFagomradeCode) {
 		return joarkFagomradeCode == null ? Tema.UKJ : Tema.valueOf(joarkFagomradeCode.name());
