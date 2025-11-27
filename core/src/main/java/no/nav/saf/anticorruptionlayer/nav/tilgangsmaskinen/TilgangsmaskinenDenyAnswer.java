@@ -1,4 +1,4 @@
-package no.nav.saf.anticorruptionlayer.nav;
+package no.nav.saf.anticorruptionlayer.nav.tilgangsmaskinen;
 
 public record TilgangsmaskinenDenyAnswer(
 		String type,

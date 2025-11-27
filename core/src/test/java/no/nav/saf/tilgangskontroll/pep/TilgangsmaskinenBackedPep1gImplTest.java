@@ -1,7 +1,7 @@
 package no.nav.saf.tilgangskontroll.pep;
 
 import no.nav.saf.anticorruptionlayer.nav.NavOrgService;
-import no.nav.saf.anticorruptionlayer.nav.TilgangsmaskinenConsumer;
+import no.nav.saf.anticorruptionlayer.nav.tilgangsmaskinen.TilgangsmaskinenConsumer;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.domain.tilgangsmodell.TilgangIdent;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
@@ -51,7 +51,7 @@ class TilgangsmaskinenBackedPep1gImplTest extends AbstractAbacBackedPepTest {
 
 	@Test
 	void shouldPermitWhenAktoerIdIsEvaluated() {
-		when(tilgangsmaskinenConsumer.navIdentHasAccess(any(), any())).thenReturn(PepAnswer.permit());
+		when(tilgangsmaskinenConsumer.navIdentHasAccess(any(), any(), any())).thenReturn(PepAnswer.permit());
 
 		boolean hasAccess = pep1g.hasAccess(TilgangBruker.builder()
 				.aktoerId(AKTOER_ID)
@@ -59,7 +59,7 @@ class TilgangsmaskinenBackedPep1gImplTest extends AbstractAbacBackedPepTest {
 				.historiskeIdenter(Collections.singletonList(TilgangIdent.builder().identifikator(FNR).build()))
 				.build(), createSafRequestContext());
 
-		verify(tilgangsmaskinenConsumer, times(1)).navIdentHasAccess(any(), any());
+		verify(tilgangsmaskinenConsumer, times(1)).navIdentHasAccess(any(), any(), any());
 		verify(navOrgService, times(0)).isOrganisasjonsnummerNavBedrift(any());
 		verify(navUserGroupMembershipService, times(0)).isNavIdentInEgenAnsattGroup(any());
 
@@ -68,14 +68,14 @@ class TilgangsmaskinenBackedPep1gImplTest extends AbstractAbacBackedPepTest {
 
 	@Test
 	void shouldPermitWhenFnrIsEvaluated() {
-		when(tilgangsmaskinenConsumer.navIdentHasAccess(any(), any())).thenReturn(PepAnswer.permit());
+		when(tilgangsmaskinenConsumer.navIdentHasAccess(any(), any(), any())).thenReturn(PepAnswer.permit());
 
 		boolean hasAccess = pep1g.hasAccess(TilgangBruker.builder()
 				.foedselsnummer(FNR)
 				.historiskeIdenter(Collections.singletonList(TilgangIdent.builder().identifikator(FNR).build()))
 				.build(), createSafRequestContext());
 
-		verify(tilgangsmaskinenConsumer, times(1)).navIdentHasAccess(any(), any());
+		verify(tilgangsmaskinenConsumer, times(1)).navIdentHasAccess(any(), any(), any());
 		verify(navOrgService, times(0)).isOrganisasjonsnummerNavBedrift(any());
 		verify(navUserGroupMembershipService, times(0)).isNavIdentInEgenAnsattGroup(any());
 
@@ -90,7 +90,7 @@ class TilgangsmaskinenBackedPep1gImplTest extends AbstractAbacBackedPepTest {
 				.orgnummer(ORGNUMMER)
 				.build(), createSafRequestContext());
 
-		verify(tilgangsmaskinenConsumer, times(0)).navIdentHasAccess(any(), any());
+		verify(tilgangsmaskinenConsumer, times(0)).navIdentHasAccess(any(), any(), any());
 		verify(navOrgService, times(1)).isOrganisasjonsnummerNavBedrift(any());
 		verify(navUserGroupMembershipService, times(0)).isNavIdentInEgenAnsattGroup(any());
 
@@ -106,7 +106,7 @@ class TilgangsmaskinenBackedPep1gImplTest extends AbstractAbacBackedPepTest {
 				.orgnummer(ORGNUMMER)
 				.build(), createSafRequestContext());
 
-		verify(tilgangsmaskinenConsumer, times(0)).navIdentHasAccess(any(), any());
+		verify(tilgangsmaskinenConsumer, times(0)).navIdentHasAccess(any(), any(), any());
 		verify(navOrgService, times(1)).isOrganisasjonsnummerNavBedrift(any());
 		verify(navUserGroupMembershipService, times(1)).isNavIdentInEgenAnsattGroup(any());
 
@@ -122,7 +122,7 @@ class TilgangsmaskinenBackedPep1gImplTest extends AbstractAbacBackedPepTest {
 				.orgnummer(ORGNUMMER)
 				.build(), createSafRequestContext());
 
-		verify(tilgangsmaskinenConsumer, times(0)).navIdentHasAccess(any(), any());
+		verify(tilgangsmaskinenConsumer, times(0)).navIdentHasAccess(any(), any(), any());
 		verify(navOrgService, times(1)).isOrganisasjonsnummerNavBedrift(any());
 		verify(navUserGroupMembershipService, times(1)).isNavIdentInEgenAnsattGroup(any());
 
@@ -131,7 +131,7 @@ class TilgangsmaskinenBackedPep1gImplTest extends AbstractAbacBackedPepTest {
 
 	@Test
 	void shouldDeny() {
-		when(tilgangsmaskinenConsumer.navIdentHasAccess(any(), any())).thenReturn(PepAnswer.deny(new UkjentEllerTekniskReason()));
+		when(tilgangsmaskinenConsumer.navIdentHasAccess(any(), any(), any())).thenReturn(PepAnswer.deny(new UkjentEllerTekniskReason()));
 
 		boolean hasAccess = pep1g.hasAccess(TilgangBruker.builder()
 				.aktoerId(AKTOER_ID)
@@ -139,7 +139,7 @@ class TilgangsmaskinenBackedPep1gImplTest extends AbstractAbacBackedPepTest {
 				.historiskeIdenter(Collections.singletonList(TilgangIdent.builder().identifikator(FNR).build()))
 				.build(), createSafRequestContext());
 
-		verify(tilgangsmaskinenConsumer, times(1)).navIdentHasAccess(any(), any());
+		verify(tilgangsmaskinenConsumer, times(1)).navIdentHasAccess(any(), any(), any());
 		verify(navOrgService, times(0)).isOrganisasjonsnummerNavBedrift(any());
 		verify(navUserGroupMembershipService, times(0)).isNavIdentInEgenAnsattGroup(any());
 
