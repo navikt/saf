@@ -574,7 +574,7 @@
       ]
     },
     {
-      "app": "opphold-dataminimering-jobb-q1",
+      "app": "institusjon-opphold-dataminimering-jobb-q1",
       "namespace": "team-rocket",
       "cluster" : "dev-gcp"
     }

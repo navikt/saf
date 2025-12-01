@@ -748,7 +748,7 @@
       "cluster": "prod-fss"
     },
     {
-      "app": "opphold-dataminimering-jobb",
+      "app": "institusjon-opphold-dataminimering-jobb",
       "namespace": "team-rocket",
       "cluster" : "prod-gcp"
     }

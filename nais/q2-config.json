@@ -713,7 +713,7 @@
       "cluster": "dev-gcp"
     },
     {
-      "app": "opphold-dataminimering-jobb-q2",
+      "app": "institusjon-opphold-dataminimering-jobb-q2",
       "namespace": "team-rocket",
       "cluster" : "dev-gcp"
     }
