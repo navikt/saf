@@ -194,6 +194,11 @@
       "cluster": "prod-fss"
     },
     {
+      "app": "su-se-bakover",
+      "namespace": "supstonad",
+      "cluster": "prod-gcp"
+    },
+    {
       "app": "veilarbvedtaksstotte",
       "namespace": "pto",
       "cluster": "prod-fss",
