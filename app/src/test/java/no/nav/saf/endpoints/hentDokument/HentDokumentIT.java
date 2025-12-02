@@ -620,6 +620,7 @@ class HentDokumentIT extends AbstractItest {
 
 	@Test
 	void shouldGetForbiddenFromPep7dWhenTemaForeldrepenger() {
+		stubTilgangsmaskinenPep7BulkDeny();
 		abacDenyPep7dSkipPep2Pep3Pep4Pep5Pep6d();
 		stubDokarkivJournalpost("journalpost-dokumentinfo-sak-tema-for.json");
 		stubFor(get("/fpsak?saksnummer=FOR2000")
@@ -638,6 +639,7 @@ class HentDokumentIT extends AbstractItest {
 
 	@Test
 	void shouldGetForbiddenFromPep7dWhenK9TemaFri() {
+		stubTilgangsmaskinenPep7BulkDeny();
 		abacDenyPep7dSkipPep2Pep3Pep4Pep5Pep6d();
 		stubDokarkivJournalpost("journalpost-dokumentinfo-sak-tema-fri.json");
 		stubFor(get("/k9sak?saksnummer=K92000")
@@ -656,6 +658,7 @@ class HentDokumentIT extends AbstractItest {
 
 	@Test
 	void shouldGetForbiddenFromPep7ForK9TemaOms() {
+		stubTilgangsmaskinenPep7BulkDeny();
 		abacDenyPep7dSkipPep2Pep3Pep4Pep5Pep6d();
 		stubPdl();
 		stubDokarkivJournalpost("journalpost-dokumentinfo-sak-tema-oms.json");

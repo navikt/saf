@@ -491,6 +491,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 	@Test
 	void shouldGetUnauthorizedFromPep7d() throws IOException, URISyntaxException {
 		String SAK_ID = "123456";
+		stubTilgangsmaskinenPep7BulkDeny();
 		abacDenyPep7dSkipPep2Pep3Pep4Pep5Pep6d();
 		stubPdl();
 		stubSakMedAktoerId("sak-sakerBySaksId_oms-happy.json");
