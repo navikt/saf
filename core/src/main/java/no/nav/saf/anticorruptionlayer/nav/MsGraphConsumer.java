@@ -4,6 +4,8 @@ import com.azure.identity.ClientSecretCredential;
 import com.azure.identity.ClientSecretCredentialBuilder;
 import com.microsoft.graph.models.DirectoryObject;
 import com.microsoft.graph.models.User;
+import com.microsoft.graph.models.odataerrors.MainError;
+import com.microsoft.graph.models.odataerrors.ODataError;
 import com.microsoft.graph.serviceclient.GraphServiceClient;
 import com.microsoft.graph.users.item.checkmembergroups.CheckMemberGroupsPostRequestBody;
 import com.microsoft.kiota.ApiException;
@@ -61,6 +63,10 @@ public class MsGraphConsumer {
 				return Optional.empty();
 			}
 			return Optional.of(res.get(0));
+		} catch (ODataError e) {
+			MainError mainError = e.getError();
+			log.error("Auth-feil mot msgraph: {} ; target: {} ; details: {}", mainError.getMessage(), mainError.getTarget(), mainError.getDetails(), e);
+			return Optional.empty();
 		} catch (ApiException e) {
 			log.error("Teknisk feil mot Microsoft Graph. message=" + e.getMessage(), e);
 			return Optional.empty();
@@ -84,6 +90,10 @@ public class MsGraphConsumer {
 					})
 					.getValue();
 			return !res.isEmpty();
+		} catch (ODataError e) {
+			MainError mainError = e.getError();
+			log.error("Auth-feil mot msgraph: {} ; target: {} ; details: {}", mainError.getMessage(), mainError.getTarget(), mainError.getDetails(), e);
+			return false;
 		} catch (ApiException e) {
 			log.error("Teknisk feil mot Microsoft Graph. message=" + e.getMessage(), e);
 			return false;
@@ -104,6 +114,10 @@ public class MsGraphConsumer {
 					})
 					.getValue();
 			return new HashSet<>(res);
+		} catch (ODataError e) {
+			MainError mainError = e.getError();
+			log.error("Auth-feil mot msgraph: {} ; target: {} ; details: {}", mainError.getMessage(), mainError.getTarget(), mainError.getDetails(), e);
+			return emptySet();
 		} catch (ApiException e) {
 			log.error("Teknisk feil mot Microsoft Graph. message=" + e.getMessage(), e);
 			return emptySet();
