@@ -462,6 +462,14 @@
       ]
     },
     {
+      "app": "testnav-dolly-proxy-trygdeetaten",
+      "namespace": "dolly",
+      "cluster": "dev-fss",
+      "roles": [
+        "tema_alle"
+      ]
+    },
+    {
       "app": "innsending-api",
       "namespace": "team-soknad",
       "cluster": "dev-gcp"
