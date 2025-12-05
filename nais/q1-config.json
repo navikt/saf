@@ -355,7 +355,7 @@
     {
       "app": "ung-sak",
       "namespace": "k9saksbehandling",
-      "cluster": "dev-gcp",
+      "cluster": "dev-gcp"
     },
     {
       "app": "k9-fordel",
@@ -455,6 +455,14 @@
     },
     {
       "app": "testnav-saf-proxy-trygdeetaten",
+      "namespace": "dolly",
+      "cluster": "dev-fss",
+      "roles": [
+        "tema_alle"
+      ]
+    },
+    {
+      "app": "testnav-dolly-proxy-trygdeetaten",
       "namespace": "dolly",
       "cluster": "dev-fss",
       "roles": [
