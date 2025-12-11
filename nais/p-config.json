@@ -737,6 +737,11 @@
       "namespace": "historisk",
       "cluster": "prod-gcp"
     },
+	{
+      "app": "superhelt",
+      "namespace": "historisk",
+      "cluster": "prod-gcp"
+    },
     {
       "app": "rpa-medlemskap-og-avgift",
       "namespace": "team-rpa",
