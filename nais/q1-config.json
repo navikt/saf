@@ -585,6 +585,11 @@
       "app": "institusjon-opphold-dataminimering-jobb-q1",
       "namespace": "team-rocket",
       "cluster" : "dev-gcp"
+    },
+    {
+      "app": "translatore-backend",
+      "namespace": "ki-oversetter",
+      "cluster": "dev-gcp"
     }
   ]
 }
