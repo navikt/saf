@@ -694,6 +694,11 @@
       "namespace": "historisk",
       "cluster": "dev-gcp"
     },
+	{
+      "app": "superhelt",
+      "namespace": "historisk",
+      "cluster": "dev-gcp"
+    },
     {
       "app": "rpa-nos-robot1",
       "namespace": "team-rpa",
