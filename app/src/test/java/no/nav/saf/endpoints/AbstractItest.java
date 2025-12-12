@@ -764,12 +764,7 @@ public abstract class AbstractItest {
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("abac/abac-permit.json"))
 				.willSetStateTo(STATE_PEP7D));
-		stubFor(post(urlEqualTo("/abac"))
-				.inScenario(SCENARIO_ABAC)
-				.whenScenarioStateIs(STATE_PEP7D)
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("abac/abac-deny.json")));
+		stubTilgangsmaskinenPep7BulkDeny();
 	}
 
 	protected static void denyPep8d() {

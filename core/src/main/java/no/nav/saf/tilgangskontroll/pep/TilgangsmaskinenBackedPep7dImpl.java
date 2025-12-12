@@ -32,7 +32,7 @@ public class TilgangsmaskinenBackedPep7dImpl extends StandardTilgangsmaskinenBac
 
 	@Override
 	PepAnswer verifyNavIdentAccessToUser(TilgangSak ressurs, SafRequestContext safRequestContext) {
-		if (harIkkeArkivsaksystemOgEllerNummer(ressurs)) {
+		if (harIkkeArkivsaksystemEllerArkivsaksummer(ressurs)) {
 			return PepAnswer.permit();
 		}
 
@@ -72,7 +72,7 @@ public class TilgangsmaskinenBackedPep7dImpl extends StandardTilgangsmaskinenBac
 		return FOR.equals(ressurs.getTema()) && FAGSAKSYSTEM_FORELDREPENGELOSNING.equals(ressurs.getFagsaksystem());
 	}
 
-	private static boolean harIkkeArkivsaksystemOgEllerNummer(TilgangSak ressurs) {
+	private static boolean harIkkeArkivsaksystemEllerArkivsaksummer(TilgangSak ressurs) {
 		return ressurs == null
 			   || ressurs.getArkivsaksystem() == null
 			   || ressurs.getArkivsaksnummer() == null;
