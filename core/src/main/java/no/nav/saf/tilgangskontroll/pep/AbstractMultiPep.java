@@ -24,18 +24,15 @@ public abstract class AbstractMultiPep<T> extends Pep<T> {
 
 	private final Pep<T> abacBackedPep;
 	private final Pep<T> tilgangsmaskinenBackedPep;
-	private final boolean featureToggleUseCheckTilgangsmaskinen;
 	private final boolean prioritizeTilgangsmaskinenAnswer;
 	private final String pepName;
 
 	protected AbstractMultiPep(Pep<T> abacBackedPep,
 							   Pep<T> tilgangsmaskinenBackedPep,
-							   boolean featureToggleUseCheckTilgangsmaskinen,
 							   boolean prioritizeTilgangsmaskinenAnswer,
 							   String pepName) {
 		this.abacBackedPep = abacBackedPep;
 		this.tilgangsmaskinenBackedPep = tilgangsmaskinenBackedPep;
-		this.featureToggleUseCheckTilgangsmaskinen = featureToggleUseCheckTilgangsmaskinen;
 		this.prioritizeTilgangsmaskinenAnswer = prioritizeTilgangsmaskinenAnswer;
 		this.pepName = pepName;
 	}
@@ -50,18 +47,14 @@ public abstract class AbstractMultiPep<T> extends Pep<T> {
 				.orTimeout(OPPSLAG_TIMEOUT_SEKUNDER, SECONDS)
 				.handle(handleExceptionInOppslag("abac-saf", currentMdcContextMap));
 
-		if (featureToggleUseCheckTilgangsmaskinen) {
-			CompletableFuture<PepAnswer> tilgangsmaskinen = CompletableFuture.supplyAsync(() -> {
-						MDC.setContextMap(currentMdcContextMap);
-						return tilgangsmaskinenBackedPep.hasAccessWithAnswer(ressurs, safRequestContext);
-					})
-					.orTimeout(OPPSLAG_TIMEOUT_SEKUNDER, SECONDS)
-					.handle(handleExceptionInOppslag("tilgangsmaskinen", currentMdcContextMap));
+		CompletableFuture<PepAnswer> tilgangsmaskinen = CompletableFuture.supplyAsync(() -> {
+					MDC.setContextMap(currentMdcContextMap);
+					return tilgangsmaskinenBackedPep.hasAccessWithAnswer(ressurs, safRequestContext);
+				})
+				.orTimeout(OPPSLAG_TIMEOUT_SEKUNDER, SECONDS)
+				.handle(handleExceptionInOppslag("tilgangsmaskinen", currentMdcContextMap));
 
-			return analyzeLogAndChoosePepAnswer(abacSaf.join(), tilgangsmaskinen.join());
-		} else {
-			return abacSaf.join();
-		}
+		return analyzeLogAndChoosePepAnswer(abacSaf.join(), tilgangsmaskinen.join());
 	}
 
 	private BiFunction<PepAnswer, Throwable, PepAnswer> handleExceptionInOppslag(String serviceName, Map<String, String> mdcContextMap) {

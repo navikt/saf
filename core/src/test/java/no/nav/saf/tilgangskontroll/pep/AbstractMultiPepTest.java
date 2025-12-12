@@ -44,7 +44,7 @@ class AbstractMultiPepTest {
 														PepAnswer tilgangsmaskinenResult,
 														boolean prioritizeTilgangsmaskinen,
 														PepAnswer expectedResult) {
-		multiPep = createMultiPep(true, prioritizeTilgangsmaskinen);
+		multiPep = createMultiPep(prioritizeTilgangsmaskinen);
 
 		when(abacPep.hasAccessWithAnswer(any(), any())).thenReturn(abacResult);
 		when(tilgangsmaskinenPep.hasAccessWithAnswer(any(), any())).thenReturn(tilgangsmaskinenResult);
@@ -77,7 +77,7 @@ class AbstractMultiPepTest {
 	void shouldHandleServiceFailuresBasedOnPrioritization(boolean prioritizeTilgangsmaskinen,
 														  FailingService failingService,
 														  PepAnswer expectedResult) {
-		multiPep = createMultiPep(true, prioritizeTilgangsmaskinen);
+		multiPep = createMultiPep(prioritizeTilgangsmaskinen);
 
 		switch (failingService) {
 			case ABAC -> {
@@ -115,18 +115,8 @@ class AbstractMultiPepTest {
 		);
 	}
 
-	@Test
-	void shouldOnlyCallAbacWhenFeatureToggleIsFalse() {
-		multiPep = createMultiPep(false, true);
-
-		when(abacPep.hasAccessWithAnswer(any(), any())).thenReturn(PERMIT);
-
-		var answer = multiPep.hasAccessWithAnswer(null, null);
-		assertThat(answer.isPermit()).isTrue();
-	}
-
-	private AbstractMultiPep<Object> createMultiPep(boolean featureToggle, boolean prioritizeTilgangsmaskinen) {
-		return new AbstractMultiPep<>(abacPep, tilgangsmaskinenPep, featureToggle, prioritizeTilgangsmaskinen, "TestPep") {};
+	private AbstractMultiPep<Object> createMultiPep(boolean prioritizeTilgangsmaskinen) {
+		return new AbstractMultiPep<>(abacPep, tilgangsmaskinenPep, prioritizeTilgangsmaskinen, "TestPep") {};
 	}
 
 	private enum FailingService {
