@@ -689,6 +689,11 @@
       "namespace": "teamcrm",
       "cluster": "dev-gcp"
     },
+	{
+      "app": "saas-proxy",
+      "namespace": "platforce",
+      "cluster": "dev-gcp"
+    },
     {
       "app": "historisk-helt-backend",
       "namespace": "historisk",
