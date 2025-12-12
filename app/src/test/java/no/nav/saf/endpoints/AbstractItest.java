@@ -322,7 +322,7 @@ public abstract class AbstractItest {
 	protected static void stubTilgangsmaskinenPermit() {
 		stubTexasToken();
 		stubTilgangsmaskinenPep1gPermit();
-		stubTilgangsmaskinenPep3Permit();
+		stubTilgangsmaskinenPep3BulkPermit();
 	}
 
 	protected static void stubTilgangsmaskinenPep1gPermit() {
@@ -337,16 +337,25 @@ public abstract class AbstractItest {
 				.withBodyFile("tilgangsmaskinen/" + "tilgangsmaskinen_deny_fortrolig.json")));
 	}
 
-	protected static void stubTilgangsmaskinenPep3Permit() {
+	protected static void stubTilgangsmaskinenPep3BulkPermit() {
 		stubTexasToken();
 		stubFor(post(urlMatching("/tilgangsmaskinen/api/v1/bulk/ccf/.*/KJERNE_REGELTYPE")).willReturn(aResponse().withStatus(MULTI_STATUS.value())
 				.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 				.withBodyFile("tilgangsmaskinen/tilgangsmaskinen_permit_bulk.json")));
 	}
 
-	protected static void stubTilgangsmaskinenPep3Deny() {
+	protected static void stubTilgangsmaskinenPep3BulkDeny() {
 		stubTexasToken();
 		stubTilgangsmaskinenPep1gPermit();
+		stubFor(post(urlMatching("/tilgangsmaskinen/api/v1/bulk/ccf/.*/KJERNE_REGELTYPE")).willReturn(aResponse().withStatus(MULTI_STATUS.value())
+				.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+				.withBodyFile("tilgangsmaskinen/tilgangsmaskinen_deny_fortrolig_bulk.json")));
+	}
+
+	protected static void stubTilgangsmaskinenPep7BulkDeny() {
+		stubTexasToken();
+		stubTilgangsmaskinenPep1gPermit();
+		stubTilgangsmaskinenPep3BulkPermit();
 		stubFor(post(urlMatching("/tilgangsmaskinen/api/v1/bulk/ccf/.*/KJERNE_REGELTYPE")).willReturn(aResponse().withStatus(MULTI_STATUS.value())
 				.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 				.withBodyFile("tilgangsmaskinen/tilgangsmaskinen_deny_fortrolig_bulk.json")));
@@ -359,7 +368,7 @@ public abstract class AbstractItest {
 						.withBodyFile("abac/abac-permit.json")));
 		stubMsGraphMemberOfAllRelevantGroupsDefaultSaksbehandler();
 		stubTilgangsmaskinenPermit();
-		stubTilgangsmaskinenPep3Permit();
+		stubTilgangsmaskinenPep3BulkPermit();
 	}
 
 	protected void abacDenyPep6dSkipPep3OrPep2() {
@@ -598,7 +607,7 @@ public abstract class AbstractItest {
 
 	protected void abacDenyPep3SkipPep2() {
 		stubTilgangsmaskinenPep1gPermit();
-		stubTilgangsmaskinenPep3Deny();
+		stubTilgangsmaskinenPep3BulkDeny();
 		stubMsGraphMemberOfNoGroupsDefaultSaksbehandler();
 		stubFor(post(urlEqualTo("/abac"))
 				.inScenario(SCENARIO_ABAC)
@@ -625,7 +634,7 @@ public abstract class AbstractItest {
 
 	protected void abacDenyPep3SkipPep2dAndPep2() {
 		stubTilgangsmaskinenPep1gPermit();
-		stubTilgangsmaskinenPep3Deny();
+		stubTilgangsmaskinenPep3BulkDeny();
 		stubFor(post(urlEqualTo("/abac"))
 				.inScenario(SCENARIO_ABAC)
 				.whenScenarioStateIs(STARTED)
@@ -741,7 +750,6 @@ public abstract class AbstractItest {
 	}
 
 	protected void abacDenyPep7dSkipPep2Pep3Pep4Pep5Pep6d() {
-		stubTilgangsmaskinenPermit();
 		stubFor(post(urlEqualTo("/abac"))
 				.inScenario(SCENARIO_ABAC)
 				.whenScenarioStateIs(STARTED)
@@ -756,12 +764,7 @@ public abstract class AbstractItest {
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("abac/abac-permit.json"))
 				.willSetStateTo(STATE_PEP7D));
-		stubFor(post(urlEqualTo("/abac"))
-				.inScenario(SCENARIO_ABAC)
-				.whenScenarioStateIs(STATE_PEP7D)
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("abac/abac-deny.json")));
+		stubTilgangsmaskinenPep7BulkDeny();
 	}
 
 	protected static void denyPep8d() {

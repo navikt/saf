@@ -42,7 +42,7 @@ import static no.nav.saf.tilgangskontroll.pep.AbacDenyReasonCode.STRENGT_FORTROL
  * https://confluence.adeo.no/display/ABAC/FP2%3A+Behandling+Kode+7+Brukere
  */
 @Slf4j
-@Component(PEP7D)
+@Component
 public class AbacBackedPep7dImpl extends StandardAbacBackedPep<TilgangSak> {
 
 	private final AbacService abacService;
