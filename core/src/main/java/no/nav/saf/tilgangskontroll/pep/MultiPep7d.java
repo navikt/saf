@@ -13,8 +13,7 @@ public class MultiPep7d extends AbstractMultiPep<TilgangSak> {
 
 	public MultiPep7d(AbacBackedPep7dImpl abacBackedPep,
 					  TilgangsmaskinenBackedPep7dImpl tilgangsmaskinenBackedPep,
-					  @Value("${saf.pep7d.feature_toggle_tilgangsmaskinen}") boolean featureToggleUseCheckTilgangsmaskinen,
 					  @Value("${saf.pep7d.prioritize_tilgangsmaskinen}") boolean prioritizeTilgangsmaskinenAnswer) {
-		super(abacBackedPep, tilgangsmaskinenBackedPep, featureToggleUseCheckTilgangsmaskinen, prioritizeTilgangsmaskinenAnswer, PEP7D);
+		super(abacBackedPep, tilgangsmaskinenBackedPep, prioritizeTilgangsmaskinenAnswer, PEP7D);
 	}
 }

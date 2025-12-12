@@ -13,9 +13,8 @@ public class MultiPep1g extends AbstractMultiPep<TilgangBruker> {
 
 	public MultiPep1g(AbacBackedPep1gImpl abacBackedPep,
 					  TilgangsmaskinenBackedPep1gImpl tilgangsmaskinenBackedPep,
-					  @Value("${saf.pep1g.feature_toggle_tilgangsmaskinen}") boolean featureToggleUseCheckTilgangsmaskinen,
 					  @Value("${saf.pep1g.prioritize_tilgangsmaskinen}") boolean prioritizeTilgangsmaskinenAnswer) {
-		super(abacBackedPep, tilgangsmaskinenBackedPep, featureToggleUseCheckTilgangsmaskinen, prioritizeTilgangsmaskinenAnswer, PEP1G);
+		super(abacBackedPep, tilgangsmaskinenBackedPep, prioritizeTilgangsmaskinenAnswer, PEP1G);
 	}
 }
 
