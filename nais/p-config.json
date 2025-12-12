@@ -158,6 +158,11 @@
       "namespace": "teamcrm",
       "cluster": "prod-gcp"
     },
+	{
+      "app": "saas-proxy",
+      "namespace": "platforce",
+      "cluster": "prod-gcp"
+    },
     {
       "app": "kabal-document",
       "namespace": "klage",
