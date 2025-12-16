@@ -427,11 +427,6 @@
       "cluster": "prod-fss"
     },
     {
-      "app": "fpfordel",
-      "namespace": "teamforeldrepenger",
-      "cluster": "prod-fss"
-    },
-    {
       "app": "fptilbake",
       "namespace": "teamforeldrepenger",
       "cluster": "prod-fss"
