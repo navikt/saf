@@ -761,6 +761,11 @@
       "app": "tilbakekreving-backend",
       "namespace": "tilbake",
       "cluster": "prod-gcp"
+    },
+    {
+      "app": "translatore-backend",
+      "namespace": "ki-oversetter",
+      "cluster": "prod-gcp"
     }
   ]
 }
