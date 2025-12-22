@@ -810,6 +810,9 @@ enum Tema {
     # Barnetrygd
     BAR
 
+    # Barnebortføring
+    BBF
+
     # Bidrag
     BID
 
@@ -890,6 +893,9 @@ enum Tema {
 
     # Mobilitetsfremmende stønad
     MOB
+
+    # Oljepionerene
+    OLJ
 
     # Omsorgspenger, pleiepenger og opplæringspenger
     OMS
