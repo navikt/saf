@@ -27,7 +27,6 @@ import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
-import static org.apache.hc.core5.http.ContentType.APPLICATION_JSON;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -174,7 +173,10 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 	void hentSakerTechnicalFail() throws URISyntaxException {
 		abacDenyPep1g();
 		stubFor(get(SAK_API_PATH_MED_QUERY_PARA_FAGSAK_NR)
-				.willReturn(aResponse().withStatus(INTERNAL_SERVER_ERROR.value())));
+				.willReturn(aResponse()
+						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withStatus(INTERNAL_SERVER_ERROR.value())
+						.withBodyFile("sak/sak-error.json")));
 
 		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikFagsakSak();
 		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
@@ -187,7 +189,10 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 	void hentSakerFunctionalFail() throws URISyntaxException {
 		abacDenyPep1g();
 		stubFor(get(SAK_API_PATH_MED_QUERY_PARA_FAGSAK_NR)
-				.willReturn(aResponse().withStatus(BAD_REQUEST.value())));
+				.willReturn(aResponse()
+						.withStatus(BAD_REQUEST.value())
+						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("sak/sak-error.json")));
 
 		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikFagsakSak();
 		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
@@ -220,7 +225,7 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 		stubFinnjournalposter("finnjournalposter-empty.json");
 		stubFor(get(PENSJON_API_SAK_SAMMENDRAG_URL)
 				.willReturn(aResponse().withStatus(INTERNAL_SERVER_ERROR.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
+						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("psak-hentSakSammendragListe-technical.json")));
 
 		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikFagsakPsak();
@@ -238,7 +243,7 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 		stubFinnjournalposter("finnjournalposter-empty.json");
 		stubFor(get(PENSJON_API_SAK_SAMMENDRAG_URL)
 				.willReturn(aResponse().withStatus(BAD_REQUEST.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
+						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("psak-hentSakSammendragListe-technical.json")));
 
 		ResponseEntity<LinkedHashMap> responseEntity = callDokumentOversikFagsakPsak();
