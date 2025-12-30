@@ -13,7 +13,6 @@ import no.nav.security.mock.oauth2.MockOAuth2Server;
 import no.nav.security.mock.oauth2.token.DefaultOAuth2TokenCallback;
 import no.nav.security.token.support.spring.test.EnableMockOAuth2Server;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
-import org.apache.hc.core5.http.ContentType;
 import org.junit.jupiter.api.AfterEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -250,7 +249,7 @@ public abstract class AbstractItest {
 	protected static void stubSakMedAktoerId(String filename) {
 		stubFor(get(SAK_API_PATH_MED_QUERY_PARA_AKTOER_ID)
 				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType())
+						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("sak/" + filename)));
 	}
 
@@ -264,7 +263,7 @@ public abstract class AbstractItest {
 	protected static void stubSakOrgnr() {
 		stubFor(get("/sak?orgnr=" + ORG_NR)
 				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType())
+						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("sak/sak-sakerBySaksId_not_bid-happy.json")));
 	}
 
@@ -275,7 +274,7 @@ public abstract class AbstractItest {
 	protected static void stubFinnjournalposter(String filename) {
 		stubFor(post("/hentjournalsakinfo/finnjournalposter")
 				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType())
+						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("joark/" + filename)));
 	}
 
@@ -286,7 +285,7 @@ public abstract class AbstractItest {
 	protected static void stubPensjonSakSammendrag(String filename) {
 		stubFor(get(PENSJON_API_SAK_SAMMENDRAG_URL)
 				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType())
+						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("psak/" + filename)));
 	}
 
