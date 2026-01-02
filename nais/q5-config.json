@@ -19,7 +19,7 @@
   "SAF_AZURE_GROUP_JOARK_HISTORISK_OBJECT_ID": "f92e7578-b530-4e0f-87e6-f5f82fa84168",
   "SAF_AZURE_GROUP_LESE_UTGAATTE_DOKUMENTER_OBJECT_ID": "690fcc33-2c4b-4aa3-98ee-7c16dca276fb",
   "SAF_PRIVILEGIEDSERVICEUSERS": "srvdokdistfordeling,srvdokdisteformidling,srvtilbakemeldings,srvomsitramme,srvmelosys,srvdolly,srvdolly_u,srvdokproduksjon",
-  "BIDRAG_SAK_URL": "https://bidrag-sak-q2.dev.intern.nav.no/bidrag-sak/pip/sak/",
+  "BIDRAG_SAK_URL": "https://bidrag-sak-q2.intern.dev.nav.no/bidrag-sak/pip/sak",
   "HENTJOURNALSAKINFO_URL": "http://dokarkiv-q5.teamdokumenthandtering.svc.nais.local/hentjournalsakinfo",
   "SAF_ENDPOINTS_PDL_URL": "http://pdl-api-q0.pdl.svc.nais.local/graphql",
   "SAF_ENDPOINTS_PDL_SCOPE": "api://dev-fss.pdl.pdl-api-q0/.default",
