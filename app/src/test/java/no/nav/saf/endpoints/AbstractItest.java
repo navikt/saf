@@ -351,6 +351,12 @@ public abstract class AbstractItest {
 				.withBodyFile("tilgangsmaskinen/tilgangsmaskinen_deny_fortrolig_bulk.json")));
 	}
 
+	protected static void stubEntraProxy() {
+		stubFor(get(urlMatching("/entra-proxy/api/v1/tema/ansatt/.*")).willReturn(aResponse().withStatus(OK.value())
+				.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+				.withBodyFile("entraproxy/tematilganger.json")));
+	}
+
 	protected static void stubTilgangsmaskinenPep7BulkDeny() {
 		stubTexasToken();
 		stubTilgangsmaskinenPep1gPermit();

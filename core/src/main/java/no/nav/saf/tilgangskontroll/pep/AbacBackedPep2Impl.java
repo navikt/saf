@@ -1,6 +1,8 @@
 package no.nav.saf.tilgangskontroll.pep;
 
 import lombok.extern.slf4j.Slf4j;
+import no.nav.saf.anticorruptionlayer.nav.entraproxy.EntraProxyConsumer;
+import no.nav.saf.anticorruptionlayer.nav.entraproxy.EntraProxyTematilgangResponse;
 import no.nav.saf.domain.kode.Tema;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
@@ -10,6 +12,7 @@ import no.nav.saf.tilgangskontroll.abac.service.AbacService;
 import no.nav.saf.tilgangskontroll.pep.reasons.TemaReason;
 import no.nav.saf.tilgangskontroll.pep.reasons.UkjentEllerTekniskReason;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import static no.nav.saf.domain.DomainConstants.PEP2;
@@ -29,11 +32,17 @@ import static no.nav.saf.tilgangskontroll.pep.PepAnswer.permit;
 @Component(PEP2)
 public class AbacBackedPep2Impl extends StandardAbacBackedPep<TilgangSak> {
 
+	private final boolean featureToggleEntraProxy;
 	private final AbacService abacService;
+	private final EntraProxyConsumer entraProxyConsumer;
 
 	@Autowired
-	public AbacBackedPep2Impl(AbacService abacService) {
+	public AbacBackedPep2Impl(@Value("${saf.pep2.feature_toggle_entra_proxy}") boolean featureToggleEntraProxy,
+							  AbacService abacService,
+							  EntraProxyConsumer entraProxyConsumer) {
+		this.featureToggleEntraProxy = featureToggleEntraProxy;
 		this.abacService = abacService;
+		this.entraProxyConsumer = entraProxyConsumer;
 	}
 
 	@Override
@@ -43,16 +52,33 @@ public class AbacBackedPep2Impl extends StandardAbacBackedPep<TilgangSak> {
 			return PepAnswer.deny(new UkjentEllerTekniskReason());
 		}
 
-		if (isFarskap(ressurs) || isKontrollAnmeldelse(ressurs)) {
+		Tema tema = ressurs.getTema();
+
+		if (isFarskap(tema) || isKontrollAnmeldelse(tema)) {
+
+			if (featureToggleEntraProxy) {
+				try {
+					EntraProxyTematilgangResponse response = entraProxyConsumer.hentTematilgangForNavAnsatt(safRequestContext);
+
+					if (response.harTilgangTilTema(tema)) {
+						return PepAnswer.permit();
+					}
+
+					return getDenyAnswerForTema(tema);
+				} catch (Exception e) {
+					log.error("Pep2 (tema FAR eller KTA): Kall mot Entra-proxy feilet, fallback til abac-saf.", e);
+				}
+			}
+
 			XacmlRequest request = SafXacmlRequestFactory.create(safRequestContext.getSecurityContext());
 			request.resource(RESOURCE_FELLES_RESOURCE_TYPE, RESOURCE_SAF_SAK_JP_METADATA);
-			request.resource(RESOURCE_FELLES_TEMA, ressurs.getTema().name());
+			request.resource(RESOURCE_FELLES_TEMA, tema.name());
 
 			traceLogPepStarted(PEP2, ressurs);
 			XacmlResponse response = abacService.evaluate(request);
 			traceLogPepFinished(PEP2, ressurs);
 
-			return response.isPermit() ? PepAnswer.permit() : PepAnswer.deny(new TemaReason(response.getAdvicesMap(), ressurs.getTema()));
+			return response.isPermit() ? PepAnswer.permit() : PepAnswer.deny(new TemaReason(response.getAdvicesMap(), tema));
 
 		} else {
 			return PepAnswer.permit();
@@ -73,27 +99,35 @@ public class AbacBackedPep2Impl extends StandardAbacBackedPep<TilgangSak> {
 			));
 		}
 		Tema tema = ressurs.getTema();
-		if (isFarskap(ressurs)) {
+
+		if (isFarskap(tema) || isKontrollAnmeldelse(tema)) {
 			return safRequestContext.getSecurityContext().hasJournalTilgangEntraRole(tema) ?
-					permit() : PepAnswer.deny(new TemaReason(
-					"cause_0013_ikketilgangtilJournaltema", "saf_farskap", "tematilgang_nok", FAR
-			));
-		} else if (isKontrollAnmeldelse(ressurs)) {
-			return safRequestContext.getSecurityContext().hasJournalTilgangEntraRole(tema) ?
-					permit() : PepAnswer.deny(new TemaReason(
-					"cause_0013_ikketilgangtilJournaltema", "saf_kontrollanmeldelse", "tematilgang_nok", KTA
-			));
+					permit() : getDenyAnswerForTema(tema);
 		} else {
 			return permit();
 		}
 	}
 
-	private boolean isFarskap(TilgangSak ressurs) {
-		return FAR.equals(ressurs.getTema());
+	private boolean isFarskap(Tema tema) {
+		return FAR.equals(tema);
 	}
 
-	private boolean isKontrollAnmeldelse(TilgangSak ressurs) {
-		return KTA.equals(ressurs.getTema());
+	private boolean isKontrollAnmeldelse(Tema tema) {
+		return KTA.equals(tema);
+	}
+
+	private PepAnswer getDenyAnswerForTema(Tema tema) {
+		String policy = switch (tema) {
+			case FAR -> "saf_farskap";
+			case KTA -> "saf_kontrollanmeldelse";
+			default -> "saf_pep2";
+		};
+
+		return PepAnswer.deny(new TemaReason(
+				"cause_0013_ikketilgangtilJournaltema",
+				policy,
+				"tematilgang_nok",
+				tema));
 	}
 
 }
