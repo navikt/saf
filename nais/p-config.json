@@ -489,7 +489,12 @@
     {
       "app": "melosys-eessi",
       "namespace": "teammelosys",
-      "cluster": "prod-fss"
+      "cluster": "prod-fss",
+      "roles": [
+        "dokument_tema_med",
+        "dokument_tema_ufm",
+        "dokument_tema_try"
+      ]
     },
     {
       "app": "k9-sak",
