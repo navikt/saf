@@ -101,6 +101,12 @@ public class SafProperties {
 		 */
 		@NotNull
 		private AzureEndpoint tilgangsmaskinen;
+
+		/**
+		 * Url og scope til Entra Proxy
+		 */
+		@NotNull
+		private AzureEndpoint entraProxy;
 	}
 
 	@Data

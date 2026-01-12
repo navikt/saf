@@ -172,6 +172,7 @@ class JournalpostIT extends AbstractItest {
 	@Test
 	void shouldQueryUtgaaendeJournalpostByJournalpostIdWhenAllAccessPermit() {
 		abacPermit();
+		stubEntraProxy();
 		stubDokarkivJournalpost("journalpost-sak-utgaaende-happy.json");
 		stubPdl();
 

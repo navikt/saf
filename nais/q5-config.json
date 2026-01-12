@@ -36,6 +36,8 @@
   "SAF_ENDPOINTS_HR_NAV_URL": "https://dvh.adeo.no/",
   "SAF_ENDPOINTS_TILGANGSMASKINEN_URL": "https://tilgangsmaskin.intern.dev.nav.no",
   "SAF_ENDPOINTS_TILGANGSMASKINEN_SCOPE": "api://dev-gcp.tilgangsmaskin.populasjonstilgangskontroll/.default",
+  "SAF_ENDPOINTS_ENTRA_PROXY_URL": "https://entraproxy.intern.dev.nav.no",
+  "SAF_ENDPOINTS_ENTRA_PROXY_SCOPE": "api://dev-gcp.sikkerhetstjenesten.entra-proxy/.default",
   "SPRING_DATA_REDIS_HOST": "saf-valkey",
   "AZURE_IAC_RULES": [
     {
