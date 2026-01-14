@@ -26,6 +26,8 @@ public abstract class StandardAbacBackedPep<T> extends Pep<T> {
 	public PepAnswer hasAccessWithAnswer(T ressurs, SafRequestContext safRequestContext) {
 		if (safRequestContext.getSecurityContext().isJwtAzureClientCredentialFlow()) {
 			return verifyAzureClientCredentialFlowAccess(ressurs, safRequestContext);
+		} else if (safRequestContext.isSystem()) {
+			return verifyRestSTSCredentialFlowAccess(ressurs, safRequestContext);
 		} else {
 			return verifyAbacPdpDecision(ressurs, safRequestContext);
 		}
