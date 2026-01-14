@@ -127,6 +127,16 @@ public class AbacBackedPep2dImpl extends StandardAbacBackedPep<TilgangSak> {
 		return pepAnswer;
 	}
 
+	@Override
+	PepAnswer verifyRestSTSCredentialFlowAccess(TilgangSak ressurs, SafRequestContext safRequestContext) {
+		if (safRequestContext.isUserIdNavAnsatt()) {
+			return verifyAbacPdpDecision(ressurs, safRequestContext);
+		}
+
+		log.warn("Rest-STS servicebruker forsøker å hente dokument uten at Nav-User-Id header er satt. Tilgang nektes for tema={}", ressurs.getTema());
+		return PepAnswer.deny(new UkjentEllerTekniskReason());
+	}
+
 	protected PepAnswer mapToAbacAnswer(XacmlResponse xacmlResponse, Tema tema) {
 		if (xacmlResponse.isPermit()) {
 			return PepAnswer.permit();
