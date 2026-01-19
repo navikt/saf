@@ -95,16 +95,6 @@ public class SafSecurityContext {
 	}
 
 	/**
-	 * Brukes av abac-saf policy decision point (PDP).
-	 * Hentet ut en gang for ytelse.
-	 *
-	 * @return Payload delen av JWT
-	 */
-	public String getCachedJwtPayload() {
-		return cachedJwtPayload;
-	}
-
-	/**
 	 * Brukes av saf policy enforcement point (PEP).
 	 * Lagres pga ytelse
 	 *

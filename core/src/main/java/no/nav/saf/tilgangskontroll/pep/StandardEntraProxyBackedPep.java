@@ -2,12 +2,10 @@ package no.nav.saf.tilgangskontroll.pep;
 
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 
-import static no.nav.saf.tilgangskontroll.pep.PepAnswer.permit;
-
-public abstract class StandardTilgangsmaskinenBackedPep<T> extends Pep<T> {
+public abstract class StandardEntraProxyBackedPep<T> extends Pep<T> {
 
 	/**
-	 * Sjekk NavIdent mot Tilgangsmaskinen for å se om de har tilgang til en gitt bruker
+	 * Sjekk NavIdent mot Entra-Proxy for å se om de har tilgang til et gitt tema
 	 * Bestemmer om kall skal få tilgang til ressurs.
 	 * Implementerer:
 	 * https://confluence.adeo.no/display/BOA/saf+-+Tilgangskontroll#safTilgangskontroll-TilgangsreglerforNAV-ansatte
@@ -15,9 +13,11 @@ public abstract class StandardTilgangsmaskinenBackedPep<T> extends Pep<T> {
 	 *
 	 * @param ressurs           Ressursen som skal sjekkes - alltid en bruker
 	 * @param safRequestContext Kontekst for kallet
-	 * @return Beslutning om tilgang fra intern PDP
+	 * @return Beslutning om tilgang fra internt PDP
 	 */
-	abstract PepAnswer verifyNavIdentAccessToUser(T ressurs, SafRequestContext safRequestContext);
+	abstract PepAnswer verifyNavIdentAccessToTema(T ressurs, SafRequestContext safRequestContext);
+
+	abstract PepAnswer verifyAccessForSystemUser(T ressurs, SafRequestContext safRequestContext);
 
 	public PepAnswer hasAccessWithAnswer(T ressurs, SafRequestContext safRequestContext) {
 		PepAnswer pepAnswer;
@@ -27,7 +27,7 @@ public abstract class StandardTilgangsmaskinenBackedPep<T> extends Pep<T> {
 		} else if (safRequestContext.isSystem()) {
 			pepAnswer = verifyRestSTSCredentialFlowAccess(ressurs, safRequestContext);
 		} else {
-			pepAnswer = verifyNavIdentAccessToUser(ressurs, safRequestContext);
+			pepAnswer = verifyNavIdentAccessToTema(ressurs, safRequestContext);
 		}
 
 		if (pepAnswer.isDeny()) {
@@ -43,10 +43,6 @@ public abstract class StandardTilgangsmaskinenBackedPep<T> extends Pep<T> {
 
 	PepAnswer verifyRestSTSCredentialFlowAccess(T ressurs, SafRequestContext safRequestContext) {
 		return verifyAccessForSystemUser(ressurs, safRequestContext);
-	}
-
-	protected PepAnswer verifyAccessForSystemUser(T ressurs, SafRequestContext safRequestContext) {
-		return permit();
 	}
 
 }

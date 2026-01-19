@@ -3,18 +3,15 @@ package no.nav.saf.tilgangskontroll.pep;
 import no.nav.saf.anticorruptionlayer.nav.tilgangsmaskinen.TilgangsmaskinenConsumer;
 import no.nav.saf.domain.kode.Arkivsakssystem;
 import no.nav.saf.domain.kode.Tema;
-import no.nav.saf.domain.tilgangsmodell.TilgangIdent;
-import no.nav.saf.domain.tilgangsmodell.TilgangRelevantTredjepart;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
+import no.nav.saf.tilgangskontroll.RequestCache;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.SafSecurityContext;
 import no.nav.saf.tilgangskontroll.pep.reasons.UkjentEllerTekniskReason;
-import org.apache.tomcat.util.http.parser.TE;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -22,7 +19,6 @@ import org.mockito.Mockito;
 import java.util.List;
 import java.util.stream.Stream;
 
-import static no.nav.saf.domain.DomainConstants.FAGSAKSYSTEM_BISYS;
 import static no.nav.saf.domain.DomainConstants.FAGSAKSYSTEM_FORELDREPENGELOSNING;
 import static no.nav.saf.domain.DomainConstants.FAGSAKSYSTEM_K9;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -31,7 +27,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-class TilgangsmaskinenBackedPep7dImplTest extends AbstractAbacBackedPepTest {
+class TilgangsmaskinenBackedPep7dImplTest extends AbstractPepTest {
 
 	private static final String IDENTIFIKATOR = "12345678910";
 	private static final String IDENTIFIKATOR_2 = "01987654321";
@@ -51,6 +47,8 @@ class TilgangsmaskinenBackedPep7dImplTest extends AbstractAbacBackedPepTest {
 		when(safRequestContextMock.getUserId()).thenReturn("Z123456");
 		when(safRequestContextMock.isUserIdNavAnsatt()).thenReturn(true);
 		when(safRequestContextMock.getSecurityContext()).thenReturn(safSecurityContextMock);
+		var safRequestCache = Mockito.mock(RequestCache.class);
+		when(safRequestContextMock.getRequestCache()).thenReturn(safRequestCache);
 		return safRequestContextMock;
 	}
 

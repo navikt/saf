@@ -2,6 +2,7 @@ package no.nav.saf.tilgangskontroll.pep;
 
 import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
+import no.nav.saf.tilgangskontroll.pep.reasons.DenyReason;
 
 /**
  * Policy Enforcement Point
@@ -29,7 +30,7 @@ public abstract class Pep<T> {
 	 *
 	 * @param ressurs           Ressursen som skal sjekkes
 	 * @param safRequestContext Kontekst for kallet
-	 * @return Beslutning om tilgang fra intern ABAC PDP
+	 * @return Beslutning om tilgang fra intern PDP
 	 */
 	abstract PepAnswer verifyRestSTSCredentialFlowAccess(T ressurs, SafRequestContext safRequestContext);
 
@@ -58,5 +59,10 @@ public abstract class Pep<T> {
 		if (log.isTraceEnabled()) {
 			log.trace("{} ferdig evaluert ressurs={}", pepName, ressurs);
 		}
+	}
+
+	void logDeny(PepAnswer pepAnswer) {
+		log.info("SAF tilgangskontroll har avvist tilgang til ressurs med begrunnelse={}",
+				pepAnswer.getPepDenyReason() != null ? pepAnswer.getPepDenyReason().getHumanReadableDenyReason() : "Ukjent");
 	}
 }

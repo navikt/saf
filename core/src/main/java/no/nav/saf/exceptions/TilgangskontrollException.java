@@ -3,7 +3,7 @@ package no.nav.saf.exceptions;
 import lombok.Getter;
 import no.nav.saf.graphql.ErrorCode;
 import no.nav.saf.tilgangskontroll.pep.PepAnswer;
-import no.nav.saf.tilgangskontroll.pep.reasons.AbacDenyReason;
+import no.nav.saf.tilgangskontroll.pep.reasons.DenyReason;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
@@ -17,7 +17,7 @@ public class TilgangskontrollException extends SafFunctionalException {
 	public static final String REASON_MESSAGE = "reason_message";
 
 	protected final String denyReason;
-	protected final AbacDenyReason pepDenyReason;
+	protected final DenyReason pepDenyReason;
 
 	public TilgangskontrollException(String message, PepAnswer pepAnswer) {
 		super("Avvist av SAF tilgangskontroll: " + message, ErrorCode.FORBIDDEN);
@@ -28,7 +28,7 @@ public class TilgangskontrollException extends SafFunctionalException {
 	@Override
 	public Map<String, Object> getExtensions() {
 		var map = new HashMap<>(super.getExtensions());
-		map.put(REASON_CODE, pepDenyReason.getAbacDenyReasonCode().code);
+		map.put(REASON_CODE, pepDenyReason.getDenyReasonCode().code);
 		map.put(REASON_MESSAGE, pepDenyReason.getHumanReadableDenyReason());
 		return map;
 	}

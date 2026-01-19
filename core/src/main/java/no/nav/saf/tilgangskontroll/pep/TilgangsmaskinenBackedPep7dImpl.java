@@ -2,6 +2,7 @@ package no.nav.saf.tilgangskontroll.pep;
 
 import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.anticorruptionlayer.nav.tilgangsmaskinen.TilgangsmaskinenConsumer;
+import no.nav.saf.cache.KeyGeneratorLocalCaching;
 import no.nav.saf.domain.kode.Tema;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
@@ -19,7 +20,7 @@ import static no.nav.saf.domain.kode.Tema.OMS;
 import static no.nav.saf.tilgangskontroll.pep.PepAnswer.permit;
 
 @Slf4j
-@Component
+@Component(PEP7D)
 public class TilgangsmaskinenBackedPep7dImpl extends StandardTilgangsmaskinenBackedPep<TilgangSak> {
 
 	private static final EnumSet<Tema> relevanteTemaK9 = EnumSet.of(FRI, OMS);
@@ -36,24 +37,34 @@ public class TilgangsmaskinenBackedPep7dImpl extends StandardTilgangsmaskinenBac
 			return PepAnswer.permit();
 		}
 
+		String tilgangKeyLocalCaching = KeyGeneratorLocalCaching.getKeyForPep7d(ressurs.getArkivsaksystem(), ressurs.getArkivsaksnummer());
+
 		if (erFagsystemForeldrepenger(ressurs)) {
-			return handterTilgangForFagsaksystem(ressurs.getFpAktoerIdList(), "foreldrepengesak", safRequestContext);
+			return handterTilgangForFagsaksystem(ressurs.getFpAktoerIdList(), "foreldrepengesak", safRequestContext, tilgangKeyLocalCaching);
 		}
 
 		if (erFagsystemK9(ressurs)) {
-			return handterTilgangForFagsaksystem(ressurs.getK9AktoerIdList(), "K9sak", safRequestContext);
+			return handterTilgangForFagsaksystem(ressurs.getK9AktoerIdList(), "K9sak", safRequestContext, tilgangKeyLocalCaching);
 		}
 
+		safRequestContext.getRequestCache().putDecision(tilgangKeyLocalCaching, PepAnswer.permit());
 		return PepAnswer.permit();
 	}
 
-	private PepAnswer handterTilgangForFagsaksystem(List<String> parter, String fagsaksystemNavn, SafRequestContext safRequestContext) {
+	private PepAnswer handterTilgangForFagsaksystem(List<String> parter, String fagsaksystemNavn, SafRequestContext safRequestContext, String tilgangKeyLocalCaching) {
 		if (parter == null || parter.isEmpty()) {
 			log.info("Pep7d(kode6/7-relevante-parter) har ingen relevante parter for {}. Tilgang gis.", fagsaksystemNavn);
+			safRequestContext.getRequestCache().putDecision(tilgangKeyLocalCaching, PepAnswer.permit());
 			return PepAnswer.permit();
 		}
 
-		return evaluerTilgangForParter(parter, safRequestContext);
+		if (safRequestContext.getRequestCache().getCachedDecision(tilgangKeyLocalCaching) == null) {
+			PepAnswer pepAnswer = evaluerTilgangForParter(parter, safRequestContext);
+			safRequestContext.getRequestCache().putDecision(tilgangKeyLocalCaching, pepAnswer);
+			return pepAnswer;
+		}
+
+		return safRequestContext.getRequestCache().getCachedDecision(tilgangKeyLocalCaching);
 	}
 
 	private PepAnswer evaluerTilgangForParter(List<String> parter, SafRequestContext safRequestContext) {
@@ -80,6 +91,10 @@ public class TilgangsmaskinenBackedPep7dImpl extends StandardTilgangsmaskinenBac
 
 	@Override
 	public PepAnswer verifyAzureClientCredentialFlowAccess(TilgangSak ressurs, SafRequestContext safRequestContext) {
+		if (!harIkkeArkivsaksystemEllerArkivsaksummer(ressurs)) {
+			String tilgangKeyLocalCaching = KeyGeneratorLocalCaching.getKeyForPep7d(ressurs.getArkivsaksystem(), ressurs.getArkivsaksnummer());
+			safRequestContext.getRequestCache().putDecision(tilgangKeyLocalCaching, PepAnswer.permit());
+		}
 		return permit();
 	}
 }

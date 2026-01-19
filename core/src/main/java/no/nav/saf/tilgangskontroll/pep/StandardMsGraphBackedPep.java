@@ -15,18 +15,26 @@ public abstract class StandardMsGraphBackedPep<T> extends Pep<T> {
 	 *
 	 * @param ressurs           Ressursen som skal sjekkes
 	 * @param safRequestContext Kontekst for kallet
-	 * @return Beslutning om tilgang fra intern ABAC PDP
+	 * @return Beslutning om tilgang fra intern PDP
 	 */
 	abstract PepAnswer verifyNavIdentGroupMembershipAccess(T ressurs, SafRequestContext safRequestContext);
 
 	public PepAnswer hasAccessWithAnswer(T ressurs, SafRequestContext safRequestContext) {
+		PepAnswer pepAnswer;
+
 		if (safRequestContext.getSecurityContext().isJwtAzureClientCredentialFlow()) {
-			return verifyAzureClientCredentialFlowAccess(ressurs, safRequestContext);
+			pepAnswer = verifyAzureClientCredentialFlowAccess(ressurs, safRequestContext);
 		} else if (safRequestContext.isSystem()) {
-			return verifyRestSTSCredentialFlowAccess(ressurs, safRequestContext);
+			pepAnswer = verifyRestSTSCredentialFlowAccess(ressurs, safRequestContext);
 		} else {
-			return verifyNavIdentGroupMembershipAccess(ressurs, safRequestContext);
+			pepAnswer = verifyNavIdentGroupMembershipAccess(ressurs, safRequestContext);
 		}
+
+		if (pepAnswer.isDeny()) {
+			logDeny(pepAnswer);
+		}
+
+		return pepAnswer;
 	}
 
 	PepAnswer verifyAzureClientCredentialFlowAccess(T ressurs, SafRequestContext safRequestContext) {

@@ -1,8 +1,6 @@
 package no.nav.saf.tilgangskontroll.pep;
 
-import java.util.Map;
-
-public enum AbacDenyReasonCode {
+public enum DenyReasonCode {
 	EGEN_ANSATT("deny_egen_ansatt", "skjermede_navansatte_og_familiemedlemmer", "behandle_skjermede_navansatte_og_familiemedlemmer_mangler_gruppetilgang"),
 	EGEN_ANSATT_PART("deny_egen_ansatt_part"),
 	HABILITET("deny_habilitet"),
@@ -21,31 +19,24 @@ public enum AbacDenyReasonCode {
 	AVSLUTTET_SAK("deny_avsluttet_sak"),
 	UKJENT("ukjent");
 
-	private static final String ABAC_ADVICE_UNDEFINED = "null:null";
-	private final String abacAdvice;
+	private static final String ADVICE_UNDEFINED = "null:null";
+	private final String advice;
 
 	public final String code;
 
-	AbacDenyReasonCode(String code) {
+	DenyReasonCode(String code) {
 		this.code = code;
-		this.abacAdvice = ABAC_ADVICE_UNDEFINED;
+		this.advice = ADVICE_UNDEFINED;
 	}
 
-	AbacDenyReasonCode(String code, String abacDenyPolicy, String abacDenyRule) {
+	DenyReasonCode(String code, String denyPolicy, String denyRule) {
 		this.code = code;
-		this.abacAdvice = buildAbacAdvice(abacDenyPolicy, abacDenyRule);
+		this.advice = buildAdvice(denyPolicy, denyRule);
 	}
 
-	public boolean matchesAbacAdvice(Map<String, String> advices) {
-		if (ABAC_ADVICE_UNDEFINED.equalsIgnoreCase(abacAdvice)) {
-			return false;
-		}
-		return abacAdvice.equalsIgnoreCase(buildAbacAdvice(advices.get("deny_policy"), advices.get("deny_rule")));
-	}
-
-	private static String buildAbacAdvice(String denyPolicy, String denyRule) {
+	private static String buildAdvice(String denyPolicy, String denyRule) {
 		if (denyPolicy == null && denyRule == null) {
-			return ABAC_ADVICE_UNDEFINED;
+			return ADVICE_UNDEFINED;
 		}
 		return denyPolicy + ":" + denyRule;
 	}

@@ -1,12 +1,12 @@
 package no.nav.saf.tilgangskontroll.pep.reasons;
 
-import no.nav.saf.tilgangskontroll.pep.AbacDenyReasonCode;
+import no.nav.saf.tilgangskontroll.pep.DenyReasonCode;
 
 import java.util.Map;
 
-public final class EgenAnsattPartReason extends AbacDenyReason {
+public final class EgenAnsattPartReason extends DenyReason {
 	public EgenAnsattPartReason(Map<String, String> advices) {
-		super(advices, AbacDenyReasonCode.EGEN_ANSATT_PART);
+		super(advices, DenyReasonCode.EGEN_ANSATT_PART);
 	}
 
 	public String getHumanReadableDenyReason() {

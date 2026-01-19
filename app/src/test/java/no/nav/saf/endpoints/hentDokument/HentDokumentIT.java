@@ -70,7 +70,7 @@ class HentDokumentIT extends AbstractItest {
 
 	@Test
 	void shouldHentDokumentWhenHappy() {
-		abacPermit();
+		tilgangskontrollPermit();
 		stubHappyHentDokument();
 		stubDokarkivJournalpost("journalpost-dokumentinfo-sak-happy.json");
 		stubPdl();
@@ -108,7 +108,7 @@ class HentDokumentIT extends AbstractItest {
 
 	@Test
 	void shouldHentDokumentWhenBrukerIsOrganisationAndHasAktoerId() {
-		abacPermit();
+		tilgangskontrollPermit();
 		stubHappyHentDokument();
 		stubDokarkivJournalpost("journalpost-dokumentinfo-sak-bruker-organisasjon-og-aktoerid.json");
 		stubPdl();
@@ -146,7 +146,7 @@ class HentDokumentIT extends AbstractItest {
 
 	@Test
 	void shouldHentXmlOriginalWhenHappy() {
-		abacPermit();
+		tilgangskontrollPermit();
 		stubHappyHentDokumentXml();
 		stubDokarkivJournalpost("journalpost-dokumentinfo-sak-happy.json");
 		stubPdl();
@@ -160,7 +160,7 @@ class HentDokumentIT extends AbstractItest {
 
 	@Test
 	void shouldHentJsonOriginalWhenHappy() {
-		abacPermit();
+		tilgangskontrollPermit();
 		stubPdl();
 		stubHappyHentDokumentJson();
 		stubDokarkivJournalpost("journalpost-dokumentinfo-sak-happy.json");
@@ -174,7 +174,7 @@ class HentDokumentIT extends AbstractItest {
 
 	@Test
 	void shouldHentDokumentHappyPathBrukerOrganisasjon() {
-		abacPermit();
+		tilgangskontrollPermit();
 		stubNavHrOrganisasjonNei(ORG_NR);
 		stubHappyHentDokument();
 		stubDokarkivJournalpost("journalpost-dokumentinfo-sak-org-happy.json");
@@ -187,7 +187,7 @@ class HentDokumentIT extends AbstractItest {
 
 	@Test
 	void shouldNotHentDokumentWhenBrukerErOrganisasjonAndNotEgenAnsatt() {
-		abacPermit();
+		tilgangskontrollPermit();
 		stubNavHrOrganisasjonJa(ORG_NR);
 		stubMsGraphMemberOfNoGroupsDefaultSaksbehandler();
 		stubDokarkivJournalpost("journalpost-dokumentinfo-sak-org-happy.json");
@@ -200,7 +200,7 @@ class HentDokumentIT extends AbstractItest {
 
 	@Test
 	void shouldHentDokumentWhenBrukerErOrganisasjonAndIsEgenAnsattBehandler() {
-		abacPermit();
+		tilgangskontrollPermit();
 		stubNavHrOrganisasjonJa(ORG_NR);
 		stubHappyHentDokument();
 		stubDokarkivJournalpost("journalpost-dokumentinfo-sak-org-happy.json");
@@ -214,7 +214,7 @@ class HentDokumentIT extends AbstractItest {
 
 	@Test
 	void shouldHentDokumentWhenBrukerErOrganisasjonAndIsEgenAnsattBehandlerAndOrgnrWhitespace() {
-		abacPermit();
+		tilgangskontrollPermit();
 		stubNavHrOrganisasjonJa(ORG_NR);
 		stubHappyHentDokument();
 		stubDokarkivJournalpost("journalpost-dokumentinfo-sak-org-whitespace.json");
@@ -228,7 +228,7 @@ class HentDokumentIT extends AbstractItest {
 
 	@Test
 	void shouldHentDokumentWhenSakPsakHappy() {
-		abacPermit();
+		tilgangskontrollPermit();
 		stubHappyHentDokument();
 		stubDokarkivJournalpost("journalpost-dokumentinfo-pensjon-happy.json");
 		stubPensjonBrukerForSak();
@@ -243,7 +243,7 @@ class HentDokumentIT extends AbstractItest {
 
 	@Test
 	void shouldHentDokumentWhenMidlertidigHappy() {
-		abacPermit();
+		tilgangskontrollPermit();
 		stubHappyHentDokument();
 		stubDokarkivJournalpost("journalpost-dokumentinfo-sak-midlertidig-happy.json");
 
@@ -255,7 +255,7 @@ class HentDokumentIT extends AbstractItest {
 
 	@Test
 	void shouldHentDokumentWhenMidlertidigAndBrukerTypeNull() {
-		abacPermit();
+		tilgangskontrollPermit();
 		stubHappyHentDokument();
 		stubDokarkivJournalpost("journalpost-dokumentinfo-sak-midlertidig-bruker-empty.json");
 
@@ -267,7 +267,7 @@ class HentDokumentIT extends AbstractItest {
 
 	@Test
 	void shouldHentDokumentWhenMidlertidigSaksrelasjonEmpty() {
-		abacPermit();
+		tilgangskontrollPermit();
 		stubHappyHentDokument();
 		stubDokarkivJournalpost("journalpost-dokumentinfo-sak-midlertidig-saksrelasjon-empty.json");
 
@@ -279,7 +279,7 @@ class HentDokumentIT extends AbstractItest {
 
 	@Test
 	void shouldHentDokumentWhenSladdet() {
-		abacPermit();
+		tilgangskontrollPermit();
 		stubPdl();
 		stubFor(get("/dokarkiv/hentdokument/" + DOKUMENT_ID + "/" + SLADDET_VARIANTFORMAT)
 				.willReturn(aResponse().withStatus(OK.value())
@@ -324,7 +324,7 @@ class HentDokumentIT extends AbstractItest {
 
 	@Test
 	void shouldNotReturnDokumentWhenPensjonHentBrukerForSakTechnicalError() {
-		abacPermit();
+		tilgangskontrollPermit();
 		stubDokarkivJournalpost("journalpost-dokumentinfo-pensjon-happy.json");
 		stubFor(get(PENSJON_API_PIP_HENT_BRUKER_OG_ENHETSTILGANGER_FOR_SAK_V1_URL)
 				.willReturn(aResponse().withStatus(INTERNAL_SERVER_ERROR.value())
@@ -337,7 +337,7 @@ class HentDokumentIT extends AbstractItest {
 
 	@Test
 	void shouldNotReturnDokumentWhenPensjonHentBrukerForSakFunctionalErrorEmptyResponse() {
-		abacPermit();
+		tilgangskontrollPermit();
 		stubDokarkivJournalpost("journalpost-dokumentinfo-pensjon-happy.json");
 		stubFor(get(PENSJON_API_PIP_HENT_BRUKER_OG_ENHETSTILGANGER_FOR_SAK_V1_URL)
 				.willReturn(aResponse().withStatus(OK.value())
@@ -351,7 +351,7 @@ class HentDokumentIT extends AbstractItest {
 
 	@Test
 	void shouldNotReturnDokumentWhenPensjonHentBrukerForSakFunctionalErrorUnauthorized() {
-		abacPermit();
+		tilgangskontrollPermit();
 		stubDokarkivJournalpost("journalpost-dokumentinfo-pensjon-happy.json");
 		stubFor(get(PENSJON_API_PIP_HENT_BRUKER_OG_ENHETSTILGANGER_FOR_SAK_V1_URL)
 				.willReturn(aResponse().withStatus(HttpStatus.UNAUTHORIZED.value())
@@ -364,7 +364,7 @@ class HentDokumentIT extends AbstractItest {
 
 	@Test
 	void shouldReturnNotFoundWhenDokumentNotFound() {
-		abacPermit();
+		tilgangskontrollPermit();
 		stubPdl();
 		stubFor(get("/dokarkiv/hentdokument/" + DOKUMENT_ID + "/" + VARIANTFORMAT)
 				.willReturn(aResponse().withStatus(NOT_FOUND.value())));
@@ -378,7 +378,7 @@ class HentDokumentIT extends AbstractItest {
 
 	@Test
 	void shouldReturnInternalServerErrorWhenHentDokumentJoarkTechnicalFail() {
-		abacPermit();
+		tilgangskontrollPermit();
 		stubFor(get("/dokarkiv/hentdokument/" + DOKUMENT_ID + "/" + VARIANTFORMAT)
 				.willReturn(aResponse().withStatus(INTERNAL_SERVER_ERROR.value())));
 		stubDokarkivJournalpost("journalpost-dokumentinfo-sak-happy.json");
@@ -389,7 +389,7 @@ class HentDokumentIT extends AbstractItest {
 
 	@Test
 	void shouldReturnInternalServerErrorWhenHentJournalpostTechnicalFail() {
-		abacPermit();
+		tilgangskontrollPermit();
 		stubDokarkivJournalpost(INTERNAL_SERVER_ERROR);
 
 		ResponseEntity<String> responseEntity = callHentDokument();
@@ -399,7 +399,7 @@ class HentDokumentIT extends AbstractItest {
 
 	@Test
 	void shouldReturnNotFoundWhenOriginalVariantDoesNotExist() {
-		abacPermit();
+		tilgangskontrollPermit();
 		stubPdl();
 		stubDokarkivJournalpost("journalpost-dokumentinfo-sak-dokumentvariant-notmatched.json");
 
@@ -411,7 +411,7 @@ class HentDokumentIT extends AbstractItest {
 
 	@Test
 	void shouldReturnBadRequestWhenDokumentVariantIsWrong() {
-		abacPermit();
+		tilgangskontrollPermit();
 		stubPdl();
 		stubDokarkivJournalpost("journalpost-dokumentinfo-sak-dokumentvariant-notmatched.json");
 
@@ -425,7 +425,7 @@ class HentDokumentIT extends AbstractItest {
 
 	@Test
 	void shouldReturnNotFoundWhenJournalpostMetadataNotFound() {
-		abacPermit();
+		tilgangskontrollPermit();
 		stubDokarkivJournalpost(NOT_FOUND);
 
 		ResponseEntity<String> responseEntity = callHentDokument();
@@ -435,7 +435,7 @@ class HentDokumentIT extends AbstractItest {
 
 	@Test
 	void shouldReturnInternalServerErrorWhenJournalpostMetadataBadRequest() {
-		abacPermit();
+		tilgangskontrollPermit();
 		stubDokarkivJournalpost(BAD_REQUEST);
 
 		ResponseEntity<String> responseEntity = callHentDokument();
@@ -445,34 +445,34 @@ class HentDokumentIT extends AbstractItest {
 
 	@Test
 	void shouldGetForbiddenFromPep1g() {
-		abacDenyPep1g();
+		tilgangskontrollDenyPep1g();
 		stubPdl();
 		stubDokarkivJournalpost("journalpost-dokumentinfo-sak-happy.json");
 
 		ResponseEntity<String> responseEntity = callHentDokument();
 
 		verify(postRequestedFor(urlEqualTo("/pdl")));
-		verifyabacDenyPep1gAndHttpStatusCode(FORBIDDEN, responseEntity.getStatusCode());
+		verifyTilgangsmaskinenDenyPep1gAndHttpStatusCode(FORBIDDEN, responseEntity.getStatusCode());
 		assertThat(responseEntity.getBody()).contains(PEP1G_DENY_REASON);
 	}
 
 	@Test
 	void shouldGetForbiddenFromPep2() {
-		abacDenyPep2();
+		tilgangskontrollDenyPep2();
 		stubPdl();
 		stubDokarkivJournalpost("journalpost-dokumentinfo-sak-tema-far.json");
 
 		ResponseEntity<String> responseEntity = callHentDokument();
 
 		verify(postRequestedFor(urlEqualTo("/pdl")));
-		verifyabacDenyPep2AndHttpStatusCode(FORBIDDEN, responseEntity.getStatusCode());
+		tilgangskontrollDenyPep2();
 		assertThat(responseEntity.getBody()).contains(PEP2_DENY_REASON);
 	}
 
 	@Test
 	@DisplayName("Skal ikke hente farskap dokument hvis journalpost ikke har sakstilknytning eller bruker")
 	void shouldGetForbiddenFromPep2WhenMidlertidigJournalpost() {
-		abacDenyPep2MidlertidigJournalpost();
+		tilgangskontrollDenyPep2();
 		stubDokarkivJournalpost("journalpost-dokumentinfo-sak-midlertidig-ingen-bruker-tema-far.json");
 
 		ResponseEntity<String> responseEntity = callHentDokument();
@@ -483,7 +483,7 @@ class HentDokumentIT extends AbstractItest {
 
 	@Test
 	void shouldGetForbiddenFromPep2d() {
-		abacDenyPep2d();
+		tilgangskontrollDenyPep2d();
 		stubHappyBisysSak();
 		stubPdl();
 		stubDokarkivJournalpost("journalpost-dokumentinfo-sak-tema-bid.json");
@@ -497,7 +497,7 @@ class HentDokumentIT extends AbstractItest {
 
 	@Test
 	void shouldGetForbiddenFromPep8d() {
-		denyPep8d();
+		tilgangskontrollDenyPep8d();
 		stubHappyBisysSak();
 		stubPdl();
 		stubDokarkivJournalpost("journalpost-dokumentinfo-sak-avsluttet-sak.json");
@@ -511,7 +511,7 @@ class HentDokumentIT extends AbstractItest {
 
 	@Test
 	void shouldHentDokumentWhenHappyAndInJoarkHistoriskAvsluttetSak() {
-		abacPermit();
+		tilgangskontrollPermit();
 		stubHappyHentDokument();
 		stubDokarkivJournalpost("journalpost-dokumentinfo-sak-avsluttet-sak.json");
 		stubPdl();
@@ -549,7 +549,7 @@ class HentDokumentIT extends AbstractItest {
 
 	@Test
 	void shouldGetForbiddenFromPep3() {
-		abacDenyPep3SkipPep2dAndPep2();
+		tilgangskontrollDenyPep3();
 		stubHappyBisysSak();
 		stubPdl();
 		stubDokarkivJournalpost("journalpost-dokumentinfo-sak-tema-bid.json");
@@ -563,7 +563,7 @@ class HentDokumentIT extends AbstractItest {
 
 	@Test
 	void shouldGetForbiddenFromPep4WhenJournalstatusUtgaar() {
-		abacDenyPep4SkipPep2OrPep3();
+		tilgangskontrollDenyPep4();
 		stubHappyBisysSak();
 		stubPdl();
 		stubDokarkivJournalpost("journalpost-dokumentinfo-sak-tema-bid-utgaar.json");
@@ -577,7 +577,7 @@ class HentDokumentIT extends AbstractItest {
 
 	@Test
 	void shouldGetForbiddenFromPep4WhenJournalpostSkjermet() {
-		abacDenyPep4SkipPep2OrPep3();
+		tilgangskontrollDenyPep4();
 		stubHappyBisysSak();
 		stubPdl();
 		stubDokarkivJournalpost("journalpost-dokumentinfo-sak-tema-bid-journalpost-skjerming.json");
@@ -591,7 +591,7 @@ class HentDokumentIT extends AbstractItest {
 
 	@Test
 	void shouldGetForbiddenFromPep5WhenDokumentinfoSkjermet() {
-		abacDenyPep5SkipPep4();
+		tilgangskontrollDenyPep5();
 		stubHappyBisysSak();
 		stubDokarkivJournalpost("journalpost-dokumentinfo-sak-tema-bid-dokumentinfo-skjerming.json");
 		stubPdl();
@@ -605,7 +605,7 @@ class HentDokumentIT extends AbstractItest {
 
 	@Test
 	void shouldGetForbiddenFromPep6d() {
-		abacDenyPep6dSkipPep2Pep4Pep5();
+		tilgangskontrollDenyPep6dWithSkjerming();
 		stubHappyHentDokument();
 		stubHappyBisysSak();
 		stubPdl();
@@ -620,7 +620,7 @@ class HentDokumentIT extends AbstractItest {
 
 	@Test
 	void shouldGetForbiddenFromPep7dWhenTemaForeldrepenger() {
-		abacDenyPep7dSkipPep2Pep3Pep4Pep5Pep6d();
+		tilgangskontrollDenyPep7d();
 		stubDokarkivJournalpost("journalpost-dokumentinfo-sak-tema-for.json");
 		stubFor(get("/fpsak?saksnummer=FOR2000")
 				.willReturn(aResponse()
@@ -638,7 +638,7 @@ class HentDokumentIT extends AbstractItest {
 
 	@Test
 	void shouldGetForbiddenFromPep7dWhenK9TemaFri() {
-		abacDenyPep7dSkipPep2Pep3Pep4Pep5Pep6d();
+		tilgangskontrollDenyPep7d();
 		stubDokarkivJournalpost("journalpost-dokumentinfo-sak-tema-fri.json");
 		stubFor(get("/k9sak?saksnummer=K92000")
 				.willReturn(aResponse()
@@ -656,7 +656,7 @@ class HentDokumentIT extends AbstractItest {
 
 	@Test
 	void shouldGetForbiddenFromPep7ForK9TemaOms() {
-		abacDenyPep7dSkipPep2Pep3Pep4Pep5Pep6d();
+		tilgangskontrollDenyPep7d();
 		stubPdl();
 		stubDokarkivJournalpost("journalpost-dokumentinfo-sak-tema-oms.json");
 		stubFor(get("/k9sak?saksnummer=K92000")
@@ -675,7 +675,7 @@ class HentDokumentIT extends AbstractItest {
 
 	@Test
 	void shouldHentDokumentAlsoWhenUserNotFoundInPDL() {
-		abacPermit();
+		tilgangskontrollPermit();
 		stubHappyHentDokument();
 		stubDokarkivJournalpost("journalpost-dokumentinfo-sak-happy.json");
 		stubPdl("pdl-person-ikke-funnet.json");
@@ -716,7 +716,7 @@ class HentDokumentIT extends AbstractItest {
 
 	@Test
 	void shouldAuditLogWhenNavUserIdHeaderAndSystemTilSystem() {
-		abacPermit();
+		tilgangskontrollPermit();
 		stubPdl();
 		stubHappyHentDokument();
 		stubDokarkivJournalpost("journalpost-dokumentinfo-sak-happy.json");
@@ -751,7 +751,7 @@ class HentDokumentIT extends AbstractItest {
 
 	@Test
 	void shouldNotAuditLogWhenSystemTilSystem() {
-		abacPermit();
+		tilgangskontrollPermit();
 		stubPdl();
 		stubHappyHentDokument();
 		stubDokarkivJournalpost("journalpost-dokumentinfo-sak-happy.json");

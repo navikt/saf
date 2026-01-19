@@ -1,17 +1,17 @@
 package no.nav.saf.tilgangskontroll.pep.reasons;
 
-import no.nav.saf.tilgangskontroll.pep.AbacDenyReasonCode;
+import no.nav.saf.tilgangskontroll.pep.DenyReasonCode;
 
 import java.util.Map;
 
-public final class GeografiReason extends AbacDenyReason {
+public final class GeografiReason extends DenyReason {
 
 	public GeografiReason(Map<String, String> advices) {
-		super(advices, AbacDenyReasonCode.GEOGRAFI);
+		super(advices, DenyReasonCode.GEOGRAFI);
 	}
 
 	public GeografiReason(String rawTilgangsmaskinenDenyReason, String rawTilgangmaskinenBegrunnelse) {
-		super(AbacDenyReasonCode.GEOGRAFI, rawTilgangsmaskinenDenyReason, rawTilgangmaskinenBegrunnelse);
+		super(DenyReasonCode.GEOGRAFI, rawTilgangsmaskinenDenyReason, rawTilgangmaskinenBegrunnelse);
 	}
 
 	public String getHumanReadableDenyReason() {

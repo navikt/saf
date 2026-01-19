@@ -1,10 +1,10 @@
 package no.nav.saf.tilgangskontroll.pep.reasons;
 
-import no.nav.saf.tilgangskontroll.pep.AbacDenyReasonCode;
+import no.nav.saf.tilgangskontroll.pep.DenyReasonCode;
 
-public final class OrgnrNavStatReason extends AbacDenyReason {
+public final class OrgnrNavStatReason extends DenyReason {
 	public OrgnrNavStatReason(String cause, String policy, String rule) {
-		super(cause, policy, rule, AbacDenyReasonCode.ORGNR_NAV_STAT, null, null);
+		super(cause, policy, rule, DenyReasonCode.ORGNR_NAV_STAT, null, null);
 	}
 
 	public String getHumanReadableDenyReason() {

@@ -11,10 +11,10 @@ import no.nav.saf.endpoints.graphql.GraphQLResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 
-import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
@@ -32,8 +32,8 @@ import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static no.nav.saf.graphql.ErrorCode.FORBIDDEN;
-import static no.nav.saf.tilgangskontroll.pep.AbacDenyReasonCode.FORTROLIG_ADRESSE;
-import static no.nav.saf.tilgangskontroll.pep.AbacDenyReasonCode.ORGNR_NAV_STAT;
+import static no.nav.saf.tilgangskontroll.pep.DenyReasonCode.FORTROLIG_ADRESSE;
+import static no.nav.saf.tilgangskontroll.pep.DenyReasonCode.ORGNR_NAV_STAT;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
@@ -57,8 +57,8 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 	}
 
 	@Test
-	void shouldHentDokumentoversiktBrukerWithAktoerID() throws IOException, URISyntaxException {
-		abacPermit();
+	void shouldHentDokumentoversiktBrukerWithAktoerID() throws URISyntaxException {
+		tilgangskontrollPermit();
 		stubPdl();
 		stubSakMedAktoerId();
 		stubFinnjournalposter();
@@ -81,8 +81,8 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 	}
 
 	@Test
-	void shouldHentDokumentoversiktBrukerWithAktoerIDAndHavDokumentInfosInCorrectOrder() throws IOException, URISyntaxException {
-		abacPermit();
+	void shouldHentDokumentoversiktBrukerWithAktoerIDAndHavDokumentInfosInCorrectOrder() throws URISyntaxException {
+		tilgangskontrollPermit();
 		stubPdl();
 		stubSakMedAktoerId();
 		// Merk: i filen under kommer vedleggene i feil rekkefølge "fra dokarkiv" for å teste at saf sorterer dem riktig.
@@ -112,7 +112,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 
 	@Test
 	void shouldHentDokumentoversiktBrukerWithFNR() throws URISyntaxException {
-		abacPermit();
+		tilgangskontrollPermit();
 		stubPdl();
 		stubSakMedAktoerId();
 		stubFinnjournalposter();
@@ -137,7 +137,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 
 	@Test
 	void shouldHentDokumentoversiktBrukerWithOrgNr() throws URISyntaxException {
-		abacPermit();
+		tilgangskontrollPermit();
 		stubNavHrOrganisasjonNei(ORG_NR);
 		stubSakOrgnr();
 		stubFinnjournalposter("finnjournalposter_single_temaForNullskjerming-happy.json");
@@ -155,7 +155,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 
 	@Test
 	void shouldNotHentDokumentoversiktBrukerWithNavStatOrgnummerWhenBrukerNotEgenAnsattBehandler() throws URISyntaxException {
-		abacPermit();
+		tilgangskontrollPermit();
 		stubNavHrOrganisasjonJa(ORG_NR);
 		stubMsGraphMemberOfNoGroupsDefaultSaksbehandler();
 
@@ -171,7 +171,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 
 	@Test
 	void shouldHentDokumentoversiktBrukerWithNavStatOrgnummerWhenBrukerIsEgenAnsattBehandler() throws URISyntaxException {
-		abacPermit();
+		tilgangskontrollPermit();
 		stubNavHrOrganisasjonJa(ORG_NR);
 		stubSakOrgnr();
 		stubFinnjournalposter("finnjournalposter_single_temaForNullskjerming-happy.json");
@@ -188,7 +188,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 
 	@Test
 	void shouldHentDokumentoversiktBrukerWithFraDato() throws URISyntaxException {
-		abacPermit();
+		tilgangskontrollPermit();
 		stubPdl();
 		stubSakMedAktoerId();
 		stubFinnjournalposter();
@@ -206,7 +206,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 
 	@Test
 	void shouldHentDokumentoversiktBrukerWithAktoerIDMidlertidig() throws URISyntaxException {
-		abacPermit();
+		tilgangskontrollPermit();
 		stubPdl();
 		stubSakMedAktoerId("sak-sakerBySaksId-empty.json");
 		stubFinnjournalposter("finnjournalposter-midlertidig-happy.json");
@@ -223,7 +223,6 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 		DokumentInfo dokumentInfo = journalpost.getDokumenter().get(0);
 		assertThat(dokumentInfo.getTittel()).isEqualTo("Søknad om foreldrepenger ved fødsel");
 
-		verify(2, postRequestedFor(urlEqualTo("/abac")));
 		verify(postRequestedFor(urlEqualTo("/pdl")).withRequestBody(matchingJsonPath("$.variables.ident", equalTo(AKTOER_ID))));
 		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter"))
 				.withRequestBody(containing("{\"gsakSakIds\":[],\"psakSakIds\":[],\"fraDato\":\"0001-01-01\",\"tilDato\":null,\"inkluderJournalStatus\":[\"FL\",\"FS\",\"J\",\"E\"],\"inkluderJournalpostType\":[\"I\",\"U\",\"N\"],\"visFeilregistrerte\":false,\"alleIdenter\":[\"11111111111\"],\"foerste\":3,\"etterPeker\":null}")));
@@ -231,8 +230,8 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 	}
 
 	@Test
-	void shouldHentDokumentoversiktBrukerWithAktoerIDSladdet() throws IOException, URISyntaxException {
-		abacPermit();
+	void shouldHentDokumentoversiktBrukerWithAktoerIDSladdet() throws URISyntaxException {
+		tilgangskontrollPermit();
 		stubPdl();
 		stubSakMedAktoerId();
 		stubFinnjournalposter("finnjournalposter_single_sladdet-happy.json");
@@ -251,7 +250,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 	}
 
 	@Test
-	void hentIdentForAktoerIdTechnicalFail() throws IOException, URISyntaxException {
+	void hentIdentForAktoerIdTechnicalFail() throws URISyntaxException {
 		stubPdl("badRequest.json");
 
 		ResponseEntity<GraphQLResponse> responseEntity = callDokumentOversikBrukerWithAktoerId();
@@ -265,7 +264,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 	}
 
 	@Test
-	void hentIdentForAktoerIdFunctionalFail() throws IOException, URISyntaxException {
+	void hentIdentForAktoerIdFunctionalFail() throws URISyntaxException {
 		stubPdl("badRequest.json");
 
 		ResponseEntity<GraphQLResponse> responseEntity = callDokumentOversikBrukerWithAktoerId();
@@ -279,8 +278,8 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 	}
 
 	@Test
-	void HentSakerByAktoerIdGsakTechnicalFail() throws IOException, URISyntaxException {
-		abacPermit();
+	void HentSakerByAktoerIdGsakTechnicalFail() throws URISyntaxException {
+		tilgangskontrollPermit();
 		stubPdl();
 		stubFor(get(SAK_API_PATH_MED_QUERY_PARA_AKTOER_ID)
 				.willReturn(aResponse().withStatus(INTERNAL_SERVER_ERROR.value())));
@@ -298,8 +297,8 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 	}
 
 	@Test
-	void HentSakerByAktoerIdGsakFunctionalFail() throws IOException, URISyntaxException {
-		abacPermit();
+	void HentSakerByAktoerIdGsakFunctionalFail() throws URISyntaxException {
+		tilgangskontrollPermit();
 		stubPdl();
 		stubFor(get(SAK_API_PATH_MED_QUERY_PARA_AKTOER_ID)
 				.willReturn(aResponse().withStatus(NOT_FOUND.value())));
@@ -320,8 +319,8 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 	}
 
 	@Test
-	void bidragConsumerTechnicalError() throws IOException, URISyntaxException {
-		abacPermit();
+	void bidragConsumerTechnicalError() throws URISyntaxException {
+		tilgangskontrollPermit();
 		stubPdl();
 		stubSakMedAktoerId("sak-sakerBySaksId-happy.json");
 		stubFinnjournalposter("finnjournalposter-empty.json");
@@ -342,8 +341,8 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 	}
 
 	@Test
-	void shouldGetUnauthorizedFromPep1g() throws IOException, URISyntaxException {
-		abacDenyPep1g();
+	void shouldGetUnauthorizedFromPep1g() throws URISyntaxException {
+		tilgangskontrollDenyPep1g();
 		stubPdl();
 		stubSakMedAktoerId("sak-sakerBySaksId-happy.json");
 		stubFinnjournalposter();
@@ -354,15 +353,15 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
 
 		verifyEmptyJournalpostListeAndNullSideInfo(dokumentoversikt);
-		verifyabacDenyPep1gAndHttpStatusCode(OK, responseEntity.getStatusCode());
+		verifyTilgangsmaskinenDenyPep1gAndHttpStatusCode(OK, responseEntity.getStatusCode());
 		List<GraphQLResponse.Error> errors = responseEntity.getBody().getErrors();
 		assertThat(errors.get(0).getExtensions().getCode()).isEqualTo(FORBIDDEN.getText());
 		assertThat(errors.get(0).getExtensions().getReasonCode()).isEqualTo(FORTROLIG_ADRESSE.code);
 	}
 
 	@Test
-	void shouldGetUnauthorizedFromPep2() throws IOException, URISyntaxException {
-		abacDenyPep2();
+	void shouldGetUnauthorizedFromPep2() throws URISyntaxException {
+		tilgangskontrollDenyPep2();
 		stubPdl();
 		stubSakMedAktoerId("sak-sakerByFagsakIdAndFagsaksystem-FAR-happy.json");
 		stubFinnjournalposter("finnjournalposter-empty.json");
@@ -374,12 +373,12 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter"))
 				.withRequestBody(containing("{\"gsakSakIds\":[],\"psakSakIds\":[],\"fraDato\":\"0001-01-01\",\"tilDato\":null,\"inkluderJournalStatus\":[\"FL\",\"FS\",\"J\",\"E\"],\"inkluderJournalpostType\":[\"I\",\"U\",\"N\"],\"visFeilregistrerte\":false,\"alleIdenter\":[\"11111111111\"],\"foerste\":3,\"etterPeker\":null}")));
 		verifyEmptyJournalpostListeAndNullSideInfo(dokumentoversikt);
-		verifyabacDenyPep2AndHttpStatusCode(OK, responseEntity.getStatusCode());
+		verifyDenyPep2(responseEntity.getStatusCode());
 	}
 
 	@Test
 	void shouldGetUnauthorizedFromPep2WhenIngenSakstilknytning() throws URISyntaxException {
-		abacDenyPep2();
+		tilgangskontrollDenyPep2();
 		stubPdl();
 		stubSakMedAktoerId("sak-sakerBySaksId-empty.json");
 		stubFinnjournalposter("finnjournalposter-far-kta.json");
@@ -393,8 +392,8 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 	}
 
 	@Test
-	void shouldReturnSaksbehandlerHarTilgangFalseAndSkjultTittelWhenDenyPep2d() throws IOException, URISyntaxException {
-		abacDenyPep2dSkipPep2();
+	void shouldReturnSaksbehandlerHarTilgangFalseAndSkjultTittelWhenDenyPep2d() throws URISyntaxException {
+		tilgangskontrollDenyPep2d();
 		stubPdl();
 		stubSakMedAktoerId("sak-sakerBySaksId-happy.json");
 		stubFinnjournalposter("finnjournalposter_single_bidragAndSkjerming-happy.json");
@@ -409,12 +408,13 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 		assertSkjultTittel(dokumentoversikt);
 		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter"))
 				.withRequestBody(containing("{\"gsakSakIds\":[\"135695442\"],\"psakSakIds\":[],\"fraDato\":\"0001-01-01\",\"tilDato\":null,\"inkluderJournalStatus\":[\"FL\",\"FS\",\"J\",\"E\"],\"inkluderJournalpostType\":[\"I\",\"U\",\"N\"],\"visFeilregistrerte\":false,\"alleIdenter\":[\"11111111111\"],\"foerste\":3,\"etterPeker\":null}")));
-		verifyabacDenyPep2dAndHttpStatusCode(true, OK, responseEntity.getStatusCode());
+		assertThat(responseEntity.getStatusCode()).isSameAs(HttpStatus.OK);
+		verifyDenyPep2d(responseEntity.getStatusCode());
 	}
 
 	@Test
-	void shouldGetUnauthorizedFromPep3() throws IOException, URISyntaxException {
-		abacDenyPep3SkipPep2();
+	void shouldGetUnauthorizedFromPep3() throws URISyntaxException {
+		tilgangskontrollDenyPep3();
 		stubPdl();
 		stubSakMedAktoerId("sak-sakerBySaksId-happy.json");
 		stubFinnjournalposter("finnjournalposter-empty.json");
@@ -427,13 +427,13 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter"))
 				.withRequestBody(containing("{\"gsakSakIds\":[],\"psakSakIds\":[],\"fraDato\":\"0001-01-01\",\"tilDato\":null,\"inkluderJournalStatus\":[\"FL\",\"FS\",\"J\",\"E\"],\"inkluderJournalpostType\":[\"I\",\"U\",\"N\"],\"visFeilregistrerte\":false,\"alleIdenter\":[\"11111111111\"],\"foerste\":3,\"etterPeker\":null}")));
 		verifyEmptyJournalpostListeAndNullSideInfo(dokumentoversikt);
-		verify(3, postRequestedFor(urlEqualTo("/abac")));
+		verifyEntraProxyCalled(1);
 		assertEquals(OK, responseEntity.getStatusCode());
 	}
 
 	@Test
-	void shouldGetUnauthorizedFromPep4() throws IOException, URISyntaxException {
-		abacDenyPep4SkipPep2OrPep3();
+	void shouldGetUnauthorizedFromPep4() throws URISyntaxException {
+		tilgangskontrollDenyPep4();
 		stubPdl();
 		stubSakMedAktoerId("sak-sakerBySaksId-happy.json");
 		stubFinnjournalposter("finnjournalposter_single_bidragAndSkjerming-happy.json");
@@ -446,13 +446,13 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 		verifyEmptyJournalpostListeAndNullSideInfo(dokumentoversikt);
 		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter"))
 				.withRequestBody(containing("{\"gsakSakIds\":[\"135695442\"],\"psakSakIds\":[],\"fraDato\":\"0001-01-01\",\"tilDato\":null,\"inkluderJournalStatus\":[\"FL\",\"FS\",\"J\",\"E\"],\"inkluderJournalpostType\":[\"I\",\"U\",\"N\"],\"visFeilregistrerte\":false,\"alleIdenter\":[\"11111111111\"],\"foerste\":3,\"etterPeker\":null}")));
-		verifyabacDenyPep4SkipPep2OrPep3AndHttpStatusCode(OK, responseEntity.getStatusCode());
+		verifyDenyPep4(responseEntity.getStatusCode(), 1);
 		verifyMsGraphMemberOfSeveralGroupsCalled(MS_ID_SAKSBEHANDLER, 1);
 	}
 
 	@Test
-	void shouldGetUnauthorizedFromPep5() throws IOException, URISyntaxException {
-		abacDenyPep5SkipPep2OrPep3();
+	void shouldGetUnauthorizedFromPep5() throws URISyntaxException {
+		tilgangskontrollDenyPep5();
 		stubPdl();
 		stubSakMedAktoerId("sak-sakerBySaksId-happy.json");
 		stubFinnjournalposter("finnjournalposter_single_bidragAndSkjermingOnlyDokument-happy.json");
@@ -467,12 +467,12 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 		assertThat(dokumentoversikt.getJournalposter().get(0).getDokumenter()).isEmpty();
 		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter"))
 				.withRequestBody(containing("{\"gsakSakIds\":[\"135695442\"],\"psakSakIds\":[],\"fraDato\":\"0001-01-01\",\"tilDato\":null,\"inkluderJournalStatus\":[\"FL\",\"FS\",\"J\",\"E\"],\"inkluderJournalpostType\":[\"I\",\"U\",\"N\"],\"visFeilregistrerte\":false,\"alleIdenter\":[\"11111111111\"],\"foerste\":3,\"etterPeker\":null}")));
-		verifyabacDenyPep5SkipPep2OrPep3AndHttpStatusCode(true, OK, responseEntity.getStatusCode());
+		verifyDenyPep5(responseEntity.getStatusCode(), 1);
 	}
 
 	@Test
-	void shouldGetUnauthorizedFromPep6d() throws IOException, URISyntaxException {
-		abacDenyPep6dSkipPep2Pep4Pep5();
+	void shouldGetUnauthorizedFromPep6d() throws URISyntaxException {
+		tilgangskontrollDenyPep6dWithSkjerming();
 		stubPdl();
 		stubSakMedAktoerId();
 		stubFinnjournalposter("finnjournalposter_single_bidragAndSkjermingOnlyDokvariant-happy.json");
@@ -485,13 +485,13 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 		assertSaksbehandlerHarIkkeTilgang(dokumentoversikt);
 		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter"))
 				.withRequestBody(containing("{\"gsakSakIds\":[\"135695442\"],\"psakSakIds\":[],\"fraDato\":\"0001-01-01\",\"tilDato\":null,\"inkluderJournalStatus\":[\"FL\",\"FS\",\"J\",\"E\"],\"inkluderJournalpostType\":[\"I\",\"U\",\"N\"],\"visFeilregistrerte\":false,\"alleIdenter\":[\"11111111111\"],\"foerste\":3,\"etterPeker\":null}")));
-		verifyabacDenyPep6dSkipPep2Pep3AndHttpStatusCode(OK, responseEntity.getStatusCode());
+		verifyDenyPep6d(responseEntity.getStatusCode(), 1);
 	}
 
 	@Test
-	void shouldGetUnauthorizedFromPep7d() throws IOException, URISyntaxException {
+	void shouldGetUnauthorizedFromPep7d() throws URISyntaxException {
 		String SAK_ID = "123456";
-		abacDenyPep7dSkipPep2Pep3Pep4Pep5Pep6d();
+		tilgangskontrollDenyPep7d();
 		stubPdl();
 		stubSakMedAktoerId("sak-sakerBySaksId_oms-happy.json");
 		stubFinnjournalposter("finnjournalposter_single_temaK9Nullskjerming-happy.json");
@@ -507,7 +507,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 		assertSaksbehandlerHarIkkeTilgang(dokumentoversikt);
 		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter"))
 				.withRequestBody(containing("{\"gsakSakIds\":[\"135695442\"],\"psakSakIds\":[],\"fraDato\":\"0001-01-01\",\"tilDato\":null,\"inkluderJournalStatus\":[\"FL\",\"FS\",\"J\",\"E\"],\"inkluderJournalpostType\":[\"I\",\"U\",\"N\"],\"visFeilregistrerte\":false,\"alleIdenter\":[\"11111111111\"],\"foerste\":3,\"etterPeker\":null}")));
-		verifyabacDenyPep7dSkipPep2Pep3Pep4Pep5Pep6dAndHttpStatusCode(OK, responseEntity.getStatusCode());
+		verifyDenyPep7d(responseEntity.getStatusCode());
 	}
 
 	/*
@@ -518,7 +518,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 	 */
 	@Test
 	void shouldReturnFinnesNesteSideTrueWhenDocumentsAreFilteredFromPageAndNesteSideExists() throws URISyntaxException {
-		abacPermit();
+		tilgangskontrollPermit();
 		stubMsGraphMemberOfNoGroupsDefaultSaksbehandler();
 		stubPdl();
 		stubSakMedAktoerId();

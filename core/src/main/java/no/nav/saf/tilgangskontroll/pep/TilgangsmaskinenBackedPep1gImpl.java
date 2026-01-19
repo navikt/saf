@@ -15,7 +15,7 @@ import static no.nav.saf.tilgangskontroll.pep.PepAnswer.permit;
 import static org.apache.commons.lang3.ObjectUtils.firstNonNull;
 
 @Slf4j
-@Component
+@Component(PEP1G)
 public class TilgangsmaskinenBackedPep1gImpl extends StandardTilgangsmaskinenBackedPep<TilgangBruker> {
 
 	private final TilgangsmaskinenConsumer tilgangsmaskinenConsumer;

@@ -1,18 +1,18 @@
 package no.nav.saf.tilgangskontroll.pep.reasons;
 
-import no.nav.saf.tilgangskontroll.pep.AbacDenyReasonCode;
+import no.nav.saf.tilgangskontroll.pep.DenyReasonCode;
 
 import java.util.Map;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
-public final class EgenAnsattReason extends AbacDenyReason {
+public final class EgenAnsattReason extends DenyReason {
 	public EgenAnsattReason(Map<String, String> advices) {
-		super(advices, AbacDenyReasonCode.EGEN_ANSATT);
+		super(advices, DenyReasonCode.EGEN_ANSATT);
 	}
 
 	public EgenAnsattReason(String rawTilgangsmaskinenDenyReason, String rawTilgangsmaskinenBegrunnelse) {
-		super(AbacDenyReasonCode.EGEN_ANSATT, rawTilgangsmaskinenDenyReason, rawTilgangsmaskinenBegrunnelse);
+		super(DenyReasonCode.EGEN_ANSATT, rawTilgangsmaskinenDenyReason, rawTilgangsmaskinenBegrunnelse);
 	}
 
 	public String getHumanReadableDenyReason() {

@@ -1,16 +1,16 @@
 package no.nav.saf.tilgangskontroll.pep.reasons;
 
-import no.nav.saf.tilgangskontroll.pep.AbacDenyReasonCode;
+import no.nav.saf.tilgangskontroll.pep.DenyReasonCode;
 
 import java.util.Map;
 
-public final class FortroligAdresseReason extends AbacDenyReason {
+public final class FortroligAdresseReason extends DenyReason {
 	public FortroligAdresseReason(Map<String, String> advices) {
-		super(advices, AbacDenyReasonCode.FORTROLIG_ADRESSE);
+		super(advices, DenyReasonCode.FORTROLIG_ADRESSE);
 	}
 
 	public FortroligAdresseReason(String rawTilgangsmaskinenDenyReason, String rawTilgangmaskinenBegrunnelse) {
-		super(AbacDenyReasonCode.FORTROLIG_ADRESSE, rawTilgangsmaskinenDenyReason, rawTilgangmaskinenBegrunnelse);
+		super(DenyReasonCode.FORTROLIG_ADRESSE, rawTilgangsmaskinenDenyReason, rawTilgangmaskinenBegrunnelse);
 	}
 
 	public String getHumanReadableDenyReason() {

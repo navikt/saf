@@ -19,7 +19,7 @@ import static no.nav.saf.domain.kode.Tema.FAR;
 import static no.nav.saf.tilgangskontroll.pep.PepAnswer.permit;
 
 @Slf4j
-@Component
+@Component(PEP3)
 public class TilgangsmaskinenBackedPep3Impl extends StandardTilgangsmaskinenBackedPep<TilgangSak> {
 
 	private static final EnumSet<Tema> RELEVANTE_TEMA = EnumSet.of(BID, FAR);

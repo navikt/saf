@@ -1,12 +1,12 @@
 package no.nav.saf.tilgangskontroll.pep.reasons;
 
-import no.nav.saf.tilgangskontroll.pep.AbacDenyReasonCode;
+import no.nav.saf.tilgangskontroll.pep.DenyReasonCode;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
-public final class UkjentEllerTekniskReason extends AbacDenyReason {
+public final class UkjentEllerTekniskReason extends DenyReason {
 	public UkjentEllerTekniskReason(String cause, String policy, String rule) {
-		super(cause, policy, rule, AbacDenyReasonCode.UKJENT, null, null);
+		super(cause, policy, rule, DenyReasonCode.UKJENT, null, null);
 	}
 
 	public UkjentEllerTekniskReason() {
@@ -14,7 +14,7 @@ public final class UkjentEllerTekniskReason extends AbacDenyReason {
 	}
 
 	public UkjentEllerTekniskReason(String rawTilgangsmaskinenDenyReason, String rawTilgangmaskinenBegrunnelse) {
-		super(AbacDenyReasonCode.UKJENT, rawTilgangsmaskinenDenyReason, rawTilgangmaskinenBegrunnelse);
+		super(DenyReasonCode.UKJENT, rawTilgangsmaskinenDenyReason, rawTilgangmaskinenBegrunnelse);
 	}
 
 	public String getHumanReadableDenyReason() {

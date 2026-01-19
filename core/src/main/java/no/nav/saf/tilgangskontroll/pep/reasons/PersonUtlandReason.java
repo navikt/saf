@@ -1,10 +1,10 @@
 package no.nav.saf.tilgangskontroll.pep.reasons;
 
-import no.nav.saf.tilgangskontroll.pep.AbacDenyReasonCode;
+import no.nav.saf.tilgangskontroll.pep.DenyReasonCode;
 
-public final class PersonUtlandReason extends AbacDenyReason {
+public final class PersonUtlandReason extends DenyReason {
 	public PersonUtlandReason(String rawTilgangsmaskinenDenyReason, String rawTilgangsmaskinenBegrunnelse) {
-		super(AbacDenyReasonCode.PERSON_UTLAND, rawTilgangsmaskinenDenyReason, rawTilgangsmaskinenBegrunnelse);
+		super(DenyReasonCode.PERSON_UTLAND, rawTilgangsmaskinenDenyReason, rawTilgangsmaskinenBegrunnelse);
 	}
 
 	public String getHumanReadableDenyReason() {

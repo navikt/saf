@@ -22,14 +22,12 @@ import java.util.stream.Stream;
 
 import static no.nav.saf.domain.DomainConstants.FAGSAKSYSTEM_BISYS;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-class TilgangsmaskinenBackedPep3ImplTest extends AbstractAbacBackedPepTest {
+class TilgangsmaskinenBackedPep3ImplTest extends AbstractPepTest {
 
 	private static final String IDENTIFIKATOR = "12345678910";
 	private static final String IDENTIFIKATOR_2 = "01987654321";
