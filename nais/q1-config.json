@@ -29,7 +29,7 @@
   "SAF_ENDPOINTS_PENSJON_SCOPE": "api://dev-fss.pensjon-q1.pensjon-pen-q1/.default",
   "SAF_ENDPOINTS_DOKARKIV_URL": "http://dokarkiv-q1.teamdokumenthandtering.svc.nais.local/rest/internal/safintern",
   "SAF_ENDPOINTS_DOKARKIV_SCOPE": "api://dev-fss.teamdokumenthandtering.dokarkiv-q1/.default",
-  "SAF_ENDPOINTS_FPSAK_URL": "http://fpsak.teamforeldrepenger.svc.nais.local/fpsak/api/pip/aktoer-for-sak",
+  "SAF_ENDPOINTS_FPSAK_URL": "http://fpsak.teamforeldrepenger.svc.nais.local/fpsak/ekstern/api/pip/aktoer-for-sak",
   "SAF_ENDPOINTS_FPSAK_SCOPE": "api://dev-fss.teamforeldrepenger.fpsak/.default",
   "SAF_ENDPOINTS_SAK_URL": "http://sak-q1.teamdokumenthandtering.svc.nais.local/api/v1/saker",
   "SAF_ENDPOINTS_SAK_SCOPE": "api://dev-fss.teamdokumenthandtering.sak-q1/.default",
