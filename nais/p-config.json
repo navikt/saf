@@ -81,11 +81,6 @@
       "cluster": "prod-gcp"
     },
     {
-      "app": "trygderetten-vedlegg",
-      "namespace": "isa",
-      "cluster": "prod-gcp"
-    },
-    {
       "app": "fagarkiv-administrasjon",
       "namespace": "isa",
       "cluster": "prod-gcp"
