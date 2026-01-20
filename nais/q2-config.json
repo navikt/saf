@@ -115,11 +115,6 @@
       "cluster": "dev-gcp"
     },
     {
-      "app": "trygderetten-vedlegg-q2",
-      "namespace": "isa",
-      "cluster": "dev-gcp"
-    },
-    {
       "app": "fagarkiv-administrasjon-q2",
       "namespace": "isa",
       "cluster": "dev-gcp"
