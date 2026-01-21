@@ -99,6 +99,14 @@
       "roles": [
         "tema_alle"
       ]
+    },
+    {
+      "app": "testnav-dolly-proxy-trygdeetaten",
+      "namespace": "dolly",
+      "cluster": "dev-fss",
+      "roles": [
+        "tema_alle"
+      ]
     }
   ]
 }
