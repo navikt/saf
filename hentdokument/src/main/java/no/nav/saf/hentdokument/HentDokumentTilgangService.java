@@ -101,7 +101,7 @@ class HentDokumentTilgangService {
 						return tilgangBruker;
 					}
 				} catch (PersonIkkeFunnetException e) {
-					log.warn("Fant ikke bruker for aktørId={} i PDL, fortsetter med data fra t_bruker", arkivSak.aktoerId(), e);
+					log.warn("Fant ikke bruker for aktørId i PDL, fortsetter med data fra t_bruker", e);
 				}
 			}
 			return TilgangBruker.builder()

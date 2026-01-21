@@ -10,15 +10,10 @@ public class BrukerIdInput {
 
 	@Override
 	public String toString() {
-		switch (type) {
-			case AKTOERID:
-				return "aktørId=" + id;
-			case FNR:
-				return "fødselsnummer=*****";
-			case ORGNR:
-				return "organisasjonsnummer=" + id;
-			default:
-				return "ukjentId=" + id;
-		}
+		return switch (type) {
+			case AKTOERID -> "aktørId";
+			case FNR -> "fødselsnummer";
+			case ORGNR -> "organisasjonsnummer=" + id;
+		};
 	}
 }
