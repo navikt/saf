@@ -170,10 +170,7 @@
     {
       "app": "yrkesskade-melding-mottak",
       "namespace": "yrkesskade",
-      "cluster": "dev-gcp",
-      "roles": [
-        "dokument_tema_yrk"
-      ]
+      "cluster": "dev-gcp"
     },
     {
       "app": "yrkesskade-saksbehandling-backend",
@@ -290,7 +287,6 @@
       "namespace": "teamdokumenthandtering",
       "cluster": "dev-fss",
       "roles": [
-        "dokument_tema_far",
         "journal_tema_far"
       ]
     },
@@ -395,10 +391,7 @@
     {
       "app": "dokprod-q1",
       "namespace": "teamdokumenthandtering",
-      "cluster": "dev-fss",
-      "roles": [
-        "tema_alle"
-      ]
+      "cluster": "dev-fss"
     },
     {
       "app": "dokumenter",
@@ -489,10 +482,7 @@
     {
       "app": "tilbakemeldingsmottak-api",
       "namespace": "teamserviceklage",
-      "cluster": "dev-gcp",
-      "roles": [
-        "dokument_tema_ser"
-      ]
+      "cluster": "dev-gcp"
     },
     {
       "app": "rpa-medlemskap-og-avgift",
@@ -530,10 +520,7 @@
     {
       "app": "okonomiportal",
       "namespace": "okonomi",
-      "cluster": "dev-fss",
-      "roles": [
-        "dokument_tema_sto"
-      ]
+      "cluster": "dev-fss"
     },
     {
       "app": "spinosaurus",
@@ -591,7 +578,7 @@
     {
       "app": "institusjon-opphold-dataminimering-jobb-q1",
       "namespace": "team-rocket",
-      "cluster" : "dev-gcp"
+      "cluster": "dev-gcp"
     },
     {
       "app": "translatore-backend",

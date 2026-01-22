@@ -52,10 +52,7 @@
     {
       "app": "dokprod-q0",
       "namespace": "teamdokumenthandtering",
-      "cluster": "dev-fss",
-      "roles": [
-        "tema_alle"
-      ]
+      "cluster": "dev-fss"
     },
     {
       "app": "arena",
