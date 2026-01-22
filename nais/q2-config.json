@@ -369,11 +369,11 @@
       "namespace": "pensjonselvbetjening",
       "cluster": "dev-gcp"
     },
-	{
+    {
       "app": "uforetrygd-backend",
       "namespace": "pensjonselvbetjening",
       "cluster": "dev-gcp"
-	},
+    },
     {
       "app": "din-uforetrygd-backend",
       "namespace": "ufore",
@@ -417,7 +417,6 @@
       "namespace": "teamdokumenthandtering",
       "cluster": "dev-fss",
       "roles": [
-        "dokument_tema_far",
         "journal_tema_far"
       ]
     },
@@ -552,10 +551,7 @@
     {
       "app": "dokprod",
       "namespace": "teamdokumenthandtering",
-      "cluster": "dev-fss",
-      "roles": [
-        "tema_alle"
-      ]
+      "cluster": "dev-fss"
     },
     {
       "app": "gosys-q2",
@@ -692,10 +688,7 @@
     {
       "app": "tilbakemeldingsmottak-api",
       "namespace": "teamserviceklage",
-      "cluster": "dev-gcp",
-      "roles": [
-        "dokument_tema_ser"
-      ]
+      "cluster": "dev-gcp"
     },
     {
       "app": "gosys-oppgavebehandling-api",
@@ -731,7 +724,7 @@
       "namespace": "teamcrm",
       "cluster": "dev-gcp"
     },
-	{
+    {
       "app": "saas-proxy",
       "namespace": "platforce",
       "cluster": "dev-gcp"
@@ -741,7 +734,7 @@
       "namespace": "historisk",
       "cluster": "dev-gcp"
     },
-	{
+    {
       "app": "superhelt",
       "namespace": "historisk",
       "cluster": "dev-gcp"
@@ -764,10 +757,11 @@
       "namespace": "teamdokumenthandtering",
       "cluster": "dev-fss",
       "roles": [
-        "tema_alle"
+        "journal_tema_far",
+        "journal_tema_kta"
       ]
     },
-	{
+    {
       "app": "tiltakspenger-journalposthendelser",
       "namespace": "tpts",
       "cluster": "dev-gcp"
@@ -780,7 +774,7 @@
     {
       "app": "institusjon-opphold-dataminimering-jobb-q2",
       "namespace": "team-rocket",
-      "cluster" : "dev-gcp"
+      "cluster": "dev-gcp"
     }
   ]
 }
