@@ -694,7 +694,11 @@
     {
       "app": "dokdistdpi-2",
       "namespace": "teamdokumenthandtering",
-      "cluster": "prod-fss"
+      "cluster": "prod-fss",
+      "roles": [
+        "journal_tema_far",
+        "journal_tema_kta"
+      ]
     },
     {
       "app": "tiltakspenger-journalposthendelser",
