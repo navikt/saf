@@ -616,7 +616,10 @@
     {
       "app": "okonomiportal",
       "namespace": "okonomi",
-      "cluster": "prod-fss"
+      "cluster": "prod-fss",
+      "roles": [
+        "dokument_tema_sto"
+      ]
     },
     {
       "app": "skribenten-backend",

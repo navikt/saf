@@ -520,7 +520,10 @@
     {
       "app": "okonomiportal",
       "namespace": "okonomi",
-      "cluster": "dev-fss"
+      "cluster": "dev-fss",
+      "roles": [
+        "dokument_tema_sto"
+      ]
     },
     {
       "app": "spinosaurus",
