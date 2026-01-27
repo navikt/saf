@@ -587,6 +587,11 @@
       "app": "translatore-backend",
       "namespace": "ki-oversetter",
       "cluster": "dev-gcp"
+    },
+    {
+      "app": "dokdisteformidling-q1",
+      "namespace": "teamdokumenthandtering",
+      "cluster": "dev-fss"
     }
   ]
 }
