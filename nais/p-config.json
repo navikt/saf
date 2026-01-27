@@ -742,6 +742,11 @@
       "app": "translatore-backend",
       "namespace": "ki-oversetter",
       "cluster": "prod-gcp"
+    },
+    {
+      "app": "dokdisteformidling",
+      "namespace": "teamdokumenthandtering",
+      "cluster": "prod-fss"
     }
   ]
 }
