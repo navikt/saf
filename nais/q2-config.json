@@ -264,10 +264,7 @@
     {
       "app": "veilarbvedtaksstotte",
       "namespace": "obo",
-      "cluster": "dev-gcp",
-      "roles": [
-        "dokument_tema_opp"
-      ]
+      "cluster": "dev-gcp"
     },
     {
       "app": "syfosmpapirmottak",

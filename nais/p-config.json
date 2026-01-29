@@ -185,19 +185,8 @@
     },
     {
       "app": "veilarbvedtaksstotte",
-      "namespace": "pto",
-      "cluster": "prod-fss",
-      "roles": [
-        "dokument_tema_opp"
-      ]
-    },
-    {
-      "app": "veilarbvedtaksstotte",
       "namespace": "obo",
-      "cluster": "prod-gcp",
-      "roles": [
-        "dokument_tema_opp"
-      ]
+      "cluster": "prod-gcp"
     },
     {
       "app": "yrkesskade-melding-api",
