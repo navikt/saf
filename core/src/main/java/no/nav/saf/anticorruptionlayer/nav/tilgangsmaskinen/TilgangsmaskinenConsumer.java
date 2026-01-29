@@ -10,7 +10,6 @@ import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.pep.PepAnswer;
 import org.springframework.boot.http.client.ClientHttpRequestFactoryBuilder;
 import org.springframework.boot.http.client.ClientHttpRequestFactorySettings;
-import org.springframework.http.ProblemDetail;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 
@@ -36,12 +35,10 @@ public class TilgangsmaskinenConsumer {
 	private final RestClient texasAuthorizedRestClient;
 	private final SafProperties safProperties;
 
-	public static final Duration READ_TIMEOUT = Duration.ofSeconds(2);
-
 	public TilgangsmaskinenConsumer(RestClient texasAuthorizedRestClient, SafProperties safProperties) {
 		ClientHttpRequestFactorySettings settings = defaults()
 				.withConnectTimeout(Duration.ofSeconds(3))
-				.withReadTimeout(READ_TIMEOUT);
+				.withReadTimeout(Duration.ofSeconds(4));
 		this.texasAuthorizedRestClient = texasAuthorizedRestClient.mutate()
 				.requestFactory(ClientHttpRequestFactoryBuilder.jdk().build(settings))
 				.baseUrl(safProperties.getEndpoints().getTilgangsmaskinen().getUrl())

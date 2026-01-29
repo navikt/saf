@@ -15,7 +15,6 @@ import org.springframework.web.client.RestClient;
 import java.time.Duration;
 import java.util.Set;
 
-import static no.nav.saf.anticorruptionlayer.nav.tilgangsmaskinen.TilgangsmaskinenConsumer.READ_TIMEOUT;
 import static no.nav.saf.integration.token.NaisTexasAndCallIdRequestInterceptor.TARGET_SCOPE;
 import static org.springframework.boot.http.client.ClientHttpRequestFactorySettings.defaults;
 
@@ -33,7 +32,7 @@ public class EntraProxyConsumer {
 							  SafProperties safProperties) {
 		ClientHttpRequestFactorySettings settings = defaults()
 				.withConnectTimeout(Duration.ofSeconds(3))
-				.withReadTimeout(READ_TIMEOUT);
+				.withReadTimeout(Duration.ofSeconds(4));
 		this.texasAuthorizedRestClient = texasAuthorizedRestClient.mutate()
 				.requestFactory(ClientHttpRequestFactoryBuilder.jdk().build(settings))
 				.baseUrl(safProperties.getEndpoints().getEntraProxy().getUrl())
