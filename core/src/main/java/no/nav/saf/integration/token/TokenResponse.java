@@ -1,4 +1,4 @@
-package no.nav.saf.integration.azure;
+package no.nav.saf.integration.token;
 
 public record TokenResponse(
 		String access_token,

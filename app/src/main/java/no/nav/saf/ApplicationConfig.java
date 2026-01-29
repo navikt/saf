@@ -93,30 +93,6 @@ public class ApplicationConfig {
 	}
 
 	@Bean
-	public ClientHttpRequestFactory azureTokenHttpRequestFactory(WebProxyProperties webProxyProperties) {
-		var readTimeout = SocketConfig.custom().setSoTimeout(ofSeconds(20)).build();
-		var connectionManager = new PoolingHttpClientConnectionManager();
-		connectionManager.setMaxTotal(40);
-		connectionManager.setDefaultMaxPerRoute(10);
-		connectionManager.setDefaultSocketConfig(readTimeout);
-
-
-		var httpClient = webProxyProperties.getProxy()
-				.map(proxy -> HttpClients.custom()
-						.setConnectionManager(connectionManager)
-						.setProxy(proxy)
-						.build())
-				.orElseGet(() -> HttpClients.custom()
-						.setConnectionManager(connectionManager)
-						.build());
-
-		var clientHttpRequestFactory = new HttpComponentsClientHttpRequestFactory(httpClient);
-		clientHttpRequestFactory.setConnectTimeout(5_000);
-
-		return clientHttpRequestFactory;
-	}
-
-	@Bean
 	@Qualifier("privilegiedServiceusers")
 	public Map<String, Boolean> getServiceusersMap(SafProperties safProperties) {
 		Map<String, Boolean> privilegiedServiceusers = new HashMap<>();

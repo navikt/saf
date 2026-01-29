@@ -3,21 +3,17 @@ package no.nav.saf.endpoints;
 import lombok.SneakyThrows;
 import no.nav.saf.ApplicationConfig;
 import no.nav.saf.anticorruptionlayer.nav.NavOrgService;
-import no.nav.saf.azure.AzureProperties;
 import no.nav.saf.domain.visningsmodell.Dokumentoversikt;
 import no.nav.saf.domain.visningsmodell.Journalpost;
 import no.nav.saf.endpoints.testconfig.ValkeyCacheTestConfig;
 import no.nav.saf.headers.NavHeaders;
-import no.nav.saf.integration.azure.AzureTokenConsumer;
 import no.nav.security.mock.oauth2.MockOAuth2Server;
 import no.nav.security.mock.oauth2.token.DefaultOAuth2TokenCallback;
 import no.nav.security.token.support.spring.test.EnableMockOAuth2Server;
-import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.junit.jupiter.api.AfterEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,7 +23,6 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.client.ClientHttpRequestFactory;
-import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
@@ -89,17 +84,6 @@ public abstract class AbstractItest {
 		@Primary
 		ClientHttpRequestFactory clientHttpRequestFactoryTest() {
 			return new SimpleClientHttpRequestFactory();
-		}
-
-		@Bean
-		@Primary
-		AzureTokenConsumer azureTokenConsumer(AzureProperties azureProperties, RestTemplateBuilder restTemplateBuilder) {
-			var httpClient = HttpClients.custom()
-					.build();
-			var clientHttpRequestFactory = new HttpComponentsClientHttpRequestFactory(httpClient);
-			clientHttpRequestFactory.setConnectTimeout(5_000);
-
-			return new AzureTokenConsumer(azureProperties, restTemplateBuilder, clientHttpRequestFactory);
 		}
 	}
 
