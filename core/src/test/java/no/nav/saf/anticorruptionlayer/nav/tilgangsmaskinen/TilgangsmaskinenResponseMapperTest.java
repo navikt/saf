@@ -1,7 +1,7 @@
 package no.nav.saf.anticorruptionlayer.nav.tilgangsmaskinen;
 
 import no.nav.saf.anticorruptionlayer.nav.tilgangsmaskinen.TilgangsmaskinenBulkResponse.Resultat;
-import no.nav.saf.tilgangskontroll.pep.reasons.AbacDenyReason;
+import no.nav.saf.tilgangskontroll.pep.reasons.DenyReason;
 import no.nav.saf.tilgangskontroll.pep.reasons.EgenAnsattReason;
 import no.nav.saf.tilgangskontroll.pep.reasons.FortroligAdresseReason;
 import no.nav.saf.tilgangskontroll.pep.reasons.GeografiReason;
@@ -51,7 +51,7 @@ class TilgangsmaskinenResponseMapperTest {
 
 		assertThat(result.getPepDenyReason())
 				.isInstanceOf(expected)
-				.extracting(AbacDenyReason::getRawTilgangsmaskinenDenyReason, AbacDenyReason::getRawTilgangsmaskinenBegrunnelse)
+				.extracting(DenyReason::getRawTilgangsmaskinenDenyReason, DenyReason::getRawTilgangsmaskinenBegrunnelse)
 				.containsExactly(denyAnswer.title(), denyAnswer.begrunnelse());
 	}
 

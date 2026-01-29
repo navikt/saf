@@ -17,7 +17,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 
-import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.time.LocalDateTime;
@@ -69,7 +68,7 @@ class TilknyttedeJournalposterIT extends AbstractItest {
 
 	@Test
 	void shouldReturnTilknyttedeJournalposter() throws Exception {
-		abacPermit();
+		tilgangskontrollPermit();
 		stubFor(get("/dokarkiv/tilknyttedeJournalposter/gjenbruk/dokumentInfoId/" + DOKUMENT_INFO_ID)
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
@@ -128,7 +127,7 @@ class TilknyttedeJournalposterIT extends AbstractItest {
 
 	@Test
 	void shouldReturnTilknyttedeJournalposterPsak() throws Exception {
-		abacPermit();
+		tilgangskontrollPermit();
 		stubPensjonBrukerForSak();
 		stubPensjonSakSammendrag();
 		stubFor(get("/dokarkiv/tilknyttedeJournalposter/gjenbruk/dokumentInfoId/" + DOKUMENT_INFO_ID)
@@ -192,7 +191,7 @@ class TilknyttedeJournalposterIT extends AbstractItest {
 
 	@Test
 	void shouldReturnTilknyttedeJournalposterWithEmptyAvsendermottakerWhenOriginalAvsendermottakerIsNull() throws Exception {
-		abacPermit();
+		tilgangskontrollPermit();
 		stubFor(get("/dokarkiv/tilknyttedeJournalposter/gjenbruk/dokumentInfoId/" + DOKUMENT_INFO_ID)
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
@@ -217,7 +216,7 @@ class TilknyttedeJournalposterIT extends AbstractItest {
 
 	@Test
 	void shouldReturnNoJournalpostsWhenDenyOnPep1g() throws Exception {
-		abacDenyPep1g();
+		tilgangskontrollDenyPep1g();
 		stubFor(get("/dokarkiv/tilknyttedeJournalposter/gjenbruk/dokumentInfoId/" + DOKUMENT_INFO_ID)
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
@@ -230,7 +229,7 @@ class TilknyttedeJournalposterIT extends AbstractItest {
 
 	@Test
 	void shouldReturnNoJournalpostsWhenDenyOnPep2() throws Exception {
-		abacDenyPep2();
+		tilgangskontrollDenyPep2();
 		stubFor(get("/dokarkiv/tilknyttedeJournalposter/gjenbruk/dokumentInfoId/" + DOKUMENT_INFO_ID)
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
@@ -243,7 +242,7 @@ class TilknyttedeJournalposterIT extends AbstractItest {
 
 	@Test
 	void shouldReturnSaksbehandlerTilgangFalseWhenDenyOnPep2d() throws Exception {
-		abacDenyPep2dSkipPep2();
+		tilgangskontrollDenyPep2d();
 		stubFor(get("/dokarkiv/tilknyttedeJournalposter/gjenbruk/dokumentInfoId/" + DOKUMENT_INFO_ID)
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
@@ -261,7 +260,7 @@ class TilknyttedeJournalposterIT extends AbstractItest {
 
 	@Test
 	void shouldReturnNoJournalpostsWhenDenyOnPep3() throws Exception {
-		abacDenyPep3SkipPep2();
+		tilgangskontrollDenyPep3();
 		stubFor(get("/dokarkiv/tilknyttedeJournalposter/gjenbruk/dokumentInfoId/" + DOKUMENT_INFO_ID)
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
@@ -282,7 +281,7 @@ class TilknyttedeJournalposterIT extends AbstractItest {
 
 	@Test
 	void shouldReturnNoJournalpostWhenDenyOnPep4() throws Exception {
-		abacDenyPep4SkipPep2Pep3();
+		tilgangskontrollDenyPep4();
 		stubFor(get("/dokarkiv/tilknyttedeJournalposter/gjenbruk/dokumentInfoId/" + DOKUMENT_INFO_ID)
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
@@ -295,7 +294,7 @@ class TilknyttedeJournalposterIT extends AbstractItest {
 
 	@Test
 	void shouldReturnJournalpostWithOneFilteredDokumentInfoWhenDenyOnPep5() throws Exception {
-		abacDenyPep5SkipPep2Pep3Pep4();
+		tilgangskontrollDenyPep5();
 		stubFor(get("/dokarkiv/tilknyttedeJournalposter/gjenbruk/dokumentInfoId/" + DOKUMENT_INFO_ID)
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
@@ -309,7 +308,7 @@ class TilknyttedeJournalposterIT extends AbstractItest {
 
 	@Test
 	void shouldReturnSaksbehandlerTilgangFalseOnVariantWithDenyOnPep6d() throws Exception {
-		abacDenyPep6dSkipPep2Pep3Pep4Pep5();
+		tilgangskontrollDenyPep6dWithSkjerming();
 		stubFor(get("/dokarkiv/tilknyttedeJournalposter/gjenbruk/dokumentInfoId/" + DOKUMENT_INFO_ID)
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
@@ -327,7 +326,7 @@ class TilknyttedeJournalposterIT extends AbstractItest {
 
 	@Test
 	void shouldReturnTilknyttedeJournalposterWithoutSakOrBruker() throws Exception {
-		abacPermit();
+		tilgangskontrollPermit();
 		stubFor(get("/dokarkiv/tilknyttedeJournalposter/gjenbruk/dokumentInfoId/" + DOKUMENT_INFO_ID)
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
@@ -342,7 +341,7 @@ class TilknyttedeJournalposterIT extends AbstractItest {
 
 	@Test
 	void shouldReturnTilknyttedeJournalposterWhenBrukerNotFoundInPDL() throws Exception {
-		abacPermit();
+		tilgangskontrollPermit();
 		stubPdl("pdl-person-ikke-funnet.json");
 		stubFor(get("/dokarkiv/tilknyttedeJournalposter/gjenbruk/dokumentInfoId/" + DOKUMENT_INFO_ID)
 				.willReturn(aResponse().withStatus(OK.value())

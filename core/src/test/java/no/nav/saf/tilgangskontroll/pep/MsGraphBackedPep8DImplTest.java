@@ -20,7 +20,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class MsGraphBackedPep8DImplTest extends AbstractAbacBackedPepTest {
+public class MsGraphBackedPep8DImplTest extends AbstractPepTest {
 
 	private MsGraphBackedPep8dImpl pep8d;
 

@@ -1,16 +1,16 @@
 package no.nav.saf.tilgangskontroll.pep.reasons;
 
-import no.nav.saf.tilgangskontroll.pep.AbacDenyReasonCode;
+import no.nav.saf.tilgangskontroll.pep.DenyReasonCode;
 
 import java.util.Map;
 
-public final class SkjermingReason extends AbacDenyReason {
+public final class SkjermingReason extends DenyReason {
 	public SkjermingReason(String cause, String policy, String rule) {
-		super(cause, policy, rule, AbacDenyReasonCode.SKJERMING, null, null);
+		super(cause, policy, rule, DenyReasonCode.SKJERMING, null, null);
 	}
 
 	public SkjermingReason(Map<String, String> advices) {
-		super(advices, AbacDenyReasonCode.SKJERMING);
+		super(advices, DenyReasonCode.SKJERMING);
 	}
 
 	public String getHumanReadableDenyReason() {

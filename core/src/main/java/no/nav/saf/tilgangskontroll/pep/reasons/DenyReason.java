@@ -2,13 +2,13 @@ package no.nav.saf.tilgangskontroll.pep.reasons;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import no.nav.saf.tilgangskontroll.pep.AbacDenyReasonCode;
+import no.nav.saf.tilgangskontroll.pep.DenyReasonCode;
 
 import java.util.Map;
 
 @Getter
 @AllArgsConstructor
-public abstract sealed class AbacDenyReason permits EgenAnsattReason, HabilitetReason, EgenAnsattPartReason, FortroligAdresseReason, FortroligAdressePartReason,
+public abstract sealed class DenyReason permits EgenAnsattReason, HabilitetReason, EgenAnsattPartReason, FortroligAdresseReason, FortroligAdressePartReason,
 		GeografiReason, JournalstatusReason, OrgnrNavStatReason, SkjermingReason, StrengtFortroligAdresseReason, StrengtFortroligAdresseUtlandReason,
 		StrengtFortroligAdressePartReason, StrengtFortroligAdresseUtlandPartReason, TemaReason, AvsluttetSakReason, PersonUtlandReason, UkjentEllerTekniskReason {
 
@@ -21,21 +21,21 @@ public abstract sealed class AbacDenyReason permits EgenAnsattReason, HabilitetR
 	protected final String cause;
 	protected final String policy;
 	protected final String rule;
-	protected final AbacDenyReasonCode abacDenyReasonCode;
+	protected final DenyReasonCode denyReasonCode;
 	protected final String rawTilgangsmaskinenDenyReason;
 	protected final String rawTilgangsmaskinenBegrunnelse;
 
-	protected AbacDenyReason(Map<String, String> advices, AbacDenyReasonCode abacDenyReasonCode) {
-		this(advices.get("cause"), advices.get("deny_policy"), advices.get("deny_rule"), abacDenyReasonCode, null, null);
+	protected DenyReason(Map<String, String> advices, DenyReasonCode denyReasonCode) {
+		this(advices.get("cause"), advices.get("deny_policy"), advices.get("deny_rule"), denyReasonCode, null, null);
 	}
 
-	protected AbacDenyReason(AbacDenyReasonCode abacDenyReasonCode, String rawTilgangsmaskinenDenyReason, String rawTilgangsmaskinenBegrunnelse) {
-		this(null, null, null, abacDenyReasonCode, rawTilgangsmaskinenDenyReason, rawTilgangsmaskinenBegrunnelse);
+	protected DenyReason(DenyReasonCode denyReasonCode, String rawTilgangsmaskinenDenyReason, String rawTilgangsmaskinenBegrunnelse) {
+		this(null, null, null, denyReasonCode, rawTilgangsmaskinenDenyReason, rawTilgangsmaskinenBegrunnelse);
 	}
 
 	public String toString() {
 		return "cause=" + getCause() + ", deny_policy=" + getPolicy() + ", deny_rule=" + getRule() +
-				", reason_code=" + getAbacDenyReasonCode().code + ", tilgangsmaskinenCode=" + rawTilgangsmaskinenDenyReason;
+			   ", reason_code=" + getDenyReasonCode().code + ", tilgangsmaskinenCode=" + rawTilgangsmaskinenDenyReason;
 	}
 
 	public abstract String getHumanReadableDenyReason();

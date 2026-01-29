@@ -1,19 +1,19 @@
 package no.nav.saf.tilgangskontroll.pep.reasons;
 
-import no.nav.saf.tilgangskontroll.pep.AbacDenyReasonCode;
+import no.nav.saf.tilgangskontroll.pep.DenyReasonCode;
 
 import java.util.Map;
 
 import static java.util.Collections.emptyMap;
 
-public final class JournalstatusReason extends AbacDenyReason {
+public final class JournalstatusReason extends DenyReason {
 
 	public JournalstatusReason() {
 		this(emptyMap());
 	}
 
 	public JournalstatusReason(Map<String, String> advices) {
-		super(advices, AbacDenyReasonCode.JOURNALSTATUS);
+		super(advices, DenyReasonCode.JOURNALSTATUS);
 	}
 
 	public String getHumanReadableDenyReason() {

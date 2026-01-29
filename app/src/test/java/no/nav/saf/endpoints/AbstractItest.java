@@ -25,9 +25,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
-import org.springframework.http.MediaType;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
@@ -40,14 +38,13 @@ import java.util.UUID;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
+import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static com.github.tomakehurst.wiremock.core.Options.DYNAMIC_PORT;
-import static com.github.tomakehurst.wiremock.stubbing.Scenario.STARTED;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Objects.requireNonNull;
 import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostMapper.SKJULT_TITTEL;
@@ -74,13 +71,6 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 @AutoConfigureWireMock(port = DYNAMIC_PORT)
 public abstract class AbstractItest {
 
-	private static final String SCENARIO_ABAC = "state_abac";
-	private static final String STATE_PERMIT = "state_permit";
-	private static final String STATE_PEP2 = "state_pep2";
-	private static final String STATE_PEP2D = "state_pep2d";
-	private static final String STATE_PEP3 = "state_pep3";
-	private static final String STATE_PEP7D = "state_pep7d";
-
 	protected static final String NAV_IDENT_SAKSBEHANDLER = "Z123456";
 	protected static final String MS_ID_SAKSBEHANDLER = "11111111-2222-3333-4444-555555555555";
 	protected static final String ORG_NR = "894705922";
@@ -90,6 +80,7 @@ public abstract class AbstractItest {
 	protected static final String SAK_API_PATH_MED_QUERY_PARA_AKTOER_ID = "/sak?aktoerId=" + AKTOER_ID;
 	protected static final String SAK_API_PATH_MED_QUERY_PARA_FAGSAK_NR = "/sak?fagsakNr=ARENA-1&applikasjon=AO01";
 
+	private static final String ENTRA_PROXY_ANSATT_PATH = "/entra-proxy/api/v1/tema/ansatt/.*";
 
 	@Configuration
 	public static class TestConfig {
@@ -352,9 +343,15 @@ public abstract class AbstractItest {
 	}
 
 	protected static void stubEntraProxy() {
-		stubFor(get(urlMatching("/entra-proxy/api/v1/tema/ansatt/.*")).willReturn(aResponse().withStatus(OK.value())
+		stubFor(get(urlMatching(ENTRA_PROXY_ANSATT_PATH)).willReturn(aResponse().withStatus(OK.value())
 				.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 				.withBodyFile("entraproxy/tematilganger.json")));
+	}
+
+	protected static void stubEntraProxyDeny() {
+		stubFor(get(urlMatching(ENTRA_PROXY_ANSATT_PATH)).willReturn(aResponse().withStatus(OK.value())
+				.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+				.withBody("[]")));
 	}
 
 	protected static void stubTilgangsmaskinenPep7BulkDeny() {
@@ -366,420 +363,71 @@ public abstract class AbstractItest {
 				.withBodyFile("tilgangsmaskinen/tilgangsmaskinen_deny_fortrolig_bulk.json")));
 	}
 
-	protected static void abacPermit() {
-		stubFor(post(urlEqualTo("/abac"))
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("abac/abac-permit.json")));
+	protected static void tilgangskontrollPermit() {
+		stubEntraProxy();
 		stubMsGraphMemberOfAllRelevantGroupsDefaultSaksbehandler();
 		stubTilgangsmaskinenPermit();
-		stubTilgangsmaskinenPep3BulkPermit();
 	}
 
-	protected void abacDenyPep6dSkipPep3OrPep2() {
-		stubTilgangsmaskinenPermit();
-		stubMsGraphGetUser(NAV_IDENT_SAKSBEHANDLER);
-		stubMsGraphMemberOfSeveralGroups(MS_ID_SAKSBEHANDLER, "nav/msgraph-checkmembergroup-ikke-joarkvedlikehold.json");
-		stubFor(post(urlEqualTo("/abac"))
-				.inScenario(SCENARIO_ABAC)
-				.whenScenarioStateIs(STARTED)
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("abac/abac-permit.json"))
-				.willSetStateTo(STATE_PEP2));
-		stubFor(post(urlEqualTo("/abac"))
-				.inScenario(SCENARIO_ABAC)
-				.whenScenarioStateIs(STATE_PEP2)
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("abac/abac-permit.json"))
-				.willSetStateTo(STATE_PEP2D));
-		stubFor(post(urlEqualTo("/abac"))
-				.inScenario(SCENARIO_ABAC)
-				.whenScenarioStateIs(STATE_PEP2D)
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("abac/abac-permit.json")));
-	}
-
-	protected void abacDenyPep6dSkipPep2Pep4Pep5() {
-		stubTilgangsmaskinenPermit();
-		stubMsGraphGetUser(NAV_IDENT_SAKSBEHANDLER);
-		stubMsGraphMemberOfSeveralGroups(MS_ID_SAKSBEHANDLER, "nav/msgraph-checkmembergroup-egenansatt-fortrolig-strengt-fortrolig.json");
-		stubFor(post(urlEqualTo("/abac"))
-				.inScenario(SCENARIO_ABAC)
-				.whenScenarioStateIs(STARTED)
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("abac/abac-permit.json"))
-				.willSetStateTo(STATE_PEP3));
-		stubFor(post(urlEqualTo("/abac"))
-				.inScenario(SCENARIO_ABAC)
-				.whenScenarioStateIs(STATE_PEP3)
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("abac/abac-permit.json"))
-				.willSetStateTo(STATE_PEP2D));
-		stubFor(post(urlEqualTo("/abac"))
-				.inScenario(SCENARIO_ABAC)
-				.whenScenarioStateIs(STATE_PEP2D)
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("abac/abac-permit.json")));
-	}
-
-	protected void abacDenyPep6dSkipPep2Pep3Pep4Pep5() {
-		stubTilgangsmaskinenPermit();
-		stubMsGraphGetUser(NAV_IDENT_SAKSBEHANDLER);
-		stubMsGraphMemberOfSeveralGroups(MS_ID_SAKSBEHANDLER, "nav/msgraph-checkmembergroup-egenansatt-fortrolig-strengt-fortrolig.json");
-		stubFor(post(urlEqualTo("/abac"))
-				.inScenario(SCENARIO_ABAC)
-				.whenScenarioStateIs(STARTED)
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("abac/abac-permit.json"))
-				.willSetStateTo(STATE_PEP2D));
-		stubFor(post(urlEqualTo("/abac"))
-				.inScenario(SCENARIO_ABAC)
-				.whenScenarioStateIs(STATE_PEP2D)
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("abac/abac-permit.json")));
-		stubFor(post(urlEqualTo("/abac"))
-				.inScenario(SCENARIO_ABAC)
-				.whenScenarioStateIs(STATE_PERMIT)
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("abac/abac-permit.json")));
-	}
-
-	protected void abacDenyPep5SkipPep2OrPep3() {
-		stubTilgangsmaskinenPermit();
-		stubMsGraphGetUser(NAV_IDENT_SAKSBEHANDLER);
-		stubMsGraphMemberOfSeveralGroups(MS_ID_SAKSBEHANDLER, "nav/msgraph-checkmembergroup-ikke-joarkvedlikehold.json");
-		stubFor(post(urlEqualTo("/abac"))
-				.inScenario(SCENARIO_ABAC)
-				.whenScenarioStateIs(STARTED)
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("abac/abac-permit.json"))
-				.willSetStateTo(STATE_PEP2));
-		stubFor(post(urlEqualTo("/abac"))
-				.inScenario(SCENARIO_ABAC)
-				.whenScenarioStateIs(STATE_PEP2)
-				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
-						.withHeader(CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-						.withBodyFile("abac/abac-permit.json"))
-				.willSetStateTo(STATE_PEP2D));
-		stubFor(post(urlEqualTo("/abac"))
-				.inScenario(SCENARIO_ABAC)
-				.whenScenarioStateIs(STATE_PEP2D)
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("abac/abac-permit.json")));
-	}
-
-	protected void abacDenyPep5SkipPep4() {
-		stubTilgangsmaskinenPermit();
-		stubMsGraphGetUser(NAV_IDENT_SAKSBEHANDLER);
-		stubMsGraphMemberOfSeveralGroups(MS_ID_SAKSBEHANDLER, "nav/msgraph-checkmembergroup-ikke-joarkvedlikehold.json");
-		stubFor(post(urlEqualTo("/abac"))
-				.inScenario(SCENARIO_ABAC)
-				.whenScenarioStateIs(STARTED)
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("abac/abac-permit.json"))
-				.willSetStateTo(STATE_PEP2));
-		stubFor(post(urlEqualTo("/abac"))
-				.inScenario(SCENARIO_ABAC)
-				.whenScenarioStateIs(STATE_PEP2)
-				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
-						.withHeader(CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-						.withBodyFile("abac/abac-permit.json"))
-				.willSetStateTo(STATE_PEP2D));
-		stubFor(post(urlEqualTo("/abac"))
-				.inScenario(SCENARIO_ABAC)
-				.whenScenarioStateIs(STATE_PEP2D)
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("abac/abac-permit.json")));
-	}
-
-	protected void abacDenyPep5SkipPep2Pep3Pep4() {
-		stubTilgangsmaskinenPermit();
-		stubMsGraphGetUser(NAV_IDENT_SAKSBEHANDLER);
-		stubMsGraphMemberOfSeveralGroups(MS_ID_SAKSBEHANDLER, "nav/msgraph-checkmembergroup-ikke-joarkvedlikehold.json");
-		stubFor(post(urlEqualTo("/abac"))
-				.inScenario(SCENARIO_ABAC)
-				.whenScenarioStateIs(STARTED)
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("abac/abac-permit.json"))
-				.willSetStateTo(STATE_PEP2D));
-		stubFor(post(urlEqualTo("/abac"))
-				.inScenario(SCENARIO_ABAC)
-				.whenScenarioStateIs(STATE_PEP2D)
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("abac/abac-permit.json"))
-				.willSetStateTo(STATE_PERMIT));
-		stubFor(post(urlEqualTo("/abac"))
-				.inScenario(SCENARIO_ABAC)
-				.whenScenarioStateIs(STATE_PERMIT)
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("abac/abac-permit.json")));
-	}
-
-	protected void abacDenyPep5SkipPep1gPep2Pep2dPep3() {
-		stubTilgangsmaskinenPermit();
-		stubMsGraphGetUser(NAV_IDENT_SAKSBEHANDLER);
-		stubMsGraphMemberOfSeveralGroups(MS_ID_SAKSBEHANDLER, "nav/msgraph-checkmembergroup-ikke-joarkvedlikehold.json");
-		stubFor(post(urlEqualTo("/abac"))
-				.inScenario(SCENARIO_ABAC)
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("abac/abac-permit.json")));
-	}
-
-	protected void abacDenyPep4SkipPep1gPep2Pep2dPep3() {
-		stubTilgangsmaskinenPermit();
-		stubMsGraphMemberOfNoGroupsDefaultSaksbehandler();
-		stubFor(post(urlEqualTo("/abac"))
-				.inScenario(SCENARIO_ABAC)
-				.whenScenarioStateIs(STARTED)
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("abac/abac-deny.json"))
-				.willSetStateTo(STATE_PERMIT));
-		stubFor(post(urlEqualTo("/abac"))
-				.inScenario(SCENARIO_ABAC)
-				.whenScenarioStateIs(STATE_PERMIT)
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("abac/abac-permit.json")));
-	}
-
-	protected void abacDenyPep4SkipPep2Pep3() {
-		stubTilgangsmaskinenPermit();
-		stubMsGraphMemberOfNoGroupsDefaultSaksbehandler();
-		stubFor(post(urlEqualTo("/abac"))
-				.inScenario(SCENARIO_ABAC)
-				.whenScenarioStateIs(STARTED)
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("abac/abac-permit.json"))
-				.willSetStateTo(STATE_PEP2D));
-		stubFor(post(urlEqualTo("/abac"))
-				.inScenario(SCENARIO_ABAC)
-				.whenScenarioStateIs(STATE_PEP2D)
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("abac/abac-permit.json")));
-	}
-
-	protected void abacDenyPep4SkipPep2OrPep3() {
-		stubTilgangsmaskinenPermit();
-		stubMsGraphMemberOfNoGroupsDefaultSaksbehandler();
-		stubFor(post(urlEqualTo("/abac"))
-				.inScenario(SCENARIO_ABAC)
-				.whenScenarioStateIs(STARTED)
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("abac/abac-permit.json"))
-				.willSetStateTo(STATE_PEP2));
-		stubFor(post(urlEqualTo("/abac"))
-				.inScenario(SCENARIO_ABAC)
-				.whenScenarioStateIs(STATE_PEP2)
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("abac/abac-permit.json"))
-				.willSetStateTo(STATE_PEP2D));
-		stubFor(post(urlEqualTo("/abac"))
-				.inScenario(SCENARIO_ABAC)
-				.whenScenarioStateIs(STATE_PEP2D)
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("abac/abac-permit.json"))
-				.willSetStateTo(STATE_PERMIT));
-		stubFor(post(urlEqualTo("/abac"))
-				.inScenario(SCENARIO_ABAC)
-				.whenScenarioStateIs(STATE_PERMIT)
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("abac/abac-permit.json")));
-	}
-
-	protected void abacDenyPep3SkipPep2() {
-		stubTilgangsmaskinenPep1gPermit();
-		stubTilgangsmaskinenPep3BulkDeny();
-		stubMsGraphMemberOfNoGroupsDefaultSaksbehandler();
-		stubFor(post(urlEqualTo("/abac"))
-				.inScenario(SCENARIO_ABAC)
-				.whenScenarioStateIs(STARTED)
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("abac/abac-permit.json"))
-				.willSetStateTo(STATE_PEP2D));
-		stubFor(post(urlEqualTo("/abac"))
-				.inScenario(SCENARIO_ABAC)
-				.whenScenarioStateIs(STATE_PEP2D)
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("abac/abac-permit.json"))
-				.willSetStateTo(STATE_PEP3));
-		stubFor(post(urlEqualTo("/abac"))
-				.inScenario(SCENARIO_ABAC)
-				.whenScenarioStateIs(STATE_PEP3)
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("abac/abac-deny-kode6.json"))
-				.willSetStateTo(STATE_PERMIT));
-	}
-
-	protected void abacDenyPep3SkipPep2dAndPep2() {
-		stubTilgangsmaskinenPep1gPermit();
-		stubTilgangsmaskinenPep3BulkDeny();
-		stubFor(post(urlEqualTo("/abac"))
-				.inScenario(SCENARIO_ABAC)
-				.whenScenarioStateIs(STARTED)
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("abac/abac-permit.json"))
-				.willSetStateTo(STATE_PEP3));
-		stubFor(post(urlEqualTo("/abac"))
-				.inScenario(SCENARIO_ABAC)
-				.whenScenarioStateIs(STATE_PEP3)
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("abac/abac-deny.json"))
-				.willSetStateTo(STATE_PERMIT));
-	}
-
-	protected void abacDenyPep2d() {
-		stubTilgangsmaskinenPermit();
-		stubFor(post(urlEqualTo("/abac"))
-				.inScenario(SCENARIO_ABAC)
-				.whenScenarioStateIs(STARTED)
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("abac/abac-permit.json"))
-				.willSetStateTo(STATE_PEP2));
-		stubFor(post(urlEqualTo("/abac"))
-				.inScenario(SCENARIO_ABAC)
-				.whenScenarioStateIs(STATE_PEP2)
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("abac/abac-permit.json"))
-				.willSetStateTo(STATE_PEP2D));
-		stubFor(post(urlEqualTo("/abac"))
-				.inScenario(SCENARIO_ABAC)
-				.whenScenarioStateIs(STATE_PEP2D)
-				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
-						.withHeader(CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-						.withBodyFile("abac/abac-deny.json"))
-				.willSetStateTo(STATE_PERMIT));
-		stubFor(post(urlEqualTo("/abac"))
-				.inScenario(SCENARIO_ABAC)
-				.whenScenarioStateIs(STATE_PERMIT)
-				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
-						.withHeader(CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-						.withBodyFile("abac/abac-permit.json")));
-	}
-
-	protected void abacDenyPep2dSkipPep2() {
-		stubTilgangsmaskinenPermit();
-		stubMsGraphMemberOfAllRelevantGroupsDefaultSaksbehandler();
-		stubFor(post(urlEqualTo("/abac"))
-				.inScenario(SCENARIO_ABAC)
-				.whenScenarioStateIs(STARTED)
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("abac/abac-permit.json"))
-				.willSetStateTo(STATE_PEP2D));
-		stubFor(post(urlEqualTo("/abac"))
-				.inScenario(SCENARIO_ABAC)
-				.whenScenarioStateIs(STATE_PEP2D)
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("abac/abac-deny.json"))
-				.willSetStateTo(STATE_PERMIT));
-		stubFor(post(urlEqualTo("/abac"))
-				.inScenario(SCENARIO_ABAC)
-				.whenScenarioStateIs(STATE_PERMIT)
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("abac/abac-permit.json")));
-	}
-
-	protected void abacDenyPep2() {
-		stubTilgangsmaskinenPermit();
-		stubFor(post(urlEqualTo("/abac"))
-				.inScenario(SCENARIO_ABAC)
-				.whenScenarioStateIs(STARTED)
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("abac/abac-permit.json"))
-				.willSetStateTo(STATE_PEP2));
-		stubFor(post(urlEqualTo("/abac"))
-				.inScenario(SCENARIO_ABAC)
-				.whenScenarioStateIs(STATE_PEP2)
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("abac/abac-deny.json")));
-	}
-
-	protected void abacDenyPep2MidlertidigJournalpost() {
-		stubTilgangsmaskinenPermit();
-		stubFor(post(urlEqualTo("/abac"))
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("abac/abac-deny.json")));
-	}
-
-	protected void abacDenyPep1g() {
+	protected void tilgangskontrollDenyPep1g() {
 		stubTilgangsmaskinenPep1gDeny();
-		stubFor(post(urlEqualTo("/abac"))
-				.inScenario(SCENARIO_ABAC)
-				.whenScenarioStateIs(STARTED)
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("abac/abac-deny.json"))
-				.willSetStateTo(STATE_PERMIT));
-		stubFor(post(urlEqualTo("/abac"))
-				.inScenario(SCENARIO_ABAC)
-				.whenScenarioStateIs(STATE_PERMIT)
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("abac/abac-permit.json")));
 	}
 
-	protected void abacDenyPep7dSkipPep2Pep3Pep4Pep5Pep6d() {
-		stubFor(post(urlEqualTo("/abac"))
-				.inScenario(SCENARIO_ABAC)
-				.whenScenarioStateIs(STARTED)
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("abac/abac-permit.json"))
-				.willSetStateTo(STATE_PEP2D));
-		stubFor(post(urlEqualTo("/abac"))
-				.inScenario(SCENARIO_ABAC)
-				.whenScenarioStateIs(STATE_PEP2D)
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("abac/abac-permit.json"))
-				.willSetStateTo(STATE_PEP7D));
+	protected void tilgangskontrollDenyPep2() {
+		stubTilgangsmaskinenPermit();
+		stubEntraProxyDeny();
+	}
+
+	protected void tilgangskontrollDenyPep2d() {
+		stubTilgangsmaskinenPermit();
+		stubEntraProxyDeny();
+		stubMsGraphMemberOfAllRelevantGroupsDefaultSaksbehandler();
+	}
+
+	protected void tilgangskontrollDenyPep3() {
+		stubTilgangsmaskinenPep1gPermit();
+		stubEntraProxy();
+		stubTilgangsmaskinenPep3BulkDeny();
+		stubMsGraphMemberOfNoGroupsDefaultSaksbehandler();
+	}
+
+	protected void tilgangskontrollDenyPep4() {
+		stubTilgangsmaskinenPermit();
+		stubEntraProxy();
+		stubMsGraphMemberOfNoGroupsDefaultSaksbehandler();
+	}
+
+	protected void tilgangskontrollDenyPep5() {
+		stubTilgangsmaskinenPermit();
+		stubEntraProxy();
+		stubMsGraphGetUser(NAV_IDENT_SAKSBEHANDLER);
+		stubMsGraphMemberOfSeveralGroups(MS_ID_SAKSBEHANDLER, "nav/msgraph-checkmembergroup-ikke-joarkvedlikehold.json");
+	}
+
+	protected void tilgangskontrollDenyPep6dWithSkjerming() {
+		stubTilgangsmaskinenPermit();
+		stubEntraProxy();
+		stubMsGraphGetUser(NAV_IDENT_SAKSBEHANDLER);
+		stubMsGraphMemberOfSeveralGroups(MS_ID_SAKSBEHANDLER, "nav/msgraph-checkmembergroup-egenansatt-fortrolig-strengt-fortrolig.json");
+	}
+
+	protected void tilgangskontrollDenyPep6d() {
+		stubTilgangsmaskinenPermit();
+		stubEntraProxy();
+		stubMsGraphGetUser(NAV_IDENT_SAKSBEHANDLER);
+		stubMsGraphMemberOfSeveralGroups(MS_ID_SAKSBEHANDLER, "nav/msgraph-checkmembergroup-ikke-joarkvedlikehold.json");
+	}
+
+	protected void tilgangskontrollDenyPep7d() {
+		stubEntraProxy();
 		stubTilgangsmaskinenPep7BulkDeny();
 	}
 
-	protected static void denyPep8d() {
+	protected static void tilgangskontrollDenyPep8d() {
 		stubTilgangsmaskinenPermit();
+		stubEntraProxy();
 		stubMsGraphGetUser(NAV_IDENT_SAKSBEHANDLER);
 		stubMsGraphMemberOfSeveralGroups(MS_ID_SAKSBEHANDLER, "nav/msgraph-checkmembergroup-ikke-joark-historisk.json");
-		stubFor(post(urlEqualTo("/abac"))
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile("abac/abac-permit.json")));
 	}
 
 	protected static void stubMsGraphGetUser(String navIdent) {
@@ -810,62 +458,53 @@ public abstract class AbstractItest {
 		verify(count, postRequestedFor(urlMatching("/msgraph/users/" + msUserId + "/checkMemberGroups")));
 	}
 
-	protected void verifyabacDenyPep7dSkipPep2Pep3Pep4Pep5Pep6dAndHttpStatusCode(HttpStatusCode expectedHttpStatus, HttpStatusCode actualHttpStatus) {
-		verify(3, postRequestedFor(urlEqualTo("/abac")));
+	protected void verifyTilgangsmaskinenDenyPep1gAndHttpStatusCode(HttpStatusCode expectedHttpStatus, HttpStatusCode actualHttpStatus) {
+		verify(1, postRequestedFor(urlMatching("/tilgangsmaskinen/api/v1/ccf/komplett/.*")));
 		assertEquals(expectedHttpStatus, actualHttpStatus);
 	}
 
-	protected void verifyabacDenyPep1gAndHttpStatusCode(HttpStatusCode expectedHttpStatus, HttpStatusCode actualHttpStatus) {
-		verify(1, postRequestedFor(urlEqualTo("/abac")));
-		assertEquals(expectedHttpStatus, actualHttpStatus);
+	protected void verifyTilgangsmaskinenDenyPep3AndHttpStatusCode(HttpStatusCode actualHttpStatus) {
+		verify(1, postRequestedFor(urlMatching("/tilgangsmaskinen/api/v1/bulk/ccf/.*/KJERNE_REGELTYPE")));
+		assertEquals(OK, actualHttpStatus);
 	}
 
-	protected void verifyabacDenyPep2AndHttpStatusCode(HttpStatusCode expectedHttpStatus, HttpStatusCode actualHttpStatus) {
-		verify(2, postRequestedFor(urlEqualTo("/abac")));
-		assertEquals(expectedHttpStatus, actualHttpStatus);
+	protected static void verifyEntraProxyCalled(int count) {
+		verify(count, getRequestedFor(urlMatching(ENTRA_PROXY_ANSATT_PATH)));
 	}
 
-	protected void verifyabacDenyPep2dAndHttpStatusCode(boolean isDokumentoversikt, HttpStatusCode expectedHttpStatus, HttpStatusCode actualHttpStatus) {
-		if (isDokumentoversikt) {
-			verify(3, postRequestedFor(urlEqualTo("/abac")));
-		} else {
-			verify(3, postRequestedFor(urlEqualTo("/abac")));
-		}
+	protected void verifyDenyPep2(HttpStatusCode actualHttpStatus) {
+		verifyEntraProxyCalled(1);
+		assertEquals(OK, actualHttpStatus);
+	}
+
+	protected void verifyDenyPep2d(HttpStatusCode actualHttpStatus) {
+		verifyEntraProxyCalled(1);
 		verifyMsGraphMemberOfSeveralGroupsCalled(MS_ID_SAKSBEHANDLER, 1);
-		assertEquals(expectedHttpStatus, actualHttpStatus);
+		assertEquals(OK, actualHttpStatus);
 	}
 
-	protected void verifyabacDenyPep3SkipPep2AndPep2dAndHttpStatusCode(HttpStatusCode expectedHttpStatus, HttpStatusCode actualHttpStatus) {
-		verify(2, postRequestedFor(urlEqualTo("/abac")));
-		assertEquals(expectedHttpStatus, actualHttpStatus);
-	}
-
-	protected void verifyabacDenyPep4SkipPep2OrPep3AndHttpStatusCode(HttpStatusCode expectedHttpStatus, HttpStatusCode actualHttpStatus) {
-		verify(3, postRequestedFor(urlEqualTo("/abac")));
+	protected void verifyDenyPep4(HttpStatusCode actualHttpStatus, int count) {
+		verifyEntraProxyCalled(count);
 		verifyMsGraphMemberOfSeveralGroupsCalled(MS_ID_SAKSBEHANDLER, 1);
-		assertEquals(expectedHttpStatus, actualHttpStatus);
+		assertEquals(OK, actualHttpStatus);
 	}
 
-	protected void verifyabacDenyPep5SkipPep2OrPep3AndHttpStatusCode(boolean isDokumentoversikt, HttpStatusCode expectedHttpStatus, HttpStatusCode actualHttpStatus) {
-		if (isDokumentoversikt) {
-			verify(3, postRequestedFor(urlEqualTo("/abac")));
-		} else {
-			verify(3, postRequestedFor(urlEqualTo("/abac")));
-		}
+	protected void verifyDenyPep5(HttpStatusCode actualHttpStatus, int count) {
+		verifyEntraProxyCalled(count);
 		verifyMsGraphMemberOfSeveralGroupsCalled(MS_ID_SAKSBEHANDLER, 1);
-		assertEquals(expectedHttpStatus, actualHttpStatus);
+		assertEquals(OK, actualHttpStatus);
 	}
 
-	protected void verifyabacDenyPep6dSkipPep2AndHttpStatusCode(HttpStatusCode expectedHttpStatus, HttpStatusCode actualHttpStatus) {
-		verify(3, postRequestedFor(urlEqualTo("/abac")));
+	protected void verifyDenyPep6d(HttpStatusCode actualHttpStatus, int count) {
+		verifyEntraProxyCalled(count);
 		verifyMsGraphMemberOfSeveralGroupsCalled(MS_ID_SAKSBEHANDLER, 1);
-		assertEquals(expectedHttpStatus, actualHttpStatus);
+		assertEquals(OK, actualHttpStatus);
 	}
 
-	protected void verifyabacDenyPep6dSkipPep2Pep3AndHttpStatusCode(HttpStatusCode expectedHttpStatus, HttpStatusCode actualHttpStatus) {
-		verify(2, postRequestedFor(urlEqualTo("/abac")));
-		verifyMsGraphMemberOfSeveralGroupsCalled(MS_ID_SAKSBEHANDLER, 1);
-		assertEquals(expectedHttpStatus, actualHttpStatus);
+	protected void verifyDenyPep7d(HttpStatusCode actualHttpStatus) {
+		verifyEntraProxyCalled(1);
+		verifyMsGraphMemberOfSeveralGroupsCalled(MS_ID_SAKSBEHANDLER, 0);
+		assertEquals(OK, actualHttpStatus);
 	}
 
 	protected void verifyEmptyJournalpostListeAndNullSideInfo(Dokumentoversikt dokumentoversikt) {

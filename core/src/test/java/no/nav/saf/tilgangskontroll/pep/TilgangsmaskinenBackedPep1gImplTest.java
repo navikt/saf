@@ -21,7 +21,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-class TilgangsmaskinenBackedPep1gImplTest extends AbstractAbacBackedPepTest {
+class TilgangsmaskinenBackedPep1gImplTest extends AbstractPepTest {
 
 	private static final String ORGNUMMER = "123465987";
 	@Mock

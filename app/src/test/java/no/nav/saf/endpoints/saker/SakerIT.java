@@ -50,7 +50,7 @@ class SakerIT extends AbstractItest {
 
 	@Test
 	void shouldReturnOldestSakWhenDuplicates() {
-		abacPermit();
+		tilgangskontrollPermit();
 		stubPdl();
 		stubSakMedAktoerId("sak-sakerBySaksId-happy-duplicates.json");
 		stubPensjonSakSammendrag("psak-hentSakSammendragListe-happy.json");
@@ -72,7 +72,7 @@ class SakerIT extends AbstractItest {
 
 	@Test
 	void shouldReturnPsakWhenDuplicatesContainsPsak() {
-		abacPermit();
+		tilgangskontrollPermit();
 		stubPdl();
 		stubSakMedAktoerId("sak-sakerBySaksId-happy-duplicates-psak.json");
 		stubPensjonSakSammendrag("psak-hentSakSammendragListe-happy.json");
@@ -88,7 +88,7 @@ class SakerIT extends AbstractItest {
 
 	@Test
 	void shouldReturnPsakAndGenerellSakWhenDuplicatesContainsPsak() {
-		abacPermit();
+		tilgangskontrollPermit();
 		stubPdl();
 		stubSakMedAktoerId("sak-sakerBySaksId-happy-duplicates-psak-with-generell-sak.json");
 		stubPensjonSakSammendrag("psak-hentSakSammendragListe-happy.json");
@@ -109,7 +109,7 @@ class SakerIT extends AbstractItest {
 
 	@Test
 	void shouldReturnFilteredByTemaWhenDuplicates() {
-		abacPermit();
+		tilgangskontrollPermit();
 		stubPdl();
 		stubSakMedAktoerId("sak-sakerBySaksId-happy-multiple-duplicates.json");
 		stubPensjonSakSammendrag("psak-hentSakSammendragListe-happy.json");
@@ -133,7 +133,7 @@ class SakerIT extends AbstractItest {
 
 	@Test
 	void shouldGetSakerForAktoerID() {
-		abacPermit();
+		tilgangskontrollPermit();
 		stubPdl();
 		stubSakMedAktoerId("sak-sakerBySaksId-happy.json");
 		stubPensjonSakSammendrag("psak-hentSakSammendragListe-happy.json");
@@ -154,8 +154,8 @@ class SakerIT extends AbstractItest {
 	}
 
 	@Test
-	void shouldReturnNoSakerWhenDenyOnPep1g() throws Exception {
-		abacDenyPep1g();
+	void shouldReturnNoSakerWhenDenyOnPep1g() {
+		tilgangskontrollDenyPep1g();
 		stubPdl();
 		ResponseEntity<LinkedHashMap> responseEntity = callSakerWithAktoerId();
 		List<Sak> saker = parseSaker(responseEntity);
@@ -164,8 +164,8 @@ class SakerIT extends AbstractItest {
 	}
 
 	@Test
-	void shouldReturnNoSakerWhenDenyOnPep2() throws Exception {
-		abacDenyPep2();
+	void shouldReturnNoSakerWhenDenyOnPep2() {
+		tilgangskontrollDenyPep2();
 		stubPdl();
 		stubSakMedAktoerId("sak-sakerByFagsakIdAndFagsaksystem-FAR-happy.json");
 		stubPensjonSakSammendrag("psak-hentSakSammendragListe-happy-empty.json");
@@ -173,12 +173,12 @@ class SakerIT extends AbstractItest {
 		ResponseEntity<LinkedHashMap> responseEntity = callSakerWithAktoerId();
 		List<Sak> saker = parseSaker(responseEntity);
 		assertThat(saker.size(), is(0));
-		verifyabacDenyPep2AndHttpStatusCode(OK, responseEntity.getStatusCode());
+		verifyDenyPep2(responseEntity.getStatusCode());
 	}
 
 	@Test
-	void shouldReturnNoSakerWhenDenyOnPep3() throws Exception {
-		abacDenyPep3SkipPep2dAndPep2();
+	void shouldReturnNoSakerWhenDenyOnPep3() {
+		tilgangskontrollDenyPep3();
 		stubPdl();
 		stubSakMedAktoerId("sak-sakerBySaksId-happy.json");
 		stubPensjonSakSammendrag("psak-hentSakSammendragListe-happy-empty.json");
@@ -187,7 +187,7 @@ class SakerIT extends AbstractItest {
 		ResponseEntity<LinkedHashMap> responseEntity = callSakerWithAktoerId();
 		List<Sak> saker = parseSaker(responseEntity);
 		assertThat(saker, hasSize(0));
-		verifyabacDenyPep3SkipPep2AndPep2dAndHttpStatusCode(OK, responseEntity.getStatusCode());
+		verifyTilgangsmaskinenDenyPep3AndHttpStatusCode(responseEntity.getStatusCode());
 	}
 
 	private void assertSak(Sak sak) {

@@ -1,11 +1,11 @@
 package no.nav.saf.tilgangskontroll.pep.reasons;
 
-import no.nav.saf.tilgangskontroll.pep.AbacDenyReasonCode;
+import no.nav.saf.tilgangskontroll.pep.DenyReasonCode;
 
-public final class HabilitetReason extends AbacDenyReason {
+public final class HabilitetReason extends DenyReason {
 
 	public HabilitetReason(String rawTilgangsmaskinenDenyReason, String rawTilgangsmaskinenBegrunnelse) {
-		super(AbacDenyReasonCode.HABILITET, rawTilgangsmaskinenDenyReason, rawTilgangsmaskinenBegrunnelse);
+		super(DenyReasonCode.HABILITET, rawTilgangsmaskinenDenyReason, rawTilgangsmaskinenBegrunnelse);
 	}
 
 	@Override

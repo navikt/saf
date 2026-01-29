@@ -17,8 +17,6 @@ spec:
       value: "-XX:MaxRAMPercentage=75
               -XX:+UseCompactObjectHeaders      
               $(JAVA_PROXY_OPTIONS) $(JAVA_TRUSTSTORE_OPTIONS)"
-    - name: ABAC_PDP_ENDPOINT_URL
-      value: {{ ABAC_PDP_ENDPOINT_URL }}
     - name: SAK_SAKER_URL
       value: {{ SAK_SAKER_URL }}
     - name: SPRINGDOC_ENABLED

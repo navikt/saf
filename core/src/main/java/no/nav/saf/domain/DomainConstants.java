@@ -3,9 +3,6 @@ package no.nav.saf.domain;
 import java.time.ZoneId;
 
 public final class DomainConstants {
-	// abac
-	public static final String SAF = "saf";
-	public static final String ABAC_JOURNALSTATUS_UTGAAR = "U";
 	// lokale caches
 	public static final String TILGANG_BRUKER = "tilgangBruker";
 	public static final String AKTOER_ID_LIST = "aktoerIdList";

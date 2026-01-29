@@ -1,7 +1,8 @@
 package no.nav.saf.tilgangskontroll.pep;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Value;
-import no.nav.saf.tilgangskontroll.pep.reasons.AbacDenyReason;
+import no.nav.saf.tilgangskontroll.pep.reasons.DenyReason;
 
 import static no.nav.saf.tilgangskontroll.pep.PepAnswer.PepDecision.DENY;
 import static no.nav.saf.tilgangskontroll.pep.PepAnswer.PepDecision.PERMIT;
@@ -10,6 +11,7 @@ import static no.nav.saf.tilgangskontroll.pep.PepAnswer.PepDecision.PERMIT;
  * Inneholder beslutningen til PEP.
  */
 @Value
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class PepAnswer {
 	PepDecision decision;
 	/**
@@ -17,7 +19,7 @@ public class PepAnswer {
 	 * https://confluence.adeo.no/display/BOA/saf+-+Sporingslogg+hentdokument
 	 */
 	String denyReasonSporing;
-	AbacDenyReason pepDenyReason;
+	DenyReason pepDenyReason;
 
 	public boolean isDeny() {
 		return DENY == decision;
@@ -31,7 +33,7 @@ public class PepAnswer {
 		return new PepAnswer(PERMIT, null, null);
 	}
 
-	public static PepAnswer deny(AbacDenyReason pepDenyReason) {
+	public static PepAnswer deny(DenyReason pepDenyReason) {
 		return new PepAnswer(DENY, pepDenyReason.toString(), pepDenyReason);
 	}
 

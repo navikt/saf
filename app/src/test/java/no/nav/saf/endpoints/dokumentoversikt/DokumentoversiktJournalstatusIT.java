@@ -14,7 +14,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 
-import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.LinkedHashMap;
@@ -48,8 +47,8 @@ class DokumentoversiktJournalstatusIT extends AbstractItest {
 
 
 	@Test
-	void shouldHentDokumentoversiktJournalstatusUkjentBruker() throws IOException, URISyntaxException {
-		abacPermit();
+	void shouldHentDokumentoversiktJournalstatusUkjentBruker() throws URISyntaxException {
+		tilgangskontrollPermit();
 
 		stubFor(post("/dokarkiv/finnjournalposterstatus")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
@@ -74,12 +73,11 @@ class DokumentoversiktJournalstatusIT extends AbstractItest {
 
 		verify(postRequestedFor(urlEqualTo("/dokarkiv/finnjournalposterstatus"))
 				.withRequestBody(matchingJsonPath("$.journalstatus", containing("UB"))));
-		verify(0, postRequestedFor(urlEqualTo("/abac"))); // kun journalpost 452929051 med skjerming sjekkes mot abac
 	}
 
 	@Test
-	void shouldHentDokumentoversiktJournalstatusUtgaar() throws IOException, URISyntaxException {
-		abacPermit();
+	void shouldHentDokumentoversiktJournalstatusUtgaar() throws URISyntaxException {
+		tilgangskontrollPermit();
 
 		stubFor(post("/dokarkiv/finnjournalposterstatus")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
@@ -105,12 +103,11 @@ class DokumentoversiktJournalstatusIT extends AbstractItest {
 
 		verify(postRequestedFor(urlEqualTo("/dokarkiv/finnjournalposterstatus"))
 				.withRequestBody(matchingJsonPath("$.journalstatus", containing("U"))));
-		verify(0, postRequestedFor(urlEqualTo("/abac"))); // ingen skjerming så kun pep4 sjekkes
 	}
 
 	@Test
 	void shouldFailIfUnsupportedFieldsInQuery() throws URISyntaxException {
-		abacPermit();
+		tilgangskontrollPermit();
 
 		stubFor(post("/dokarkiv/finnjournalposterstatus")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
@@ -128,8 +125,8 @@ class DokumentoversiktJournalstatusIT extends AbstractItest {
 	}
 
 	@Test
-	void finnJournalposterStatusTechnicalException() throws IOException, URISyntaxException {
-		abacPermit();
+	void finnJournalposterStatusTechnicalException() throws URISyntaxException {
+		tilgangskontrollPermit();
 
 		stubFor(post("/dokarkiv/finnjournalposterstatus")
 				.willReturn(aResponse().withStatus(HttpStatus.INTERNAL_SERVER_ERROR.value())
@@ -144,8 +141,8 @@ class DokumentoversiktJournalstatusIT extends AbstractItest {
 	}
 
 	@Test
-	void finnJournalposterStatusFunctionalException() throws IOException, URISyntaxException {
-		abacPermit();
+	void finnJournalposterStatusFunctionalException() throws URISyntaxException {
+		tilgangskontrollPermit();
 
 		stubFor(post("/dokarkiv/finnjournalposterstatus")
 				.willReturn(aResponse().withStatus(HttpStatus.BAD_REQUEST.value())
@@ -160,8 +157,8 @@ class DokumentoversiktJournalstatusIT extends AbstractItest {
 	}
 
 	@Test
-	void finnJournalposterStatusEmptyResponse() throws IOException, URISyntaxException {
-		abacPermit();
+	void finnJournalposterStatusEmptyResponse() throws URISyntaxException {
+		tilgangskontrollPermit();
 
 		stubFor(post("/dokarkiv/finnjournalposterstatus")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
@@ -178,8 +175,8 @@ class DokumentoversiktJournalstatusIT extends AbstractItest {
 	}
 
 	@Test
-	void shouldGetAuthorized() throws IOException, URISyntaxException {
-		abacPermit();
+	void shouldGetAuthorized() throws URISyntaxException {
+		tilgangskontrollPermit();
 
 		stubFor(post("/dokarkiv/finnjournalposterstatus")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
@@ -197,13 +194,12 @@ class DokumentoversiktJournalstatusIT extends AbstractItest {
 
 		verify(postRequestedFor(urlEqualTo("/dokarkiv/finnjournalposterstatus"))
 				.withRequestBody(containing("{\"journalstatus\":\"U\",\"fraDato\":\"2019-01-01\",\"journalposttyper\":[\"I\",\"U\",\"N\"],\"antallRader\":5,\"etterPeker\":null}")));
-		verify(0, postRequestedFor(urlEqualTo("/abac")));
 		assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
 	}
 
 	@Test
-	void shouldGetUnauthorizedFromPep4() throws IOException, URISyntaxException {
-		abacDenyPep4SkipPep1gPep2Pep2dPep3();
+	void shouldGetUnauthorizedFromPep4() throws URISyntaxException {
+		tilgangskontrollDenyPep4();
 
 		stubFor(post("/dokarkiv/finnjournalposterstatus")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
@@ -217,13 +213,12 @@ class DokumentoversiktJournalstatusIT extends AbstractItest {
 		assertFalse(dokumentoversikt.getSideInfo().isFinnesNesteSide());
 		verify(postRequestedFor(urlEqualTo("/dokarkiv/finnjournalposterstatus"))
 				.withRequestBody(containing("{\"journalstatus\":\"U\",\"fraDato\":\"2019-01-01\",\"journalposttyper\":[\"I\",\"U\",\"N\"],\"antallRader\":5,\"etterPeker\":null}")));
-		verify(0, postRequestedFor(urlEqualTo("/abac")));
 		assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
 	}
 
 	@Test
-	void shouldGetUnauthorizedFromPep5() throws IOException, URISyntaxException {
-		abacDenyPep5SkipPep1gPep2Pep2dPep3();
+	void shouldGetUnauthorizedFromPep5() throws URISyntaxException {
+		tilgangskontrollDenyPep5();
 
 		stubFor(post("/dokarkiv/finnjournalposterstatus")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
@@ -238,13 +233,12 @@ class DokumentoversiktJournalstatusIT extends AbstractItest {
 		assertThat(dokumentoversikt.getJournalposter().get(0).getDokumenter()).isEmpty();
 		verify(postRequestedFor(urlEqualTo("/dokarkiv/finnjournalposterstatus"))
 				.withRequestBody(containing("{\"journalstatus\":\"U\",\"fraDato\":\"2019-01-01\",\"journalposttyper\":[\"I\",\"U\",\"N\"],\"antallRader\":5,\"etterPeker\":null}")));
-		verify(0, postRequestedFor(urlEqualTo("/abac")));
 		assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
 	}
 
 	@Test
-	void shouldGetUnauthorizedFromPep6d() throws IOException, URISyntaxException {
-		abacDenyPep6dSkipPep3OrPep2();
+	void shouldGetUnauthorizedFromPep6d() throws URISyntaxException {
+		tilgangskontrollDenyPep6d();
 
 		stubFor(post("/dokarkiv/finnjournalposterstatus")
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
@@ -259,7 +253,6 @@ class DokumentoversiktJournalstatusIT extends AbstractItest {
 		assertSaksbehandlerHarIkkeTilgang(dokumentoversikt);
 		verify(postRequestedFor(urlEqualTo("/dokarkiv/finnjournalposterstatus"))
 				.withRequestBody(containing("{\"journalstatus\":\"U\",\"fraDato\":\"2019-01-01\",\"journalposttyper\":[\"I\",\"U\",\"N\"],\"antallRader\":5,\"etterPeker\":null}")));
-		verify(0, postRequestedFor(urlEqualTo("/abac")));
 		assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
 	}
 
