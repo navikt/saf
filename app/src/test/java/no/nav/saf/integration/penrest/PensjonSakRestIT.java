@@ -4,7 +4,6 @@ import jakarta.annotation.Resource;
 import no.nav.saf.anticorruptionlayer.pensjonsak.domain.SakSammendrag;
 import no.nav.saf.anticorruptionlayer.pensjonsak.hentbrukerforsak.PensjonSakRestConsumer;
 import no.nav.saf.endpoints.AbstractItest;
-import no.nav.saf.integration.azure.AzureTokenException;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
@@ -21,7 +20,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
-import static org.awaitility.Awaitility.given;
+import static org.awaitility.Awaitility.await;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.equalToIgnoringCase;
@@ -49,16 +48,16 @@ class PensjonSakRestIT extends AbstractItest {
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("psak/psak-hentSakSammendragListe-happy-full.json")));
 
-		given().ignoreException(AzureTokenException.class)
-				.await().atMost(Duration.ofSeconds(5)).untilAsserted(() -> {
-					List<SakSammendrag> sammendragList = pensjonSakRest.hentSakSammendragListe("12345654321");
 
-					assertAll(
-							() -> assertThat(sammendragList, hasSize(5)),
-							() -> assertThat(sammendragList, hasItem(where(SakSammendrag::saksstatus, equalToIgnoringCase("AVSLUTTET")))),
-							() -> assertThat(sammendragList, hasItem(where((Function<SakSammendrag, LocalDate>) sammendrag -> sammendrag.saksperiode().fom(), equalTo(LocalDate.of(2019, 5, 12)))))
-					);
-				});
+		await().atMost(Duration.ofSeconds(5)).untilAsserted(() -> {
+			List<SakSammendrag> sammendragList = pensjonSakRest.hentSakSammendragListe("12345654321");
+
+			assertAll(
+					() -> assertThat(sammendragList, hasSize(5)),
+					() -> assertThat(sammendragList, hasItem(where(SakSammendrag::saksstatus, equalToIgnoringCase("AVSLUTTET")))),
+					() -> assertThat(sammendragList, hasItem(where((Function<SakSammendrag, LocalDate>) sammendrag -> sammendrag.saksperiode().fom(), equalTo(LocalDate.of(2019, 5, 12)))))
+			);
+		});
 	}
 
 

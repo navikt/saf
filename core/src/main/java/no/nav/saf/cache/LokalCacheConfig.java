@@ -19,7 +19,6 @@ public class LokalCacheConfig {
 	public static final String BIDRAG_SAK_BY_SAKID_CACHE = "bidragSakerBySakId";
 	public static final String FPSAK_RELEVANTE_PARTER_BY_SAKID_CACHE = "hentRelevanteParter";
 	public static final String TILGANGSMODELL_REPO_BRUKER_CACHE = "tilgangsmodellRepoBruker";
-	public static final String AZURE_CLIENT_CREDENTIAL_TOKEN_CACHE = "azureClientCredentialToken";
 
 	@Bean
 	@Primary
@@ -41,11 +40,6 @@ public class LokalCacheConfig {
 				new CaffeineCache(FPSAK_RELEVANTE_PARTER_BY_SAKID_CACHE, Caffeine.newBuilder()
 						.expireAfterWrite(10, TimeUnit.MINUTES)
 						.maximumSize(500)
-						.recordStats()
-						.build()),
-				new CaffeineCache(AZURE_CLIENT_CREDENTIAL_TOKEN_CACHE, Caffeine.newBuilder()
-						.expireAfterWrite(50, TimeUnit.MINUTES)
-						.maximumSize(10)
 						.recordStats()
 						.build())
 		));
