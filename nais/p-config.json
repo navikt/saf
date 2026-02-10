@@ -6,18 +6,15 @@
   "MAX_REPLICAS": 20,
   "SPRINGDOC_ENABLED": "false",
   "NO_NAV_SECURITY_JWT_ISSUER_AZUREV2_DISCOVERYURL": "https://login.microsoftonline.com/62366534-1ec3-4962-8869-9b5535279d0b/v2.0/.well-known/openid-configuration",
-  "NO_NAV_SECURITY_JWT_ISSUER_RESTSTS_DISCOVERYURL": "https://security-token-service.nais.adeo.no/rest/v1/sts/.well-known/openid-configuration",
   "INGRESSES": [
     "https://saf.nais.adeo.no",
     "https://saf.prod-fss-pub.nais.io",
     "https://saf.intern.nav.no"
   ],
-  "NO_NAV_SECURITY_JWT_ISSUER_RESTSTS_ACCEPTED_AUDIENCE": "srvdokdisteformidl",
   "SAF_AZURE_GROUP_EGEN_ANSATT_OBJECT_ID": "e750ceb5-b70b-4d94-b4fa-9d22467b786b",
   "SAF_AZURE_GROUP_JOARK_VEDLIKEHOLD_OBJECT_ID": "cc9f8c69-9a8b-4cd1-a1c7-d5e993cc7e5a",
   "SAF_AZURE_GROUP_JOARK_HISTORISK_OBJECT_ID": "dbd1fce4-6e0a-4fa6-8e9b-e99d1c239c72",
   "SAF_AZURE_GROUP_LESE_UTGAATTE_DOKUMENTER_OBJECT_ID": "41108590-d644-4dac-ace7-74a1e7056019",
-  "SAF_PRIVILEGIEDSERVICEUSERS": "srvdokdistfordeling,srvdokdisteformidling,srvtilbakemeldings,srvomsitramme,srvmelosys,srvdokproduksjon",
   "BIDRAG_SAK_URL": "https://bidrag-sak.intern.nav.no/bidrag-sak/pip/sak/",
   "HENTJOURNALSAKINFO_URL": "http://dokarkiv.teamdokumenthandtering.svc.nais.local/hentjournalsakinfo",
   "SAF_ENDPOINTS_PDL_URL": "http://pdl-api.pdl.svc.nais.local/graphql",

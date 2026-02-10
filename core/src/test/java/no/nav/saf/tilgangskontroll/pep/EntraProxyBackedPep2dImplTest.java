@@ -108,9 +108,11 @@ class EntraProxyBackedPep2dImplTest extends AbstractPepTest {
 		when(safRequestContextMock.getNavCallId()).thenReturn(NAV_CALLID);
 		when(safRequestContextMock.getUserId()).thenReturn(null);
 		when(safRequestContextMock.isUserIdNavAnsatt()).thenReturn(false);
+		when(safRequestContextMock.isSystem()).thenReturn(true);
 		when(safRequestContextMock.isSystemAndVariantformatOriginal()).thenReturn(variantformatOriginal);
 		var safSecurityContextMock = Mockito.mock(SafSecurityContext.class);
 		when(safSecurityContextMock.isJwtAzureClientCredentialFlow()).thenReturn(true);
+		when(safRequestContextMock.isSystem()).thenReturn(true);
 		when(safRequestContextMock.getSecurityContext()).thenReturn(safSecurityContextMock);
 		when(safSecurityContextMock.hasDokumentTilgangEntraRole(any())).thenReturn(tilgangTilTema);
 		var safRequestCache = Mockito.mock(RequestCache.class);

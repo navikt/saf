@@ -15,17 +15,11 @@ For å kjøre saf lokalt er det nødvendig å hente en truststore, sette profil 
 ## Tilgangsstyring
 Ved behov for tilgang til Saf kan andre team selv gjøre nødvendige kodeendringer.
 
-For Azure tokens: 
+For Entra tokens: 
 - Lag en ny branch hvor dere legger til et innslag for appen deres i `AZURE_IAC_RULES`
   - [dev](https://github.com/navikt/saf/blob/master/nais/) (legg til i respektiv *-config.json fil for alle miljøer appen ønsker tilgang)
   - [produksjon](https://github.com/navikt/saf/blob/master/nais/p-config.json)
 - Push endringene og lag en pull request.
-- Pull requesten vil bli gått gjennom og merget av noen i Team Dokumentløsninger.
-
-For REST-STS:
-- Lag en ny branch med endringene du ønsker for tilgang. Endringene må legges til i alle ønskede miljø i filene: /nais/<miljø>-config.json.
-- Legg til audience i `NO_NAV_SECURITY_JWT_ISSUER_RESTSTS_ACCEPTED_AUDIENCE` om du bruker REST-STS.
-- Push endringene og lag en pull request. 
 - Pull requesten vil bli gått gjennom og merget av noen i Team Dokumentløsninger.
 
 ### Henvendelser

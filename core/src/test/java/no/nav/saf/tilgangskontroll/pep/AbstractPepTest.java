@@ -46,12 +46,8 @@ abstract class AbstractPepTest {
 	}
 
 	SafRequestContext createSafRequestContext() {
-		Map<String, Boolean> privilegiedServiceusers = Map.of(
-				"srvsaf", true,
-				"srvdokopp", true
-		);
 		Map<String, JwtToken> issuerValidated = Map.of("azurev2", mockJwtToken);
-		return new SafRequestContext(NAV_CALLID, NAVIDENT, new TokenValidationContext(issuerValidated), privilegiedServiceusers);
+		return new SafRequestContext(NAV_CALLID, NAVIDENT, new TokenValidationContext(issuerValidated));
 	}
 
 	@SneakyThrows

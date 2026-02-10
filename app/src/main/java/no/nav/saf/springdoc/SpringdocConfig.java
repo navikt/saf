@@ -28,9 +28,9 @@ public class SpringdocConfig {
 						.title("saf REST API")
 						.description("""
 								saf REST API tilbyr en tjeneste for å hente dokument fra fagarkivet.
-																
-								Klienter autoriseres med OAuth 2.0 access tokens. De kan være autorisert av NAV Onprem REST-STS, Azure client credential flow eller Azure on-behalf-of flow.
-																
+								
+								Klienter autoriseres med OAuth 2.0 access tokens. De kan være autorisert av Entra client credential flow eller Entra on-behalf-of flow.
+								
 								Azure access tokens for manuell test som saksbehandler kan hentes fra <a href="https://ida.intern.nav.no/">IDA</a>.
 								""")
 						.version(version))
@@ -42,7 +42,7 @@ public class SpringdocConfig {
 												.scheme("Bearer")
 												.bearerFormat("JWT")
 												.in(HEADER)
-												.description("Bearer token for autorisasjon. Må være issued av NAV Onprem REST-STS, Azure client credential flow eller Azure on-behalf-of flow")
+												.description("Bearer token for autorisasjon. Må være issued av Entra client credential flow eller Entra on-behalf-of flow")
 												.name(AUTHORIZATION)
 								)
 				)

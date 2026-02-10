@@ -13,7 +13,6 @@ import no.nav.security.token.support.core.jwt.JwtTokenClaims;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -27,7 +26,6 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 @Slf4j
 public class SafSecurityContext {
 
-	private static final String ISSUER_REST_STS = "reststs";
 	private static final String ISSUER_AZUREV2 = "azurev2";
 	// JWT claims. https://datatracker.ietf.org/doc/html/rfc7519#section-4.1
 	static final String JWT_CLAIM_AUD = "aud";
@@ -40,9 +38,8 @@ public class SafSecurityContext {
 	static final String AZURE_NAV_CUSTOM_CLAIM_NAVIDENT = "NAVident";
 	static final String AZURE_NAV_CUSTOM_CLAIM_AZP_NAME = "azp_name";
 
-	private static final String SERVICEUSER_PREFIX = "srv";
 	private static final String AUTH_ERRORMESSAGE = "Tilgang er avvist. " +
-													"Ingen gyldig token på Authorization header. Token må være utsted av NAV onprem security-token-service eller azure.";
+			"Ingen gyldig token på Authorization header. Token må være utsted av NAV onprem security-token-service eller azure.";
 	private static final String UKJENT_CONSUMER_ID = "ukjentConsumerId";
 	private static final String UKJENT_USER_ID = "ukjentUserId";
 	@Deprecated
@@ -53,24 +50,19 @@ public class SafSecurityContext {
 	private static final String JOURNAL_TEMA_ROLE = "journal_tema_";
 	private static final String DOKUMENT_TEMA_ROLE = "dokument_tema_";
 
-	private final TokenValidationContext tokenValidationContext;
 	private final JwtToken jwtToken;
 	private final String cachedJwtPayload;
 	private final boolean jwtIssuedByAzure;
 	private final boolean jwtAzureClientCredentialFlow;
 	private final List<String> jwtAzureRoles;
-	private final Map<String, Boolean> privilegiedServiceusers;
 	private final String navUserId;
 
 	SafSecurityContext(TokenValidationContext tokenValidationContext,
-					   Map<String, Boolean> privilegiedServiceusers,
 					   String navUserId) {
 		this.jwtToken = tokenValidationContext.getFirstValidToken();
 		if (this.jwtToken == null) {
 			throw new AuthorizationException(AUTH_ERRORMESSAGE);
 		}
-		this.tokenValidationContext = tokenValidationContext;
-		this.privilegiedServiceusers = privilegiedServiceusers;
 		// Nav-User-Id header. Valgfri
 		this.navUserId = navUserId;
 		// Payload fra JWT hentes ut en gang pga den blir hentet ut fra kontekst ofte.
@@ -111,19 +103,10 @@ public class SafSecurityContext {
 	/**
 	 * Om token er i kontekst av system eller bruker.
 	 *
-	 * @return true hvis token er utsted av REST-STS eller er Azure client-credential flow, ellers false
+	 * @return true hvis token er utsted av Entra client-credential flow, ellers false
 	 */
 	public boolean isSystem() {
-		return isRestStsSystemToken() || jwtAzureClientCredentialFlow;
-	}
-
-	/**
-	 * Om servicebruker er privilegiert og kan hente ARKIV varianter (pdf).
-	 *
-	 * @return true hvis systemet står i listen med ENV-verdi: SAF_PRIVILEGIEDSERVICEUSERS, ellers false
-	 */
-	public boolean isPrivilegiedServiceUserWithArkivVariantAccess() {
-		return isSystem() && privilegiedServiceusers.containsKey(jwtToken.getSubject().toLowerCase());
+		return jwtAzureClientCredentialFlow;
 	}
 
 	/**
@@ -145,7 +128,7 @@ public class SafSecurityContext {
 	 * @return true hvis tema rolen finnes. Ellers false
 	 */
 	public boolean hasJournalTilgangEntraRole(Tema tema) {
-		return  hasEntraRoleOrAlleTemaRole(JOURNAL_TEMA_ROLE, tema);
+		return hasEntraRoleOrAlleTemaRole(JOURNAL_TEMA_ROLE, tema);
 	}
 
 	/**
@@ -161,7 +144,7 @@ public class SafSecurityContext {
 		return hasEntraRoleOrAlleTemaRole(DOKUMENT_TEMA_ROLE, tema);
 	}
 
-	private boolean hasEntraRoleOrAlleTemaRole(String role, Tema tema){
+	private boolean hasEntraRoleOrAlleTemaRole(String role, Tema tema) {
 		if (containsEntraRole(AZURE_ROLE_ALLE_TEMA)) {
 			return true;
 		}
@@ -187,9 +170,7 @@ public class SafSecurityContext {
 	}
 
 	protected String getConsumerId() {
-		if (isRestStsSystemToken()) {
-			return jwtToken.getSubject();
-		} else if (jwtAzureClientCredentialFlow || isOnBehalfOfFlowToken()) {
+		if (jwtAzureClientCredentialFlow || isOnBehalfOfFlowToken()) {
 			return findAzureAppnameClaim(jwtToken.getJwtTokenClaims());
 		}
 		return UKJENT_CONSUMER_ID;
@@ -198,9 +179,9 @@ public class SafSecurityContext {
 	protected String getUserId() {
 		if (navUserId == null) {
 			return getUserIdFromToken();
-		} else if (isNotBlank(navUserId) && (isRestStsSystemToken() || isClientCredentialFlowToken(jwtToken))) {
+		} else if (isNotBlank(navUserId) && isClientCredentialFlowToken(jwtToken)) {
 			if (!NAVIDENT_PATTERN.matcher(navUserId).matches()) {
-				log.error("Tjeneste kalt med REST-STS token og Nav-User-Id header. Ugyldig format på NAVIdent={}. Må matche \"^[a-zA-Z]\\d{6}$\". Konsument må informeres og bes om å rette dette.", navUserId);
+				log.error("Tjeneste kalt med Nav-User-Id header og maskin-til-maskin Entra token. Ugyldig format på NAVIdent={}. Må matche \"^[a-zA-Z]\\d{6}$\". Konsument må informeres og bes om å rette dette.", navUserId);
 			}
 			return navUserId;
 		}
@@ -212,9 +193,7 @@ public class SafSecurityContext {
 	}
 
 	private String getUserIdFromToken() {
-		if (isRestStsSystemToken()) {
-			return jwtToken.getSubject();
-		} else if (isClientCredentialFlowToken(jwtToken)) {
+		if (isClientCredentialFlowToken(jwtToken)) {
 			return findAzureAppnameClaim(jwtToken.getJwtTokenClaims());
 		} else if (isOnBehalfOfFlowToken()) {
 			if (jwtToken.getJwtTokenClaims().getAllClaims().containsKey(AZURE_NAV_CUSTOM_CLAIM_NAVIDENT)) {
@@ -226,24 +205,19 @@ public class SafSecurityContext {
 		return UKJENT_USER_ID;
 	}
 
-	protected boolean isRestStsSystemToken() {
-		return tokenValidationContext.hasTokenFor(ISSUER_REST_STS)
-			   && jwtToken.getSubject().toLowerCase().startsWith(SERVICEUSER_PREFIX);
-	}
-
 	protected boolean isOnBehalfOfFlowToken() {
 		final JwtTokenClaims jwtTokenClaims = jwtToken.getJwtTokenClaims();
 		return jwtTokenClaims.getStringClaim(AZURE_CLAIM_SUB) != null &&
-			   jwtTokenClaims.getStringClaim(AZURE_CLAIM_OID) != null &&
-			   !jwtTokenClaims.getStringClaim(AZURE_CLAIM_SUB).equals(jwtTokenClaims.getStringClaim(AZURE_CLAIM_OID));
+				jwtTokenClaims.getStringClaim(AZURE_CLAIM_OID) != null &&
+				!jwtTokenClaims.getStringClaim(AZURE_CLAIM_SUB).equals(jwtTokenClaims.getStringClaim(AZURE_CLAIM_OID));
 	}
 
 	protected boolean isClientCredentialFlowToken(JwtToken jwtToken) {
 		if (isJwtIssuedByAzure()) {
 			final JwtTokenClaims jwtTokenClaims = jwtToken.getJwtTokenClaims();
 			return jwtTokenClaims.getStringClaim(AZURE_CLAIM_SUB) != null &&
-				   jwtTokenClaims.getStringClaim(AZURE_CLAIM_OID) != null &&
-				   jwtTokenClaims.getStringClaim(AZURE_CLAIM_SUB).equals(jwtTokenClaims.getStringClaim(AZURE_CLAIM_OID));
+					jwtTokenClaims.getStringClaim(AZURE_CLAIM_OID) != null &&
+					jwtTokenClaims.getStringClaim(AZURE_CLAIM_SUB).equals(jwtTokenClaims.getStringClaim(AZURE_CLAIM_OID));
 		} else {
 			return false;
 		}

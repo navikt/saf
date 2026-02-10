@@ -58,9 +58,8 @@ public class TilgangsmaskinenBackedPep3Impl extends StandardTilgangsmaskinenBack
 		return PepAnswer.permit();
 	}
 
-
 	@Override
-	public PepAnswer verifyAzureClientCredentialFlowAccess(TilgangSak ressurs, SafRequestContext safRequestContext) {
+	PepAnswer verifyAccessForSystem(TilgangSak ressurs, SafRequestContext safRequestContext) {
 		return permit();
 	}
 }

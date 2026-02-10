@@ -85,12 +85,12 @@ public class TilgangsmaskinenBackedPep7dImpl extends StandardTilgangsmaskinenBac
 
 	private static boolean harIkkeArkivsaksystemEllerArkivsaksummer(TilgangSak ressurs) {
 		return ressurs == null
-			   || ressurs.getArkivsaksystem() == null
-			   || ressurs.getArkivsaksnummer() == null;
+				|| ressurs.getArkivsaksystem() == null
+				|| ressurs.getArkivsaksnummer() == null;
 	}
 
 	@Override
-	public PepAnswer verifyAzureClientCredentialFlowAccess(TilgangSak ressurs, SafRequestContext safRequestContext) {
+	PepAnswer verifyAccessForSystem(TilgangSak ressurs, SafRequestContext safRequestContext) {
 		if (!harIkkeArkivsaksystemEllerArkivsaksummer(ressurs)) {
 			String tilgangKeyLocalCaching = KeyGeneratorLocalCaching.getKeyForPep7d(ressurs.getArkivsaksystem(), ressurs.getArkivsaksnummer());
 			safRequestContext.getRequestCache().putDecision(tilgangKeyLocalCaching, PepAnswer.permit());

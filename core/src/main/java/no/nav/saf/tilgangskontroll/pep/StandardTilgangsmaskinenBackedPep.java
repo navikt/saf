@@ -2,8 +2,6 @@ package no.nav.saf.tilgangskontroll.pep;
 
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 
-import static no.nav.saf.tilgangskontroll.pep.PepAnswer.permit;
-
 public abstract class StandardTilgangsmaskinenBackedPep<T> extends Pep<T> {
 
 	/**
@@ -19,13 +17,12 @@ public abstract class StandardTilgangsmaskinenBackedPep<T> extends Pep<T> {
 	 */
 	abstract PepAnswer verifyNavIdentAccessToUser(T ressurs, SafRequestContext safRequestContext);
 
+	@Override
 	public PepAnswer hasAccessWithAnswer(T ressurs, SafRequestContext safRequestContext) {
 		PepAnswer pepAnswer;
 
-		if (safRequestContext.getSecurityContext().isJwtAzureClientCredentialFlow()) {
-			pepAnswer = verifyAzureClientCredentialFlowAccess(ressurs, safRequestContext);
-		} else if (safRequestContext.isSystem()) {
-			pepAnswer = verifyRestSTSCredentialFlowAccess(ressurs, safRequestContext);
+		if (safRequestContext.isSystem()) {
+			pepAnswer = verifyAccessForSystem(ressurs, safRequestContext);
 		} else {
 			pepAnswer = verifyNavIdentAccessToUser(ressurs, safRequestContext);
 		}
@@ -36,17 +33,4 @@ public abstract class StandardTilgangsmaskinenBackedPep<T> extends Pep<T> {
 
 		return pepAnswer;
 	}
-
-	PepAnswer verifyAzureClientCredentialFlowAccess(T ressurs, SafRequestContext safRequestContext) {
-		return verifyAccessForSystemUser(ressurs, safRequestContext);
-	}
-
-	PepAnswer verifyRestSTSCredentialFlowAccess(T ressurs, SafRequestContext safRequestContext) {
-		return verifyAccessForSystemUser(ressurs, safRequestContext);
-	}
-
-	protected PepAnswer verifyAccessForSystemUser(T ressurs, SafRequestContext safRequestContext) {
-		return permit();
-	}
-
 }

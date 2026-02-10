@@ -2,7 +2,6 @@ package no.nav.saf.tilgangskontroll.pep;
 
 import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
-import no.nav.saf.tilgangskontroll.pep.reasons.DenyReason;
 
 /**
  * Policy Enforcement Point
@@ -13,7 +12,7 @@ import no.nav.saf.tilgangskontroll.pep.reasons.DenyReason;
 public abstract class Pep<T> {
 
 	/**
-	 * Sjekker tilgang for app registration autentisert med client credential flow i Azure.
+	 * Sjekker tilgang for app autorisert med maskin-til-maskin token
 	 * Implementerer:
 	 * https://confluence.adeo.no/display/BOA/saf+-+Tilgangskontroll#safTilgangskontroll-Tilgangsreglerforservicebrukerautentisertmedclient-credential-flowiAzure
 	 *
@@ -21,33 +20,13 @@ public abstract class Pep<T> {
 	 * @param safRequestContext Kontekst for kallet
 	 * @return Beslutning om tilgang fra intern PDP
 	 */
-	abstract PepAnswer verifyAzureClientCredentialFlowAccess(T ressurs, SafRequestContext safRequestContext);
-
-	/**
-	 * Sjekker tilgang for app registration autentisert med Rest-STS-token (systembrukere som ikke går via azure-flow)
-	 * NB: denne skal alltid gi samme resultat som verifyAzureClientCredentialFlowAccess for et gitt real-world system,
-	 * men bruker data fra andre kilder
-	 *
-	 * @param ressurs           Ressursen som skal sjekkes
-	 * @param safRequestContext Kontekst for kallet
-	 * @return Beslutning om tilgang fra intern PDP
-	 */
-	abstract PepAnswer verifyRestSTSCredentialFlowAccess(T ressurs, SafRequestContext safRequestContext);
+	abstract PepAnswer verifyAccessForSystem(T ressurs, SafRequestContext safRequestContext);
 
 	public boolean hasAccess(T ressurs, SafRequestContext safRequestContext) {
 		return hasAccessWithAnswer(ressurs, safRequestContext).isPermit();
 	}
 
-	public PepAnswer hasAccessWithAnswer(T ressurs, SafRequestContext safRequestContext) {
-		if (safRequestContext.getSecurityContext().isJwtAzureClientCredentialFlow()) {
-			return verifyAzureClientCredentialFlowAccess(ressurs, safRequestContext);
-		} else if (safRequestContext.isSystem()) {
-			return verifyRestSTSCredentialFlowAccess(ressurs, safRequestContext);
-		} else {
-			// Denne må implementeres fordi det er forskjellig for Abac-backed PEP og MsGraph-backed PEP
-			throw new UnsupportedOperationException("Not implemented!");
-		}
-	}
+	public abstract PepAnswer hasAccessWithAnswer(T ressurs, SafRequestContext safRequestContext);
 
 	void traceLogPepStarted(String pepName, Object ressurs) {
 		if (log.isTraceEnabled()) {

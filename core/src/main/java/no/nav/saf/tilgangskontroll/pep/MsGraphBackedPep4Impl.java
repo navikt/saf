@@ -73,4 +73,8 @@ public class MsGraphBackedPep4Impl extends StandardMsGraphBackedPep<TilgangJourn
 		return ressurs.getSkjerming() != null;
 	}
 
+	@Override
+	PepAnswer verifyAccessForSystem(TilgangJournalpost ressurs, SafRequestContext safRequestContext) {
+		return permit();
+	}
 }

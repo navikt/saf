@@ -7,7 +7,6 @@ import no.nav.saf.domain.kode.Arkivsakssystem;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.pep.reasons.AvsluttetSakReason;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 
 import static no.nav.saf.domain.DomainConstants.PEP8D;
@@ -39,7 +38,7 @@ public class MsGraphBackedPep8dImpl extends StandardMsGraphBackedPep<TilgangSak>
 	}
 
 	@Override
-	protected PepAnswer verifyAccessForSystemUser(TilgangSak ressurs, SafRequestContext safRequestContext) {
+	protected PepAnswer verifyAccessForSystem(TilgangSak ressurs, SafRequestContext safRequestContext) {
 		return cacheAndReturnPermit(safRequestContext, ressurs.getArkivsaksystem(), ressurs.getArkivsaksnummer());
 	}
 
