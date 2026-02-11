@@ -55,7 +55,7 @@ public class EntraProxyBackedPep2Impl extends StandardEntraProxyBackedPep<Tilgan
 	}
 
 	@Override
-	PepAnswer verifyAccessForSystemUser(TilgangSak ressurs, SafRequestContext safRequestContext) {
+	PepAnswer verifyAccessForSystem(TilgangSak ressurs, SafRequestContext safRequestContext) {
 		if (ressurs == null) {
 			log.error(MANGLER_DATA_TEKNISK_FEILMELDING);
 			return PepAnswer.deny(new UkjentEllerTekniskReason());

@@ -1,5 +1,6 @@
 package no.nav.saf.config;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -15,22 +16,20 @@ import java.util.stream.Stream;
 @Validated
 public class SafProperties {
 
+	@Valid
 	private final Endpoints endpoints = new Endpoints();
-
+	@Valid
 	private final AzureGroup azureGroup = new AzureGroup();
-
-	@NotEmpty
-	private String privilegiedserviceusers;
 
 	@Data
 	public static class AzureGroup {
-		@NotEmpty
+		@NotNull
 		private UUID egenAnsattObjectId;
-		@NotEmpty
+		@NotNull
 		private UUID joarkVedlikeholdObjectId;
-		@NotEmpty
+		@NotNull
 		private UUID joarkHistoriskObjectId;
-		@NotEmpty
+		@NotNull
 		private UUID leseUtgaatteDokumenterObjectId;
 
 		// Nye ObjectIds skal annoteres med @NotEmpty etterhvert som de blir tatt i bruk,

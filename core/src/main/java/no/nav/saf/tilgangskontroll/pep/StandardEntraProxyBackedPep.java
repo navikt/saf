@@ -17,15 +17,12 @@ public abstract class StandardEntraProxyBackedPep<T> extends Pep<T> {
 	 */
 	abstract PepAnswer verifyNavIdentAccessToTema(T ressurs, SafRequestContext safRequestContext);
 
-	abstract PepAnswer verifyAccessForSystemUser(T ressurs, SafRequestContext safRequestContext);
-
+	@Override
 	public PepAnswer hasAccessWithAnswer(T ressurs, SafRequestContext safRequestContext) {
 		PepAnswer pepAnswer;
 
-		if (safRequestContext.getSecurityContext().isJwtAzureClientCredentialFlow()) {
-			pepAnswer = verifyAzureClientCredentialFlowAccess(ressurs, safRequestContext);
-		} else if (safRequestContext.isSystem()) {
-			pepAnswer = verifyRestSTSCredentialFlowAccess(ressurs, safRequestContext);
+		if (safRequestContext.isSystem()) {
+			pepAnswer = verifyAccessForSystem(ressurs, safRequestContext);
 		} else {
 			pepAnswer = verifyNavIdentAccessToTema(ressurs, safRequestContext);
 		}
@@ -36,13 +33,4 @@ public abstract class StandardEntraProxyBackedPep<T> extends Pep<T> {
 
 		return pepAnswer;
 	}
-
-	PepAnswer verifyAzureClientCredentialFlowAccess(T ressurs, SafRequestContext safRequestContext) {
-		return verifyAccessForSystemUser(ressurs, safRequestContext);
-	}
-
-	PepAnswer verifyRestSTSCredentialFlowAccess(T ressurs, SafRequestContext safRequestContext) {
-		return verifyAccessForSystemUser(ressurs, safRequestContext);
-	}
-
 }

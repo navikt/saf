@@ -16,7 +16,6 @@ import no.nav.saf.metrics.AudienceCounter;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.security.token.support.core.api.Protected;
 import no.nav.security.token.support.core.context.TokenValidationContextHolder;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -44,10 +43,8 @@ public class GraphQLController {
 	private final GraphQLExceptionHandler graphQLExceptionHandler;
 	private final TokenValidationContextHolder tokenValidationContextHolder;
 	private final AudienceCounter audienceCounter;
-	private final Map<String, Boolean> privilegiedServiceusers;
 
-	public GraphQLController(@Qualifier("privilegiedServiceusers") Map<String, Boolean> privilegiedServiceusers,
-							 GraphQLWiring graphQLWiring,
+	public GraphQLController(GraphQLWiring graphQLWiring,
 							 GraphQLExceptionHandler graphQLExceptionHandler,
 							 AudienceCounter audienceCounter,
 							 TokenValidationContextHolder tokenValidationContextHolder) {
@@ -60,7 +57,6 @@ public class GraphQLController {
 		SchemaGenerator schemaGenerator = new SchemaGenerator();
 		this.graphQLSchema = schemaGenerator.makeExecutableSchema(typeRegistry, graphQLWiring.createRuntimeWiring());
 		this.audienceCounter = audienceCounter;
-		this.privilegiedServiceusers = privilegiedServiceusers;
 	}
 
 	@PostMapping(value = {"/graphql", "/graphql/"}, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
@@ -71,8 +67,7 @@ public class GraphQLController {
 		final SafRequestContext safRequestContext = new SafRequestContext(
 				createNavCallid(navCallid, xCorrelationId),
 				navUserId,
-				tokenValidationContextHolder.getTokenValidationContext(),
-				privilegiedServiceusers
+				tokenValidationContextHolder.getTokenValidationContext()
 		);
 		addMdcData(safRequestContext);
 

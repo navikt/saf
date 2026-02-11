@@ -2,10 +2,7 @@ package no.nav.saf.tilgangskontroll;
 
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import no.nav.saf.anticorruptionlayer.joark.domain.kode.VariantFormatCode;
 import no.nav.security.token.support.core.context.TokenValidationContext;
-
-import java.util.Map;
 
 import static no.nav.saf.anticorruptionlayer.joark.domain.kode.VariantFormatCode.ORIGINAL;
 
@@ -21,16 +18,16 @@ public class SafRequestContext {
 	private final RequestCache requestCache;
 	private final boolean originalDokument;
 
-	public SafRequestContext(String navCallId, String navUserId, TokenValidationContext tokenValidationContext, Map<String, Boolean> privilegiedServiceusers, String requestVariantFormat) {
+	public SafRequestContext(String navCallId, String navUserId, TokenValidationContext tokenValidationContext, String requestVariantFormat) {
 		this.navCallId = navCallId;
-		this.securityContext = new SafSecurityContext(tokenValidationContext, privilegiedServiceusers, navUserId);
+		this.securityContext = new SafSecurityContext(tokenValidationContext, navUserId);
 		this.requestCache = new RequestCache(securityContext.isSystem());
 		this.originalDokument = ORIGINAL.name().equals(requestVariantFormat);
 	}
 
-	public SafRequestContext(String navCallId, String navUserId, TokenValidationContext tokenValidationContext, Map<String, Boolean> privilegiedServiceusers) {
+	public SafRequestContext(String navCallId, String navUserId, TokenValidationContext tokenValidationContext) {
 		this.navCallId = navCallId;
-		this.securityContext = new SafSecurityContext(tokenValidationContext, privilegiedServiceusers, navUserId);
+		this.securityContext = new SafSecurityContext(tokenValidationContext, navUserId);
 		this.requestCache = new RequestCache(securityContext.isSystem());
 		this.originalDokument = false;
 	}
@@ -60,7 +57,7 @@ public class SafRequestContext {
 	/**
 	 * Om token i request er i kontekst av system eller bruker.
 	 *
-	 * @return true hvis token er utsted av REST-STS eller er Azure client-credential flow, ellers false
+	 * @return true hvis token er utsted av Entra client-credential flow, ellers false
 	 */
 	public boolean isSystem() {
 		return securityContext.isSystem();

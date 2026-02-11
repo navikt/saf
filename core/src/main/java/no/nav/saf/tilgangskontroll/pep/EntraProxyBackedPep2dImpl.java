@@ -77,7 +77,7 @@ public class EntraProxyBackedPep2dImpl extends StandardEntraProxyBackedPep<Tilga
 	}
 
 	@Override
-	public PepAnswer verifyAccessForSystemUser(TilgangSak ressurs, SafRequestContext safRequestContext) {
+	public PepAnswer verifyAccessForSystem(TilgangSak ressurs, SafRequestContext safRequestContext) {
 		if (ressurs == null) {
 			log.info(MANGLER_RESSURS_MELDING, "system");
 			return permit();

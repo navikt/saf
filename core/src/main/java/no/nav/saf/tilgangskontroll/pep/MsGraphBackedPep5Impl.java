@@ -51,7 +51,7 @@ public class MsGraphBackedPep5Impl extends StandardMsGraphBackedPep<TilgangDokum
 	}
 
 	@Override
-	public PepAnswer verifyAccessForSystemUser(TilgangDokumentInfo ressurs, SafRequestContext safRequestContext) {
+	public PepAnswer verifyAccessForSystem(TilgangDokumentInfo ressurs, SafRequestContext safRequestContext) {
 		if (ressurs == null) {
 			log.warn("Pep5 mangler tilstrekkelig datagrunnlag for å kunne gjennomføre tilgangskontroll. Azure ccf.");
 			return PepAnswer.deny(new UkjentEllerTekniskReason(

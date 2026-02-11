@@ -43,7 +43,7 @@ public class TilgangsmaskinenBackedPep1gImpl extends StandardTilgangsmaskinenBac
 	}
 
 	@Override
-	public PepAnswer verifyAccessForSystemUser(TilgangBruker ressurs, SafRequestContext safRequestContext) {
+	public PepAnswer verifyAccessForSystem(TilgangBruker ressurs, SafRequestContext safRequestContext) {
 		if (ressurs == null) {
 			return permit();
 		} else if (ressurs.isOrganisasjon()) {

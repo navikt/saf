@@ -5,7 +5,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.VariantFormatCode;
 import no.nav.saf.domain.HentDokument;
-import no.nav.saf.domain.kode.Variantformat;
 import no.nav.saf.exceptions.DokumentIkkeFunnetException;
 import no.nav.saf.exceptions.HentdokumentTilgangskontrollException;
 import no.nav.saf.exceptions.JournalpostIkkeFunnetException;
@@ -14,14 +13,10 @@ import no.nav.saf.hentdokument.HentDokumentDomainCoordinator;
 import no.nav.saf.metrics.AudienceCounter;
 import no.nav.saf.springdoc.SwaggerRestHentDokument;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
-import no.nav.saf.tilgangskontroll.SafSecurityContext;
-import no.nav.saf.tilgangskontroll.pep.PepAnswer;
-import no.nav.saf.tilgangskontroll.pep.reasons.UkjentEllerTekniskReason;
 import no.nav.security.token.support.core.api.Protected;
 import no.nav.security.token.support.core.context.TokenValidationContextHolder;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,7 +26,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Arrays;
-import java.util.Map;
 
 import static java.lang.String.format;
 import static no.nav.saf.domain.kode.Variantformat.ARKIV;
@@ -60,17 +54,14 @@ public class HentDokumentController {
 	private final HentDokumentDomainCoordinator hentDokumentDomainCoordinator;
 	private final TokenValidationContextHolder tokenValidationContextHolder;
 	private final AudienceCounter audienceCounter;
-	private final Map<String, Boolean> privilegiedServiceusers;
 
 	@Autowired
-	public HentDokumentController(@Qualifier("privilegiedServiceusers") Map<String, Boolean> privilegiedServiceusers,
-								  HentDokumentDomainCoordinator hentDokumentDomainCoordinator,
+	public HentDokumentController(HentDokumentDomainCoordinator hentDokumentDomainCoordinator,
 								  AudienceCounter audienceCounter,
 								  TokenValidationContextHolder tokenValidationContextHolder) {
 		this.tokenValidationContextHolder = tokenValidationContextHolder;
 		this.hentDokumentDomainCoordinator = hentDokumentDomainCoordinator;
 		this.audienceCounter = audienceCounter;
-		this.privilegiedServiceusers = privilegiedServiceusers;
 	}
 
 	@SwaggerRestHentDokument
@@ -87,7 +78,6 @@ public class HentDokumentController {
 		final SafRequestContext safRequestContext = new SafRequestContext(createNavCallid(navCallid, xCorrelationId),
 				navUserId,
 				tokenValidationContextHolder.getTokenValidationContext(),
-				privilegiedServiceusers,
 				variantFormat
 		);
 		addMdcData(safRequestContext);
@@ -99,7 +89,6 @@ public class HentDokumentController {
 					safRequestContext.getSecurityContext().getAudience()
 			);
 
-			validateServiceUserAccess(safRequestContext, variantFormat);
 			HentDokument response = hentDokumentDomainCoordinator.hentDokument(journalpostId, dokumentInfoId, variantFormat, safRequestContext);
 
 			//ekstra logging for MMA-7862. Fjernes når oppryddingen er ferdig
@@ -146,19 +135,5 @@ public class HentDokumentController {
 	private void mdcSporing(String journalpostId, String dokumentInfoId) {
 		MDC.put(JOURNALPOST_ID, journalpostId);
 		MDC.put(DOKUMENT_INFO_ID, dokumentInfoId);
-	}
-
-	private void validateServiceUserAccess(SafRequestContext safRequestContext, String variantFormat) {
-		SafSecurityContext securityContext = safRequestContext.getSecurityContext();
-		if (securityContext.isPrivilegiedServiceUserWithArkivVariantAccess() || securityContext.isJwtAzureClientCredentialFlow()) {
-			// Azure client credential flow roller blir sjekket etter at journalpost er hentet.
-			return;
-		}
-		if (securityContext.isSystem() && !Variantformat.ORIGINAL.name().equals(variantFormat)) {
-			throw new HentdokumentTilgangskontrollException(
-					"Servicebruker forsøker å hente dokument med variantFormat=" +
-							variantFormat + ". Servicebrukere har kun tilgang til variantFormat=" + Variantformat.ORIGINAL +
-							" med mindre man har en avtale med Team Dokumentløsninger. Snakk med oss om behov.", PepAnswer.deny(new UkjentEllerTekniskReason()));
-		}
 	}
 }

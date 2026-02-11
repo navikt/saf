@@ -7,12 +7,10 @@ import no.nav.saf.config.ServiceuserAlias;
 import no.nav.saf.config.WebProxyProperties;
 import no.nav.saf.integration.token.NaisTexasAndCallIdRequestInterceptor;
 import no.nav.saf.integration.token.NaisTexasConsumer;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.hc.client5.http.classic.HttpClient;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager;
 import org.apache.hc.core5.http.io.SocketConfig;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -22,12 +20,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.client.RestClient;
-
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 import static org.apache.hc.core5.util.Timeout.ofSeconds;
 
@@ -90,14 +82,5 @@ public class ApplicationConfig {
 		return HttpClients.custom()
 				.setConnectionManager(connectionManager)
 				.build();
-	}
-
-	@Bean
-	@Qualifier("privilegiedServiceusers")
-	public Map<String, Boolean> getServiceusersMap(SafProperties safProperties) {
-		Map<String, Boolean> privilegiedServiceusers = new HashMap<>();
-		List<String> serviceuserList = Arrays.stream(StringUtils.split(safProperties.getPrivilegiedserviceusers(), ',')).collect(Collectors.toList());
-		serviceuserList.forEach(serviceuser -> privilegiedServiceusers.put(serviceuser, true));
-		return privilegiedServiceusers;
 	}
 }
