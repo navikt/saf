@@ -15,7 +15,8 @@ spec:
               -Djavax.net.ssl.trustStorePassword=$(NAV_TRUSTSTORE_PASSWORD)"
     - name: JDK_JAVA_OPTIONS
       value: "-XX:MaxRAMPercentage=75
-              -XX:+UseCompactObjectHeaders      
+              -XX:+UseCompactObjectHeaders
+              --enable-preview      
               $(JAVA_PROXY_OPTIONS) $(JAVA_TRUSTSTORE_OPTIONS)"
     - name: SAK_SAKER_URL
       value: {{ SAK_SAKER_URL }}

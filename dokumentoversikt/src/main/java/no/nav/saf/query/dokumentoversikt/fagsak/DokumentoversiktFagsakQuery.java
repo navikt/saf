@@ -4,6 +4,7 @@ import io.reactivex.rxjava3.core.Flowable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 import no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoMapper;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.dto.JournalpostDto;
+import no.nav.saf.anticorruptionlayer.nav.NavAnsattTemaService;
 import no.nav.saf.domain.TilgangsmodellRepository;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.domain.tilgangsmodell.TilgangDokumentInfo;
@@ -37,6 +38,7 @@ class DokumentoversiktFagsakQuery {
 	private final JournalpostDtoMapper journalpostDtoMapper = new JournalpostDtoMapper();
 	private final DokumentoversiktFagsakTilgangsmodellRepository dokumentoversiktFagsakTilgangsmodellRepository;
 	private final TilgangsmodellRepository tilgangsmodellRepository;
+	private final NavAnsattTemaService navAnsattTemaService;
 	private final Pep<TilgangBruker> pep1g;
 	private final Pep<TilgangSak> pep2;
 	private final Pep<TilgangSak> pep2d;
@@ -51,6 +53,7 @@ class DokumentoversiktFagsakQuery {
 	public DokumentoversiktFagsakQuery(
 			DokumentoversiktFagsakTilgangsmodellRepository dokumentoversiktFagsakTilgangsmodellRepository,
 			TilgangsmodellRepository tilgangsmodellRepository,
+			NavAnsattTemaService navAnsattTemaService,
 			Pep<TilgangBruker> pep1g,
 			Pep<TilgangSak> pep2,
 			Pep<TilgangSak> pep2d,
@@ -62,6 +65,7 @@ class DokumentoversiktFagsakQuery {
 			Pep<TilgangSak> pep8d) {
 		this.dokumentoversiktFagsakTilgangsmodellRepository = dokumentoversiktFagsakTilgangsmodellRepository;
 		this.tilgangsmodellRepository = tilgangsmodellRepository;
+		this.navAnsattTemaService = navAnsattTemaService;
 		this.pep1g = pep1g;
 		this.pep2 = pep2;
 		this.pep2d = pep2d;
@@ -90,6 +94,7 @@ class DokumentoversiktFagsakQuery {
 		final List<TilgangSak> tilgangSakList = dokumentoversiktFagsakTilgangsmodellRepository.findTilgangSaker(filteredTilgangBrukerList, fagsakInput,
 				dokumentoversiktFagsakArguments.getFilters().getTema(), safRequestContext);
 
+		navAnsattTemaService.registerRequestCacheTemaTilgang(safRequestContext);
 		final List<TilgangSak> filteredTilgangSakList = Flowable.fromIterable(tilgangSakList)
 				.parallel(10)
 				.runOn(Schedulers.io())

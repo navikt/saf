@@ -172,6 +172,7 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 	@Test
 	void hentSakerTechnicalFail() throws URISyntaxException {
 		tilgangskontrollDenyPep1g();
+		stubEntraProxy();
 		stubFor(get(SAK_API_PATH_MED_QUERY_PARA_FAGSAK_NR)
 				.willReturn(aResponse()
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
@@ -274,6 +275,7 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 	@Test
 	void shouldGetUnauthorizedFromPep1g() throws URISyntaxException {
 		tilgangskontrollDenyPep1g();
+		stubEntraProxy();
 
 		stubSakMedFagSak("sak/sak-sakerByFagsakIdAndFagsaksystem-happy.json");
 		stubFinnjournalposter("finnjournalposter-happy.json");
@@ -357,7 +359,7 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 		verifyEmptyJournalpostListeAndNullSideInfo(dokumentoversikt);
 		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter"))
 				.withRequestBody(containing("{\"gsakSakIds\":[\"135695442\"],\"psakSakIds\":[],\"fraDato\":\"0001-01-01\",\"tilDato\":null,\"inkluderJournalStatus\":[\"FL\",\"FS\",\"J\",\"E\"],\"inkluderJournalpostType\":[\"I\",\"U\",\"N\"],\"visFeilregistrerte\":false,\"alleIdenter\":[],\"foerste\":5,\"etterPeker\":null}")));
-		verifyDenyPep4(responseEntity.getStatusCode(), 2);
+		verifyDenyPep4(responseEntity.getStatusCode(), 1);
 	}
 
 	@Test
@@ -375,7 +377,7 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 		assertThat(dokumentoversikt.getJournalposter().get(0).getDokumenter()).isEmpty();
 		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter"))
 				.withRequestBody(containing("{\"gsakSakIds\":[\"135695442\"],\"psakSakIds\":[],\"fraDato\":\"0001-01-01\",\"tilDato\":null,\"inkluderJournalStatus\":[\"FL\",\"FS\",\"J\",\"E\"],\"inkluderJournalpostType\":[\"I\",\"U\",\"N\"],\"visFeilregistrerte\":false,\"alleIdenter\":[],\"foerste\":5,\"etterPeker\":null}")));
-		verifyDenyPep5(responseEntity.getStatusCode(), 2);
+		verifyDenyPep5(responseEntity.getStatusCode(), 1);
 	}
 
 	@Test
@@ -398,7 +400,7 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 
 		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter"))
 				.withRequestBody(containing("{\"gsakSakIds\":[\"135695442\"],\"psakSakIds\":[],\"fraDato\":\"0001-01-01\",\"tilDato\":null,\"inkluderJournalStatus\":[\"FL\",\"FS\",\"J\",\"E\"],\"inkluderJournalpostType\":[\"I\",\"U\",\"N\"],\"visFeilregistrerte\":false,\"alleIdenter\":[],\"foerste\":5,\"etterPeker\":null}")));
-		verifyDenyPep6d(responseEntity.getStatusCode(), 2);
+		verifyDenyPep6d(responseEntity.getStatusCode(), 1);
 	}
 
 	private ResponseEntity<LinkedHashMap> callDokumentOversikFagsakPsak() throws URISyntaxException {

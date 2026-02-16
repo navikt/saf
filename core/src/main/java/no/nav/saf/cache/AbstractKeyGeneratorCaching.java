@@ -9,6 +9,7 @@ abstract class AbstractKeyGeneratorCaching {
 	static final String RESSURS_DOKUMENT_METADATA = "dokument_metadata";
 	static final String RESSURS_DOKUMENT_FIL = "dokument_fil";
 
+	static final String NAV_IDENT_TEMA = "navIdentTema";
 	static final String SAKSBEHANDLER_ID = "saksbehandlerId";
 	static final String TEMA = "tema";
 	static final String JOURNALPOST_ID = "journalpostId";

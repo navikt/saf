@@ -15,11 +15,11 @@ import java.util.Set;
 import java.util.UUID;
 
 import static no.nav.saf.cache.KeyGeneratorDistributedCaching.getKeyForSaksbehandlerGroupMembership;
+import static no.nav.saf.cache.ValkeyCacheConfig.NO_GROUPS;
 import static no.nav.saf.cache.ValkeyCacheConfig.VALKEY_CACHE_ENTRY_TTL;
 
 @Component
 public class MsGraphEntraGroupMembershipService {
-	private static final String[] NO_GROUPS = new String[]{"NO_GROUPS"};
 	private final MsGraphConsumer msGraphConsumer;
 	private final StringRedisTemplate stringRedisTemplate;
 	private final ValkeyCacheConfig.ValkeyGrupperMedlemskapCacheConfiguration valkeyGrupperMedlemskapCacheConfiguration;

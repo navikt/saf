@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostMapper;
 import no.nav.saf.anticorruptionlayer.joark.safintern.DokarkivTilknyttetJournalpostConsumer;
 import no.nav.saf.anticorruptionlayer.joark.safintern.journalpost.ArkivJournalpost;
+import no.nav.saf.anticorruptionlayer.nav.NavAnsattTemaService;
 import no.nav.saf.domain.Arkivsak;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.domain.tilgangsmodell.TilgangDokumentInfo;
@@ -31,6 +32,7 @@ import static no.nav.saf.util.MDCUtility.addMdcData;
 public class TilknyttedeJournalposterQuery {
 	private final TilknyttedeJournalposterTilgangRepository tilknyttedeJournalposterTilgangRepository;
 	private final DokarkivTilknyttetJournalpostConsumer dokarkivTilknyttetJournalpostConsumer;
+	private final NavAnsattTemaService navAnsattTemaService;
 	private final Pep<TilgangBruker> pep1g;
 	private final Pep<TilgangSak> pep2;
 	private final Pep<TilgangSak> pep2d;
@@ -44,6 +46,7 @@ public class TilknyttedeJournalposterQuery {
 	public TilknyttedeJournalposterQuery(
 			TilknyttedeJournalposterTilgangRepository tilknyttedeJournalposterTilgangRepository,
 			DokarkivTilknyttetJournalpostConsumer dokarkivTilknyttetJournalpostConsumer,
+			NavAnsattTemaService navAnsattTemaService,
 			Pep<TilgangBruker> pep1g,
 			Pep<TilgangSak> pep2,
 			Pep<TilgangSak> pep2d,
@@ -55,6 +58,7 @@ public class TilknyttedeJournalposterQuery {
 			Pep<TilgangSak> pep8d) {
 		this.tilknyttedeJournalposterTilgangRepository = tilknyttedeJournalposterTilgangRepository;
 		this.dokarkivTilknyttetJournalpostConsumer = dokarkivTilknyttetJournalpostConsumer;
+		this.navAnsattTemaService = navAnsattTemaService;
 		this.pep1g = pep1g;
 		this.pep2 = pep2;
 		this.pep2d = pep2d;
@@ -78,6 +82,7 @@ public class TilknyttedeJournalposterQuery {
 				.filter(tilgangBruker -> pep1g.hasAccess(tilgangBruker.getValue(), safRequestContext))
 				.collect(Collectors.toMap(Entry::getKey, Entry::getValue));
 
+		navAnsattTemaService.registerRequestCacheTemaTilgang(safRequestContext);
 		Set<TilgangSak> filteredTilgangSaker = tilknyttedeJournalposterTilgangRepository.tilgangSaker(arkivsaker.values(), safRequestContext)
 				.stream()
 				.filter(tilgangSak -> filteredTilgangBruker.values().stream()

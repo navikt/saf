@@ -1,8 +1,7 @@
 package no.nav.saf.tilgangskontroll.pep;
 
 import lombok.extern.slf4j.Slf4j;
-import no.nav.saf.anticorruptionlayer.nav.entraproxy.EntraProxyConsumer;
-import no.nav.saf.anticorruptionlayer.nav.entraproxy.EntraProxyTematilgangResponse;
+import no.nav.saf.anticorruptionlayer.nav.NavAnsattTemaService;
 import no.nav.saf.domain.kode.Tema;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
@@ -24,10 +23,10 @@ public class EntraProxyBackedPep2Impl extends StandardEntraProxyBackedPep<Tilgan
 	private static final EnumSet<Tema> relevanteTema = EnumSet.of(FAR, KTA);
 	private static final String MANGLER_DATA_TEKNISK_FEILMELDING = "Pep2 (tema FAR eller KTA) mangler data om journalposten. Den må ha tema for å gjøre tilgangskontroll. Dette er forårsaket av en teknisk feil";
 
-	private final EntraProxyConsumer entraProxyConsumer;
+	private final NavAnsattTemaService navAnsattTemaService;
 
-	public EntraProxyBackedPep2Impl(EntraProxyConsumer entraProxyConsumer) {
-		this.entraProxyConsumer = entraProxyConsumer;
+	public EntraProxyBackedPep2Impl(NavAnsattTemaService navAnsattTemaService) {
+		this.navAnsattTemaService = navAnsattTemaService;
 	}
 
 
@@ -41,15 +40,14 @@ public class EntraProxyBackedPep2Impl extends StandardEntraProxyBackedPep<Tilgan
 		Tema tema = ressurs.getTema();
 
 		if (relevanteTema.contains(tema)) {
-			EntraProxyTematilgangResponse tematilgangResponse = entraProxyConsumer.hentTematilgangForNavAnsatt(safRequestContext);
+			boolean harTemaTilgang = navAnsattTemaService.harTemaTilgang(safRequestContext, tema);
 
-			if (tematilgangResponse.harTilgangTilTema(tema)) {
+			if (harTemaTilgang) {
 				return PepAnswer.permit();
 			}
 
 			return getDenyAnswerForTema(tema);
 		}
-
 
 		return PepAnswer.permit();
 	}
