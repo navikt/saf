@@ -492,7 +492,7 @@ class HentDokumentIT extends AbstractItest {
 
 		verify(postRequestedFor(urlEqualTo("/pdl")));
 		assertEquals(FORBIDDEN, responseEntity.getStatusCode());
-		assertThat(responseEntity.getBody()).contains("Saksbehandler har ikke tilgang til tema ressursen tilhører eller geografisk område");
+		assertThat(responseEntity.getBody()).contains("Saksbehandler har ikke tilgang til tema ressursen tilhører. Saksbehandler må være i gruppen 0000-GA-TEMA_BID i Entra ID.");
 	}
 
 	@Test
