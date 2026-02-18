@@ -7,7 +7,8 @@ import no.nav.saf.domain.kode.Tema;
  */
 public final class KeyGeneratorDistributedCaching extends AbstractKeyGeneratorCaching {
 
-	private KeyGeneratorDistributedCaching() {}
+	private KeyGeneratorDistributedCaching() {
+	}
 
 	public static String getKeyForPep2d(String saksbehandlerId, Tema tema) {
 		return createIdentifierPair(RESSURS, RESSURS_SAK_DOKUMENT) + createUniqueIdentifier(createIdentifierPair(SAKSBEHANDLER_ID, saksbehandlerId), createIdentifierPair(TEMA, tema.name()));
@@ -21,5 +22,9 @@ public final class KeyGeneratorDistributedCaching extends AbstractKeyGeneratorCa
 
 	public static String getKeyForSaksbehandlerGroupMembership(String saksbehandlerId) {
 		return createIdentifierPair(SAKSBEHANDLER_ID, saksbehandlerId);
+	}
+
+	public static String getNavIdentTemaKey(String navIdent) {
+		return createIdentifierPair(NAV_IDENT_TEMA, navIdent);
 	}
 }

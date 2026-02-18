@@ -7,6 +7,7 @@ import no.nav.saf.anticorruptionlayer.aktoer.PdlAntiCorruptionLayer;
 import no.nav.saf.anticorruptionlayer.joark.domain.JournalpostDtoMapper;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.FagomradeCode;
 import no.nav.saf.anticorruptionlayer.joark.hentjournalsakinfo.dto.JournalpostDto;
+import no.nav.saf.anticorruptionlayer.nav.NavAnsattTemaService;
 import no.nav.saf.domain.TilgangsmodellRepository;
 import no.nav.saf.domain.kode.Journalstatus;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
@@ -17,14 +18,17 @@ import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 import no.nav.saf.domain.visningsmodell.Dokumentoversikt;
 import no.nav.saf.domain.visningsmodell.Journalpost;
 import no.nav.saf.exceptions.SafFunctionalException;
+import no.nav.saf.exceptions.SafTechnicalException;
 import no.nav.saf.exceptions.TilgangskontrollException;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
-import no.nav.saf.tilgangskontroll.pep.PepAnswer;
 import no.nav.saf.tilgangskontroll.pep.Pep;
+import no.nav.saf.tilgangskontroll.pep.PepAnswer;
+import no.nav.saf.tilgangskontroll.pep.reasons.UkjentEllerTekniskReason;
 import no.nav.safselvbetjening.tilgang.Ident;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -32,8 +36,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.StructuredTaskScope;
 import java.util.stream.Collectors;
 
+import static java.util.concurrent.StructuredTaskScope.Joiner.allSuccessfulOrThrow;
 import static no.nav.saf.graphql.ErrorCode.NOT_FOUND;
 import static no.nav.saf.query.dokumentoversikt.SideInfoMapper.mapFilteredSideInfo;
 import static no.nav.saf.tilgangskontroll.pep.DenyReasonFactory.createPep1gDenyReasonDokumentoversikt;
@@ -47,6 +53,7 @@ class DokumentoversiktBrukerQuery {
 			Fant ikke bruker i Persondataløsningen (PDL). Kan derfor ikke slå opp dokumentoversikten til bruker. Hvis du ser dette i test, forsøk å gjenopprett brukeren i Dolly. Hvis det ikke hjelper, ta kontakt med #team_dokumentløsninger på slack""";
 	private final DokumentoversiktBrukerTilgangsmodellRepository dokumentoversiktBrukerTilgangsmodellRepository;
 	private final TilgangsmodellRepository tilgangsmodellRepository;
+	private final NavAnsattTemaService navAnsattTemaService;
 	private final Pep<TilgangBruker> pep1g;
 	private final Pep<TilgangSak> pep2;
 	private final Pep<TilgangSak> pep2d;
@@ -62,6 +69,7 @@ class DokumentoversiktBrukerQuery {
 	@Autowired
 	public DokumentoversiktBrukerQuery(DokumentoversiktBrukerTilgangsmodellRepository dokumentoversiktBrukerTilgangsmodellRepository,
 									   TilgangsmodellRepository tilgangsmodellRepository,
+									   NavAnsattTemaService navAnsattTemaService,
 									   Pep<TilgangBruker> pep1g,
 									   Pep<TilgangSak> pep2,
 									   Pep<TilgangSak> pep2d,
@@ -75,6 +83,7 @@ class DokumentoversiktBrukerQuery {
 	) {
 		this.dokumentoversiktBrukerTilgangsmodellRepository = dokumentoversiktBrukerTilgangsmodellRepository;
 		this.tilgangsmodellRepository = tilgangsmodellRepository;
+		this.navAnsattTemaService = navAnsattTemaService;
 		this.pep1g = pep1g;
 		this.pep2 = pep2;
 		this.pep2d = pep2d;
@@ -96,7 +105,7 @@ class DokumentoversiktBrukerQuery {
 			safRequestContext.getRequestCache().putTilgangBruker(tilgangBruker);
 		}
 
-		PepAnswer pep1gAnswer = this.pep1g.hasAccessWithAnswer(tilgangBruker, safRequestContext);
+		PepAnswer pep1gAnswer = concurrentPep1gTemaTilganger(tilgangBruker, safRequestContext);
 		if (pep1gAnswer.isDeny()) {
 			throw new TilgangskontrollException(createPep1gDenyReasonDokumentoversikt(safRequestContext, pep1gAnswer), pep1gAnswer);
 		}
@@ -176,6 +185,23 @@ class DokumentoversiktBrukerQuery {
 				.journalposter(visningJournalposterFiltrert)
 				.sideInfo(mapFilteredSideInfo(getLastJournalpostOnPage(journalposter, visningJournalposterSortert), visningJournalposterFiltrert))
 				.build();
+	}
+
+	public PepAnswer concurrentPep1gTemaTilganger(TilgangBruker tilgangBruker, SafRequestContext safRequestContext) {
+		try (var scope = StructuredTaskScope.open(allSuccessfulOrThrow(),
+				cfg -> cfg.withTimeout(Duration.ofSeconds(15)))) {
+			StructuredTaskScope.Subtask<PepAnswer> pep1gTask = scope.fork(() -> pep1g.hasAccessWithAnswer(tilgangBruker, safRequestContext));
+			StructuredTaskScope.Subtask<Void> navAnsattTemaTask = scope.fork(() -> navAnsattTemaService.registerRequestCacheTemaTilgang(safRequestContext));
+			try {
+				scope.join();
+			} catch (InterruptedException e) {
+				throw new SafTechnicalException("Avbrutt ved henting av tilganger", e);
+			}
+			navAnsattTemaTask.get();
+			return pep1gTask.get();
+		} catch (StructuredTaskScope.TimeoutException | StructuredTaskScope.FailedException e) {
+			return PepAnswer.deny(new UkjentEllerTekniskReason());
+		}
 	}
 
 	private static JournalpostDto getLastJournalpostOnPage(Map<Long, JournalpostDto> journalpostDtoMap, List<Journalpost> visningJournalposterSortert) {

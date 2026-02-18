@@ -343,6 +343,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 	@Test
 	void shouldGetUnauthorizedFromPep1g() throws URISyntaxException {
 		tilgangskontrollDenyPep1g();
+		stubEntraProxy();
 		stubPdl();
 		stubSakMedAktoerId("sak-sakerBySaksId-happy.json");
 		stubFinnjournalposter();

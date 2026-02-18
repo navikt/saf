@@ -1,7 +1,6 @@
 package no.nav.saf.cache;
 
 import lombok.extern.slf4j.Slf4j;
-import no.nav.saf.tilgangskontroll.pep.PepAnswer;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.annotation.CachingConfigurer;
 import org.springframework.cache.annotation.EnableCaching;
@@ -14,21 +13,18 @@ import org.springframework.data.redis.cache.RedisCacheConfiguration;
 import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 
 import java.time.Duration;
 import java.util.Map;
-
-import static org.springframework.data.redis.serializer.RedisSerializationContext.SerializationPair.fromSerializer;
 
 @Configuration
 @EnableCaching
 @Slf4j
 public class ValkeyCacheConfig implements CachingConfigurer {
 	public static final String VALKEY_CACHE_MANAGER = "valkeyCacheManager";
-	public static final String VALKEY_DOKUMENT_TILGANG_CACHE = "dokument-tilgang-v2";
 	public static final String VALKEY_MSGRAPH_GRUPPER_CACHE = "msgraph-grupper";
 	public static final Duration VALKEY_CACHE_ENTRY_TTL = Duration.ofHours(12);
+	public static final String[] NO_GROUPS = new String[]{"NO_GROUPS"};
 	public final String cacheNamePrefix;
 
 	public ValkeyCacheConfig(Environment environment) {
@@ -41,19 +37,9 @@ public class ValkeyCacheConfig implements CachingConfigurer {
 		return RedisCacheManager.builder(connectionFactory)
 				.withInitialCacheConfigurations(
 						Map.of(
-								VALKEY_DOKUMENT_TILGANG_CACHE, valkeyDokumentTilgangCacheConfiguration(),
 								VALKEY_MSGRAPH_GRUPPER_CACHE, valkeyMsGraphCacheConfiguration()))
 				.enableStatistics()
 				.build();
-	}
-
-	private RedisCacheConfiguration valkeyDokumentTilgangCacheConfiguration() {
-		return RedisCacheConfiguration.defaultCacheConfig()
-				.disableCachingNullValues()
-				.serializeValuesWith(fromSerializer(new Jackson2JsonRedisSerializer<>(PepAnswer.class)))
-				// En valkey-app håndterer alle testmiljøene
-				.prefixCacheNameWith(cacheNamePrefix)
-				.entryTtl(VALKEY_CACHE_ENTRY_TTL);
 	}
 
 	private RedisCacheConfiguration valkeyMsGraphCacheConfiguration() {

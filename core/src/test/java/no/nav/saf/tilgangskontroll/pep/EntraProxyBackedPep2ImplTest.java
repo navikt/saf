@@ -1,7 +1,6 @@
 package no.nav.saf.tilgangskontroll.pep;
 
-import no.nav.saf.anticorruptionlayer.nav.entraproxy.EntraProxyConsumer;
-import no.nav.saf.anticorruptionlayer.nav.entraproxy.EntraProxyTematilgangResponse;
+import no.nav.saf.anticorruptionlayer.nav.NavAnsattTemaService;
 import no.nav.saf.domain.kode.Tema;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 import no.nav.saf.tilgangskontroll.RequestCache;
@@ -14,12 +13,12 @@ import org.junit.jupiter.params.provider.EnumSource;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 
-import java.util.Set;
-
 import static no.nav.saf.domain.kode.Tema.FAR;
+import static no.nav.saf.domain.kode.Tema.KTA;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.params.provider.EnumSource.Mode.EXCLUDE;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 class EntraProxyBackedPep2ImplTest extends AbstractPepTest {
@@ -27,12 +26,12 @@ class EntraProxyBackedPep2ImplTest extends AbstractPepTest {
 	private EntraProxyBackedPep2Impl pep2;
 
 	@Mock
-	private EntraProxyConsumer entraProxyConsumer;
+	private NavAnsattTemaService navAnsattTemaServiceMock;
 
 	@BeforeEach
 	void setUp() {
 		super.setUp();
-		pep2 = new EntraProxyBackedPep2Impl(entraProxyConsumer);
+		pep2 = new EntraProxyBackedPep2Impl(navAnsattTemaServiceMock);
 	}
 
 	@Test
@@ -45,8 +44,7 @@ class EntraProxyBackedPep2ImplTest extends AbstractPepTest {
 	@ParameterizedTest
 	@EnumSource(value = Tema.class, names = {"FAR", "KTA"})
 	void shouldPermitForRelevantTema(Tema tema) {
-		EntraProxyTematilgangResponse response = new EntraProxyTematilgangResponse(Set.of("FAR", "KTA"));
-		when(entraProxyConsumer.hentTematilgangForNavAnsatt(any())).thenReturn(response);
+		when(navAnsattTemaServiceMock.harTemaTilgang(any(SafRequestContext.class), eq(tema))).thenReturn(true);
 
 		var hasAccess = pep2.hasAccess(TilgangSak.builder()
 				.tema(tema)
@@ -58,8 +56,7 @@ class EntraProxyBackedPep2ImplTest extends AbstractPepTest {
 	@ParameterizedTest
 	@EnumSource(value = Tema.class, names = {"FAR", "KTA"})
 	void shouldDenyForRelevantTemaWhenUserDoesNotHaveAccess(Tema tema) {
-		EntraProxyTematilgangResponse response = new EntraProxyTematilgangResponse(Set.of("AAP", "SYK"));
-		when(entraProxyConsumer.hentTematilgangForNavAnsatt(any())).thenReturn(response);
+		when(navAnsattTemaServiceMock.harTemaTilgang(any(SafRequestContext.class), eq(tema))).thenReturn(false);
 
 		var hasAccess = pep2.hasAccess(TilgangSak.builder()
 				.tema(tema)
@@ -81,8 +78,7 @@ class EntraProxyBackedPep2ImplTest extends AbstractPepTest {
 
 	@Test
 	void shouldDeny() {
-		EntraProxyTematilgangResponse response = new EntraProxyTematilgangResponse(Set.of("KTA"));
-		when(entraProxyConsumer.hentTematilgangForNavAnsatt(any())).thenReturn(response);
+		when(navAnsattTemaServiceMock.harTemaTilgang(any(SafRequestContext.class), eq(KTA))).thenReturn(false);
 
 		var hasAccess = pep2.hasAccess(TilgangSak.builder()
 				.tema(FAR)

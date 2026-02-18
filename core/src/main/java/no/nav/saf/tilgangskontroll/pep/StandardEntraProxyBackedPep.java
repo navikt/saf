@@ -27,7 +27,7 @@ public abstract class StandardEntraProxyBackedPep<T> extends Pep<T> {
 			pepAnswer = verifyNavIdentAccessToTema(ressurs, safRequestContext);
 		}
 
-		if (pepAnswer.isDeny()) {
+		if (pepAnswer.isDeny() && safRequestContext.isUserIdNavAnsatt()) {
 			logDeny(pepAnswer);
 		}
 

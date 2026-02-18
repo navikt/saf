@@ -14,14 +14,14 @@ public final class DenyReasonFactory {
 			" har ikke tilgang til ressurs tilhørende bruker som har kode 6/7 (strengt fortrolig/fortrolig adressesperre), egen ansatt eller utenfor tillatt geografisk område.";
 
 	private static final String PEP1G_DENY_SAKSBEHANDLER_INFO =
-			" Saksbehandler må ha tilgang til Enhet som brukeren er tilknyttet i AXSYS.";
+			" Saksbehandler må ha tilgang til Enhet som brukeren er tilknyttet i Entra ID.";
 	public static final String PEP2_DENY_REASON =
 			" har ikke tilgang til tema ressursen tilhører eller på grunn av Forvaltningsloven § 19.";
 
 	private static final String PEP2D_DENY_SYSTEM_INFO = "System har ikke tilgang til tema ressursen tilhører. " +
-														 "\"dokument_tema_%s\" må ligge i feltet \"roles\" i Azure IAC-konfigurasjonen for konsumenten i saf sin nais-konfigurasjon.";
-	private static final String PEP2D_DENY_SAKSBEHANDLER_INFO = "Saksbehandler har ikke tilgang til tema ressursen tilhører eller geografisk område. " +
-																"Saksbehandler må ha tilgang til Enhet som brukeren er tilknyttet, med Fagområde=%s i AXSYS.";
+			"\"dokument_tema_%s\" må ligge i feltet \"roles\" i Azure IAC-konfigurasjonen for konsumenten i saf sin nais-konfigurasjon.";
+	private static final String PEP2D_DENY_SAKSBEHANDLER_INFO = "Saksbehandler har ikke tilgang til tema ressursen tilhører. " +
+			"Saksbehandler må være i gruppen 0000-GA-TEMA_%s i Entra ID.";
 
 	public static final String PEP3_DENY_REASON =
 			" har ikke tilgang til ressurs der en av partene i bidragssaken har kode 6/7 (strengt fortrolig/fortrolig adressesperre) eller egen ansatt.";
@@ -50,22 +50,22 @@ public final class DenyReasonFactory {
 
 		if (pepAnswer.getPepDenyReason().getDenyReasonCode() == DenyReasonCode.ORGNR_NAV_STAT) {
 			return DENY_PREFIX +
-				   "Dokumentoversikten er knyttet til organisasjon underlagt NAV og det krever egen ansatt behandling for oppslag på denne. " +
-				   "NAV ansatt må være medlem av gruppen 0000-GA-Egne_ansatte";
+					"Dokumentoversikten er knyttet til organisasjon underlagt NAV og det krever egen ansatt behandling for oppslag på denne. " +
+					"NAV ansatt må være medlem av gruppen 0000-GA-Egne_ansatte";
 		}
 		return "Tilgang til dokumentoversikt ble avvist. " + consumerType + PEP1G_DENY_REASON +
-			   (isSystem ? "" : PEP1G_DENY_SAKSBEHANDLER_INFO) + CONTACT_US_SUFFIX;
+				(isSystem ? "" : PEP1G_DENY_SAKSBEHANDLER_INFO) + CONTACT_US_SUFFIX;
 	}
 
 	public static String createPep1gDenyReason(SafRequestContext safRequestContext, PepAnswer pepAnswer) {
 		boolean isSystem = safRequestContext.getSecurityContext().isSystem();
 		if (pepAnswer.getPepDenyReason().getDenyReasonCode() == DenyReasonCode.ORGNR_NAV_STAT) {
 			return DENY_PREFIX +
-				   "Journalpost/dokument er knyttet til organisasjon underlagt NAV og det krever egen ansatt behandling for oppslag på denne. " +
-				   "NAV ansatt må være medlem av gruppen 0000-GA-Egne_ansatte";
+					"Journalpost/dokument er knyttet til organisasjon underlagt NAV og det krever egen ansatt behandling for oppslag på denne. " +
+					"NAV ansatt må være medlem av gruppen 0000-GA-Egne_ansatte";
 		}
 		return DENY_PREFIX + saksbehandlerEllerSystem(isSystem) + PEP1G_DENY_REASON +
-			   (isSystem ? "" : PEP1G_DENY_SAKSBEHANDLER_INFO) + CONTACT_US_SUFFIX;
+				(isSystem ? "" : PEP1G_DENY_SAKSBEHANDLER_INFO) + CONTACT_US_SUFFIX;
 	}
 
 	public static String createPep2DenyReason(SafRequestContext safRequestContext) {

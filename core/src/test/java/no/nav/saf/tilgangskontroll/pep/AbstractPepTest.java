@@ -18,6 +18,7 @@ import org.mockito.Mock;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.Map;
+import java.util.UUID;
 
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.openMocks;
@@ -63,6 +64,10 @@ abstract class AbstractPepTest {
 	}
 
 	private static JWTClaimsSet getJwtClaimsSet() {
-		return new JWTClaimsSet.Builder().build();
+		return new JWTClaimsSet.Builder()
+				.claim("NAVident", NAVIDENT)
+				.claim("oid", UUID.randomUUID().toString())
+				.claim("sub", UUID.randomUUID().toString())
+				.build();
 	}
 }

@@ -1,7 +1,6 @@
 package no.nav.saf.tilgangskontroll.pep;
 
-import no.nav.saf.anticorruptionlayer.nav.entraproxy.EntraProxyConsumer;
-import no.nav.saf.anticorruptionlayer.nav.entraproxy.EntraProxyTematilgangResponse;
+import no.nav.saf.anticorruptionlayer.nav.NavAnsattTemaService;
 import no.nav.saf.domain.kode.Tema;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 import no.nav.saf.tilgangskontroll.RequestCache;
@@ -13,16 +12,11 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.springframework.cache.support.NoOpCache;
-import org.springframework.cache.support.SimpleCacheManager;
 
-import java.util.Collections;
-import java.util.Set;
-
-import static no.nav.saf.cache.ValkeyCacheConfig.VALKEY_DOKUMENT_TILGANG_CACHE;
 import static no.nav.saf.domain.kode.Tema.FAR;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 class EntraProxyBackedPep2dImplTest extends AbstractPepTest {
@@ -30,15 +24,12 @@ class EntraProxyBackedPep2dImplTest extends AbstractPepTest {
 	private EntraProxyBackedPep2dImpl pep2d;
 
 	@Mock
-	private EntraProxyConsumer entraProxyConsumer;
+	private NavAnsattTemaService navAnsattTemaServiceMock;
 
 	@BeforeEach
 	void setUp() {
 		super.setUp();
-		SimpleCacheManager cacheManager = new SimpleCacheManager();
-		cacheManager.setCaches(Collections.singletonList(new NoOpCache(VALKEY_DOKUMENT_TILGANG_CACHE)));
-		cacheManager.afterPropertiesSet();
-		pep2d = new EntraProxyBackedPep2dImpl(cacheManager, entraProxyConsumer);
+		pep2d = new EntraProxyBackedPep2dImpl(navAnsattTemaServiceMock);
 	}
 
 	@Test
@@ -51,7 +42,7 @@ class EntraProxyBackedPep2dImplTest extends AbstractPepTest {
 	@ParameterizedTest
 	@EnumSource(value = Tema.class)
 	void shouldPermitWhenUserHasAccessToTema(Tema tema) {
-		when(entraProxyConsumer.hentTematilgangForNavAnsatt(any())).thenReturn(new EntraProxyTematilgangResponse(Set.of(tema.name())));
+		when(navAnsattTemaServiceMock.harTemaTilgang(any(SafRequestContext.class), eq(tema))).thenReturn(true);
 
 		boolean hasAccess = pep2d.hasAccess(TilgangSak.builder()
 				.tema(tema)
@@ -62,7 +53,7 @@ class EntraProxyBackedPep2dImplTest extends AbstractPepTest {
 
 	@Test
 	void shouldDenyWhenUserDoesNotHaveAccessToTema() {
-		when(entraProxyConsumer.hentTematilgangForNavAnsatt(any())).thenReturn(new EntraProxyTematilgangResponse(Set.of()));
+		when(navAnsattTemaServiceMock.harTemaTilgang(any(SafRequestContext.class), eq(FAR))).thenReturn(false);
 
 		boolean hasAccess = pep2d.hasAccess(TilgangSak.builder()
 				.tema(FAR)

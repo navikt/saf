@@ -16,6 +16,7 @@ import java.util.concurrent.TimeUnit;
 @Configuration
 @EnableCaching
 public class LokalCacheConfig {
+	public static final String ENTRA_PROXY_TEMA_CACHE = "entraProxyTemaCache";
 	public static final String BIDRAG_SAK_BY_SAKID_CACHE = "bidragSakerBySakId";
 	public static final String FPSAK_RELEVANTE_PARTER_BY_SAKID_CACHE = "hentRelevanteParter";
 	public static final String TILGANGSMODELL_REPO_BRUKER_CACHE = "tilgangsmodellRepoBruker";
@@ -27,6 +28,11 @@ public class LokalCacheConfig {
 		SimpleCacheManager manager = new SimpleCacheManager();
 		manager.setCaches(Arrays.asList(
 				// Lokale caches
+				new CaffeineCache(ENTRA_PROXY_TEMA_CACHE, Caffeine.newBuilder()
+						.expireAfterWrite(50, TimeUnit.MINUTES)
+						.maximumSize(500)
+						.recordStats()
+						.build()),
 				new CaffeineCache(TILGANGSMODELL_REPO_BRUKER_CACHE, Caffeine.newBuilder()
 						.expireAfterWrite(10, TimeUnit.MINUTES)
 						.maximumSize(500)
