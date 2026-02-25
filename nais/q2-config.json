@@ -388,7 +388,11 @@
     {
       "app": "brev-administrasjon-q2",
       "namespace": "isa",
-      "cluster": "dev-gcp"
+      "cluster": "dev-gcp",
+      "roles": [
+        "journal_tema_far",
+        "journal_tema_kta"
+      ]
     },
     {
       "app": "dokdistdpv",
