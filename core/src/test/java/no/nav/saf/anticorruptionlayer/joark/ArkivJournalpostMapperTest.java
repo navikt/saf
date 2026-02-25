@@ -394,7 +394,7 @@ class ArkivJournalpostMapperTest {
 
 		Journalpost journalpost = mapJournalpost(arkivJournalpost, emptySet(), requestCache);
 
-		assertThat(journalpost.getDokumenter().getFirst().getSensitivtPselv()).isTrue();
+		assertThat(journalpost.getDokumenter().getFirst().isSensitivtPselv());
 	}
 
 	@Test

@@ -124,11 +124,11 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
 		assertEquals(OK, responseEntity.getStatusCode());
 		assertEquals("429837417", dokumentoversikt.getJournalposter().get(0).getJournalpostId());
-		assertEquals(true, dokumentoversikt.getJournalposter().getFirst().getDokumenter().getFirst().getSensitivtPselv());
+		assertEquals(true, dokumentoversikt.getJournalposter().getFirst().getDokumenter().getFirst().isSensitivtPselv());
 		assertEquals("429837329", dokumentoversikt.getJournalposter().get(1).getJournalpostId());
-		assertFalse(dokumentoversikt.getJournalposter().get(1).getDokumenter().getFirst().getSensitivtPselv());
+		assertFalse(dokumentoversikt.getJournalposter().get(1).getDokumenter().getFirst().isSensitivtPselv());
 		assertEquals("429812815", dokumentoversikt.getJournalposter().get(2).getJournalpostId());
-		assertFalse(dokumentoversikt.getJournalposter().get(2).getDokumenter().getFirst().getSensitivtPselv());
+		assertFalse(dokumentoversikt.getJournalposter().get(2).getDokumenter().getFirst().isSensitivtPselv());
 		assertSaksbehandlerHarTilgang(dokumentoversikt);
 		verify(postRequestedFor(urlEqualTo("/pdl")).withRequestBody(matchingJsonPath("$.variables.ident", equalTo(AKTOER_ID))));
 		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter"))

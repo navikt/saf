@@ -379,7 +379,7 @@ class JournalpostDtoMapperTest {
 				.hasSize(2)
 				.containsExactlyInAnyOrder(tuple(VARIANT_FORMAT_CODE_SLADDET.getSafVariantformat(), false),
 						tuple(VARIANT_FORMAT_CODE_ARKIV.getSafVariantformat(), true));
-		Assertions.assertThat(journalpost.getDokumenter().getFirst().getSensitivtPselv()).isEqualTo(true);
+		Assertions.assertThat(journalpost.getDokumenter().getFirst().isSensitivtPselv()).isEqualTo(true);
 	}
 
 	@Test
