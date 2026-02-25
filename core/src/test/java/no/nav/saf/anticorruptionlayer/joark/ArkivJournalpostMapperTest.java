@@ -383,6 +383,21 @@ class ArkivJournalpostMapperTest {
 	}
 
 	@Test
+	void shoudMapJournalpostWithSensitivPSelvStatus() {
+		ArkivJournalpost arkivJournalpost = baseArkivJournalpost()
+				.type(JournalpostTypeCode.U.name())
+				.dokumenter(List.of(baseArkivDokumentinfo()
+						.sensitivt(true)
+						.build()))
+				.build();
+		RequestCache requestCache = defaultRequestCache();
+
+		Journalpost journalpost = mapJournalpost(arkivJournalpost, emptySet(), requestCache);
+
+		assertThat(journalpost.getDokumenter().getFirst().isSensitivtPselv());
+	}
+
+	@Test
 	void shouldMapSaksbehandlerHarTilgang() {
 		ArkivJournalpost arkivJournalpost = pensjonSakArkivJournalpost();
 		String tilgangKeyPep2dLocalCaching = KeyGeneratorLocalCaching.getKeyForPep2d(Tema.PEN);

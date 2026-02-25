@@ -23,6 +23,7 @@ public class DokumentInfo {
 	private final LocalDateTime datoFerdigstilt;
 	private final String originalJournalpostId;
 	private final Skjerming skjerming;
+	private final boolean sensitivtPselv;
 	@Builder.Default
 	private final List<LogiskVedlegg> logiskeVedlegg = new ArrayList<>();
 	@Builder.Default

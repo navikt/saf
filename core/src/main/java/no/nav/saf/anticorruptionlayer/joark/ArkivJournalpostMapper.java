@@ -363,6 +363,10 @@ public class ArkivJournalpostMapper {
 		}
 	}
 
+	private static boolean mapSensitivtPselv(Boolean sensitivt) {
+		return sensitivt != null && sensitivt;
+	}
+
 	private static List<RelevantDato> mapRelevanteDatoer(ArkivJournalpost arkivJournalpost) {
 		List<RelevantDato> relevanteDatoer = new ArrayList<>();
 		ArkivRelevanteDatoer arkivRelevanteDatoer = arkivJournalpost.relevanteDatoer();
@@ -481,6 +485,7 @@ public class ArkivJournalpostMapper {
 						.datoFerdigstilt(mapDokumentFerdigstilt(dokumentinfo))
 						.originalJournalpostId(dokumentinfo.originalJournalpostId() == null ? null : dokumentinfo.originalJournalpostId().toString())
 						.skjerming(mapSkjerming(dokumentinfo.skjerming()))
+						.sensitivtPselv(mapSensitivtPselv(dokumentinfo.sensitivt()))
 						.dokumentvarianter(dokumentinfo.fildetaljer().stream()
 								.map(fildetaljer -> mapDokumentvariant(tilgangJournalpost, journalpost, brukerIdenter, requestCache, dokumentinfo, fildetaljer))
 								.filter(Objects::nonNull)

@@ -36,6 +36,8 @@ import static no.nav.saf.tilgangskontroll.pep.DenyReasonCode.FORTROLIG_ADRESSE;
 import static no.nav.saf.tilgangskontroll.pep.DenyReasonCode.ORGNR_NAV_STAT;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
@@ -103,6 +105,30 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 		assertEquals(KANAL_REFERANSE_ID, dokumentoversikt.getJournalposter().get(0).getEksternReferanseId());
 		assertEquals(KANAL_REFERANSE_ID, dokumentoversikt.getJournalposter().get(1).getEksternReferanseId());
 		assertEquals(KANAL_REFERANSE_ID, dokumentoversikt.getJournalposter().get(2).getEksternReferanseId());
+		assertSaksbehandlerHarTilgang(dokumentoversikt);
+		verify(postRequestedFor(urlEqualTo("/pdl")).withRequestBody(matchingJsonPath("$.variables.ident", equalTo(AKTOER_ID))));
+		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter"))
+				.withRequestBody(containing("{\"gsakSakIds\":[\"135695442\"],\"psakSakIds\":[\"21998969\"],\"fraDato\":\"0001-01-01\",\"tilDato\":null,\"inkluderJournalStatus\":[\"FL\",\"FS\",\"J\",\"E\"],\"inkluderJournalpostType\":[\"I\",\"U\",\"N\"],\"visFeilregistrerte\":false,\"alleIdenter\":[\"11111111111\"],\"foerste\":3,\"etterPeker\":null}")));
+		verify(getRequestedFor(urlEqualTo(PENSJON_API_SAK_SAMMENDRAG_URL)).withHeader("fnr", new EqualToPattern(FNR)));
+	}
+
+	@Test
+	void shouldHentDokumentoversiktBrukerWithSensitivtPselv() throws URISyntaxException {
+		tilgangskontrollPermit();
+		stubPdl();
+		stubSakMedAktoerId();
+		stubFinnjournalposter();
+		stubPensjonSakSammendrag();
+
+		ResponseEntity<GraphQLResponse> responseEntity = callDokumentOversikBrukerWithAktoerIdInkluderSensitivtPselv();
+		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
+		assertEquals(OK, responseEntity.getStatusCode());
+		assertEquals("429837417", dokumentoversikt.getJournalposter().get(0).getJournalpostId());
+		assertEquals(true, dokumentoversikt.getJournalposter().getFirst().getDokumenter().getFirst().isSensitivtPselv());
+		assertEquals("429837329", dokumentoversikt.getJournalposter().get(1).getJournalpostId());
+		assertFalse(dokumentoversikt.getJournalposter().get(1).getDokumenter().getFirst().isSensitivtPselv());
+		assertEquals("429812815", dokumentoversikt.getJournalposter().get(2).getJournalpostId());
+		assertFalse(dokumentoversikt.getJournalposter().get(2).getDokumenter().getFirst().isSensitivtPselv());
 		assertSaksbehandlerHarTilgang(dokumentoversikt);
 		verify(postRequestedFor(urlEqualTo("/pdl")).withRequestBody(matchingJsonPath("$.variables.ident", equalTo(AKTOER_ID))));
 		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter"))
@@ -558,6 +584,12 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 
 	private ResponseEntity<GraphQLResponse> callDokumentOversikBrukerWithFnr() throws URISyntaxException {
 		GraphQLRequest request = new GraphQLRequest(stringFromClasspath("dokumentoversiktBruker/dokumentoversiktbruker_fnr.query"), null, null);
+		RequestEntity<GraphQLRequest> requestEntity = new RequestEntity<>(request, createHeaders(), HttpMethod.POST, new URI("/graphql"));
+		return restTemplate.exchange(requestEntity, GraphQLResponse.class);
+	}
+
+	private ResponseEntity<GraphQLResponse> callDokumentOversikBrukerWithAktoerIdInkluderSensitivtPselv() throws URISyntaxException {
+		GraphQLRequest request = new GraphQLRequest(stringFromClasspath("dokumentoversiktBruker/dokumentoversiktbruker_aktoerid_sensitivtPselv.query"), null, null);
 		RequestEntity<GraphQLRequest> requestEntity = new RequestEntity<>(request, createHeaders(), HttpMethod.POST, new URI("/graphql"));
 		return restTemplate.exchange(requestEntity, GraphQLResponse.class);
 	}

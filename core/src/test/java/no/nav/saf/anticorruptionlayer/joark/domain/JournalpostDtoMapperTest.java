@@ -359,6 +359,7 @@ class JournalpostDtoMapperTest {
 	@Test
 	void shouldMapSaksbehandlerHarTilgang() {
 		JournalpostDto journalpostDto = JournalpostDtoTestObjects.buildJournalpostDtoPenSaksrelasjonDto();
+		journalpostDto.getDokumenter().getFirst().setSensitivt(true);
 
 		String tilgangKeyPep6dLocalCachingVariantArkiv = KeyGeneratorLocalCaching.getKeyForPep6d(
 				String.valueOf(JOURNALPOST_ID), DOKUMENT_INFO_ID, VARIANT_FORMAT_CODE_ARKIV.getSafVariantformat()
@@ -378,6 +379,7 @@ class JournalpostDtoMapperTest {
 				.hasSize(2)
 				.containsExactlyInAnyOrder(tuple(VARIANT_FORMAT_CODE_SLADDET.getSafVariantformat(), false),
 						tuple(VARIANT_FORMAT_CODE_ARKIV.getSafVariantformat(), true));
+		Assertions.assertThat(journalpost.getDokumenter().getFirst().isSensitivtPselv()).isEqualTo(true);
 	}
 
 	@Test

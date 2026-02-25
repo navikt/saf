@@ -32,6 +32,7 @@
           "dokumentstatus": null,
           "brevkode": null,
           "skjerming": null,
+          "sensitivt": true,
           "varianter": [
             {
               "variantf": "ARKIV",
@@ -83,7 +84,8 @@
           ],
           "tittel": "Dokumentasjon av etterlønn/sluttvederlag",
           "logiske": [],
-          "skjerming": null
+          "skjerming": null,
+          "sensitivt": false
         }
       ],
       "kanalReferanseId": "KANAL REFERANSE ID"
@@ -117,6 +119,7 @@
       "dokumenter": [
         {
           "skjerming": null,
+          "sensitivt": null,
           "dokumentInfoId": 441803683,
           "dokumentstatus": null,
           "brevkode": null,

@@ -139,6 +139,7 @@ public class JournalpostDtoMapper {
 						.skjerming(dokumentInfoDto.getSkjerming() == null ? null : dokumentInfoDto.getSkjerming()
 								.getSafSkjerming()
 						)
+						.sensitivtPselv(mapSensitivPselv(dokumentInfoDto.getSensitivt()))
 						.dokumentvarianter(dokumentInfoDto.getVarianter().stream()
 								.map(variantDto -> {
 									TilgangDokument tilgangDokument = tilgangJournalpost.getDokumenter().stream().filter(dok -> dok.id() == Long.parseLong(dokumentInfoDto.getDokumentInfoId())).findFirst().orElse(null);
@@ -385,6 +386,10 @@ public class JournalpostDtoMapper {
 		}
 
 		return dokumentInfoDto.getDokumentstatus() == null ? null : dokumentInfoDto.getDokumentstatus().toSafDokumentstatus();
+	}
+
+	private boolean mapSensitivPselv(Boolean sensitivtPselv) {
+		return sensitivtPselv == null ? false : sensitivtPselv;
 	}
 
 	private List<Tilleggsopplysning> mapTilleggsopplysninger(JournalpostDto journalpostDto) {

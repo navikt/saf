@@ -29,6 +29,7 @@ public class DokumentInfoDto {
 	private SkjermingTypeCode skjerming;
 	private List<VariantDto> varianter;
 	private Long origJournalpostId;
+	private Boolean sensitivt;
 	private Integer rekkefoelge;
 	private List<LogiskVedleggDto> logiske;
 	private Boolean kassert;
