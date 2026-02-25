@@ -74,7 +74,11 @@
     {
       "app": "brev-administrasjon",
       "namespace": "isa",
-      "cluster": "prod-gcp"
+      "cluster": "prod-gcp",
+      "roles": [
+        "journal_tema_far",
+        "journal_tema_kta"
+      ]
     },
     {
       "app": "fagarkiv-administrasjon",
