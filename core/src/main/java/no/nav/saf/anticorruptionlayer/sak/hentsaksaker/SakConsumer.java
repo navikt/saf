@@ -62,7 +62,7 @@ public class SakConsumer {
 	@CircuitBreaker(name = SAK_INSTANCE)
 	@Retry(name = SAK_INSTANCE)
 	public List<SakSakerTo> hentSakerByAktoerId(final String aktoerId) {
-		log.info("Henter saker for aktoerId: {}", aktoerId);
+		log.info("Henter saker for aktoerId");
 		return texasAuthorizedRestClient.get()
 				.uri(uriBuilder -> uriBuilder
 						.queryParam("aktoerId", aktoerId)

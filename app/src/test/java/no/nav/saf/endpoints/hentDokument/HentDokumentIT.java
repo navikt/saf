@@ -10,11 +10,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 
+import java.net.URI;
 import java.util.List;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
@@ -186,19 +187,6 @@ class HentDokumentIT extends AbstractItest {
 	}
 
 	@Test
-	void shouldNotHentDokumentWhenBrukerErOrganisasjonAndNotEgenAnsatt() {
-		tilgangskontrollPermit();
-		stubNavHrOrganisasjonJa(ORG_NR);
-		stubMsGraphMemberOfNoGroupsDefaultSaksbehandler();
-		stubDokarkivJournalpost("journalpost-dokumentinfo-sak-org-happy.json");
-
-		ResponseEntity<String> responseEntity = callHentDokument();
-
-		assertThat(responseEntity.getStatusCode()).isEqualTo(FORBIDDEN);
-		assertThat(responseEntity.getBody()).contains("Journalpost/dokument er knyttet til organisasjon underlagt NAV og det krever egen ansatt behandling for oppslag på denne.");
-	}
-
-	@Test
 	void shouldHentDokumentWhenBrukerErOrganisasjonAndIsEgenAnsattBehandler() {
 		tilgangskontrollPermit();
 		stubNavHrOrganisasjonJa(ORG_NR);
@@ -303,7 +291,7 @@ class HentDokumentIT extends AbstractItest {
 						.withBody(TEST_FILE_BYTES)));
 		stubDokarkivJournalpost("journalpost-dokumentinfo-sak-happy.json");
 
-		ResponseEntity<String> responseEntity = callHentDokument(new HttpEntity<>(createHeadersClientCredentialWithoutRoles()), ORIGINAL);
+		ResponseEntity<String> responseEntity = callHentDokument(createHeadersClientCredentialWithoutRoles(), ORIGINAL);
 		assertOkOriginalResponse(responseEntity);
 
 		verify(postRequestedFor(urlEqualTo("/pdl")));
@@ -311,11 +299,169 @@ class HentDokumentIT extends AbstractItest {
 	}
 
 	@Test
+	void shouldNotHentDokumentWhenBrukerErOrganisasjonAndNotEgenAnsatt() {
+		tilgangskontrollPermit();
+		stubNavHrOrganisasjonJa(ORG_NR);
+		stubMsGraphMemberOfNoGroupsDefaultSaksbehandler();
+		stubDokarkivJournalpost("journalpost-dokumentinfo-sak-org-happy.json");
+
+		ResponseEntity<String> responseEntity = callHentDokument();
+
+		assertThat(responseEntity.getStatusCode()).isEqualTo(FORBIDDEN);
+		assertThat(responseEntity.getBody()).contains("Journalpost/dokument er knyttet til organisasjon underlagt NAV og det krever egen ansatt behandling for oppslag på denne.");
+	}
+
+	@Test
+	void shouldGetForbiddenFromPep1g() {
+		tilgangskontrollDenyPep1g();
+		stubPdl();
+		stubDokarkivJournalpost("journalpost-dokumentinfo-sak-happy.json");
+
+		ResponseEntity<String> responseEntity = callHentDokument();
+
+		verify(postRequestedFor(urlEqualTo("/pdl")));
+		verifyTilgangsmaskinenDenyPep1gAndHttpStatusCode(FORBIDDEN, responseEntity.getStatusCode());
+		assertThat(responseEntity.getBody()).contains(PEP1G_DENY_REASON);
+	}
+
+	@Test
+	void shouldGetForbiddenFromPep2() {
+		tilgangskontrollDenyPep2();
+		stubPdl();
+		stubDokarkivJournalpost("journalpost-dokumentinfo-sak-tema-far.json");
+
+		ResponseEntity<String> responseEntity = callHentDokument();
+
+		verify(postRequestedFor(urlEqualTo("/pdl")));
+		tilgangskontrollDenyPep2();
+		assertThat(responseEntity.getBody()).contains(PEP2_DENY_REASON);
+	}
+
+	@Test
+	@DisplayName("Skal ikke hente farskap dokument hvis journalpost ikke har sakstilknytning eller bruker")
+	void shouldGetForbiddenFromPep2WhenMidlertidigJournalpost() {
+		tilgangskontrollDenyPep2();
+		stubDokarkivJournalpost("journalpost-dokumentinfo-sak-midlertidig-ingen-bruker-tema-far.json");
+
+		ResponseEntity<String> responseEntity = callHentDokument();
+
+		assertEquals(FORBIDDEN, responseEntity.getStatusCode());
+		assertThat(responseEntity.getBody()).contains(PEP2_DENY_REASON);
+	}
+
+	@Test
+	void shouldGetForbiddenFromPep2d() {
+		tilgangskontrollDenyPep2d();
+		stubHappyBisysSak();
+		stubPdl();
+		stubDokarkivJournalpost("journalpost-dokumentinfo-sak-tema-bid.json");
+
+		ResponseEntity<String> responseEntity = callHentDokument();
+
+		verify(postRequestedFor(urlEqualTo("/pdl")));
+		assertEquals(FORBIDDEN, responseEntity.getStatusCode());
+		assertThat(responseEntity.getBody()).contains("Saksbehandler har ikke tilgang til tema ressursen tilhører. Saksbehandler må være i gruppen 0000-GA-TEMA_BID i Entra ID.");
+	}
+
+	@Test
+	void shouldGetForbiddenFromPep8d() {
+		tilgangskontrollDenyPep8d();
+		stubHappyBisysSak();
+		stubPdl();
+		stubDokarkivJournalpost("journalpost-dokumentinfo-sak-avsluttet-sak.json");
+
+		ResponseEntity<String> responseEntity = callHentDokument();
+
+		verify(postRequestedFor(urlEqualTo("/pdl")));
+		assertEquals(FORBIDDEN, responseEntity.getStatusCode());
+		assertThat(responseEntity.getBody()).contains("Saksbehandler har ikke tilgang til ressurs som er tilknyttet en avsluttet sak");
+	}
+
+	@Test
+	void shouldNotHentDokumentWhenBrukerErOrganisasjonAndNotEgenAnsattWithNavUserIdHeader() {
+		tilgangskontrollPermit();
+		stubNavHrOrganisasjonJa(ORG_NR);
+		stubMsGraphMemberOfNoGroupsDefaultSaksbehandler();
+		stubDokarkivJournalpost("journalpost-dokumentinfo-sak-org-happy.json");
+
+		ResponseEntity<String> responseEntity = callHentDokumentNavUserIdHeader();
+
+		assertThat(responseEntity.getStatusCode()).isEqualTo(FORBIDDEN);
+		assertThat(responseEntity.getBody()).contains("Journalpost/dokument er knyttet til organisasjon underlagt NAV og det krever egen ansatt behandling for oppslag på denne.");
+	}
+
+	@Test
+	void shouldGetForbiddenFromPep1gWithNavUserIdHeader() {
+		tilgangskontrollDenyPep1g();
+		stubPdl();
+		stubDokarkivJournalpost("journalpost-dokumentinfo-sak-happy.json");
+
+		ResponseEntity<String> responseEntity = callHentDokumentNavUserIdHeader();
+
+		verify(postRequestedFor(urlEqualTo("/pdl")));
+		verifyTilgangsmaskinenDenyPep1gAndHttpStatusCode(FORBIDDEN, responseEntity.getStatusCode());
+		assertThat(responseEntity.getBody()).contains(PEP1G_DENY_REASON);
+	}
+
+	@Test
+	void shouldGetForbiddenFromPep2WithNavUserIdHeader() {
+		tilgangskontrollDenyPep2();
+		stubPdl();
+		stubDokarkivJournalpost("journalpost-dokumentinfo-sak-tema-far.json");
+
+		ResponseEntity<String> responseEntity = callHentDokumentNavUserIdHeader();
+
+		verify(postRequestedFor(urlEqualTo("/pdl")));
+		tilgangskontrollDenyPep2();
+		assertThat(responseEntity.getBody()).contains(PEP2_DENY_REASON);
+	}
+
+	@Test
+	@DisplayName("Skal ikke hente farskap dokument hvis journalpost ikke har sakstilknytning eller bruker")
+	void shouldGetForbiddenFromPep2WhenMidlertidigJournalpostWithNavUserIdHeader() {
+		tilgangskontrollDenyPep2();
+		stubDokarkivJournalpost("journalpost-dokumentinfo-sak-midlertidig-ingen-bruker-tema-far.json");
+
+		ResponseEntity<String> responseEntity = callHentDokumentNavUserIdHeader();
+
+		assertEquals(FORBIDDEN, responseEntity.getStatusCode());
+		assertThat(responseEntity.getBody()).contains(PEP2_DENY_REASON);
+	}
+
+	@Test
+	void shouldGetForbiddenFromPep2dWithNavUserIdHeader() {
+		tilgangskontrollDenyPep2d();
+		stubHappyBisysSak();
+		stubPdl();
+		stubDokarkivJournalpost("journalpost-dokumentinfo-sak-tema-bid.json");
+
+		ResponseEntity<String> responseEntity = callHentDokumentNavUserIdHeader();
+
+		verify(postRequestedFor(urlEqualTo("/pdl")));
+		assertEquals(FORBIDDEN, responseEntity.getStatusCode());
+		assertThat(responseEntity.getBody()).contains("Saksbehandler har ikke tilgang til tema ressursen tilhører. Saksbehandler må være i gruppen 0000-GA-TEMA_BID i Entra ID.");
+	}
+
+	@Test
+	void shouldGetForbiddenFromPep8dWithNavUserIdHeader() {
+		tilgangskontrollDenyPep8d();
+		stubHappyBisysSak();
+		stubPdl();
+		stubDokarkivJournalpost("journalpost-dokumentinfo-sak-avsluttet-sak.json");
+
+		ResponseEntity<String> responseEntity = callHentDokumentNavUserIdHeader();
+
+		verify(postRequestedFor(urlEqualTo("/pdl")));
+		assertEquals(FORBIDDEN, responseEntity.getStatusCode());
+		assertThat(responseEntity.getBody()).contains("Saksbehandler har ikke tilgang til ressurs som er tilknyttet en avsluttet sak");
+	}
+
+	@Test
 	void shouldNotHentArkivDokumentWhenCallerIsSystemWithoutTemaRole() {
 		stubPdl();
 		stubDokarkivJournalpost("journalpost-dokumentinfo-sak-happy.json");
 
-		ResponseEntity<String> responseEntity = callHentDokument(new HttpEntity<>(createHeadersClientCredentialWithoutRoles()), ARKIV);
+		ResponseEntity<String> responseEntity = callHentDokument(createHeadersClientCredentialWithoutRoles());
 		assertEquals(FORBIDDEN, responseEntity.getStatusCode());
 		assertThat(responseEntity.getBody()).contains("System har ikke tilgang til tema ressursen tilhører");
 
@@ -417,7 +563,7 @@ class HentDokumentIT extends AbstractItest {
 
 		String uri = "/rest/hentdokument/" + JOURNALPOST_ID + "/" + DOKUMENT_ID + "/" + "ugyldigVariantFormat";
 
-		ResponseEntity<String> responseEntity = this.restTemplate.exchange(uri, HttpMethod.GET, createHttpEntity(), String.class);
+		ResponseEntity<String> responseEntity = this.restTemplate.exchange(RequestEntity.get(URI.create(uri)).headers(createHeaders()).build(), String.class);
 
 		assertEquals(BAD_REQUEST, responseEntity.getStatusCode());
 		assertThat(responseEntity.getBody()).contains("Ugyldig variantFormat");
@@ -441,72 +587,6 @@ class HentDokumentIT extends AbstractItest {
 		ResponseEntity<String> responseEntity = callHentDokument();
 
 		assertEquals(INTERNAL_SERVER_ERROR, responseEntity.getStatusCode());
-	}
-
-	@Test
-	void shouldGetForbiddenFromPep1g() {
-		tilgangskontrollDenyPep1g();
-		stubPdl();
-		stubDokarkivJournalpost("journalpost-dokumentinfo-sak-happy.json");
-
-		ResponseEntity<String> responseEntity = callHentDokument();
-
-		verify(postRequestedFor(urlEqualTo("/pdl")));
-		verifyTilgangsmaskinenDenyPep1gAndHttpStatusCode(FORBIDDEN, responseEntity.getStatusCode());
-		assertThat(responseEntity.getBody()).contains(PEP1G_DENY_REASON);
-	}
-
-	@Test
-	void shouldGetForbiddenFromPep2() {
-		tilgangskontrollDenyPep2();
-		stubPdl();
-		stubDokarkivJournalpost("journalpost-dokumentinfo-sak-tema-far.json");
-
-		ResponseEntity<String> responseEntity = callHentDokument();
-
-		verify(postRequestedFor(urlEqualTo("/pdl")));
-		tilgangskontrollDenyPep2();
-		assertThat(responseEntity.getBody()).contains(PEP2_DENY_REASON);
-	}
-
-	@Test
-	@DisplayName("Skal ikke hente farskap dokument hvis journalpost ikke har sakstilknytning eller bruker")
-	void shouldGetForbiddenFromPep2WhenMidlertidigJournalpost() {
-		tilgangskontrollDenyPep2();
-		stubDokarkivJournalpost("journalpost-dokumentinfo-sak-midlertidig-ingen-bruker-tema-far.json");
-
-		ResponseEntity<String> responseEntity = callHentDokument();
-
-		assertEquals(FORBIDDEN, responseEntity.getStatusCode());
-		assertThat(responseEntity.getBody()).contains(PEP2_DENY_REASON);
-	}
-
-	@Test
-	void shouldGetForbiddenFromPep2d() {
-		tilgangskontrollDenyPep2d();
-		stubHappyBisysSak();
-		stubPdl();
-		stubDokarkivJournalpost("journalpost-dokumentinfo-sak-tema-bid.json");
-
-		ResponseEntity<String> responseEntity = callHentDokument();
-
-		verify(postRequestedFor(urlEqualTo("/pdl")));
-		assertEquals(FORBIDDEN, responseEntity.getStatusCode());
-		assertThat(responseEntity.getBody()).contains("Saksbehandler har ikke tilgang til tema ressursen tilhører. Saksbehandler må være i gruppen 0000-GA-TEMA_BID i Entra ID.");
-	}
-
-	@Test
-	void shouldGetForbiddenFromPep8d() {
-		tilgangskontrollDenyPep8d();
-		stubHappyBisysSak();
-		stubPdl();
-		stubDokarkivJournalpost("journalpost-dokumentinfo-sak-avsluttet-sak.json");
-
-		ResponseEntity<String> responseEntity = callHentDokument();
-
-		verify(postRequestedFor(urlEqualTo("/pdl")));
-		assertEquals(FORBIDDEN, responseEntity.getStatusCode());
-		assertThat(responseEntity.getBody()).contains("Saksbehandler har ikke tilgang til ressurs som er tilknyttet en avsluttet sak");
 	}
 
 	@Test
@@ -723,7 +803,7 @@ class HentDokumentIT extends AbstractItest {
 
 		ListAppender<ILoggingEvent> listAppender = initialiseLogAppender();
 
-		ResponseEntity<String> responseEntity = callHentDokument(new HttpEntity<>(createHeadersNavUserId()));
+		ResponseEntity<String> responseEntity = callHentDokumentNavUserIdHeader();
 		assertOkArkivResponse(responseEntity);
 
 		List<String> auditLog = listAppender.list.stream().map(ILoggingEvent::getMessage).toList();
@@ -758,7 +838,7 @@ class HentDokumentIT extends AbstractItest {
 
 		ListAppender<ILoggingEvent> listAppender = initialiseLogAppender();
 
-		ResponseEntity<String> responseEntity = callHentDokument(new HttpEntity<>(createHeadersClientCredential()));
+		ResponseEntity<String> responseEntity = callHentDokument(createHeadersClientCredential());
 		assertOkArkivResponse(responseEntity);
 
 		List<String> auditLog = listAppender.list.stream().map(ILoggingEvent::getMessage).toList();
@@ -854,26 +934,28 @@ class HentDokumentIT extends AbstractItest {
 	}
 
 	private ResponseEntity<String> callHentDokument() {
-		return callHentDokument(createHttpEntity());
+		return callHentDokument(createHeaders());
 	}
 
-	private ResponseEntity<String> callHentDokument(HttpEntity<?> httpEntity) {
-		String uri = "/rest/hentdokument/" + JOURNALPOST_ID + "/" + DOKUMENT_ID + "/" + VARIANTFORMAT;
-		return this.restTemplate.exchange(uri, HttpMethod.GET, httpEntity, String.class);
+	private ResponseEntity<String> callHentDokumentNavUserIdHeader() {
+		return callHentDokument(createHeadersNavUserId());
 	}
 
-	private ResponseEntity<String> callHentDokument(HttpEntity<?> httpEntity, VariantFormatCode variantFormatCode) {
-		String uri = "/rest/hentdokument/" + JOURNALPOST_ID + "/" + DOKUMENT_ID + "/" + variantFormatCode;
-		return this.restTemplate.exchange(uri, HttpMethod.GET, httpEntity, String.class);
-	}
-
-	private ResponseEntity<String> callHentDokument(VariantFormatCode variantFormat) {
-		String uri = "/rest/hentdokument/" + JOURNALPOST_ID + "/" + DOKUMENT_ID + "/" + variantFormat;
-		return this.restTemplate.exchange(uri, HttpMethod.GET, createHttpEntity(), String.class);
+	private ResponseEntity<String> callHentDokument(HttpHeaders headers) {
+		return callHentDokument(headers, VARIANTFORMAT);
 	}
 
 	private ResponseEntity<String> callHentDokumentSladdetVariant() {
-		String uri = "/rest/hentdokument/" + JOURNALPOST_ID + "/" + DOKUMENT_ID + "/" + SLADDET_VARIANTFORMAT;
-		return this.restTemplate.exchange(uri, HttpMethod.GET, createHttpEntity(), String.class);
+		return callHentDokument(SLADDET_VARIANTFORMAT);
+	}
+
+	private ResponseEntity<String> callHentDokument(VariantFormatCode variantFormat) {
+		return callHentDokument(createHeaders(), variantFormat);
+	}
+
+	private ResponseEntity<String> callHentDokument(HttpHeaders headers, VariantFormatCode variantFormatCode) {
+		String uri = "/rest/hentdokument/" + JOURNALPOST_ID + "/" + DOKUMENT_ID + "/" + variantFormatCode;
+		RequestEntity<Void> requestEntity = RequestEntity.get(URI.create(uri)).headers(headers).build();
+		return this.restTemplate.exchange(requestEntity, String.class);
 	}
 }

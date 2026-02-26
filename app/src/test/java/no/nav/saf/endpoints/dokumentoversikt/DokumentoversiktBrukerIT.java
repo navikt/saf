@@ -10,6 +10,7 @@ import no.nav.saf.endpoints.graphql.GraphQLRequest;
 import no.nav.saf.endpoints.graphql.GraphQLResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.RequestEntity;
@@ -37,7 +38,6 @@ import static no.nav.saf.tilgangskontroll.pep.DenyReasonCode.ORGNR_NAV_STAT;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
@@ -162,6 +162,24 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 	}
 
 	@Test
+	void shouldHentDokumentoversiktSystemAndNavUserIdHeader() throws URISyntaxException {
+		tilgangskontrollPermit();
+		stubPdl();
+		stubSakMedAktoerId();
+		stubFinnjournalposter();
+		stubPensjonSakSammendrag();
+
+		ResponseEntity<GraphQLResponse> responseEntity = callDokumentOversikBrukerWithFnr(createHeadersNavUserId());
+		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
+
+		assertEquals(OK, responseEntity.getStatusCode());
+		assertEquals("429837417", dokumentoversikt.getJournalposter().get(0).getJournalpostId());
+		assertEquals("429837329", dokumentoversikt.getJournalposter().get(1).getJournalpostId());
+		assertEquals("429812815", dokumentoversikt.getJournalposter().get(2).getJournalpostId());
+		assertSaksbehandlerHarTilgang(dokumentoversikt);
+	}
+
+	@Test
 	void shouldHentDokumentoversiktBrukerWithOrgNr() throws URISyntaxException {
 		tilgangskontrollPermit();
 		stubNavHrOrganisasjonNei(ORG_NR);
@@ -218,6 +236,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 		stubPdl();
 		stubSakMedAktoerId();
 		stubFinnjournalposter();
+		stubPensjonSakSammendrag("psak-hentSakSammendragListe-happy-empty.json");
 
 		Map<String, Object> variables = new HashMap<>();
 		variables.put("fnr", "11111111111");
@@ -393,6 +412,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 		stubSakMedAktoerId("sak-sakerByFagsakIdAndFagsaksystem-FAR-happy.json");
 		stubFinnjournalposter("finnjournalposter-empty.json");
 		stubPensjonSakSammendrag("psak-hentSakSammendragListe-happy-empty.json");
+		stubBidragForeldreskap();
 
 		ResponseEntity<GraphQLResponse> responseEntity = callDokumentOversikBrukerWithAktoerId();
 		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
@@ -498,14 +518,14 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 	}
 
 	@Test
-	void shouldGetUnauthorizedFromPep6d() throws URISyntaxException {
+	void shouldGetUnauthorizedFromPep6dWithNavUserIdHeader() throws URISyntaxException {
 		tilgangskontrollDenyPep6dWithSkjerming();
 		stubPdl();
 		stubSakMedAktoerId();
 		stubFinnjournalposter("finnjournalposter_single_bidragAndSkjermingOnlyDokvariant-happy.json");
 		stubPensjonSakSammendrag("psak-hentSakSammendragListe-happy-empty.json");
 
-		ResponseEntity<GraphQLResponse> responseEntity = callDokumentOversikBrukerWithAktoerId();
+		ResponseEntity<GraphQLResponse> responseEntity = callDokumentOversikBrukerWithAktoerId(createHeadersNavUserId());
 		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
 
 		assertEquals("429837417", dokumentoversikt.getJournalposter().get(0).getJournalpostId());
@@ -526,8 +546,164 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 				.withStatus(OK.value())
 				.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 				.withBodyFile("k9/happy-response.json")));
+		stubPensjonSakSammendrag("psak-hentSakSammendragListe-happy-empty.json");
 
 		ResponseEntity<GraphQLResponse> responseEntity = callDokumentOversikBrukerWithAktoerId();
+		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
+
+		assertEquals("429837417", dokumentoversikt.getJournalposter().get(0).getJournalpostId());
+		assertSaksbehandlerHarIkkeTilgang(dokumentoversikt);
+		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter"))
+				.withRequestBody(containing("{\"gsakSakIds\":[\"135695442\"],\"psakSakIds\":[],\"fraDato\":\"0001-01-01\",\"tilDato\":null,\"inkluderJournalStatus\":[\"FL\",\"FS\",\"J\",\"E\"],\"inkluderJournalpostType\":[\"I\",\"U\",\"N\"],\"visFeilregistrerte\":false,\"alleIdenter\":[\"11111111111\"],\"foerste\":3,\"etterPeker\":null}")));
+		verifyDenyPep7d(responseEntity.getStatusCode());
+	}
+
+	@Test
+	void shouldGetUnauthorizedFromPep1gWithNavUserIdHeader() throws URISyntaxException {
+		tilgangskontrollDenyPep1g();
+		stubEntraProxy();
+		stubPdl();
+		stubSakMedAktoerId("sak-sakerBySaksId-happy.json");
+		stubFinnjournalposter();
+		stubPensjonSakSammendrag();
+		stubBidrag();
+
+		ResponseEntity<GraphQLResponse> responseEntity = callDokumentOversikBrukerWithAktoerId(createHeadersNavUserId());
+		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
+
+		verifyEmptyJournalpostListeAndNullSideInfo(dokumentoversikt);
+		verifyTilgangsmaskinenDenyPep1gAndHttpStatusCode(OK, responseEntity.getStatusCode());
+		List<GraphQLResponse.Error> errors = responseEntity.getBody().getErrors();
+		assertThat(errors.get(0).getExtensions().getCode()).isEqualTo(FORBIDDEN.getText());
+		assertThat(errors.get(0).getExtensions().getReasonCode()).isEqualTo(FORTROLIG_ADRESSE.code);
+	}
+
+	@Test
+	void shouldGetUnauthorizedFromPep2WithNavUserIdHeader() throws URISyntaxException {
+		tilgangskontrollDenyPep2();
+		stubPdl();
+		stubSakMedAktoerId("sak-sakerByFagsakIdAndFagsaksystem-FAR-happy.json");
+		stubFinnjournalposter("finnjournalposter-empty.json");
+		stubPensjonSakSammendrag("psak-hentSakSammendragListe-happy-empty.json");
+		stubBidragForeldreskap();
+
+		ResponseEntity<GraphQLResponse> responseEntity = callDokumentOversikBrukerWithAktoerId(createHeadersNavUserId());
+		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
+
+		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter"))
+				.withRequestBody(containing("{\"gsakSakIds\":[],\"psakSakIds\":[],\"fraDato\":\"0001-01-01\",\"tilDato\":null,\"inkluderJournalStatus\":[\"FL\",\"FS\",\"J\",\"E\"],\"inkluderJournalpostType\":[\"I\",\"U\",\"N\"],\"visFeilregistrerte\":false,\"alleIdenter\":[\"11111111111\"],\"foerste\":3,\"etterPeker\":null}")));
+		verifyEmptyJournalpostListeAndNullSideInfo(dokumentoversikt);
+		verifyDenyPep2(responseEntity.getStatusCode());
+	}
+
+	@Test
+	void shouldGetUnauthorizedFromPep2WhenIngenSakstilknytningWithNavUserIdHeader() throws URISyntaxException {
+		tilgangskontrollDenyPep2();
+		stubPdl();
+		stubSakMedAktoerId("sak-sakerBySaksId-empty.json");
+		stubFinnjournalposter("finnjournalposter-far-kta.json");
+		stubPensjonSakSammendrag("psak-hentSakSammendragListe-happy-empty.json");
+
+		ResponseEntity<GraphQLResponse> responseEntity = callDokumentOversikBrukerWithAktoerIdInkluderMidlertidige(createHeadersNavUserId());
+		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
+
+		verifyEmptyJournalpostListeAndNullSideInfo(dokumentoversikt);
+		assertEquals(OK, responseEntity.getStatusCode());
+	}
+
+	@Test
+	void shouldReturnSaksbehandlerHarTilgangFalseAndSkjultTittelWhenDenyPep2dAndNavUserIdHeader() throws URISyntaxException {
+		tilgangskontrollDenyPep2d();
+		stubPdl();
+		stubSakMedAktoerId("sak-sakerBySaksId-happy.json");
+		stubFinnjournalposter("finnjournalposter_single_bidragAndSkjerming-happy.json");
+		stubPensjonSakSammendrag("psak-hentSakSammendragListe-happy-empty.json");
+		stubBidrag("bidragsak-happy.json");
+
+		ResponseEntity<GraphQLResponse> responseEntity = callDokumentOversikBrukerWithAktoerId(createHeadersNavUserId());
+		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
+
+		assertEquals("429837417", dokumentoversikt.getJournalposter().get(0).getJournalpostId());
+		assertSaksbehandlerHarIkkeTilgang(dokumentoversikt);
+		assertSkjultTittel(dokumentoversikt);
+		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter"))
+				.withRequestBody(containing("{\"gsakSakIds\":[\"135695442\"],\"psakSakIds\":[],\"fraDato\":\"0001-01-01\",\"tilDato\":null,\"inkluderJournalStatus\":[\"FL\",\"FS\",\"J\",\"E\"],\"inkluderJournalpostType\":[\"I\",\"U\",\"N\"],\"visFeilregistrerte\":false,\"alleIdenter\":[\"11111111111\"],\"foerste\":3,\"etterPeker\":null}")));
+		assertThat(responseEntity.getStatusCode()).isSameAs(HttpStatus.OK);
+		verifyDenyPep2d(responseEntity.getStatusCode());
+	}
+
+	@Test
+	void shouldGetUnauthorizedFromPep3WithNavUserIdHeader() throws URISyntaxException {
+		tilgangskontrollDenyPep3();
+		stubPdl();
+		stubSakMedAktoerId("sak-sakerBySaksId-happy.json");
+		stubFinnjournalposter("finnjournalposter-empty.json");
+		stubPensjonSakSammendrag("psak-hentSakSammendragListe-happy-empty.json");
+		stubBidrag();
+
+		ResponseEntity<GraphQLResponse> responseEntity = callDokumentOversikBrukerWithAktoerId(createHeadersNavUserId());
+		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
+
+		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter"))
+				.withRequestBody(containing("{\"gsakSakIds\":[],\"psakSakIds\":[],\"fraDato\":\"0001-01-01\",\"tilDato\":null,\"inkluderJournalStatus\":[\"FL\",\"FS\",\"J\",\"E\"],\"inkluderJournalpostType\":[\"I\",\"U\",\"N\"],\"visFeilregistrerte\":false,\"alleIdenter\":[\"11111111111\"],\"foerste\":3,\"etterPeker\":null}")));
+		verifyEmptyJournalpostListeAndNullSideInfo(dokumentoversikt);
+		verifyEntraProxyCalled(1);
+		assertEquals(OK, responseEntity.getStatusCode());
+	}
+
+	@Test
+	void shouldGetUnauthorizedFromPep4WithNavUserIdHeader() throws URISyntaxException {
+		tilgangskontrollDenyPep4();
+		stubPdl();
+		stubSakMedAktoerId("sak-sakerBySaksId-happy.json");
+		stubFinnjournalposter("finnjournalposter_single_bidragAndSkjerming-happy.json");
+		stubPensjonSakSammendrag("psak-hentSakSammendragListe-happy-empty.json");
+		stubBidrag();
+
+		ResponseEntity<GraphQLResponse> responseEntity = callDokumentOversikBrukerWithAktoerId(createHeadersNavUserId());
+		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
+
+		verifyEmptyJournalpostListeAndNullSideInfo(dokumentoversikt);
+		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter"))
+				.withRequestBody(containing("{\"gsakSakIds\":[\"135695442\"],\"psakSakIds\":[],\"fraDato\":\"0001-01-01\",\"tilDato\":null,\"inkluderJournalStatus\":[\"FL\",\"FS\",\"J\",\"E\"],\"inkluderJournalpostType\":[\"I\",\"U\",\"N\"],\"visFeilregistrerte\":false,\"alleIdenter\":[\"11111111111\"],\"foerste\":3,\"etterPeker\":null}")));
+		verifyDenyPep4(responseEntity.getStatusCode(), 1);
+		verifyMsGraphMemberOfSeveralGroupsCalled(MS_ID_SAKSBEHANDLER, 1);
+	}
+
+	@Test
+	void shouldGetUnauthorizedFromPep5WithNavUserIdHeader() throws URISyntaxException {
+		tilgangskontrollDenyPep5();
+		stubPdl();
+		stubSakMedAktoerId("sak-sakerBySaksId-happy.json");
+		stubFinnjournalposter("finnjournalposter_single_bidragAndSkjermingOnlyDokument-happy.json");
+		stubPensjonSakSammendrag("psak-hentSakSammendragListe-happy-empty.json");
+		stubBidrag();
+
+		ResponseEntity<GraphQLResponse> responseEntity = callDokumentOversikBrukerWithAktoerId(createHeadersNavUserId());
+		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
+
+		assertThat(dokumentoversikt.getJournalposter()).isNotEmpty();
+		assertEquals("429837417", dokumentoversikt.getJournalposter().get(0).getJournalpostId());
+		assertThat(dokumentoversikt.getJournalposter().get(0).getDokumenter()).isEmpty();
+		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter"))
+				.withRequestBody(containing("{\"gsakSakIds\":[\"135695442\"],\"psakSakIds\":[],\"fraDato\":\"0001-01-01\",\"tilDato\":null,\"inkluderJournalStatus\":[\"FL\",\"FS\",\"J\",\"E\"],\"inkluderJournalpostType\":[\"I\",\"U\",\"N\"],\"visFeilregistrerte\":false,\"alleIdenter\":[\"11111111111\"],\"foerste\":3,\"etterPeker\":null}")));
+		verifyDenyPep5(responseEntity.getStatusCode(), 1);
+	}
+
+	@Test
+	void shouldGetUnauthorizedFromPep7dWithNavUserIdHeader() throws URISyntaxException {
+		String SAK_ID = "123456";
+		tilgangskontrollDenyPep7d();
+		stubPdl();
+		stubSakMedAktoerId("sak-sakerBySaksId_oms-happy.json");
+		stubFinnjournalposter("finnjournalposter_single_temaK9Nullskjerming-happy.json");
+		stubFor(get("/k9sak?saksnummer=" + SAK_ID).willReturn(aResponse()
+				.withStatus(OK.value())
+				.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+				.withBodyFile("k9/happy-response.json")));
+		stubPensjonSakSammendrag("psak-hentSakSammendragListe-happy-empty.json");
+
+		ResponseEntity<GraphQLResponse> responseEntity = callDokumentOversikBrukerWithAktoerId(createHeadersNavUserId());
 		Dokumentoversikt dokumentoversikt = getDokumentoversikt(responseEntity);
 
 		assertEquals("429837417", dokumentoversikt.getJournalposter().get(0).getJournalpostId());
@@ -571,20 +747,32 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 	}
 
 	private ResponseEntity<GraphQLResponse> callDokumentOversikBrukerWithAktoerId() throws URISyntaxException {
+		return callDokumentOversikBrukerWithAktoerId(createHeaders());
+	}
+
+	private ResponseEntity<GraphQLResponse> callDokumentOversikBrukerWithAktoerId(HttpHeaders headers) throws URISyntaxException {
 		GraphQLRequest request = new GraphQLRequest(stringFromClasspath("dokumentoversiktBruker/dokumentoversiktbruker_aktoerid.query"), null, null);
-		RequestEntity<GraphQLRequest> requestEntity = new RequestEntity<>(request, createHeaders(), HttpMethod.POST, new URI("/graphql"));
+		RequestEntity<GraphQLRequest> requestEntity = new RequestEntity<>(request, headers, HttpMethod.POST, new URI("/graphql"));
 		return restTemplate.exchange(requestEntity, GraphQLResponse.class);
 	}
 
 	private ResponseEntity<GraphQLResponse> callDokumentOversikBrukerWithAktoerIdInkluderMidlertidige() throws URISyntaxException {
+		return callDokumentOversikBrukerWithAktoerIdInkluderMidlertidige(createHeaders());
+	}
+
+	private ResponseEntity<GraphQLResponse> callDokumentOversikBrukerWithAktoerIdInkluderMidlertidige(HttpHeaders headers) throws URISyntaxException {
 		GraphQLRequest request = new GraphQLRequest(stringFromClasspath("dokumentoversiktBruker/dokumentoversiktbruker_aktoerid_midlertidig.query"), null, null);
 		RequestEntity<GraphQLRequest> requestEntity = new RequestEntity<>(request, createHeaders(), HttpMethod.POST, new URI("/graphql"));
 		return restTemplate.exchange(requestEntity, GraphQLResponse.class);
 	}
 
 	private ResponseEntity<GraphQLResponse> callDokumentOversikBrukerWithFnr() throws URISyntaxException {
+		return callDokumentOversikBrukerWithFnr(createHeaders());
+	}
+
+	private ResponseEntity<GraphQLResponse> callDokumentOversikBrukerWithFnr(HttpHeaders headers) throws URISyntaxException {
 		GraphQLRequest request = new GraphQLRequest(stringFromClasspath("dokumentoversiktBruker/dokumentoversiktbruker_fnr.query"), null, null);
-		RequestEntity<GraphQLRequest> requestEntity = new RequestEntity<>(request, createHeaders(), HttpMethod.POST, new URI("/graphql"));
+		RequestEntity<GraphQLRequest> requestEntity = new RequestEntity<>(request, headers, HttpMethod.POST, new URI("/graphql"));
 		return restTemplate.exchange(requestEntity, GraphQLResponse.class);
 	}
 

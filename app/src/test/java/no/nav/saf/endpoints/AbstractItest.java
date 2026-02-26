@@ -19,7 +19,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.client.ClientHttpRequestFactory;
@@ -76,6 +75,8 @@ public abstract class AbstractItest {
 	protected static final String SAK_API_PATH_MED_QUERY_PARA_FAGSAK_NR = "/sak?fagsakNr=ARENA-1&applikasjon=AO01";
 
 	private static final String ENTRA_PROXY_ANSATT_PATH = "/entra-proxy/api/v1/tema/ansatt/.*";
+	protected static final String BISYS_FORELDRESKAP_SAK_ID = "201545004";
+	protected static final String BISYS_BIDRAG_SAK_ID = "654321";
 
 	@Configuration
 	public static class TestConfig {
@@ -99,10 +100,6 @@ public abstract class AbstractItest {
 	@AfterEach
 	void resetCache() {
 		stringRedisTemplate.getConnectionFactory().getConnection().serverCommands().flushDb();
-	}
-
-	protected HttpEntity<?> createHttpEntity() {
-		return new HttpEntity<>(createHeaders());
 	}
 
 	protected HttpHeaders createHeaders() {
@@ -275,8 +272,16 @@ public abstract class AbstractItest {
 		stubBidrag("bidragsak-happy.json");
 	}
 
+	protected static void stubBidragForeldreskap() {
+		stubBidrag(BISYS_FORELDRESKAP_SAK_ID, "bidragsak-happy.json");
+	}
+
 	protected static void stubBidrag(String filename) {
-		stubFor(get("/bidrag/654321").willReturn(aResponse().withStatus(OK.value())
+		stubBidrag(BISYS_BIDRAG_SAK_ID, filename);
+	}
+
+	protected static void stubBidrag(String sakId, String filename) {
+		stubFor(get("/bidrag/" + sakId).willReturn(aResponse().withStatus(OK.value())
 				.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 				.withBodyFile("bidrag/" + filename)));
 	}
