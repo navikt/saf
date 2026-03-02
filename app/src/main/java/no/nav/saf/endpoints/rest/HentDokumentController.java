@@ -10,7 +10,6 @@ import no.nav.saf.exceptions.HentdokumentTilgangskontrollException;
 import no.nav.saf.exceptions.JournalpostIkkeFunnetException;
 import no.nav.saf.exceptions.UgyldigInputException;
 import no.nav.saf.hentdokument.HentDokumentDomainCoordinator;
-import no.nav.saf.metrics.AudienceCounter;
 import no.nav.saf.springdoc.SwaggerRestHentDokument;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.security.token.support.core.api.Protected;
@@ -53,15 +52,12 @@ import static org.apache.commons.lang3.StringUtils.isNumeric;
 public class HentDokumentController {
 	private final HentDokumentDomainCoordinator hentDokumentDomainCoordinator;
 	private final TokenValidationContextHolder tokenValidationContextHolder;
-	private final AudienceCounter audienceCounter;
 
 	@Autowired
 	public HentDokumentController(HentDokumentDomainCoordinator hentDokumentDomainCoordinator,
-								  AudienceCounter audienceCounter,
 								  TokenValidationContextHolder tokenValidationContextHolder) {
 		this.tokenValidationContextHolder = tokenValidationContextHolder;
 		this.hentDokumentDomainCoordinator = hentDokumentDomainCoordinator;
-		this.audienceCounter = audienceCounter;
 	}
 
 	@SwaggerRestHentDokument
@@ -84,11 +80,6 @@ public class HentDokumentController {
 		log.info("hentDokument har mottatt kall. journalpostId={}, dokumentInfoId={}, variantFormat={}", journalpostId, dokumentInfoId, variantFormat);
 		try {
 			mdcSporing(journalpostId, dokumentInfoId);
-			audienceCounter.increment(
-					safRequestContext.getSecurityContext().getIssuer(),
-					safRequestContext.getSecurityContext().getAudience()
-			);
-
 			HentDokument response = hentDokumentDomainCoordinator.hentDokument(journalpostId, dokumentInfoId, variantFormat, safRequestContext);
 
 			//ekstra logging for MMA-7862. Fjernes når oppryddingen er ferdig

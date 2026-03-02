@@ -6,9 +6,7 @@ import no.nav.security.token.support.core.context.TokenValidationContext;
 
 import static no.nav.saf.anticorruptionlayer.joark.domain.kode.VariantFormatCode.ORIGINAL;
 
-/**
- * Holder kontekst om kall inn til saf.
- */
+/// Holder kontekst om kall inn til saf.
 @Slf4j
 @Getter
 public class SafRequestContext {
@@ -36,29 +34,22 @@ public class SafRequestContext {
 		return securityContext.isSystem() && originalDokument;
 	}
 
-	/**
-	 * @return System som har gjort kallet.
-	 */
-	public String getConsumerId() {
-		return securityContext.getConsumerId();
-	}
-
-	/**
-	 * @return Bruker som har gjort kallet. System hvis det ikke er en saksbehandler.
-	 */
+	/// @return Nav ansatt som har gjort kallet. System hvis det ikke er en Nav ansatt.
 	public String getUserId() {
 		return securityContext.getUserId();
 	}
 
+	/// @return `true` hvis userId er Nav ansatt
 	public boolean isUserIdNavAnsatt() {
 		return securityContext.isUserIdNavAnsatt();
 	}
 
-	/**
-	 * Om token i request er i kontekst av system eller bruker.
-	 *
-	 * @return true hvis token er utsted av Entra client-credential flow, ellers false
-	 */
+	/// @return System som har gjort kallet.
+	public String getConsumerId() {
+		return securityContext.getConsumerId();
+	}
+
+	/// @return `true` hvis request er system, `false` hvis Nav ansatt
 	public boolean isSystem() {
 		return securityContext.isSystem();
 	}

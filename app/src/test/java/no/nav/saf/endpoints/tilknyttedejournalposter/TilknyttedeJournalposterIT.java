@@ -13,6 +13,7 @@ import no.nav.saf.endpoints.AbstractItest;
 import no.nav.saf.endpoints.graphql.GraphQLRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
@@ -79,6 +80,26 @@ class TilknyttedeJournalposterIT extends AbstractItest {
 		assertThat(tilknyttedeJournalposter, hasSize(1));
 		Journalpost journalpost = tilknyttedeJournalposter.getFirst();
 
+		assertTilknyttedeJournalposter(journalpost);
+	}
+
+	@Test
+	void shouldReturnTilknyttedeJournalposterWithNavUserIdHeader() throws Exception {
+		tilgangskontrollPermit();
+		stubFor(get("/dokarkiv/tilknyttedeJournalposter/gjenbruk/dokumentInfoId/" + DOKUMENT_INFO_ID)
+				.willReturn(aResponse().withStatus(OK.value())
+						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("safintern/tilknyttetjournalpost/tilknyttedejournalposter-not-bid-happy.json")));
+		stubPdl();
+
+		List<Journalpost> tilknyttedeJournalposter = parseJournalpost(tilknyttedeJournalposterGjenbrukQuery(createHeadersNavUserId()));
+		assertThat(tilknyttedeJournalposter, hasSize(1));
+		Journalpost journalpost = tilknyttedeJournalposter.getFirst();
+
+		assertTilknyttedeJournalposter(journalpost);
+	}
+
+	private static void assertTilknyttedeJournalposter(Journalpost journalpost) {
 		assertThat(journalpost.getJournalpostId(), is(JOURNALPOST_ID));
 		assertThat(journalpost.getTittel(), is("En søknad om noe"));
 		assertThat(journalpost.getJournalposttype(), is(Journalposttype.U));
@@ -140,6 +161,10 @@ class TilknyttedeJournalposterIT extends AbstractItest {
 		assertThat(tilknyttedeJournalposter, hasSize(1));
 		Journalpost journalpost = tilknyttedeJournalposter.getFirst();
 
+		assertTilknyttedeJournalposterPsak(journalpost);
+	}
+
+	private static void assertTilknyttedeJournalposterPsak(Journalpost journalpost) {
 		assertThat(journalpost.getJournalpostId(), is(JOURNALPOST_ID));
 		assertThat(journalpost.getTittel(), is("Vedtak – omregning fra uføretrygd til alderspensjon"));
 		assertThat(journalpost.getJournalposttype(), is(Journalposttype.U));
@@ -217,6 +242,7 @@ class TilknyttedeJournalposterIT extends AbstractItest {
 	@Test
 	void shouldReturnNoJournalpostsWhenDenyOnPep1g() throws Exception {
 		tilgangskontrollDenyPep1g();
+		stubEntraProxy();
 		stubFor(get("/dokarkiv/tilknyttedeJournalposter/gjenbruk/dokumentInfoId/" + DOKUMENT_INFO_ID)
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
@@ -325,6 +351,117 @@ class TilknyttedeJournalposterIT extends AbstractItest {
 	}
 
 	@Test
+	void shouldReturnNoJournalpostsWhenDenyOnPep1gWithNavUserIdHeader() throws Exception {
+		tilgangskontrollDenyPep1g();
+		stubEntraProxy();
+		stubFor(get("/dokarkiv/tilknyttedeJournalposter/gjenbruk/dokumentInfoId/" + DOKUMENT_INFO_ID)
+				.willReturn(aResponse().withStatus(OK.value())
+						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("safintern/tilknyttetjournalpost/tilknyttedejournalposter-not-bid-happy.json")));
+		stubPdl();
+
+		List<Journalpost> tilknyttedeJournalposter = parseJournalpost(tilknyttedeJournalposterGjenbrukQuery(createHeadersNavUserId()));
+		assertThat(tilknyttedeJournalposter, hasSize(0));
+	}
+
+	@Test
+	void shouldReturnNoJournalpostsWhenDenyOnPep2WithNavUserIdHeader() throws Exception {
+		tilgangskontrollDenyPep2();
+		stubFor(get("/dokarkiv/tilknyttedeJournalposter/gjenbruk/dokumentInfoId/" + DOKUMENT_INFO_ID)
+				.willReturn(aResponse().withStatus(OK.value())
+						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("safintern/tilknyttetjournalpost/tilknyttedejournalposter-far-happy.json")));
+		stubPdl();
+
+		List<Journalpost> tilknyttedeJournalposter = parseJournalpost(tilknyttedeJournalposterGjenbrukQuery(createHeadersNavUserId()));
+		assertThat(tilknyttedeJournalposter, hasSize(0));
+	}
+
+	@Test
+	void shouldReturnSaksbehandlerTilgangFalseWhenDenyOnPep2dWithNavUserIdHeader() throws Exception {
+		tilgangskontrollDenyPep2d();
+		stubFor(get("/dokarkiv/tilknyttedeJournalposter/gjenbruk/dokumentInfoId/" + DOKUMENT_INFO_ID)
+				.willReturn(aResponse().withStatus(OK.value())
+						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("safintern/tilknyttetjournalpost/tilknyttedejournalposter-not-bid-happy.json")));
+		stubPdl();
+
+		List<Journalpost> tilknyttedeJournalposter = parseJournalpost(tilknyttedeJournalposterGjenbrukQuery(createHeadersNavUserId()));
+		Journalpost journalpost = tilknyttedeJournalposter.get(0);
+		assertThat(journalpost.getTittel(), is(SKJULT_TITTEL));
+		DokumentInfo dokumentInfo = journalpost.getDokumenter().get(0);
+		assertThat(dokumentInfo.getTittel(), is(SKJULT_TITTEL));
+		assertFalse(dokumentInfo.getDokumentvarianter().get(0).isSaksbehandlerHarTilgang());
+		assertThat(dokumentInfo.getLogiskeVedlegg().get(0).getTittel(), is(SKJULT_TITTEL));
+	}
+
+	@Test
+	void shouldReturnNoJournalpostsWhenDenyOnPep3WithNavUserIdHeader() throws Exception {
+		tilgangskontrollDenyPep3();
+		stubFor(get("/dokarkiv/tilknyttedeJournalposter/gjenbruk/dokumentInfoId/" + DOKUMENT_INFO_ID)
+				.willReturn(aResponse().withStatus(OK.value())
+						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("safintern/tilknyttetjournalpost/tilknyttedejournalposter-bid-happy.json")));
+		stubFor(get("/sak/" + SAK_ID)
+				.willReturn(aResponse().withStatus(OK.value())
+						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("sak/sak-sakBySaksId-happy.json")));
+		stubFor(get("/bidrag/" + BIDRAG_SAK_ID)
+				.willReturn(aResponse().withStatus(OK.value())
+						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("bidrag/bidragsak-happy.json")));
+		stubPdl();
+
+		List<Journalpost> tilknyttedeJournalposter = parseJournalpost(tilknyttedeJournalposterGjenbrukQuery(createHeadersNavUserId()));
+		assertThat(tilknyttedeJournalposter, hasSize(0));
+	}
+
+	@Test
+	void shouldReturnNoJournalpostWhenDenyOnPep4WithNavUserIdHeader() throws Exception {
+		tilgangskontrollDenyPep4();
+		stubFor(get("/dokarkiv/tilknyttedeJournalposter/gjenbruk/dokumentInfoId/" + DOKUMENT_INFO_ID)
+				.willReturn(aResponse().withStatus(OK.value())
+						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("safintern/tilknyttetjournalpost/tilknyttedejournalposter-skjerming-jp-pol-happy.json")));
+		stubPdl();
+
+		List<Journalpost> tilknyttedeJournalposter = parseJournalpost(tilknyttedeJournalposterGjenbrukQuery(createHeadersNavUserId()));
+		assertThat(tilknyttedeJournalposter, hasSize(0));
+	}
+
+	@Test
+	void shouldReturnJournalpostWithOneFilteredDokumentInfoWhenDenyOnPep5WithNavUserIdHeader() throws Exception {
+		tilgangskontrollDenyPep5();
+		stubFor(get("/dokarkiv/tilknyttedeJournalposter/gjenbruk/dokumentInfoId/" + DOKUMENT_INFO_ID)
+				.willReturn(aResponse().withStatus(OK.value())
+						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("safintern/tilknyttetjournalpost/tilknyttedejournalposter-skjerming-dokumentinfo-pol-happy.json")));
+		stubPdl();
+
+		List<Journalpost> tilknyttedeJournalposter = parseJournalpost(tilknyttedeJournalposterGjenbrukQuery(createHeadersNavUserId()));
+		assertThat(tilknyttedeJournalposter.get(0).getDokumenter(), hasSize(1));
+		assertThat(tilknyttedeJournalposter.get(0).getDokumenter().getFirst().getDokumentInfoId(), is("500000001"));
+	}
+
+	@Test
+	void shouldReturnSaksbehandlerTilgangFalseOnVariantWithDenyOnPep6dWithNavUserIdHeader() throws Exception {
+		tilgangskontrollDenyPep6dWithSkjerming();
+		stubFor(get("/dokarkiv/tilknyttedeJournalposter/gjenbruk/dokumentInfoId/" + DOKUMENT_INFO_ID)
+				.willReturn(aResponse().withStatus(OK.value())
+						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("safintern/tilknyttetjournalpost/tilknyttedejournalposter-skjerming-variant-pol-happy.json")));
+		stubFor(get("/sak/" + SAK_ID)
+				.willReturn(aResponse().withStatus(OK.value())
+						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("sak/sak-sakBySaksId_not_bid-happy.json")));
+		stubPdl();
+
+		List<Journalpost> tilknyttedeJournalposter = parseJournalpost(tilknyttedeJournalposterGjenbrukQuery(createHeadersNavUserId()));
+		DokumentInfo dokumentInfo = tilknyttedeJournalposter.get(0).getDokumenter().get(0);
+		assertFalse(dokumentInfo.getDokumentvarianter().get(0).isSaksbehandlerHarTilgang());
+	}
+
+	@Test
 	void shouldReturnTilknyttedeJournalposterWithoutSakOrBruker() throws Exception {
 		tilgangskontrollPermit();
 		stubFor(get("/dokarkiv/tilknyttedeJournalposter/gjenbruk/dokumentInfoId/" + DOKUMENT_INFO_ID)
@@ -361,8 +498,12 @@ class TilknyttedeJournalposterIT extends AbstractItest {
 	}
 
 	private ResponseEntity<LinkedHashMap> tilknyttedeJournalposterGjenbrukQuery() throws URISyntaxException {
+		return tilknyttedeJournalposterGjenbrukQuery(createHeaders());
+	}
+
+	private ResponseEntity<LinkedHashMap> tilknyttedeJournalposterGjenbrukQuery(HttpHeaders headers) throws URISyntaxException {
 		GraphQLRequest request = new GraphQLRequest(stringFromClasspath("tilknyttedejournalposter/tilknyttedejournalpostergjenbruk.query"), null, null);
-		RequestEntity<GraphQLRequest> requestEntity = new RequestEntity<>(request, createHeaders(), HttpMethod.POST, new URI("/graphql"));
+		RequestEntity<GraphQLRequest> requestEntity = new RequestEntity<>(request, headers, HttpMethod.POST, new URI("/graphql"));
 		return restTemplate.exchange(requestEntity, LinkedHashMap.class);
 	}
 

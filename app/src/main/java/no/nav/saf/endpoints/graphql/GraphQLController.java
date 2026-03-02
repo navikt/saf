@@ -12,7 +12,6 @@ import graphql.schema.idl.TypeDefinitionRegistry;
 import io.swagger.v3.oas.annotations.Hidden;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.graphql.GraphQLExceptionHandler;
-import no.nav.saf.metrics.AudienceCounter;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.security.token.support.core.api.Protected;
 import no.nav.security.token.support.core.context.TokenValidationContextHolder;
@@ -42,11 +41,9 @@ public class GraphQLController {
 	private final GraphQLSchema graphQLSchema;
 	private final GraphQLExceptionHandler graphQLExceptionHandler;
 	private final TokenValidationContextHolder tokenValidationContextHolder;
-	private final AudienceCounter audienceCounter;
 
 	public GraphQLController(GraphQLWiring graphQLWiring,
 							 GraphQLExceptionHandler graphQLExceptionHandler,
-							 AudienceCounter audienceCounter,
 							 TokenValidationContextHolder tokenValidationContextHolder) {
 		this.tokenValidationContextHolder = tokenValidationContextHolder;
 		this.graphQLExceptionHandler = graphQLExceptionHandler;
@@ -56,7 +53,6 @@ public class GraphQLController {
 		TypeDefinitionRegistry typeRegistry = schemaParser.parse(schema);
 		SchemaGenerator schemaGenerator = new SchemaGenerator();
 		this.graphQLSchema = schemaGenerator.makeExecutableSchema(typeRegistry, graphQLWiring.createRuntimeWiring());
-		this.audienceCounter = audienceCounter;
 	}
 
 	@PostMapping(value = {"/graphql", "/graphql/"}, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
@@ -70,11 +66,6 @@ public class GraphQLController {
 				tokenValidationContextHolder.getTokenValidationContext()
 		);
 		addMdcData(safRequestContext);
-
-		audienceCounter.increment(
-				safRequestContext.getSecurityContext().getIssuer(),
-				safRequestContext.getSecurityContext().getAudience()
-		);
 		ExecutionResult executionResult =
 				GraphQL.newGraphQL(graphQLSchema)
 						.mutationExecutionStrategy(new AsyncSerialExecutionStrategy(graphQLExceptionHandler))

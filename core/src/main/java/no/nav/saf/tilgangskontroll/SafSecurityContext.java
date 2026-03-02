@@ -1,8 +1,6 @@
 package no.nav.saf.tilgangskontroll;
 
-import com.nimbusds.jwt.JWT;
-import com.nimbusds.jwt.JWTParser;
-import com.nimbusds.jwt.SignedJWT;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.domain.kode.Tema;
 import no.nav.saf.exceptions.AuthorizationException;
@@ -10,25 +8,22 @@ import no.nav.security.token.support.core.context.TokenValidationContext;
 import no.nav.security.token.support.core.jwt.JwtToken;
 import no.nav.security.token.support.core.jwt.JwtTokenClaims;
 
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import static lombok.AccessLevel.PRIVATE;
+import static lombok.AccessLevel.PROTECTED;
 import static no.nav.saf.util.MDCUtility.addMdcData;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
-/**
- * Holder informasjon om token. Opprettes for hvert kall til saf.
- */
+/// Holder informasjon om token. Opprettes for hvert kall til saf.
 @Slf4j
 public class SafSecurityContext {
 
 	private static final String ISSUER_AZUREV2 = "azurev2";
-	// JWT claims. https://datatracker.ietf.org/doc/html/rfc7519#section-4.1
-	static final String JWT_CLAIM_AUD = "aud";
 	// Azure claims. https://docs.microsoft.com/en-us/azure/active-directory/develop/access-tokens#payload-claims
 	static final String AZURE_CLAIM_AZP = "azp";
 	static final String AZURE_CLAIM_OID = "oid";
@@ -42,8 +37,6 @@ public class SafSecurityContext {
 			"Ingen gyldig token på Authorization header. Token må være utsted av NAV onprem security-token-service eller azure.";
 	private static final String UKJENT_CONSUMER_ID = "ukjentConsumerId";
 	private static final String UKJENT_USER_ID = "ukjentUserId";
-	@Deprecated
-	private static final String UKJENT_AUDIENCE = "ukjentAudience";
 	static final String NAVIDENT_REGEX = "^[a-zA-Z]\\d{6}$";
 	public static final Pattern NAVIDENT_PATTERN = Pattern.compile(NAVIDENT_REGEX);
 	public static final String AZURE_ROLE_ALLE_TEMA = "tema_alle";
@@ -51,32 +44,26 @@ public class SafSecurityContext {
 	private static final String DOKUMENT_TEMA_ROLE = "dokument_tema_";
 
 	private final JwtToken jwtToken;
-	private final String cachedJwtPayload;
+	@Getter(PRIVATE)
 	private final boolean jwtIssuedByAzure;
+	///  Om token er utsted av Azure i deres client credential flow.
+	@Getter
 	private final boolean jwtAzureClientCredentialFlow;
+	@Getter(PROTECTED)
+	private final boolean userIdNavAnsatt;
 	private final List<String> jwtAzureRoles;
-	private final String navUserId;
+	@Getter(PROTECTED)
+	private final String userId;
+	@Getter(PROTECTED)
+	private final String consumerId;
 
 	SafSecurityContext(TokenValidationContext tokenValidationContext,
-					   String navUserId) {
+					   String navUserIdHeader) {
 		this.jwtToken = tokenValidationContext.getFirstValidToken();
 		if (this.jwtToken == null) {
 			throw new AuthorizationException(AUTH_ERRORMESSAGE);
 		}
-		// Nav-User-Id header. Valgfri
-		this.navUserId = navUserId;
 		// Payload fra JWT hentes ut en gang pga den blir hentet ut fra kontekst ofte.
-		JWT jwt;
-		try {
-			jwt = JWTParser.parse(this.jwtToken.getEncodedToken());
-		} catch (ParseException e) {
-			throw new AuthorizationException("Kunne ikke parse JWT token.", e);
-		}
-		if (jwt instanceof SignedJWT) {
-			this.cachedJwtPayload = ((SignedJWT) jwt).getPayload().toBase64URL().toString();
-		} else {
-			throw new AuthorizationException("Kun SignedJWT er støttet i saf.");
-		}
 		this.jwtIssuedByAzure = tokenValidationContext.hasTokenFor(ISSUER_AZUREV2);
 		this.jwtAzureClientCredentialFlow = isClientCredentialFlowToken(jwtToken);
 		if (jwtIssuedByAzure && jwtAzureClientCredentialFlow) {
@@ -84,62 +71,36 @@ public class SafSecurityContext {
 		} else {
 			this.jwtAzureRoles = new ArrayList<>();
 		}
+		this.userId = mapUserId(navUserIdHeader);
+		this.userIdNavAnsatt = NAVIDENT_PATTERN.matcher(this.userId).matches();
+		this.consumerId = mapConsumerId();
 	}
 
-	/**
-	 * Brukes av saf policy enforcement point (PEP).
-	 * Lagres pga ytelse
-	 *
-	 * @return true hvis token er utsted av Azure, false ellers
-	 */
-	public boolean isJwtIssuedByAzure() {
-		return jwtIssuedByAzure;
-	}
-
-	public JwtToken getJwtToken() {
-		return jwtToken;
-	}
-
-	/**
-	 * Om token er i kontekst av system eller bruker.
-	 *
-	 * @return true hvis token er utsted av Entra client-credential flow, ellers false
-	 */
+	/// Om tilgang representerer et system eller en Nav ansatt
+	///
+	/// @return `true` hvis token representerer et system, ellers `false`
 	public boolean isSystem() {
-		return jwtAzureClientCredentialFlow;
+		return isJwtAzureClientCredentialFlow() && !isUserIdNavAnsatt();
 	}
 
-	/**
-	 * Om token er utsted av Azure i deres client credential flow.
-	 *
-	 * @return true hvis jwt er Azure client credential flow token.
-	 */
-	public boolean isJwtAzureClientCredentialFlow() {
-		return jwtAzureClientCredentialFlow;
-	}
-
-	/**
-	 * Sjekker om konsument har tilgang til journal-tema gjennom rolen "journal_tema_{tema}" i roles claim på token. (Azure)
-	 * Tema rolen gir tilgang til metadata (kun relevant for tema KTA og FAR)
-	 * tema_alle rolen gir tilgang til alle tema.
-	 * Se nais/naiserator.yaml azureator config
-	 *
-	 * @param tema Temakode. Eksempel "FOR"
-	 * @return true hvis tema rolen finnes. Ellers false
-	 */
+	/// Sjekker om konsument har tilgang til journal-tema gjennom rolen `"journal_tema_{tema}"` i roles claim på token. (Azure)
+	/// Tema rolen gir tilgang til metadata (kun relevant for tema KTA og FAR)
+	/// tema_alle rolen gir tilgang til alle tema.
+	/// Se nais/naiserator.yaml azureator config
+	///
+	/// @param tema Temakode. Eksempel `FOR`
+	/// @return true hvis tema rolen finnes. Ellers false
 	public boolean hasJournalTilgangEntraRole(Tema tema) {
 		return hasEntraRoleOrAlleTemaRole(JOURNAL_TEMA_ROLE, tema);
 	}
 
-	/**
-	 * Sjekker om konsument har tilgang til dokument-tema gjennom rolen "dokument_tema_{tema}" i roles claim på token. (Azure)
-	 * Tema rolen gir tilgang til dokumenter.
-	 * tema_alle rolen gir tilgang til alle tema.
-	 * Se nais/naiserator.yaml azureator config
-	 *
-	 * @param tema Temakode. Eksempel "FOR"
-	 * @return true hvis tema rolen finnes. Ellers false
-	 */
+	/// Sjekker om konsument har tilgang til dokument-tema gjennom rolen `"dokument_tema_{tema}"` i roles claim på token. (Azure)
+	/// Tema rolen gir tilgang til dokumenter.
+	/// tema_alle rolen gir tilgang til alle tema.
+	/// Se nais/naiserator.yaml azureator config
+	///
+	/// @param tema Temakode. Eksempel `FOR`
+	/// @return true hvis tema rolen finnes. Ellers false
 	public boolean hasDokumentTilgangEntraRole(Tema tema) {
 		return hasEntraRoleOrAlleTemaRole(DOKUMENT_TEMA_ROLE, tema);
 	}
@@ -155,41 +116,23 @@ public class SafSecurityContext {
 		return jwtAzureRoles.contains(role);
 	}
 
-	@Deprecated
-	public String getIssuer() {
-		return jwtToken.getIssuer();
-	}
-
-	@Deprecated
-	public String getAudience() {
-		try {
-			return jwtToken.getJwtTokenClaims().getAsList(JWT_CLAIM_AUD).get(0);
-		} catch (Exception e) {
-			return UKJENT_AUDIENCE;
-		}
-	}
-
-	protected String getConsumerId() {
-		if (jwtAzureClientCredentialFlow || isOnBehalfOfFlowToken()) {
-			return findAzureAppnameClaim(jwtToken.getJwtTokenClaims());
-		}
-		return UKJENT_CONSUMER_ID;
-	}
-
-	protected String getUserId() {
-		if (navUserId == null) {
+	private String mapUserId(String navUserIdHeader) {
+		if (navUserIdHeader == null) {
 			return getUserIdFromToken();
-		} else if (isNotBlank(navUserId) && isClientCredentialFlowToken(jwtToken)) {
-			if (!NAVIDENT_PATTERN.matcher(navUserId).matches()) {
-				log.error("Tjeneste kalt med Nav-User-Id header og maskin-til-maskin Entra token. Ugyldig format på NAVIdent={}. Må matche \"^[a-zA-Z]\\d{6}$\". Konsument må informeres og bes om å rette dette.", navUserId);
+		} else if (isNotBlank(navUserIdHeader) && isClientCredentialFlowToken(jwtToken)) {
+			if (!NAVIDENT_PATTERN.matcher(navUserIdHeader).matches()) {
+				log.error("Tjeneste kalt med Nav-User-Id header og maskin-til-maskin Entra token. Ugyldig format på NAVIdent={}. Må matche \"^[a-zA-Z]\\d{6}$\". Konsument må informeres og bes om å rette dette.", navUserIdHeader);
 			}
-			return navUserId;
+			return navUserIdHeader;
 		}
 		return getUserIdFromToken();
 	}
 
-	protected boolean isUserIdNavAnsatt() {
-		return NAVIDENT_PATTERN.matcher(getUserId()).matches();
+	private String mapConsumerId() {
+		if (isJwtAzureClientCredentialFlow() || isOnBehalfOfFlowToken()) {
+			return findAzureAppnameClaim(jwtToken.getJwtTokenClaims());
+		}
+		return UKJENT_CONSUMER_ID;
 	}
 
 	private String getUserIdFromToken() {
@@ -205,14 +148,14 @@ public class SafSecurityContext {
 		return UKJENT_USER_ID;
 	}
 
-	protected boolean isOnBehalfOfFlowToken() {
+	private boolean isOnBehalfOfFlowToken() {
 		final JwtTokenClaims jwtTokenClaims = jwtToken.getJwtTokenClaims();
 		return jwtTokenClaims.getStringClaim(AZURE_CLAIM_SUB) != null &&
 				jwtTokenClaims.getStringClaim(AZURE_CLAIM_OID) != null &&
 				!jwtTokenClaims.getStringClaim(AZURE_CLAIM_SUB).equals(jwtTokenClaims.getStringClaim(AZURE_CLAIM_OID));
 	}
 
-	protected boolean isClientCredentialFlowToken(JwtToken jwtToken) {
+	private boolean isClientCredentialFlowToken(JwtToken jwtToken) {
 		if (isJwtIssuedByAzure()) {
 			final JwtTokenClaims jwtTokenClaims = jwtToken.getJwtTokenClaims();
 			return jwtTokenClaims.getStringClaim(AZURE_CLAIM_SUB) != null &&
@@ -223,7 +166,7 @@ public class SafSecurityContext {
 		}
 	}
 
-	protected String findAzureAppnameClaim(JwtTokenClaims jwtTokenClaims) {
+	private String findAzureAppnameClaim(JwtTokenClaims jwtTokenClaims) {
 		if (jwtTokenClaims.getAllClaims().containsKey(AZURE_NAV_CUSTOM_CLAIM_AZP_NAME)) {
 			String azpnameClaim = jwtTokenClaims.getStringClaim(AZURE_NAV_CUSTOM_CLAIM_AZP_NAME);
 			if (isNotBlank(azpnameClaim)) {
@@ -234,7 +177,7 @@ public class SafSecurityContext {
 		return jwtTokenClaims.getStringClaim(AZURE_CLAIM_AZP);
 	}
 
-	protected List<String> findAzureRoles(JwtToken jwtToken) {
+	private List<String> findAzureRoles(JwtToken jwtToken) {
 		if (jwtToken.getJwtTokenClaims().getAllClaims().containsKey(AZURE_CLAIM_ROLES)) {
 			return jwtToken.getJwtTokenClaims().getAsList(AZURE_CLAIM_ROLES).stream().map(String::toLowerCase).collect(Collectors.toList());
 		} else {

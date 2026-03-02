@@ -643,6 +643,127 @@ class JournalpostIT extends AbstractItest {
 	}
 
 	@Test
+	void shouldReturnNullJournalpostWhenDenyOnPep1gWithNavUserIdHeader() {
+		tilgangskontrollDenyPep1g();
+		stubDokarkivJournalpost("journalpost-sak-inngaaende-happy.json");
+		stubPdl("hentPdlDataForIdent-inngaaendeBrevBruker-happy.json");
+
+		GraphQLResponse graphQLResponse = journalpostQueryNavUserId();
+		assertErrorWithCodeAndReason(graphQLResponse, FORBIDDEN, FORTROLIG_ADRESSE);
+		assertErrorWithMessage(graphQLResponse, PEP1G_DENY_REASON);
+	}
+
+	@Test
+	void shouldReturnNullJournalpostWhenDenyOnPep2WithNavUserIdHeader() {
+		tilgangskontrollDenyPep2();
+		stubBidrag();
+		stubDokarkivJournalpost("journalpost-sak-inngaaende-tema-far.json");
+		stubPdl("hentPdlDataForIdent-inngaaendeBrevBruker-happy.json");
+
+		GraphQLResponse graphQLResponse = journalpostQueryNavUserId();
+		assertErrorWithCodeAndReason(graphQLResponse, FORBIDDEN, TEMA);
+		assertErrorWithMessage(graphQLResponse, PEP2_DENY_REASON);
+	}
+
+	@Test
+	void shouldReturnNullJournalpostWhenDenyOnPep2AndMidlertidigJournalpostWithNavUserIdHeader() {
+		tilgangskontrollDenyPep2();
+		stubDokarkivJournalpost("journalpost-sak-inngaaende-midlertidig-tema-far.json");
+
+		GraphQLResponse graphQLResponse = journalpostQueryNavUserId();
+		assertErrorWithCodeAndReason(graphQLResponse, FORBIDDEN, TEMA);
+		assertErrorWithMessage(graphQLResponse, PEP2_DENY_REASON);
+	}
+
+	@Test
+	void shouldReturnSaksbehandlerTilgangFalseAndSkjultTittelWhenDenyOnPep2dWithNavUserIdHeader() {
+		tilgangskontrollDenyPep2d();
+		stubDokarkivJournalpost("journalpost-sak-inngaaende-happy.json");
+		stubPdl("hentPdlDataForIdent-inngaaendeBrevBruker-happy.json");
+
+		Journalpost journalpost = parseJournalpost(journalpostQueryNavUserId());
+		assertThat(journalpost.getTittel()).isEqualTo(SKJULT_TITTEL);
+		DokumentInfo dokumentInfo = journalpost.getDokumenter().get(0);
+		assertThat(dokumentInfo.getTittel()).isEqualTo(SKJULT_TITTEL);
+		assertThat(dokumentInfo.getDokumentvarianter().get(0).isSaksbehandlerHarTilgang()).isFalse();
+		assertThat(dokumentInfo.getLogiskeVedlegg().get(0).getTittel()).isEqualTo(SKJULT_TITTEL);
+
+		assertThat(journalpost.getBrukerTilgangAvvistBegrunnelser()).isNotNull().isEmpty();
+		assertThat(journalpost.isBrukerHarTilgang()).isTrue();
+	}
+
+	@Test
+	void shouldReturnSaksbehandlerTilgangFalseAndSkjultTittelWhenDenyOnPep8dWithNavUserIdHeader() {
+		tilgangskontrollDenyPep8d();
+		stubDokarkivJournalpost("journalpost-sak-inngaaende-avsluttet-sak.json");
+		stubPdl("hentPdlDataForIdent-inngaaendeBrevBruker-happy.json");
+
+		Journalpost journalpost = parseJournalpost(journalpostQueryNavUserId());
+		assertThat(journalpost.getTittel()).isEqualTo(SKJULT_TITTEL);
+		DokumentInfo dokumentInfo = journalpost.getDokumenter().get(0);
+		assertThat(dokumentInfo.getTittel()).isEqualTo(SKJULT_TITTEL);
+		assertThat(dokumentInfo.getDokumentvarianter().get(0).isSaksbehandlerHarTilgang()).isFalse();
+		assertThat(dokumentInfo.getLogiskeVedlegg().get(0).getTittel()).isEqualTo(SKJULT_TITTEL);
+
+		assertThat(journalpost.getBrukerTilgangAvvistBegrunnelser()).isNotNull().isEmpty();
+		assertThat(journalpost.isBrukerHarTilgang()).isTrue();
+	}
+
+	@Test
+	void shouldReturnNullJournalpostWhenDenyOnPep3WithNavUserIdHeader() {
+		tilgangskontrollDenyPep3();
+		stubDokarkivJournalpost("journalpost-sak-inngaaende-tema-bid.json");
+		stubPdl("hentPdlDataForIdent-inngaaendeBrevBruker-happy.json");
+		stubBidrag();
+
+		GraphQLResponse graphQLResponse = journalpostQueryNavUserId();
+		assertErrorWithCodeAndReason(graphQLResponse, FORBIDDEN, FORTROLIG_ADRESSE);
+		assertErrorWithMessage(graphQLResponse, PEP3_DENY_REASON);
+	}
+
+	@Test
+	void shouldReturnNullJournalpostWhenDenyOnPep4WithNavUserIdHeader() {
+		tilgangskontrollDenyPep4();
+		stubDokarkivJournalpost("journalpost-sak-inngaaende-skjerming.json");
+		stubPdl("hentPdlDataForIdent-inngaaendeBrevBruker-happy.json");
+
+		GraphQLResponse graphQLResponse = journalpostQueryNavUserId();
+		assertErrorWithCodeAndReason(graphQLResponse, FORBIDDEN, JOURNALSTATUS);
+		assertErrorWithMessage(graphQLResponse, PEP4_DENY_REASON);
+	}
+
+	@Test
+	void shouldReturnJournalpostWithOneFilteredDokumentInfoWhenDenyOnPep5WithNavUserIdHeader() {
+		tilgangskontrollDenyPep5();
+		stubDokarkivJournalpost("journalpost-sak-inngaaende-dokumentinfo-skjerming.json");
+		stubPdl("hentPdlDataForIdent-inngaaendeBrevBruker-happy.json");
+
+		Journalpost journalpost = parseJournalpost(journalpostQueryNavUserId());
+		assertThat(journalpost.getDokumenter()).hasSize(1);
+
+		assertThat(journalpost.getBrukerTilgangAvvistBegrunnelser()).isNotNull().isEmpty();
+		assertThat(journalpost.isBrukerHarTilgang()).isTrue();
+	}
+
+	@Test
+	void shouldReturnSaksbehandlerTilgangFalseOnVariantWithDenyOnPep6dWithNavUserIdHeader() {
+		tilgangskontrollDenyPep6dWithSkjerming();
+		stubDokarkivJournalpost("journalpost-sak-inngaaende-fildetaljer-skjerming.json");
+		stubPdl("hentPdlDataForIdent-inngaaendeBrevBruker-happy.json");
+
+		Journalpost journalpost = parseJournalpost(journalpostQueryNavUserId());
+		assertThat(journalpost.getDokumenter())
+				.hasSize(1)
+				.flatExtracting(DokumentInfo::getDokumentvarianter)
+				.hasSize(1)
+				.extracting(Dokumentvariant::getVariantformat, Dokumentvariant::isSaksbehandlerHarTilgang)
+				.contains(tuple(ARKIV, false));
+
+		assertThat(journalpost.getBrukerTilgangAvvistBegrunnelser()).isNotNull().isEmpty();
+		assertThat(journalpost.isBrukerHarTilgang()).isTrue();
+	}
+
+	@Test
 	void shouldReturnErrorCodeNotFoundWhenJournalpostNotFound() {
 		tilgangskontrollPermit();
 		stubDokarkivJournalpost(HttpStatus.NOT_FOUND);
