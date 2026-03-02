@@ -8,12 +8,11 @@ import no.nav.security.token.support.core.context.TokenValidationContext;
 import no.nav.security.token.support.core.jwt.JwtToken;
 import no.nav.security.token.support.core.jwt.JwtTokenClaims;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.toSet;
 import static lombok.AccessLevel.PRIVATE;
 import static lombok.AccessLevel.PROTECTED;
 import static no.nav.saf.util.MDCUtility.addMdcData;
@@ -39,9 +38,10 @@ public class SafSecurityContext {
 	private static final String UKJENT_USER_ID = "ukjentUserId";
 	static final String NAVIDENT_REGEX = "^[a-zA-Z]\\d{6}$";
 	public static final Pattern NAVIDENT_PATTERN = Pattern.compile(NAVIDENT_REGEX);
-	public static final String AZURE_ROLE_ALLE_TEMA = "tema_alle";
-	private static final String JOURNAL_TEMA_ROLE = "journal_tema_";
-	private static final String DOKUMENT_TEMA_ROLE = "dokument_tema_";
+	public static final String TEMA_ALLE_ROLE = "tema_alle";
+	public static final String TILGANG_NAV_USERID_HEADER_ROLE = "tilgang_nav_user_id_header";
+	private static final String JOURNAL_TEMA_ROLE_PREFIX = "journal_tema_";
+	private static final String DOKUMENT_TEMA_ROLE_PREFIX = "dokument_tema_";
 
 	private final JwtToken jwtToken;
 	@Getter(PRIVATE)
@@ -51,7 +51,7 @@ public class SafSecurityContext {
 	private final boolean jwtAzureClientCredentialFlow;
 	@Getter(PROTECTED)
 	private final boolean userIdNavAnsatt;
-	private final List<String> jwtAzureRoles;
+	private final Set<String> jwtAzureRoles;
 	@Getter(PROTECTED)
 	private final String userId;
 	@Getter(PROTECTED)
@@ -69,7 +69,7 @@ public class SafSecurityContext {
 		if (jwtIssuedByAzure && jwtAzureClientCredentialFlow) {
 			this.jwtAzureRoles = findAzureRoles(jwtToken);
 		} else {
-			this.jwtAzureRoles = new ArrayList<>();
+			this.jwtAzureRoles = Set.of();
 		}
 		this.userId = mapUserId(navUserIdHeader);
 		this.userIdNavAnsatt = NAVIDENT_PATTERN.matcher(this.userId).matches();
@@ -91,7 +91,7 @@ public class SafSecurityContext {
 	/// @param tema Temakode. Eksempel `FOR`
 	/// @return true hvis tema rolen finnes. Ellers false
 	public boolean hasJournalTilgangEntraRole(Tema tema) {
-		return hasEntraRoleOrAlleTemaRole(JOURNAL_TEMA_ROLE, tema);
+		return hasEntraRoleOrAlleTemaRole(JOURNAL_TEMA_ROLE_PREFIX, tema);
 	}
 
 	/// Sjekker om konsument har tilgang til dokument-tema gjennom rolen `"dokument_tema_{tema}"` i roles claim på token. (Azure)
@@ -102,11 +102,11 @@ public class SafSecurityContext {
 	/// @param tema Temakode. Eksempel `FOR`
 	/// @return true hvis tema rolen finnes. Ellers false
 	public boolean hasDokumentTilgangEntraRole(Tema tema) {
-		return hasEntraRoleOrAlleTemaRole(DOKUMENT_TEMA_ROLE, tema);
+		return hasEntraRoleOrAlleTemaRole(DOKUMENT_TEMA_ROLE_PREFIX, tema);
 	}
 
 	private boolean hasEntraRoleOrAlleTemaRole(String role, Tema tema) {
-		if (containsEntraRole(AZURE_ROLE_ALLE_TEMA)) {
+		if (containsEntraRole(TEMA_ALLE_ROLE)) {
 			return true;
 		}
 		return tema != null && containsEntraRole(role + tema.name().toLowerCase());
@@ -121,7 +121,13 @@ public class SafSecurityContext {
 			return getUserIdFromToken();
 		} else if (isNotBlank(navUserIdHeader) && isClientCredentialFlowToken(jwtToken)) {
 			if (!NAVIDENT_PATTERN.matcher(navUserIdHeader).matches()) {
-				log.error("Tjeneste kalt med Nav-User-Id header og maskin-til-maskin Entra token. Ugyldig format på NAVIdent={}. Må matche \"^[a-zA-Z]\\d{6}$\". Konsument må informeres og bes om å rette dette.", navUserIdHeader);
+				log.error("Tjeneste kalt med Nav-User-Id header og maskin-til-maskin Entra token. Ugyldig format på NAVIdent={}. Må matche \"^[a-zA-Z]\\d{6}$\". " +
+						"Konsument må informeres og bes om å rette dette. Maskinens tilganger vil bli benyttet for tilgangskontroll.", navUserIdHeader);
+				return getUserIdFromToken();
+			}
+			if (!jwtAzureRoles.contains(TILGANG_NAV_USERID_HEADER_ROLE)) {
+				log.warn("Tjeneste kalt med Nav-User-Id header og maskin-til-maskin Entra token. Konsument har ikke role={}. " +
+						"Dette må undersøkes og rettes av #team_dokumentløsninger. Maskinens tilganger vil bli benyttet for tilgangskontroll.", TILGANG_NAV_USERID_HEADER_ROLE);
 			}
 			return navUserIdHeader;
 		}
@@ -177,13 +183,15 @@ public class SafSecurityContext {
 		return jwtTokenClaims.getStringClaim(AZURE_CLAIM_AZP);
 	}
 
-	private List<String> findAzureRoles(JwtToken jwtToken) {
+	private Set<String> findAzureRoles(JwtToken jwtToken) {
 		if (jwtToken.getJwtTokenClaims().getAllClaims().containsKey(AZURE_CLAIM_ROLES)) {
-			return jwtToken.getJwtTokenClaims().getAsList(AZURE_CLAIM_ROLES).stream().map(String::toLowerCase).collect(Collectors.toList());
+			return jwtToken.getJwtTokenClaims().getAsList(AZURE_CLAIM_ROLES).stream()
+					.map(String::toLowerCase)
+					.collect(toSet());
 		} else {
 			addMdcData(UUID.randomUUID().toString(), getUserId(), getConsumerId());
 			log.error("Azure client credential token flow token mangler roles claim. Permissions.roles må være satt på client i azureator. Må undersøkes.");
-			return new ArrayList<>();
+			return Set.of();
 		}
 	}
 }

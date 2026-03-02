@@ -254,7 +254,8 @@
         "dokument_tema_til",
         "dokument_tema_tso",
         "dokument_tema_tsr",
-        "dokument_tema_saa"
+        "dokument_tema_saa",
+        "tilgang_nav_user_id_header"
       ]
     },
     {
