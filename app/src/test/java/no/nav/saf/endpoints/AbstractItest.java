@@ -42,6 +42,7 @@ import static com.github.tomakehurst.wiremock.core.Options.DYNAMIC_PORT;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Objects.requireNonNull;
 import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostMapper.SKJULT_TITTEL;
+import static no.nav.saf.tilgangskontroll.SafSecurityContext.TILGANG_NAV_USERID_HEADER_ROLE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -117,6 +118,14 @@ public abstract class AbstractItest {
 		return headers;
 	}
 
+	protected HttpHeaders createHeadersNavUserIdWithoutRoles() {
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(APPLICATION_JSON);
+		headers.setBearerAuth(getClientCredentialTokenWithoutRoles());
+		headers.set(NavHeaders.NAV_USER_ID, NAV_IDENT_SAKSBEHANDLER);
+		return headers;
+	}
+
 	protected HttpHeaders createHeadersClientCredential() {
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(APPLICATION_JSON);
@@ -142,18 +151,6 @@ public abstract class AbstractItest {
 		);
 	}
 
-	private String getClientCredentialToken() {
-		String oidSubEqual = UUID.randomUUID().toString();
-		return jwt("dev-itest:isa:gosys",
-				Map.of(
-						"oid", oidSubEqual,
-						"sub", oidSubEqual,
-						"azp_name", "dev-itest:isa:gosys",
-						"roles", List.of("dokument_tema_hje")
-				)
-		);
-	}
-
 	private String getClientCredentialTokenWithoutRoles() {
 		String oidSubEqual = UUID.randomUUID().toString();
 		return jwt("dev-itest:isa:gosys",
@@ -161,6 +158,22 @@ public abstract class AbstractItest {
 						"oid", oidSubEqual,
 						"sub", oidSubEqual,
 						"azp_name", "dev-itest:isa:gosys"
+				)
+		);
+	}
+
+	private String getClientCredentialToken() {
+		return getClientCredentialTokenWithRoles(List.of("dokument_tema_hje", TILGANG_NAV_USERID_HEADER_ROLE));
+	}
+
+	private String getClientCredentialTokenWithRoles(List<String> roles) {
+		String oidSubEqual = UUID.randomUUID().toString();
+		return jwt("dev-itest:isa:gosys",
+				Map.of(
+						"oid", oidSubEqual,
+						"sub", oidSubEqual,
+						"azp_name", "dev-itest:isa:gosys",
+						"roles", roles
 				)
 		);
 	}
