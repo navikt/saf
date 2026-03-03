@@ -709,7 +709,8 @@
       "cluster": "dev-fss",
       "roles": [
         "dokument_tema_ktr",
-        "dokument_tema_kta"
+        "dokument_tema_kta",
+        "tilgang_nav_user_id_header"
       ]
     },
     {
