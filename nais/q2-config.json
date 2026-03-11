@@ -46,6 +46,11 @@
       "cluster": "dev-gcp"
     },
     {
+      "app": "dp-saksbehandling-frontend",
+      "namespace": "teamdagpenger",
+      "cluster": "dev-gcp"
+    },
+    {
       "app": "etterlatte-brev-api",
       "namespace": "etterlatte",
       "cluster": "dev-gcp"
