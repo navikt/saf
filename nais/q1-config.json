@@ -484,16 +484,6 @@
       "cluster": "dev-fss"
     },
     {
-      "app": "dp-behov-distribuering",
-      "namespace": "teamdagpenger",
-      "cluster": "dev-gcp"
-    },
-    {
-      "app": "dp-saksbehandling-frontend",
-      "namespace": "teamdagpenger",
-      "cluster": "dev-gcp"
-    },
-    {
       "app": "ezbrev-backend-q4",
       "namespace": "teamdokumenthandtering",
       "cluster": "dev-fss",
@@ -534,11 +524,6 @@
       "app": "dokumentfordeling",
       "namespace": "arbeidsgiver",
       "cluster": "dev-fss"
-    },
-    {
-      "app": "dp-mottak",
-      "namespace": "teamdagpenger",
-      "cluster": "dev-gcp"
     },
     {
       "app": "dp-ruting",
