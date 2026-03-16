@@ -388,6 +388,11 @@
       "cluster": "prod-fss"
     },
     {
+      "app": "fpformidling",
+      "namespace": "teamforeldrepenger",
+      "cluster": "prod-gcp"
+    },
+    {
       "app": "fpsak",
       "namespace": "teamforeldrepenger",
       "cluster": "prod-fss"
