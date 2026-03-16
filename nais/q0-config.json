@@ -46,11 +46,6 @@
       ]
     },
     {
-      "app": "dokprod-q0",
-      "namespace": "teamdokumenthandtering",
-      "cluster": "dev-fss"
-    },
-    {
       "app": "arena",
       "namespace": "teamarenanais",
       "cluster": "dev-fss",

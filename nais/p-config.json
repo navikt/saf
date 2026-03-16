@@ -506,11 +506,6 @@
       ]
     },
     {
-      "app": "dokprod",
-      "namespace": "teamdokumenthandtering",
-      "cluster": "prod-fss"
-    },
-    {
       "app": "syk-dig-oppgavelytter",
       "namespace": "teamsykmelding",
       "cluster": "prod-gcp"
@@ -669,8 +664,7 @@
       "roles": [
         "journal_tema_kta",
         "dokument_tema_ktr",
-        "dokument_tema_kta",
-        "tilgang_nav_user_id_header"
+        "dokument_tema_kta"
       ]
     },
     {
