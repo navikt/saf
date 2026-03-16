@@ -383,11 +383,6 @@
       ]
     },
     {
-      "app": "dokprod-q1",
-      "namespace": "teamdokumenthandtering",
-      "cluster": "dev-fss"
-    },
-    {
       "app": "dokumenter",
       "namespace": "aap",
       "cluster": "dev-gcp"
