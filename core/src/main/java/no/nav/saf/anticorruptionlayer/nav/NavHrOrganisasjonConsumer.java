@@ -13,6 +13,7 @@ import reactor.util.retry.Retry;
 import java.time.Duration;
 
 import static java.time.Duration.ofSeconds;
+import static no.nav.saf.anticorruptionlayer.nav.NavOrgService.NAV_ORGANISASJONER_LIMIT;
 
 @Slf4j
 @Component
@@ -30,6 +31,7 @@ public class NavHrOrganisasjonConsumer {
 	NavHrOrganisasjonORDSResponse getAllNavOrganisasjon() {
 		return webClient.get()
 				.uri(uriBuilder -> uriBuilder.path("/ords/dvh/dt_hr/nav_organisasjon_orgnummer")
+						.queryParam("limit", NAV_ORGANISASJONER_LIMIT)
 						.build())
 				.httpRequest(httpRequest -> {
 					HttpClientRequest reactorRequest = httpRequest.getNativeRequest();
@@ -45,10 +47,10 @@ public class NavHrOrganisasjonConsumer {
 
 	private static void logError(Throwable e) {
 		switch (e) {
-			case DecodingException decodingException ->
+			case DecodingException _ ->
 					log.error("Klarte ikke dekode payload fra HR NAV Orgnummer tjenesten. Får ikke lastet cache. message={}",
 							e.getMessage(), e);
-			case WebClientException webClientException ->
+			case WebClientException _ ->
 					log.error("Kall til HR NAV Orgnummer tjenesten feilet. Får ikke lastet cache. message={}", e.getMessage(), e);
 			case null, default ->
 					log.error("Kall til HR NAV Orgnummer tjenesten feilet med en ukjent teknisk feil. message={}", e == null ? "null" : e.getMessage(), e);
