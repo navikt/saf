@@ -31,7 +31,7 @@ class NavOrgServiceIT extends AbstractItest {
 	}
 
 	private static void stubNavHrOrgOrds() {
-		stubFor(get("/hrnavorganisasjon/ords/dvh/dt_hr/nav_organisasjon_orgnummer")
+		stubFor(get("/hrnavorganisasjon/ords/dvh/dt_hr/nav_organisasjon_orgnummer?limit=2000")
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("nav/ords_response.json")));
