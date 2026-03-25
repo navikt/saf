@@ -1,6 +1,5 @@
 package no.nav.saf.anticorruptionlayer.joark;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.UtsendingsKanalCode;
 import no.nav.saf.anticorruptionlayer.joark.safintern.journalpost.ArkivDigitalPostadresse;
 import no.nav.saf.anticorruptionlayer.joark.safintern.journalpost.ArkivFysiskPostadresse;
@@ -10,8 +9,8 @@ import no.nav.saf.domain.visningsmodell.Utsendingsinfo;
 import no.nav.saf.domain.visningsmodell.VarselMelding;
 import no.nav.saf.exceptions.SafTechnicalException;
 import org.apache.commons.lang3.StringUtils;
+import tools.jackson.databind.json.JsonMapper;
 
-import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -31,7 +30,7 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 
 public class ArkivUtsendingsInfoMapper {
 
-	private final static ObjectMapper mapper = new ObjectMapper();
+	private final static JsonMapper mapper = new JsonMapper();
 	private static final Pattern EPOST_VARSLINGSTEKST_PATTERN = Pattern.compile("Tittel\\s(?<epostTittel>.*),\\sTekst\\s(?<epostVarslingstekst>.*)", Pattern.DOTALL);
 
 	public static Optional<Utsendingsinfo> mapArkivUtsendingsInfo(ArkivUtsendingsInfo arkivUtsendingsInfo, UtsendingsKanalCode utsendingsKanalCode) {
@@ -225,7 +224,7 @@ public class ArkivUtsendingsInfoMapper {
 	public static <T> T jsonStringToObject(String jsonString, Class<T> tClass) {
 		try {
 			return mapper.readValue(jsonString, tClass);
-		} catch (IOException e) {
+		} catch (Exception e) {
 			throw new SafTechnicalException(e.getMessage(), e);
 		}
 	}

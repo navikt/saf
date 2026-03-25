@@ -1,6 +1,5 @@
 package no.nav.saf.anticorruptionlayer.sak.hentsaksaker;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.retry.annotation.Retry;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +13,7 @@ import org.springframework.http.ProblemDetail;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.io.IOException;
 import java.util.List;
@@ -31,18 +31,18 @@ public class SakConsumer {
 	private static final String SAK_INSTANCE = "sak";
 
 	private final RestClient texasAuthorizedRestClient;
-	private final ObjectMapper objectMapper;
+	private final JsonMapper jsonMapper;
 	private final String sakScope;
 
 	public SakConsumer(RestClient texasAuthorizedRestClient,
 					   SafProperties safProperties,
-					   ObjectMapper objectMapper) {
+					   JsonMapper jsonMapper) {
 		this.sakScope = safProperties.getEndpoints().getSak().getScope();
 		this.texasAuthorizedRestClient = texasAuthorizedRestClient.mutate()
 				.baseUrl(safProperties.getEndpoints().getSak().getUrl())
 				.defaultHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 				.build();
-		this.objectMapper = objectMapper;
+		this.jsonMapper = jsonMapper;
 	}
 
 	@CircuitBreaker(name = SAK_INSTANCE)
@@ -139,7 +139,7 @@ public class SakConsumer {
 	}
 
 	private void handleError(ClientHttpResponse response, String tjeneste) throws IOException {
-		ProblemDetail problemDetail = objectMapper.readValue(response.getBody(), ProblemDetail.class);
+		ProblemDetail problemDetail = jsonMapper.readValue(response.getBody(), ProblemDetail.class);
 		if (response.getStatusCode().is4xxClientError()) {
 			throw new SafFunctionalException(format("%s feilet funksjonelt med statusKode=%s. Feilmelding=%s",
 					tjeneste, response.getStatusCode(), problemDetail.getDetail()));

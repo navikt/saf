@@ -9,7 +9,7 @@ import no.nav.saf.exceptions.SafTechnicalException;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.pep.PepAnswer;
 import org.springframework.boot.http.client.ClientHttpRequestFactoryBuilder;
-import org.springframework.boot.http.client.ClientHttpRequestFactorySettings;
+import org.springframework.boot.http.client.HttpClientSettings;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 
@@ -18,7 +18,7 @@ import java.time.Duration;
 import java.util.List;
 
 import static no.nav.saf.integration.token.NaisTexasAndCallIdRequestInterceptor.TARGET_SCOPE;
-import static org.springframework.boot.http.client.ClientHttpRequestFactorySettings.defaults;
+import static org.springframework.boot.http.client.HttpClientSettings.defaults;
 import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.HttpStatus.MULTI_STATUS;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
@@ -36,7 +36,7 @@ public class TilgangsmaskinenConsumer {
 	private final SafProperties safProperties;
 
 	public TilgangsmaskinenConsumer(RestClient texasAuthorizedRestClient, SafProperties safProperties) {
-		ClientHttpRequestFactorySettings settings = defaults()
+		HttpClientSettings settings = defaults()
 				.withConnectTimeout(Duration.ofSeconds(3))
 				.withReadTimeout(Duration.ofSeconds(4));
 		this.texasAuthorizedRestClient = texasAuthorizedRestClient.mutate()

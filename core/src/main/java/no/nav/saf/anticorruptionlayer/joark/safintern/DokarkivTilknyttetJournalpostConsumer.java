@@ -12,7 +12,7 @@ import no.nav.saf.anticorruptionlayer.joark.safintern.journalpost.ArkivJournalpo
 import no.nav.saf.config.SafProperties;
 import no.nav.saf.exceptions.JournalpostIkkeFunnetException;
 import no.nav.saf.exceptions.SafTechnicalException;
-import org.springframework.boot.autoconfigure.http.codec.HttpCodecsProperties;
+import org.springframework.boot.http.codec.autoconfigure.HttpCodecsProperties;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.ExchangeStrategies;

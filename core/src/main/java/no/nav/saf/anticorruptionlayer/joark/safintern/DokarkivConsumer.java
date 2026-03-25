@@ -19,7 +19,7 @@ import no.nav.saf.exceptions.DokumentIkkeFunnetException;
 import no.nav.saf.exceptions.JournalpostIkkeFunnetException;
 import no.nav.saf.exceptions.SafFunctionalException;
 import no.nav.saf.exceptions.SafTechnicalException;
-import org.springframework.boot.autoconfigure.http.codec.HttpCodecsProperties;
+import org.springframework.boot.http.codec.autoconfigure.HttpCodecsProperties;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.ExchangeStrategies;
 import org.springframework.web.reactive.function.client.WebClient;

@@ -1,14 +1,12 @@
 package no.nav.saf.endpoints.dokumentoversikt;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import no.nav.saf.domain.kode.Journalstatus;
 import no.nav.saf.domain.visningsmodell.Dokumentoversikt;
 import no.nav.saf.endpoints.AbstractItest;
 import no.nav.saf.endpoints.graphql.GraphQLRequest;
-import org.apache.http.HttpHeaders;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.RequestEntity;
@@ -36,9 +34,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 class DokumentoversiktJournalstatusIT extends AbstractItest {
-
-	private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper().registerModule(new JavaTimeModule());
-
 
 	@BeforeEach
 	void setUp() {
@@ -272,6 +267,6 @@ class DokumentoversiktJournalstatusIT extends AbstractItest {
 
 	private Dokumentoversikt getDokumentoversikt(ResponseEntity<LinkedHashMap> responseEntity) {
 		Map<String, Object> responseEntityData = (Map<String, Object>) responseEntity.getBody().get("data");
-		return OBJECT_MAPPER.convertValue(responseEntityData.get("dokumentoversiktJournalstatus"), Dokumentoversikt.class);
+		return jsonMapper.convertValue(responseEntityData.get("dokumentoversiktJournalstatus"), Dokumentoversikt.class);
 	}
 }

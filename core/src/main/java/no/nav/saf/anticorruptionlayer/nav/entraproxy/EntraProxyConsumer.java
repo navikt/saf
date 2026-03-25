@@ -5,7 +5,7 @@ import io.github.resilience4j.retry.annotation.Retry;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.config.SafProperties;
 import org.springframework.boot.http.client.ClientHttpRequestFactoryBuilder;
-import org.springframework.boot.http.client.ClientHttpRequestFactorySettings;
+import org.springframework.boot.http.client.HttpClientSettings;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Component;
@@ -16,7 +16,7 @@ import java.util.Set;
 
 import static no.nav.saf.cache.LokalCacheConfig.ENTRA_PROXY_TEMA_CACHE;
 import static no.nav.saf.integration.token.NaisTexasAndCallIdRequestInterceptor.TARGET_SCOPE;
-import static org.springframework.boot.http.client.ClientHttpRequestFactorySettings.defaults;
+import static org.springframework.boot.http.client.HttpClientSettings.defaults;
 
 @Slf4j
 @Component
@@ -30,7 +30,7 @@ public class EntraProxyConsumer {
 
 	public EntraProxyConsumer(RestClient texasAuthorizedRestClient,
 							  SafProperties safProperties) {
-		ClientHttpRequestFactorySettings settings = defaults()
+		HttpClientSettings settings = defaults()
 				.withConnectTimeout(Duration.ofSeconds(3))
 				.withReadTimeout(Duration.ofSeconds(4));
 		this.texasAuthorizedRestClient = texasAuthorizedRestClient.mutate()

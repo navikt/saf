@@ -1,8 +1,5 @@
 package no.nav.saf.endpoints.saker;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.SneakyThrows;
 import no.nav.saf.domain.visningsmodell.Sak;
 import no.nav.saf.endpoints.AbstractItest;
@@ -13,6 +10,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
+import tools.jackson.core.type.TypeReference;
 
 import java.net.URI;
 import java.time.LocalDateTime;
@@ -35,8 +33,6 @@ import static org.assertj.core.api.Assertions.tuple;
 import static org.springframework.http.HttpStatus.OK;
 
 class SakerIT extends AbstractItest {
-
-	private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper().registerModule(new JavaTimeModule());
 
 	@BeforeEach
 	void setup() {
@@ -255,7 +251,7 @@ class SakerIT extends AbstractItest {
 
 	private List<Sak> parseSaker(ResponseEntity<LinkedHashMap> responseEntity) {
 		Map<String, Object> responseEntityData = (Map<String, Object>) responseEntity.getBody().get("data");
-		return OBJECT_MAPPER.convertValue(responseEntityData.get("saker"), new TypeReference<>() {
+		return jsonMapper.convertValue(responseEntityData.get("saker"), new TypeReference<>() {
 		});
 	}
 }

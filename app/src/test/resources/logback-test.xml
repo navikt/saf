@@ -14,5 +14,4 @@
 	<logger level="INFO" name="hentdokument_sporbarhetslogg" additivity="false">
 		<appender-ref ref="CONSOLE"/>
 	</logger>
-
 </configuration>
