@@ -1,7 +1,5 @@
 package no.nav.saf.endpoints.journalpost;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.SneakyThrows;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.Sakstype;
 import no.nav.saf.domain.kode.Arkivsakssystem;
@@ -75,8 +73,6 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 class JournalpostIT extends AbstractItest {
 	private static final String JOURNALPOST_ID = "400000000";
 	private static final String EKSTERNREFERANSE_ID = "cd047c37-aaaf-4dda-83a3773ed636f452";
-
-	private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper().registerModule(new JavaTimeModule());
 
 	@BeforeEach
 	void setUp() {
@@ -843,7 +839,7 @@ class JournalpostIT extends AbstractItest {
 			return null;
 		} else {
 			Object journalpost = graphQLResponse.getData().get("journalpost");
-			return OBJECT_MAPPER.convertValue(journalpost, Journalpost.class);
+			return jsonMapper.convertValue(journalpost, Journalpost.class);
 		}
 	}
 

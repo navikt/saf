@@ -7,7 +7,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.5.10</version>
+		<version>4.0.4</version>
 	</parent>
 
 	<groupId>no.nav.saf</groupId>
@@ -29,19 +29,20 @@
 		<java.version>25</java.version>
 
 		<graphql-java.version>25.0</graphql-java.version>
-		<resilience4j.version>2.3.0</resilience4j.version>
-		<token-support.version>5.0.37</token-support.version>
-		<springdoc-openapi-starter-webmvc-ui.version>2.8.13</springdoc-openapi-starter-webmvc-ui.version>
-		<logstash-logback-encoder.version>8.1</logstash-logback-encoder.version>
+		<resilience4j.version>2.4.0</resilience4j.version>
+		<token-support.version>6.0.4</token-support.version>
+		<springdoc-openapi-starter-webmvc-ui.version>3.0.2</springdoc-openapi-starter-webmvc-ui.version>
+		<logstash-logback-encoder.version>9.0</logstash-logback-encoder.version>
 		<audit-log.version>3.2025.06.23_14.50-3af3985d8555</audit-log.version>
 		<microsoft-graph.version>6.59.0</microsoft-graph.version>
 		<azure-identity.version>1.18.2</azure-identity.version>
 		<context-propagation.version>1.2.0</context-propagation.version>
 		<bcprov-jdk18on.version>1.83</bcprov-jdk18on.version>
 		<safselvbetjening-innsyn-api.version>2026.02.06-13.23-57e762f</safselvbetjening-innsyn-api.version>
+		<mock-oauth2-server.version>2.3.0</mock-oauth2-server.version>
 
 		<!-- Test -->
-		<spring-cloud-starter-contract-stub-runner.version>4.3.1</spring-cloud-starter-contract-stub-runner.version>
+		<wiremock-spring-boot.version>4.2.1</wiremock-spring-boot.version>
 		<embedded-redis.version>1.4.3</embedded-redis.version>
 
 		<!-- Plugins -->
@@ -94,6 +95,11 @@
 				<scope>import</scope>
 			</dependency>
 			<dependency>
+				<groupId>io.github.resilience4j</groupId>
+				<artifactId>resilience4j-spring-boot4</artifactId>
+				<version>${resilience4j.version}</version>
+			</dependency>
+			<dependency>
 				<groupId>com.graphql-java</groupId>
 				<artifactId>graphql-java</artifactId>
 				<version>${graphql-java.version}</version>
@@ -142,9 +148,9 @@
 
 			<!-- test -->
 			<dependency>
-				<groupId>org.springframework.cloud</groupId>
-				<artifactId>spring-cloud-starter-contract-stub-runner</artifactId>
-				<version>${spring-cloud-starter-contract-stub-runner.version}</version>
+				<groupId>org.wiremock.integrations</groupId>
+				<artifactId>wiremock-spring-boot</artifactId>
+				<version>${wiremock-spring-boot.version}</version>
 				<scope>test</scope>
 			</dependency>
 			<dependency>
@@ -157,6 +163,12 @@
 				<groupId>com.github.codemonstur</groupId>
 				<artifactId>embedded-redis</artifactId>
 				<version>${embedded-redis.version}</version>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>no.nav.security</groupId>
+				<artifactId>mock-oauth2-server</artifactId>
+				<version>${mock-oauth2-server.version}</version>
 				<scope>test</scope>
 			</dependency>
 		</dependencies>
@@ -181,7 +193,7 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-failsafe-plugin</artifactId>
 				<configuration>
-					<argLine>--enable-preview</argLine>
+					<argLine>--enable-preview -Dio.netty.allocator.type=pooled</argLine>
 				</configuration>
 			</plugin>
 			<plugin>

@@ -1,6 +1,5 @@
 package no.nav.saf.endpoints.dokumentoversikt;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.matching.EqualToPattern;
 import no.nav.saf.domain.visningsmodell.DokumentInfo;
 import no.nav.saf.domain.visningsmodell.Dokumentoversikt;
@@ -48,9 +47,6 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 
 	private static final String FNR = "11111111111";
 	private static final String KANAL_REFERANSE_ID = "KANAL REFERANSE ID";
-
-	private final ObjectMapper objectMapper = new ObjectMapper();
-
 
 	@BeforeEach
 	public void setup() {
@@ -790,7 +786,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 
 	private Dokumentoversikt getDokumentoversikt(ResponseEntity<GraphQLResponse> responseEntity) {
 		Map<String, Object> responseEntityData = (Map<String, Object>) responseEntity.getBody().getData().get("dokumentoversiktBruker");
-		return objectMapper.convertValue(responseEntityData, Dokumentoversikt.class);
+		return jsonMapper.convertValue(responseEntityData, Dokumentoversikt.class);
 	}
 
 	private ResponseEntity<GraphQLResponse> callDokumentOversikBrukerWithFraDato(Map<String, Object> variables) throws URISyntaxException {

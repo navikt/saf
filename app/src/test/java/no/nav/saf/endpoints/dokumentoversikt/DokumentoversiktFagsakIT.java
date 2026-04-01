@@ -1,6 +1,5 @@
 package no.nav.saf.endpoints.dokumentoversikt;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import no.nav.saf.domain.visningsmodell.BrukerTilgangAvvistBegrunnelse;
 import no.nav.saf.domain.visningsmodell.Dokumentoversikt;
 import no.nav.saf.domain.visningsmodell.Journalpost;
@@ -41,9 +40,6 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 class DokumentoversiktFagsakIT extends AbstractItest {
 
 	private static final String KANAL_REFERANSE_ID = "KANAL REFERANSE ID";
-
-
-	private final ObjectMapper objectMapper = new ObjectMapper();
 
 	@BeforeEach
 	void setup() {
@@ -585,6 +581,6 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 
 	private Dokumentoversikt getDokumentoversikt(ResponseEntity<LinkedHashMap> responseEntity) {
 		Map<String, Object> responseEntityData = (Map<String, Object>) responseEntity.getBody().get("data");
-		return objectMapper.convertValue(responseEntityData.get("dokumentoversiktFagsak"), Dokumentoversikt.class);
+		return jsonMapper.convertValue(responseEntityData.get("dokumentoversiktFagsak"), Dokumentoversikt.class);
 	}
 }

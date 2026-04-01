@@ -8,12 +8,13 @@ import no.nav.saf.config.WebProxyProperties;
 import no.nav.saf.integration.token.NaisTexasAndCallIdRequestInterceptor;
 import no.nav.saf.integration.token.NaisTexasConsumer;
 import org.apache.hc.client5.http.classic.HttpClient;
+import org.apache.hc.client5.http.config.ConnectionConfig;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager;
 import org.apache.hc.core5.http.io.SocketConfig;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.security.autoconfigure.UserDetailsServiceAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -36,20 +37,18 @@ import static org.apache.hc.core5.util.Timeout.ofSeconds;
 public class ApplicationConfig {
 	@Bean
 	ClientHttpRequestFactory clientHttpRequestFactory(HttpClient httpClient) {
-		HttpComponentsClientHttpRequestFactory httpComponentsClientHttpRequestFactory = new HttpComponentsClientHttpRequestFactory(httpClient);
-		// Default timeouts for alle restklienter som bruker denne requestFactory.
-		// RestTemplate som behøver egne timeouts må konstruere en ny ClientHttpRequestFactory.
-		httpComponentsClientHttpRequestFactory.setConnectTimeout(5_000);
-		return httpComponentsClientHttpRequestFactory;
+		return new HttpComponentsClientHttpRequestFactory(httpClient);
 	}
 
 	@Bean
 	HttpClient httpClient() {
-		var readTimeout = SocketConfig.custom().setSoTimeout(ofSeconds(20)).build();
+		var socketConfig = SocketConfig.custom().setSoTimeout(ofSeconds(20)).build();
+		var connectionConfig = ConnectionConfig.custom().setConnectTimeout(ofSeconds(5)).build();
 		PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager();
 		connectionManager.setMaxTotal(400);
 		connectionManager.setDefaultMaxPerRoute(100);
-		connectionManager.setDefaultSocketConfig(readTimeout);
+		connectionManager.setDefaultSocketConfig(socketConfig);
+		connectionManager.setDefaultConnectionConfig(connectionConfig);
 
 		return HttpClients.custom()
 				.setConnectionManager(connectionManager)
@@ -66,18 +65,18 @@ public class ApplicationConfig {
 
 	@Bean
 	ClientHttpRequestFactory hentJournalsakInfoClientHttpRequestFactory(HttpClient hentJournalsakInfoHttpClient) {
-		HttpComponentsClientHttpRequestFactory httpComponentsClientHttpRequestFactory = new HttpComponentsClientHttpRequestFactory(hentJournalsakInfoHttpClient);
-		httpComponentsClientHttpRequestFactory.setConnectTimeout(5_000);
-		return httpComponentsClientHttpRequestFactory;
+		return new HttpComponentsClientHttpRequestFactory(hentJournalsakInfoHttpClient);
 	}
 
 	@Bean
 	HttpClient hentJournalsakInfoHttpClient() {
-		var readTimeout = SocketConfig.custom().setSoTimeout(ofSeconds(180)).build();
+		var socketConfig = SocketConfig.custom().setSoTimeout(ofSeconds(180)).build();
+		var connectionConfig = ConnectionConfig.custom().setConnectTimeout(ofSeconds(5)).build();
 		PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager();
 		connectionManager.setMaxTotal(200);
 		connectionManager.setDefaultMaxPerRoute(200);
-		connectionManager.setDefaultSocketConfig(readTimeout);
+		connectionManager.setDefaultSocketConfig(socketConfig);
+		connectionManager.setDefaultConnectionConfig(connectionConfig);
 
 		return HttpClients.custom()
 				.setConnectionManager(connectionManager)

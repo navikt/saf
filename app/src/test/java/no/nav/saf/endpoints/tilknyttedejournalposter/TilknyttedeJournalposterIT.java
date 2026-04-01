@@ -1,8 +1,5 @@
 package no.nav.saf.endpoints.tilknyttedejournalposter;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import no.nav.saf.domain.kode.Arkivsakssystem;
 import no.nav.saf.domain.kode.Journalposttype;
 import no.nav.saf.domain.kode.Journalstatus;
@@ -17,6 +14,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
+import tools.jackson.core.type.TypeReference;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -59,8 +57,6 @@ class TilknyttedeJournalposterIT extends AbstractItest {
 	private static final String DOKUMENT_INFO_ID = "500000000";
 	private static final String SAK_ID = "100000000";
 	private static final String BIDRAG_SAK_ID = "abc123";
-
-	private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper().registerModule(new JavaTimeModule());
 
 	@BeforeEach
 	void setUp() {
@@ -510,7 +506,7 @@ class TilknyttedeJournalposterIT extends AbstractItest {
 	private List<Journalpost> parseJournalpost(ResponseEntity<LinkedHashMap> responseEntity) {
 		Map<String, Object> responseEntityData = (Map<String, Object>) responseEntity.getBody().get("data");
 
-		return responseEntityData == null ? null : OBJECT_MAPPER.convertValue(responseEntityData.get("tilknyttedeJournalposter"), new TypeReference<List<Journalpost>>() {
+		return responseEntityData == null ? null : jsonMapper.convertValue(responseEntityData.get("tilknyttedeJournalposter"), new TypeReference<List<Journalpost>>() {
 		});
 	}
 }
