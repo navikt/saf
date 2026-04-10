@@ -643,6 +643,11 @@
       "cluster": "prod-gcp"
     },
     {
+      "app": "dp-soknad-orkestrator",
+      "namespace": "teamdagpenger",
+      "cluster": "prod-gcp"
+    },
+    {
       "app": "amt-distribusjon",
       "namespace": "amt",
       "cluster": "prod-gcp"
