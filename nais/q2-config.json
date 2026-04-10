@@ -51,6 +51,11 @@
       "cluster": "dev-gcp"
     },
     {
+      "app": "dp-soknad-orkestrator",
+      "namespace": "teamdagpenger",
+      "cluster": "dev-gcp"
+    },
+    {
       "app": "etterlatte-brev-api",
       "namespace": "etterlatte",
       "cluster": "dev-gcp"
