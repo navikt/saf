@@ -341,7 +341,13 @@
     {
       "app": "eessi-pensjon-pdl-produsent-q2",
       "namespace": "eessipensjon",
-      "cluster": "dev-gcp"
+      "cluster": "dev-gcp",
+      "roles": [
+        "dokument_tema_eyb",
+        "dokument_tema_eyo",
+        "dokument_tema_pen",
+        "dokument_tema_ufo"
+      ]
     },
     {
       "app": "eessi-pensjon-journalforing-q2",
