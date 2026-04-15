@@ -302,11 +302,6 @@
       "cluster": "prod-gcp"
     },
     {
-      "app": "uforetrygd-backend",
-      "namespace": "pensjonselvbetjening",
-      "cluster": "prod-gcp"
-    },
-    {
       "app": "din-uforetrygd-backend",
       "namespace": "ufore",
       "cluster": "prod-gcp"
