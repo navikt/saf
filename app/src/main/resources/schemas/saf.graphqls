@@ -578,7 +578,10 @@ enum SkjermingType {
     POL
 
     # Indikerer at det har blitt gjort en feil under mottak, journalføring eller brevproduksjon, slik at journalposten eller dokumentene er markert for sletting.
-    FEIL
+    FEIL @deprecated(reason: "Denne verdien er erstattet av ARK")
+
+    # Indikerer at det er fattet et vedtak etter arkivloven. Det skjer fordi det har blitt gjort en feil under mottak, journalføring eller brevproduksjon, slik at journalposten eller dokumentene er markert for sletting.
+    ARK
 }
 # Beskriver en type dato som kan være relevant for en journalpost, for eksempel **DATO_OPPRETTET**. Ulike datotyper returneres for ulike journalstatuser.
 enum Datotype {
@@ -901,7 +904,7 @@ enum Tema {
 
     # Omsorgspenger, pleiepenger og opplæringspenger
     OMS
-    
+
     # Oppfølging – arbeidsgiver
     OPA
 

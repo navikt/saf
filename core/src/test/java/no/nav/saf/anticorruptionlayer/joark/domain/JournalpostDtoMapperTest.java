@@ -30,6 +30,9 @@ import no.nav.saf.tilgangskontroll.pep.reasons.TemaReason;
 import no.nav.saf.tilgangskontroll.pep.reasons.UkjentEllerTekniskReason;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -311,15 +314,24 @@ class JournalpostDtoMapperTest {
 		assertEquals(PSAK.name(), journalpost.getSak().getArkivsaksystem().name());
 	}
 
-	@Test
-	void shouldMapJournalpostSkjermingType() {
+	static Stream<Arguments> shouldMapJournalpostSkjermingType() {
+		return Stream.of(
+			Arguments.of(SkjermingTypeCode.ARK, Skjerming.ARK),
+			Arguments.of(SkjermingTypeCode.POL, Skjerming.POL),
+			Arguments.of(SkjermingTypeCode.FEIL, Skjerming.FEIL)
+		);
+	}
+
+	@MethodSource
+	@ParameterizedTest
+	void shouldMapJournalpostSkjermingType(SkjermingTypeCode skjermingTypeCode, Skjerming expectedSkjerming) {
 		JournalpostDto journalpostDto = JournalpostDtoTestObjects.buildJournalpostDtoPenSaksrelasjonDto();
-		journalpostDto.setSkjerming(SkjermingTypeCode.FEIL);
+		journalpostDto.setSkjerming(skjermingTypeCode);
 		RequestCache requestCache = createTilgangBrukerRequestCachePSAK();
 
 		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, emptySet(), requestCache);
 
-		assertEquals(Skjerming.FEIL, journalpost.getSkjerming());
+		assertEquals(expectedSkjerming, journalpost.getSkjerming());
 	}
 
 	@Test

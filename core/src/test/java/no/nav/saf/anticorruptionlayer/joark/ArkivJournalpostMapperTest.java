@@ -326,18 +326,26 @@ class ArkivJournalpostMapperTest {
 		assertThat(journalpost.getSak().getTema()).isEqualTo(Tema.PEN);
 		assertThat(journalpost.getSak().getFagsakId()).isEqualTo(ARKIVSAKSRELASJON_SAK_ID.toString());
 	}
+	static Stream<Arguments> shouldMapJournalpostSkjermingType() {
+		return Stream.of(
+			Arguments.of(SkjermingTypeCode.ARK, Skjerming.ARK),
+			Arguments.of(SkjermingTypeCode.POL, Skjerming.POL),
+			Arguments.of(SkjermingTypeCode.FEIL, Skjerming.FEIL)
+		);
+	}
 
-	@Test
-	void shouldMapJournalpostSkjermingType() {
+	@MethodSource
+	@ParameterizedTest
+	void shouldMapJournalpostSkjermingType(SkjermingTypeCode skjermingTypeCode, Skjerming expectedSkjerming) {
 		ArkivJournalpost arkivJournalpost = baseArkivJournalpost()
 				.type(JournalpostTypeCode.U.name())
-				.skjerming(SkjermingTypeCode.FEIL.name())
+				.skjerming(skjermingTypeCode.name())
 				.build();
 		RequestCache requestCache = createTilgangBrukerRequestCachePSAK();
 
 		Journalpost journalpost = mapJournalpost(arkivJournalpost, emptySet(), requestCache);
 
-		assertThat(journalpost.getSkjerming()).isEqualTo(Skjerming.FEIL);
+		assertThat(journalpost.getSkjerming()).isEqualTo(expectedSkjerming);
 	}
 
 	@Test

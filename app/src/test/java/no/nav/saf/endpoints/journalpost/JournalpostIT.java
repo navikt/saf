@@ -595,11 +595,21 @@ class JournalpostIT extends AbstractItest {
 		assertErrorWithCodeAndReason(graphQLResponse, FORBIDDEN, FORTROLIG_ADRESSE);
 		assertErrorWithMessage(graphQLResponse, PEP3_DENY_REASON);
 	}
-
 	@Test
 	void shouldReturnNullJournalpostWhenDenyOnPep4() {
 		tilgangskontrollDenyPep4();
 		stubDokarkivJournalpost("journalpost-sak-inngaaende-skjerming.json");
+		stubPdl("hentPdlDataForIdent-inngaaendeBrevBruker-happy.json");
+
+		GraphQLResponse graphQLResponse = journalpostQuery();
+		assertErrorWithCodeAndReason(graphQLResponse, FORBIDDEN, JOURNALSTATUS);
+		assertErrorWithMessage(graphQLResponse, PEP4_DENY_REASON);
+	}
+
+	@Test
+	void shouldReturnNullJournalpostWhenDenyOnPep4SkjerminFEIL() {
+		tilgangskontrollDenyPep4();
+		stubDokarkivJournalpost("journalpost-sak-inngaaende-skjerming-retro.json");
 		stubPdl("hentPdlDataForIdent-inngaaendeBrevBruker-happy.json");
 
 		GraphQLResponse graphQLResponse = journalpostQuery();
