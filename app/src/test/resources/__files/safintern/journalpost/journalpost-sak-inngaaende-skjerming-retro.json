@@ -56,29 +56,8 @@
       ],
       "originalJournalpostId": 400000000,
       "status": "FERDIGSTILT",
-      "skjerming": null,
       "tilknyttetSom": "HOVEDDOKUMENT",
       "tittel": "NAV 10-07.34 Tilskudd ved kjøp av briller til barn"
-    },
-    {
-      "dokumentInfoId": 500000001,
-      "brevkode": "KVITTERING",
-      "fildetaljer": [
-        {
-          "format": "ARKIV",
-          "navn": "tilskudd.pdf",
-          "stoerrelse": "4721",
-          "type": "PDFA",
-          "uuid": "4b4d0d13-5c8c-4f6b-922c-4026f1679069"
-        }
-      ],
-      "kategori": "IS",
-      "logiskVedlegg": [],
-      "originalJournalpostId": 400000000,
-      "status": "FERDIGSTILT",
-      "skjerming": "ARK",
-      "tilknyttetSom": "VEDLEGG",
-      "tittel": "Kvittering"
     }
   ],
   "innhold": "NAV 10-07.34 Tilskudd ved kjøp av briller til barn",
@@ -87,7 +66,7 @@
   "journalfoertAvNavn": "teamdigihot:hm-joark-sink",
   "mottakskanal": "SKAN_IM",
   "opprettetAvNavn": "Max Mekker",
-  "skjerming": null,
+  "skjerming": "FEIL",
   "tilleggsopplysninger": {
     "brilletype": "trippel-brille"
   }
