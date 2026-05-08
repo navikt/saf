@@ -571,7 +571,10 @@
     {
       "app": "dokdistdpv",
       "namespace": "teamdokumenthandtering",
-      "cluster": "prod-fss"
+      "cluster": "prod-fss",
+      "roles": [
+        "journal_tema_kta"
+      ]
     },
     {
       "app": "pdl-web",
