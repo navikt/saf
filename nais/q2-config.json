@@ -360,6 +360,11 @@
       "cluster": "dev-gcp"
     },
     {
+      "app": "eessi-pensjon-dodsmelding-q2",
+      "namespace": "eessipensjon",
+      "cluster": "dev-gcp"
+    },
+    {
       "app": "pensjon-pen-q2",
       "namespace": "pensjon-q2",
       "cluster": "dev-fss"
