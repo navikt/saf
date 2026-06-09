@@ -741,6 +741,16 @@
       "app": "dokdisteformidling",
       "namespace": "teamdokumenthandtering",
       "cluster": "prod-fss"
+    },
+    {
+      "app": "brevserver-nais",
+      "namespace": "teamdokumenthandtering",
+      "cluster": "prod-fss",
+      "roles": [
+        "dokument_tema_pen",
+        "dokument_tema_ufo"
+      ]
     }
+
   ]
 }
