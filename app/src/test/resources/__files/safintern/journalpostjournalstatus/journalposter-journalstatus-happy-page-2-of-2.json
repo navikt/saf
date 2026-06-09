@@ -44,7 +44,6 @@
             }
           ],
           "kategori": "IS",
-          "logiskVedlegg": [],
           "originalJournalpostId": 639658307,
           "sensitivt": false,
           "tilknyttetSom": "HOVEDDOKUMENT",
@@ -55,8 +54,7 @@
       "journalfoerendeEnhet": "2950",
       "kanalreferanseId": "72533905-30de-4bf9-883d-bc75c2306fb7",
       "mottakskanal": "SKAN_IM",
-      "opprettetAvNavn": "dolly:testnav-dokarkiv-proxy-trygdeetate",
-      "tilleggsopplysninger": {}
+      "opprettetAvNavn": "dolly:testnav-dokarkiv-proxy-trygdeetate"
     },
     {
       "journalpostId": 639658258,
@@ -102,7 +100,6 @@
             }
           ],
           "kategori": "IS",
-          "logiskVedlegg": [],
           "originalJournalpostId": 639658258,
           "sensitivt": false,
           "tilknyttetSom": "HOVEDDOKUMENT",
@@ -113,8 +110,7 @@
       "journalfoerendeEnhet": "2950",
       "kanalreferanseId": "e83bb2b1-b710-46f4-a653-52ff94d48871",
       "mottakskanal": "SKAN_IM",
-      "opprettetAvNavn": "dolly:testnav-dokarkiv-proxy-trygdeetate",
-      "tilleggsopplysninger": {}
+      "opprettetAvNavn": "dolly:testnav-dokarkiv-proxy-trygdeetate"
     }
   ],
   "antallRader": 2,

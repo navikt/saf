@@ -3,7 +3,6 @@
   "innhold": "Journalposttittel",
   "fagomraade": "HJE",
   "status": "M",
-  "saksrelasjon": {},
   "bruker": {
     "id": "12345678910",
     "type": "PERSON"
@@ -23,9 +22,7 @@
           "type": "XML",
           "uuid": "4b4d0d13-5c8c-4f6b-922c-4026f1679068"
         }
-      ],
-      "logiskVedlegg": []
+      ]
     }
-  ],
-  "tilleggsopplysninger": {}
+  ]
 }
