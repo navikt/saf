@@ -103,6 +103,16 @@
       "roles": [
         "tema_alle"
       ]
+    },
+    {
+      "app": "brevserver-nais-q0",
+      "namespace": "teamdokumenthandtering",
+      "cluster": "dev-fss",
+      "roles": [
+        "dokument_tema_pen",
+        "dokument_tema_ufo"
+      ]
     }
+
   ]
 }
