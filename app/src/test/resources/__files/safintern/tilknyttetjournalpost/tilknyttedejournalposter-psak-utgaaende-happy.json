@@ -43,7 +43,6 @@
         }
       ],
       "kategori": "VB",
-      "logiskVedlegg": [],
       "originalJournalpostId": 400000000,
       "sensitivt": true,
       "status": "FERDIGSTILT",
@@ -70,7 +69,6 @@
         }
       ],
       "kategori": "B",
-      "logiskVedlegg": [],
       "originalJournalpostId": 400000000,
       "sensitivt": false,
       "status": "FERDIGSTILT",
@@ -97,7 +95,6 @@
         }
       ],
       "kategori": "B",
-      "logiskVedlegg": [],
       "originalJournalpostId": 400000000,
       "sensitivt": false,
       "status": "FERDIGSTILT",
@@ -124,7 +121,6 @@
         }
       ],
       "kategori": "B",
-      "logiskVedlegg": [],
       "originalJournalpostId": 400000000,
       "sensitivt": false,
       "status": "FERDIGSTILT",
@@ -136,6 +132,5 @@
   "journalfoerendeEnhet": "4808",
   "journalfoertAvNavn": "PESYS_MASKINELL",
   "opprettetAvNavn": "PESYS_MASKINELL",
-  "tilleggsopplysninger": {},
   "utsendingskanal": "S"
 }]

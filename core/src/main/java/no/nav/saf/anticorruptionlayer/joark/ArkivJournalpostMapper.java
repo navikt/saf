@@ -59,6 +59,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static java.util.Collections.emptyList;
 import static no.nav.saf.anticorruptionlayer.joark.ArkivAvsenderMottakerMapper.mapArkivAvsenderMottaker;
 import static no.nav.saf.anticorruptionlayer.joark.ArkivUtsendingsInfoMapper.mapArkivUtsendingsInfo;
 import static no.nav.saf.anticorruptionlayer.joark.domain.kode.JournalpostTypeCode.U;
@@ -542,9 +543,12 @@ public class ArkivJournalpostMapper {
 	}
 
 	private static List<LogiskVedlegg> mapLogiskeVedlegg(ArkivDokumentinfo dokumentinfo, Tema tema, Journalstatus journalstatus, Sak sak, RequestCache requestCache) {
+		if (dokumentinfo.logiskVedlegg() == null) {
+			return emptyList();
+		}
 		return dokumentinfo.logiskVedlegg().stream()
-				.map(logiskVedlegg -> new LogiskVedlegg(logiskVedlegg.vedleggId().toString(), mapTittel(logiskVedlegg.tittel(), tema, journalstatus, sak, requestCache)))
-				.collect(Collectors.toList());
+			.map(logiskVedlegg -> new LogiskVedlegg(logiskVedlegg.vedleggId().toString(), mapTittel(logiskVedlegg.tittel(), tema, journalstatus, sak, requestCache)))
+			.collect(Collectors.toList());
 	}
 
 	private static Integer mapFilstoerrelse(ArkivFildetaljer fildetaljer) {
