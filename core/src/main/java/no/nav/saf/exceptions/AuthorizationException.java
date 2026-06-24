@@ -11,7 +11,4 @@ public class AuthorizationException extends SafFunctionalException {
 		super(message, FORBIDDEN);
 	}
 
-	public AuthorizationException(String message, Throwable cause) {
-		super(message, cause, FORBIDDEN);
-	}
 }

@@ -32,8 +32,6 @@ public class SafSecurityContext {
 	static final String AZURE_NAV_CUSTOM_CLAIM_NAVIDENT = "NAVident";
 	static final String AZURE_NAV_CUSTOM_CLAIM_AZP_NAME = "azp_name";
 
-	private static final String AUTH_ERRORMESSAGE = "Tilgang er avvist. " +
-			"Ingen gyldig token på Authorization header. Token må være utsted av NAV onprem security-token-service eller azure.";
 	private static final String UKJENT_CONSUMER_ID = "ukjentConsumerId";
 	private static final String UKJENT_USER_ID = "ukjentUserId";
 	static final String NAVIDENT_REGEX = "^[a-zA-Z]\\d{6}$";
@@ -57,12 +55,12 @@ public class SafSecurityContext {
 	@Getter(PROTECTED)
 	private final String consumerId;
 
-	SafSecurityContext(TokenValidationContext tokenValidationContext,
-					   String navUserIdHeader) {
+	SafSecurityContext(TokenValidationContext tokenValidationContext, String navUserIdHeader) {
 		this.jwtToken = tokenValidationContext.getFirstValidToken();
 		if (this.jwtToken == null) {
-			throw new AuthorizationException(AUTH_ERRORMESSAGE);
+			throw new AuthorizationException("Tilgang er avvist. Ingen gyldig token på Authorization header. Token må være utsted av NAV onprem security-token-service eller azure.");
 		}
+
 		// Payload fra JWT hentes ut en gang pga den blir hentet ut fra kontekst ofte.
 		this.jwtIssuedByAzure = tokenValidationContext.hasTokenFor(ISSUER_AZUREV2);
 		this.jwtAzureClientCredentialFlow = isClientCredentialFlowToken(jwtToken);
@@ -120,14 +118,15 @@ public class SafSecurityContext {
 		if (navUserIdHeader == null) {
 			return getUserIdFromToken();
 		} else if (isNotBlank(navUserIdHeader) && isClientCredentialFlowToken(jwtToken)) {
-			if (!NAVIDENT_PATTERN.matcher(navUserIdHeader).matches()) {
+			if (navIdentHarFeilFormat(navUserIdHeader)) {
 				log.error("Tjeneste kalt med Nav-User-Id header og maskin-til-maskin Entra token. Ugyldig format på NAVIdent={}. Må matche \"^[a-zA-Z]\\d{6}$\". " +
 						"Konsument må informeres og bes om å rette dette. Maskinens tilganger vil bli benyttet for tilgangskontroll.", navUserIdHeader);
 				return getUserIdFromToken();
 			}
-			if (!jwtAzureRoles.contains(TILGANG_NAV_USERID_HEADER_ROLE)) {
-				log.warn("Tjeneste kalt med Nav-User-Id header og maskin-til-maskin Entra token. Konsument har ikke role={}. " +
-						"Dette må undersøkes og rettes av #team_dokumentløsninger. Maskinens tilganger vil bli benyttet for tilgangskontroll.", TILGANG_NAV_USERID_HEADER_ROLE);
+
+			if (rollenTilgangNavUserIdHeaderMangler()) {
+				log.warn("Tjeneste kalt med Nav-User-Id header og maskin-til-maskin Entra token. Konsument har ikke role={}.", TILGANG_NAV_USERID_HEADER_ROLE);
+				throw new AuthorizationException("Tilgang er avvist. Tjeneste kalt med Nav-User-Id header og maskin-til-maskin Entra token krever role=%s.".formatted(TILGANG_NAV_USERID_HEADER_ROLE));
 			}
 			return navUserIdHeader;
 		}
@@ -194,4 +193,13 @@ public class SafSecurityContext {
 			return Set.of();
 		}
 	}
+
+	private static boolean navIdentHarFeilFormat(String navUserIdHeader) {
+		return !NAVIDENT_PATTERN.matcher(navUserIdHeader).matches();
+	}
+
+	private boolean rollenTilgangNavUserIdHeaderMangler() {
+		return !jwtAzureRoles.contains(TILGANG_NAV_USERID_HEADER_ROLE);
+	}
+
 }

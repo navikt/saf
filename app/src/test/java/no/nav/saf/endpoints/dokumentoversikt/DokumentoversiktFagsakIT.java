@@ -33,6 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -93,6 +94,13 @@ class DokumentoversiktFagsakIT extends AbstractItest {
 		assertBrukerTilgang(dokumentoversikt.getJournalposter().toArray(Journalpost[]::new));
 
 		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter")).withRequestBody(matchingJsonPath("$.gsakSakIds", containing("119185782"))));
+	}
+
+	@Test
+	void shouldReturnForbiddenForDokumentoversiktFagsakWhenSystemAndNavUserIdHeaderWithoutRole() throws URISyntaxException {
+		var response = callDokumentOversikFagsakSak(createHeadersNavUserIdWithoutRoles());
+
+		assertEquals(FORBIDDEN, response.getStatusCode());
 	}
 
 	@Test

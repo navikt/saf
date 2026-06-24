@@ -391,6 +391,14 @@ class HentDokumentIT extends AbstractItest {
 	}
 
 	@Test
+	void shouldReturnForbiddenForHentDokumentWhenSystemAndNavUserIdHeader() {
+		var response = callHentDokumentNavUserIdHeaderWithoutRoles();
+
+		assertThat(response.getStatusCode()).isEqualTo(FORBIDDEN);
+		assertThat(response.getBody()).contains("Tilgang er avvist. Tjeneste kalt med Nav-User-Id header og maskin-til-maskin Entra token krever role=tilgang_nav_user_id_header.");
+	}
+
+	@Test
 	void shouldGetForbiddenFromPep1gWithNavUserIdHeader() {
 		tilgangskontrollDenyPep1g();
 		stubPdl();
@@ -939,6 +947,10 @@ class HentDokumentIT extends AbstractItest {
 
 	private ResponseEntity<String> callHentDokumentNavUserIdHeader() {
 		return callHentDokument(createHeadersNavUserId());
+	}
+
+	private ResponseEntity<String> callHentDokumentNavUserIdHeaderWithoutRoles() {
+		return callHentDokument(createHeadersNavUserIdWithoutRoles());
 	}
 
 	private ResponseEntity<String> callHentDokument(HttpHeaders headers) {

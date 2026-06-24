@@ -176,6 +176,13 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 	}
 
 	@Test
+	void shouldReturnForbiddenForDokumentoversiktBrukerWhenSystemAndNavUserIdHeaderWithoutRole() throws URISyntaxException {
+		ResponseEntity<GraphQLResponse> responseEntity = callDokumentOversikBrukerWithFnr(createHeadersNavUserIdWithoutRoles());
+
+		assertEquals(HttpStatus.FORBIDDEN, responseEntity.getStatusCode());
+	}
+
+	@Test
 	void shouldHentDokumentoversiktBrukerWithOrgNr() throws URISyntaxException {
 		tilgangskontrollPermit();
 		stubNavHrOrganisasjonNei(ORG_NR);
