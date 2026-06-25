@@ -6,7 +6,6 @@ import no.nav.saf.anticorruptionlayer.nav.NavOrgService;
 import no.nav.saf.domain.visningsmodell.Dokumentoversikt;
 import no.nav.saf.domain.visningsmodell.Journalpost;
 import no.nav.saf.endpoints.testconfig.ValkeyCacheTestConfig;
-import no.nav.saf.headers.NavHeaders;
 import no.nav.security.mock.oauth2.MockOAuth2Server;
 import no.nav.security.mock.oauth2.token.DefaultOAuth2TokenCallback;
 import no.nav.security.token.support.spring.test.EnableMockOAuth2Server;
@@ -43,6 +42,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Objects.requireNonNull;
 import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostMapper.SKJULT_TITTEL;
+import static no.nav.saf.headers.NavHeaders.NAV_USER_ID;
 import static no.nav.saf.tilgangskontroll.SafSecurityContext.TILGANG_NAV_USERID_HEADER_ROLE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -118,7 +118,7 @@ public abstract class AbstractItest {
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(APPLICATION_JSON);
 		headers.setBearerAuth(getClientCredentialToken());
-		headers.set(NavHeaders.NAV_USER_ID, NAV_IDENT_SAKSBEHANDLER);
+		headers.set(NAV_USER_ID, NAV_IDENT_SAKSBEHANDLER);
 		return headers;
 	}
 
@@ -126,7 +126,7 @@ public abstract class AbstractItest {
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(APPLICATION_JSON);
 		headers.setBearerAuth(getClientCredentialTokenWithoutRoles());
-		headers.set(NavHeaders.NAV_USER_ID, NAV_IDENT_SAKSBEHANDLER);
+		headers.set(NAV_USER_ID, NAV_IDENT_SAKSBEHANDLER);
 		return headers;
 	}
 

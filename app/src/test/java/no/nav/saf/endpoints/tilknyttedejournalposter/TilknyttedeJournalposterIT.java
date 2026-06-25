@@ -49,6 +49,7 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
+import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
@@ -140,6 +141,13 @@ class TilknyttedeJournalposterIT extends AbstractItest {
 		assertThat(dokumentInfo1.getLogiskeVedlegg().get(0).getTittel(), is("Søknadsinfo"));
 		assertThat(dokumentInfo1.getDokumentvarianter().get(0).getVariantformat(), is(ARKIV));
 		assertTrue(dokumentInfo1.getDokumentvarianter().get(0).isSaksbehandlerHarTilgang());
+	}
+
+	@Test
+	void shouldReturnForbiddenForTilknyttedeJournalposterWhenSystemAndNavUserIdHeaderWithoutRole() throws Exception {
+		var response = tilknyttedeJournalposterGjenbrukQuery(createHeadersNavUserIdWithoutRoles());
+
+		assertThat(response.getStatusCode(), is(FORBIDDEN));
 	}
 
 	@Test

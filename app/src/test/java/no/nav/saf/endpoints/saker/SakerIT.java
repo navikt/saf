@@ -30,6 +30,7 @@ import static no.nav.saf.domain.kode.Tema.PEN;
 import static no.nav.saf.domain.kode.Tema.UFO;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
+import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.HttpStatus.OK;
 
 class SakerIT extends AbstractItest {
@@ -197,6 +198,14 @@ class SakerIT extends AbstractItest {
 						tuple("135695442", GSAK, LocalDateTime.parse("2018-07-17T13:49:01", ISO_LOCAL_DATE_TIME), "BISYS", "654321", FAGSAK, BID),
 						tuple("21998969", PSAK, LocalDateTime.parse("2015-06-01T00:00", ISO_LOCAL_DATE_TIME), "PP01", "21998969", FAGSAK, UFO)
 				);
+	}
+
+	@Test
+	void shouldReturnForbiddenForSakerWhenSystemAndNavUserIdHeaderWithoutRole() {
+		var response = callSakerWithAktoerId(createHeadersNavUserIdWithoutRoles());
+
+		assertThat(response.getStatusCode()).isEqualTo(FORBIDDEN);
+		assertThat(response.getBody().get("message")).isEqualTo("Tilgang er avvist. Tjeneste kalt med Nav-User-Id header og maskin-til-maskin Entra token krever role=tilgang_nav_user_id_header.");
 	}
 
 	@Test
