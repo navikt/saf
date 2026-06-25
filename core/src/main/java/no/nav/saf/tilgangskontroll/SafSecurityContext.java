@@ -125,7 +125,7 @@ public class SafSecurityContext {
 			}
 
 			if (rollenTilgangNavUserIdHeaderMangler()) {
-				log.warn("Tjeneste kalt med Nav-User-Id header og maskin-til-maskin Entra token. Konsument har ikke role={}.", TILGANG_NAV_USERID_HEADER_ROLE);
+				log.error("Tjeneste kalt med Nav-User-Id header og maskin-til-maskin Entra token. Konsument har ikke role={}.", TILGANG_NAV_USERID_HEADER_ROLE);
 				throw new AuthorizationException("Tilgang er avvist. Tjeneste kalt med Nav-User-Id header og maskin-til-maskin Entra token krever role=%s.".formatted(TILGANG_NAV_USERID_HEADER_ROLE));
 			}
 			return navUserIdHeader;
