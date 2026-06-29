@@ -136,6 +136,11 @@
       "cluster": "dev-gcp"
     },
     {
+      "app": "gosys-backend-q2",
+      "namespace": "isa",
+      "cluster": "dev-gcp"
+    },
+    {
       "app": "salesforce",
       "namespace": "teamcrm",
       "cluster": "dev-external"
