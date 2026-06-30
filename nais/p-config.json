@@ -91,6 +91,11 @@
       "cluster": "prod-gcp"
     },
     {
+      "app": "gosys-backend",
+      "namespace": "isa",
+      "cluster": "prod-gcp"
+    },
+    {
       "app": "jfr-infotrygd",
       "namespace": "isa",
       "cluster": "prod-fss"
