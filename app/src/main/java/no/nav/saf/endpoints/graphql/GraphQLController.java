@@ -55,7 +55,7 @@ public class GraphQLController {
 		this.graphQLSchema = schemaGenerator.makeExecutableSchema(typeRegistry, graphQLWiring.createRuntimeWiring());
 	}
 
-	@PostMapping(value = {"/graphql", "/graphql/"}, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+	@PostMapping(value = {"/graphql"}, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
 	public Map<String, Object> graphQLRequest(@RequestHeader(value = X_CORRELATION_ID, required = false) String xCorrelationId,
 											  @RequestHeader(value = NAV_CALLID, required = false) String navCallid,
 											  @RequestHeader(value = NAV_USER_ID, required = false) String navUserId,
