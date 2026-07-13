@@ -811,6 +811,11 @@
         "dokument_tema_pen",
         "dokument_tema_ufo"
       ]
+    },
+    {
+      "app": "sokos-up-kontoregister-api",
+      "namespace": "okonomi",
+      "cluster": "dev-gcp"
     }
   ]
 }
