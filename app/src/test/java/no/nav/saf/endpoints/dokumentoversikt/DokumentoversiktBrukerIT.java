@@ -373,7 +373,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 		stubSakMedAktoerId("sak-sakerBySaksId-happy.json");
 		stubFinnjournalposter("finnjournalposter-empty.json");
 		stubPensjonSakSammendrag("psak-hentSakSammendragListe-happy-empty.json");
-		stubFor(get("/bidrag/654321").willReturn(aResponse()
+		stubFor(get("/bidrag/v2/pip/sak/654321").willReturn(aResponse()
 				.withStatus(INTERNAL_SERVER_ERROR.value())
 				.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)));
 
@@ -385,7 +385,7 @@ class DokumentoversiktBrukerIT extends AbstractItest {
 		verify(postRequestedFor(urlEqualTo("/pdl")).withRequestBody(matchingJsonPath("$.variables.ident", equalTo(AKTOER_ID))));
 		verify(postRequestedFor(urlEqualTo("/hentjournalsakinfo/finnjournalposter")).withRequestBody(containing("{\"gsakSakIds\":[\"135695442\"],\"psakSakIds\":[]")));
 		verify(getRequestedFor(urlEqualTo(PENSJON_API_SAK_SAMMENDRAG_URL)).withHeader("fnr", new EqualToPattern(FNR)));
-		verify(getRequestedFor(urlEqualTo("/bidrag/654321")));
+		verify(getRequestedFor(urlEqualTo("/bidrag/v2/pip/sak/654321")));
 	}
 
 	@Test

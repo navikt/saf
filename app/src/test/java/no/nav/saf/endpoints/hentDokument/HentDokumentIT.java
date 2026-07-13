@@ -889,7 +889,7 @@ class HentDokumentIT extends AbstractItest {
 	}
 
 	private static void stubHappyBisysSak() {
-		stubFor(get("/bidrag/BISYS2000")
+		stubFor(get("/bidrag/v2/pip/sak/BISYS2000")
 				.willReturn(aResponse()
 						.withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)

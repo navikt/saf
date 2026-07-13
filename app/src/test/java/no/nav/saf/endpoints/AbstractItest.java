@@ -298,7 +298,7 @@ public abstract class AbstractItest {
 	}
 
 	protected static void stubBidrag(String sakId, String filename) {
-		stubFor(get("/bidrag/" + sakId).willReturn(aResponse().withStatus(OK.value())
+		stubFor(get("/bidrag/v2/pip/sak/" + sakId).willReturn(aResponse().withStatus(OK.value())
 				.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 				.withBodyFile("bidrag/" + filename)));
 	}
