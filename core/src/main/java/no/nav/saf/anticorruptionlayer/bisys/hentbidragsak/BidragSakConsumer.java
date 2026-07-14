@@ -6,6 +6,7 @@ import no.nav.saf.config.SafProperties;
 import no.nav.saf.exceptions.SafFunctionalException;
 import no.nav.saf.exceptions.SafTechnicalException;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.http.ProblemDetail;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 
@@ -45,14 +46,14 @@ public class BidragSakConsumer {
 							case NO_CONTENT ->
 									throw new SafFunctionalException(String.format("hentBidragSak fikk tilbake tom respons. Ingen innslag funnet på sakId=%s", sakId));
 							case BAD_REQUEST ->
-									throw new SafTechnicalException(String.format("hentBidragSak feilet. SakId=%s er ikke 7 tegn", sakId),
+									throw new SafTechnicalException(String.format("hentBidragSak request validering feilet for sakId=%s. body=%s", sakId, clientResponse.bodyTo(ProblemDetail.class)),
 											clientResponse.getStatusCode());
 							case NOT_FOUND ->
-									throw new SafTechnicalException(String.format("hentBidragSak kunne ikke kontakte bidrag-pip. sakId=%s", sakId),
+									throw new SafTechnicalException(String.format("hentBidragSak fant ikke sakId=%s", sakId),
 											clientResponse.getStatusCode());
 							default ->
-									throw new SafTechnicalException(String.format("hentBidragSak feilet teknisk med statusKode=%s. Responsebody=%s",
-											clientResponse.getStatusCode(), clientResponse.bodyTo(String.class)), clientResponse.getStatusCode());
+									throw new SafTechnicalException(String.format("hentBidragSak feilet teknisk med statusKode=%s. body=%s",
+											clientResponse.getStatusCode(), clientResponse.bodyTo(ProblemDetail.class)), clientResponse.getStatusCode());
 						});
 	}
 }
