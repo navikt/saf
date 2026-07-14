@@ -53,57 +53,43 @@ public class SafProperties {
 	public static class Endpoints {
 		private String overrideMsGraphServiceRoot;
 
-		/**
-		 * Baseurl til NAV HR tjenestene
-		 */
+		/// Baseurl til NAV HR tjenestene
 		@NotEmpty
 		private String hrNavUrl;
 
-		/**
-		 * Base URL og scope til pensjon
-		 */
+		/// Base URL og scope til pensjon
 		@NotNull
 		private AzureEndpoint pensjon;
 
-		/**
-		 * URL og scope til PDL
-		 */
+		/// URL og scope til PDL
 		@NotNull
 		private AzureEndpoint pdl;
 
-		/**
-		 * URL og scope til safintern oppslagstjenesten i dokarkiv.
-		 */
+		/// URL og scope til safintern oppslagstjenesten i dokarkiv.
 		@NotNull
 		private AzureEndpoint dokarkiv;
 
-		/**
-		 * Url og scope til fpsak PIP
-		 */
+		/// Url og scope til fpsak PIP
 		@NotNull
 		private AzureEndpoint fpsak;
 
-		/**
-		 * Url og scope til sak
-		 */
+		/// Url og scope til sak
 		@NotNull
 		private AzureEndpoint sak;
 
-		/**
-		 * Url og scope til k9sak
-		 */
+		/// Url og scope til k9sak
 		@NotNull
 		private AzureEndpoint k9sak;
 
-		/**
-		 * Url og scope til Tilgangsmaskinen
-		 */
+		/// Url og scope til bidrag-sak
+		@NotNull
+		private AzureEndpoint bidragsak;
+
+		/// Url og scope til Tilgangsmaskinen
 		@NotNull
 		private AzureEndpoint tilgangsmaskinen;
 
-		/**
-		 * Url og scope til Entra Proxy
-		 */
+		/// Url og scope til Entra Proxy
 		@NotNull
 		private AzureEndpoint entraProxy;
 	}
@@ -111,14 +97,10 @@ public class SafProperties {
 	@Data
 	@Validated
 	public static class AzureEndpoint {
-		/**
-		 * Url til tjeneste som har azure autorisasjon
-		 */
+		/// Url til tjeneste som har azure autorisasjon
 		@NotEmpty
 		private String url;
-		/**
-		 * Scope til azure client credential flow
-		 */
+		/// Scope til azure client credential flow
 		@NotEmpty
 		private String scope;
 	}

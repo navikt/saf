@@ -299,7 +299,7 @@ class TilknyttedeJournalposterIT extends AbstractItest {
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("sak/sak-sakBySaksId-happy.json")));
-		stubFor(get("/bidrag/" + BIDRAG_SAK_ID)
+		stubFor(get("/bidrag/v2/pip/sak/" + BIDRAG_SAK_ID)
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("bidrag/bidragsak-happy.json")));
@@ -410,7 +410,7 @@ class TilknyttedeJournalposterIT extends AbstractItest {
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("sak/sak-sakBySaksId-happy.json")));
-		stubFor(get("/bidrag/" + BIDRAG_SAK_ID)
+		stubFor(get("/bidrag/v2/pip/sak/" + BIDRAG_SAK_ID)
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("bidrag/bidragsak-happy.json")));
