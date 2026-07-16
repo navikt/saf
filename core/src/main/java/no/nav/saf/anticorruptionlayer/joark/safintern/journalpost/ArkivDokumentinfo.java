@@ -7,7 +7,6 @@ import no.nav.safselvbetjening.tilgang.TilgangSkjermingType;
 
 import java.time.OffsetDateTime;
 import java.util.List;
-import java.util.Set;
 
 @Builder
 public record ArkivDokumentinfo(
@@ -20,7 +19,7 @@ public record ArkivDokumentinfo(
 		OffsetDateTime ferdigDato,
 		Boolean kassert,
 		String kategori,
-		Set<ArkivLogiskVedlegg> logiskVedlegg,
+		List<ArkivLogiskVedlegg> logiskVedlegg,
 		Long originalJournalpostId,
 		Boolean sensitivt,
 		String status,

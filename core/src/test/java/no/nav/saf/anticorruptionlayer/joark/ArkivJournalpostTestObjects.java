@@ -25,7 +25,6 @@ import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostMapper.TILKNYTTET_SOM_HOVEDDOKUMENT;
 import static no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostMapper.TILKNYTTET_SOM_VEDLEGG;
@@ -252,7 +251,7 @@ public class ArkivJournalpostTestObjects {
 								.build()));
 	}
 
-	private static Set<ArkivLogiskVedlegg> logiskVedlegg() {
-		return Set.of(new ArkivLogiskVedlegg(LOGISK_VEDLEGG_ID, LOGISK_VEDLEGG_TITTEL));
+	private static List<ArkivLogiskVedlegg> logiskVedlegg() {
+		return List.of(new ArkivLogiskVedlegg(LOGISK_VEDLEGG_ID, LOGISK_VEDLEGG_TITTEL));
 	}
 }
