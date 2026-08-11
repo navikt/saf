@@ -765,7 +765,10 @@
     {
       "app": "rpa-nos-robot",
       "namespace": "team-rpa",
-      "cluster": "dev-fss"
+      "cluster": "dev-fss",
+      "roles": [
+        "tema_alle"
+      ]
     },
     {
       "app": "dokdistfordeling",
