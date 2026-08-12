@@ -767,7 +767,7 @@
       "namespace": "team-rpa",
       "cluster": "dev-fss",
       "roles": [
-        "tema_alle"
+        "dokument_tema_sto"
       ]
     },
     {
