@@ -820,6 +820,11 @@
       "app": "sokos-up-kontoregister-api",
       "namespace": "okonomi",
       "cluster": "dev-gcp"
+    },
+    {
+      "app": "translatore-backend-q2",
+      "namespace": "ki-oversetter",
+      "cluster": "dev-gcp"
     }
   ]
 }
