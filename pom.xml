@@ -47,7 +47,7 @@
 		<embedded-redis.version>1.4.3</embedded-redis.version>
 
 		<!-- Plugins -->
-		<maven-toolchains-plugin.version>3.2.0</maven-toolchains-plugin.version>
+		<maven-toolchains-plugin.version>3.3.0</maven-toolchains-plugin.version>
 	</properties>
 
 	<dependencyManagement>
