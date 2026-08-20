@@ -103,6 +103,7 @@ class HentDokumentIT extends AbstractItest {
 				"flexString2=" + DOKUMENT_ID,
 				"flexString2Label=dokumentInfoId",
 				"act=hentdokument_saksbehandler",
+				"shost=dev-itest:isa:gosys",
 				"sproc=",
 				"end=");
 	}
