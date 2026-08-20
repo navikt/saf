@@ -32,6 +32,7 @@ class HentDokumentSporbarhetslogger {
 				   HentDokumentTilgang hentDokumentTilgang, SafRequestContext safRequestContext) {
 		try {
 			String journalpostTittel = hentDokumentTilgang.tilgangJournalpost().getJournalpostTittel();
+			String requestingFagsystem = safRequestContext.getConsumerId();
 			String sourceUserId = safRequestContext.getUserId();
 			CefMessage message = CefMessage.builder()
 					.version(0)
@@ -47,13 +48,16 @@ class HentDokumentSporbarhetslogger {
 					.sourceUserId(sourceUserId != null ? sourceUserId : "ukjent bruker")
 					.authorizationDecision(PERMIT)
 					.extension("act", MACHINE_HENT_DOKUMENT_SAKSBEHANDLER)
+					.extension("shost", requestingFagsystem)
 					.flexString(1, "journalpostId", journalpostId)
 					.flexString(2, "dokumentInfoId", dokumentInfoId)
 					.customString(3, "variantformat", variantFormat)
 					.customString(5, "tittel", journalpostTittel != null ? journalpostTittel : "ukjent tittel")
 					.customString(6, "tema", getTema(hentDokumentTilgang.tilgangSak()))
 					.build();
-			auditlog.info(message.toString());
+			String messageString = message.toString();
+			auditlog.info(messageString);
+			log.debug("saf hentdokument auditlog: {}", messageString);
 		} catch (NullPointerException e) {
 			log.error("saf hentdokument Unable to audit log for journalpostId={} dokumentInfoId={}, variantFormat={}", journalpostId, dokumentInfoId, variantFormat, e);
 		}
