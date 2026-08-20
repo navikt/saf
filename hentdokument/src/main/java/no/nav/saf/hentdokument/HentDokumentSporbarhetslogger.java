@@ -57,7 +57,7 @@ class HentDokumentSporbarhetslogger {
 					.build();
 			String messageString = message.toString();
 			auditlog.info(messageString);
-			log.debug("saf hentdokument auditlog: {}", messageString);
+			log.info("saf hentdokument auditlog: {}", messageString);
 		} catch (NullPointerException e) {
 			log.error("saf hentdokument Unable to audit log for journalpostId={} dokumentInfoId={}, variantFormat={}", journalpostId, dokumentInfoId, variantFormat, e);
 		}
