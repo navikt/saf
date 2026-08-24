@@ -32,6 +32,7 @@ class HentDokumentSporbarhetslogger {
 				   HentDokumentTilgang hentDokumentTilgang, SafRequestContext safRequestContext) {
 		try {
 			String journalpostTittel = hentDokumentTilgang.tilgangJournalpost().getJournalpostTittel();
+			String requestingFagsystem = safRequestContext.getConsumerId();
 			String sourceUserId = safRequestContext.getUserId();
 			CefMessage message = CefMessage.builder()
 					.version(0)
@@ -47,6 +48,7 @@ class HentDokumentSporbarhetslogger {
 					.sourceUserId(sourceUserId != null ? sourceUserId : "ukjent bruker")
 					.authorizationDecision(PERMIT)
 					.extension("act", MACHINE_HENT_DOKUMENT_SAKSBEHANDLER)
+					.extension("shost", requestingFagsystem)
 					.flexString(1, "journalpostId", journalpostId)
 					.flexString(2, "dokumentInfoId", dokumentInfoId)
 					.customString(3, "variantformat", variantFormat)
