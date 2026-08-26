@@ -127,43 +127,63 @@ public class JournalpostDtoMapper {
 		List<DokumentInfo> dokumenter = journalpostDto.getDokumenter().stream()
 				.filter(dokumentInfoDto -> shouldMapDokumentInfo(journalpostId, dokumentInfoDto.getDokumentInfoId(), requestCache))
 				.sorted(sortDokumentInfoByTilknyttetSomRekkefoelgeDokumentInfoId())
-				.map(dokumentInfoDto -> DokumentInfo.builder()
-						.parent(journalpost)
-						.dokumentInfoId(dokumentInfoDto.getDokumentInfoId())
-						.tittel(mapTittel(dokumentInfoDto.getTittel(), tema, journalstatus, sak, requestCache))
-						.brevkode(mapBrevkode(journalpostDto, dokumentInfoDto))
-						.dokumentstatus(mapDokumentstatus(dokumentInfoDto))
-						.datoFerdigstilt(toLocalDateTime(dokumentInfoDto.getDatoFerdigstilt()))
-						.originalJournalpostId(dokumentInfoDto.getOrigJournalpostId() == null ? null : dokumentInfoDto.getOrigJournalpostId()
-								.toString())
-						.skjerming(dokumentInfoDto.getSkjerming() == null ? null : dokumentInfoDto.getSkjerming()
-								.getSafSkjerming()
-						)
-						.sensitivtPselv(mapSensitivPselv(dokumentInfoDto.getSensitivt()))
-						.dokumentvarianter(dokumentInfoDto.getVarianter().stream()
-								.map(variantDto -> {
-									TilgangDokument tilgangDokument = tilgangJournalpost.getDokumenter().stream().filter(dok -> dok.id() == Long.parseLong(dokumentInfoDto.getDokumentInfoId())).findFirst().orElse(null);
-									List<BrukerTilgangAvvistBegrunnelse> variantBrukerTilgangAvvistBegrunnelser = mapbrukerTilgangAvvistBegrunnelser(utledTilgangService.utledTilgangDokument(tilgangJournalpost, tilgangDokument, variantDto.getTilgangVariant(), brukerIdenter));
-									return Dokumentvariant.builder()
-											.saksbehandlerHarTilgang(determineSaksbehandlerTilgang(journalpost, dokumentInfoDto, variantDto, requestCache))
-											.variantformat(variantDto.getVariantf().getSafVariantformat())
-											.filnavn(variantDto.getFilnavn())
-											.filuuid(variantDto.getFiluuid())
-											.filtype(mapFiltype(variantDto))
-											.skjerming(variantDto.getSkjerming() == null ? null : variantDto.getSkjerming()
-													.getSafSkjerming())
-											.filstoerrelse(isBlank(variantDto.getFilstorrelse()) ? 0 : valueOf(variantDto.getFilstorrelse()))
-											.brukerTilgangAvvistBegrunnelser(variantBrukerTilgangAvvistBegrunnelser)
-											.brukerHarTilgang(variantBrukerTilgangAvvistBegrunnelser.isEmpty())
-											.build();
-								})
-								.collect(Collectors.toList()))
-						.logiskeVedlegg(dokumentInfoDto.getLogiske().stream()
-								.map(logiskVedleggDto -> new LogiskVedlegg(logiskVedleggDto.getVedleggId(), mapTittel(logiskVedleggDto.getTittel(), tema, journalstatus, sak, requestCache)))
-								.collect(Collectors.toList()))
-						.build()).toList();
+				.map(dokumentInfoDto -> mapDokumentInfo(journalpostDto, dokumentInfoDto, journalpost, tilgangJournalpost, brukerIdenter, requestCache))
+				.toList();
 		journalpost.getDokumenter().addAll(dokumenter);
 		return journalpost;
+	}
+
+	private DokumentInfo mapDokumentInfo(JournalpostDto journalpostDto, DokumentInfoDto dokumentInfoDto, Journalpost journalpost,
+										 TilgangJournalpost tilgangJournalpost, Set<Ident> brukerIdenter, RequestCache requestCache) {
+		return DokumentInfo.builder()
+				.parent(journalpost)
+				.dokumentInfoId(dokumentInfoDto.getDokumentInfoId())
+				.tittel(mapTittel(dokumentInfoDto.getTittel(), journalpost.getTema(), journalpost.getJournalstatus(), journalpost.getSak(), requestCache))
+				.brevkode(mapBrevkode(journalpostDto, dokumentInfoDto))
+				.dokumentstatus(mapDokumentstatus(dokumentInfoDto))
+				.datoFerdigstilt(toLocalDateTime(dokumentInfoDto.getDatoFerdigstilt()))
+				.originalJournalpostId(dokumentInfoDto.getOrigJournalpostId() == null ? null : dokumentInfoDto.getOrigJournalpostId().toString())
+				.skjerming(dokumentInfoDto.getSkjerming() == null ? null : dokumentInfoDto.getSkjerming().getSafSkjerming())
+				.sensitivtPselv(mapSensitivPselv(dokumentInfoDto.getSensitivt()))
+				.dokumentvarianter(mapDokumentvarianter(tilgangJournalpost, journalpost, dokumentInfoDto, brukerIdenter, requestCache))
+				.logiskeVedlegg(dokumentInfoDto.getLogiske().stream()
+						.map(logiskVedleggDto -> new LogiskVedlegg(logiskVedleggDto.getVedleggId(), mapTittel(logiskVedleggDto.getTittel(),
+								journalpost.getTema(), journalpost.getJournalstatus(), journalpost.getSak(), requestCache)))
+						.collect(Collectors.toList()))
+				.build();
+	}
+
+	private List<Dokumentvariant> mapDokumentvarianter(TilgangJournalpost tilgangJournalpost, Journalpost journalpost,
+													   DokumentInfoDto dokumentInfoDto, Set<Ident> brukerIdenter, RequestCache requestCache) {
+		if (dokumentInfoDto.getVarianter().isEmpty()) {
+			return List.of();
+		}
+		TilgangDokument tilgangDokument = tilgangJournalpost.getDokumenter().stream()
+				.filter(dokument -> dokument.id() == Long.parseLong(dokumentInfoDto.getDokumentInfoId()))
+				.findFirst()
+				.orElse(null);
+		return dokumentInfoDto.getVarianter().stream()
+				.map(variantDto -> mapDokumentvariant(tilgangJournalpost, tilgangDokument, journalpost, dokumentInfoDto,
+						variantDto, brukerIdenter, requestCache))
+				.collect(Collectors.toList());
+	}
+
+	private Dokumentvariant mapDokumentvariant(TilgangJournalpost tilgangJournalpost, TilgangDokument tilgangDokument,
+											   Journalpost journalpost, DokumentInfoDto dokumentInfoDto, VariantDto variantDto,
+											   Set<Ident> brukerIdenter, RequestCache requestCache) {
+		List<BrukerTilgangAvvistBegrunnelse> brukerTilgangAvvistBegrunnelser = mapbrukerTilgangAvvistBegrunnelser(
+				utledTilgangService.utledTilgangDokument(tilgangJournalpost, tilgangDokument, variantDto.getTilgangVariant(), brukerIdenter));
+		return Dokumentvariant.builder()
+				.saksbehandlerHarTilgang(determineSaksbehandlerTilgang(journalpost, dokumentInfoDto, variantDto, requestCache))
+				.variantformat(variantDto.getVariantf().getSafVariantformat())
+				.filnavn(variantDto.getFilnavn())
+				.filuuid(variantDto.getFiluuid())
+				.filtype(mapFiltype(variantDto))
+				.skjerming(variantDto.getSkjerming() == null ? null : variantDto.getSkjerming().getSafSkjerming())
+				.filstoerrelse(isBlank(variantDto.getFilstorrelse()) ? 0 : valueOf(variantDto.getFilstorrelse()))
+				.brukerTilgangAvvistBegrunnelser(brukerTilgangAvvistBegrunnelser)
+				.brukerHarTilgang(brukerTilgangAvvistBegrunnelser.isEmpty())
+				.build();
 	}
 
 	static Comparator<? super DokumentInfoDto> sortDokumentInfoByTilknyttetSomRekkefoelgeDokumentInfoId() {

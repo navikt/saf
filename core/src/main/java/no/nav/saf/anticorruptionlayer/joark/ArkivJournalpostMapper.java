@@ -478,21 +478,49 @@ public class ArkivJournalpostMapper {
 		return arkivJournalpost.dokumenter().stream()
 				.filter(dokumentinfo -> shouldMapDokumentInfo(arkivJournalpost.journalpostId().toString(), dokumentinfo.dokumentInfoId().toString(), requestCache))
 				.sorted(sortDokumentInfoByTilknyttetSomRekkefoelgeDokumentInfoId())
-				.map(dokumentinfo -> DokumentInfo.builder()
-						.dokumentInfoId(dokumentinfo.dokumentInfoId().toString())
-						.tittel(mapTittel(dokumentinfo.tittel(), journalpost.getTema(), journalpost.getJournalstatus(), journalpost.getSak(), requestCache))
-						.brevkode(mapBrevkode(arkivJournalpost, dokumentinfo))
-						.dokumentstatus(mapDokumentstatus(dokumentinfo))
-						.datoFerdigstilt(mapDokumentFerdigstilt(dokumentinfo))
-						.originalJournalpostId(dokumentinfo.originalJournalpostId() == null ? null : dokumentinfo.originalJournalpostId().toString())
-						.skjerming(mapSkjerming(dokumentinfo.skjerming()))
-						.sensitivtPselv(mapSensitivtPselv(dokumentinfo.sensitivt()))
-						.dokumentvarianter(dokumentinfo.fildetaljer().stream()
-								.map(fildetaljer -> mapDokumentvariant(tilgangJournalpost, journalpost, brukerIdenter, requestCache, dokumentinfo, fildetaljer))
-								.filter(Objects::nonNull)
-								.collect(Collectors.toList()))
-						.logiskeVedlegg(mapLogiskeVedlegg(dokumentinfo, journalpost.getTema(), journalpost.getJournalstatus(), journalpost.getSak(), requestCache))
-						.build()).toList();
+				.map(dokumentinfo -> mapDokumentInfo(tilgangJournalpost, journalpost, arkivJournalpost, dokumentinfo, brukerIdenter, requestCache))
+				.toList();
+	}
+
+	private static DokumentInfo mapDokumentInfo(TilgangJournalpost tilgangJournalpost,
+												Journalpost journalpost,
+												ArkivJournalpost arkivJournalpost,
+												ArkivDokumentinfo dokumentinfo,
+												Set<Ident> brukerIdenter,
+												RequestCache requestCache) {
+		return DokumentInfo.builder()
+				.dokumentInfoId(dokumentinfo.dokumentInfoId().toString())
+				.tittel(mapTittel(dokumentinfo.tittel(), journalpost.getTema(), journalpost.getJournalstatus(), journalpost.getSak(), requestCache))
+				.brevkode(mapBrevkode(arkivJournalpost, dokumentinfo))
+				.dokumentstatus(mapDokumentstatus(dokumentinfo))
+				.datoFerdigstilt(mapDokumentFerdigstilt(dokumentinfo))
+				.originalJournalpostId(dokumentinfo.originalJournalpostId() == null ? null : dokumentinfo.originalJournalpostId().toString())
+				.skjerming(mapSkjerming(dokumentinfo.skjerming()))
+				.sensitivtPselv(mapSensitivtPselv(dokumentinfo.sensitivt()))
+				.dokumentvarianter(mapDokumentvarianter(tilgangJournalpost, journalpost, dokumentinfo, brukerIdenter, requestCache))
+				.logiskeVedlegg(mapLogiskeVedlegg(dokumentinfo, journalpost.getTema(), journalpost.getJournalstatus(), journalpost.getSak(), requestCache))
+				.build();
+	}
+
+	private static List<Dokumentvariant> mapDokumentvarianter(TilgangJournalpost tilgangJournalpost,
+															  Journalpost journalpost,
+															  ArkivDokumentinfo dokumentinfo,
+															  Set<Ident> brukerIdenter,
+															  RequestCache requestCache) {
+		if (dokumentinfo.fildetaljer().isEmpty()) {
+			return List.of();
+		}
+
+		TilgangDokument tilgangDokument = tilgangJournalpost.getDokumenter().stream()
+				.filter(dokument -> dokument.id() == dokumentinfo.dokumentInfoId())
+				.findFirst()
+				.orElse(null);
+
+		return dokumentinfo.fildetaljer().stream()
+				.map(fildetaljer ->
+						mapDokumentvariant(tilgangJournalpost, tilgangDokument, journalpost, brukerIdenter, requestCache, dokumentinfo, fildetaljer))
+				.filter(Objects::nonNull)
+				.toList();
 	}
 
 	static Comparator<? super ArkivDokumentinfo> sortDokumentInfoByTilknyttetSomRekkefoelgeDokumentInfoId() {
@@ -522,13 +550,21 @@ public class ArkivJournalpostMapper {
 		};
 	}
 
-	private static Dokumentvariant mapDokumentvariant(TilgangJournalpost tilgangJournalpost, Journalpost journalpost, Set<Ident> brukerIdenter, RequestCache requestCache, ArkivDokumentinfo dokumentinfo, ArkivFildetaljer fildetaljer) {
+	private static Dokumentvariant mapDokumentvariant(TilgangJournalpost tilgangJournalpost,
+													  TilgangDokument tilgangDokument,
+													  Journalpost journalpost,
+													  Set<Ident> brukerIdenter,
+													  RequestCache requestCache,
+													  ArkivDokumentinfo dokumentinfo,
+													  ArkivFildetaljer fildetaljer) {
 		Variantformat variantformat = mapVariantformat(fildetaljer);
+
 		if (variantformat == null) {
 			return null;
 		}
-		TilgangDokument tilgangDokument = tilgangJournalpost.getDokumenter().stream().filter(dok -> dok.id() == dokumentinfo.dokumentInfoId()).findFirst().orElse(null);
+
 		List<BrukerTilgangAvvistBegrunnelse> brukerTilgangAvvistBegrunnelser = TilgangAvvistMapper.mapbrukerTilgangAvvistBegrunnelser(utledTilgangService.utledTilgangDokument(tilgangJournalpost, tilgangDokument, fildetaljer.getTilgangVariant(), brukerIdenter));
+
 		return Dokumentvariant.builder()
 				.saksbehandlerHarTilgang(determineSaksbehandlerTilgang(journalpost, dokumentinfo, fildetaljer, requestCache))
 				.variantformat(variantformat)
