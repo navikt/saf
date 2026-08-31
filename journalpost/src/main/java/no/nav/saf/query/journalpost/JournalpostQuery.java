@@ -91,13 +91,14 @@ class JournalpostQuery {
 				throw new TilgangskontrollException(createPep2DenyReason(safRequestContext), pep2Access);
 			}
 
+			boolean endeligJournalstatusErIkkeMottatt = tilgangJournalpost.getJournalstatus() != MOTTATT || tilgangSak.isFeilregistrert();
 			if (environment.getSelectionSet().contains(SELECTION_JOURNALPOST_DOKUMENTER)) {
-				if (tilgangJournalpost.getJournalstatus() != MOTTATT) {
+				if (endeligJournalstatusErIkkeMottatt) {
 					pep2d.hasAccess(tilgangSak, safRequestContext);
 					pep7d.hasAccess(tilgangSak, safRequestContext);
 				}
 			} else {
-				if (tilgangJournalpost.getJournalstatus() != MOTTATT) {
+				if (endeligJournalstatusErIkkeMottatt) {
 					pep2d.hasAccess(tilgangSak, safRequestContext);
 				}
 			}
