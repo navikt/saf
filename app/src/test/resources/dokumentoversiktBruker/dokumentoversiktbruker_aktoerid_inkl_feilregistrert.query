@@ -1,0 +1,19 @@
+{
+  dokumentoversiktBruker(brukerId: {id: "1912374211459", type: AKTOERID}, journalstatuser: [FERDIGSTILT, JOURNALFOERT, EKSPEDERT, MOTTATT, FEILREGISTRERT], foerste: 3) {
+    journalposter {
+      journalpostId
+      eksternReferanseId
+      tittel
+      dokumenter {
+        dokumentInfoId
+        tittel
+        dokumentvarianter {
+          saksbehandlerHarTilgang
+        }
+        logiskeVedlegg {
+          tittel
+        }
+      }
+    }
+  }
+}
