@@ -1,0 +1,49 @@
+{
+  "tilgangJournalposter": [
+    {
+      "journalpostId": 429837417,
+      "prevJournalpostId": null,
+      "nextJournalpostId": 429837329,
+      "totaltAntall": 18,
+      "journalForendeEnhetId": "9999",
+      "innhold": "Ettersendelse: BEKREFTELSE_FRA_ARBEIDSGIVER (1x)",
+      "fagomrade": "HJE",
+      "journalstatus": "M",
+      "avsenderMottakerNavn": "LOLNES JENNY PIKENES",
+      "journalfortAvNavn": "TMOT010",
+      "mottakskanal": "SKAN_IM",
+      "utsendingskanal": null,
+      "journalposttype": "I",
+      "saksrelasjon": {
+        "sakId": "140000000",
+        "aktoerId": "1912374211459",
+        "feilregistrert": true,
+        "fagsystem": "FS22"
+      },
+      "datoOpprettet": "2018-12-12T20:31:17.286+0000",
+      "mottattDato": "2018-12-12T21:31:10.000+0000",
+      "journalDato": "2018-12-12T20:31:17.284+0000",
+      "sendtPrintDato": null,
+      "ekspedertDato": null,
+      "skjerming": null,
+      "dokumenter": [
+        {
+          "dokumentInfoId": 441828510,
+          "dokumentstatus": null,
+          "brevkode": null,
+          "skjerming": null,
+          "sensitivt": true,
+          "varianter": [
+            {
+              "variantf": "ARKIV",
+              "skjerming": null
+            }
+          ],
+          "tittel": "Bekreftelse fra arbeidsgiver",
+          "logiske": []
+        }
+      ],
+      "kanalReferanseId": "KANAL REFERANSE ID"
+    }
+  ]
+}

@@ -139,11 +139,11 @@ public class JournalpostService {
 		} else {
 			Arkivsak arkivsak = mapArkivsak(arkivJournalpost);
 			safRequestContext.getRequestCache().putArkivsak(arkivsak);
-			return mapTilgangGsak(arkivsak);
+			return mapTilgangGsak(arkivsak, arkivSaksrelasjon);
 		}
 	}
 
-	private TilgangSak mapTilgangGsak(Arkivsak arkivsak) {
+	private TilgangSak mapTilgangGsak(Arkivsak arkivsak, ArkivSaksrelasjon arkivSaksrelasjon) {
 		BidragSak bidragSak = bisysAntiCorruptionLayer.hentBidragSakByArkivsak(arkivsak);
 		List<String> fpsak = fpsakAntiCorruptionLayer.hentRelevanteParter(arkivsak);
 		List<String> k9sak = k9AntiCorruptionLayer.hentRelevanteParter(arkivsak);
@@ -152,6 +152,7 @@ public class JournalpostService {
 				.arkivsaksnummer(arkivsak.getArkivsaksnummer())
 				.arkivsaksystem(GSAK)
 				.avsluttet(arkivsak.isAvsluttet())
+				.feilregistrert(arkivSaksrelasjon.feilregistrert() != null && arkivSaksrelasjon.feilregistrert())
 				.tema(arkivsak.getTema())
 				.orgnummer(trim(arkivsak.getOrgnummer()))
 				.relevanteTredjeparter(bidragSak == null ? null : new ArrayList<>(bidragSak.getRelevanteTredjeparter()))
@@ -175,6 +176,7 @@ public class JournalpostService {
 						.orgnummer(trim(psakArkivsak.getOrgnummer()))
 						.relevanteTredjeparter(new ArrayList<>())
 						.fagsaksystem(psakArkivsak.getFagsaksystem())
+						.feilregistrert(arkivSaksrelasjon.feilregistrert() != null && arkivSaksrelasjon.feilregistrert())
 						.build()).findFirst()
 				.orElseGet(() -> mapTilgangSakUtenSakstilknytning(arkivJournalpost));
 	}

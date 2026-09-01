@@ -7,6 +7,7 @@ import no.nav.saf.anticorruptionlayer.joark.domain.kode.VariantFormatCode;
 import no.nav.saf.anticorruptionlayer.joark.safintern.journalpost.ArkivBruker;
 import no.nav.saf.anticorruptionlayer.joark.safintern.journalpost.ArkivFildetaljer;
 import no.nav.saf.anticorruptionlayer.joark.safintern.journalpost.ArkivJournalpost;
+import no.nav.saf.anticorruptionlayer.joark.safintern.journalpost.ArkivSaksrelasjon;
 import no.nav.saf.domain.kode.Skjerming;
 import no.nav.saf.domain.kode.Tema;
 
@@ -41,9 +42,11 @@ public class BaseTilgangMapper {
 
 
 	public static TilgangSak mapTilgangSakUtenSakstilknytning(ArkivJournalpost arkivJournalpost) {
+		ArkivSaksrelasjon saksrelasjon = arkivJournalpost.saksrelasjon();
 		return TilgangSak.builder()
 				.tema(Tema.valueOf(arkivJournalpost.fagomraade()))
 				.avsluttet(false)
+				.feilregistrert(saksrelasjon != null && saksrelasjon.feilregistrert() != null && saksrelasjon.feilregistrert())
 				.build();
 	}
 

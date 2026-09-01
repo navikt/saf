@@ -1,0 +1,109 @@
+{
+    journalpost(journalpostId: "429837417") {
+        journalpostId
+        tittel
+        journalposttype
+        journalstatus
+        tema
+        temanavn
+        behandlingstema
+        behandlingstemanavn
+        avsenderMottaker {
+          id
+          navn
+          type
+          land
+          erLikBruker
+        }
+        avsenderMottakerId
+        avsenderMottakerNavn
+        avsenderMottakerLand
+        journalforendeEnhet
+        journalfoerendeEnhet
+        journalfortAvNavn
+        opprettetAvNavn
+        kanal
+        kanalnavn
+        datoOpprettet
+        datoSortering
+        eksternReferanseId
+        relevanteDatoer {
+            dato
+            datotype
+        }
+        antallRetur
+        tilleggsopplysninger {
+            nokkel
+            verdi
+        }
+        sak {
+            arkivsaksnummer
+            arkivsaksystem
+            datoOpprettet
+            fagsakId
+            fagsaksystem
+            sakstype
+            tema
+        }
+        bruker {
+            id
+            type
+        }
+        dokumenter {
+            dokumentInfoId
+            tittel
+            brevkode
+            dokumentstatus
+            originalJournalpostId
+            logiskeVedlegg {
+                logiskVedleggId
+                tittel
+            }
+            dokumentvarianter {
+                variantformat
+                saksbehandlerHarTilgang
+                filuuid
+                filnavn
+                filtype
+                filstoerrelse
+                brukerHarTilgang
+                brukerTilgangAvvistBegrunnelser {
+                  kode
+                  begrunnelse
+              }
+            }
+        }
+        utsendingsinfo {
+            digitalpostSendt {
+                adresse
+            }
+            fysiskpostSendt {
+                adressetekstKonvolutt
+            }
+            smsVarselSendt {
+                adresse
+                varslingstekst
+            }
+            epostVarselSendt {
+                tittel
+                adresse
+                varslingstekst
+            }
+            varselSendt {
+                type
+                tittel
+                adresse
+                varslingstekst
+                varslingstidspunkt
+            }
+        }
+        innsynsregel
+        innsynsregelBeskrivelse
+        brukerHarTilgang
+        brukerTilgangAvvistBegrunnelser {
+          kode
+          begrunnelse
+      }
+    }
+}
+

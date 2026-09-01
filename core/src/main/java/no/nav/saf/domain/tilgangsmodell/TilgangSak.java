@@ -20,6 +20,7 @@ public class TilgangSak {
 	Tema tema;
 	String fagsaksystem;
 	boolean avsluttet;
+	boolean feilregistrert;
 
 	List<TilgangRelevantTredjepart> relevanteTredjeparter; // Bisys
 
