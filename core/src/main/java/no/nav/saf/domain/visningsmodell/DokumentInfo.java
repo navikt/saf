@@ -14,18 +14,24 @@ import java.util.List;
 @ToString(exclude = "parent")
 @Builder
 public class DokumentInfo {
-	private final Journalpost parent;
+	Journalpost parent;
 
-	private final String dokumentInfoId;
-	private final String tittel;
-	private final String brevkode;
-	private final Dokumentstatus dokumentstatus;
-	private final LocalDateTime datoFerdigstilt;
-	private final String originalJournalpostId;
-	private final Skjerming skjerming;
-	private final boolean sensitivtPselv;
+	String dokumentInfoId;
+	String tittel;
+	String brevkode;
+	Dokumentstatus dokumentstatus;
+	LocalDateTime datoFerdigstilt;
+	String originalJournalpostId;
+	Skjerming skjerming;
+	boolean sensitivtPselv;
 	@Builder.Default
-	private final List<LogiskVedlegg> logiskeVedlegg = new ArrayList<>();
+	List<LogiskVedlegg> logiskeVedlegg = new ArrayList<>();
 	@Builder.Default
-	private final List<Dokumentvariant> dokumentvarianter = new ArrayList<>();
+	List<Dokumentvariant> dokumentvarianter = new ArrayList<>();
+
+	public boolean isSaksbehandlerHarTilgang() {
+		return dokumentvarianter.stream()
+				.filter(Dokumentvariant::isSladdetEllerArkiv)
+				.anyMatch(Dokumentvariant::isSaksbehandlerHarTilgang);
+	}
 }

@@ -55,6 +55,7 @@
             brevkode
             dokumentstatus
             originalJournalpostId
+            saksbehandlerHarTilgang
             logiskeVedlegg {
                 logiskVedleggId
                 tittel
@@ -106,4 +107,3 @@
       }
     }
 }
-

@@ -19,4 +19,8 @@ public class Dokumentvariant {
 	Skjerming skjerming;
 	List<BrukerTilgangAvvistBegrunnelse> brukerTilgangAvvistBegrunnelser;
 	boolean brukerHarTilgang;
+
+	public boolean isSladdetEllerArkiv() {
+		return this.getVariantformat() == Variantformat.SLADDET || this.getVariantformat() == Variantformat.ARKIV;
+	}
 }

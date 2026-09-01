@@ -1,5 +1,6 @@
 package no.nav.saf.hentdokument;
 
+import no.nav.saf.anticorruptionlayer.joark.domain.kode.VariantFormatCode;
 import no.nav.saf.domain.HentDokument;
 import no.nav.saf.domain.kode.Journalstatus;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
@@ -7,7 +8,6 @@ import no.nav.saf.domain.tilgangsmodell.TilgangDokumentInfo;
 import no.nav.saf.domain.tilgangsmodell.TilgangDokumentvariant;
 import no.nav.saf.domain.tilgangsmodell.TilgangJournalpost;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
-import no.nav.saf.exceptions.DokumentIkkeFunnetException;
 import no.nav.saf.exceptions.HentdokumentTilgangskontrollException;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.pep.PepAnswer;
@@ -15,7 +15,6 @@ import no.nav.saf.tilgangskontroll.pep.Pep;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import static java.lang.String.format;
 import static no.nav.saf.tilgangskontroll.pep.DenyReasonFactory.createPep1gDenyReason;
 import static no.nav.saf.tilgangskontroll.pep.DenyReasonFactory.createPep2DenyReason;
 import static no.nav.saf.tilgangskontroll.pep.DenyReasonFactory.createPep2dDenyReason;
@@ -70,17 +69,15 @@ class HentDokumentDomainCoordinatorImpl implements HentDokumentDomainCoordinator
 
 	@Override
 	public HentDokument hentDokument(final String journalpostId, final String dokumentInfoId, final String variantFormat, final SafRequestContext safRequestContext) {
-		HentDokumentTilgang hentDokumentTilgang = hentDokumentTilgangService.hentDokumentTilgang(journalpostId, dokumentInfoId, variantFormat);
-		if (hentDokumentTilgang.tilgangDokumentvariant().isEmpty()) {
-			throw new DokumentIkkeFunnetException(format("Dokument med journalpostId=%s, dokumentInfoId=%s, variantFormat=%s ikke funnet i Joark.",
-					journalpostId, dokumentInfoId, variantFormat));
-		}
+		HentDokumentTilgang hentDokumentTilgang = hentDokumentTilgangService.hentDokumentTilgang(journalpostId, dokumentInfoId, VariantFormatCode.fromString(variantFormat));
+		VariantFormatCode valgtVariantFormat = hentDokumentTilgang.variantFormat();
 
 		doTilgangskontroll(hentDokumentTilgang, safRequestContext);
-		if(safRequestContext.isUserIdNavAnsatt()) {
-			hentDokumentSporbarhetslogger.logPermit(journalpostId, dokumentInfoId, variantFormat, hentDokumentTilgang, safRequestContext);
+
+		if (safRequestContext.isUserIdNavAnsatt()) {
+			hentDokumentSporbarhetslogger.logPermit(journalpostId, dokumentInfoId, valgtVariantFormat.name(), hentDokumentTilgang, safRequestContext);
 		}
-		return hentDokumentAntiCorruptionLayer.hentDokument(dokumentInfoId, variantFormat);
+		return hentDokumentAntiCorruptionLayer.hentDokument(dokumentInfoId, valgtVariantFormat);
 	}
 
 	private void doTilgangskontroll(HentDokumentTilgang hentDokumentTilgang, SafRequestContext safRequestContext) {

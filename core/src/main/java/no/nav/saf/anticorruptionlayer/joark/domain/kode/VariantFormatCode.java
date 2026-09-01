@@ -46,6 +46,10 @@ public enum VariantFormatCode {
 		return safVariantformat;
 	}
 
+	public static VariantFormatCode fromString(String variantFormat) {
+		return variantFormat == null ? null : valueOf(variantFormat);
+	}
+
 	public static Variantformat toSafVariantformat(VariantFormatCode joarkVariantFormatCode) {
 		return joarkVariantFormatCode == null ? null : joarkVariantFormatCode.getSafVariantformat();
 	}

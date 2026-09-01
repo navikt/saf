@@ -437,6 +437,44 @@ class ArkivJournalpostMapperTest {
 	}
 
 	@Test
+	void shouldMapSaksbehandlerHarTilgangWhenOnlySladdetIsPermitted() {
+		ArkivJournalpost arkivJournalpost = pensjonSakArkivJournalpost();
+		String tilgangKeyPep2dLocalCaching = KeyGeneratorLocalCaching.getKeyForPep2d(Tema.PEN);
+		String tilgangKeyPep5LocalCaching = KeyGeneratorLocalCaching.getKeyForPep5(String.valueOf(ARKIVJOURNALPOST_JOURNALPOST_ID), String.valueOf(ARKIVDOKUMENTINFO_DOKUMENT_INFO_ID));
+		String tilgangKeyPep6dLocalCachingVariantArkiv = KeyGeneratorLocalCaching.getKeyForPep6d(
+				String.valueOf(ARKIVJOURNALPOST_JOURNALPOST_ID), String.valueOf(ARKIVDOKUMENTINFO_DOKUMENT_INFO_ID), VARIANT_FORMAT_CODE_ARKIV.getSafVariantformat()
+						.name(), SKJERMING_TYPE_CODE_POL.getSafSkjerming().name());
+		String tilgangKeyPep6dLocalCachingVariantSladdet = KeyGeneratorLocalCaching.getKeyForPep6d(
+				String.valueOf(ARKIVJOURNALPOST_JOURNALPOST_ID), String.valueOf(ARKIVDOKUMENTINFO_DOKUMENT_INFO_ID), VARIANT_FORMAT_CODE_SLADDET.getSafVariantformat()
+						.name(), null);
+		String tilgangKeyPep7dLocalCaching = KeyGeneratorLocalCaching.getKeyForPep7d(FagsystemCode.toSafArkivsaksystem(arkivJournalpost.saksrelasjon().fagsystem()), arkivJournalpost.saksrelasjon().sakId().toString());
+		String tilgangKeyPep8dLocalCaching = KeyGeneratorLocalCaching.getKeyForPep8d(Arkivsakssystem.PSAK, String.valueOf(ARKIVSAKSRELASJON_SAK_ID));
+
+		RequestCache requestCache = createTilgangBrukerRequestCachePSAK();
+		requestCache.putDecision(tilgangKeyPep2dLocalCaching, PepAnswer.permit());
+		requestCache.putDecision(tilgangKeyPep5LocalCaching, PepAnswer.permit());
+		requestCache.putDecision(tilgangKeyPep6dLocalCachingVariantArkiv, PepAnswer.deny(new UkjentEllerTekniskReason()));
+		requestCache.putDecision(tilgangKeyPep6dLocalCachingVariantSladdet, PepAnswer.permit());
+		requestCache.putDecision(tilgangKeyPep7dLocalCaching, PepAnswer.permit());
+		requestCache.putDecision(tilgangKeyPep8dLocalCaching, PepAnswer.permit());
+
+		Journalpost journalpost = mapJournalpost(arkivJournalpost, emptySet(), requestCache);
+
+		List<DokumentInfo> dokumenter = journalpost.getDokumenter();
+
+		assertThat(dokumenter).hasSize(1);
+
+		assertThat(dokumenter.getFirst().getDokumentvarianter())
+				.extracting(Dokumentvariant::getVariantformat, Dokumentvariant::isSaksbehandlerHarTilgang)
+				.hasSize(2)
+				.containsExactlyInAnyOrder(
+						tuple(VARIANT_FORMAT_CODE_SLADDET.getSafVariantformat(), true),
+						tuple(VARIANT_FORMAT_CODE_ARKIV.getSafVariantformat(), false));
+
+		assertThat(dokumenter.getFirst().isSaksbehandlerHarTilgang()).isTrue();
+	}
+
+	@Test
 	void shouldMapSkjultTittelWhenPep2dDeny() {
 		ArkivJournalpost arkivJournalpost = pensjonSakArkivJournalpost();
 
