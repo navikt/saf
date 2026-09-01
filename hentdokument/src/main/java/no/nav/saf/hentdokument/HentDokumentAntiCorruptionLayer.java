@@ -1,6 +1,7 @@
 package no.nav.saf.hentdokument;
 
 import lombok.extern.slf4j.Slf4j;
+import no.nav.saf.anticorruptionlayer.joark.domain.kode.VariantFormatCode;
 import no.nav.saf.anticorruptionlayer.joark.safintern.DokarkivConsumer;
 import no.nav.saf.anticorruptionlayer.joark.safintern.hentdokument.HentDokumentResponseTo;
 import no.nav.saf.anticorruptionlayer.joark.safintern.journalpost.ArkivJournalpost;
@@ -28,13 +29,14 @@ public class HentDokumentAntiCorruptionLayer {
 		return dokarkivConsumer.journalpostByIdAndDokumentInfoId(journalpostId, dokumentInfoId, HENTDOKUMENT_TILGANG_FIELDS);
 	}
 
-	public HentDokument hentDokument(String dokumentInfoId, String variantFormat) {
-		HentDokumentResponseTo responseTo = dokarkivConsumer.hentDokument(dokumentInfoId, variantFormat);
+	public HentDokument hentDokument(String dokumentInfoId, VariantFormatCode variantFormat) {
+		HentDokumentResponseTo responseTo = dokarkivConsumer.hentDokument(dokumentInfoId, variantFormat.name());
 
 		return HentDokument.builder()
 				.dokument(responseTo.dokument())
 				.mediaType(responseTo.mediaType())
 				.extension(toFileextension(responseTo.mediaType()))
+				.variantFormat(variantFormat.name())
 				.build();
 	}
 }

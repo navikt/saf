@@ -35,6 +35,8 @@ import static no.nav.saf.domain.kode.Arkivsakssystem.GSAK;
 import static no.nav.saf.domain.kode.Arkivsakssystem.PSAK;
 import static no.nav.saf.domain.kode.Tema.PEN;
 import static no.nav.saf.domain.kode.Tema.UFO;
+import static no.nav.saf.anticorruptionlayer.joark.domain.kode.VariantFormatCode.ARKIV;
+import static no.nav.saf.anticorruptionlayer.joark.domain.kode.VariantFormatCode.SLADDET;
 import static no.nav.saf.domain.tilgangsmodell.BaseTilgangMapper.mapSkjerming;
 import static no.nav.saf.domain.tilgangsmodell.BaseTilgangMapper.mapTilgangBrukerUtenTilknyttetSak;
 import static no.nav.saf.domain.tilgangsmodell.BaseTilgangMapper.mapTilgangSakUtenSakstilknytning;
@@ -64,12 +66,26 @@ class HentDokumentTilgangService {
 		this.pdlAntiCorruptionLayer = pdlAntiCorruptionLayer;
 	}
 
-	HentDokumentTilgang hentDokumentTilgang(String journalpostId, String dokumentInfoId, String variantFormat) {
+	HentDokumentTilgang hentDokumentTilgang(String journalpostId, String dokumentInfoId, VariantFormatCode variantFormat) {
 		ArkivJournalpost arkivJournalpost = hentDokumentAntiCorruptionLayer.hentDokumentTilgang(journalpostId, dokumentInfoId);
+		VariantFormatCode valgtVariantFormat = velgVariantFormat(variantFormat, arkivJournalpost.dokumenter().getFirst());
 		TilgangBruker tilgangBruker = mapTilgangBruker(arkivJournalpost);
 		TilgangSak tilgangSak = mapTilgangSak(tilgangBruker, arkivJournalpost);
-		TilgangJournalpost tilgangJournalpost = mapTilgangJournalpost(variantFormat, arkivJournalpost);
-		return new HentDokumentTilgang(tilgangBruker, tilgangSak, tilgangJournalpost);
+		TilgangJournalpost tilgangJournalpost = mapTilgangJournalpost(valgtVariantFormat, arkivJournalpost);
+		return new HentDokumentTilgang(tilgangBruker, tilgangSak, tilgangJournalpost, valgtVariantFormat);
+	}
+
+	static VariantFormatCode velgVariantFormat(VariantFormatCode variantFormat, ArkivDokumentinfo arkivDokumentinfo) {
+		if (variantFormat != null) {
+			return variantFormat;
+		}
+		if (arkivDokumentinfo.harVariantformat(SLADDET)) {
+			return SLADDET;
+		}
+		if (arkivDokumentinfo.harVariantformat(ARKIV)) {
+			return ARKIV;
+		}
+		return null;
 	}
 
 	private TilgangBruker mapTilgangBruker(ArkivJournalpost arkivJournalpost) {
@@ -165,7 +181,7 @@ class HentDokumentTilgangService {
 				.orElseGet(() -> mapTilgangSakUtenSakstilknytning(arkivJournalpost));
 	}
 
-	private TilgangJournalpost mapTilgangJournalpost(String variantFormat, ArkivJournalpost arkivJournalpost) {
+	private TilgangJournalpost mapTilgangJournalpost(VariantFormatCode variantFormat, ArkivJournalpost arkivJournalpost) {
 		ArkivDokumentinfo arkivDokumentinfoOpt = arkivJournalpost.dokumenter().get(0);
 		Long journalpostId = arkivJournalpost.journalpostId();
 		return TilgangJournalpost.builder()
@@ -177,7 +193,7 @@ class HentDokumentTilgangService {
 				.build();
 	}
 
-	private static List<TilgangDokumentInfo> mapTilgangDokumentInfo(Long journalpostId, String variantFormat, ArkivDokumentinfo arkivDokumentinfo) {
+	private static List<TilgangDokumentInfo> mapTilgangDokumentInfo(Long journalpostId, VariantFormatCode variantFormat, ArkivDokumentinfo arkivDokumentinfo) {
 		Long dokumentInfoId = arkivDokumentinfo.dokumentInfoId();
 		return List.of(TilgangDokumentInfo.builder()
 				.skjerming(mapSkjerming(arkivDokumentinfo.skjerming()))
@@ -187,9 +203,9 @@ class HentDokumentTilgangService {
 				.build());
 	}
 
-	private static List<TilgangDokumentvariant> mapTilgangDokumentvarianter(Long journalpostId, Long dokumentInfoId, String variantFormat, List<ArkivFildetaljer> fildetaljer) {
+	private static List<TilgangDokumentvariant> mapTilgangDokumentvarianter(Long journalpostId, Long dokumentInfoId, VariantFormatCode variantFormat, List<ArkivFildetaljer> fildetaljer) {
 		return fildetaljer.stream()
-				.filter(f -> variantFormat.equals(f.format()))
+				.filter(f -> variantFormat != null && variantFormat.name().equals(f.format()))
 				.map(arkivFildetaljer -> TilgangDokumentvariant.builder()
 						.skjerming(mapSkjerming(arkivFildetaljer.skjerming()))
 						.variantformat(VariantFormatCode.valueOf(arkivFildetaljer.format()).getSafVariantformat())

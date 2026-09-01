@@ -1,5 +1,6 @@
 package no.nav.saf.hentdokument;
 
+import no.nav.saf.anticorruptionlayer.joark.domain.kode.VariantFormatCode;
 import no.nav.saf.domain.HentDokument;
 import no.nav.saf.domain.kode.Journalstatus;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
@@ -70,17 +71,29 @@ class HentDokumentDomainCoordinatorImpl implements HentDokumentDomainCoordinator
 
 	@Override
 	public HentDokument hentDokument(final String journalpostId, final String dokumentInfoId, final String variantFormat, final SafRequestContext safRequestContext) {
-		HentDokumentTilgang hentDokumentTilgang = hentDokumentTilgangService.hentDokumentTilgang(journalpostId, dokumentInfoId, variantFormat);
-		if (hentDokumentTilgang.tilgangDokumentvariant().isEmpty()) {
-			throw new DokumentIkkeFunnetException(format("Dokument med journalpostId=%s, dokumentInfoId=%s, variantFormat=%s ikke funnet i Joark.",
-					journalpostId, dokumentInfoId, variantFormat));
-		}
+		HentDokumentTilgang hentDokumentTilgang = hentDokumentTilgangService.hentDokumentTilgang(journalpostId, dokumentInfoId, VariantFormatCode.fromString(variantFormat));
+		VariantFormatCode valgtVariantFormat = getValgtVariantFormat(journalpostId, dokumentInfoId, hentDokumentTilgang);
 
 		doTilgangskontroll(hentDokumentTilgang, safRequestContext);
-		if(safRequestContext.isUserIdNavAnsatt()) {
-			hentDokumentSporbarhetslogger.logPermit(journalpostId, dokumentInfoId, variantFormat, hentDokumentTilgang, safRequestContext);
+
+		if (safRequestContext.isUserIdNavAnsatt()) {
+			hentDokumentSporbarhetslogger.logPermit(journalpostId, dokumentInfoId, valgtVariantFormat.name(), hentDokumentTilgang, safRequestContext);
 		}
-		return hentDokumentAntiCorruptionLayer.hentDokument(dokumentInfoId, variantFormat);
+		return hentDokumentAntiCorruptionLayer.hentDokument(dokumentInfoId, valgtVariantFormat);
+	}
+
+	private static VariantFormatCode getValgtVariantFormat(String journalpostId, String dokumentInfoId, HentDokumentTilgang hentDokumentTilgang) {
+		VariantFormatCode valgtVariantFormat = hentDokumentTilgang.variantFormat();
+
+		if (hentDokumentTilgang.tilgangDokumentvariant().isEmpty()) {
+			if (valgtVariantFormat == null) {
+				throw new DokumentIkkeFunnetException(format("Dokument med journalpostId=%s og dokumentInfoId=%s har ingen SLADDET- eller ARKIV-variant for automatisk valg i Joark.",
+						journalpostId, dokumentInfoId));
+			}
+			throw new DokumentIkkeFunnetException(format("Dokument med journalpostId=%s, dokumentInfoId=%s, variantFormat=%s ikke funnet i Joark.",
+					journalpostId, dokumentInfoId, valgtVariantFormat));
+		}
+		return valgtVariantFormat;
 	}
 
 	private void doTilgangskontroll(HentDokumentTilgang hentDokumentTilgang, SafRequestContext safRequestContext) {
