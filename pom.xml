@@ -40,7 +40,7 @@
 		<bcprov-jdk18on.version>1.85.2</bcprov-jdk18on.version>
 		<safselvbetjening-innsyn-api.version>2026.09.03-13.16-f674052</safselvbetjening-innsyn-api.version>
 		<mock-oauth2-server.version>3.0.1</mock-oauth2-server.version>
-		<okhttp.version>5.2.1</okhttp.version>
+		<okhttp.version>5.5.0</okhttp.version>
 
 		<!-- Test -->
 		<wiremock-spring-boot.version>4.2.2</wiremock-spring-boot.version>
