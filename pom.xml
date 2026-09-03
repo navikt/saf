@@ -38,7 +38,7 @@
 		<azure-identity.version>1.18.4</azure-identity.version>
 		<context-propagation.version>1.2.1</context-propagation.version>
 		<bcprov-jdk18on.version>1.85.2</bcprov-jdk18on.version>
-		<safselvbetjening-innsyn-api.version>2026.04.14-13.14-97c402d</safselvbetjening-innsyn-api.version>
+		<safselvbetjening-innsyn-api.version>2026.09.03-13.16-f674052</safselvbetjening-innsyn-api.version>
 		<mock-oauth2-server.version>3.0.1</mock-oauth2-server.version>
 		<okhttp.version>5.2.1</okhttp.version>
 
