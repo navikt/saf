@@ -39,7 +39,7 @@
 		<context-propagation.version>1.2.1</context-propagation.version>
 		<bcprov-jdk18on.version>1.85.2</bcprov-jdk18on.version>
 		<safselvbetjening-innsyn-api.version>2026.09.03-13.16-f674052</safselvbetjening-innsyn-api.version>
-		<mock-oauth2-server.version>3.0.1</mock-oauth2-server.version>
+		<mock-oauth2-server.version>6.0.2</mock-oauth2-server.version>
 		<okhttp.version>5.2.1</okhttp.version>
 
 		<!-- Test -->
