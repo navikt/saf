@@ -21,6 +21,7 @@ import no.nav.saf.domain.tilgangsmodell.TilgangDokumentInfo;
 import no.nav.saf.domain.tilgangsmodell.TilgangDokumentvariant;
 import no.nav.saf.domain.tilgangsmodell.TilgangJournalpost;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
+import no.nav.saf.exceptions.DokumentIkkeFunnetException;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -68,16 +69,20 @@ class HentDokumentTilgangService {
 
 	HentDokumentTilgang hentDokumentTilgang(String journalpostId, String dokumentInfoId, VariantFormatCode variantFormat) {
 		ArkivJournalpost arkivJournalpost = hentDokumentAntiCorruptionLayer.hentDokumentTilgang(journalpostId, dokumentInfoId);
-		VariantFormatCode valgtVariantFormat = velgVariantFormat(variantFormat, arkivJournalpost.dokumenter().getFirst());
+		VariantFormatCode valgtVariantFormat = velgVariantformat(journalpostId, dokumentInfoId, variantFormat, arkivJournalpost.dokumenter().getFirst());
 		TilgangBruker tilgangBruker = mapTilgangBruker(arkivJournalpost);
 		TilgangSak tilgangSak = mapTilgangSak(tilgangBruker, arkivJournalpost);
 		TilgangJournalpost tilgangJournalpost = mapTilgangJournalpost(valgtVariantFormat, arkivJournalpost);
 		return new HentDokumentTilgang(tilgangBruker, tilgangSak, tilgangJournalpost, valgtVariantFormat);
 	}
 
-	static VariantFormatCode velgVariantFormat(VariantFormatCode variantFormat, ArkivDokumentinfo arkivDokumentinfo) {
+	static VariantFormatCode velgVariantformat(String journalpostId, String dokumentInfoId, VariantFormatCode variantFormat, ArkivDokumentinfo arkivDokumentinfo) {
 		if (variantFormat != null) {
-			return variantFormat;
+			if (arkivDokumentinfo.harVariantformat(variantFormat)) {
+				return variantFormat;
+			}
+			throw new DokumentIkkeFunnetException("Dokument med journalpostId=%s, dokumentInfoId=%s, variantFormat=%s ikke funnet i Joark."
+					.formatted(journalpostId, dokumentInfoId, variantFormat));
 		}
 		if (arkivDokumentinfo.harVariantformat(SLADDET)) {
 			return SLADDET;
@@ -85,7 +90,8 @@ class HentDokumentTilgangService {
 		if (arkivDokumentinfo.harVariantformat(ARKIV)) {
 			return ARKIV;
 		}
-		return null;
+		throw new DokumentIkkeFunnetException("Dokument med journalpostId=%s og dokumentInfoId=%s har ingen SLADDET- eller ARKIV-variant for automatisk valg i Joark."
+				.formatted(journalpostId, dokumentInfoId));
 	}
 
 	private TilgangBruker mapTilgangBruker(ArkivJournalpost arkivJournalpost) {
@@ -205,7 +211,7 @@ class HentDokumentTilgangService {
 
 	private static List<TilgangDokumentvariant> mapTilgangDokumentvarianter(Long journalpostId, Long dokumentInfoId, VariantFormatCode variantFormat, List<ArkivFildetaljer> fildetaljer) {
 		return fildetaljer.stream()
-				.filter(f -> variantFormat != null && variantFormat.name().equals(f.format()))
+				.filter(f -> variantFormat.name().equals(f.format()))
 				.map(arkivFildetaljer -> TilgangDokumentvariant.builder()
 						.skjerming(mapSkjerming(arkivFildetaljer.skjerming()))
 						.variantformat(VariantFormatCode.valueOf(arkivFildetaljer.format()).getSafVariantformat())

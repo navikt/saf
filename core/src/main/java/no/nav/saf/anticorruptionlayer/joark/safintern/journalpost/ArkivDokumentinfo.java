@@ -43,6 +43,7 @@ public record ArkivDokumentinfo(
 
 	public boolean harVariantformat(VariantFormatCode variantformat) {
 		return fildetaljer.stream()
-				.anyMatch(fildetalj -> variantformat.name().equals(fildetalj.format()));
+				.map(ArkivFildetaljer::format)
+				.anyMatch(variantformat.name()::equals);
 	}
 }

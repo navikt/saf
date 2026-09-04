@@ -81,13 +81,13 @@ public class HentDokumentController {
 		try {
 			mdcSporing(journalpostId, dokumentInfoId);
 			HentDokument response = hentDokumentDomainCoordinator.hentDokument(journalpostId, dokumentInfoId, variantFormat, safRequestContext);
-			String valgtVariantFormat = response.getVariantFormat();
+			String valgtVariantFormat = variantFormat == null ? response.getVariantFormat() + " (automatisk valgt)" : response.getVariantFormat();
 
 			log.info("hentDokument hentet dokument. journalpostId={}, dokumentInfoId={}, variantFormat={}", journalpostId, dokumentInfoId, valgtVariantFormat);
 
 			return ResponseEntity.ok()
 					.contentType(response.getMediaType())
-					.header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=" + dokumentInfoId + "_" + valgtVariantFormat + response.getExtension())
+					.header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=" + dokumentInfoId + "_" + response.getVariantFormat() + response.getExtension())
 					.body(response.getDokument());
 		} catch (UgyldigInputException e) {
 			log.warn("hentDokument hentet ikke dokument. journalpostId={}, dokumentInfoId={}, variantFormat={}. Ugyldig input til tjenesten: " + e.getMessage(), journalpostId, dokumentInfoId, variantFormat);

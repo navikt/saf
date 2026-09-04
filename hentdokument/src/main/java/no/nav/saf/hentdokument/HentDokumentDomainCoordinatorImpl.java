@@ -8,7 +8,6 @@ import no.nav.saf.domain.tilgangsmodell.TilgangDokumentInfo;
 import no.nav.saf.domain.tilgangsmodell.TilgangDokumentvariant;
 import no.nav.saf.domain.tilgangsmodell.TilgangJournalpost;
 import no.nav.saf.domain.tilgangsmodell.TilgangSak;
-import no.nav.saf.exceptions.DokumentIkkeFunnetException;
 import no.nav.saf.exceptions.HentdokumentTilgangskontrollException;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.pep.PepAnswer;
@@ -16,7 +15,6 @@ import no.nav.saf.tilgangskontroll.pep.Pep;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import static java.lang.String.format;
 import static no.nav.saf.tilgangskontroll.pep.DenyReasonFactory.createPep1gDenyReason;
 import static no.nav.saf.tilgangskontroll.pep.DenyReasonFactory.createPep2DenyReason;
 import static no.nav.saf.tilgangskontroll.pep.DenyReasonFactory.createPep2dDenyReason;
@@ -72,7 +70,7 @@ class HentDokumentDomainCoordinatorImpl implements HentDokumentDomainCoordinator
 	@Override
 	public HentDokument hentDokument(final String journalpostId, final String dokumentInfoId, final String variantFormat, final SafRequestContext safRequestContext) {
 		HentDokumentTilgang hentDokumentTilgang = hentDokumentTilgangService.hentDokumentTilgang(journalpostId, dokumentInfoId, VariantFormatCode.fromString(variantFormat));
-		VariantFormatCode valgtVariantFormat = getValgtVariantFormat(journalpostId, dokumentInfoId, hentDokumentTilgang);
+		VariantFormatCode valgtVariantFormat = hentDokumentTilgang.variantFormat();
 
 		doTilgangskontroll(hentDokumentTilgang, safRequestContext);
 
@@ -80,20 +78,6 @@ class HentDokumentDomainCoordinatorImpl implements HentDokumentDomainCoordinator
 			hentDokumentSporbarhetslogger.logPermit(journalpostId, dokumentInfoId, valgtVariantFormat.name(), hentDokumentTilgang, safRequestContext);
 		}
 		return hentDokumentAntiCorruptionLayer.hentDokument(dokumentInfoId, valgtVariantFormat);
-	}
-
-	private static VariantFormatCode getValgtVariantFormat(String journalpostId, String dokumentInfoId, HentDokumentTilgang hentDokumentTilgang) {
-		VariantFormatCode valgtVariantFormat = hentDokumentTilgang.variantFormat();
-
-		if (hentDokumentTilgang.tilgangDokumentvariant().isEmpty()) {
-			if (valgtVariantFormat == null) {
-				throw new DokumentIkkeFunnetException(format("Dokument med journalpostId=%s og dokumentInfoId=%s har ingen SLADDET- eller ARKIV-variant for automatisk valg i Joark.",
-						journalpostId, dokumentInfoId));
-			}
-			throw new DokumentIkkeFunnetException(format("Dokument med journalpostId=%s, dokumentInfoId=%s, variantFormat=%s ikke funnet i Joark.",
-					journalpostId, dokumentInfoId, valgtVariantFormat));
-		}
-		return valgtVariantFormat;
 	}
 
 	private void doTilgangskontroll(HentDokumentTilgang hentDokumentTilgang, SafRequestContext safRequestContext) {

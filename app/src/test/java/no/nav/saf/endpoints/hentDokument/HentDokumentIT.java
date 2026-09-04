@@ -590,12 +590,10 @@ class HentDokumentIT extends AbstractItest {
 	@Test
 	void shouldReturnNotFoundWhenOriginalVariantDoesNotExist() {
 		tilgangskontrollPermit();
-		stubPdl();
 		stubDokarkivJournalpost("journalpost-dokumentinfo-sak-dokumentvariant-notmatched.json");
 
 		ResponseEntity<String> responseEntity = callHentDokument(ORIGINAL);
 
-		verify(postRequestedFor(urlEqualTo("/pdl")));
 		assertEquals(NOT_FOUND, responseEntity.getStatusCode());
 	}
 
