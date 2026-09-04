@@ -2,6 +2,7 @@ package no.nav.saf.anticorruptionlayer.joark.safintern.journalpost;
 
 import lombok.Builder;
 import no.nav.saf.anticorruptionlayer.joark.ArkivJournalpostMapper;
+import no.nav.saf.anticorruptionlayer.joark.domain.kode.VariantFormatCode;
 import no.nav.safselvbetjening.tilgang.TilgangDokument;
 import no.nav.safselvbetjening.tilgang.TilgangSkjermingType;
 
@@ -38,5 +39,11 @@ public record ArkivDokumentinfo(
 				.skjerming(TilgangSkjermingType.from(skjerming))
 				.dokumentvarianter(fildetaljer.stream().map(ArkivFildetaljer::getTilgangVariant).toList())
 				.build();
+	}
+
+	public boolean harVariantformat(VariantFormatCode variantformat) {
+		return fildetaljer.stream()
+				.map(ArkivFildetaljer::format)
+				.anyMatch(variantformat.name()::equals);
 	}
 }

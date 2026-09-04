@@ -149,6 +149,7 @@ class JournalpostIT extends AbstractItest {
 		assertThat(dokumentInfo1.getBrevkode()).isEqualTo("NAV 10-07.34");
 		assertThat(dokumentInfo1.getDokumentstatus()).isEqualTo(FERDIGSTILT);
 		assertThat(dokumentInfo1.getOriginalJournalpostId()).isEqualTo(JOURNALPOST_ID);
+		assertThat(dokumentInfo1.isSaksbehandlerHarTilgang()).isTrue();
 		assertThat(dokumentInfo1.getLogiskeVedlegg().get(0).getLogiskVedleggId()).isEqualTo("300000000");
 		assertThat(dokumentInfo1.getLogiskeVedlegg().get(0).getTittel()).isEqualTo("Skjema");
 		assertThat(dokumentInfo1.getDokumentvarianter()).hasSize(1);
@@ -637,6 +638,7 @@ class JournalpostIT extends AbstractItest {
 		stubPdl("hentPdlDataForIdent-inngaaendeBrevBruker-happy.json");
 
 		Journalpost journalpost = parseJournalpost(journalpostQuery());
+		assertThat(journalpost.getDokumenter().getFirst().isSaksbehandlerHarTilgang()).isFalse();
 		assertThat(journalpost.getDokumenter())
 				.hasSize(1)
 				.flatExtracting(DokumentInfo::getDokumentvarianter)

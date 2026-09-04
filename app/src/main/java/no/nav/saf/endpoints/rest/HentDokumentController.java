@@ -27,21 +27,18 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Arrays;
 
 import static java.lang.String.format;
-import static no.nav.saf.domain.kode.Variantformat.ARKIV;
 import static no.nav.saf.endpoints.HeaderUtils.createNavCallid;
 import static no.nav.saf.headers.NavHeaders.NAV_CALLID;
 import static no.nav.saf.headers.NavHeaders.NAV_USER_ID;
 import static no.nav.saf.headers.NavHeaders.X_CORRELATION_ID;
 import static no.nav.saf.util.LogSanitizer.removeUnsafeChars;
-import static no.nav.saf.util.MDCConstants.CONSUMER_ID;
 import static no.nav.saf.util.MDCConstants.DOKUMENT_INFO_ID;
 import static no.nav.saf.util.MDCConstants.JOURNALPOST_ID;
 import static no.nav.saf.util.MDCUtility.addMdcData;
-import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNumeric;
 
 /**
- * Endepunktet til hentDokument, som returnerer et dokument fra joark basert på journalpostId, dokumentInfoId og variantFormat.
+ * Endepunktet til hentDokument, som returnerer et dokument fra Joark basert på journalpostId, dokumentInfoId og eventuelt variantFormat.
  * Tjenesten er sikret med Oauth2 flyt tokens.
  */
 @Tag(name = "saf REST API", description = "Lesemodellen til fagarkivet. Henter dokumenter.")
@@ -61,11 +58,14 @@ public class HentDokumentController {
 	}
 
 	@SwaggerRestHentDokument
-	@GetMapping(value = "hentdokument/{journalpostId}/{dokumentInfoId}/{variantFormat}")
+	@GetMapping(value = {
+			"hentdokument/{journalpostId}/{dokumentInfoId}/{variantFormat}",
+			"hentdokument/{journalpostId}/{dokumentInfoId}"
+	})
 	public ResponseEntity<byte[]> hentDokument(
-			@Parameter(name = "journalpostId", description = "Id for aktuell journalpost", required = true) @PathVariable String journalpostId,
-			@Parameter(name = "dokumentInfoId", description = "Id for aktuelt dokument", required = true) @PathVariable String dokumentInfoId,
-			@Parameter(name = "variantFormat", description = "Varianten til dokumentet som skal hentes. [Følg lenken for gyldige verdier](https://confluence.adeo.no/display/BOA/Enum%3A+Variantformat).", required = true) @PathVariable String variantFormat,
+			@Parameter(name = "journalpostId", description = "ID-en til journalposten.", example = "453997590", required = true) @PathVariable String journalpostId,
+			@Parameter(name = "dokumentInfoId", description = "ID-en til dokumentet.", example = "454179226", required = true) @PathVariable String dokumentInfoId,
+			@Parameter(name = "variantFormat", description = "(Valgfri) Varianten til dokumentet som skal hentes. Dersom verdien utelates velges SLADDET dersom den finnes, ellers ARKIV. [Følg lenken for gyldige verdier](https://confluence.adeo.no/display/BOA/Enum%3A+Variantformat).", example = "ARKIV") @PathVariable(required = false) String variantFormat,
 			@Parameter(name = NAV_CALLID, description = "(Valgfri) ID for logging og sporing på tvers av verdikjeder. Eksempel: UUID") @RequestHeader(value = NAV_CALLID, required = false) String navCallid,
 			@Parameter(name = NAV_USER_ID, description = "(Valgfri) NAV ident som overstyrer sporing for kall fra servicebrukere.") @RequestHeader(value = NAV_USER_ID, required = false) String navUserId,
 			@Parameter(name = X_CORRELATION_ID, description = "@Deprecated. Bruk " + NAV_CALLID, hidden = true) @RequestHeader(value = X_CORRELATION_ID, required = false) String xCorrelationId
@@ -81,18 +81,13 @@ public class HentDokumentController {
 		try {
 			mdcSporing(journalpostId, dokumentInfoId);
 			HentDokument response = hentDokumentDomainCoordinator.hentDokument(journalpostId, dokumentInfoId, variantFormat, safRequestContext);
+			String valgtVariantFormat = variantFormat == null ? response.getVariantFormat() + " (automatisk valgt)" : response.getVariantFormat();
 
-			//ekstra logging for MMA-7862. Fjernes når oppryddingen er ferdig
-			if (ARKIV.name().equals(variantFormat)) {
-				log.info("hentDokument hentet dokument med variantFormat=ARKIV {} Nav-User-Id header fra system={}. journalpostId={}, dokumentInfoId={}",
-						isBlank(navUserId) ? "uten" : "med", MDC.get(CONSUMER_ID), journalpostId, dokumentInfoId);
-			} else {
-				log.info("hentDokument hentet dokument. journalpostId={}, dokumentInfoId={}, variantFormat={}", journalpostId, dokumentInfoId, variantFormat);
-			}
+			log.info("hentDokument hentet dokument. journalpostId={}, dokumentInfoId={}, variantFormat={}", journalpostId, dokumentInfoId, valgtVariantFormat);
 
 			return ResponseEntity.ok()
 					.contentType(response.getMediaType())
-					.header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=" + dokumentInfoId + "_" + variantFormat + response.getExtension())
+					.header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=" + dokumentInfoId + "_" + response.getVariantFormat() + response.getExtension())
 					.body(response.getDokument());
 		} catch (UgyldigInputException e) {
 			log.warn("hentDokument hentet ikke dokument. journalpostId={}, dokumentInfoId={}, variantFormat={}. Ugyldig input til tjenesten: " + e.getMessage(), journalpostId, dokumentInfoId, variantFormat);
@@ -116,10 +111,12 @@ public class HentDokumentController {
 		if (!isNumeric(dokumentInfoId)) {
 			throw new UgyldigInputException("dokumentInfoId må være et tall. dokumentInfoId=" + removeUnsafeChars(dokumentInfoId));
 		}
-		try {
-			VariantFormatCode.valueOf(variantFormat);
-		} catch (IllegalArgumentException illegalArgumentException) {
-			throw new UgyldigInputException(format("Ugyldig variantFormat. variantFormat må være en av verdiene=%s", Arrays.toString(VariantFormatCode.values())));
+		if (variantFormat != null) {
+			try {
+				VariantFormatCode.valueOf(variantFormat);
+			} catch (IllegalArgumentException illegalArgumentException) {
+				throw new UgyldigInputException("Ugyldig variantFormat. variantFormat må være en av verdiene=%s".formatted(Arrays.toString(VariantFormatCode.values())));
+			}
 		}
 	}
 
