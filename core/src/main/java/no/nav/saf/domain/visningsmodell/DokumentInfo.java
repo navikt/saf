@@ -29,7 +29,7 @@ public class DokumentInfo {
 	@Builder.Default
 	List<Dokumentvariant> dokumentvarianter = new ArrayList<>();
 
-	public boolean isSaksbehandlerHarTilgang() {
+	public boolean isSaksbehandlerHarTilgangTilVisningsvariant() {
 		return dokumentvarianter.stream()
 				.filter(Dokumentvariant::isSladdetEllerArkiv)
 				.anyMatch(Dokumentvariant::isSaksbehandlerHarTilgang);

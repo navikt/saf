@@ -471,7 +471,7 @@ class ArkivJournalpostMapperTest {
 						tuple(VARIANT_FORMAT_CODE_SLADDET.getSafVariantformat(), true),
 						tuple(VARIANT_FORMAT_CODE_ARKIV.getSafVariantformat(), false));
 
-		assertThat(dokumenter.getFirst().isSaksbehandlerHarTilgang()).isTrue();
+		assertThat(dokumenter.getFirst().isSaksbehandlerHarTilgangTilVisningsvariant()).isTrue();
 	}
 
 	@Test
