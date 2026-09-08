@@ -29,16 +29,24 @@ import static org.springframework.http.MediaType.APPLICATION_XML_VALUE;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Operation(
-		summary = "Henter fysiske dokumenter fra NAV sitt arkiv og gjør nødvendig tilgangskontroll."
+		summary = "Hent et fysisk dokument fra NAVs arkiv",
+		description = """
+				Henter et fysisk dokument og utfører nødvendig tilgangskontroll.
+
+				Dokumentet kan hentes med eller uten `variantFormat` i URL-en. Dersom `variantFormat` ikke oppgis
+				returneres `SLADDET` dersom varianten finnes, ellers returneres `ARKIV`.
+				""",
+		operationId = "hentDokument"
 )
 @ApiResponses(value = {
-		@ApiResponse(responseCode = "200", description = "OK - dokument returneres som rå data. (binærdata hvis binært filformat som pdf, tekstdata hvis tekstformat som xml eller json)",
+		@ApiResponse(responseCode = "200", description = "Dokumentet returneres som rå data (binærdata hvis binært filformat som pdf, tekstdata hvis tekstformat som xml eller json).",
 				headers = {
 						@Header(name = CONTENT_TYPE, description = "Mimetypen til dokumentet. Eksempel: `Content-Type: application/pdf`.", required = true),
 						@Header(name = CONTENT_DISPOSITION, description = """
 								Hvordan dokumentet skal vises og filnavnet hvis det skal lastes ned.
 								Standardverdi er inline for visning. Filnavnet er formattert som `<dokumentInfoId>_<variantformat>.<filendelse>`.
-								Fileendelse vil være tilpasset for mimetypen, f.eks Content-Type: application/pdf vil gi filendelse .pdf.
+								Variantformatet er enten eksplisitt angitt av konsumenten eller automatisk valgt av SAF.
+								Filendelsen tilpasses mimetypen, for eksempel gir `Content-Type: application/pdf` filendelsen `.pdf`.
 								Eksempel: `Content-Disposition: inline; filename=400000000_ARKIV.pdf`.
 								""", required = true)
 				},
@@ -82,7 +90,8 @@ import static org.springframework.http.MediaType.APPLICATION_XML_VALUE;
 				}
 		),
 		@ApiResponse(responseCode = "400", description = """
-				* Ugyldig input. JournalpostId og dokumentInfoId må være tall og variantFormat må være en gyldig kodeverk-verdi som ARKIV eller ORIGINAL.
+				* Ugyldig input. `journalpostId` og `dokumentInfoId` må være tall.
+				* Dersom `variantFormat` oppgis må det være en gyldig kodeverkverdi, for eksempel `ARKIV`, `SLADDET` eller `ORIGINAL`.
 				* Journalposten tilhører et ustøttet arkivsaksystem. Arkivsaksystem må være GSAK, PSAK eller NULL (midlertidig journalpost).""",
 				content = @Content(mediaType = APPLICATION_JSON_VALUE)),
 		@ApiResponse(responseCode = "401", description = """
@@ -97,6 +106,7 @@ import static org.springframework.http.MediaType.APPLICATION_XML_VALUE;
 				content = @Content(mediaType = APPLICATION_JSON_VALUE)),
 		@ApiResponse(responseCode = "404", description = """
 				* Dokumentet ble ikke funnet i fagarkivet.
+				* Når `variantFormat` ikke oppgis, returneres 404 dersom dokumentet verken har en `SLADDET`- eller `ARKIV`-variant.
 				* Dette kan være av midlertidig natur i tilfeller der konsument får en claim check på en journalpostId før den er ferdig arkivert.
 				* Det er opp til utvikleren å vurdere om det skal forsøkes retry på denne feilstatusen.""",
 				content = @Content(mediaType = APPLICATION_JSON_VALUE))}

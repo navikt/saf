@@ -1,0 +1,34 @@
+{
+  "journalpostId": 400000000,
+  "innhold": "Journalposttittel",
+  "fagomraade": "HJE",
+  "status": "J",
+  "saksrelasjon": {
+    "fagsystem": "FS22",
+    "sak": {
+      "aktoerId": "2000000000000",
+      "applikasjon": "HJELPEMIDLER",
+      "fagsakNr": "2514",
+      "opprettetTid": "2023-09-08T14:16:28.791052",
+      "tema": "HJE"
+    },
+    "sakId": 140000000
+  },
+  "bruker": {
+    "id": "12345678910",
+    "type": "PERSON"
+  },
+  "dokumenter": [
+    {
+      "dokumentInfoId": 500000000,
+      "fildetaljer": [
+        {
+          "format": "ORIGINAL",
+          "stoerrelse": "4721",
+          "type": "PDFA",
+          "uuid": "4b4d0d13-5c8c-4f6b-922c-4026f1679069"
+        }
+      ]
+    }
+  ]
+}

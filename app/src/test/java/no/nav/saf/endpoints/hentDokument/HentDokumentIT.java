@@ -270,10 +270,7 @@ class HentDokumentIT extends AbstractItest {
 	void shouldHentDokumentWhenSladdet() {
 		tilgangskontrollPermit();
 		stubPdl();
-		stubFor(get("/dokarkiv/hentdokument/" + DOKUMENT_ID + "/" + SLADDET_VARIANTFORMAT)
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_PDF_VALUE)
-						.withBody(TEST_FILE_BYTES)));
+		stubHappyHentDokument(SLADDET_VARIANTFORMAT);
 		stubDokarkivJournalpost("journalpost-dokumentinfo-sak-sladdet-happy.json");
 
 		ResponseEntity<String> responseEntity = callHentDokumentSladdetVariant();
@@ -284,12 +281,50 @@ class HentDokumentIT extends AbstractItest {
 	}
 
 	@Test
+	void shouldHentSladdetDokumentWhenVariantFormatIsNotSpecified() {
+		tilgangskontrollPermit();
+		stubPdl();
+		stubHappyHentDokument(SLADDET_VARIANTFORMAT);
+		stubDokarkivJournalpost("journalpost-dokumentinfo-sak-sladdet-happy.json");
+
+		ResponseEntity<String> responseEntity = callHentDokument(createHeaders(), null);
+
+		assertOkSladdetResponse(responseEntity);
+		verify(getRequestedFor(urlEqualTo("/dokarkiv/hentdokument/" + DOKUMENT_ID + "/" + SLADDET_VARIANTFORMAT)));
+	}
+
+	@Test
+	void shouldHentArkivDokumentWhenVariantFormatIsNotSpecifiedAndSladdetDoesNotExist() {
+		tilgangskontrollPermit();
+		stubHappyHentDokument();
+		stubDokarkivJournalpost("journalpost-dokumentinfo-sak-happy.json");
+		stubPdl();
+
+		ResponseEntity<String> responseEntity = callHentDokument(createHeaders(), null);
+
+		assertOkArkivResponse(responseEntity);
+		verify(getRequestedFor(urlEqualTo("/dokarkiv/hentdokument/" + DOKUMENT_ID + "/" + VARIANTFORMAT)));
+	}
+
+	@Test
+	void shouldReturnNotFoundWhenVariantFormatIsNotSpecifiedAndNeitherSladdetNorArkivExists() {
+		tilgangskontrollPermit();
+		stubPdl();
+		stubDokarkivJournalpost("journalpost-dokumentinfo-sak-uten-sladdet-eller-arkiv.json");
+
+		ResponseEntity<String> responseEntity = callHentDokument(createHeaders(), null);
+
+		assertEquals(NOT_FOUND, responseEntity.getStatusCode());
+		assertThat(responseEntity.getBody())
+				.contains("Dokument med journalpostId=%s og dokumentInfoId=%s har ingen SLADDET- eller ARKIV-variant for automatisk valg"
+						.formatted(JOURNALPOST_ID, DOKUMENT_ID));
+		verify(0, getRequestedFor(urlEqualTo("/dokarkiv/hentdokument/" + DOKUMENT_ID + "/" + ORIGINAL_VARIANTFORMAT)));
+	}
+
+	@Test
 	void shouldHentOriginalDokumentWhenCallerIsSystemWithoutRoles() {
 		stubPdl();
-		stubFor(get("/dokarkiv/hentdokument/" + DOKUMENT_ID + "/" + ORIGINAL_VARIANTFORMAT)
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_PDF_VALUE)
-						.withBody(TEST_FILE_BYTES)));
+		stubHappyHentDokument(ORIGINAL_VARIANTFORMAT);
 		stubDokarkivJournalpost("journalpost-dokumentinfo-sak-happy.json");
 
 		ResponseEntity<String> responseEntity = callHentDokument(createHeadersClientCredentialWithoutRoles(), ORIGINAL);
@@ -555,12 +590,10 @@ class HentDokumentIT extends AbstractItest {
 	@Test
 	void shouldReturnNotFoundWhenOriginalVariantDoesNotExist() {
 		tilgangskontrollPermit();
-		stubPdl();
 		stubDokarkivJournalpost("journalpost-dokumentinfo-sak-dokumentvariant-notmatched.json");
 
 		ResponseEntity<String> responseEntity = callHentDokument(ORIGINAL);
 
-		verify(postRequestedFor(urlEqualTo("/pdl")));
 		assertEquals(NOT_FOUND, responseEntity.getStatusCode());
 	}
 
@@ -855,7 +888,11 @@ class HentDokumentIT extends AbstractItest {
 	}
 
 	private static void stubHappyHentDokument() {
-		stubFor(get("/dokarkiv/hentdokument/" + DOKUMENT_ID + "/" + VARIANTFORMAT)
+		stubHappyHentDokument(VARIANTFORMAT);
+	}
+
+	private static void stubHappyHentDokument(VariantFormatCode variantFormat) {
+		stubFor(get("/dokarkiv/hentdokument/" + DOKUMENT_ID + "/" + variantFormat)
 				.willReturn(aResponse().withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_PDF_VALUE)
 						.withBody(TEST_FILE_BYTES)));
@@ -967,7 +1004,8 @@ class HentDokumentIT extends AbstractItest {
 	}
 
 	private ResponseEntity<String> callHentDokument(HttpHeaders headers, VariantFormatCode variantFormatCode) {
-		String uri = "/rest/hentdokument/" + JOURNALPOST_ID + "/" + DOKUMENT_ID + "/" + variantFormatCode;
+		String variantFormatSegment = variantFormatCode == null ? "" : "/" + variantFormatCode;
+		String uri = "/rest/hentdokument/" + JOURNALPOST_ID + "/" + DOKUMENT_ID + variantFormatSegment;
 		RequestEntity<Void> requestEntity = RequestEntity.get(URI.create(uri)).headers(headers).build();
 		return this.restTemplate.exchange(requestEntity, String.class);
 	}

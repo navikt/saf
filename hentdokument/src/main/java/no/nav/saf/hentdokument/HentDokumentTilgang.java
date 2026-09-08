@@ -1,5 +1,6 @@
 package no.nav.saf.hentdokument;
 
+import no.nav.saf.anticorruptionlayer.joark.domain.kode.VariantFormatCode;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.domain.tilgangsmodell.TilgangDokumentInfo;
 import no.nav.saf.domain.tilgangsmodell.TilgangDokumentvariant;
@@ -8,7 +9,11 @@ import no.nav.saf.domain.tilgangsmodell.TilgangSak;
 
 import java.util.Optional;
 
-record HentDokumentTilgang(TilgangBruker tilgangBruker, TilgangSak tilgangSak, TilgangJournalpost tilgangJournalpost) {
+record HentDokumentTilgang(TilgangBruker tilgangBruker,
+						   TilgangSak tilgangSak,
+						   TilgangJournalpost tilgangJournalpost,
+						   VariantFormatCode variantFormat) {
+
 	TilgangDokumentInfo tilgangDokumentInfo() {
 		if(tilgangJournalpost.getDokumenter() == null) {
 			return null;
