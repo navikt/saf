@@ -90,7 +90,7 @@ public class ArkivJournalpostTestObjects {
 	static final String VEDLEGG_FIL_UUID = "11111111-2222-3333-4444-000000000002";
 	static final String VEDLEGG_TITTEL = "Kvitteringsside for dokumentinnsending";
 	static final String VEDLEGG_BREVKODE = "L7";
-	static final String KATEGORI_FORVALTNINGSNOTAT = "FORVALTNINGSNOTAT";
+	static final String KATEGORI_SED = "SED";
 
 
 	static ArkivJournalpost utgaaendeArkivJournalpost(JournalStatusCode journalStatusCode, ArkivUtsendingsInfo arkivUtsendingsInfo, UtsendingsKanalCode kanalCode) {
@@ -174,7 +174,7 @@ public class ArkivJournalpostTestObjects {
 				.dokumentInfoId(HOVEDDOKUMENT_DOKUMENT_INFO_ID)
 				.tilknyttetSom(TILKNYTTET_SOM_HOVEDDOKUMENT)
 				.skjerming(SkjermingTypeCode.ARK.name())
-				.kategori(KATEGORI_FORVALTNINGSNOTAT)
+				.kategori(KATEGORI_SED)
 				.kassert(false)
 				.fildetaljer(List.of(new ArkivFildetaljer(SkjermingTypeCode.ARK.name(), VariantFormatCode.ARKIV.name(), ARKIVFILDETALJER_FILNAVN_1, HOVEDDOKUMENT_FIL_STOERRELSE, HOVEDDOKUMENT_FILTYPE, HOVEDDOKUMENT_FIL_UUID)))
 				.tittel(HOVEDDOKUMENT_TITTEL)
@@ -188,7 +188,7 @@ public class ArkivJournalpostTestObjects {
 				.dokumentInfoId(VEDLEGG_DOKUMENT_INFO_ID)
 				.tilknyttetSom(TILKNYTTET_SOM_VEDLEGG)
 				.skjerming(SkjermingTypeCode.ARK.name())
-				.kategori(KATEGORI_FORVALTNINGSNOTAT)
+				.kategori(KATEGORI_SED)
 				.kassert(false)
 				.fildetaljer(List.of(new ArkivFildetaljer(SkjermingTypeCode.ARK.name(), VariantFormatCode.ARKIV.name(), ARKIVFILDETALJER_FILNAVN_1, HOVEDDOKUMENT_FIL_STOERRELSE, HOVEDDOKUMENT_FILTYPE, HOVEDDOKUMENT_FIL_UUID)))
 				.tittel(VEDLEGG_TITTEL)
