@@ -42,7 +42,7 @@
   "SPRING_DATA_REDIS_HOST": "saf-valkey",
   "AZURE_IAC_RULES": [
     {
-      "name":  "grunn-og-hjelpestonad",
+      "app":  "grunn-og-hjelpestonad",
       "namespace": "grunn-og-hjelp",
       "cluster": "dev-gcp"
     },
