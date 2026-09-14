@@ -42,6 +42,11 @@
   "SPRING_DATA_REDIS_HOST": "saf-valkey",
   "AZURE_IAC_RULES": [
     {
+      "name":  "grunn-og-hjelpestonad",
+      "namespace": "grunn-og-hjelp",
+      "cluster": "dev-gcp"
+    },
+    {
       "app": "dp-mottak",
       "namespace": "teamdagpenger",
       "cluster": "dev-gcp"
