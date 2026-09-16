@@ -1,8 +1,10 @@
 package no.nav.saf.hentdokument;
 
+import lombok.extern.slf4j.Slf4j;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.VariantFormatCode;
 import no.nav.saf.domain.HentDokument;
 import no.nav.saf.domain.kode.Journalstatus;
+import no.nav.saf.domain.kode.Tema;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.domain.tilgangsmodell.TilgangDokumentInfo;
 import no.nav.saf.domain.tilgangsmodell.TilgangDokumentvariant;
@@ -12,9 +14,20 @@ import no.nav.saf.exceptions.HentdokumentTilgangskontrollException;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.pep.PepAnswer;
 import no.nav.saf.tilgangskontroll.pep.Pep;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.EnumSet;
+
+import static no.nav.saf.domain.kode.Tema.FRI;
+import static no.nav.saf.domain.kode.Tema.MOB;
+import static no.nav.saf.domain.kode.Tema.OPA;
+import static no.nav.saf.domain.kode.Tema.REH;
+import static no.nav.saf.domain.kode.Tema.RVE;
+import static no.nav.saf.domain.kode.Tema.SAA;
+import static no.nav.saf.domain.kode.Tema.SAP;
+import static no.nav.saf.domain.kode.Tema.UKJ;
 import static no.nav.saf.tilgangskontroll.pep.DenyReasonFactory.createPep1gDenyReason;
 import static no.nav.saf.tilgangskontroll.pep.DenyReasonFactory.createPep2DenyReason;
 import static no.nav.saf.tilgangskontroll.pep.DenyReasonFactory.createPep2dDenyReason;
@@ -25,8 +38,11 @@ import static no.nav.saf.tilgangskontroll.pep.DenyReasonFactory.createPep6dDenyR
 import static no.nav.saf.tilgangskontroll.pep.DenyReasonFactory.createPep7dDenyReason;
 import static no.nav.saf.tilgangskontroll.pep.DenyReasonFactory.createPep8DenyReason;
 
+@Slf4j
 @Component
 class HentDokumentDomainCoordinatorImpl implements HentDokumentDomainCoordinator {
+
+	private static final EnumSet<Tema> DISCONTINUED_TEMA = EnumSet.of(FRI, MOB, OPA, REH, RVE, SAA, SAP);
 
 	private final HentDokumentAntiCorruptionLayer hentDokumentAntiCorruptionLayer;
 	private final HentDokumentTilgangService hentDokumentTilgangService;
@@ -76,6 +92,10 @@ class HentDokumentDomainCoordinatorImpl implements HentDokumentDomainCoordinator
 
 		if (safRequestContext.isUserIdNavAnsatt()) {
 			hentDokumentSporbarhetslogger.logPermit(journalpostId, dokumentInfoId, valgtVariantFormat.name(), hentDokumentTilgang, safRequestContext);
+		}
+		Tema tema = getTema(hentDokumentTilgang);
+		if (DISCONTINUED_TEMA.contains(tema)) {
+			log.info("hentdokument henter dokument på avsluttet tema={}, journalpostId={}, dokumentInfoId={}, varianformat={}, isUserIdNavAnsatt={}", tema, journalpostId, dokumentInfoId, variantFormat, safRequestContext.isUserIdNavAnsatt());
 		}
 		return hentDokumentAntiCorruptionLayer.hentDokument(dokumentInfoId, valgtVariantFormat);
 	}
@@ -128,6 +148,15 @@ class HentDokumentDomainCoordinatorImpl implements HentDokumentDomainCoordinator
 		PepAnswer pep8Response = pep8d.hasAccessWithAnswer(tilgangSak, safRequestContext);
 		if (pep8Response.isDeny()) {
 			throw new HentdokumentTilgangskontrollException(createPep8DenyReason(safRequestContext), pep8Response);
+		}
+	}
+
+	private static @NonNull Tema getTema(HentDokumentTilgang hentDokumentTilgang) {
+		TilgangSak tilgangSak = hentDokumentTilgang.tilgangSak();
+		if (tilgangSak == null) {
+			return UKJ;
+		} else {
+			return tilgangSak.getTema();
 		}
 	}
 }
