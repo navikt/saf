@@ -14,12 +14,19 @@ import no.nav.saf.exceptions.HentdokumentTilgangskontrollException;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.pep.PepAnswer;
 import no.nav.saf.tilgangskontroll.pep.Pep;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.EnumSet;
 
+import static no.nav.saf.domain.kode.Tema.FRI;
+import static no.nav.saf.domain.kode.Tema.MOB;
+import static no.nav.saf.domain.kode.Tema.OPA;
+import static no.nav.saf.domain.kode.Tema.REH;
+import static no.nav.saf.domain.kode.Tema.RVE;
 import static no.nav.saf.domain.kode.Tema.SAA;
+import static no.nav.saf.domain.kode.Tema.SAP;
 import static no.nav.saf.domain.kode.Tema.UKJ;
 import static no.nav.saf.tilgangskontroll.pep.DenyReasonFactory.createPep1gDenyReason;
 import static no.nav.saf.tilgangskontroll.pep.DenyReasonFactory.createPep2DenyReason;
@@ -35,7 +42,7 @@ import static no.nav.saf.tilgangskontroll.pep.DenyReasonFactory.createPep8DenyRe
 @Component
 class HentDokumentDomainCoordinatorImpl implements HentDokumentDomainCoordinator {
 
-	private static final EnumSet<Tema> DISCONTINUED_TEMA = EnumSet.of(SAA);
+	private static final EnumSet<Tema> DISCONTINUED_TEMA = EnumSet.of(FRI, MOB, OPA, REH, RVE, SAA, SAP);
 
 	private final HentDokumentAntiCorruptionLayer hentDokumentAntiCorruptionLayer;
 	private final HentDokumentTilgangService hentDokumentTilgangService;
@@ -144,9 +151,9 @@ class HentDokumentDomainCoordinatorImpl implements HentDokumentDomainCoordinator
 		}
 	}
 
-	private static Tema getTema(HentDokumentTilgang hentDokumentTilgang) {
+	private static @NonNull Tema getTema(HentDokumentTilgang hentDokumentTilgang) {
 		TilgangSak tilgangSak = hentDokumentTilgang.tilgangSak();
-		if (tilgangSak == null || tilgangSak.getTema() == null) {
+		if (tilgangSak == null) {
 			return UKJ;
 		} else {
 			return tilgangSak.getTema();
