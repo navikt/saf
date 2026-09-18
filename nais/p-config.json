@@ -761,6 +761,11 @@
       "app": "sokos-up-kontoregister-api",
       "namespace": "okonomi",
       "cluster": "prod-gcp"
-     }
+     },
+    {
+      "app": "arbeid-og-ytelser",
+      "namespace": "team-rpa",
+      "cluster": "prod-fss"
+    }
   ]
 }
