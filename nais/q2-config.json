@@ -42,6 +42,11 @@
   "SPRING_DATA_REDIS_HOST": "saf-valkey",
   "AZURE_IAC_RULES": [
     {
+      "app":  "mulighetsrommet-api",
+      "namespace": "team-mulighetsrommet",
+      "cluster": "dev-gcp"
+    },
+    {
       "app":  "grunn-og-hjelpestonad",
       "namespace": "grunn-og-hjelp",
       "cluster": "dev-gcp"
