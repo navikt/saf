@@ -835,6 +835,11 @@
       "app": "translatore-backend-q2",
       "namespace": "ki-oversetter",
       "cluster": "dev-gcp"
+    },
+    {
+      "app": "arbeid-og-ytelser",
+      "namespace": "team-rpa",
+      "cluster": "dev-fss"
     }
   ]
 }
