@@ -839,10 +839,7 @@
     {
       "app": "arbeid-og-ytelser",
       "namespace": "team-rpa",
-      "cluster": "dev-fss",
-      "roles": [
-        "dokument_tema_ufo"
-      ]
+      "cluster": "dev-fss"
     }
   ]
 }
