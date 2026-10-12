@@ -1,5 +1,6 @@
 package no.nav.saf.anticorruptionlayer.joark.domain;
 
+import no.nav.saf.anticorruptionlayer.joark.domain.kode.AvsenderMottakerIdTypeCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.FagomradeCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.JournalStatusCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.JournalpostTypeCode;
@@ -32,6 +33,7 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.time.LocalDateTime;
@@ -158,7 +160,7 @@ class JournalpostDtoMapperTest {
 		assertThat(journalpost.getRelevanteDatoer(), hasItem(new RelevantDato(AVS_RETUR_DATO, DATO_AVS_RETUR)));
 		assertThat(journalpost.getRelevanteDatoer(), hasItem(new RelevantDato(SENDT_PRINT_DATO, DATO_SENDT_PRINT)));
 		assertThat(journalpost.getRelevanteDatoer(), hasItem(new RelevantDato(EKSPEDERT_DATO, DATO_EKSPEDERT)));
-		assertThat(journalpost.getRelevanteDatoer(), hasItem(new RelevantDato(LEST_DATO, DATO_LEST)));
+		assertThat(journalpost.getRelevanteDatoer(), not(hasItem(new RelevantDato(LEST_DATO, DATO_LEST))));
 		assertThat(journalpost.getRelevanteDatoer(), not(hasItem(new RelevantDato(MOTTAT_DATO, DATO_REGISTRERT))));
 		assertEquals(FORVENTET_ADRESSETEKST_KONVOLUTT, journalpost.getUtsendingsinfo().getFysiskpostSendt().getAdressetekstKonvolutt());
 	}
@@ -256,6 +258,31 @@ class JournalpostDtoMapperTest {
 		assertEquals(journalpost.getKanalnavn(), INGEN_DISTRIBUSJON.getKanalnavn());
 
 		assertThat(journalpost.getRelevanteDatoer(), hasItem(new RelevantDato(JOURNAL_DATO, DATO_JOURNALFOERT)));
+	}
+
+	@Test
+	void shouldMapLestDatoForOrganisasjon() {
+		JournalpostDto journalpostDto = buildJournalpostDtoUtgaaendeType(E, null, null);
+		journalpostDto.setAvsenderMottakerId(BRUKER_ID_ORGANISASJON);
+		journalpostDto.setAvsenderMottakerIdType(AvsenderMottakerIdTypeCode.ORGNR);
+
+		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, emptySet(), defaultRequestCache());
+
+		Assertions.assertThat(journalpost.getRelevanteDatoer())
+				.contains(new RelevantDato(LEST_DATO, DATO_LEST));
+	}
+
+	@ParameterizedTest
+	@EnumSource(value = AvsenderMottakerIdTypeCode.class, mode = EnumSource.Mode.EXCLUDE, names = "ORGNR")
+	void shouldNotMapLestDatoForAndreIdTyperEnnOrgnummer(AvsenderMottakerIdTypeCode idType) {
+		JournalpostDto journalpostDto = buildJournalpostDtoUtgaaendeType(E, null, null);
+		journalpostDto.setAvsenderMottakerIdType(idType);
+
+		Journalpost journalpost = mapper.mapJournalpostDto(journalpostDto, emptySet(), defaultRequestCache());
+
+		Assertions.assertThat(journalpost.getRelevanteDatoer())
+				.extracting(RelevantDato::getDatotype)
+				.doesNotContain(DATO_LEST);
 	}
 
 	@Test

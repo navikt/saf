@@ -393,7 +393,7 @@ public class ArkivJournalpostMapper {
 				if (arkivRelevanteDatoer.retur() != null) {
 					relevanteDatoer.add(new RelevantDato(arkivRelevanteDatoer.retur(), Datotype.DATO_AVS_RETUR));
 				}
-				if (arkivRelevanteDatoer.lest() != null) {
+				if (arkivRelevanteDatoer.lest() != null && arkivJournalpost.erAvsenderMottakerOrganisasjon()) {
 					relevanteDatoer.add(new RelevantDato(arkivRelevanteDatoer.lest(), Datotype.DATO_LEST));
 				}
 				break;

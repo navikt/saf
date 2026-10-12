@@ -77,6 +77,10 @@ public class JournalpostDto {
 		return saksrelasjon != null && saksrelasjon.getSakId() != null;
 	}
 
+	public boolean erAvsenderMottakerOrganisasjon() {
+		return avsenderMottakerIdType == AvsenderMottakerIdTypeCode.ORGNR;
+	}
+
 	public TilgangJournalpost getJournalpostTilgang(TilgangSak tilgangSak) {
 		return TilgangJournalpost.builder()
 				.journalstatus(TilgangJournalstatus.from(journalstatus.name()))
