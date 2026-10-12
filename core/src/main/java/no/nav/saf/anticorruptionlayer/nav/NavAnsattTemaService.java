@@ -10,6 +10,7 @@ import no.nav.saf.cache.ValkeyCacheConfig;
 import no.nav.saf.domain.kode.Tema;
 import no.nav.saf.tilgangskontroll.SafRequestContext;
 import no.nav.saf.tilgangskontroll.pep.PepAnswer;
+import org.springframework.dao.QueryTimeoutException;
 import org.springframework.data.redis.RedisConnectionFailureException;
 import org.springframework.data.redis.RedisSystemException;
 import org.springframework.data.redis.connection.PoolException;
@@ -39,7 +40,7 @@ public class NavAnsattTemaService {
 	public void registerRequestCacheTemaTilgang(SafRequestContext safRequestContext) {
 		if (safRequestContext.isUserIdNavAnsatt()) {
 			final String navIdent = safRequestContext.getUserId();
-			getValkeyCacheTemaTilganger(navIdent).forEach(tema -> {
+			getTemaTilganger(navIdent).forEach(tema -> {
 				try {
 					String keyForPep2d = KeyGeneratorLocalCaching.getKeyForPep2d(Tema.valueOf(tema));
 					safRequestContext.getRequestCache().putDecision(keyForPep2d, PepAnswer.permit());
@@ -65,8 +66,12 @@ public class NavAnsattTemaService {
 			if (requestCacheDecision == null) {
 				try {
 					return getValkeyCacheTemaTilgang(navIdent, tema);
+				} catch (QueryTimeoutException e) {
+					log.warn("tidsavbrudd ved forsøk på å hente tilgang i redis/valkey.", e);
+					return getTemaGroupsForNavIdent(navIdent).contains(tema.name());
 				} catch (RedisSystemException | RedisException | PoolException |
 						 RedisConnectionFailureException e) {
+					log.warn("feil ved forsøk på å hente tilgang i redis/valkey.", e);
 					return getTemaGroupsForNavIdent(navIdent).contains(tema.name());
 				}
 			} else {
@@ -74,6 +79,18 @@ public class NavAnsattTemaService {
 			}
 		}
 		return false;
+	}
+
+	/// Henter tilganger fra valkey, eller hvis det feiler, fra Entra
+	private Set<String> getTemaTilganger(String navIdent) {
+		try {
+			return getValkeyCacheTemaTilganger(navIdent);
+		} catch (QueryTimeoutException e) {
+			log.warn("tidsavbrudd ved forsøk på å hente tilgangsliste i redis/valkey.", e);
+		} catch (RedisConnectionFailureException e) {
+			log.warn("tilkoblingsfeil ved forsøk på å hente tilgangsliste i redis/valkey.", e);
+		}
+		return getTemaGroupsForNavIdent(navIdent);
 	}
 
 	private Set<String> getValkeyCacheTemaTilganger(String navIdent) {
