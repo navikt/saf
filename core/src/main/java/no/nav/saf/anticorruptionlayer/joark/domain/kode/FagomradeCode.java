@@ -12,22 +12,6 @@ public enum FagomradeCode {
 	 */
 	PEN,
 	/**
-	 * Øvrig
-	 */
-	OVR,
-	/**
-	 * Skanning
-	 */
-	MOT,
-	/**
-	 * Bidrag innkreving
-	 */
-	BII,
-	/**
-	 * FS22
-	 */
-	FS22,
-	/**
 	 * Bil
 	 */
 	BIL,
