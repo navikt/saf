@@ -4,6 +4,7 @@ import com.microsoft.graph.models.User;
 import io.lettuce.core.RedisException;
 import no.nav.saf.cache.ValkeyCacheConfig;
 import org.springframework.cache.Cache;
+import org.springframework.dao.QueryTimeoutException;
 import org.springframework.data.redis.RedisConnectionFailureException;
 import org.springframework.data.redis.RedisSystemException;
 import org.springframework.data.redis.connection.PoolException;
@@ -53,7 +54,7 @@ public class MsGraphEntraGroupMembershipService {
 				return isMemberOfGroup != null && isMemberOfGroup;
 			}
 		} catch (RedisSystemException | RedisException | PoolException | Cache.ValueRetrievalException |
-				 RedisConnectionFailureException e) {
+				 QueryTimeoutException | RedisConnectionFailureException e) {
 			// Ting skal fremdeles snurre selv om man ikke får kontakt med redis
 			return getGroupsForIdent(navIdent).contains(azureAdGroup.toString());
 		}
