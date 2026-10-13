@@ -286,7 +286,11 @@ public enum FagomradeCode {
 	/**
 	 * Oljepionerene
 	 */
-	OLJ;
+	OLJ,
+	/**
+	 * Aktivitetspenger
+	 */
+	AVP;
 
 	public static Tema toSafTema(FagomradeCode joarkFagomradeCode) {
 		return joarkFagomradeCode == null ? Tema.UKJ : Tema.valueOf(joarkFagomradeCode.name());

@@ -10,6 +10,7 @@ public enum Tema {
 	AKT("Aktivitetsplan med dialoger"),
 	ARP("Arbeidsrådgivning – psykologtester"),
 	ARS("Arbeidsrådgivning – skjermet"),
+	AVP("Aktivitetspenger"),
 	BAR("Barnetrygd"),
 	BBF("Barnebortføring"),
 	BID("Bidrag"),
