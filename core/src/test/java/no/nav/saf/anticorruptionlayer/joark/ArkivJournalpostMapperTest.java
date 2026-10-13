@@ -1,11 +1,13 @@
 package no.nav.saf.anticorruptionlayer.joark;
 
+import no.nav.saf.anticorruptionlayer.joark.domain.kode.AvsenderMottakerIdTypeCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.BrukerTypeCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.FagomradeCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.FagsystemCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.JournalStatusCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.JournalpostTypeCode;
 import no.nav.saf.anticorruptionlayer.joark.domain.kode.SkjermingTypeCode;
+import no.nav.saf.anticorruptionlayer.joark.safintern.journalpost.ArkivAvsenderMottaker;
 import no.nav.saf.anticorruptionlayer.joark.safintern.journalpost.ArkivBruker;
 import no.nav.saf.anticorruptionlayer.joark.safintern.journalpost.ArkivDokumentinfo;
 import no.nav.saf.anticorruptionlayer.joark.safintern.journalpost.ArkivJournalpost;
@@ -163,13 +165,12 @@ class ArkivJournalpostMapperTest {
 		assertThat(journalpost.getAntallRetur()).isEqualTo(ARKIVJOURNALPOST_ANTALL_RETUR.toString());
 		assertThat(journalpost.getDatoSortering()).isEqualTo(ARKIVJOURNALPOST_EKSPEDERT_DATO.atZoneSameInstant(TIDSSONE_NORGE).toLocalDateTime());
 		assertThat(journalpost.getRelevanteDatoer())
-				.hasSize(6)
+				.hasSize(5)
 				.contains(new RelevantDato(ARKIVJOURNALPOST_JOURNAL_DATO, DATO_JOURNALFOERT),
 						new RelevantDato(ARKIVJOURNALPOST_DOKUMENT_DATO, DATO_DOKUMENT),
 						new RelevantDato(ARKIVJOURNALPOST_AVS_RETUR_DATO, DATO_AVS_RETUR),
 						new RelevantDato(ARKIVJOURNALPOST_SENDT_PRINT_DATO, DATO_SENDT_PRINT),
-						new RelevantDato(ARKIVJOURNALPOST_EKSPEDERT_DATO, DATO_EKSPEDERT),
-						new RelevantDato(ARKIVJOURNALPOST_LEST_DATO, DATO_LEST));
+						new RelevantDato(ARKIVJOURNALPOST_EKSPEDERT_DATO, DATO_EKSPEDERT));
 		assertThat(journalpost.getInnsynsregel()).isEqualTo(ARKIVJOURNALPOST_OVERSTYRTINNSYN_STANDARD);
 		assertThat(journalpost.getUtsendingsinfo().getFysiskpostSendt().getAdressetekstKonvolutt()).isEqualTo(FORVENTET_ADRESSETEKST_KONVOLUTT);
 	}
@@ -267,6 +268,32 @@ class ArkivJournalpostMapperTest {
 		assertThat(journalpost.getRelevanteDatoer())
 				.hasSize(1)
 				.contains(new RelevantDato(ARKIVJOURNALPOST_JOURNAL_DATO, DATO_JOURNALFOERT));
+	}
+
+	@Test
+	void shouldMapLestDatoForOrganisasjon() {
+		ArkivJournalpost arkivJournalpost = utgaaendeArkivJournalpostBuilder(E, null, null)
+				.avsenderMottaker(new ArkivAvsenderMottaker(BRUKER_ID_ORGANISASJON, "ORGNR", AVSENDER_MOTTAKER_NAVN, AVSENDER_MOTTAKER_LAND))
+				.build();
+
+		Journalpost journalpost = mapJournalpost(arkivJournalpost, emptySet(), defaultRequestCache());
+
+		assertThat(journalpost.getRelevanteDatoer())
+				.contains(new RelevantDato(ARKIVJOURNALPOST_LEST_DATO, DATO_LEST));
+	}
+
+	@ParameterizedTest
+	@EnumSource(value = AvsenderMottakerIdTypeCode.class, mode = EnumSource.Mode.EXCLUDE, names = "ORGNR")
+	void shouldNotMapLestDatoForAndreIdTyperEnnOrgnummer(AvsenderMottakerIdTypeCode idType) {
+		ArkivJournalpost arkivJournalpost = utgaaendeArkivJournalpostBuilder(E, null, null)
+				.avsenderMottaker(new ArkivAvsenderMottaker(AVSENDER_MOTTAKER_ID, idType.name(), AVSENDER_MOTTAKER_NAVN, AVSENDER_MOTTAKER_LAND))
+				.build();
+
+		Journalpost journalpost = mapJournalpost(arkivJournalpost, emptySet(), defaultRequestCache());
+
+		assertThat(journalpost.getRelevanteDatoer())
+				.extracting(RelevantDato::getDatotype)
+				.doesNotContain(DATO_LEST);
 	}
 
 	@Test

@@ -445,7 +445,7 @@ public class JournalpostDtoMapper {
 				if (journalpostDto.getAvsReturDato() != null) {
 					relevanteDatoer.add(new RelevantDato(journalpostDto.getAvsReturDato(), Datotype.DATO_AVS_RETUR));
 				}
-				if (journalpostDto.getLestDato() != null) {
+				if (journalpostDto.getLestDato() != null && journalpostDto.erAvsenderMottakerOrganisasjon()) {
 					relevanteDatoer.add(new RelevantDato(journalpostDto.getLestDato(), Datotype.DATO_LEST));
 				}
 				break;

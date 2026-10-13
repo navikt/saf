@@ -52,6 +52,10 @@ public record ArkivJournalpost(
 		return saksrelasjon != null && saksrelasjon.sakId() != null;
 	}
 
+	public boolean erAvsenderMottakerOrganisasjon() {
+		return avsenderMottaker != null && avsenderMottaker.erOrganisasjon();
+	}
+
 	public TilgangJournalpost getJournalpostTilgang(TilgangSak tilgangSak) {
 		return TilgangJournalpost.builder()
 				.journalstatus(TilgangJournalstatus.from(status))

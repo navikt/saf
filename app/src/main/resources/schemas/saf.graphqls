@@ -617,7 +617,7 @@ enum Datotype {
     DATO_DOKUMENT
 
     # * Tidspunkt som hoveddokumentet på journalposten ble lest på nav.no
-    # * returneres for utgående journalposter
+    # * Returneres for utgående journalposter når datoLest er satt og avsender/mottaker har ID-type ORGNR.
     DATO_LEST
 
 }
