@@ -771,6 +771,11 @@
       "app": "arbeid-og-ytelser",
       "namespace": "team-rpa",
       "cluster": "prod-fss"
+    },
+    {
+      "app": "watson-admin-api",
+      "namespace": "holmes",
+      "cluster": "prod-gcp"
     }
   ]
 }
