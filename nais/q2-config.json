@@ -840,6 +840,11 @@
       "app": "arbeid-og-ytelser",
       "namespace": "team-rpa",
       "cluster": "dev-fss"
+    },
+    {
+      "app": "watson-admin-api",
+      "namespace": "holmes",
+      "cluster": "dev-gcp"
     }
   ]
 }
