@@ -227,6 +227,11 @@
       "cluster": "dev-gcp"
     },
     {
+      "app": "tsm-oppgave",
+      "namespace": "tsm",
+      "cluster": "dev-gcp"
+    },
+    {
       "app": "isdialogmote",
       "namespace": "teamsykefravr",
       "cluster": "dev-gcp"
