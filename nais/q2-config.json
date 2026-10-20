@@ -97,6 +97,11 @@
       "cluster": "dev-fss"
     },
     {
+      "app": "familie-integrasjoner",
+      "namespace": "teamfamilie",
+      "cluster": "dev-gcp"
+    },
+    {
       "app": "journalforing-frontend",
       "namespace": "isa",
       "cluster": "dev-fss"
