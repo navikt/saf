@@ -48,6 +48,11 @@
       "cluster": "prod-fss"
     },
     {
+      "app": "familie-integrasjoner",
+      "namespace": "teamfamilie",
+      "cluster": "prod-gcp"
+    },
+    {
       "app": "k9-punsj",
       "namespace": "k9saksbehandling",
       "cluster": "prod-fss"
