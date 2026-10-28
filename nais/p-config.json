@@ -776,6 +776,11 @@
       "app": "watson-admin-api",
       "namespace": "holmes",
       "cluster": "prod-gcp"
+    },
+    {
+      "app": "ufore-dokument-mottak",
+      "namespace": "ufore",
+      "cluster": "prod-gcp"
     }
   ]
 }

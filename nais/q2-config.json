@@ -855,6 +855,11 @@
       "app": "watson-admin-api",
       "namespace": "holmes",
       "cluster": "dev-gcp"
+    },
+    {
+      "app": "ufore-dokument-mottak",
+      "namespace": "ufore",
+      "cluster": "dev-gcp"
     }
   ]
 }
