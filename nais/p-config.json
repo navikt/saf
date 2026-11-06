@@ -419,11 +419,6 @@
       "cluster": "prod-gcp"
     },
     {
-      "app": "joarkadmin",
-      "namespace": "teamdokumenthandtering",
-      "cluster": "prod-fss"
-    },
-    {
       "app": "modiapersonoversikt-api",
       "namespace": "personoversikt",
       "cluster": "prod-fss"

@@ -16,7 +16,7 @@
       "avsenderMottakerLand": null,
       "journalforendeEnhet": null,
       "journalfortAvNavn": null,
-      "opprettetAvNavn": "srvjoarkadmin",
+      "opprettetAvNavn": "aap:app",
       "mottakskanal": "NAV_NO",
       "utsendingskanal": null,
       "journalposttype": "I",
