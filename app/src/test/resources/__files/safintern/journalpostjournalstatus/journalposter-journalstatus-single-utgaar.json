@@ -13,7 +13,7 @@
         "type": "ORGNR",
         "navn": "NAV"
       },
-      "opprettetAvNavn": "srvjoarkadmin",
+      "opprettetAvNavn": "teamdagpenger:app",
       "mottakskanal": "NAV_NO",
       "type": "I",
       "saksrelasjon": {
