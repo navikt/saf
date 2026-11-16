@@ -45,6 +45,11 @@
       "cluster": "dev-gcp"
     },
     {
+      "app": "su-se-bakover-q1",
+      "namespace": "supstonad",
+      "cluster": "dev-gcp"
+    },
+    {
       "app": "medlemskap-oppslag",
       "namespace": "medlemskap",
       "cluster": "dev-gcp"
