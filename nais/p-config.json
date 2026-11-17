@@ -11,7 +11,7 @@
     "https://saf.prod-fss-pub.nais.io",
     "https://saf.intern.nav.no"
   ],
-  "SAF_AZURE_GROUP_EGEN_ANSATT_OBJECT_ID": "e750ceb5-b70b-4d94-b4fa-9d22467b786b",
+  "SAF_AZURE_GROUP_EGEN_ANSATT_OBJECT_ID": "3121171d-bced-4967-b993-caaf57f02b73",
   "SAF_AZURE_GROUP_JOARK_VEDLIKEHOLD_OBJECT_ID": "cc9f8c69-9a8b-4cd1-a1c7-d5e993cc7e5a",
   "SAF_AZURE_GROUP_JOARK_HISTORISK_OBJECT_ID": "dbd1fce4-6e0a-4fa6-8e9b-e99d1c239c72",
   "SAF_AZURE_GROUP_LESE_UTGAATTE_DOKUMENTER_OBJECT_ID": "41108590-d644-4dac-ace7-74a1e7056019",
@@ -40,7 +40,7 @@
     {
       "app": "mulighetsrommet-api",
       "namespace": "team-mulighetsrommet",
-      "cluster": "prod-gcp",
+      "cluster": "prod-gcp"
     },
     {
       "app": "familie-integrasjoner",
