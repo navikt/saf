@@ -850,6 +850,11 @@
       "app": "ufore-dokument-mottak",
       "namespace": "ufore",
       "cluster": "dev-gcp"
+    },
+    {
+      "app": "tsm-papirmottak",
+      "namespace": "tsm",
+      "cluster": "dev-gcp"
     }
   ]
 }
