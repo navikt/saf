@@ -44,11 +44,13 @@ import static no.nav.saf.domain.kode.Datotype.DATO_JOURNALFOERT;
 import static no.nav.saf.domain.kode.Datotype.DATO_REGISTRERT;
 import static no.nav.saf.domain.kode.Dokumentstatus.FERDIGSTILT;
 import static no.nav.saf.domain.kode.Journalstatus.MOTTATT;
+import static no.nav.saf.domain.kode.Kanal.INGEN_DISTRIBUSJON;
 import static no.nav.saf.domain.kode.Kanal.SDP;
 import static no.nav.saf.domain.kode.Kanal.SKAN_IM;
 import static no.nav.saf.domain.kode.Tema.HJE;
 import static no.nav.saf.domain.kode.Tema.UFO;
 import static no.nav.saf.domain.kode.Variantformat.ARKIV;
+import static no.nav.saf.domain.visningsmodell.AvsenderMottakerIdType.NULL;
 import static no.nav.saf.domain.visningsmodell.BrukerIdType.AKTOERID;
 import static no.nav.saf.domain.visningsmodell.BrukerIdType.ORGNR;
 import static no.nav.saf.graphql.ErrorCode.BAD_REQUEST;
@@ -320,8 +322,8 @@ class JournalpostIT extends AbstractItest {
 		assertThat(journalpost.getDokumenter())
 				.hasSize(1)
 				.flatExtracting(DokumentInfo::getDokumentvarianter)
-				.extracting(Dokumentvariant::isSaksbehandlerHarTilgang)
-				.containsExactly(true);
+				.extracting(Dokumentvariant::isSaksbehandlerHarTilgang, Dokumentvariant::isBrukerHarTilgang)
+				.containsExactly(tuple(true, false));
 		String expectedTittel = "NAV 10-07.34 Tilskudd ved kjøp av briller til barn";
 		assertThat(journalpost.getTittel()).isEqualTo(expectedTittel);
 		DokumentInfo dokumentInfo = journalpost.getDokumenter().get(0);
@@ -355,6 +357,79 @@ class JournalpostIT extends AbstractItest {
 
 		assertThat(journalpost.getBrukerTilgangAvvistBegrunnelser()).isNotNull().isEmpty();
 		assertThat(journalpost.isBrukerHarTilgang()).isTrue();
+	}
+
+	@Test
+	void shouldQueryNotatJournalpostByJournalpostId() {
+		tilgangskontrollPermit();
+		stubDokarkivJournalpost("journalpost-sak-notat-tilgang.json");
+		stubPdl();
+
+		Journalpost journalpost = parseJournalpost(journalpostQuery());
+
+		assertNotatJournalpost(journalpost);
+	}
+
+	private static void assertNotatJournalpost(Journalpost journalpost) {
+		assertThat(journalpost.getJournalpostId()).isEqualTo(JOURNALPOST_ID);
+		assertThat(journalpost.getTittel()).isEqualTo("Notat om revurdert overgangstønad");
+		assertThat(journalpost.getJournalposttype()).isEqualTo(Journalposttype.N);
+		assertThat(journalpost.getJournalstatus()).isEqualTo(Journalstatus.FERDIGSTILT);
+		assertThat(journalpost.getTema()).isEqualTo(Tema.ENF);
+		assertThat(journalpost.getTemanavn()).isEqualTo(Tema.ENF.getTemanavn());
+		assertThat(journalpost.getBehandlingstema()).isNull();
+		assertThat(journalpost.getBehandlingstemanavn()).isNull();
+		assertThat(journalpost.getSak().getArkivsaksnummer()).isEqualTo("140000000");
+		assertThat(journalpost.getSak().getArkivsaksystem()).isEqualTo(Arkivsakssystem.GSAK);
+		assertThat(journalpost.getSak().getFagsakId()).isEqualTo("200054151");
+		assertThat(journalpost.getSak().getFagsaksystem()).isEqualTo("EF");
+		assertThat(journalpost.getSak().getDatoOpprettet()).isEqualTo(LocalDateTime.parse("2023-11-21T14:21:12"));
+		assertThat(journalpost.getSak().getSakstype()).isEqualTo(Sakstype.FAGSAK);
+		assertThat(journalpost.getSak().getTema()).isEqualTo(Tema.ENF);
+		assertThat(journalpost.getBruker().getId()).isEqualTo(AKTOER_ID);
+		assertThat(journalpost.getBruker().getType()).isEqualTo(AKTOERID);
+		assertThat(journalpost.getAvsenderMottaker().getId()).isNull();
+		assertThat(journalpost.getAvsenderMottaker().getType()).isEqualTo(NULL);
+		assertThat(journalpost.getAvsenderMottaker().getNavn()).isNull();
+		assertThat(journalpost.getAvsenderMottaker().getLand()).isNull();
+		assertThat(journalpost.getAvsenderMottaker().isErLikBruker()).isFalse();
+		assertThat(journalpost.getAvsenderMottakerId()).isNull();
+		assertThat(journalpost.getAvsenderMottakerNavn()).isNull();
+		assertThat(journalpost.getAvsenderMottakerLand()).isNull();
+		assertThat(journalpost.getAntallRetur()).isNull();;
+		assertThat(journalpost.getJournalforendeEnhet()).isEqualTo("4489");
+		assertThat(journalpost.getJournalfoerendeEnhet()).isEqualTo("4489");
+		assertThat(journalpost.getJournalfortAvNavn()).isEqualTo("Bjarne Betjent");
+		assertThat(journalpost.getOpprettetAvNavn()).isEqualTo("Bjarne Betjent");
+		assertThat(journalpost.getKanal()).isEqualTo(INGEN_DISTRIBUSJON);
+		assertThat(journalpost.getKanalnavn()).isEqualTo(INGEN_DISTRIBUSJON.getKanalnavn());
+		assertThat(journalpost.getDatoOpprettet()).isEqualTo(LocalDateTime.parse("2023-11-21T16:19:35"));
+		assertThat(journalpost.getRelevanteDatoer().get(0).getDato()).isEqualTo(LocalDateTime.parse("2023-11-21T16:19:35"));
+		assertThat(journalpost.getRelevanteDatoer().get(0).getDatotype()).isEqualTo(DATO_DOKUMENT);
+		assertThat(journalpost.getRelevanteDatoer().get(1).getDato()).isEqualTo(LocalDateTime.parse("2023-11-21T16:19:35"));
+		assertThat(journalpost.getRelevanteDatoer().get(1).getDatotype()).isEqualTo(DATO_JOURNALFOERT);
+		assertThat(journalpost.getEksternReferanseId()).isEqualTo("712a2b03-adb0-44e8-be07-34e5fadbc821-vedtaksbrev");
+		DokumentInfo dokumentInfo1 = journalpost.getDokumenter().get(0);
+		assertThat(dokumentInfo1.getDokumentInfoId()).isEqualTo("500000000");
+		assertThat(dokumentInfo1.getTittel()).isEqualTo("Notat om revurdert overgangstønad");
+		assertThat(dokumentInfo1.getBrevkode()).isEqualTo("NOTAT");
+		assertThat(dokumentInfo1.getDokumentstatus()).isEqualTo(FERDIGSTILT);
+		assertThat(dokumentInfo1.getOriginalJournalpostId()).isEqualTo(JOURNALPOST_ID);
+		assertThat(dokumentInfo1.getLogiskeVedlegg()).isEmpty();
+		assertThat(dokumentInfo1.getDokumentvarianter().get(0).getVariantformat()).isEqualTo(ARKIV);
+		assertThat(dokumentInfo1.getDokumentvarianter().get(0).isSaksbehandlerHarTilgang()).isTrue();
+		assertThat(dokumentInfo1.getDokumentvarianter().get(0).getFiltype()).isEqualTo("PDF");
+		assertThat(dokumentInfo1.getDokumentvarianter().get(0).getFilnavn()).isNull();
+		assertThat(dokumentInfo1.getDokumentvarianter().get(0).getFiluuid()).isEqualTo("4ceaea4f-b01f-42fa-9992-d01e56f58962");
+		assertThat(dokumentInfo1.getDokumentvarianter().get(0).getFilstoerrelse()).isEqualTo(22507);
+
+		assertThat(journalpost.getBrukerTilgangAvvistBegrunnelser())
+				.extracting(BrukerTilgangAvvistBegrunnelse::kode, BrukerTilgangAvvistBegrunnelse::begrunnelse)
+				.containsExactlyInAnyOrder(tuple("notat", "Journalposten er et internt notat"));
+		assertThat(dokumentInfo1.getDokumentvarianter().get(0).isBrukerHarTilgang()).isFalse();
+		assertThat(dokumentInfo1.getDokumentvarianter().get(0).getBrukerTilgangAvvistBegrunnelser())
+				.extracting(BrukerTilgangAvvistBegrunnelse::kode, BrukerTilgangAvvistBegrunnelse::begrunnelse)
+				.containsExactlyInAnyOrder(tuple("notat", "Journalposten er et internt notat"));
 	}
 
 	@Test

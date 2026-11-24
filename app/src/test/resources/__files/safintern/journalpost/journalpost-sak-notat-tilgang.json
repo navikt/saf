@@ -1,0 +1,51 @@
+{
+  "journalpostId": 400000000,
+  "type": "N",
+  "fagomraade": "ENF",
+  "fagomraadenavn": "Enslig mor eller far",
+  "status": "FL",
+  "saksrelasjon": {
+    "fagsystem": "FS22",
+    "sak": {
+      "aktoerId": "1912374211459",
+      "applikasjon": "EF",
+      "fagsakNr": "200054151",
+      "opprettetTid": "2023-11-21T14:21:12.233152",
+      "tema": "ENF"
+    },
+    "sakId": 140000000
+  },
+  "relevanteDatoer": {
+    "hoveddokument": "2023-11-21T15:19:35.871+00:00",
+    "journalfoert": "2023-11-21T15:19:35.911+00:00",
+    "opprettet": "2023-11-21T15:19:35.874+00:00"
+  },
+  "bruker": {
+    "id": "23496940474",
+    "type": "PERSON"
+  },
+  "dokumenter": [
+    {
+      "dokumentInfoId": 500000000,
+      "brevkode": "NOTAT",
+      "fildetaljer": [
+        {
+          "format": "ARKIV",
+          "stoerrelse": "22507",
+          "type": "PDFA",
+          "uuid": "4ceaea4f-b01f-42fa-9992-d01e56f58962"
+        }
+      ],
+      "kategori": "VB",
+      "originalJournalpostId": 400000000,
+      "status": "FERDIGSTILT",
+      "tilknyttetSom": "HOVEDDOKUMENT",
+      "tittel": "Notat om revurdert overgangstønad"
+    }
+  ],
+  "innhold": "Notat om revurdert overgangstønad",
+  "journalfoerendeEnhet": "4489",
+  "journalfoertAvNavn": "Bjarne Betjent",
+  "kanalreferanseId": "712a2b03-adb0-44e8-be07-34e5fadbc821-vedtaksbrev",
+  "opprettetAvNavn": "Bjarne Betjent"
+}
