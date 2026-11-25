@@ -46,7 +46,9 @@ import no.nav.safselvbetjening.tilgang.Ident;
 import no.nav.safselvbetjening.tilgang.TilgangDokument;
 import no.nav.safselvbetjening.tilgang.TilgangJournalpost;
 import no.nav.safselvbetjening.tilgang.TilgangSak;
+import no.nav.safselvbetjening.tilgang.TilgangVariant;
 import no.nav.safselvbetjening.tilgang.UtledTilgangService;
+import org.jspecify.annotations.NonNull;
 
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
@@ -63,6 +65,7 @@ import java.util.stream.Stream;
 import static java.util.Collections.emptyList;
 import static no.nav.saf.anticorruptionlayer.joark.ArkivAvsenderMottakerMapper.mapArkivAvsenderMottaker;
 import static no.nav.saf.anticorruptionlayer.joark.ArkivUtsendingsInfoMapper.mapArkivUtsendingsInfo;
+import static no.nav.saf.anticorruptionlayer.joark.TilgangAvvistMapper.mapbrukerTilgangAvvistBegrunnelser;
 import static no.nav.saf.anticorruptionlayer.joark.domain.kode.JournalpostTypeCode.U;
 import static no.nav.saf.anticorruptionlayer.joark.domain.kode.JournalpostTypeCode.mapToJournalpostType;
 import static no.nav.saf.cache.KeyGeneratorLocalCaching.getKeyForPep2d;
@@ -99,7 +102,7 @@ public class ArkivJournalpostMapper {
 		Journalstatus journalstatus = mapJournalstatus(arkivJournalpost);
 		Sak sak = mapSak(arkivJournalpost.saksrelasjon(), requestCache);
 		TilgangJournalpost tilgangJournalpost = arkivJournalpost.getJournalpostTilgang(mapTilgangSak(arkivJournalpost.saksrelasjon(), requestCache));
-		List<BrukerTilgangAvvistBegrunnelse> journalpostBrukerTilgangAvvistBegrunnelser = TilgangAvvistMapper.mapbrukerTilgangAvvistBegrunnelser(utledTilgangService.utledTilgangJournalpost(tilgangJournalpost, brukerIdenter));
+		List<BrukerTilgangAvvistBegrunnelse> journalpostBrukerTilgangAvvistBegrunnelser = mapbrukerTilgangAvvistBegrunnelser(utledTilgangService.utledTilgangJournalpost(tilgangJournalpost, brukerIdenter));
 
 		Journalpost journalpost = Journalpost.builder()
 				.journalpostId(journalpostId)
@@ -141,7 +144,7 @@ public class ArkivJournalpostMapper {
 	}
 
 	private static String mapTittel(String originalTittel, Tema tema, Journalstatus journalstatus, Sak sak, RequestCache requestCache) {
-		if (requestCache.isSystem() || journalstatus == MOTTATT || ( getDecisionFromPep2d(tema, requestCache) &&
+		if (requestCache.isSystem() || journalstatus == MOTTATT || (getDecisionFromPep2d(tema, requestCache) &&
 				(sak == null || getDecisionFromPep8d(sak, requestCache)))) {
 			return originalTittel;
 		}
@@ -572,12 +575,8 @@ public class ArkivJournalpostMapper {
 			return null;
 		}
 
-		List<BrukerTilgangAvvistBegrunnelse> brukerTilgangAvvistBegrunnelser = TilgangAvvistMapper.mapbrukerTilgangAvvistBegrunnelser(utledTilgangService.utledTilgangDokument(tilgangJournalpost, tilgangDokument, fildetaljer.getTilgangVariant(), brukerIdenter));
-		Set<String> seen = new HashSet<>();
-		List<BrukerTilgangAvvistBegrunnelse> kombinertBrukerHarTilgangBegrunnelser =
-				Stream.concat(journalpostBrukerTilgangAvvistBegrunnelser.stream(), brukerTilgangAvvistBegrunnelser.stream())
-						.filter(b -> seen.add(b.kode()))
-						.toList();
+		List<BrukerTilgangAvvistBegrunnelse> brukerTilgangAvvistBegrunnelser =
+				mapBrukerTilgangAvvistBegrunnelser(tilgangJournalpost, tilgangDokument, fildetaljer.getTilgangVariant(), brukerIdenter, journalpostBrukerTilgangAvvistBegrunnelser);
 
 		return Dokumentvariant.builder()
 				.saksbehandlerHarTilgang(determineSaksbehandlerTilgang(journalpost, dokumentinfo, fildetaljer, requestCache))
@@ -587,9 +586,26 @@ public class ArkivJournalpostMapper {
 				.filtype(mapFiltype(fildetaljer))
 				.skjerming(mapSkjerming(fildetaljer.skjerming()))
 				.filstoerrelse(mapFilstoerrelse(fildetaljer))
-				.brukerTilgangAvvistBegrunnelser(kombinertBrukerHarTilgangBegrunnelser)
-				.brukerHarTilgang(kombinertBrukerHarTilgangBegrunnelser.isEmpty())
+				.brukerTilgangAvvistBegrunnelser(brukerTilgangAvvistBegrunnelser)
+				.brukerHarTilgang(brukerTilgangAvvistBegrunnelser.isEmpty())
 				.build();
+	}
+
+	private static @NonNull List<BrukerTilgangAvvistBegrunnelse> mapBrukerTilgangAvvistBegrunnelser(TilgangJournalpost tilgangJournalpost,
+																									TilgangDokument tilgangDokument,
+																									TilgangVariant tilgangVariant,
+																									Set<Ident> brukerIdenter,
+																									List<BrukerTilgangAvvistBegrunnelse> journalpostBrukerTilgangAvvistBegrunnelser) {
+		List<BrukerTilgangAvvistBegrunnelse> brukerTilgangAvvistBegrunnelser =
+				mapbrukerTilgangAvvistBegrunnelser(utledTilgangService.utledTilgangDokument(tilgangJournalpost, tilgangDokument, tilgangVariant, brukerIdenter));
+		if (journalpostBrukerTilgangAvvistBegrunnelser.isEmpty()) {
+			return brukerTilgangAvvistBegrunnelser;
+		} else {
+			Set<String> seen = new HashSet<>();
+			return Stream.concat(journalpostBrukerTilgangAvvistBegrunnelser.stream(), brukerTilgangAvvistBegrunnelser.stream())
+					.filter(b -> seen.add(b.kode()))
+					.toList();
+		}
 	}
 
 	private static List<LogiskVedlegg> mapLogiskeVedlegg(ArkivDokumentinfo dokumentinfo, Tema tema, Journalstatus journalstatus, Sak sak, RequestCache requestCache) {
@@ -597,8 +613,8 @@ public class ArkivJournalpostMapper {
 			return emptyList();
 		}
 		return dokumentinfo.logiskVedlegg().stream()
-			.map(logiskVedlegg -> new LogiskVedlegg(logiskVedlegg.vedleggId().toString(), mapTittel(logiskVedlegg.tittel(), tema, journalstatus, sak, requestCache)))
-			.collect(Collectors.toList());
+				.map(logiskVedlegg -> new LogiskVedlegg(logiskVedlegg.vedleggId().toString(), mapTittel(logiskVedlegg.tittel(), tema, journalstatus, sak, requestCache)))
+				.collect(Collectors.toList());
 	}
 
 	private static Integer mapFilstoerrelse(ArkivFildetaljer fildetaljer) {
