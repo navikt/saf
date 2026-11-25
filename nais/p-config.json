@@ -157,7 +157,11 @@
     {
       "app": "kabal-document",
       "namespace": "klage",
-      "cluster": "prod-gcp"
+      "cluster": "prod-gcp",
+      "roles": [
+        "journal_tema_far",
+        "journal_tema_kta"
+      ]
     },
     {
       "app": "klage-dittnav-api",
