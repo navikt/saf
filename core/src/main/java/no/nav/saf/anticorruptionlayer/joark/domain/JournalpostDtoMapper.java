@@ -35,13 +35,16 @@ import no.nav.safselvbetjening.tilgang.Ident;
 import no.nav.safselvbetjening.tilgang.TilgangDokument;
 import no.nav.safselvbetjening.tilgang.TilgangJournalpost;
 import no.nav.safselvbetjening.tilgang.TilgangSak;
+import no.nav.safselvbetjening.tilgang.TilgangVariant;
 import no.nav.safselvbetjening.tilgang.UtledTilgangService;
+import org.jspecify.annotations.NonNull;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -87,7 +90,7 @@ public class JournalpostDtoMapper {
 		Journalstatus journalstatus = mapJournalstatus(journalpostDto);
 		TilgangSak tilgangSak = mapTilgangSak(journalpostDto.getSaksrelasjon(), requestCache);
 		TilgangJournalpost tilgangJournalpost = journalpostDto.getJournalpostTilgang(tilgangSak);
-		List<BrukerTilgangAvvistBegrunnelse> brukerTilgangAvvistBegrunnelser = mapbrukerTilgangAvvistBegrunnelser(utledTilgangService.utledTilgangJournalpost(tilgangJournalpost, brukerIdenter));
+		List<BrukerTilgangAvvistBegrunnelse> journalpostBrukerTilgangAvvistBegrunnelser = mapbrukerTilgangAvvistBegrunnelser(utledTilgangService.utledTilgangJournalpost(tilgangJournalpost, brukerIdenter));
 		Sak sak = mapSak(journalpostDto.getSaksrelasjon(), requestCache);
 		Journalpost journalpost = Journalpost.builder()
 				.journalpostId(journalpostId)
@@ -121,20 +124,25 @@ public class JournalpostDtoMapper {
 				.innsynsregel(journalpostDto.getInnsyn() == null ? ARKIVJOURNALPOST_OVERSTYRTINNSYN_STANDARD : journalpostDto.getInnsyn())
 				.innsynsregelBeskrivelse(journalpostDto.getInnsynbeskrivelse() == null ? ARKIVJOURNALPOST_OVERSTYRTINNSYN_STANDARD_BESKRIVELSE : journalpostDto.getInnsynbeskrivelse())
 				.utsendingsinfo(getUtgaaendeJournalpostUtsendingsInfo(journalpostDto))
-				.brukerTilgangAvvistBegrunnelser(brukerTilgangAvvistBegrunnelser)
-				.brukerHarTilgang(brukerTilgangAvvistBegrunnelser.isEmpty())
+				.brukerTilgangAvvistBegrunnelser(journalpostBrukerTilgangAvvistBegrunnelser)
+				.brukerHarTilgang(journalpostBrukerTilgangAvvistBegrunnelser.isEmpty())
 				.build();
 		List<DokumentInfo> dokumenter = journalpostDto.getDokumenter().stream()
 				.filter(dokumentInfoDto -> shouldMapDokumentInfo(journalpostId, dokumentInfoDto.getDokumentInfoId(), requestCache))
 				.sorted(sortDokumentInfoByTilknyttetSomRekkefoelgeDokumentInfoId())
-				.map(dokumentInfoDto -> mapDokumentInfo(journalpostDto, dokumentInfoDto, journalpost, tilgangJournalpost, brukerIdenter, requestCache))
+				.map(dokumentInfoDto -> mapDokumentInfo(journalpostDto, dokumentInfoDto, journalpost, tilgangJournalpost, brukerIdenter, journalpostBrukerTilgangAvvistBegrunnelser, requestCache))
 				.toList();
 		journalpost.getDokumenter().addAll(dokumenter);
 		return journalpost;
 	}
 
-	private DokumentInfo mapDokumentInfo(JournalpostDto journalpostDto, DokumentInfoDto dokumentInfoDto, Journalpost journalpost,
-										 TilgangJournalpost tilgangJournalpost, Set<Ident> brukerIdenter, RequestCache requestCache) {
+	private DokumentInfo mapDokumentInfo(JournalpostDto journalpostDto,
+										 DokumentInfoDto dokumentInfoDto,
+										 Journalpost journalpost,
+										 TilgangJournalpost tilgangJournalpost,
+										 Set<Ident> brukerIdenter,
+										 List<BrukerTilgangAvvistBegrunnelse> journalpostBrukerTilgangAvvistBegrunnelser,
+										 RequestCache requestCache) {
 		return DokumentInfo.builder()
 				.parent(journalpost)
 				.dokumentInfoId(dokumentInfoDto.getDokumentInfoId())
@@ -145,7 +153,7 @@ public class JournalpostDtoMapper {
 				.originalJournalpostId(dokumentInfoDto.getOrigJournalpostId() == null ? null : dokumentInfoDto.getOrigJournalpostId().toString())
 				.skjerming(dokumentInfoDto.getSkjerming() == null ? null : dokumentInfoDto.getSkjerming().getSafSkjerming())
 				.sensitivtPselv(mapSensitivPselv(dokumentInfoDto.getSensitivt()))
-				.dokumentvarianter(mapDokumentvarianter(tilgangJournalpost, journalpost, dokumentInfoDto, brukerIdenter, requestCache))
+				.dokumentvarianter(mapDokumentvarianter(tilgangJournalpost, journalpost, dokumentInfoDto, brukerIdenter, journalpostBrukerTilgangAvvistBegrunnelser, requestCache))
 				.logiskeVedlegg(dokumentInfoDto.getLogiske().stream()
 						.map(logiskVedleggDto -> new LogiskVedlegg(logiskVedleggDto.getVedleggId(), mapTittel(logiskVedleggDto.getTittel(),
 								journalpost.getTema(), journalpost.getJournalstatus(), journalpost.getSak(), requestCache)))
@@ -153,8 +161,12 @@ public class JournalpostDtoMapper {
 				.build();
 	}
 
-	private List<Dokumentvariant> mapDokumentvarianter(TilgangJournalpost tilgangJournalpost, Journalpost journalpost,
-													   DokumentInfoDto dokumentInfoDto, Set<Ident> brukerIdenter, RequestCache requestCache) {
+	private List<Dokumentvariant> mapDokumentvarianter(TilgangJournalpost tilgangJournalpost,
+													   Journalpost journalpost,
+													   DokumentInfoDto dokumentInfoDto,
+													   Set<Ident> brukerIdenter,
+													   List<BrukerTilgangAvvistBegrunnelse> journalpostBrukerTilgangAvvistBegrunnelser,
+													   RequestCache requestCache) {
 		if (dokumentInfoDto.getVarianter().isEmpty()) {
 			return List.of();
 		}
@@ -164,15 +176,21 @@ public class JournalpostDtoMapper {
 				.orElse(null);
 		return dokumentInfoDto.getVarianter().stream()
 				.map(variantDto -> mapDokumentvariant(tilgangJournalpost, tilgangDokument, journalpost, dokumentInfoDto,
-						variantDto, brukerIdenter, requestCache))
+						variantDto, brukerIdenter, journalpostBrukerTilgangAvvistBegrunnelser, requestCache))
 				.collect(Collectors.toList());
 	}
 
-	private Dokumentvariant mapDokumentvariant(TilgangJournalpost tilgangJournalpost, TilgangDokument tilgangDokument,
-											   Journalpost journalpost, DokumentInfoDto dokumentInfoDto, VariantDto variantDto,
-											   Set<Ident> brukerIdenter, RequestCache requestCache) {
-		List<BrukerTilgangAvvistBegrunnelse> brukerTilgangAvvistBegrunnelser = mapbrukerTilgangAvvistBegrunnelser(
-				utledTilgangService.utledTilgangDokument(tilgangJournalpost, tilgangDokument, variantDto.getTilgangVariant(), brukerIdenter));
+	private Dokumentvariant mapDokumentvariant(TilgangJournalpost tilgangJournalpost,
+											   TilgangDokument tilgangDokument,
+											   Journalpost journalpost,
+											   DokumentInfoDto dokumentInfoDto,
+											   VariantDto variantDto,
+											   Set<Ident> brukerIdenter,
+											   List<BrukerTilgangAvvistBegrunnelse> journalpostBrukerTilgangAvvistBegrunnelser,
+											   RequestCache requestCache) {
+		List<BrukerTilgangAvvistBegrunnelse> brukerTilgangAvvistBegrunnelser =
+				mapBrukerTilgangAvvistBegrunnelser(tilgangJournalpost, tilgangDokument, variantDto.getTilgangVariant(), brukerIdenter, journalpostBrukerTilgangAvvistBegrunnelser);
+
 		return Dokumentvariant.builder()
 				.saksbehandlerHarTilgang(determineSaksbehandlerTilgang(journalpost, dokumentInfoDto, variantDto, requestCache))
 				.variantformat(variantDto.getVariantf().getSafVariantformat())
@@ -184,6 +202,23 @@ public class JournalpostDtoMapper {
 				.brukerTilgangAvvistBegrunnelser(brukerTilgangAvvistBegrunnelser)
 				.brukerHarTilgang(brukerTilgangAvvistBegrunnelser.isEmpty())
 				.build();
+	}
+
+	private static @NonNull List<BrukerTilgangAvvistBegrunnelse> mapBrukerTilgangAvvistBegrunnelser(TilgangJournalpost tilgangJournalpost,
+																									TilgangDokument tilgangDokument,
+																									TilgangVariant tilgangVariant,
+																									Set<Ident> brukerIdenter,
+																									List<BrukerTilgangAvvistBegrunnelse> journalpostBrukerTilgangAvvistBegrunnelser) {
+		List<BrukerTilgangAvvistBegrunnelse> brukerTilgangAvvistBegrunnelser =
+				mapbrukerTilgangAvvistBegrunnelser(utledTilgangService.utledTilgangDokument(tilgangJournalpost, tilgangDokument, tilgangVariant, brukerIdenter));
+		if (journalpostBrukerTilgangAvvistBegrunnelser.isEmpty()) {
+			return brukerTilgangAvvistBegrunnelser;
+		} else {
+			Set<String> seen = new HashSet<>();
+			return Stream.concat(journalpostBrukerTilgangAvvistBegrunnelser.stream(), brukerTilgangAvvistBegrunnelser.stream())
+					.filter(b -> seen.add(b.kode()))
+					.toList();
+		}
 	}
 
 	static Comparator<? super DokumentInfoDto> sortDokumentInfoByTilknyttetSomRekkefoelgeDokumentInfoId() {
@@ -393,7 +428,7 @@ public class JournalpostDtoMapper {
 	private Journalstatus mapJournalstatus(JournalpostDto journalpostDto) {
 		SaksrelasjonDto saksrelasjon = journalpostDto.getSaksrelasjon();
 		if (saksrelasjon != null && saksrelasjon.getFeilregistrert() != null && saksrelasjon.getFeilregistrert()
-			&& !Journalstatus.UTGAAR.equals(journalpostDto.getJournalstatus().toSafJournalstatus())) {
+				&& !Journalstatus.UTGAAR.equals(journalpostDto.getJournalstatus().toSafJournalstatus())) {
 			return Journalstatus.FEILREGISTRERT;
 		} else {
 			return journalpostDto.getJournalstatus().toSafJournalstatus();
@@ -528,18 +563,18 @@ public class JournalpostDtoMapper {
 			// Midlertidige journalposter skal ikke ha tilgangskontroll på tema. Her skal saksbehandler ha tilgang uansett.
 			// https://jira.adeo.no/browse/MMA-2494
 			return getDecisionFromPep6d(journalpost.getJournalpostId(), dokumentInfoDto.getDokumentInfoId(), variantDto, requestCache) &&
-				   getDecisionFromPep8d(journalpost.getSak(), requestCache);
+					getDecisionFromPep8d(journalpost.getSak(), requestCache);
 		} else {
 			if (journalpost.getTema() == Tema.UKJ) {
 				// Når tema=UKJ og sak er åpen skal saksbehandler ha tilgang. Kun Pep6d og Pep8d skal bestemme saksbehandlerHarTilgang.
 				// https://jira.adeo.no/browse/MMA-3992
 				return getDecisionFromPep6d(journalpost.getJournalpostId(), dokumentInfoDto.getDokumentInfoId(), variantDto, requestCache) &&
-					   getDecisionFromPep8d(journalpost.getSak(), requestCache);
+						getDecisionFromPep8d(journalpost.getSak(), requestCache);
 			} else {
 				return getDecisionFromPep2d(journalpost.getTema(), requestCache) &&
-					   getDecisionFromPep6d(journalpost.getJournalpostId(), dokumentInfoDto.getDokumentInfoId(), variantDto, requestCache) &&
-					   getDecisionFromPep7d(journalpost.getSak().getArkivsaksystem(), journalpost.getSak().getArkivsaksnummer(), requestCache) &&
-					   getDecisionFromPep8d(journalpost.getSak(), requestCache);
+						getDecisionFromPep6d(journalpost.getJournalpostId(), dokumentInfoDto.getDokumentInfoId(), variantDto, requestCache) &&
+						getDecisionFromPep7d(journalpost.getSak().getArkivsaksystem(), journalpost.getSak().getArkivsaksnummer(), requestCache) &&
+						getDecisionFromPep8d(journalpost.getSak(), requestCache);
 			}
 		}
 	}

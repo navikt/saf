@@ -18,6 +18,7 @@ import no.nav.saf.domain.kode.Skjerming;
 import no.nav.saf.domain.kode.Tema;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.domain.visningsmodell.BrukerIdType;
+import no.nav.saf.domain.visningsmodell.BrukerTilgangAvvistBegrunnelse;
 import no.nav.saf.domain.visningsmodell.DokumentInfo;
 import no.nav.saf.domain.visningsmodell.Dokumentvariant;
 import no.nav.saf.domain.visningsmodell.Journalpost;
@@ -258,6 +259,22 @@ class JournalpostDtoMapperTest {
 		assertEquals(journalpost.getKanalnavn(), INGEN_DISTRIBUSJON.getKanalnavn());
 
 		assertThat(journalpost.getRelevanteDatoer(), hasItem(new RelevantDato(JOURNAL_DATO, DATO_JOURNALFOERT)));
+
+		Assertions.assertThat(journalpost.isBrukerHarTilgang()).isFalse();
+		Assertions.assertThat(journalpost.getBrukerTilgangAvvistBegrunnelser())
+				.extracting(BrukerTilgangAvvistBegrunnelse::kode, BrukerTilgangAvvistBegrunnelse::begrunnelse)
+				.containsExactlyInAnyOrder(tuple("notat", "Journalposten er et internt notat"),
+						tuple("foer_innsynsdato", "Journalposten er opprettet eller journalført før 4. juni 2016"),
+						tuple("ikke_avsender_mottaker", "Avsender / mottakers fødselsnummer er ikke lik brukerens fødselsnummer"),
+						tuple("pol_gdpr", "Journalposten er skjermet etter personopplysningsloven / GDPR"));
+		DokumentInfo dokumentInfo1 = journalpost.getDokumenter().get(0);
+		Assertions.assertThat(dokumentInfo1.getDokumentvarianter().get(0).isBrukerHarTilgang()).isFalse();
+		Assertions.assertThat(dokumentInfo1.getDokumentvarianter().get(0).getBrukerTilgangAvvistBegrunnelser())
+				.extracting(BrukerTilgangAvvistBegrunnelse::kode, BrukerTilgangAvvistBegrunnelse::begrunnelse)
+				.containsExactlyInAnyOrder(tuple("notat", "Journalposten er et internt notat"),
+						tuple("foer_innsynsdato", "Journalposten er opprettet eller journalført før 4. juni 2016"),
+						tuple("ikke_avsender_mottaker", "Avsender / mottakers fødselsnummer er ikke lik brukerens fødselsnummer"),
+						tuple("pol_gdpr", "Journalposten er skjermet etter personopplysningsloven / GDPR"));
 	}
 
 	@Test

@@ -26,6 +26,7 @@ import no.nav.saf.domain.kode.Tema;
 import no.nav.saf.domain.tilgangsmodell.TilgangBruker;
 import no.nav.saf.domain.visningsmodell.AvsenderMottakerIdType;
 import no.nav.saf.domain.visningsmodell.BrukerIdType;
+import no.nav.saf.domain.visningsmodell.BrukerTilgangAvvistBegrunnelse;
 import no.nav.saf.domain.visningsmodell.DokumentInfo;
 import no.nav.saf.domain.visningsmodell.Dokumentvariant;
 import no.nav.saf.domain.visningsmodell.Journalpost;
@@ -260,7 +261,6 @@ class ArkivJournalpostMapperTest {
 
 		assertCommonMetadata(journalpost);
 
-
 		assertThat(journalpost.getJournalposttype()).isEqualTo(Journalposttype.N);
 		assertThat(journalpost.getJournalstatus()).isEqualTo(JOURNALFOERT);
 		assertThat(journalpost.getKanal()).isEqualTo(Kanal.INGEN_DISTRIBUSJON);
@@ -268,6 +268,20 @@ class ArkivJournalpostMapperTest {
 		assertThat(journalpost.getRelevanteDatoer())
 				.hasSize(1)
 				.contains(new RelevantDato(ARKIVJOURNALPOST_JOURNAL_DATO, DATO_JOURNALFOERT));
+
+		assertThat(journalpost.isBrukerHarTilgang()).isFalse();
+		assertThat(journalpost.getBrukerTilgangAvvistBegrunnelser())
+				.extracting(BrukerTilgangAvvistBegrunnelse::kode, BrukerTilgangAvvistBegrunnelse::begrunnelse)
+				.containsExactlyInAnyOrder(tuple("notat", "Journalposten er et internt notat"),
+						tuple("ikke_avsender_mottaker", "Avsender / mottakers fødselsnummer er ikke lik brukerens fødselsnummer"),
+						tuple("pol_gdpr", "Journalposten er skjermet etter personopplysningsloven / GDPR"));
+		DokumentInfo dokumentInfo1 = journalpost.getDokumenter().get(0);
+		assertThat(dokumentInfo1.getDokumentvarianter().get(0).isBrukerHarTilgang()).isFalse();
+		assertThat(dokumentInfo1.getDokumentvarianter().get(0).getBrukerTilgangAvvistBegrunnelser())
+				.extracting(BrukerTilgangAvvistBegrunnelse::kode, BrukerTilgangAvvistBegrunnelse::begrunnelse)
+				.containsExactlyInAnyOrder(tuple("notat", "Journalposten er et internt notat"),
+						tuple("ikke_avsender_mottaker", "Avsender / mottakers fødselsnummer er ikke lik brukerens fødselsnummer"),
+						tuple("pol_gdpr", "Journalposten er skjermet etter personopplysningsloven / GDPR"));
 	}
 
 	@Test
@@ -353,11 +367,12 @@ class ArkivJournalpostMapperTest {
 		assertThat(journalpost.getSak().getTema()).isEqualTo(Tema.PEN);
 		assertThat(journalpost.getSak().getFagsakId()).isEqualTo(ARKIVSAKSRELASJON_SAK_ID.toString());
 	}
+
 	static Stream<Arguments> shouldMapJournalpostSkjermingType() {
 		return Stream.of(
-			Arguments.of(SkjermingTypeCode.ARK, Skjerming.ARK),
-			Arguments.of(SkjermingTypeCode.POL, Skjerming.POL),
-			Arguments.of(SkjermingTypeCode.FEIL, Skjerming.FEIL)
+				Arguments.of(SkjermingTypeCode.ARK, Skjerming.ARK),
+				Arguments.of(SkjermingTypeCode.POL, Skjerming.POL),
+				Arguments.of(SkjermingTypeCode.FEIL, Skjerming.FEIL)
 		);
 	}
 
