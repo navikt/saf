@@ -102,6 +102,11 @@
       "cluster": "dev-gcp"
     },
     {
+      "app": "gravferd-sak",
+      "namespace": "gravferd",
+      "cluster": "dev-gcp"
+    },
+    {
       "app": "journalforing-frontend",
       "namespace": "isa",
       "cluster": "dev-fss"
