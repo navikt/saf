@@ -53,6 +53,11 @@
       "cluster": "prod-gcp"
     },
     {
+      "app": "gravferd-sak",
+      "namespace": "gravferd",
+      "cluster": "prod-gcp"
+    },
+    {
       "app": "k9-punsj",
       "namespace": "k9saksbehandling",
       "cluster": "prod-fss"
