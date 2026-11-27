@@ -790,6 +790,11 @@
       "app": "tsm-papirmottak",
       "namespace": "tsm",
       "cluster": "prod-gcp"
+    },
+    {
+      "app": "tsm-oppgave",
+      "namespace": "tsm",
+      "cluster": "prod-gcp"
     }
   ]
 }
